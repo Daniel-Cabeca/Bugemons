@@ -47,8 +47,13 @@ public class Bugemon {
     }
 
     public void swapAbility(String oldAbility, String newAbility){
-        this.abilities.remove(oldAbility);
-        this.abilities.add(newAbility);
+        for (int index = 0; index < this.abilities.size(); index++) {
+            if (this.abilities.get(index).equals(oldAbility)) {
+                this.abilities.remove(oldAbility);
+                this.abilities.insertElementAt(newAbility, index);
+                break;
+            }
+        }
     }
 
     public final String getName() {return this.name;}

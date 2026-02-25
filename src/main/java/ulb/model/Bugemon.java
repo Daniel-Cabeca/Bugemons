@@ -1,4 +1,6 @@
 package ulb.model;
+import ulb.utils.Stats;
+import java.util.Vector;
 
 public class Bugemon {
     public enum Type {
@@ -9,44 +11,51 @@ public class Bugemon {
     private final String name;
     private final Type type;
 
-    private int pv;
-    private int defense;
-    private int attack;
-    private int initiative;
-    //private Buff buff; Spécifie dynamiquement la valeur des stats
+    private Stats baseStats;
+    private Stats fightStats; 
 
     private int xp;
     private int level;
 
-    //private Vector<Ability> abilities;
+    private Vector<String> abilities; //placeholder le temps que la classe ability soit faite
 
-    public Bugemon (String name, Type type, int pv, int attack, int defense, int level){ //,Vector<Ability> abilities) {
+    public Bugemon(String name, Type type, int pv, int attack, int defense, int initiative, Vector<String> abilities, int level) {
         this.name = name;
         this.type = type;
-        this.pv = pv;
-        this.attack = attack;
-        this.defense = defense;
+        this.baseStats = new Stats(pv, defense, attack, initiative);
+        this.fightStats = new Stats(pv, defense, attack, initiative);
+        this.abilities = abilities;
         this.level = level;
-        //this.abilities = abilities;
         this.xp = 0;
     }
 
-    public void increasePV (int delta) {}
-    public void increaseDefense (int delta) {}
-    public void increaseAttack (int delta) {}
-    public void increaseInitiative (int delta) {}
-    public void gainXP (int experience) {}
+    public void increaseBaseStats(Stats delta) {
+        this.baseStats.add(delta);
+    }
 
-    public final String getName () {return this.name;}
+    public void changeFightStats(Stats delta) {
+        this.fightStats.add(delta);
+    }
+
+    public void gainXP(int experience) {
+        this.xp += experience;
+        
+        while (this.xp >= (50 + 50 * (this.level - 1))) {
+            this.xp -= (50 + 50 * (this.level - 1));
+            this.level++;
+        }
+    }
+
+    public void swapAbility(String oldAbility, String newAbility){
+        this.abilities.remove(oldAbility);
+        this.abilities.add(newAbility);
+    }
+
+    public final String getName() {return this.name;}
     public final Type getType () {return this.type;}
-    public int getPV () {return 0;}
-    public int getDefense () {return 0;}
-    public int getAttack () {return 0;}
-    public int getInitiative () {return 0;}
-    public int getLevel () {return this.level;}
-    public int getXP () {return this.xp;}
-    //public Vector<Ability> getAbilities () {}
-
-    //public void applyBuff (Buff buff) {}
-    //public void resetBuff () {}
+    public Stats getFighStats() {return this.fightStats;}
+    public Stats getBaseStats() {return this.baseStats;}
+    public int getLevel() {return this.level;}
+    public int getXP() {return this.xp;}
+    public Vector<String> getAbilities() {return this.abilities;}
 }

@@ -8,6 +8,7 @@ public class Bugemon {
         flora,
         aqua
     }
+    
     private final String name;
     private final Type type;
 
@@ -46,7 +47,7 @@ public class Bugemon {
         }
     }
 
-    public void swapAbility(String oldAbility, String newAbility){
+    public void swapAbility(String oldAbility, String newAbility) {
         for (int index = 0; index < this.abilities.size(); index++) {
             if (this.abilities.get(index).equals(oldAbility)) {
                 this.abilities.setElementAt(newAbility, index);
@@ -56,7 +57,7 @@ public class Bugemon {
     }
 
     public final String getName() {return this.name;}
-    public final Type getType () {return this.type;}
+    public final Type getType() {return this.type;}
     public Stats getFighStats() {return this.fightStats;}
     public Stats getBaseStats() {return this.baseStats;}
     public int getLevel() {return this.level;}

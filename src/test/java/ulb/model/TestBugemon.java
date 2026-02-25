@@ -41,7 +41,7 @@ public class TestBugemon {
      }
 
      @Test
-    public void swapNonexistentAbility(){
+    public void swapNonexistentAbility() {
          Bugemon B = new Bugemon("A", Bugemon.Type.aqua, 10, 29, 35, 16, new Vector<String>(List.of("a", "b", "c")), 1);
          String newAbility = "d";
          B.swapAbility("e", newAbility);

@@ -20,7 +20,7 @@ public class Item {
         this.effect = effect;
         this.sprite = sprite;
     }
-    // Getters
+
     public String getId() { return this.id; }
     public String getName() { return this.name; }
     public String getDescription() { return this.description; }

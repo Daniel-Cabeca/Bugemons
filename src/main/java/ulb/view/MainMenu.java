@@ -13,16 +13,16 @@ import java.io.IOException;
 
 public class MainMenu {
 
-    @FXML
-    private void handleCreateTeam(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("/ulb/view/CreateTeamMenu.fxml"));
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.getScene().setRoot(root);
-    }
+	@FXML
+	private void handleCreateTeam(ActionEvent event) throws IOException {
+		Parent root = FXMLLoader.load(getClass().getResource("/ulb/view/CreateTeamMenu.fxml"));
+		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+		stage.getScene().setRoot(root);
+	}
 
-    @FXML
-    private void handleExit() {
-        Platform.exit();
-        System.exit(0);
-    }
+	@FXML
+	private void handleExit() {
+		Platform.exit();
+		System.exit(0);
+	}
 }

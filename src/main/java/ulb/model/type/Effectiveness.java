@@ -13,12 +13,53 @@ public class Effectiveness {
 		this.value = value;
 	}
 
+
 	public Effectiveness(Type move, Type target) {
-		if (move == Type.FLORA && target == Type.AQUA) {
-			this.value = Value.HIGH;
-		}
-		else {
-			this.value = Value.NORMAL;
+		switch (move) {
+			case FLORA:
+				if (target == Type.AQUA) {
+					this.value = Value.HIGH;
+				} else if (target == Type.LITHO) {
+					this.value = Value.LOW;
+				} else {
+					this.value = Value.NORMAL;
+				}
+				break;
+			case AQUA:
+				if (target  == Type.PYRO) {
+					this.value = Value.HIGH;
+				}
+				else if (target == Type.FLORA) {
+					this.value = Value.LOW;
+				}
+				else {
+					this.value = Value.NORMAL;
+				}
+				break;
+			case PYRO:
+				if (target  == Type.LITHO) {
+					this.value = Value.HIGH;
+				}
+				else if (target == Type.AQUA) {
+					this.value = Value.LOW;
+				}
+				else {
+					this.value = Value.NORMAL;
+				}
+				break;
+			case LITHO:
+				if (target  == Type.FLORA) {
+					this.value = Value.HIGH;
+				}
+				else if (target == Type.PYRO) {
+					this.value = Value.LOW;
+				}
+				else {
+					this.value = Value.NORMAL;
+				}
+				break;
+			default:
+				break;
 		}
 	}
 

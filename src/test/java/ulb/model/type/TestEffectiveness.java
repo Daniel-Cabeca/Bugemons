@@ -79,7 +79,7 @@ public class TestEffectiveness {
 
 	@Test
 	public void verifyLithoToPyro() {
-		testTypeEffectiveness(Type.LITHO, Type.PYRO, Effectiveness.Value.NORMAL);
+		testTypeEffectiveness(Type.LITHO, Type.PYRO, Effectiveness.Value.LOW);
 	}
 
 	@Test
@@ -94,6 +94,6 @@ public class TestEffectiveness {
 
 	@Test
 	public void verifyLithoToLitho() {
-		testTypeEffectiveness(Type.LITHO, Type.LITHO, Effectiveness.Value.LOW);
+		testTypeEffectiveness(Type.LITHO, Type.LITHO, Effectiveness.Value.NORMAL);
 	}
 }

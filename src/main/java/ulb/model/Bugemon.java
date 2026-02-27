@@ -2,13 +2,9 @@ package ulb.model;
 import ulb.utils.Stats;
 import java.util.Vector;
 
-public class Bugemon {
-	public enum Type {
-		pyro,
-		flora,
-		aqua
-	}
+import ulb.model.type.Type;
 
+public class Bugemon {
 	private final String name;
 	private final Type type;
 

@@ -13,7 +13,6 @@ public class Effectiveness {
 		this.value = value;
 	}
 
-
 	public Effectiveness(Type move, Type target) {
 		switch (move) {
 			case FLORA:
@@ -60,6 +59,19 @@ public class Effectiveness {
 				break;
 			default:
 				break;
+		}
+	}
+
+	public float getFactor() {
+		switch(this.getValue()) {
+			case HIGH:
+				return 1.5f;
+
+			case LOW:
+				return 0.5f;
+
+			default:
+				return 1.0f;
 		}
 	}
 

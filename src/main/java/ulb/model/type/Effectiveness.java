@@ -2,17 +2,28 @@ package ulb.model.type;
 
 public class Effectiveness {
 	public enum Value {
-		HIGH, // 1.5
-		NORMAL, // 1.0
-		LOW, // 0.5
+		HIGH,
+		NORMAL,
+		LOW,
 	}
 
 	private Value value;
 
+	/**
+	 * Creates a new Effectiveness instance with a given value.
+	 *
+	 * @param value The effectiveness value
+	 */
 	public Effectiveness(Value value) {
 		this.value = value;
 	}
 
+	/**
+	 * Creates a new Effectiveness instance corresponding to the type of a move and the type of the target Bugemon.
+	 *
+	 * @param move The type of the move
+	 * @param target The type of the target Bugemon
+	 */
 	public Effectiveness(Type move, Type target) {
 		switch (move) {
 			case FLORA:
@@ -62,6 +73,11 @@ public class Effectiveness {
 		}
 	}
 
+	/**
+	 * Gives the multiplicative factor for damage calculations.
+	 *
+	 * @return The multiplicative factor
+	 */
 	public float getFactor() {
 		switch(this.getValue()) {
 			case HIGH:

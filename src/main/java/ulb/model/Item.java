@@ -3,10 +3,10 @@ package ulb.model;
 
 public class Item {
 	private String id;
-	private String name;        // Maps to "nom" in your JSON
+	private String name;
 	private String description;
-	private String category;    // Maps to "categorie" in your JSON
-	private Effect effect;      // Maps to "effet" in your JSON
+	private String category;
+	private Effect effect;
 	private String sprite;
 
 

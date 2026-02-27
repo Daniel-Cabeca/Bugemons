@@ -15,6 +15,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import ulb.model.Bugemon;
+import ulb.model.BugemonParser;
+import java.util.Vector;
+
 public class CreateTeamMenu {
 
 	@FXML
@@ -27,8 +31,16 @@ public class CreateTeamMenu {
 	/**
 	* Initializes the create team menu
 	*/
+	private Vector<Bugemon> bugemons;
+
 	@FXML
 	public void initialize() {
+		try {
+			String path = getClass().getResource("/json/bugemons.json").getPath();
+			bugemons = BugemonParser.loadBugemons(path);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		populateAvailableBugemons();
 	}
 
@@ -36,33 +48,27 @@ public class CreateTeamMenu {
 	* Updates the available bugemons grid by adding a box for each bugemon in the list
 	*/
 	private void populateAvailableBugemons() {
-		// Placeholder list with bugemon names -> to be replaced with actual bugemons and their sprites
-		String[] bugemons = {"Florachu", "Moussil", "Verdurion",
-				"Exceflam", "Pyricore", "Inferlin",
-				"Commitide", "Mergeau", "Refaquix"};
-
 		int col = 0, row = 0;
 
-		for (String bugemon : bugemons) {
+		for (Bugemon bugemon : bugemons) {
 			VBox cell = new VBox(5);
 			cell.setStyle("-fx-border-color: gray; -fx-padding: 10; -fx-alignment: center;");
 
-			Label name = new Label(bugemon);
+			Label name = new Label(bugemon.getName());
 			CheckBox checkBox = new CheckBox();
-			checkBox.setSelected(selected.contains(bugemon));
+			checkBox.setSelected(selected.contains(bugemon.getName()));
 
 			checkBox.setOnAction(e -> {
 				if (checkBox.isSelected()) {
-					onSelectBugemon(bugemon);
+					onSelectBugemon(bugemon.getName());
 				} else {
-					onDeselectBugemon(bugemon);
+					onDeselectBugemon(bugemon.getName());
 				}
 			});
 
 			cell.getChildren().addAll(name, checkBox);
 			availableBugemons.add(cell, col, row);
 
-			// Ensures there are 3 columns in the grid
 			col++;
 			if (col == 3) { col = 0; row++; }
 		}

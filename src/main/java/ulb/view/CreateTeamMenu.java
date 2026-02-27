@@ -1,5 +1,7 @@
 package ulb.view;
 
+import ulb.controller.BattleController;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -15,6 +17,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import ulb.model.Player;
+
 public class CreateTeamMenu {
 
 	@FXML
@@ -22,7 +26,14 @@ public class CreateTeamMenu {
 	@FXML
 	private GridPane selectedBugemons;
 
+	private Player player;
 	private final List<String> selected = new ArrayList<>();
+	private BattleController battleController;
+
+	public void setPlayer(Player player) {
+		this.player = player;
+		this.battleController = new BattleController(player);
+	}
 
 	/**
 	* Initializes the create team menu
@@ -104,11 +115,18 @@ public class CreateTeamMenu {
 		populateSelectedBugemons();
 	}
 
-
+	/**
+	 * Confirms the selected team and asks the controller to switch to the battle window
+	 * then, closes the current window
+	 * @param event the action triggered by clicking the confirm button
+	 * @throws IllegalStateException if the team is empty or has more than 6 bugemons
+	 */
 	public void handleConfirmTeam(ActionEvent event) {
-		if (!selected.isEmpty() && selected.size() <= 6) {}
-		System.out.println("Team confirmed");
-		// connect to battle later
+		if (!selected.isEmpty() && selected.size() <= 6) {
+			battleController.switchToBattleWindow(selected, event);
+		} else {
+			throw new IllegalStateException("You must select between 1 and 6 bugemons to confirm your team.");
+		}
 	}
 
 	/**
@@ -116,7 +134,10 @@ public class CreateTeamMenu {
 	* @param event the action triggered by clicking the return button
 	*/
 	public void handleReturn(ActionEvent event) throws IOException {
-		Parent root = FXMLLoader.load(getClass().getResource("/ulb/view/MainMenu.fxml"));
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/MainMenu.fxml"));
+		Parent root = loader.load();
+		MainMenu controller = loader.getController();
+		controller.setPlayer(player);
 		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 		stage.getScene().setRoot(root);
 	}

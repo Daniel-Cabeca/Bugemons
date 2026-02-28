@@ -1,11 +1,11 @@
-package ulb.model.move;
+package ulb.model.ability;
 
 import ulb.model.type.Type;
 
 /**
  * Represents a move that can be used by a Bugemon in battle.
  */
-public class Move {
+public class Ability {
 	private String id;
 	private String name;
 	private Type type;
@@ -13,7 +13,7 @@ public class Move {
 	private int power;
 	//TODO effects
 
-	public Move(String id, String name, Type type, String description, int power) {
+	public Ability(String id, String name, Type type, String description, int power) {
 		this.id = id;
 		this.name = name;
 		this.type = type;
@@ -35,11 +35,11 @@ public class Move {
 			return true;
 		}
 
-		if (!(o instanceof Move)) {
+		if (!(o instanceof Ability)) {
 			return false;
 		}
 
-		if (this.id.equals(((Move) o).id)) {
+		if (this.id.equals(((Ability) o).id)) {
 			return true;
 		}
 

@@ -8,7 +8,7 @@ import ulb.utils.Stats;
 
 public class StatsTest {
 	@Test
-	public void positifAdd() {
+	public void testPositifAdd() {
 		Stats stat1 = new Stats(10, 10, 10, 10);
 		Stats stat2 = new Stats(10, 5, 1, 7);
 		stat1.add(stat2);
@@ -19,7 +19,7 @@ public class StatsTest {
 	}
 
 	@Test
-	public void overflowAdd() {
+	public void testOverflowAdd() {
 		Stats stat1 = new Stats(10, 10, 10, 10);
 		Stats stat2 = new Stats(-11, -8, -20, -20);
 		stat1.add(stat2);

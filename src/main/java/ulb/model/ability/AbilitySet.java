@@ -1,41 +1,74 @@
 package ulb.model.ability;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Iterator;
 
 /**
- * Represents the set of abilitys usable by a Bugemon.
+ * Represents the set of abilities usable by a Bugemon.
+ * Is fixed to a size of 3 abilities.
  */
 public class AbilitySet implements Iterable<Ability> {
-	private final Map<String, Ability> abilitys = new HashMap<>();
+	public final int SIZE = 3;
+
+	private final Ability[] abilities = new Ability[SIZE];
+
+	public AbilitySet() {
+		this.abilities[0] = null;
+		this.abilities[1] = null;
+		this.abilities[2] = null;
+	}
+
+	public AbilitySet(Ability ability1, Ability ability2, Ability ability3) {
+		this.abilities[0] = ability1;
+		this.abilities[1] = ability2;
+		this.abilities[2] = ability3;
+	}
 
 	@Override
 	public Iterator<Ability> iterator() {
-		return this.abilitys.values().iterator();
+		return new Iterator<Ability>() {
+			private int i = 0;
+
+			@Override
+			public boolean hasNext() {
+				return i < SIZE;
+			}
+
+			@Override
+			public Ability next() {
+				return abilities[i++];
+			}
+		};
 	}
 
 	/**
-	 * Gives the number of abilitys in the abilityset.
+	 * Gives the number of abilities in the abilitieset.
 	 *
-	 * @return The number of abilitys
+	 * @return The number of abilities
 	 */
 	public int size() {
-		return this.abilitys.size();
+		return SIZE;
 	}
 
 	/**
-	 * Checks whether a ability is present in the abilityset.
+	 * Checks whether a ability is present in the abilitieset.
 	 *
 	 * @param id The id of the ability to check.
 	 * @return True if the ability is present, false otherwise
 	 */
 	public boolean contains(String id) {
-		return this.abilitys.containsKey(id);
+		for (Ability ability: this) {
+			if (ability.getId().equals(id)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
-	 * Checks whether a ability is present in the abilityset.
+	 * Checks whether a ability is present in the abilitieset.
 	 *
 	 * @param ability The ability to check.
 	 * @return True if the ability is present, false otherwise
@@ -45,30 +78,33 @@ public class AbilitySet implements Iterable<Ability> {
 	}
 
 	/**
-	 * Adds a new ability to the abilityset, if not already present.
+	 * Accesses the ability at a given index.
 	 *
-	 * @param ability The new ability
+	 * @param index The index of the ability (starting from 0)
+	 * @return The ability
+	 * @throws IndexOutOfBoundsException If the index is invalid
 	 */
-	public void add(Ability ability) {
-		this.abilitys.put(ability.getId(), ability);
+	public Ability getAbility(int index) throws IndexOutOfBoundsException {
+		if (index < 0 || index >= SIZE) {
+			throw new IndexOutOfBoundsException("Invalid index.");
+		}
+
+		return this.abilities[index];
 	}
 
 	/**
-	 * Removes a ability from the abilityset, if present.
+	 * Sets the ability at a given index.
 	 *
-	 * @param id The id of the ability to remove.
+	 * @param index The index
+	 * @param ability The ability to set
+	 * @throws IndexOutOfBoundsException If the index is invalid
 	 */
-	public void remove(String id) {
-		this.abilitys.remove(id);
-	}
+	public void setAbility(int index, Ability ability) throws IndexOutOfBoundsException {
+		if (index < 0 || index >= SIZE) {
+			throw new IndexOutOfBoundsException("Invalid index.");
+		}
 
-	/**
-	 * removes a ability from the abilityset, if present.
-	 *
-	 * @param ability The ability to remove.
-	 */
-	public void remove(Ability ability) {
-		this.abilitys.remove(ability.getId());
+		this.abilities[index] = ability;
 	}
 
 	/**
@@ -76,14 +112,18 @@ public class AbilitySet implements Iterable<Ability> {
 	 *
 	 * @param newability The new ability
 	 * @param oldability The old ability
-	 * @throws IllegalArgumentException If oldability is not known.
+	 * @throws IllegalArgumentException If old ability is not known.
 	 */
-	public void swap(Ability newability, Ability oldability) throws IllegalArgumentException {
-		if (! this.contains(oldability)) {
-			throw new IllegalArgumentException("Cannot swap out a ability that is not learned.");
+	public void swapAbility(Ability newAbility, Ability oldAbility) throws IllegalArgumentException {
+		for (int i = 0; i < SIZE; ++i) {
+			Ability currentAbility = this.abilities[i];
+
+			if (currentAbility.equals(oldAbility)) {
+				this.abilities[i] = newAbility;
+				return;
+			}
 		}
 
-		this.remove(oldability);
-		this.add(newability);
+		throw new IllegalArgumentException("Cannot swap out a ability that is not learned.");
 	}
 }

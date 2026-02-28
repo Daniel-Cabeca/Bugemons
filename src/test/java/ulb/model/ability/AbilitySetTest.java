@@ -7,6 +7,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
 
 import ulb.model.type.Type;
+import java.util.Iterator;
 
 public class AbilitySetTest {
 	private Ability getAbilityA() {
@@ -17,107 +18,117 @@ public class AbilitySetTest {
 		return new Ability("pollen_sournois", "Pollen Sournois", Type.FLORA, "Inflige des dégâts et réduit l'initiative adverse au prochain tour.", 35);
 	}
 
-	@Test
-	public void verifyEmptySize() {
-		AbilitySet abilityset = new AbilitySet();
-		assertEquals(abilityset.size(), 0);
+	private Ability getAbilityC() {
+		return new Ability("racines_vives", "Racines Vives", Type.FLORA, "Inflige des dégâts et augmente légèrement la défense du lanceur.", 35);
+	}
+
+	private Ability getAbilityD() {
+		return new Ability("spore_collante", "Spore Collante", Type.FLORA, "Inflige des dégâts et diminue l'initiative adverse.", 30);
+	}
+
+	private Ability getAbilityE() {
+		return new Ability("feuille_tranchante", "Feuille Tranchante", Type.FLORA, "Inflige des dégâts élevés.", 55);
+	}
+
+	private AbilitySet getAbilitySetA() {
+		Ability abilityA = getAbilityA();
+		Ability abilityB = getAbilityB();
+		Ability abilityC = getAbilityC();
+
+		return new AbilitySet(abilityA, abilityB, abilityC);
 	}
 
 	@Test
-	public void verifyEmptyContains() {
-		AbilitySet Abilityset = new AbilitySet();
+	public void verifyContainsTrue() {
+		AbilitySet abilityset = getAbilitySetA();
 		Ability a = getAbilityA();
-		assertFalse(Abilityset.contains(a));
-	}
-
-	@Test
-	public void verifyAddNew() {
-		AbilitySet abilityset = new AbilitySet();
-		Ability a = getAbilityA();
-		abilityset.add(a);
-
-		assertEquals(abilityset.size(), 1);
 		assertTrue(abilityset.contains(a));
 	}
 
 	@Test
-	public void verifyAddDuplicate() {
-		AbilitySet abilityset = new AbilitySet();
-		Ability a = getAbilityA();
-		abilityset.add(a);
-		abilityset.add(a);
-
-		assertEquals(abilityset.size(), 1);
-		assertTrue(abilityset.contains(a));
+	public void verifyContainsFalse() {
+		AbilitySet abilityset = getAbilitySetA();
+		Ability d = getAbilityD();
+		assertFalse(abilityset.contains(d));
 	}
 
 	@Test
-	public void verifyRemovePresent() {
-		AbilitySet abilityset = new AbilitySet();
-		Ability a = getAbilityA();
-		abilityset.add(a);
-		abilityset.remove(a);
-
-		assertEquals(abilityset.size(), 0);
-		assertFalse(abilityset.contains(a));
-	}
-
-	@Test
-	public void verifyRemoveAbsent() {
-		AbilitySet abilityset = new AbilitySet();
+	public void verifyGetAbilityCorrect() {
+		AbilitySet abilityset = getAbilitySetA();
 		Ability a = getAbilityA();
 		Ability b = getAbilityB();
-		abilityset.add(a);
-		abilityset.remove(b);
+		Ability c = getAbilityC();
 
-		assertEquals(abilityset.size(), 1);
-		assertTrue(abilityset.contains(a));
-		assertFalse(abilityset.contains(b));
+		assertEquals(abilityset.getAbility(0), a);
+		assertEquals(abilityset.getAbility(1), b);
+		assertEquals(abilityset.getAbility(2), c);
+	}
+
+	@Test
+	public void verifyGetAbilityThrows() {
+		AbilitySet abilityset = getAbilitySetA();
+
+		assertThrows(IndexOutOfBoundsException.class, () -> { abilityset.getAbility(-1); });
+		assertThrows(IndexOutOfBoundsException.class, () -> { abilityset.getAbility(abilityset.size()); });
+	}
+
+	@Test
+	public void verifySetAbilityCorrect() {
+		AbilitySet abilityset = getAbilitySetA();
+		Ability d = getAbilityD();
+
+		abilityset.setAbility(0, d);
+		assertEquals(abilityset.getAbility(0), d);
+	}
+
+	@Test
+	public void verifySetAbilityThrows() {
+		AbilitySet abilityset = getAbilitySetA();
+		Ability d = getAbilityD();
+
+		assertThrows(IndexOutOfBoundsException.class, () -> { abilityset.setAbility(-1, d); });
+		assertThrows(IndexOutOfBoundsException.class, () -> { abilityset.setAbility(abilityset.size(), d); });
 	}
 
 	@Test
 	public void verifyIterator() {
-		AbilitySet abilityset = new AbilitySet();
 		Ability a = getAbilityA();
 		Ability b = getAbilityB();
+		Ability c = getAbilityC();
+		AbilitySet abilityset = getAbilitySetA();
 
-		boolean foundA = false;
-		boolean foundB = false;
+		Iterator<Ability> iterator = abilityset.iterator();
 
-		for(Ability ability: abilityset) {
-			if (ability.equals(a)) {
-				assertFalse(foundA);
-				foundA = true;
-			}
-			else if (ability.equals(b)) {
-				assertFalse(foundB);
-				foundB = true;
-			}
-			else {
-				assertTrue(false);
-			}
-		}
+		assertTrue(iterator.hasNext());
+		assertEquals(a, iterator.next());
+
+		assertTrue(iterator.hasNext());
+		assertEquals(b, iterator.next());
+
+		assertTrue(iterator.hasNext());
+		assertEquals(c, iterator.next());
+
+		assertFalse(iterator.hasNext());
 	}
 
 	@Test
-	public void verifySwapCorrect() {
-		AbilitySet abilityset = new AbilitySet();
+	public void verifySwapAbilityCorrect() {
 		Ability a = getAbilityA();
-		Ability b = getAbilityB();
+		Ability d = getAbilityD();
+		AbilitySet abilityset = getAbilitySetA();
 
-		abilityset.add(a);
-		abilityset.swap(b, a);
+		abilityset.swapAbility(d, a);
 
 		assertFalse(abilityset.contains(a));
-		assertTrue(abilityset.contains(b));
+		assertTrue(abilityset.contains(d));
 	}
 
 	@Test
-	public void verifySwapOldNotKnown() {
-		AbilitySet abilityset = new AbilitySet();
-		Ability a = getAbilityA();
-		Ability b = getAbilityB();
+	public void verifySwapAbilityOldNotKnown() {
+		Ability d = getAbilityD();
+		Ability e = getAbilityE();
+		AbilitySet abilityset = getAbilitySetA();
 
-		assertThrows(IllegalArgumentException.class, () -> { abilityset.swap(b, a); });
+		assertThrows(IllegalArgumentException.class, () -> { abilityset.swapAbility(d, e); });
 	}
 }

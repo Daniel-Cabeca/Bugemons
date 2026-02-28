@@ -70,4 +70,20 @@ public class MoveSet implements Iterable<Move> {
 	public void remove(Move move) {
 		this.moves.remove(move.getId());
 	}
+
+	/**
+	 * Swaps a known move for a new one.
+	 *
+	 * @param newMove The new move
+	 * @param oldMove The old move
+	 * @throws IllegalArgumentException If oldMove is not known.
+	 */
+	public void swap(Move newMove, Move oldMove) throws IllegalArgumentException {
+		if (! this.contains(oldMove)) {
+			throw new IllegalArgumentException("Cannot swap out a move that is not learned.");
+		}
+
+		this.remove(oldMove);
+		this.add(newMove);
+	}
 }

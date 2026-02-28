@@ -110,8 +110,8 @@ public class AbilitySet implements Iterable<Ability> {
 	/**
 	 * Swaps a known ability for a new one.
 	 *
-	 * @param newability The new ability
-	 * @param oldability The old ability
+	 * @param newAbility The new ability
+	 * @param oldAbility The old ability
 	 * @throws IllegalArgumentException If old ability is not known.
 	 */
 	public void swapAbility(Ability newAbility, Ability oldAbility) throws IllegalArgumentException {

@@ -62,6 +62,73 @@
         "cible": "lanceur"
       },
       "sprite": "baume_reparateur.png"
+    },
+    {
+      "id": "spray_vital",
+      "nom": "Spray Vital",
+      "description": "Restaure 70 PV au Bugémon actif.",
+      "categorie": "soin",
+      "effet": {
+        "type": "soin",
+        "cible": "lanceur",
+        "valeur": 70
+      },
+      "sprite": "spray_vital.png"
+    },
+    {
+      "id": "accelerateur_leger",
+      "nom": "Accélérateur Léger",
+      "description": "Augmente l’initiative du Bugémon actif de 10 jusqu’à la fin du combat.",
+      "categorie": "boost",
+      "effet": {
+        "type": "stat_modifier",
+        "cible": "lanceur",
+        "stat": "initiative",
+        "modificateur": 10,
+        "duree": "permanent"
+      },
+      "sprite": "accelerateur_leger.png"
+    },
+    {
+      "id": "orbe_stimulant",
+      "nom": "Orbe Stimulant",
+      "description": "Augmente l’attaque et l’initiative du Bugémon actif de 10.",
+      "categorie": "boost",
+      "effet": {
+        "type": "stat_modifier_multiple",
+        "cible": "lanceur",
+        "modificateurs": {
+          "attaque": 10,
+          "initiative": 10
+        },
+        "duree": "tour"
+      },
+      "sprite": "orbe_stimulant.png"
+    },
+    {
+      "id": "fumigraine",
+      "nom": "Fumigraine",
+      "description": "Réduit l’initiative du Bugémon adverse de 10 au prochain tour.",
+      "categorie": "malus",
+      "effet": {
+        "type": "stat_modifier",
+        "cible": "adversaire",
+        "stat": "initiative",
+        "modificateur": -10,
+        "duree": "tour"
+      },
+      "sprite": "fumigraine.png"
+    },
+    {
+      "id": "pierre_retraite",
+      "nom": "Pierre de Retraite",
+      "description": "Permet de changer de Bugémon sans perdre l’initiative du tour.",
+      "categorie": "tactique",
+      "effet": {
+        "type": "switch",
+        "cible": "lanceur"
+      },
+      "sprite": "pierre_retraite.png"
     }
   ],
   "inventaire_depart": {

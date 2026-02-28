@@ -182,3 +182,4 @@ buildNumber.properties
 
 ### Kate ###
 *.kate-swp
+.idea

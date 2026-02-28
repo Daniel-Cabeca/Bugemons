@@ -14,7 +14,7 @@ public class Bugemon {
 	private int xp;
 	private int level;
 
-	private final AbilitySet moveset = new AbilitySet();
+	private final AbilitySet abilityset = new AbilitySet();
 
 	public Bugemon(String name, Type type, int pv, int attack, int defense, int initiative, int level) {
 		this.name = name;
@@ -48,5 +48,6 @@ public class Bugemon {
 	public Stats getBaseStats() {return this.baseStats;}
 	public int getLevel() {return this.level;}
 	public int getXP() {return this.xp;}
-	public AbilitySet getMoveset() {return this.moveset;}
+	public boolean isKO() {return this.fightStats.pv == 0;}
+	public AbilitySet getAbilityset() {return this.abilityset;}
 }

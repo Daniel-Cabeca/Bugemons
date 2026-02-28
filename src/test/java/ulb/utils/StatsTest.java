@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import ulb.utils.Stats;
-
 public class StatsTest {
 	@Test
 	public void testPositifAdd() {

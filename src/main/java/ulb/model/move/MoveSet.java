@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Iterator;
 
+/**
+ * Represents the set of moves usable by a Bugemon.
+ */
 public class MoveSet implements Iterable<Move> {
 	private final Map<String, Move> moves = new HashMap<>();
 

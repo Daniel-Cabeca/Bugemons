@@ -2,6 +2,9 @@ package ulb.model.move;
 
 import ulb.model.type.Type;
 
+/**
+ * Represents a move that can be used by a Bugemon in battle.
+ */
 public class Move {
 	private String id;
 	private String name;

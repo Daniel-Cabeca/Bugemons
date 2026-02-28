@@ -1,5 +1,8 @@
 package ulb.model.type;
 
+/**
+ * Contains the methods related to the effectiveness of moves based on their type and the type of their target.
+ */
 public class Effectiveness {
 	public enum Value {
 		HIGH,

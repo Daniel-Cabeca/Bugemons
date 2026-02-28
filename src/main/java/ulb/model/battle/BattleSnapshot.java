@@ -1,5 +1,6 @@
 package ulb.model.battle;
 
+import ulb.model.ability.Ability;
 import ulb.model.team.Team;
 
 /**

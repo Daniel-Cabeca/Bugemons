@@ -1,9 +1,8 @@
 package ulb.model;
 import ulb.utils.Stats;
-import java.util.Vector;
 
 import ulb.model.type.Type;
-import ulb.model.move.MoveSet;
+import ulb.model.ability.AbilitySet;
 
 public class Bugemon {
 	private final String name;
@@ -15,7 +14,7 @@ public class Bugemon {
 	private int xp;
 	private int level;
 
-	private final MoveSet moveset = new MoveSet();
+	private final AbilitySet moveset = new AbilitySet();
 
 	public Bugemon(String name, Type type, int pv, int attack, int defense, int initiative, int level) {
 		this.name = name;
@@ -49,5 +48,5 @@ public class Bugemon {
 	public Stats getBaseStats() {return this.baseStats;}
 	public int getLevel() {return this.level;}
 	public int getXP() {return this.xp;}
-	public MoveSet getMoveset() {return this.moveset;}
+	public AbilitySet getMoveset() {return this.moveset;}
 }

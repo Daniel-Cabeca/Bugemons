@@ -8,7 +8,7 @@ import java.util.List;
 
 import ulb.model.type.Type;
 
-public class TestBugemon {
+public class BugemonTest {
 	@Test
 	public void xpBelowLevel() {
 		Bugemon B = new Bugemon("A", Type.AQUA, 10, 29, 35, 16, 1);

@@ -1,4 +1,5 @@
 package ulb.controller.action;
 
-public abstract class Action {
+public interface Action {
+
 }

@@ -6,7 +6,7 @@ import static org.junit.Assert.assertFalse;
 
 import ulb.model.type.Type;
 
-public class TestMove {
+public class MoveTest {
 	private Move getMoveA() {
 		return new Move("fouet_liane", "Fouet-Liane", Type.FLORA, "Inflige des dégâts et réduit légèrement la défense adverse.", 40);
 	}

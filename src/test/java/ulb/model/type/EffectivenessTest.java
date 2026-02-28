@@ -4,7 +4,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class TestEffectiveness {
+public class EffectivenessTest {
 	// Factor
 
 	private static final float EPSILON = 1e-6f;

@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import ulb.utils.Stats;
 
-public class TestStats {
+public class StatsTest {
 	@Test
 	public void positifAdd() {
 		Stats stat1 = new Stats(10, 10, 10, 10);

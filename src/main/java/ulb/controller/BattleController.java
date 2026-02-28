@@ -33,12 +33,12 @@ public class BattleController {
 		// (for now, we will use the same team for both players)
 
 		// create placeholder bugemons based on the names
-		Bugemon bugemon1 = new Bugemon(selectedBugemons.get(0), Type.PYRO, 100, 10, 10, 10, null, 1);
-		Bugemon bugemon2 = new Bugemon(selectedBugemons.get(1), Type.FLORA, 100, 10, 10, 10, null, 1);
-		Bugemon bugemon3 = new Bugemon(selectedBugemons.get(2), Type.AQUA, 100, 10, 10, 10, null, 1);
-		Bugemon bugemon4 = new Bugemon(selectedBugemons.get(3), Type.LITHO, 100, 10, 10, 10, null, 1);
-		Bugemon bugemon5 = new Bugemon(selectedBugemons.get(4), Type.PYRO, 100, 10, 10, 10, null, 1);
-		Bugemon bugemon6 = new Bugemon(selectedBugemons.get(5), Type.FLORA, 100, 10, 10, 10, null, 1);
+		Bugemon bugemon1 = new Bugemon(selectedBugemons.get(0), Type.PYRO, 100, 10, 10, 10, 1);
+		Bugemon bugemon2 = new Bugemon(selectedBugemons.get(1), Type.FLORA, 100, 10, 10, 10, 1);
+		Bugemon bugemon3 = new Bugemon(selectedBugemons.get(2), Type.AQUA, 100, 10, 10, 10, 1);
+		Bugemon bugemon4 = new Bugemon(selectedBugemons.get(3), Type.LITHO, 100, 10, 10, 10, 1);
+		Bugemon bugemon5 = new Bugemon(selectedBugemons.get(4), Type.PYRO, 100, 10, 10, 10, 1);
+		Bugemon bugemon6 = new Bugemon(selectedBugemons.get(5), Type.FLORA, 100, 10, 10, 10, 1);
 
 		Team team1 = new Team(List.of(bugemon1, bugemon2, bugemon3, bugemon4, bugemon5, bugemon6));
 		Team team2 = new Team(List.of(bugemon1, bugemon2, bugemon3, bugemon4, bugemon5, bugemon6));

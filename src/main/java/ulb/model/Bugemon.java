@@ -3,6 +3,7 @@ import ulb.utils.Stats;
 import java.util.Vector;
 
 import ulb.model.type.Type;
+import ulb.model.move.MoveSet;
 
 public class Bugemon {
 	private final String name;
@@ -14,14 +15,13 @@ public class Bugemon {
 	private int xp;
 	private int level;
 
-	private Vector<String> abilities; //placeholder le temps que la classe ability soit faite
+	private final MoveSet moveset = new MoveSet();
 
-	public Bugemon(String name, Type type, int pv, int attack, int defense, int initiative, Vector<String> abilities, int level) {
+	public Bugemon(String name, Type type, int pv, int attack, int defense, int initiative, int level) {
 		this.name = name;
 		this.type = type;
 		this.baseStats = new Stats(pv, defense, attack, initiative);
 		this.fightStats = new Stats(pv, defense, attack, initiative);
-		this.abilities = abilities;
 		this.level = level;
 		this.xp = 0;
 	}
@@ -43,20 +43,11 @@ public class Bugemon {
 		}
 	}
 
-	public void swapAbility(String oldAbility, String newAbility) {
-		for (int index = 0; index < this.abilities.size(); index++) {
-			if (this.abilities.get(index).equals(oldAbility)) {
-				this.abilities.setElementAt(newAbility, index);
-				break;
-			}
-		}
-	}
-
 	public final String getName() {return this.name;}
 	public final Type getType() {return this.type;}
 	public Stats getFighStats() {return this.fightStats;}
 	public Stats getBaseStats() {return this.baseStats;}
 	public int getLevel() {return this.level;}
 	public int getXP() {return this.xp;}
-	public Vector<String> getAbilities() {return this.abilities;}
+	public MoveSet getMoveset() {return this.moveset;}
 }

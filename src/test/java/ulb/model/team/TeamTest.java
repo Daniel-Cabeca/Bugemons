@@ -24,7 +24,6 @@ public class TeamTest {
             100, 
             100, 
             100, 
-            null, 
             1
         );
     }

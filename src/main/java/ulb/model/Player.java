@@ -3,7 +3,9 @@ package ulb.model;
 import ulb.model.team.Team;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ulb.model.parser.ItemParser;
 
@@ -11,6 +13,8 @@ public class Player {
 	private String name;
 	private Team team;
 	private Inventory inventory;
+
+	private static final String ITEMS_PATH = "src/main/resources/json/objets.json";
 
 	public Player() {
 		this.name = "Player";
@@ -43,16 +47,12 @@ public class Player {
 	 */
 	public void addDefaultItems() {
 		try {
-			List<Item> items = ItemParser.loadItems("src/main/resources/json/objets.json");
+			List<Item> items = ItemParser.loadItems(ITEMS_PATH);
+			Map<String, Integer> startingInventory = ItemParser.loadInventory(ITEMS_PATH);
+
 			for (Item item : items) {
-				if (item.getName().equals("Baie Revigorante")) {
-					this.inventory.addItem(item, 3);
-				}
-				else if (item.getName().equals("Baie Tonique")) {
-					this.inventory.addItem(item, 2);
-				}
-				else if (item.getName().equals("Gel Défensif") || item.getName().equals("Sérum Offensif")) {
-					this.inventory.addItem(item, 1);
+				if (startingInventory.containsKey(item.getId())) {
+					this.inventory.addItem(item, startingInventory.get(item.getId()));
 				}
 			}
 

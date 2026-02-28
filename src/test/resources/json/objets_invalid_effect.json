@@ -1,0 +1,15 @@
+{
+  "objets": [
+    {
+      "id": "item_invalide",
+      "nom": "Item Invalide",
+      "description": "Item avec un effet inconnu.",
+      "categorie": "inconnu",
+      "effet": {
+        "type": "effet_inconnu",
+        "cible": "lanceur"
+      },
+      "sprite": "item_invalide.png"
+    }
+  ]
+}

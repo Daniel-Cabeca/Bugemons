@@ -12,6 +12,15 @@ public class Battle {
 	public Battle(Team teamA, Team teamB) {
 		this.teamA = teamA;
 		this.teamB = teamB;
+		this.activeBugemonA = this.teamA.getMembers().get(0);
+		this.activeBugemonB = this.teamB.getMembers().get(0);
+	}
+
+	public Battle(Team teamA, Team teamB, Bugemon activeBugemonA, Bugemon activeBugemonB) {
+		this.teamA = teamA;
+		this.teamB = teamB;
+		this.activeBugemonA = activeBugemonA;
+		this.activeBugemonB = activeBugemonB;
 	}
 
 	public Team getTeamA() {return this.teamA;}

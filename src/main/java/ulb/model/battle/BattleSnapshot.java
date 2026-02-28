@@ -23,6 +23,8 @@ public class BattleSnapshot {
 		this.battle = battle;
 		this.isTeamA = isTeamA;
 	}
+	
+	public Battle getBattle() {return this.battle;}
 
 	/**
 	 * Gives the team that the snapshot views itself as.
@@ -60,13 +62,13 @@ public class BattleSnapshot {
 		 * @param abilityPower The power of the ability used
 		 * @return the computed damage based on the formula
 		 */
-		int attackValue = offensive.getFighStats().attack;
-		int defenseValue = defensive.getFighStats().defense;
+		float attackValue = offensive.getFighStats().attack;
+		float defenseValue = defensive.getFighStats().defense;
 
-		int attackFactor = (100 + attackValue) / 100;
-		int defenseFactor = 100 / (100 + defenseValue);
+		float attackFactor = (100 + attackValue) / 100;
+		float defenseFactor = 100 / (100 + defenseValue);
 
-		int damage = attackFactor * defenseFactor * abilityPower;
+		float damage = attackFactor * defenseFactor * abilityPower;
 
 		Effectiveness typeFactor = new Effectiveness(offensive.getType(), defensive.getType());
 

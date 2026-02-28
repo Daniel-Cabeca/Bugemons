@@ -26,7 +26,7 @@ public class EffectivenessTest {
 
 	@Test
 	public void verifyFactorLow() {
-		verifyFactor(Effectiveness.Value.LOW, 0.5f);
+		verifyFactor(Effectiveness.Value.LOW, 0.75f);
 	}
 
 	// Value

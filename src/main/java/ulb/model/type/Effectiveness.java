@@ -87,7 +87,7 @@ public class Effectiveness {
 				return 1.5f;
 
 			case LOW:
-				return 0.5f;
+				return 0.75f;
 
 			default:
 				return 1.0f;

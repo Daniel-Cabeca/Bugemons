@@ -9,19 +9,19 @@ public class EffectivenessTest {
 
 	private static final float EPSILON = 1e-6f;
 
-	private void verifyFactor(Effectiveness.Value value, float expected) {
-		float obtained = (new Effectiveness(value)).getFactor();
+	private void verifyFactor(Effectiveness.Category category, float expected) {
+		float obtained = Effectiveness.getFactor(category);
 		assertEquals(obtained, expected, EPSILON);
 	}
 
 	@Test
 	public void verifyFactorHigh() {
-		verifyFactor(Effectiveness.Value.HIGH, 1.5f);
+		verifyFactor(Effectiveness.Category.HIGH, 1.5f);
 	}
 
 	@Test
 	public void verifyFactorNormal() {
-		verifyFactor(Effectiveness.Value.NORMAL, 1.0f);
+		verifyFactor(Effectiveness.Category.NORMAL, 1.0f);
 	}
 
 	@Test
@@ -29,98 +29,98 @@ public class EffectivenessTest {
 		verifyFactor(Effectiveness.Value.LOW, 0.75f);
 	}
 
-	// Value
+	// Category
 
-	private void verifyTypeEffectiveness(Type move, Type target, Effectiveness.Value expected) {
-		Effectiveness obtained = new Effectiveness(move, target);
-		assertEquals(obtained.getValue(), expected);
+	private void verifyTypeEffectiveness(Type move, Type target, Effectiveness.Category expected) {
+		Effectiveness.Category obtained = Effectiveness.getCategory(move, target);
+		assertEquals(obtained, expected);
 	}
 
 	// Pyro
 
 	@Test
 	public void verifyPyroToPyro() {
-		verifyTypeEffectiveness(Type.PYRO, Type.PYRO, Effectiveness.Value.NORMAL);
+		verifyTypeEffectiveness(Type.PYRO, Type.PYRO, Effectiveness.Category.NORMAL);
 	}
 
 	@Test
 	public void verifyPyroToFlora() {
-		verifyTypeEffectiveness(Type.PYRO, Type.FLORA, Effectiveness.Value.NORMAL);
+		verifyTypeEffectiveness(Type.PYRO, Type.FLORA, Effectiveness.Category.NORMAL);
 	}
 
 	@Test
 	public void verifyPyroToAqua() {
-		verifyTypeEffectiveness(Type.PYRO, Type.AQUA, Effectiveness.Value.LOW);
+		verifyTypeEffectiveness(Type.PYRO, Type.AQUA, Effectiveness.Category.LOW);
 	}
 
 	@Test
 	public void verifyPyroToLitho() {
-		verifyTypeEffectiveness(Type.PYRO, Type.LITHO, Effectiveness.Value.HIGH);
+		verifyTypeEffectiveness(Type.PYRO, Type.LITHO, Effectiveness.Category.HIGH);
 	}
 
 	// Flora
 
 	@Test
 	public void verifyFloraToPyro() {
-		verifyTypeEffectiveness(Type.FLORA, Type.PYRO, Effectiveness.Value.NORMAL);
+		verifyTypeEffectiveness(Type.FLORA, Type.PYRO, Effectiveness.Category.NORMAL);
 	}
 
 	@Test
 	public void verifyFloraToFlora() {
-		verifyTypeEffectiveness(Type.FLORA, Type.FLORA, Effectiveness.Value.NORMAL);
+		verifyTypeEffectiveness(Type.FLORA, Type.FLORA, Effectiveness.Category.NORMAL);
 	}
 
 	@Test
 	public void verifyFloraToAqua() {
-		verifyTypeEffectiveness(Type.FLORA, Type.AQUA, Effectiveness.Value.HIGH);
+		verifyTypeEffectiveness(Type.FLORA, Type.AQUA, Effectiveness.Category.HIGH);
 	}
 
 	@Test
 	public void verifyFloraToLitho() {
-		verifyTypeEffectiveness(Type.FLORA, Type.LITHO, Effectiveness.Value.LOW);
+		verifyTypeEffectiveness(Type.FLORA, Type.LITHO, Effectiveness.Category.LOW);
 	}
 
 	// Aqua
 
 	@Test
 	public void verifyAquaToPyro() {
-		verifyTypeEffectiveness(Type.AQUA, Type.PYRO, Effectiveness.Value.HIGH);
+		verifyTypeEffectiveness(Type.AQUA, Type.PYRO, Effectiveness.Category.HIGH);
 	}
 
 	@Test
 	public void verifyAquaToFlora() {
-		verifyTypeEffectiveness(Type.AQUA, Type.FLORA, Effectiveness.Value.LOW);
+		verifyTypeEffectiveness(Type.AQUA, Type.FLORA, Effectiveness.Category.LOW);
 	}
 
 	@Test
 	public void verifyAquaToAqua() {
-		verifyTypeEffectiveness(Type.AQUA, Type.AQUA, Effectiveness.Value.NORMAL);
+		verifyTypeEffectiveness(Type.AQUA, Type.AQUA, Effectiveness.Category.NORMAL);
 	}
 
 	@Test
 	public void verifyAquaToLitho() {
-		verifyTypeEffectiveness(Type.AQUA, Type.LITHO, Effectiveness.Value.NORMAL);
+		verifyTypeEffectiveness(Type.AQUA, Type.LITHO, Effectiveness.Category.NORMAL);
 	}
 
 	// Litho
 
 	@Test
 	public void verifyLithoToPyro() {
-		verifyTypeEffectiveness(Type.LITHO, Type.PYRO, Effectiveness.Value.LOW);
+		verifyTypeEffectiveness(Type.LITHO, Type.PYRO, Effectiveness.Category.LOW);
 	}
 
 	@Test
 	public void verifyLithoToFlora() {
-		verifyTypeEffectiveness(Type.LITHO, Type.FLORA, Effectiveness.Value.HIGH);
+		verifyTypeEffectiveness(Type.LITHO, Type.FLORA, Effectiveness.Category.HIGH);
 	}
 
 	@Test
 	public void verifyLithoToAqua() {
-		verifyTypeEffectiveness(Type.LITHO, Type.AQUA, Effectiveness.Value.NORMAL);
+		verifyTypeEffectiveness(Type.LITHO, Type.AQUA, Effectiveness.Category.NORMAL);
 	}
 
 	@Test
 	public void verifyLithoToLitho() {
-		verifyTypeEffectiveness(Type.LITHO, Type.LITHO, Effectiveness.Value.NORMAL);
+		verifyTypeEffectiveness(Type.LITHO, Type.LITHO, Effectiveness.Category.NORMAL);
 	}
 }

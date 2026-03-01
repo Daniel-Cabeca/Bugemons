@@ -3,6 +3,9 @@ package ulb.controller;
 import java.io.IOException;
 import java.util.List;
 
+import ulb.model.ability.Ability;
+import ulb.model.battle.Battle;
+import ulb.model.battle.BattleSnapshot;
 import ulb.model.team.Team;
 import ulb.model.Bugemon;
 import ulb.model.type.Type;
@@ -18,6 +21,8 @@ import ulb.model.Item;
 
 public class BattleController {
 	private Player player;
+	private BattleSnapshot battleSnapshot;
+	private Battle battle;
 
 	public BattleController(Player player) {
 		this.player = player;
@@ -64,4 +69,12 @@ public class BattleController {
 			System.out.println(inventoryItem.getName() + " x" + player.getInventory().getItems().get(inventoryItem));
 		}
 	}
+
+
+
+	public void Damage(Ability ability){
+		battleSnapshot.useAbility(ability);
+	}
+
+
 }

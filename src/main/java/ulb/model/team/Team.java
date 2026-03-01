@@ -92,4 +92,15 @@ public class Team {
         }
         return removeByName(bugemon.getName());
     }
+
+	public boolean checkTeamKO(){
+		boolean dead = true;
+		for (int i = 0 ; i < 6 ; i++){
+			if (!this.members.get(i).isKO()) {
+				dead = false;
+				return dead;
+			}
+		}
+		return dead;
+	}
 }

@@ -28,4 +28,22 @@ public class Battle {
 	public Bugemon getActiveBugemonA() {return this.activeBugemonA;}
 	public Bugemon getActiveBugemonB() {return this.activeBugemonB;}
 
+
+	public boolean isBugemonAKO() {
+		   return  getActiveBugemonA().isKO();
+	}
+
+	public boolean isBugemonBKO() {
+		return  getActiveBugemonB().isKO();
+	}
+
+	public boolean isTeamAKO() { // victory
+		return getTeamA().checkTeamKO();
+	}
+
+	public boolean isTeamBKO() { // defeat
+		return getTeamB().checkTeamKO();
+	}
+
+
 }

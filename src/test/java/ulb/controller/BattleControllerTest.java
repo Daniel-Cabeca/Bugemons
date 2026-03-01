@@ -109,7 +109,7 @@ public class BattleControllerTest {
 		field.setAccessible(true);
 		field.set(battleController, snapshot);
 
-		Effect effect = new Effect("stat modifier", "lanceur", "attack", 5, "permanent");
+		Effect effect = new Effect("stat_modifier", "lanceur", "attaque", 5, "permanent");
 		Item item = new Item("attack boost", "Attack Boost", "Augmente l'attaque de 5 points.", 
 			"stat modifier", effect, "attack_boost.png");
 		player.getInventory().addItem(item, 1);
@@ -137,7 +137,7 @@ public class BattleControllerTest {
 		field.setAccessible(true);
 		field.set(battleController, snapshot);
 
-		Map<String, Integer> modifiers = Map.of("attack", 5, "defense", 3);
+		Map<String, Integer> modifiers = Map.of("attaque", 5, "defense", 3);
 		Effect effect = new Effect("stat_modifier_multiple", "lanceur", modifiers, "permanent");
 		Item item = new Item("mixed boost", "Mixed Boost", "Augmente l'attaque de 5 points et la défense de 3 points.", 
 		"stat modifier multiple", effect, "mixed_boost.png");

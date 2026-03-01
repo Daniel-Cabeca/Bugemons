@@ -227,12 +227,7 @@ public class BattleControllerTest {
 		Team team2 = new Team(List.of(bugemon1, bugemon2, bugemon3, bugemon4, bugemon5, bugemon6));
 
 		Battle battle = new Battle(team1, team2);
-
-		// Create a BattleSnapshot instance via reflection (constructor is package-private)
-		Constructor<BattleSnapshot> constructor =
-				BattleSnapshot.class.getDeclaredConstructor(Battle.class, boolean.class);
-		constructor.setAccessible(true);
-		BattleSnapshot snapshot = constructor.newInstance(battle, true);
+		BattleSnapshot snapshot = new BattleSnapshot(battle, true);
 
 		// Wire the snapshot into the controller using reflection on the private field
 		Player player = new Player("TestPlayer");

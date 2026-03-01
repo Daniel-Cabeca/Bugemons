@@ -3,6 +3,9 @@ package ulb.model.battle;
 import ulb.model.team.Team;
 import ulb.model.Bugemon;
 
+import java.util.Random;
+
+
 public class Battle {
 	private Team teamA;
 	private Team teamB;
@@ -44,6 +47,24 @@ public class Battle {
 	public boolean isTeamBKO() { // defeat
 		return getTeamB().checkTeamKO();
 	}
+
+	public Bugemon CheckInitiave(){
+		if (getActiveBugemonA().getFighStats().initiative > getActiveBugemonB().getFighStats().initiative){
+			return getActiveBugemonA();
+		}
+		else if(getActiveBugemonA().getFighStats().initiative == getActiveBugemonB().getFighStats().initiative) {
+			 Random rand = new Random();
+			 int i = rand.nextInt(2);
+			 if (i == 0) {
+				 return getActiveBugemonA();
+			 }
+			 else  {
+				 return getActiveBugemonB();
+			}
+		}
+		return getActiveBugemonB();
+	}
+
 
 
 }

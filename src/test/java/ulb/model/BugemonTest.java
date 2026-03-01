@@ -13,9 +13,9 @@ public class BugemonTest {
 
 	int getGainedPoint(Stats previous, Stats actual){
 		Stats difference = new Stats(actual);
-		Stats opposite = new Stats(-previous.pv, -previous.attack, -previous.defense, -previous.initiative);
+		Stats opposite = new Stats(-previous.hp, -previous.attack, -previous.defense, -previous.initiative);
 		difference.add(opposite);
-		return difference.pv / 2 + difference.initiative / 2 + difference.attack + difference.defense;
+		return difference.hp / 2 + difference.initiative / 2 + difference.attack + difference.defense;
 	}
 
 	@Test
@@ -48,7 +48,7 @@ public class BugemonTest {
 	@Test
 	public void rewardSingleLevelGained(){
 		Stats s = new Stats(10,29, 35, 16);
-		Bugemon B = new Bugemon("A", Type.AQUA, s.pv, s.attack, s.defense, s.initiative, 1);
+		Bugemon B = new Bugemon("A", Type.AQUA, s.hp, s.attack, s.defense, s.initiative, 1);
 		int levelGained = B.gainXP(51);
 		B.gainLevelsReward(levelGained);
 		assertEquals(10, this.getGainedPoint(s, B.getBaseStats()));
@@ -57,7 +57,7 @@ public class BugemonTest {
 	@Test
 	public void rewardMultiLevelGained(){
 		Stats s = new Stats(10,29, 35, 16);
-		Bugemon B = new Bugemon("A", Type.AQUA, s.pv, s.attack, s.defense, s.initiative, 1);
+		Bugemon B = new Bugemon("A", Type.AQUA, s.hp, s.attack, s.defense, s.initiative, 1);
 		int levelGained = B.gainXP(300);
 		B.gainLevelsReward(levelGained);
 		assertEquals(30, this.getGainedPoint(s, B.getBaseStats()));

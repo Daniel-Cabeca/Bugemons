@@ -17,11 +17,11 @@ public class Bugemon {
 
 	private final AbilitySet abilityset = new AbilitySet();
 
-	public Bugemon(String name, Type type, int pv, int attack, int defense, int initiative, int level) {
+	public Bugemon(String name, Type type, int hp, int attack, int defense, int initiative, int level) {
 		this.name = name;
 		this.type = type;
-		this.baseStats = new Stats(pv, attack, defense, initiative);
-		this.fightStats = new Stats(pv, attack, defense, initiative);
+		this.baseStats = new Stats(hp, attack, defense, initiative);
+		this.fightStats = new Stats(hp, attack, defense, initiative);
 		this.level = level;
 		this.xp = 0;
 	}
@@ -60,7 +60,7 @@ public class Bugemon {
 
 				switch (chosenStat) {
 					case (0):
-						reward.pv += 2;
+						reward.hp += 2;
 						break;
 
 					case (1):
@@ -90,6 +90,6 @@ public class Bugemon {
 	public Stats getBaseStats() {return this.baseStats;}
 	public int getLevel() {return this.level;}
 	public int getXP() {return this.xp;}
-	public boolean isKO() {return this.fightStats.pv == 0;}
+	public boolean isKO() {return this.fightStats.hp == 0;}
 	public AbilitySet getAbilityset() {return this.abilityset;}
 }

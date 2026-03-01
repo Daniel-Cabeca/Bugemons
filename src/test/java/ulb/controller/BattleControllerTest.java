@@ -29,7 +29,7 @@ public class BattleControllerTest {
 		BattleController battleController = new BattleController(player);
 		
 		Effect effect = new Effect("soin", "lanceur", 20);
-		Item item = new Item("potion", "Potion", "Restaure 20 PV.", "soin", effect, "potion.png");
+		Item item = new Item("potion", "Potion", "Restaure 20 pv.", "soin", effect, "potion.png");
 		
 		player.getInventory().addItem(item, 3);
 		
@@ -80,7 +80,7 @@ public class BattleControllerTest {
 		field.set(controller, snapshot);
 
 		// Active opponent Bugemon before damage
-		int initialPv = snapshot.getBattle().getActiveBugemonB().getFighStats().pv;
+		int initialHp = snapshot.getBattle().getActiveBugemonB().getFighStats().hp;
 
 		Ability ability = new Ability("1", "Test Ability", Type.PYRO, "simple attack", 10);
 
@@ -88,8 +88,8 @@ public class BattleControllerTest {
 		controller.Damage(ability);
 
 		// Assert: opponent's HP should have decreased
-		int finalPv = snapshot.getBattle().getActiveBugemonB().getFighStats().pv;
-		assertTrue(finalPv < initialPv);
+		int finalHp = snapshot.getBattle().getActiveBugemonB().getFighStats().hp;
+		assertTrue(finalHp < initialHp);
 	}
 
 }

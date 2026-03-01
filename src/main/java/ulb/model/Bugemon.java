@@ -2,7 +2,6 @@ package ulb.model;
 
 import ulb.model.type.Type;
 import ulb.model.ability.AbilitySet;
-import java.util.Random;
 
 public class Bugemon {
 	private final String name;

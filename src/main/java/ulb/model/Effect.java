@@ -1,7 +1,5 @@
 package ulb.model;
 
-import ulb.model.Stats;
-
 import java.util.Map;
 
 public class Effect {

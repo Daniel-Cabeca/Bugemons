@@ -9,7 +9,6 @@ import ulb.model.type.Type;
 import ulb.utils.ActionEnum;
 import java.util.Vector;
 
-import javax.swing.Action;
 
 /**
  * View of the battle from the point of view of a player.
@@ -29,7 +28,7 @@ public class BattleSnapshot {
 		this.battle = battle;
 		this.isTeamA = isTeamA;
 	}
-	
+
 	public Battle getBattle() {return this.battle;}
 
 	/**
@@ -166,7 +165,7 @@ public class BattleSnapshot {
 				useAbility(new Ability("1", "WaTeRPoUf", Type.AQUA, "Pouf d'eau giga mega stylé...", 10)); // exemple rando d'ability
 				// prblm de spécification d'ability, résolution à venir avec nouvelle représentation d'ActionEnum
 				break;
-			
+
 			case SWAP:
 				// appel fonction pour action SWAP
 				break;
@@ -185,7 +184,7 @@ public class BattleSnapshot {
 	}
 
 	public Vector<ActionEnum> getAvailableActions() {
-		Vector<ActionEnum> actions = new Vector<ActionEnum>(); 
+		Vector<ActionEnum> actions = new Vector<ActionEnum>();
 		switch (this.state) {
 			case INGAME:
 				actions.add(ActionEnum.ATTACK);

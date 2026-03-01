@@ -11,6 +11,8 @@ public class Ability {
 	private Type type;
 	private String description;
 	private int power;
+
+
 	//TODO effects
 
 	public Ability(String id, String name, Type type, String description, int power) {

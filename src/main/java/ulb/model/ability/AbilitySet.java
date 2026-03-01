@@ -1,8 +1,7 @@
 package ulb.model.ability;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Iterator;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Represents the set of abilities usable by a Bugemon.
@@ -125,5 +124,13 @@ public class AbilitySet implements Iterable<Ability> {
 		}
 
 		throw new IllegalArgumentException("Cannot swap out a ability that is not learned.");
+	}
+
+
+	public Ability getRandomAbility(){
+		int min = 0;
+		int max = this.abilities.length;
+		int value = ThreadLocalRandom.current().nextInt(min, max + 1);
+		return this.abilities[value];
 	}
 }

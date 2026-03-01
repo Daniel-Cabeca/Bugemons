@@ -8,5 +8,4 @@ public class UseAbility implements Action {
 		this.ability = ability;
 	}
 	public Ability getAbility(){return ability;}
-
 }

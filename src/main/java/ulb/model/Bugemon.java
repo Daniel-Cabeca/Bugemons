@@ -79,21 +79,20 @@ public class Bugemon {
 			for (int i = 0; i < 10; i++) {
 				int chosenStat = (int) (Math.random() * 4); // Number in [0, 3]
 
-
 				switch (chosenStat) {
-					case (0):
+					case 0:
 						reward.hp += 2;
 						break;
 
-					case (1):
+					case 1:
 						reward.initiative += 2;
 						break;
 
-					case (2):
+					case 2:
 						reward.attack += 1;
 						break;
 
-					case (3):
+					case 3:
 						reward.defense += 1;
 						break;
 

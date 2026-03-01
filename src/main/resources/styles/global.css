@@ -1,0 +1,13 @@
+/* Color palette
+	https://colorhunt.co/palette/061e291d546d5f9598f3f4f4
+*/
+.root {
+    -fx-font-family: "Arial";
+    -fx-text-fill: #F3F4F4;
+}
+
+
+.button {
+    -fx-background-color:#5F9598;
+    -fx-text-fill: white;
+}

@@ -3,7 +3,7 @@ package ulb.model.parser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ulb.model.Effect;
-import ulb.model.Item;
+import ulb.model.item.Item;
 
 import java.io.File;
 import java.io.IOException;

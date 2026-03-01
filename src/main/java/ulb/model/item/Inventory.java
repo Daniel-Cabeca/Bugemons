@@ -1,4 +1,4 @@
-package ulb.model;
+package ulb.model.item;
 
 import java.util.HashMap;
 import java.util.Map;

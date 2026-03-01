@@ -1,10 +1,12 @@
 package ulb.model;
 
+import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Test;
-
 import java.util.Map;
+
+import ulb.model.item.Item;
+import ulb.model.item.Inventory;
 
 public class PlayerTest {
 	@Test

@@ -11,8 +11,8 @@ import javafx.scene.layout.GridPane;
 
 import ulb.model.Bugemon;
 import ulb.controller.BattleController;
-import ulb.model.Inventory;
-import ulb.model.Item;
+import ulb.model.item.Inventory;
+import ulb.model.item.Item;
 import ulb.model.team.Team;
 import ulb.model.Player;
 

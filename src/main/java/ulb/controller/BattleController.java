@@ -17,7 +17,7 @@ import javafx.scene.Parent;
 import javafx.stage.Stage;
 
 import ulb.model.Player;
-import ulb.model.Item;
+import ulb.model.item.Item;
 
 public class BattleController {
 	private Player player;

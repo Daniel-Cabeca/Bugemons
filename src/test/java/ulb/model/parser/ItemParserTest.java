@@ -1,7 +1,7 @@
 package ulb.model.parser;
 
 import org.junit.Test;
-import ulb.model.Item;
+import ulb.model.item.Item;
 
 import java.io.File;
 import java.io.IOException;

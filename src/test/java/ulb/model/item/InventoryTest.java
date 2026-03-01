@@ -1,4 +1,4 @@
-package ulb.model;
+package ulb.model.item;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
@@ -6,6 +6,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import ulb.model.Effect;
 
 public class InventoryTest {
 	@Test

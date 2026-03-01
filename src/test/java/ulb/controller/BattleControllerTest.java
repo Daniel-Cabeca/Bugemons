@@ -14,7 +14,7 @@ import java.util.Map;
 
 import ulb.model.Bugemon;
 import ulb.model.Effect;
-import ulb.model.Item;
+import ulb.model.item.Item;
 import ulb.model.Player;
 import ulb.model.ability.Ability;
 import ulb.model.battle.Battle;

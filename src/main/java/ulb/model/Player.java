@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import ulb.model.parser.ItemParser;
+import ulb.model.item.Inventory;
+import ulb.model.item.Item;
 
 public class Player {
 	private String name;

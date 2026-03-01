@@ -14,12 +14,12 @@ public class BattleSnapshot {
 	private boolean isTeamA;
 
 	/**
-	 * Creates a battle snapshot as the point of view of either team A or team A.
+	 * Creates a battle snapshot as the point of view of either team A or team B.
 	 *
 	 * @param battle The battle
 	 * @param isTeamA True if the battle is viewed from team A's poiint of view, false otherwise
 	 */
-	BattleSnapshot(Battle battle, boolean isTeamA){
+	public BattleSnapshot(Battle battle, boolean isTeamA){
 		this.battle = battle;
 		this.isTeamA = isTeamA;
 	}
@@ -62,8 +62,8 @@ public class BattleSnapshot {
 		 * @param abilityPower The power of the ability used
 		 * @return the computed damage based on the formula
 		 */
-		float attackValue = offensive.getFighStats().attack;
-		float defenseValue = defensive.getFighStats().defense;
+		float attackValue = offensive.getFightStats().attack;
+		float defenseValue = defensive.getFightStats().defense;
 
 		float attackFactor = (100 + attackValue) / 100;
 		float defenseFactor = 100 / (100 + defenseValue);

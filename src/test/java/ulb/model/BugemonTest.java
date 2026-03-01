@@ -62,4 +62,24 @@ public class BugemonTest {
 		B.gainLevelsReward(levelGained);
 		assertEquals(30, this.getGainedPoint(s, B.getBaseStats()));
 	}
+
+	@Test
+	public void testResetsFightStats(){
+		Stats s = new Stats(-10,-9, -5, -6); // debuff stats
+		Bugemon B = new Bugemon("A", Type.AQUA, 100, 20, 10, 10, 1);
+
+		B.changeFightStats(s);
+
+		assertEquals(90, B.getFightStats().hp);
+		assertEquals(11, B.getFightStats().attack);
+		assertEquals(5, B.getFightStats().defense);
+		assertEquals(4, B.getFightStats().initiative);
+
+		B.resetFightStats();
+
+		assertEquals(B.getBaseStats().hp, B.getFightStats().hp);
+		assertEquals(B.getBaseStats().attack, B.getFightStats().attack);
+		assertEquals(B.getBaseStats().defense, B.getFightStats().defense);
+		assertEquals(B.getBaseStats().initiative, B.getFightStats().initiative);
+	}
 }

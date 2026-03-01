@@ -34,4 +34,14 @@ public class Stats {
 		this.defense = (this.defense <= Math.abs(delta.defense) && delta.defense < 0)? 0: this.defense + delta.defense;
 		this.initiative = (this.initiative <= Math.abs(delta.initiative) && delta.initiative < 0)? 0: this.initiative + delta.initiative;
 	}
+
+	public int getHp() { return hp; }
+	public int getAttack() { return attack; }
+	public int getDefense() { return defense; }
+	public int getInitiative() { return initiative; }
+
+	public void setHp(int hp) { this.hp = hp; }
+	public void setAttack(int attack) { this.attack = attack; }
+	public void setDefense(int defense) { this.defense = defense; }
+	public void setInitiative(int initiative) { this.initiative = initiative; }
 }

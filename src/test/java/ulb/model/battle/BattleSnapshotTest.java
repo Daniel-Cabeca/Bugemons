@@ -67,7 +67,7 @@ public class BattleSnapshotTest {
 
 		Bugemon damagedBugemon = snapshot.getBattle().getActiveBugemonB();
 
-		assertTrue(damagedBugemon.getFighStats().hp == 90 || damagedBugemon.getFighStats().hp == 85);
+		assertTrue(damagedBugemon.getFightStats().hp == 90 || damagedBugemon.getFightStats().hp == 85);
 	}
 
 	@Test
@@ -89,7 +89,7 @@ public class BattleSnapshotTest {
 
 		Bugemon damagedBugemon = snapshot.getBattle().getActiveBugemonB();
 
-		assertTrue(damagedBugemon.getFighStats().hp == 85 || damagedBugemon.getFighStats().hp == 77);
+		assertTrue(damagedBugemon.getFightStats().hp == 85 || damagedBugemon.getFightStats().hp == 77);
 	}
 
 	@Test
@@ -111,7 +111,7 @@ public class BattleSnapshotTest {
 
 		Bugemon damagedBugemon = snapshot.getBattle().getActiveBugemonB();
 
-		assertTrue(damagedBugemon.getFighStats().hp == 92 || damagedBugemon.getFighStats().hp == 88);
+		assertTrue(damagedBugemon.getFightStats().hp == 92 || damagedBugemon.getFightStats().hp == 88);
 	}
 
 }

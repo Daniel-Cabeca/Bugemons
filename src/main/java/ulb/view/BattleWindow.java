@@ -54,15 +54,17 @@ public class BattleWindow {
 	}
 
 	private void displayTeams() {
-		displayTeam(playerTeam, playerTeamGrid);
-		displayTeam(opponentTeam, opponentTeamGrid);
+		displayTeamWithStats(playerTeam, playerTeamGrid);
+		displayTeamWithStats(opponentTeam, opponentTeamGrid);
 	}
 
-	private void displayTeam(Team team, GridPane grid) {
+	private void displayTeamWithStats(Team team, GridPane grid) {
 		grid.getChildren().clear();
 		int row = 0;
 		for (Bugemon bugemon : team.getMembers()) {
-			Label label = new Label(bugemon.getName());
+			Label label = new Label(bugemon.getName() + " HP: " + bugemon.getFightStats().getHp() + 
+			" ATK: " + bugemon.getFightStats().getAttack() + " DEF: " + 
+			bugemon.getFightStats().getDefense() + " INIT: " + bugemon.getFightStats().getInitiative());
 			grid.add(label, 0, row++);
 		}
 	}
@@ -85,6 +87,8 @@ public class BattleWindow {
 							Item item = getItem();
 							if (item != null) {
 								battleController.useItem(item);
+								// show updated stats and inventory
+								displayTeams();
 								displayInventory();
 							}
 						});
@@ -118,6 +122,7 @@ public class BattleWindow {
 	/**
 	* Returns to the main menu
 	* @param event the action triggered by clicking the return button
+	* @throws IOException if the main menu FXML file cannot be loaded
 	*/
 	public void handleReturn(ActionEvent event) throws IOException {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/MainMenu.fxml"));

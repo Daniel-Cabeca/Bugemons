@@ -31,6 +31,9 @@ public class Battle {
 	public Bugemon getActiveBugemonA() {return this.activeBugemonA;}
 	public Bugemon getActiveBugemonB() {return this.activeBugemonB;}
 
+	public void setActiveBugemonA(Bugemon bugemon) { this.activeBugemonA = bugemon; }
+	public void setActiveBugemonB(Bugemon bugemon) { this.activeBugemonB = bugemon; }
+
 
 	public boolean isBugemonAKO() {
 		   return  getActiveBugemonA().isKO();
@@ -49,10 +52,10 @@ public class Battle {
 	}
 
 	public Bugemon CheckInitiave(){
-		if (getActiveBugemonA().getFighStats().initiative > getActiveBugemonB().getFighStats().initiative){
+		if (getActiveBugemonA().getFightStats().getInitiative() > getActiveBugemonB().getFightStats().getInitiative()){
 			return getActiveBugemonA();
 		}
-		else if(getActiveBugemonA().getFighStats().initiative == getActiveBugemonB().getFighStats().initiative) {
+		else if(getActiveBugemonA().getFightStats().getInitiative() == getActiveBugemonB().getFightStats().getInitiative()) {
 			 Random rand = new Random();
 			 int i = rand.nextInt(2);
 			 if (i == 0) {
@@ -64,7 +67,5 @@ public class Battle {
 		}
 		return getActiveBugemonB();
 	}
-
-
 
 }

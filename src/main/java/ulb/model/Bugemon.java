@@ -34,6 +34,28 @@ public class Bugemon {
 		this.fightStats.add(delta);
 	}
 
+	/**
+	 * Resets fight stats to get rid of debuffs. If fight stat > base stat,
+	 * assumes that there is no debuff and keeps the stat
+	 */
+	public void resetFightStats() {
+		Stats currentFightStats = this.getFightStats();
+		Stats base = this.getBaseStats();
+
+		if (currentFightStats.getHp() < base.getHp()) {
+			currentFightStats.setHp(base.getHp());
+		}
+		if (currentFightStats.getAttack() < base.getAttack()) {
+			currentFightStats.setAttack(base.getAttack());
+		}
+		if (currentFightStats.getDefense() < base.getDefense()) {
+			currentFightStats.setDefense(base.getDefense());
+		}
+		if (currentFightStats.getInitiative() < base.getInitiative()) {
+			currentFightStats.setInitiative(base.getInitiative());
+		}
+	}
+
 	public int gainXP(int experience) {
 		this.xp += experience;
 		int gainLevels = 0;
@@ -86,7 +108,7 @@ public class Bugemon {
 
 	public final String getName() {return this.name;}
 	public final Type getType() {return this.type;}
-	public Stats getFighStats() {return this.fightStats;}
+	public Stats getFightStats() {return this.fightStats;}
 	public Stats getBaseStats() {return this.baseStats;}
 	public int getLevel() {return this.level;}
 	public int getXP() {return this.xp;}

@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 
 import ulb.model.Player;
 import ulb.view.MainMenu;
+import ulb.model.battle.BattleSnapshot;
 
 public class Main extends Application {
 
@@ -18,9 +19,8 @@ public class Main extends Application {
 		Parent root = loader.load();
 
 		// Create a player instance
-		Player player = new Player("Sasha");
+		Player player = new Player("Player");
 
-		// Pass the player to the controller
 		MainMenu controller = loader.getController();
 		controller.setPlayer(player);
 

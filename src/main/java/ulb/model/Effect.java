@@ -1,5 +1,7 @@
 package ulb.model;
 
+import ulb.utils.Stats;
+
 import java.util.Map;
 
 public class Effect {
@@ -63,6 +65,66 @@ public class Effect {
 	public Map<String, Integer> getModifiers() { return this.modifiers; }
 
 	public int apply(Bugemon target) {
-		return 0;
+		switch (this.type) {
+			case "soin":
+				target.changeFightStats(new Stats(this.value, 0, 0, 0));
+				break;
+			case "stat_modifier":
+				Stats statsChange = new Stats();
+				switch (this.stat) {
+					case "pv":
+						statsChange.add(new Stats(this.modifier, 0, 0, 0));
+						break;
+					case "attaque":
+						statsChange.add(new Stats(0, this.modifier, 0, 0));
+						break;
+					case "defense":
+						statsChange.add(new Stats(0, 0, this.modifier, 0));
+						break;
+					case "initiative":
+						statsChange.add(new Stats(0, 0, 0, this.modifier));
+						break;
+				}
+				if (this.duration.equals("permanent")) {
+					target.changeFightStats(statsChange);
+				} else {
+					// TODO: battle rounds and revert after one round
+					target.changeFightStats(statsChange);
+				}
+				break;
+			case "stat_modifier_multiple":
+				Stats multipleStatsChange = new Stats();
+				for (Map.Entry<String, Integer> entry : this.modifiers.entrySet()) {
+					switch (entry.getKey()) {
+						case "pv":
+							multipleStatsChange.add(new Stats(entry.getValue(), 0, 0, 0));
+							break;
+						case "attaque":
+							multipleStatsChange.add(new Stats(0, entry.getValue(), 0, 0));
+							break;
+						case "defense":
+							multipleStatsChange.add(new Stats(0, 0, entry.getValue(), 0));
+							break;
+						case "initiative":
+							multipleStatsChange.add(new Stats(0, 0, 0, entry.getValue()));
+							break;
+					}
+				}
+				if (this.duration.equals("permanent")) {
+					target.changeFightStats(multipleStatsChange);
+				} else {
+					// TODO: battle rounds and revert after one round
+					target.changeFightStats(multipleStatsChange);
+				}
+				break;
+			case "reset_malus":
+				target.resetFightStats();
+				break;
+			case "switch":
+				break;
+			default:
+				return 0;
+		}
+		return 1;
 	}
 }

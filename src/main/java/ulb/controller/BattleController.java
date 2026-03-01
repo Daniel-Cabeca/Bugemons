@@ -22,7 +22,6 @@ import ulb.model.Item;
 public class BattleController {
 	private Player player;
 	private BattleSnapshot battleSnapshot;
-	private Battle battle;
 
 	public BattleController(Player player) {
 		this.player = player;
@@ -46,7 +45,18 @@ public class BattleController {
 		Bugemon bugemon6 = new Bugemon(selectedBugemons.get(5), Type.FLORA, 100, 10, 10, 10, 1);
 
 		Team team1 = new Team(List.of(bugemon1, bugemon2, bugemon3, bugemon4, bugemon5, bugemon6));
-		Team team2 = new Team(List.of(bugemon1, bugemon2, bugemon3, bugemon4, bugemon5, bugemon6));
+		
+		Bugemon bugemon1_copy = new Bugemon(selectedBugemons.get(0), Type.PYRO, 100, 10, 10, 10, 1);
+		Bugemon bugemon2_copy = new Bugemon(selectedBugemons.get(1), Type.FLORA, 100, 10, 10, 10, 1);
+		Bugemon bugemon3_copy = new Bugemon(selectedBugemons.get(2), Type.AQUA, 100, 10, 10, 10, 1);
+		Bugemon bugemon4_copy = new Bugemon(selectedBugemons.get(3), Type.LITHO, 100, 10, 10, 10, 1);
+		Bugemon bugemon5_copy = new Bugemon(selectedBugemons.get(4), Type.PYRO, 100, 10, 10, 10, 1);
+		Bugemon bugemon6_copy = new Bugemon(selectedBugemons.get(5), Type.FLORA, 100, 10, 10, 10, 1);
+		
+		Team team2 = new Team(List.of(bugemon1_copy, bugemon2_copy, bugemon3_copy, bugemon4_copy, bugemon5_copy, bugemon6_copy));
+
+		// without multiplayer, player is always teamA
+		battleSnapshot = new BattleSnapshot(new Battle(team1, team2), true);
 
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/BattleWindow.fxml"));
@@ -63,10 +73,44 @@ public class BattleController {
 		}
 	}
 
+	/**
+	 * Uses an item from the player's inventory during battle and updates the inventory display and the bugemon's stats
+	 * @param item the item to be used from the player's inventory
+	 */
 	public void useItem(Item item) {
 		player.getInventory().removeItem(item);
-		for (Item inventoryItem : player.getInventory().getItems().keySet()) {
-			System.out.println(inventoryItem.getName() + " x" + player.getInventory().getItems().get(inventoryItem));
+		Bugemon activeBugemon;
+		Bugemon opponentBugemon;
+
+		if(battleSnapshot.getTeamSelf() == battleSnapshot.getBattle().getTeamA()) {
+			activeBugemon = battleSnapshot.getBattle().getActiveBugemonA();
+			opponentBugemon = battleSnapshot.getBattle().getActiveBugemonB();
+		}
+		else {
+			activeBugemon = battleSnapshot.getBattle().getActiveBugemonB();
+			opponentBugemon = battleSnapshot.getBattle().getActiveBugemonA();
+		}
+
+		if (item.getEffect().getTarget().equals("adversaire")) {
+			item.use(opponentBugemon);
+		} else {
+			item.use(activeBugemon);
+		}
+
+		if (item.getEffect().getType().equals("switch")) {
+			// TODO: implement ability to choose next bugemon, for now: switch to first available
+			Team playerTeam = battleSnapshot.getTeamSelf();
+			Bugemon nextBugemon = playerTeam.getMembers().stream()
+					.filter(b -> !b.isKO() && b != activeBugemon)
+					.findFirst()
+					.orElse(null);
+			if (nextBugemon != null) {
+				if (battleSnapshot.getTeamSelf() == battleSnapshot.getBattle().getTeamA()) {
+					battleSnapshot.getBattle().setActiveBugemonA(nextBugemon);
+				} else {
+					battleSnapshot.getBattle().setActiveBugemonB(nextBugemon);
+				}
+			}
 		}
 	}
 

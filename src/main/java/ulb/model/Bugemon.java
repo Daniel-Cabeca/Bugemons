@@ -3,6 +3,7 @@ import ulb.utils.Stats;
 
 import ulb.model.type.Type;
 import ulb.model.ability.AbilitySet;
+import java.util.Random;
 
 public class Bugemon {
 	private final String name;
@@ -19,8 +20,8 @@ public class Bugemon {
 	public Bugemon(String name, Type type, int pv, int attack, int defense, int initiative, int level) {
 		this.name = name;
 		this.type = type;
-		this.baseStats = new Stats(pv, defense, attack, initiative);
-		this.fightStats = new Stats(pv, defense, attack, initiative);
+		this.baseStats = new Stats(pv, attack, defense, initiative);
+		this.fightStats = new Stats(pv, attack, defense, initiative);
 		this.level = level;
 		this.xp = 0;
 	}
@@ -33,13 +34,54 @@ public class Bugemon {
 		this.fightStats.add(delta);
 	}
 
-	public void gainXP(int experience) {
+	public int gainXP(int experience) {
 		this.xp += experience;
+		int gainLevels = 0;
 
 		while (this.xp >= (50 + 50 * (this.level - 1))) {
 			this.xp -= (50 + 50 * (this.level - 1));
 			this.level++;
+			gainLevels++;
 		}
+		return gainLevels; // TO REMOVE : possibilité d'appeler directement gainLevelsReward
+	}
+
+	public Stats gainLevelsReward(int levelsGained) {
+		/**
+		 * Generate the rewards for all the levels gained randomly
+		 * @param levelsGained the number of levels gained
+		 * @return the rewards
+		 */
+		Stats reward = new Stats();
+		for (int l = 0; l < levelsGained; l++) {
+			for (int i = 0; i < 10; i++) {
+				int chosenStat = (int) (Math.random() * 4); // Number in [0, 3]
+
+
+				switch (chosenStat) {
+					case (0):
+						reward.pv += 2;
+						break;
+
+					case (1):
+						reward.initiative += 2;
+						break;
+
+					case (2):
+						reward.attack += 1;
+						break;
+
+					case (3):
+						reward.defense += 1;
+						break;
+
+					default:
+						break;
+				}
+			}
+		}
+		this.increaseBaseStats(reward);
+		return reward;
 	}
 
 	public final String getName() {return this.name;}

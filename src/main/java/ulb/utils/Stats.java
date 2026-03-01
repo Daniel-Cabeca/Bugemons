@@ -3,22 +3,29 @@ package ulb.utils;
 
 public class Stats {
 	public int pv;
-	public int defense;
 	public int attack;
+	public int defense;
 	public int initiative;
 
 	public Stats() {
 		this.pv = 0;
-		this.defense = 0;
 		this.attack = 0;
+		this.defense = 0;
 		this.initiative = 0;
 	}
 
-	public Stats(int pv, int defense, int attack, int initiative) {
+	public Stats(int pv, int attack, int defense, int initiative) {
 		this.pv = pv;
-		this.defense = defense;
 		this.attack = attack;
+		this.defense = defense;
 		this.initiative = initiative;
+	}
+
+	public Stats(Stats other){
+		this.pv = other.pv;
+		this.attack = other.attack;
+		this.defense = other.defense;
+		this.initiative = other.initiative;
 	}
 
 	public void add(Stats delta) {

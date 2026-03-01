@@ -31,7 +31,7 @@ public class BattleSnapshot {
 	 *
 	 * @return The snapshot's own team
 	 */
-	public Team getTeamSelf(){
+	public Team getTeamSelf() {
 		if (this.isTeamA) {
 			return battle.getTeamA();
 		}
@@ -45,7 +45,7 @@ public class BattleSnapshot {
 	 *
 	 * @return The snapshot's opponent team
 	 */
-	public Team getTeamOpponent(){
+	public Team getTeamOpponent() {
 		if (this.isTeamA) {
 			return battle.getTeamB();
 		}
@@ -53,15 +53,58 @@ public class BattleSnapshot {
 			return battle.getTeamA();
 		}
 	}
+
+	/**
+	 * Gives the Bugemon that the snapshot views as its active Bugemon.
+	 *
+	 * @return The snapshot's active Bugemon
+	 */
+	public Bugemon getActiveBugemonSelf() {
+		if (this.isTeamA) {
+			return battle.getActiveBugemonA();
+		}
+		else {
+			return battle.getActiveBugemonB();
+		}
+	}
+
+	/**
+	 * Gives the Bugemon that the snapshot views as its opponent's active Bugemon.
+	 *
+	 * @return The snapshot's active Bugemon
+	 */
+	public Bugemon getActiveBugemonOpponent() {
+		if (this.isTeamA) {
+			return battle.getActiveBugemonB();
+		}
+		else {
+			return battle.getActiveBugemonA();
+		}
+	}
+
+	/**
+	 * Sets the snapshot's active Bugemon to another one.
+	 *
+	 * @param bugemon The Bugemon to switch in
+	 */
+	public void setActiveBugemonSelf(Bugemon bugemon) {
+		if (this.isTeamA) {
+			battle.setActiveBugemonA(bugemon);
+		}
+		else {
+			battle.setActiveBugemonB(bugemon);
+		}
+	}
+
+	/**
+	 * Compute the damage based on the complete formula
+	 *
+	 * @param offensive The bugemon that uses the ability
+	 * @param defensive The bugemon targeted by the ability
+	 * @param abilityPower The power of the ability used
+	 * @return the computed damage based on the formula
+	 */
 	private int computeDamage(Bugemon offensive, Bugemon defensive, int abilityPower) {
-		/**
-		 * Compute the damage based on the complete formula
-		 *
-		 * @param offensive The bugemon that uses the ability
-		 * @param defensive The bugemon targeted by the ability
-		 * @param abilityPower The power of the ability used
-		 * @return the computed damage based on the formula
-		 */
 		float attackValue = offensive.getFightStats().attack;
 		float defenseValue = defensive.getFightStats().defense;
 
@@ -80,12 +123,12 @@ public class BattleSnapshot {
 		return Math.round(damage * typeFactor.getFactor() * criticalHitFactor);
 	}
 
+	/**
+	 * Use the ability given against the opposing active Bugemon
+	 *
+	 * @param ability the ability that is used
+	 */
 	public void useAbility(Ability ability) {
-		/**
-		 * Use the ability given against the opposing active Bugemon
-		 *
-		 * @param ability the ability that is used
-		 */
 		Bugemon offensive;
 		Bugemon defensive;
 		if (this.isTeamA){

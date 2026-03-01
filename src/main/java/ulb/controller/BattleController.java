@@ -79,17 +79,8 @@ public class BattleController {
 	 */
 	public void useItem(Item item) {
 		player.getInventory().removeItem(item);
-		Bugemon activeBugemon;
-		Bugemon opponentBugemon;
-
-		if(battleSnapshot.getTeamSelf() == battleSnapshot.getBattle().getTeamA()) {
-			activeBugemon = battleSnapshot.getBattle().getActiveBugemonA();
-			opponentBugemon = battleSnapshot.getBattle().getActiveBugemonB();
-		}
-		else {
-			activeBugemon = battleSnapshot.getBattle().getActiveBugemonB();
-			opponentBugemon = battleSnapshot.getBattle().getActiveBugemonA();
-		}
+		Bugemon activeBugemon = battleSnapshot.getActiveBugemonSelf();
+		Bugemon opponentBugemon = battleSnapshot.getActiveBugemonOpponent();
 
 		if (item.getEffect().getTarget().equals("adversaire")) {
 			item.use(opponentBugemon);
@@ -105,11 +96,7 @@ public class BattleController {
 					.findFirst()
 					.orElse(null);
 			if (nextBugemon != null) {
-				if (battleSnapshot.getTeamSelf() == battleSnapshot.getBattle().getTeamA()) {
-					battleSnapshot.getBattle().setActiveBugemonA(nextBugemon);
-				} else {
-					battleSnapshot.getBattle().setActiveBugemonB(nextBugemon);
-				}
+				battleSnapshot.setActiveBugemonSelf(nextBugemon);
 			}
 		}
 	}

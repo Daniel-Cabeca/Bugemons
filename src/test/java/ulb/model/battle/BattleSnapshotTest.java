@@ -29,7 +29,7 @@ public class BattleSnapshotTest {
 	}
 
 	@Test
-	public void testGetTeamSelf(){
+	public void testGetTeamSelf() {
 		Battle battle = getBattleA();
 		BattleSnapshot snapshotA = new BattleSnapshot(battle, true);
 		BattleSnapshot snapshotB = new BattleSnapshot(battle, false);
@@ -39,13 +39,52 @@ public class BattleSnapshotTest {
 	}
 
 	@Test
-	public void testGetTeamOpponent(){
+	public void testGetTeamOpponent() {
 		Battle battle = getBattleA();
 		BattleSnapshot snapshotA = new BattleSnapshot(battle, true);
 		BattleSnapshot snapshotB = new BattleSnapshot(battle, false);
 
 		assertSame(battle.getTeamB(), snapshotA.getTeamOpponent());
 		assertSame(battle.getTeamA(), snapshotB.getTeamOpponent());
+	}
+
+	@Test
+	public void testGetActiveBugemonSelf() {
+		Battle battle = getBattleA();
+		BattleSnapshot snapshotA = new BattleSnapshot(battle, true);
+		BattleSnapshot snapshotB = new BattleSnapshot(battle, false);
+
+		assertSame(battle.getActiveBugemonA(), snapshotA.getActiveBugemonSelf());
+		assertSame(battle.getActiveBugemonB(), snapshotB.getActiveBugemonSelf());
+	}
+
+	@Test
+	public void testGetActiveBugemonOpponent() {
+		Battle battle = getBattleA();
+		BattleSnapshot snapshotA = new BattleSnapshot(battle, true);
+		BattleSnapshot snapshotB = new BattleSnapshot(battle, false);
+
+		assertSame(battle.getActiveBugemonB(), snapshotA.getActiveBugemonOpponent());
+		assertSame(battle.getActiveBugemonA(), snapshotA.getActiveBugemonOpponent());
+	}
+
+	@Test
+	public void testSetActiveBugemonSelf() {
+		Battle battle = getBattleA();
+		BattleSnapshot snapshotA = new BattleSnapshot(battle, true);
+		BattleSnapshot snapshotB = new BattleSnapshot(battle, false);
+
+		Bugemon newBugemonA = snapshotA.getTeamSelf().getBugemon(3);
+		Bugemon newBugemonB = snapshotA.getTeamSelf().getBugemon(3);
+
+		snapshotA.setActiveBugemonSelf(newBugemonA);
+		snapshotB.setActiveBugemonSelf(newBugemonB);
+
+		assertSame(battle.getActiveBugemonA(), snapshotA.getActiveBugemonSelf());
+		assertSame(battle.getActiveBugemonB(), snapshotB.getActiveBugemonSelf());
+
+		assertSame(newBugemonA, snapshotA.getActiveBugemonSelf());
+		assertSame(newBugemonB, snapshotB.getActiveBugemonSelf());
 	}
 
 	@Test

@@ -103,4 +103,14 @@ public class Team {
 		}
 		return dead;
 	}
+
+	/**
+	 * Gives the Bugemon at a given index.
+	 *
+	 * @param index The index of the Bugemon
+	 * @return The Bugemon at the index
+	 */
+	public Bugemon getBugemon(int index) {
+		return this.members.get(index);
+	}
 }

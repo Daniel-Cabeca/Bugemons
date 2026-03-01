@@ -5,6 +5,11 @@ import ulb.model.team.Team;
 import ulb.model.Bugemon;
 import ulb.utils.Stats;
 import ulb.model.type.Effectiveness;
+import ulb.model.type.Type;
+import ulb.utils.ActionEnum;
+import java.util.Vector;
+
+import javax.swing.Action;
 
 /**
  * View of the battle from the point of view of a player.
@@ -12,6 +17,7 @@ import ulb.model.type.Effectiveness;
 public class BattleSnapshot {
 	private Battle battle;
 	private boolean isTeamA;
+	private BattleState state;
 
 	/**
 	 * Creates a battle snapshot as the point of view of either team A or team B.
@@ -143,6 +149,67 @@ public class BattleSnapshot {
 		Stats damage = new Stats(-abilityDamage, 0, 0, 0);
 		defensive.changeFightStats(damage);
 
+		if (this.battle.isTeamAKO() || this.battle.isTeamBKO()){ // cas ou une équipe gagne si l'autre est KO
+			this.state = BattleState.WON;
+		}
+		else{	// tout autre cas l'état passe en attente, si le buggemon adverse est KO ou si c'est simplement le tour à l'opposant
+			this.state = BattleState.WAITING;
+		}
+
+
 		// TODO check if bugemon is KO and if all the bugemons are KO
+	}
+
+	public void useAction(ActionEnum action) {
+		switch (action) {
+			case ATTACK:
+				useAbility(new Ability("1", "WaTeRPoUf", Type.AQUA, "Pouf d'eau giga mega stylé...", 10)); // exemple rando d'ability
+				// prblm de spécification d'ability, résolution à venir avec nouvelle représentation d'ActionEnum
+				break;
+			
+			case SWAP:
+				// appel fonction pour action SWAP
+				break;
+
+			case RUN:
+				// appel fonction pour action RUN (abandon de la partie)
+				break;
+
+			case USEITEM:
+				// appel fonction pour action USEITEM
+				break;
+
+			default:
+				break;
+		}
+	}
+
+	public Vector<ActionEnum> getAvailableActions() {
+		Vector<ActionEnum> actions = new Vector<ActionEnum>(); 
+		switch (this.state) {
+			case INGAME:
+				actions.add(ActionEnum.ATTACK);
+				actions.add(ActionEnum.RUN);
+				actions.add(ActionEnum.SWAP);
+				actions.add(ActionEnum.USEITEM);
+				break;
+
+			case SWAPPING:
+				actions.add(ActionEnum.SWAP);
+				break;
+
+			case LOST:
+				break;
+
+			case WON:
+				break;
+
+			case WAITING:
+				break;
+
+			default:
+				break;
+		}
+		return actions;
 	}
 }

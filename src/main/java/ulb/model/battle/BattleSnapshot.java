@@ -3,7 +3,7 @@ package ulb.model.battle;
 import ulb.model.ability.Ability;
 import ulb.model.team.Team;
 import ulb.model.Bugemon;
-import ulb.utils.Stats;
+import ulb.model.Stats;
 import ulb.model.type.Effectiveness;
 import ulb.model.type.Type;
 import ulb.utils.ActionEnum;

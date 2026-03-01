@@ -1,4 +1,4 @@
-package ulb.utils;
+package ulb.model;
 
 import static org.junit.Assert.assertEquals;
 

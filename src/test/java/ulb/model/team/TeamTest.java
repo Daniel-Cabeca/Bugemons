@@ -10,6 +10,7 @@ import java.util.List;
 import org.junit.Assert;
 
 import ulb.model.Bugemon;
+import ulb.model.Stats;
 import ulb.model.type.Type;
 
 
@@ -80,11 +81,11 @@ public class TeamTest {
 		Bugemon ko4 = makeBugemon("KO4");
 		Bugemon ko5 = makeBugemon("KO5");
 
-		ko1.changeFightStats(new ulb.utils.Stats(-100, 0, 0, 0));
-		ko2.changeFightStats(new ulb.utils.Stats(-100, 0, 0, 0));
-		ko3.changeFightStats(new ulb.utils.Stats(-100, 0, 0, 0));
-		ko4.changeFightStats(new ulb.utils.Stats(-100, 0, 0, 0));
-		ko5.changeFightStats(new ulb.utils.Stats(-100, 0, 0, 0));
+		ko1.changeFightStats(new Stats(-100, 0, 0, 0));
+		ko2.changeFightStats(new Stats(-100, 0, 0, 0));
+		ko3.changeFightStats(new Stats(-100, 0, 0, 0));
+		ko4.changeFightStats(new Stats(-100, 0, 0, 0));
+		ko5.changeFightStats(new Stats(-100, 0, 0, 0));
 
 		Team team = new Team(List.of(alive, ko1, ko2, ko3, ko4, ko5));
 
@@ -101,7 +102,7 @@ public class TeamTest {
 		Bugemon ko6 = makeBugemon("KO6");
 
 		for (Bugemon b : List.of(ko1, ko2, ko3, ko4, ko5, ko6)) {
-			b.changeFightStats(new ulb.utils.Stats(-100, 0, 0, 0));
+			b.changeFightStats(new Stats(-100, 0, 0, 0));
 		}
 
 		Team team = new Team(List.of(ko1, ko2, ko3, ko4, ko5, ko6));

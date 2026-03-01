@@ -21,7 +21,7 @@ import ulb.model.battle.Battle;
 import ulb.model.battle.BattleSnapshot;
 import ulb.model.team.Team;
 import ulb.model.type.Type;
-import ulb.utils.Stats;
+import ulb.model.Stats;
 
 public class BattleControllerTest {
 

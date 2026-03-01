@@ -1,5 +1,4 @@
 package ulb.model;
-import ulb.utils.Stats;
 
 import ulb.model.type.Type;
 import ulb.model.ability.AbilitySet;

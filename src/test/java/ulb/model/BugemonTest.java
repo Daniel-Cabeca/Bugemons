@@ -7,7 +7,7 @@ import java.util.Vector;
 import java.util.List;
 
 import ulb.model.type.Type;
-import ulb.utils.Stats;
+import ulb.model.Stats;
 
 public class BugemonTest {
 

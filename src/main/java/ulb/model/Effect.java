@@ -1,6 +1,6 @@
 package ulb.model;
 
-import ulb.utils.Stats;
+import ulb.model.Stats;
 
 import java.util.Map;
 

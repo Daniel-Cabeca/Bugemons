@@ -1,4 +1,4 @@
-package ulb.utils;
+package ulb.model;
 
 
 public class Stats {

@@ -23,6 +23,14 @@
     -fx-border-width: 2;
 }
 
+
+#availableBugemonsGrid{
+	-fx-alignment: center;
+    -fx-pref-width: 400px;
+    -fx-pref-height: 400px;
+}
+
+
 /*Custom*/
 
 .availableBugemons{

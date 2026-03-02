@@ -19,6 +19,10 @@ import ulb.model.Bugemon;
 import ulb.model.BugemonParser;
 import java.util.Vector;
 
+
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
 public class CreateTeamMenu {
 
 	@FXML
@@ -51,10 +55,17 @@ public class CreateTeamMenu {
 		int col = 0, row = 0;
 
 		for (Bugemon bugemon : bugemons) {
-			VBox cell = new VBox(5);
-			cell.setStyle("-fx-border-color: gray; -fx-padding: 10; -fx-alignment: center;");
+			VBox cell = new VBox();
+			cell.getStyleClass().add("availableBugemons"); // add a css class
 
 			Label name = new Label(bugemon.getName());
+
+			Image image = new Image(bugemon.getSprite());
+			ImageView sprite = new ImageView(image);
+			sprite.setFitWidth(50);
+			sprite.setFitHeight(50);
+			sprite.setPreserveRatio(true);
+
 			CheckBox checkBox = new CheckBox();
 			checkBox.setSelected(selected.contains(bugemon.getName()));
 
@@ -66,7 +77,7 @@ public class CreateTeamMenu {
 				}
 			});
 
-			cell.getChildren().addAll(name, checkBox);
+			cell.getChildren().addAll(name,sprite, checkBox);
 			availableBugemons.add(cell, col, row);
 
 			col++;
@@ -83,8 +94,8 @@ public class CreateTeamMenu {
 		int col = 0, row = 0;
 
 		for (String bugemon : selected) {
-			VBox cell = new VBox(5);
-			cell.setStyle("-fx-border-color: gray; -fx-padding: 10; -fx-alignment: center;");
+			VBox cell = new VBox();
+			cell.getStyleClass().add("selectedBugemons"); // add a css class
 
 			Label name = new Label(bugemon);
 			cell.getChildren().add(name);

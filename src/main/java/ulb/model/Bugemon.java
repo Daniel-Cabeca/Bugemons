@@ -6,6 +6,7 @@ import ulb.model.type.Type;
 
 public class Bugemon {
 	private final String name;
+	private final String sprite;
 	private final Type type;
 
 	private Stats baseStats;
@@ -16,8 +17,9 @@ public class Bugemon {
 
 	private Vector<String> abilities; //placeholder le temps que la classe ability soit faite
 
-	public Bugemon(String name, Type type, int pv, int attack, int defense, int initiative, Vector<String> abilities, int level) {
+	public Bugemon(String name, String sprite, Type type, int pv, int attack, int defense, int initiative, Vector<String> abilities, int level) {
 		this.name = name;
+		this.sprite = sprite;
 		this.type = type;
 		this.baseStats = new Stats(pv, defense, attack, initiative);
 		this.fightStats = new Stats(pv, defense, attack, initiative);
@@ -53,6 +55,7 @@ public class Bugemon {
 	}
 
 	public final String getName() {return this.name;}
+	public final String getSprite(){return "/png/"+this.sprite;}
 	public final Type getType() {return this.type;}
 	public Stats getFighStats() {return this.fightStats;}
 	public Stats getBaseStats() {return this.baseStats;}

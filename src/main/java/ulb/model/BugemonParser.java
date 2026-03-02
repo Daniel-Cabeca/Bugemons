@@ -18,6 +18,7 @@ public class BugemonParser {
 
         for (JsonNode node : bugemonArray) {
             String name = node.get("nom").asText();
+            String sprite = node.get("sprite").asText();
             String typeStr = node.get("type").asText().toLowerCase();
             Type type = Type.valueOf(typeStr.toUpperCase());
 
@@ -34,6 +35,7 @@ public class BugemonParser {
 
             Bugemon bugemon = new Bugemon(
                     name,
+                    sprite,
                     type,
                     pv,
                     attack,

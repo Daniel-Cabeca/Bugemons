@@ -153,4 +153,27 @@ public class BattleSnapshotTest {
 		assertTrue(damagedBugemon.getFightStats().hp == 92 || damagedBugemon.getFightStats().hp == 88);
 	}
 
+	@Test
+	public void availableActionsDoesNotFailAfterConstruction() {
+		Battle battle = getBattleA();
+		BattleSnapshot snapshot = new BattleSnapshot(battle, true);
+		assertTrue(snapshot.getAvailableActions().contains(ulb.utils.ActionEnum.ATTACK));
+	}
+
+	@Test
+	public void damageOfUsedAbilityNotTypeOfAttack() {
+		Bugemon attacker = new Bugemon("att", Type.PYRO, 100, 10, 10, 10);
+		Bugemon defender = new Bugemon("def", Type.AQUA, 100, 10, 10, 10);
+
+		Team t1 = new Team(List.of(attacker));
+		Team t2 = new Team(List.of(defender));
+		BattleSnapshot snap = new BattleSnapshot(new Battle(t1, t2, attacker, defender), true);
+		
+		// Attaque FLORA contre AQUA --> super efficace / HIGH (1.5)
+		Ability floraAttack = new Ability("xyz", "flora", Type.FLORA, "description", 10);
+		snap.useAbility(floraAttack);
+		int hp = snap.getBattle().getActiveBugemonB().getFightStats().hp;
+		assertTrue(hp == 85 || hp == 77);	// 10 * 1.5 (* 1.5)
+	}
+
 }

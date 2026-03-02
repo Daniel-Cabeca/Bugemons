@@ -22,11 +22,12 @@ public class BattleSnapshot {
 	 * Creates a battle snapshot as the point of view of either team A or team B.
 	 *
 	 * @param battle The battle
-	 * @param isTeamA True if the battle is viewed from team A's poiint of view, false otherwise
+	 * @param isTeamA True if the battle is viewed from team A's point of view, false otherwise
 	 */
 	public BattleSnapshot(Battle battle, boolean isTeamA){
 		this.battle = battle;
 		this.isTeamA = isTeamA;
+		this.state = BattleState.INGAME
 	}
 
 	public Battle getBattle() {return this.battle;}
@@ -106,26 +107,27 @@ public class BattleSnapshot {
 	 *
 	 * @param offensive The bugemon that uses the ability
 	 * @param defensive The bugemon targeted by the ability
-	 * @param abilityPower The power of the ability used
+	 * @param ability Ability from attacker used against defender
 	 * @return the computed damage based on the formula
 	 */
-	private int computeDamage(Bugemon offensive, Bugemon defensive, int abilityPower) {
+	private int computeDamage(Bugemon offensive, Bugemon defensive, int ability) {
 		float attackValue = offensive.getFightStats().attack;
 		float defenseValue = defensive.getFightStats().defense;
 
-		float attackFactor = (100 + attackValue) / 100;
-		float defenseFactor = 100 / (100 + defenseValue);
+		float attackFactor = (100 + attackValue) / 100f;
+		float defenseFactor = 100f / (100 + defenseValue);
 
-		float damage = attackFactor * defenseFactor * abilityPower;
+		float baseDamage = attackFactor * defenseFactor * ability.getPower();
 
-		float typeFactor = Effectiveness.getFactor(offensive.getType(), defensive.getType());
+		// Bugemon d'un type quelconque peut avoir des attaques de type t.q. type d'attaque ≠ type du pokemon
+		float typeFactor = Effectiveness.getFactor(ability.getType(), defensive.getType());
 
 		float criticalHitFactor = 1f;
 		if (Math.random() <= 0.1){
 			criticalHitFactor = 1.5f;
 		}
 
-		return Math.round(damage * typeFactor * criticalHitFactor);
+		return Math.round(baseDamage * typeFactor * criticalHitFactor);
 	}
 
 	/**
@@ -144,7 +146,7 @@ public class BattleSnapshot {
 			defensive = this.battle.getActiveBugemonA();
 		}
 
-		int abilityDamage = computeDamage(offensive, defensive, ability.getPower());
+		int abilityDamage = computeDamage(offensive, defensive, ability);
 		Stats damage = new Stats(-abilityDamage, 0, 0, 0);
 		defensive.addFightStats(damage);
 

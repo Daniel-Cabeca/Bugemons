@@ -16,7 +16,6 @@ import java.util.Vector;
 public class BattleSnapshot {
 	private Battle battle;
 	private boolean isTeamA;
-	private BattleState state;
 
 	/**
 	 * Creates a battle snapshot as the point of view of either team A or team B.
@@ -27,7 +26,6 @@ public class BattleSnapshot {
 	public BattleSnapshot(Battle battle, boolean isTeamA){
 		this.battle = battle;
 		this.isTeamA = isTeamA;
-		this.state = BattleState.INGAME;
 	}
 
 	public Battle getBattle() {return this.battle;}
@@ -150,15 +148,8 @@ public class BattleSnapshot {
 		Stats damage = new Stats(-abilityDamage, 0, 0, 0);
 		defensive.addFightStats(damage);
 
-		if (this.battle.isTeamAKO() || this.battle.isTeamBKO()){ // case where the team of this instance wins if the opposing team is KO
-			this.state = BattleState.WON;
-		}
-		else{	// Any other case, if opposing bugemon is KO
-			this.state = BattleState.WAITING;
-		}
 
 
-		// TODO check if bugemon is KO and if all the bugemons are KO
 	}
 
 	public void useAction(ActionEnum action) {
@@ -187,7 +178,7 @@ public class BattleSnapshot {
 
 	public Vector<ActionEnum> getAvailableActions() {
 		Vector<ActionEnum> actions = new Vector<ActionEnum>();
-		switch (this.state) {
+		switch (this.battle.getState(this.isTeamA)) {
 			case INGAME:
 				actions.add(ActionEnum.ATTACK);
 				actions.add(ActionEnum.RUN);

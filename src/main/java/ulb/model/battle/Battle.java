@@ -11,12 +11,16 @@ public class Battle {
 	private Team teamB;
 	private Bugemon activeBugemonA;
 	private Bugemon activeBugemonB;
+	private BattleState stateA;
+	private BattleState stateB;
 
 	public Battle(Team teamA, Team teamB) {
 		this.teamA = teamA;
 		this.teamB = teamB;
 		this.activeBugemonA = this.teamA.getMembers().get(0);
 		this.activeBugemonB = this.teamB.getMembers().get(0);
+		this.stateA = BattleState.INGAME;
+		this.stateB = BattleState.INGAME;
 	}
 
 	public Battle(Team teamA, Team teamB, Bugemon activeBugemonA, Bugemon activeBugemonB) {
@@ -24,6 +28,8 @@ public class Battle {
 		this.teamB = teamB;
 		this.activeBugemonA = activeBugemonA;
 		this.activeBugemonB = activeBugemonB;
+		this.stateA = BattleState.INGAME;
+		this.stateB = BattleState.INGAME;
 	}
 
 	public Team getTeamA() {return this.teamA;}
@@ -31,8 +37,19 @@ public class Battle {
 	public Bugemon getActiveBugemonA() {return this.activeBugemonA;}
 	public Bugemon getActiveBugemonB() {return this.activeBugemonB;}
 
+	public BattleState getState(boolean isTeamA) {
+		if (isTeamA){
+			return this.stateA;
+		}
+		return this.stateB;
+	}
+
 	public void setActiveBugemonA(Bugemon bugemon) { this.activeBugemonA = bugemon; }
 	public void setActiveBugemonB(Bugemon bugemon) { this.activeBugemonB = bugemon; }
+
+	public void setState(boolean isTeamA) {
+		// TO-DO
+	}
 
 
 	public boolean isBugemonAKO() {

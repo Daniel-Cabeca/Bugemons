@@ -16,7 +16,7 @@ public class Bugemon {
 
 	private final AbilitySet abilityset = new AbilitySet();
 
-	public Bugemon(String name, String sprite, Type type, int pv, int attack, int defense, int initiative, int level) {
+	public Bugemon(String name, String sprite, Type type, int hp, int attack, int defense, int initiative, int level) {
 		this.name = name;
 		this.sprite = sprite;
 		this.type = type;
@@ -28,6 +28,7 @@ public class Bugemon {
 
 	public Bugemon(String name, Type type, int hp, int attack, int defense, int initiative, int level) {
 		this.name = name;
+		this.sprite = "bouldax.png";
 		this.type = type;
 		this.baseStats = new Stats(hp, attack, defense, initiative);
 		this.fightStats = new Stats(hp, attack, defense, initiative);

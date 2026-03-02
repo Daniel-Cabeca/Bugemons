@@ -145,7 +145,7 @@ public class BattleSnapshot {
 
 		int abilityDamage = computeDamage(offensive, defensive, ability);
 		Stats damage = new Stats(-abilityDamage, 0, 0, 0);
-		defensive.addFightStats(damage);
+		defensive.changeFightStats(damage);
 
 	}
 

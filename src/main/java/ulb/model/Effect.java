@@ -68,29 +68,29 @@ public class Effect {
 	public int apply(Bugemon target) {
 		switch (this.type) {
 			case "soin":
-				target.addFightStats(new Stats(this.value, 0, 0, 0));
+				target.changeFightStats(new Stats(this.value, 0, 0, 0));
 				break;
 			case "stat_modifier":
 				Stats statsChange = new Stats();
 				switch (this.stat) {
 					case "pv":
-						statsChange.add(new Stats(this.modifier, 0, 0, 0));
+						statsChange.change(new Stats(this.modifier, 0, 0, 0));
 						break;
 					case "attaque":
-						statsChange.add(new Stats(0, this.modifier, 0, 0));
+						statsChange.change(new Stats(0, this.modifier, 0, 0));
 						break;
 					case "defense":
-						statsChange.add(new Stats(0, 0, this.modifier, 0));
+						statsChange.change(new Stats(0, 0, this.modifier, 0));
 						break;
 					case "initiative":
-						statsChange.add(new Stats(0, 0, 0, this.modifier));
+						statsChange.change(new Stats(0, 0, 0, this.modifier));
 						break;
 				}
 				if (this.duration.equals("permanent")) {
-					target.addFightStats(statsChange);
+					target.changeFightStats(statsChange);
 				} else {
 					// TODO: battle rounds and revert after one round
-					target.addFightStats(statsChange);
+					target.changeFightStats(statsChange);
 				}
 				break;
 			case "stat_modifier_multiple":
@@ -98,24 +98,24 @@ public class Effect {
 				for (Map.Entry<String, Integer> entry : this.modifiers.entrySet()) {
 					switch (entry.getKey()) {
 						case "pv":
-							multipleStatsChange.add(new Stats(entry.getValue(), 0, 0, 0));
+							multipleStatsChange.change(new Stats(entry.getValue(), 0, 0, 0));
 							break;
 						case "attaque":
-							multipleStatsChange.add(new Stats(0, entry.getValue(), 0, 0));
+							multipleStatsChange.change(new Stats(0, entry.getValue(), 0, 0));
 							break;
 						case "defense":
-							multipleStatsChange.add(new Stats(0, 0, entry.getValue(), 0));
+							multipleStatsChange.change(new Stats(0, 0, entry.getValue(), 0));
 							break;
 						case "initiative":
-							multipleStatsChange.add(new Stats(0, 0, 0, entry.getValue()));
+							multipleStatsChange.change(new Stats(0, 0, 0, entry.getValue()));
 							break;
 					}
 				}
 				if (this.duration.equals("permanent")) {
-					target.addFightStats(multipleStatsChange);
+					target.changeFightStats(multipleStatsChange);
 				} else {
 					// TODO: battle rounds and revert after one round
-					target.addFightStats(multipleStatsChange);
+					target.changeFightStats(multipleStatsChange);
 				}
 				break;
 			case "reset_malus":

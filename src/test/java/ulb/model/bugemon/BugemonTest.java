@@ -13,7 +13,7 @@ public class BugemonTest {
 	int getGainedPoint(Stats previous, Stats actual){
 		Stats difference = new Stats(actual);
 		Stats opposite = new Stats(-previous.hp, -previous.attack, -previous.defense, -previous.initiative);
-		difference.add(opposite);
+		difference.change(opposite);
 		return difference.hp / 2 + difference.initiative / 2 + difference.attack + difference.defense;
 	}
 
@@ -67,7 +67,7 @@ public class BugemonTest {
 		Stats s = new Stats(-10,-9, -5, -6); // debuff stats
 		Bugemon B = new Bugemon(Type.AQUA, 100, 20, 10, 10);
 
-		B.addFightStats(s);
+		B.changeFightStats(s);
 
 		assertEquals(90, B.getFightStats().hp);
 		assertEquals(11, B.getFightStats().attack);

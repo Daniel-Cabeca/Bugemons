@@ -28,7 +28,7 @@ public class Stats {
 		this.initiative = other.initiative;
 	}
 
-	public void add(Stats delta) {
+	public void change(Stats delta) {
 		this.hp = (this.hp <= Math.abs(delta.hp) && delta.hp < 0)? 0: this.hp + delta.hp;
 		this.attack = (this.attack <= Math.abs(delta.attack) && delta.attack < 0)? 0: this.attack + delta.attack;
 		this.defense = (this.defense <= Math.abs(delta.defense) && delta.defense < 0)? 0: this.defense + delta.defense;

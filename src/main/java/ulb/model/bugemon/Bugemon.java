@@ -47,12 +47,12 @@ public class Bugemon {
 	public int getDefense() { return this.getFightStats().getDefense(); }
 	public int getInitiative() { return this.getFightStats().getInitiative(); }
 
-	public void addBaseStats(Stats delta) {
-		this.getBaseStats().add(delta);
+	public void changeBaseStats(Stats delta) {
+		this.getBaseStats().change(delta);
 	}
 
-	public void addFightStats(Stats delta) {
-		this.getFightStats().add(delta);
+	public void changeFightStats(Stats delta) {
+		this.getFightStats().change(delta);
 	}
 
 	/**
@@ -108,7 +108,7 @@ public class Bugemon {
 				}
 			}
 		}
-		this.addBaseStats(reward);
+		this.changeBaseStats(reward);
 		return reward;
 	}
 

@@ -2,8 +2,8 @@ package ulb.model.battle;
 
 import ulb.model.ability.Ability;
 import ulb.model.team.Team;
-import ulb.model.Bugemon;
-import ulb.model.Stats;
+import ulb.model.bugemon.Bugemon;
+import ulb.model.bugemon.Stats;
 import ulb.model.type.Effectiveness;
 import ulb.model.type.Type;
 import ulb.utils.ActionEnum;
@@ -146,7 +146,7 @@ public class BattleSnapshot {
 
 		int abilityDamage = computeDamage(offensive, defensive, ability.getPower());
 		Stats damage = new Stats(-abilityDamage, 0, 0, 0);
-		defensive.changeFightStats(damage);
+		defensive.increaseFightStats(damage);
 
 		if (this.battle.isTeamAKO() || this.battle.isTeamBKO()){ // cas ou une équipe gagne si l'autre est KO
 			this.state = BattleState.WON;

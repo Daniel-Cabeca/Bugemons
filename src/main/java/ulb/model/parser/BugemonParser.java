@@ -3,30 +3,74 @@ package ulb.model.parser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.File;
-import java.util.Vector;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
+import java.io.IOException;
 import java.text.ParseException;
+import java.net.URISyntaxException;
 
-import ulb.model.Bugemon;
+import ulb.model.bugemon.BugemonSpecies;
+import ulb.model.bugemon.BugemonDatabase;
+import ulb.model.bugemon.Stats;
 import ulb.model.type.Type;
 import ulb.model.ability.Ability;
 import ulb.model.ability.AbilitySet;
+import ulb.model.ability.AbilityDatabase;
 
+/**
+ * Parser for Bugemon species
+ */
 public abstract class BugemonParser {
-
-	public static Vector<Bugemon> loadBugemons(String path) throws Exception {
-		ObjectMapper mapper = new ObjectMapper();
-		JsonNode root = mapper.readTree(new File(path));
-		JsonNode bugemonArray = root.get("bugemons");
-		Vector<Bugemon> bugemons = new Vector<>();
-
-		for (JsonNode node : bugemonArray) {
-			Bugemon bugemon = fromJson(node);
-			bugemons.add(bugemon);
+	/**
+	 * Gives the default JSON file for loading Bugemons.
+	 *
+	 * @return The path to the default JSON file
+	 */
+	public static Path getDefaultJson() {
+		try {
+			URL url = BugemonParser.class.getResource("/json/bugemons.json");
+			Path path = Paths.get(url.toURI());
+			return path;
+		} catch (URISyntaxException e) {
+			// can't happen (literal is safe)
+			return null;
 		}
+	}
 
-		return bugemons;
+	/**
+	 * Loads the default JSON file into the Bugemon database.
+	 */
+	public static void load() throws IOException, ParseException {
+		loadJson(getDefaultJson(), BugemonDatabase.getInstance());
+	}
+
+	/**
+	 * Loads the default JSON file into an Bugemon database.
+	 *
+	 * @param database The Bugemon database
+	 */
+	public static void load(BugemonDatabase database) throws IOException, ParseException {
+		loadJson(getDefaultJson(), database);
+	}
+
+	/**
+	 * Loads a JSON file into a Bugemon database.
+	 *
+	 * @param filename The JSON file's path
+	 * @param database The Bugemon database
+	 */
+	public static void loadJson(Path filename, BugemonDatabase database) throws IOException, ParseException {
+		ObjectMapper mapper = new ObjectMapper();
+
+		JsonNode root = mapper.readTree(filename.toFile());
+		JsonNode bugemonsArray = root.get("bugemons");
+
+		for (JsonNode node: bugemonsArray) {
+			BugemonSpecies species = fromJson(node);
+			database.add(species);
+		}
 	}
 
 	/**
@@ -35,22 +79,16 @@ public abstract class BugemonParser {
 	 * @param node The JSON node
 	 * @return The parsed Bugemon
 	 */
-	public static Bugemon fromJson(JsonNode node) throws ParseException {
-		// String id = node.get("id").asText(); //TODO add id to Bugemon class
+	public static BugemonSpecies fromJson(JsonNode node) throws ParseException {
+		String id = node.get("id").asText();
 		String name = node.get("nom").asText();
 		Type type = readJsonType(node);
+		Stats baseStats = readJsonStats(node);
+		AbilitySet abilities = readJsonAbilities(node);
+		String sprite = node.get("sprite").asText();
+		boolean starter = node.get("starter").asBoolean();
 
-		JsonNode statsNode = node.get("stats");
-		int pv = statsNode.get("pv").asInt();
-		int attack = statsNode.get("attaque").asInt();
-		int defense = statsNode.get("defense").asInt();
-		int initiative = statsNode.get("initiative").asInt();
-
-		int level = 1;
-
-		//TODO abilities
-
-		return new Bugemon(name, type, pv, attack, defense, initiative, level);
+		return new BugemonSpecies(id, name, type, baseStats, abilities, sprite, starter);
 	}
 
 	private static Type readJsonType(JsonNode node) throws ParseException {
@@ -60,5 +98,30 @@ public abstract class BugemonParser {
 		} catch (IllegalArgumentException e) {
 			throw new ParseException("Failed to parse type.", 0);
 		}
+	}
+
+	private static Stats readJsonStats(JsonNode node) {
+		node = node.get("stats");
+
+		int hp = node.get("pv").asInt();
+		int attack = node.get("attaque").asInt();
+		int defense = node.get("defense").asInt();
+		int initiative = node.get("initiative").asInt();
+
+		return new Stats(hp, attack, defense, initiative);
+	}
+
+	private static AbilitySet readJsonAbilities(JsonNode node) {
+		AbilitySet abilities = new AbilitySet();
+		JsonNode abilitiesArray = node.get("attaques");
+		int i = 0;
+
+		for (JsonNode abilityNode: abilitiesArray) {
+			String id = abilityNode.asText();
+			Ability ability = AbilityDatabase.getInstance().get(id);
+			abilities.setAbility(i++, ability);
+		}
+
+		return abilities;
 	}
 }

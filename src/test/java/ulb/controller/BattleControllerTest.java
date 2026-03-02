@@ -12,7 +12,8 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
-import ulb.model.Bugemon;
+import ulb.model.bugemon.Bugemon;
+import ulb.model.bugemon.Stats;
 import ulb.model.Effect;
 import ulb.model.item.Item;
 import ulb.model.Player;
@@ -21,7 +22,6 @@ import ulb.model.battle.Battle;
 import ulb.model.battle.BattleSnapshot;
 import ulb.model.team.Team;
 import ulb.model.type.Type;
-import ulb.model.Stats;
 
 public class BattleControllerTest {
 
@@ -31,8 +31,8 @@ public class BattleControllerTest {
 		player.getInventory().getItems().clear();
 		BattleController battleController = new BattleController(player);
 
-		Team teamA = new Team(List.of(new Bugemon("pyricore", Type.PYRO, 100, 10, 10, 10, 1)));
-		Team teamB = new Team(List.of(new Bugemon("moussil", Type.FLORA, 100, 10, 10, 10, 1)));
+		Team teamA = new Team(List.of(new Bugemon(Type.PYRO, 100, 10, 10, 10)));
+		Team teamB = new Team(List.of(new Bugemon(Type.FLORA, 100, 10, 10, 10)));
 		Battle battle = new Battle(teamA, teamB);
 
 		Constructor<BattleSnapshot> constructor = BattleSnapshot.class.getDeclaredConstructor(Battle.class, boolean.class);
@@ -69,9 +69,9 @@ public class BattleControllerTest {
 		Player player = new Player("TestPlayer");
 		BattleController battleController = new BattleController(player);
 
-		Bugemon bugemon = new Bugemon("pyricore", Type.PYRO, 50, 10, 10, 10, 1);
+		Bugemon bugemon = new Bugemon(Type.PYRO, 50, 10, 10, 10);
 		Team teamA = new Team(List.of(bugemon));
-		Team teamB = new Team(List.of(new Bugemon("moussil", Type.FLORA, 100, 10, 10, 10, 1)));
+		Team teamB = new Team(List.of(new Bugemon(Type.FLORA, 100, 10, 10, 10)));
 		Battle battle = new Battle(teamA, teamB);
 
 		Constructor<BattleSnapshot> constructor = BattleSnapshot.class.getDeclaredConstructor(Battle.class, boolean.class);
@@ -96,9 +96,9 @@ public class BattleControllerTest {
 		Player player = new Player("TestPlayer");
 		BattleController battleController = new BattleController(player);
 
-		Bugemon bugemon = new Bugemon("pyricore", Type.PYRO, 100, 10, 10, 10, 1);
+		Bugemon bugemon = new Bugemon(Type.PYRO, 100, 10, 10, 10);
 		Team teamA = new Team(List.of(bugemon));
-		Team teamB = new Team(List.of(new Bugemon("moussil", Type.FLORA, 100, 10, 10, 10, 1)));
+		Team teamB = new Team(List.of(new Bugemon(Type.FLORA, 100, 10, 10, 10)));
 		Battle battle = new Battle(teamA, teamB);
 
 		Constructor<BattleSnapshot> constructor = BattleSnapshot.class.getDeclaredConstructor(Battle.class, boolean.class);
@@ -124,9 +124,9 @@ public class BattleControllerTest {
 		Player player = new Player("TestPlayer");
 		BattleController battleController = new BattleController(player);
 
-		Bugemon bugemon = new Bugemon("pyricore", Type.PYRO, 100, 10, 10, 10, 1);
+		Bugemon bugemon = new Bugemon(Type.PYRO, 100, 10, 10, 10);
 		Team teamA = new Team(List.of(bugemon));
-		Team teamB = new Team(List.of(new Bugemon("moussil", Type.FLORA, 100, 10, 10, 10, 1)));
+		Team teamB = new Team(List.of(new Bugemon(Type.FLORA, 100, 10, 10, 10)));
 		Battle battle = new Battle(teamA, teamB);
 
 		Constructor<BattleSnapshot> constructor = BattleSnapshot.class.getDeclaredConstructor(Battle.class, boolean.class);
@@ -154,10 +154,10 @@ public class BattleControllerTest {
 		Player player = new Player("TestPlayer");
 		BattleController battleController = new BattleController(player);
 
-		Bugemon bugemonA = new Bugemon("pyricore", Type.PYRO, 100, 10, 10, 10, 1);
-		Bugemon bugemonB = new Bugemon("refaquix", Type.AQUA, 100, 10, 10, 10, 1);
+		Bugemon bugemonA = new Bugemon(Type.PYRO, 100, 10, 10, 10);
+		Bugemon bugemonB = new Bugemon(Type.AQUA, 100, 10, 10, 10);
 		Team teamA = new Team(List.of(bugemonA, bugemonB));
-		Team teamB = new Team(List.of(new Bugemon("moussil", Type.FLORA, 100, 10, 10, 10, 1)));
+		Team teamB = new Team(List.of(new Bugemon(Type.FLORA, 100, 10, 10, 10)));
 		Battle battle = new Battle(teamA, teamB);
 
 		Constructor<BattleSnapshot> constructor = BattleSnapshot.class.getDeclaredConstructor(Battle.class, boolean.class);
@@ -185,10 +185,10 @@ public class BattleControllerTest {
 		Player player = new Player("TestPlayer");
 		BattleController battleController = new BattleController(player);
 
-		Bugemon bugemon = new Bugemon("pyricore", Type.PYRO, 100, 10, 10, 10, 1);
-		bugemon.changeFightStats(new Stats(-20, -5, -5, -5)); // Apply a malus to the bugemon
+		Bugemon bugemon = new Bugemon(Type.PYRO, 100, 10, 10, 10);
+		bugemon.increaseFightStats(new Stats(-20, -5, -5, -5)); // Apply a malus to the bugemon
 		Team teamA = new Team(List.of(bugemon));
-		Team teamB = new Team(List.of(new Bugemon("moussil", Type.FLORA, 100, 10, 10, 10, 1)));
+		Team teamB = new Team(List.of(new Bugemon(Type.FLORA, 100, 10, 10, 10)));
 		Battle battle = new Battle(teamA, teamB);
 
 		Constructor<BattleSnapshot> constructor = BattleSnapshot.class.getDeclaredConstructor(Battle.class, boolean.class);
@@ -216,12 +216,12 @@ public class BattleControllerTest {
 	@Test
 	public void testDamageUsesBattleSnapshot() throws Exception {
 		// Arrange: create a simple battle with two teams
-		Bugemon bugemon1 = new Bugemon("pyricore", Type.PYRO, 100, 10, 10, 10, 1);
-		Bugemon bugemon2 = new Bugemon("moussil", Type.FLORA, 100, 10, 10, 10, 1);
-		Bugemon bugemon3 = new Bugemon("refaquix", Type.AQUA, 100, 10, 10, 10, 1);
-		Bugemon bugemon4 = new Bugemon("granitron", Type.LITHO, 100, 10, 10, 10, 1);
-		Bugemon bugemon5 = new Bugemon("inferlin", Type.PYRO, 100, 10, 10, 10, 1);
-		Bugemon bugemon6 = new Bugemon("florachu", Type.FLORA, 100, 10, 10, 10, 1);
+		Bugemon bugemon1 = new Bugemon(Type.PYRO, 100, 10, 10, 10);
+		Bugemon bugemon2 = new Bugemon(Type.FLORA, 100, 10, 10, 10);
+		Bugemon bugemon3 = new Bugemon(Type.AQUA, 100, 10, 10, 10);
+		Bugemon bugemon4 = new Bugemon(Type.LITHO, 100, 10, 10, 10);
+		Bugemon bugemon5 = new Bugemon(Type.PYRO, 100, 10, 10, 10);
+		Bugemon bugemon6 = new Bugemon(Type.FLORA, 100, 10, 10, 10);
 
 		Team team1 = new Team(List.of(bugemon1, bugemon2, bugemon3, bugemon4, bugemon5, bugemon6));
 		Team team2 = new Team(List.of(bugemon1, bugemon2, bugemon3, bugemon4, bugemon5, bugemon6));

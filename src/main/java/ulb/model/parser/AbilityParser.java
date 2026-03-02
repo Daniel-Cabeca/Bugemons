@@ -1,14 +1,15 @@
 package ulb.model.parser;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
 
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import java.io.IOException;
 import java.text.ParseException;
+import java.net.URISyntaxException;
 
 import ulb.model.ability.Ability;
 import ulb.model.ability.AbilityDatabase;
@@ -18,13 +19,27 @@ import ulb.model.type.Type;
  * Parser for abilities.
  */
 public abstract class AbilityParser {
-	public static final Path JSON_FILE = Paths.get("src/main/resources/json/attaques.json");
+	/**
+	 * Gives the default JSON file for loading abilities.
+	 *
+	 * @return The path to the default JSON file
+	 */
+	public static Path getDefaultJson() {
+		try {
+			URL url = BugemonParser.class.getResource("/json/attaques.json");
+			Path path = Paths.get(url.toURI());
+			return path;
+		} catch (URISyntaxException e) {
+			// can't happen (literal is safe)
+			return null;
+		}
+	}
 
 	/**
 	 * Loads the default JSON file into the ability database.
 	 */
 	public static void load() throws IOException, ParseException {
-		loadJson(JSON_FILE, AbilityDatabase.getInstance());
+		loadJson(getDefaultJson(), AbilityDatabase.getInstance());
 	}
 
 	/**
@@ -33,7 +48,7 @@ public abstract class AbilityParser {
 	 * @param database The ability database
 	 */
 	public static void load(AbilityDatabase database) throws IOException, ParseException {
-		loadJson(JSON_FILE, database);
+		loadJson(getDefaultJson(), database);
 	}
 
 	/**

@@ -18,8 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ulb.model.Player;
-import ulb.model.Bugemon;
-import ulb.model.parser.BugemonParser;
+import ulb.model.bugemon.BugemonSpecies;
+import ulb.model.bugemon.BugemonDatabase;
 import java.util.Vector;
 
 
@@ -45,16 +45,9 @@ public class CreateTeamMenu {
 	/**
 	* Initializes the create team menu
 	*/
-	private Vector<Bugemon> bugemons;
 
 	@FXML
 	public void initialize() {
-		try {
-			String path = getClass().getResource("/json/bugemons.json").getPath();
-			bugemons = BugemonParser.loadBugemons(path);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 		populateAvailableBugemons();
 	}
 
@@ -64,7 +57,7 @@ public class CreateTeamMenu {
 	private void populateAvailableBugemons() {
 		int col = 0, row = 0;
 
-		for (Bugemon bugemon : bugemons) {
+		for (BugemonSpecies bugemon : BugemonDatabase.getInstance()) {
 			VBox cell = new VBox();
 			cell.getStyleClass().add("availableBugemons"); // add a css class
 

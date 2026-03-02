@@ -21,7 +21,7 @@ public class AbilityDatabase {
 	}
 
 	/**
-	 * Add an ability to the database.
+	 * Adds an ability to the database.
 	 *
 	 * @param ability The new ability to add
 	 * @throws IllegalArgumentException If the ability already exists

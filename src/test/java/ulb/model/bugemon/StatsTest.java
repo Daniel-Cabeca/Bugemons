@@ -1,4 +1,4 @@
-package ulb.model;
+package ulb.model.bugemon;
 
 import static org.junit.Assert.assertEquals;
 

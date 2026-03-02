@@ -6,7 +6,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import ulb.model.Bugemon;
+import ulb.model.bugemon.Bugemon;
 import ulb.model.ability.Ability;
 import ulb.model.team.Team;
 import ulb.model.type.Type;
@@ -14,12 +14,12 @@ import java.util.List;
 
 public class BattleSnapshotTest {
 	private Battle getBattleA(){
-		Bugemon bugemon1 = new Bugemon("pyricore", Type.PYRO, 100, 10, 10, 10, 1);
-		Bugemon bugemon2 = new Bugemon("moussil", Type.FLORA, 100, 10, 10, 10, 1);
-		Bugemon bugemon3 = new Bugemon("refaquix", Type.AQUA, 100, 10, 10, 10, 1);
-		Bugemon bugemon4 = new Bugemon("granitron", Type.LITHO, 100, 10, 10, 10, 1);
-		Bugemon bugemon5 = new Bugemon("inferlin", Type.PYRO, 100, 10, 10, 10, 1);
-		Bugemon bugemon6 = new Bugemon("florachu", Type.FLORA, 100, 10, 10, 10, 1);
+		Bugemon bugemon1 = new Bugemon("pyricore", Type.PYRO, 100, 10, 10, 10);
+		Bugemon bugemon2 = new Bugemon("moussil", Type.FLORA, 100, 10, 10, 10);
+		Bugemon bugemon3 = new Bugemon("refaquix", Type.AQUA, 100, 10, 10, 10);
+		Bugemon bugemon4 = new Bugemon("granitron", Type.LITHO, 100, 10, 10, 10);
+		Bugemon bugemon5 = new Bugemon("inferlin", Type.PYRO, 100, 10, 10, 10);
+		Bugemon bugemon6 = new Bugemon("florachu", Type.FLORA, 100, 10, 10, 10);
 
 		Team team1 = new Team(List.of(bugemon1, bugemon2, bugemon3, bugemon4, bugemon5, bugemon6));
 		Team team2 = new Team(List.of(bugemon1, bugemon2, bugemon3, bugemon4, bugemon5, bugemon6));
@@ -89,12 +89,12 @@ public class BattleSnapshotTest {
 
 	@Test
 	public void testDamageNormalTypeFactor(){
-		Bugemon bugemon1 = new Bugemon("pyricore", Type.PYRO, 100, 10, 10, 10, 1);
-		Bugemon bugemon2 = new Bugemon("moussil", Type.FLORA, 100, 10, 10, 10, 1);
-		Bugemon bugemon3 = new Bugemon("refaquix", Type.AQUA, 100, 10, 10, 10, 1);
-		Bugemon bugemon4 = new Bugemon("granitron", Type.LITHO, 100, 10, 10, 10, 1);
-		Bugemon bugemon5 = new Bugemon("inferlin", Type.PYRO, 100, 10, 10, 10, 1);
-		Bugemon bugemon6 = new Bugemon("florachu", Type.FLORA, 100, 10, 10, 10, 1);
+		Bugemon bugemon1 = new Bugemon("pyricore", Type.PYRO, 100, 10, 10, 10);
+		Bugemon bugemon2 = new Bugemon("moussil", Type.FLORA, 100, 10, 10, 10);
+		Bugemon bugemon3 = new Bugemon("refaquix", Type.AQUA, 100, 10, 10, 10);
+		Bugemon bugemon4 = new Bugemon("granitron", Type.LITHO, 100, 10, 10, 10);
+		Bugemon bugemon5 = new Bugemon("inferlin", Type.PYRO, 100, 10, 10, 10);
+		Bugemon bugemon6 = new Bugemon("florachu", Type.FLORA, 100, 10, 10, 10);
 
 		Team team1 = new Team(List.of(bugemon1, bugemon2, bugemon3, bugemon4, bugemon5, bugemon6));
 		Team team2 = new Team(List.of(bugemon1, bugemon2, bugemon3, bugemon4, bugemon5, bugemon6));
@@ -111,12 +111,12 @@ public class BattleSnapshotTest {
 
 	@Test
 	public void testDamageHighTypeFactor(){
-		Bugemon bugemon1 = new Bugemon("pyricore", Type.PYRO, 100, 10, 10, 10, 1);
-		Bugemon bugemon2 = new Bugemon("moussil", Type.FLORA, 100, 10, 10, 10, 1);
-		Bugemon bugemon3 = new Bugemon("refaquix", Type.AQUA, 100, 10, 10, 10, 1);
-		Bugemon bugemon4 = new Bugemon("granitron", Type.LITHO, 100, 10, 10, 10, 1);
-		Bugemon bugemon5 = new Bugemon("inferlin", Type.PYRO, 100, 10, 10, 10, 1);
-		Bugemon bugemon6 = new Bugemon("florachu", Type.FLORA, 100, 10, 10, 10, 1);
+		Bugemon bugemon1 = new Bugemon("pyricore", Type.PYRO, 100, 10, 10, 10);
+		Bugemon bugemon2 = new Bugemon("moussil", Type.FLORA, 100, 10, 10, 10);
+		Bugemon bugemon3 = new Bugemon("refaquix", Type.AQUA, 100, 10, 10, 10);
+		Bugemon bugemon4 = new Bugemon("granitron", Type.LITHO, 100, 10, 10, 10);
+		Bugemon bugemon5 = new Bugemon("inferlin", Type.PYRO, 100, 10, 10, 10);
+		Bugemon bugemon6 = new Bugemon("florachu", Type.FLORA, 100, 10, 10, 10);
 
 		Team team1 = new Team(List.of(bugemon1, bugemon2, bugemon3, bugemon4, bugemon5, bugemon6));
 		Team team2 = new Team(List.of(bugemon1, bugemon2, bugemon3, bugemon4, bugemon5, bugemon6));
@@ -133,12 +133,12 @@ public class BattleSnapshotTest {
 
 	@Test
 	public void testDamageLowTypeFactor(){
-		Bugemon bugemon1 = new Bugemon("pyricore", Type.PYRO, 100, 10, 10, 10, 1);
-		Bugemon bugemon2 = new Bugemon("moussil", Type.FLORA, 100, 10, 10, 10, 1);
-		Bugemon bugemon3 = new Bugemon("refaquix", Type.AQUA, 100, 10, 10, 10, 1);
-		Bugemon bugemon4 = new Bugemon("granitron", Type.LITHO, 100, 10, 10, 10, 1);
-		Bugemon bugemon5 = new Bugemon("inferlin", Type.PYRO, 100, 10, 10, 10, 1);
-		Bugemon bugemon6 = new Bugemon("florachu", Type.FLORA, 100, 10, 10, 10, 1);
+		Bugemon bugemon1 = new Bugemon("pyricore", Type.PYRO, 100, 10, 10, 10);
+		Bugemon bugemon2 = new Bugemon("moussil", Type.FLORA, 100, 10, 10, 10);
+		Bugemon bugemon3 = new Bugemon("refaquix", Type.AQUA, 100, 10, 10, 10);
+		Bugemon bugemon4 = new Bugemon("granitron", Type.LITHO, 100, 10, 10, 10);
+		Bugemon bugemon5 = new Bugemon("inferlin", Type.PYRO, 100, 10, 10, 10);
+		Bugemon bugemon6 = new Bugemon("florachu", Type.FLORA, 100, 10, 10, 10);
 
 		Team team1 = new Team(List.of(bugemon1, bugemon2, bugemon3, bugemon4, bugemon5, bugemon6));
 		Team team2 = new Team(List.of(bugemon1, bugemon2, bugemon3, bugemon4, bugemon5, bugemon6));

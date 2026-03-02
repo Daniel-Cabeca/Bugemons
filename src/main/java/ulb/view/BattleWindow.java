@@ -9,7 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.GridPane;
 
-import ulb.model.Bugemon;
+import ulb.model.bugemon.Bugemon;
 import ulb.controller.BattleController;
 import ulb.model.item.Inventory;
 import ulb.model.item.Item;

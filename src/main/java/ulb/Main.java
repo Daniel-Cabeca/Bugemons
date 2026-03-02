@@ -7,6 +7,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import ulb.model.Loader;
 import ulb.model.Player;
 import ulb.view.MainMenu;
 import ulb.model.battle.BattleSnapshot;
@@ -35,6 +36,15 @@ public class Main extends Application {
 	}
 
 	public static void main(String[] args) {
+		try {
+			mainBody(args);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void mainBody(String[] args) throws Exception {
+		Loader.load();
 		launch(args);
 	}
 }

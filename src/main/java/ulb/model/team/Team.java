@@ -3,7 +3,7 @@ package ulb.model.team;
 import java.util.ArrayList;
 import java.util.List;
 
-import ulb.model.Bugemon;
+import ulb.model.bugemon.Bugemon;
 
 public class Team {
     public static final int MAX_PARTY_SIZE = 6;

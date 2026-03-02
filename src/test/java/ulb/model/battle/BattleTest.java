@@ -5,7 +5,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import ulb.model.Bugemon;
+import ulb.model.bugemon.Bugemon;
 import ulb.model.team.Team;
 import ulb.model.type.Type;
 import java.util.List;
@@ -13,8 +13,8 @@ import java.util.List;
 public class BattleTest {
 	@Test
 	public void checkInitiaveReturnsAWhenAHasHigherInitiative() {
-		Bugemon fast = new Bugemon("fast", Type.PYRO, 100, 10, 10, 20, 1);
-		Bugemon slow = new Bugemon("slow", Type.AQUA, 100, 10, 10, 5, 1);
+		Bugemon fast = new Bugemon("fast", Type.PYRO, 100, 10, 10, 20);
+		Bugemon slow = new Bugemon("slow", Type.AQUA, 100, 10, 10, 5);
 
 		Team teamA = new Team(List.of(fast));
 		Team teamB = new Team(List.of(slow));
@@ -26,8 +26,8 @@ public class BattleTest {
 
 	@Test
 	public void checkInitiaveReturnsBWhenBHasHigherInitiative() {
-		Bugemon slow = new Bugemon("slow", Type.PYRO, 100, 10, 10, 5, 1);
-		Bugemon fast = new Bugemon("fast", Type.AQUA, 100, 10, 10, 20, 1);
+		Bugemon slow = new Bugemon("slow", Type.PYRO, 100, 10, 10, 5);
+		Bugemon fast = new Bugemon("fast", Type.AQUA, 100, 10, 10, 20);
 
 		Team teamA = new Team(List.of(slow));
 		Team teamB = new Team(List.of(fast));
@@ -39,8 +39,8 @@ public class BattleTest {
 
 	@Test
 	public void checkInitiaveIsRandomWhenInitiativeEqual() {
-		Bugemon sameA = new Bugemon("sameA", Type.PYRO, 100, 10, 10, 10, 1);
-		Bugemon sameB = new Bugemon("sameB", Type.AQUA, 100, 10, 10, 10, 1);
+		Bugemon sameA = new Bugemon("sameA", Type.PYRO, 100, 10, 10, 10);
+		Bugemon sameB = new Bugemon("sameB", Type.AQUA, 100, 10, 10, 10);
 
 		Team teamA = new Team(List.of(sameA));
 		Team teamB = new Team(List.of(sameB));

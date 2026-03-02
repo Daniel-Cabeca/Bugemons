@@ -1,7 +1,7 @@
 package ulb.model.battle;
 
 import ulb.model.team.Team;
-import ulb.model.Bugemon;
+import ulb.model.bugemon.Bugemon;
 
 import java.util.Random;
 

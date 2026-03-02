@@ -1,4 +1,4 @@
-package ulb.model;
+package ulb.model.bugemon;
 
 
 public class Stats {
@@ -33,6 +33,26 @@ public class Stats {
 		this.attack = (this.attack <= Math.abs(delta.attack) && delta.attack < 0)? 0: this.attack + delta.attack;
 		this.defense = (this.defense <= Math.abs(delta.defense) && delta.defense < 0)? 0: this.defense + delta.defense;
 		this.initiative = (this.initiative <= Math.abs(delta.initiative) && delta.initiative < 0)? 0: this.initiative + delta.initiative;
+	}
+
+	/**
+	 * Raises all the stats to a given minimum.
+	 *
+	 * @param min The minimum stats
+	 */
+	public void setMin(Stats min) {
+		if (this.hp < min.hp) {
+			this.hp = min.hp;
+		}
+		if (this.attack < min.attack) {
+			this.attack = min.attack;
+		}
+		if (this.defense < min.defense) {
+			this.defense = min.defense;
+		}
+		if (this.initiative < min.initiative) {
+			this.initiative = min.initiative;
+		}
 	}
 
 	public int getHp() { return hp; }

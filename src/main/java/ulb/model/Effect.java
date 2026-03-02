@@ -2,6 +2,9 @@ package ulb.model;
 
 import java.util.Map;
 
+import ulb.model.bugemon.Bugemon;
+import ulb.model.bugemon.Stats;
+
 public class Effect {
 	private final String type;
 	private final String target;
@@ -65,7 +68,7 @@ public class Effect {
 	public int apply(Bugemon target) {
 		switch (this.type) {
 			case "soin":
-				target.changeFightStats(new Stats(this.value, 0, 0, 0));
+				target.increaseFightStats(new Stats(this.value, 0, 0, 0));
 				break;
 			case "stat_modifier":
 				Stats statsChange = new Stats();
@@ -84,10 +87,10 @@ public class Effect {
 						break;
 				}
 				if (this.duration.equals("permanent")) {
-					target.changeFightStats(statsChange);
+					target.increaseFightStats(statsChange);
 				} else {
 					// TODO: battle rounds and revert after one round
-					target.changeFightStats(statsChange);
+					target.increaseFightStats(statsChange);
 				}
 				break;
 			case "stat_modifier_multiple":
@@ -109,14 +112,14 @@ public class Effect {
 					}
 				}
 				if (this.duration.equals("permanent")) {
-					target.changeFightStats(multipleStatsChange);
+					target.increaseFightStats(multipleStatsChange);
 				} else {
 					// TODO: battle rounds and revert after one round
-					target.changeFightStats(multipleStatsChange);
+					target.increaseFightStats(multipleStatsChange);
 				}
 				break;
 			case "reset_malus":
-				target.resetFightStats();
+				target.removeStatsDebuffs();
 				break;
 			case "switch":
 				break;

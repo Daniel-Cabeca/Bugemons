@@ -6,51 +6,40 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
-import ulb.model.Bugemon;
-import ulb.model.parser.BugemonParser;
+import ulb.model.bugemon.BugemonSpecies;
+import ulb.model.bugemon.BugemonDatabase;
 
 public class OpponentTeamGenerator {
 
-    public static Team generateRandomOpponentTeam(Team playerTeam) throws Exception {
-        if (playerTeam == null) {
-            throw new IllegalArgumentException("Player team cannot be null.");
-        }
+	public static Team generateRandomOpponentTeam(Team playerTeam) throws Exception {
+		if (playerTeam == null) {
+			throw new IllegalArgumentException("Player team cannot be null.");
+		}
 
-        if (!playerTeam.isValid()) {
-            throw new IllegalArgumentException("Player team must be valid to generate an opponent team.");
-        }
+		if (!playerTeam.isValid()) {
+			throw new IllegalArgumentException("Player team must be valid to generate an opponent team.");
+		}
 
-        int teamSize = playerTeam.size();
-        if (teamSize <= 0) {
-            throw new IllegalArgumentException("Player team must contain at least one Bugemon.");
-        }
+		int teamSize = playerTeam.size();
+		if (teamSize <= 0) {
+			throw new IllegalArgumentException("Player team must contain at least one Bugemon.");
+		}
 
-        List<Bugemon> allBugemons = loadAllBugemons();
+		List<BugemonSpecies> candidates = new ArrayList<>();
+		for (BugemonSpecies species: BugemonDatabase.getInstance()) {
+			candidates.add(species);
+		}
 
+		Collections.shuffle(candidates);
 
+		Team opponentTeam = new Team();
+		for (int i = 0; i < teamSize; i++) {
+			BugemonSpecies selected = candidates.get(i);
 
-        List<Bugemon> candidates = new ArrayList<>(allBugemons);
-        Collections.shuffle(candidates);
+			opponentTeam.add(selected.spawn());
+		}
 
-        Team opponentTeam = new Team();
-        for (int i = 0; i < teamSize; i++) {
-            Bugemon selected = candidates.get(i);
-			
-            opponentTeam.add(selected);
-        }
-
-        return opponentTeam;
-    }
-
-    private static List<Bugemon> loadAllBugemons() throws Exception {
-        URL resourceUrl = BugemonParser.class.getResource("/json/bugemons.json");
-        if (resourceUrl == null) {
-            throw new IllegalStateException("Bugemons resource file not found.");
-        }
-
-        String path = resourceUrl.getPath();
-        Vector<Bugemon> bugemons = BugemonParser.loadBugemons(path);
-        return new ArrayList<>(bugemons);
-    }
+		return opponentTeam;
+	}
 }
 

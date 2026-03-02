@@ -1,4 +1,4 @@
-package ulb.model;
+package ulb.model.bugemon;
 
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
@@ -7,7 +7,6 @@ import java.util.Vector;
 import java.util.List;
 
 import ulb.model.type.Type;
-import ulb.model.Stats;
 
 public class BugemonTest {
 
@@ -20,36 +19,36 @@ public class BugemonTest {
 
 	@Test
 	public void xpBelowLevel() {
-		Bugemon B = new Bugemon("A", Type.AQUA, 10, 29, 35, 16, 1);
-		int levelGained = B.gainXP(49);
+		Bugemon B = new Bugemon(Type.AQUA, 10, 29, 35, 16);
+		int levelGained = B.gainXp(49);
 		assertEquals(1, B.getLevel());
-		assertEquals(49, B.getXP());
+		assertEquals(49, B.getXp());
 		assertEquals(0, levelGained);
 	}
 
 	@Test
-	public void xpAbouveLevel() {
-		Bugemon B = new Bugemon("A", Type.AQUA, 10, 29, 35, 16, 1);
-		int levelGained = B.gainXP(51);
+	public void xpAboveLevel() {
+		Bugemon B = new Bugemon(Type.AQUA, 10, 29, 35, 16);
+		int levelGained = B.gainXp(51);
 		assertEquals(2, B.getLevel());
-		assertEquals(1, B.getXP());
+		assertEquals(1, B.getXp());
 		assertEquals(1, levelGained);
 	}
 
 	@Test
 	public void xpAboveMultipleLevels() {
-		Bugemon B = new Bugemon("A", Type.AQUA, 10, 29, 35, 16, 1);
-		int levelGained = B.gainXP(300);
+		Bugemon B = new Bugemon(Type.AQUA, 10, 29, 35, 16);
+		int levelGained = B.gainXp(300);
 		assertEquals(4, B.getLevel());
-		assertEquals(0, B.getXP());
+		assertEquals(0, B.getXp());
 		assertEquals(3, levelGained);
 	}
 
 	@Test
 	public void rewardSingleLevelGained(){
 		Stats s = new Stats(10,29, 35, 16);
-		Bugemon B = new Bugemon("A", Type.AQUA, s.hp, s.attack, s.defense, s.initiative, 1);
-		int levelGained = B.gainXP(51);
+		Bugemon B = new Bugemon(Type.AQUA, s.hp, s.attack, s.defense, s.initiative);
+		int levelGained = B.gainXp(51);
 		B.gainLevelsReward(levelGained);
 		assertEquals(10, this.getGainedPoint(s, B.getBaseStats()));
 	}
@@ -57,8 +56,8 @@ public class BugemonTest {
 	@Test
 	public void rewardMultiLevelGained(){
 		Stats s = new Stats(10,29, 35, 16);
-		Bugemon B = new Bugemon("A", Type.AQUA, s.hp, s.attack, s.defense, s.initiative, 1);
-		int levelGained = B.gainXP(300);
+		Bugemon B = new Bugemon(Type.AQUA, s.hp, s.attack, s.defense, s.initiative);
+		int levelGained = B.gainXp(300);
 		B.gainLevelsReward(levelGained);
 		assertEquals(30, this.getGainedPoint(s, B.getBaseStats()));
 	}
@@ -66,16 +65,16 @@ public class BugemonTest {
 	@Test
 	public void testResetsFightStats(){
 		Stats s = new Stats(-10,-9, -5, -6); // debuff stats
-		Bugemon B = new Bugemon("A", Type.AQUA, 100, 20, 10, 10, 1);
+		Bugemon B = new Bugemon(Type.AQUA, 100, 20, 10, 10);
 
-		B.changeFightStats(s);
+		B.increaseFightStats(s);
 
 		assertEquals(90, B.getFightStats().hp);
 		assertEquals(11, B.getFightStats().attack);
 		assertEquals(5, B.getFightStats().defense);
 		assertEquals(4, B.getFightStats().initiative);
 
-		B.resetFightStats();
+		B.removeStatsDebuffs();
 
 		assertEquals(B.getBaseStats().hp, B.getFightStats().hp);
 		assertEquals(B.getBaseStats().attack, B.getFightStats().attack);

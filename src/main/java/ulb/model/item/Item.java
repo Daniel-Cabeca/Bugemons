@@ -1,7 +1,7 @@
 package ulb.model.item;
 
 import ulb.model.Effect;
-import ulb.model.Bugemon;
+import ulb.model.bugemon.Bugemon;
 
 public class Item {
 	private String id;

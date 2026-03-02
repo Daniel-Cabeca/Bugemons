@@ -64,4 +64,23 @@ public class Stats {
 	public void setAttack(int attack) { this.attack = attack; }
 	public void setDefense(int defense) { this.defense = defense; }
 	public void setInitiative(int initiative) { this.initiative = initiative; }
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+
+		if (!(o instanceof Stats)) {
+			return false;
+		}
+
+		Stats b = (Stats) o;
+
+		if (this.hp != b.hp || this.attack != b.attack || this.defense != b.defense || this.initiative != b.initiative) {
+			return false;
+		}
+
+		return true;
+	}
 }

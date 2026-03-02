@@ -3,65 +3,56 @@ package ulb.model.sample;
 import ulb.model.ability.Ability;
 import ulb.model.type.Type;
 
-//TODO effects
-
+/**
+ * Hard-coded abilities for testing purposes.
+ */
 public abstract class AbilitySample {
-	public static Ability getFouetLiane() {
+	public static Ability getA() {
 		return new Ability(
-			"fouet_liane",
-			"Fouet-Liane",
+			"a",
+			"A",
 			Type.FLORA,
-			"Inflige des dégâts et réduit légèrement la défense adverse.",
+			"Inflige des dégâts.",
 			40
 		);
 	}
 
-	public static Ability getPollenSournois() {
+	public static Ability getB() {
 		return new Ability(
-			"pollen_sournois",
-			"Pollen Sournois",
+			"b",
+			"B",
 			Type.FLORA,
-			"Inflige des dégâts et réduit l'initiative adverse au prochain tour.",
-			35
+			"Inflige des dégâts.",
+			40
 		);
 	}
 
-	public static Ability getRacinesVives() {
+	public static Ability getC() {
 		return new Ability(
-			"racines_vives",
-			"Racines Vives",
+			"c",
+			"C",
 			Type.FLORA,
-			"Inflige des dégâts et augmente légèrement la défense du lanceur.",
-			35
+			"Inflige des dégâts.",
+			40
 		);
 	}
 
-	public static Ability getExplosionArdente() {
+	public static Ability getD() {
 		return new Ability(
-			"explosion_ardente",
-			"Explosion Ardente",
-			Type.PYRO,
-			"Inflige de très gros dégâts.",
-			70
+			"d",
+			"D",
+			Type.FLORA,
+			"Inflige des dégâts.",
+			40
 		);
 	}
 
-	public static Ability getFlammesFolles() {
+	public static Ability getE() {
 		return new Ability(
-			"flammes_folles",
-			"Flammes Folles",
-			Type.PYRO,
-			"Inflige des dégâts et réduit la défense adverse.",
-			45
-		);
-	}
-
-	public static Ability getChocBrulant() {
-		return new Ability(
-			"choc_brulant",
-			"Choc Brûlant",
-			Type.PYRO,
-			"Inflige des dégâts et augmente légèrement l'attaque du lanceur.",
+			"e",
+			"E",
+			Type.FLORA,
+			"Inflige des dégâts.",
 			40
 		);
 	}

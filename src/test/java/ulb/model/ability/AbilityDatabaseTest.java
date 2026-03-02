@@ -30,7 +30,7 @@ public class AbilityDatabaseTest {
 	@Test
 	public void testAddThrow() {
 		AbilityDatabase database = newDatabase();
-		Ability a = AbilitySample.getFouetLiane();
+		Ability a = AbilitySample.getA();
 
 		database.add(a);
 		assertThrows(IllegalArgumentException.class, () -> { database.add(a); });
@@ -39,7 +39,7 @@ public class AbilityDatabaseTest {
 	@Test
 	public void testGetThrow() {
 		AbilityDatabase database = newDatabase();
-		Ability a = AbilitySample.getFouetLiane();
+		Ability a = AbilitySample.getA();
 
 		assertThrows(NoSuchElementException.class, () -> { database.get(a.getId()); });
 	}
@@ -47,7 +47,7 @@ public class AbilityDatabaseTest {
 	@Test
 	public void testAddGet() {
 		AbilityDatabase database = newDatabase();
-		Ability a = AbilitySample.getFouetLiane();
+		Ability a = AbilitySample.getA();
 
 		database.add(a);
 		assertEquals(a, database.get(a.getId()));
@@ -56,7 +56,7 @@ public class AbilityDatabaseTest {
 	@Test
 	public void testExistsTrue() {
 		AbilityDatabase database = newDatabase();
-		Ability a = AbilitySample.getFouetLiane();
+		Ability a = AbilitySample.getA();
 
 		database.add(a);
 		assertTrue(database.exists(a.getId()));
@@ -65,7 +65,7 @@ public class AbilityDatabaseTest {
 	@Test
 	public void testExistsFalse() {
 		AbilityDatabase database = newDatabase();
-		Ability a = AbilitySample.getFouetLiane();
+		Ability a = AbilitySample.getA();
 
 		assertFalse(database.exists(a.getId()));
 	}

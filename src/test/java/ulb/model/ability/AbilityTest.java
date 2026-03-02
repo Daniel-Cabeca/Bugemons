@@ -9,28 +9,34 @@ import ulb.model.sample.AbilitySample;
 public class AbilityTest {
 	@Test
 	public void verifyEqualsDifferent() {
-		Ability a = AbilitySample.getFouetLiane();
-		Ability b = AbilitySample.getPollenSournois();
+		Ability a = AbilitySample.getA();
+		Ability b = AbilitySample.getB();
 		assertFalse(a.equals(b));
 	}
 
 	@Test
+	public void verifyEqualsObject() {
+		Ability a = AbilitySample.getA();
+		assertFalse(a.equals(3));
+	}
+
+	@Test
 	public void verifyEqualsSameInstance() {
-		Ability a = AbilitySample.getFouetLiane();
+		Ability a = AbilitySample.getA();
 		assertTrue(a.equals(a));
 	}
 
 	@Test
 	public void verifyEqualsNotAbility() {
-		Ability a = AbilitySample.getFouetLiane();
+		Ability a = AbilitySample.getB();
 		String b = new String("fouet_liane");
 		assertFalse(a.equals(b));
 	}
 
 	@Test
-	public void verifyEqualsSame() {
-		Ability a = AbilitySample.getFouetLiane();
-		Ability b = AbilitySample.getFouetLiane();
+	public void verifyEqualsTrue() {
+		Ability a = AbilitySample.getA();
+		Ability b = AbilitySample.getA();
 		assertTrue(a.equals(b));
 	}
 }

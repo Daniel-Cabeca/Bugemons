@@ -2,12 +2,11 @@ package ulb.model.sample;
 
 import ulb.model.bugemon.Stats;
 
+/**
+ * Hard-coded stats for testing purposes.
+ */
 public abstract class StatsSample {
-	public static Stats getFlorachu() {
-		return new Stats(90, 55, 40, 50);
-	}
-
-	public static Stats getExceflam() {
-		return new Stats(85, 65, 40, 60);
+	public static Stats getA() {
+		return new Stats(100, 10, 10, 10);
 	}
 }

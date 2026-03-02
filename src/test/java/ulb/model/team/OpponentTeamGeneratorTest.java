@@ -6,15 +6,16 @@ import org.junit.BeforeClass;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import ulb.model.Loader;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.type.Type;
+
+import ulb.model.sample.SamplesLoader;
 
 public class OpponentTeamGeneratorTest {
 
 	@BeforeClass
 	public static void load() throws Exception {
-		Loader.load();
+		SamplesLoader.load();
 	}
 
 	private Bugemon makeBugemon() {

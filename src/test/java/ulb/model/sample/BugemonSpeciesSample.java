@@ -5,27 +5,78 @@ import ulb.model.bugemon.Stats;
 import ulb.model.type.Type;
 import ulb.model.ability.AbilitySet;
 
+/**
+ * Hard-coded Bugemon species for testing purposes.
+ */
 public abstract class BugemonSpeciesSample {
-	public static BugemonSpecies getFlorachu() {
+	public static BugemonSpecies getA() {
 		return new BugemonSpecies(
-			"florachu",
-			"Florachu",
+			"a",
+			"A",
 			Type.FLORA,
-			StatsSample.getFlorachu(),
-			AbilitySetSample.getFlorachu(),
+			StatsSample.getA(),
+			AbilitySetSample.getABC(),
 			"florachu.png",
 			true
 		);
 	}
 
-	public static BugemonSpecies getExceflam() {
+	public static BugemonSpecies getB() {
 		return new BugemonSpecies(
-			"exceflam",
-			"Exceflam",
-			Type.PYRO,
-			StatsSample.getExceflam(),
-			AbilitySetSample.getExceflam(),
-			"exceflam.png",
+			"b",
+			"B",
+			Type.FLORA,
+			StatsSample.getA(),
+			AbilitySetSample.getABC(),
+			"florachu.png",
+			true
+		);
+	}
+
+	public static BugemonSpecies getC() {
+		return new BugemonSpecies(
+			"c",
+			"C",
+			Type.FLORA,
+			StatsSample.getA(),
+			AbilitySetSample.getABC(),
+			"florachu.png",
+			true
+		);
+	}
+
+	public static BugemonSpecies getD() {
+		return new BugemonSpecies(
+			"d",
+			"D",
+			Type.FLORA,
+			StatsSample.getA(),
+			AbilitySetSample.getABC(),
+			"florachu.png",
+			true
+		);
+	}
+
+	public static BugemonSpecies getE() {
+		return new BugemonSpecies(
+			"e",
+			"E",
+			Type.FLORA,
+			StatsSample.getA(),
+			AbilitySetSample.getABC(),
+			"florachu.png",
+			true
+		);
+	}
+
+	public static BugemonSpecies getF() {
+		return new BugemonSpecies(
+			"f",
+			"F",
+			Type.FLORA,
+			StatsSample.getA(),
+			AbilitySetSample.getABC(),
+			"florachu.png",
 			true
 		);
 	}

@@ -19,7 +19,7 @@ import java.util.List;
 
 import ulb.model.Player;
 import ulb.model.Bugemon;
-import ulb.model.BugemonParser;
+import ulb.model.parser.BugemonParser;
 import java.util.Vector;
 
 public class CreateTeamMenu {

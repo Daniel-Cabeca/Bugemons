@@ -1,88 +1,67 @@
 package ulb.model.type;
 
-/**
- * Contains the methods related to the effectiveness of moves based on their type and the type of their target.
- */
-public class Effectiveness {
-	public enum Value {
+public abstract class Effectiveness {
+	public enum Category {
 		HIGH,
 		NORMAL,
 		LOW,
 	}
 
-	private Value value;
-
 	/**
-	 * Creates a new Effectiveness instance with a given value.
-	 *
-	 * @param value The effectiveness value
-	 */
-	public Effectiveness(Value value) {
-		this.value = value;
-	}
-
-	/**
-	 * Creates a new Effectiveness instance corresponding to the type of a move and the type of the target Bugemon.
+	 * Gives the effectiveness category corresponding to the type of a move and the type of the target Bugemon.
 	 *
 	 * @param move The type of the move
 	 * @param target The type of the target Bugemon
+	 * @return The effectiveness category
 	 */
-	public Effectiveness(Type move, Type target) {
+	public static Category getCategory(Type move, Type target) {
 		switch (move) {
 			case FLORA:
 				if (target == Type.AQUA) {
-					this.value = Value.HIGH;
+					return Category.HIGH;
 				} else if (target == Type.LITHO) {
-					this.value = Value.LOW;
-				} else {
-					this.value = Value.NORMAL;
+					return Category.LOW;
 				}
 				break;
 			case AQUA:
 				if (target  == Type.PYRO) {
-					this.value = Value.HIGH;
+					return Category.HIGH;
 				}
 				else if (target == Type.FLORA) {
-					this.value = Value.LOW;
-				}
-				else {
-					this.value = Value.NORMAL;
+					return Category.LOW;
 				}
 				break;
 			case PYRO:
 				if (target  == Type.LITHO) {
-					this.value = Value.HIGH;
+					return Category.HIGH;
 				}
 				else if (target == Type.AQUA) {
-					this.value = Value.LOW;
-				}
-				else {
-					this.value = Value.NORMAL;
+					return Category.LOW;
 				}
 				break;
 			case LITHO:
 				if (target  == Type.FLORA) {
-					this.value = Value.HIGH;
+					return Category.HIGH;
 				}
 				else if (target == Type.PYRO) {
-					this.value = Value.LOW;
-				}
-				else {
-					this.value = Value.NORMAL;
+					return Category.LOW;
 				}
 				break;
 			default:
 				break;
 		}
+
+		return Category.NORMAL;
 	}
 
 	/**
-	 * Gives the multiplicative factor for damage calculations.
+	 * Gives the multiplicative factor for damage calculations corresponding to the given effectiveness category.
 	 *
+	 * @param category The effectiveness category
 	 * @return The multiplicative factor
 	 */
-	public float getFactor() {
-		switch(this.getValue()) {
+	public static float getFactor(Category category) {
+		switch(category) {
 			case HIGH:
 				return 1.5f;
 
@@ -94,5 +73,15 @@ public class Effectiveness {
 		}
 	}
 
-	public Value getValue() { return this.value; }
+	/**
+	 * Gives the multiplicative corresponding to the type of a move and the type of the target Bugemon.
+	 *
+	 * @param move The type of the move
+	 * @param target The type of the target Bugemon
+	 * @return The multiplicative factor
+	 */
+	public static float getFactor(Type move, Type target) {
+		Category category = getCategory(move, target);
+		return getFactor(category);
+	}
 }

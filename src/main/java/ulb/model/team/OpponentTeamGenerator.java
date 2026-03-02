@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Vector;
 
 import ulb.model.Bugemon;
-import ulb.model.BugemonParser;
+import ulb.model.parser.BugemonParser;
 
 public class OpponentTeamGenerator {
 

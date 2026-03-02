@@ -118,14 +118,14 @@ public class BattleSnapshot {
 
 		float damage = attackFactor * defenseFactor * abilityPower;
 
-		Effectiveness typeFactor = new Effectiveness(offensive.getType(), defensive.getType());
+		float typeFactor = Effectiveness.getFactor(offensive.getType(), defensive.getType());
 
 		float criticalHitFactor = 1f;
 		if (Math.random() <= 0.1){
 			criticalHitFactor = 1.5f;
 		}
 
-		return Math.round(damage * typeFactor.getFactor() * criticalHitFactor);
+		return Math.round(damage * typeFactor * criticalHitFactor);
 	}
 
 	/**

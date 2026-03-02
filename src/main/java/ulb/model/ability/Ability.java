@@ -26,8 +26,8 @@ public class Ability {
 
 	public String getId() { return this.id; }
 	public String getName() { return this.name; }
-	public Type type() { return this.type; }
-	public String description() { return this.description; }
+	public Type getType() { return this.type; }
+	public String getDescription() { return this.description; }
 	public int getPower() { return this.power; }
 	//TODO effects
 

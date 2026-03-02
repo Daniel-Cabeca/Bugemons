@@ -146,7 +146,7 @@ public class BattleSnapshot {
 
 		int abilityDamage = computeDamage(offensive, defensive, ability.getPower());
 		Stats damage = new Stats(-abilityDamage, 0, 0, 0);
-		defensive.increaseFightStats(damage);
+		defensive.addFightStats(damage);
 
 		if (this.battle.isTeamAKO() || this.battle.isTeamBKO()){ // cas ou une équipe gagne si l'autre est KO
 			this.state = BattleState.WON;

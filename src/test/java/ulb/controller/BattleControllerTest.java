@@ -186,7 +186,7 @@ public class BattleControllerTest {
 		BattleController battleController = new BattleController(player);
 
 		Bugemon bugemon = new Bugemon(Type.PYRO, 100, 10, 10, 10);
-		bugemon.increaseFightStats(new Stats(-20, -5, -5, -5)); // Apply a malus to the bugemon
+		bugemon.addFightStats(new Stats(-20, -5, -5, -5)); // Apply a malus to the bugemon
 		Team teamA = new Team(List.of(bugemon));
 		Team teamB = new Team(List.of(new Bugemon(Type.FLORA, 100, 10, 10, 10)));
 		Battle battle = new Battle(teamA, teamB);

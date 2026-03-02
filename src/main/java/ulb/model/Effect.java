@@ -68,7 +68,7 @@ public class Effect {
 	public int apply(Bugemon target) {
 		switch (this.type) {
 			case "soin":
-				target.increaseFightStats(new Stats(this.value, 0, 0, 0));
+				target.addFightStats(new Stats(this.value, 0, 0, 0));
 				break;
 			case "stat_modifier":
 				Stats statsChange = new Stats();
@@ -87,10 +87,10 @@ public class Effect {
 						break;
 				}
 				if (this.duration.equals("permanent")) {
-					target.increaseFightStats(statsChange);
+					target.addFightStats(statsChange);
 				} else {
 					// TODO: battle rounds and revert after one round
-					target.increaseFightStats(statsChange);
+					target.addFightStats(statsChange);
 				}
 				break;
 			case "stat_modifier_multiple":
@@ -112,10 +112,10 @@ public class Effect {
 					}
 				}
 				if (this.duration.equals("permanent")) {
-					target.increaseFightStats(multipleStatsChange);
+					target.addFightStats(multipleStatsChange);
 				} else {
 					// TODO: battle rounds and revert after one round
-					target.increaseFightStats(multipleStatsChange);
+					target.addFightStats(multipleStatsChange);
 				}
 				break;
 			case "reset_malus":

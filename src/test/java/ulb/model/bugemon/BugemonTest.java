@@ -67,7 +67,7 @@ public class BugemonTest {
 		Stats s = new Stats(-10,-9, -5, -6); // debuff stats
 		Bugemon B = new Bugemon(Type.AQUA, 100, 20, 10, 10);
 
-		B.increaseFightStats(s);
+		B.addFightStats(s);
 
 		assertEquals(90, B.getFightStats().hp);
 		assertEquals(11, B.getFightStats().attack);

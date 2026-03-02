@@ -27,7 +27,7 @@ public class BattleSnapshot {
 	public BattleSnapshot(Battle battle, boolean isTeamA){
 		this.battle = battle;
 		this.isTeamA = isTeamA;
-		this.state = BattleState.INGAME
+		this.state = BattleState.INGAME;
 	}
 
 	public Battle getBattle() {return this.battle;}
@@ -110,7 +110,7 @@ public class BattleSnapshot {
 	 * @param ability Ability from attacker used against defender
 	 * @return the computed damage based on the formula
 	 */
-	private int computeDamage(Bugemon offensive, Bugemon defensive, int ability) {
+	private int computeDamage(Bugemon offensive, Bugemon defensive, Ability ability) {
 		float attackValue = offensive.getFightStats().attack;
 		float defenseValue = defensive.getFightStats().defense;
 
@@ -150,10 +150,10 @@ public class BattleSnapshot {
 		Stats damage = new Stats(-abilityDamage, 0, 0, 0);
 		defensive.addFightStats(damage);
 
-		if (this.battle.isTeamAKO() || this.battle.isTeamBKO()){ // cas ou une équipe gagne si l'autre est KO
+		if (this.battle.isTeamAKO() || this.battle.isTeamBKO()){ // case where the team of this instance wins if the opposing team is KO
 			this.state = BattleState.WON;
 		}
-		else{	// tout autre cas l'état passe en attente, si le buggemon adverse est KO ou si c'est simplement le tour à l'opposant
+		else{	// Any other case, if opposing bugemon is KO
 			this.state = BattleState.WAITING;
 		}
 

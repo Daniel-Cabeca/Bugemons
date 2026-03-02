@@ -145,12 +145,13 @@ public class BattleSnapshotTest {
 
 		BattleSnapshot snapshot = new BattleSnapshot(new Battle(team1, team2, bugemon4, bugemon1), true);
 
-		Ability abilityTest = new Ability("1", "a", Type.PYRO, "lance une boule d'eau", 10);
+		Ability abilityTest = new Ability("1", "a", Type.LITHO, "lance une boule d'eau", 10);
 		snapshot.useAbility(abilityTest);
 
 		Bugemon damagedBugemon = snapshot.getBattle().getActiveBugemonB();
 
-		assertTrue(damagedBugemon.getFightStats().hp == 92 || damagedBugemon.getFightStats().hp == 88);
+
+		assertTrue(damagedBugemon.getFightStats().hp == 92 || damagedBugemon.getFightStats().hp == 89);
 	}
 
 	@Test

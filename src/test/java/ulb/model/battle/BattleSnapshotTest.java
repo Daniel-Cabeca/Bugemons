@@ -7,6 +7,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import ulb.model.bugemon.Bugemon;
+import ulb.controller.action.UseAbility;
 import ulb.model.ability.Ability;
 import ulb.model.team.Team;
 import ulb.model.type.Type;
@@ -158,7 +159,7 @@ public class BattleSnapshotTest {
 	public void availableActionsDoesNotFailAfterConstruction() {
 		Battle battle = getBattleA();
 		BattleSnapshot snapshot = new BattleSnapshot(battle, true);
-		assertTrue(snapshot.getAvailableActions().contains(ulb.utils.ActionEnum.ATTACK));
+		assertEquals(4, snapshot.getAvailableActions().size());
 	}
 
 	@Test

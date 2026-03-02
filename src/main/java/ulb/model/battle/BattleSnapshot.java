@@ -5,8 +5,7 @@ import ulb.model.team.Team;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.Stats;
 import ulb.model.type.Effectiveness;
-import ulb.model.type.Type;
-import ulb.utils.ActionEnum;
+import ulb.controller.action.*;
 import java.util.Vector;
 
 
@@ -148,46 +147,34 @@ public class BattleSnapshot {
 		Stats damage = new Stats(-abilityDamage, 0, 0, 0);
 		defensive.addFightStats(damage);
 
-
-
 	}
 
-	public void useAction(ActionEnum action) {
-		switch (action) {
-			case ATTACK:
-				useAbility(new Ability("1", "WaTeRPoUf", Type.AQUA, "Pouf d'eau giga mega stylé...", 10)); // exemple rando d'ability
-				// prblm de spécification d'ability, résolution à venir avec nouvelle représentation d'ActionEnum
-				break;
+	public void useAction(Action action) {
 
-			case SWAP:
-				// appel fonction pour action SWAP
-				break;
-
-			case RUN:
-				// appel fonction pour action RUN (abandon de la partie)
-				break;
-
-			case USEITEM:
-				// appel fonction pour action USEITEM
-				break;
-
-			default:
-				break;
+		if (action instanceof UseAbility) {
+			// useAbility(new Ability("1", "WaTeRPoUf", Type.AQUA, "Pouf d'eau giga mega stylé...", 10)); // exemple rando d'ability
+		} else if (action instanceof Swap) {
+			// appel fonction pour action SWAP
+		} else if (action instanceof Run) {
+			// appel fonction pour action RUN (abandon de la partie)
+		} else if (action instanceof UseItem) {
+			// appel fonction pour action USEITEM
 		}
 	}
 
-	public Vector<ActionEnum> getAvailableActions() {
-		Vector<ActionEnum> actions = new Vector<ActionEnum>();
+	public Vector<Action> getAvailableActions() {
+
+		Vector<Action> actions = new Vector<Action>();
 		switch (this.battle.getState(this.isTeamA)) {
 			case INGAME:
-				actions.add(ActionEnum.ATTACK);
-				actions.add(ActionEnum.RUN);
-				actions.add(ActionEnum.SWAP);
-				actions.add(ActionEnum.USEITEM);
+				actions.add(new UseAbility());
+				actions.add(new Run());
+				actions.add(new Swap());
+				actions.add(new UseItem());
 				break;
 
 			case SWAPPING:
-				actions.add(ActionEnum.SWAP);
+				actions.add(new Swap());
 				break;
 
 			case LOST:

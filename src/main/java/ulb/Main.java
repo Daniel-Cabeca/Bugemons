@@ -28,6 +28,8 @@ public class Main extends Application {
 		primaryStage.setTitle("INFO-F307 Groupe 10");
 		primaryStage.setScene(scene);
 		primaryStage.setFullScreen(true);
+	 	scene.getStylesheets().add(getClass().getResource("/styles/global.css").toExternalForm());
+
 
 		primaryStage.show();
 	}

@@ -38,6 +38,7 @@ public abstract class BugemonParser {
 	public static Bugemon fromJson(JsonNode node) throws ParseException {
 		// String id = node.get("id").asText(); //TODO add id to Bugemon class
 		String name = node.get("nom").asText();
+		String sprite = node.get("sprite").asText();
 		Type type = readJsonType(node);
 
 		JsonNode statsNode = node.get("stats");
@@ -50,7 +51,7 @@ public abstract class BugemonParser {
 
 		//TODO abilities
 
-		return new Bugemon(name, type, pv, attack, defense, initiative, level);
+		return new Bugemon(name,sprite, type, pv, attack, defense, initiative, level);
 	}
 
 	private static Type readJsonType(JsonNode node) throws ParseException {

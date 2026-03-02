@@ -26,16 +26,6 @@ public class Bugemon {
 		this.xp = 0;
 	}
 
-	public Bugemon(String name, Type type, int hp, int attack, int defense, int initiative, int level) {
-		this.name = name;
-		this.sprite = "bouldax.png";
-		this.type = type;
-		this.baseStats = new Stats(hp, attack, defense, initiative);
-		this.fightStats = new Stats(hp, attack, defense, initiative);
-		this.level = level;
-		this.xp = 0;
-	}
-
 	public void increaseBaseStats(Stats delta) {
 		this.baseStats.add(delta);
 	}

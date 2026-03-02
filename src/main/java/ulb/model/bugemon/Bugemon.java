@@ -1,5 +1,7 @@
 package ulb.model.bugemon;
 
+import java.util.NoSuchElementException;
+
 import ulb.model.type.Type;
 import ulb.model.ability.AbilitySet;
 
@@ -16,6 +18,16 @@ public class Bugemon {
 		this.fightStats = new Stats(this.species.getBaseStats());
 		this.xp = 0;
 		this.level = 1;
+	}
+
+	/**
+	 * Creates a Bugemon instance with a species given by its id.
+	 * Equivalent to PokemonDatabase.getInstance().get(id).spawn();
+	 *
+	 * @param id The idea
+	 */
+	public Bugemon(String id) throws NoSuchElementException {
+		this(BugemonDatabase.getInstance().get(id));
 	}
 
 	public BugemonSpecies getSpecies() { return this.species; }

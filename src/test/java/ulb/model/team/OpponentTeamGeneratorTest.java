@@ -18,7 +18,6 @@ public class OpponentTeamGeneratorTest {
             100,
             100,
             100,
-            null,
             1
         );
     }

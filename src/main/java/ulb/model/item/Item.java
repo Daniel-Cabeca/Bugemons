@@ -1,5 +1,7 @@
-package ulb.model;
+package ulb.model.item;
 
+import ulb.model.Effect;
+import ulb.model.Bugemon;
 
 public class Item {
 	private String id;
@@ -29,5 +31,7 @@ public class Item {
 	public String getSprite() { return this.sprite; }
 
 
-	public int use(Bugemon target) { return 0;}
+	public int use(Bugemon target) {
+		return this.effect.apply(target);
+	}
 }

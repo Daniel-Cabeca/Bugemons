@@ -10,6 +10,7 @@ import java.util.List;
 import org.junit.Assert;
 
 import ulb.model.Bugemon;
+import ulb.model.Stats;
 import ulb.model.type.Type;
 
 
@@ -24,7 +25,6 @@ public class TeamTest {
             100, 
             100, 
             100, 
-            null, 
             1
         );
     }
@@ -71,4 +71,42 @@ public class TeamTest {
         assertFalse(team.add(duplicatedPokemon));
         assertEquals(1, team.size());
     }
+
+	@Test
+	public void checkTeamKO_returnsFalse_whenAtLeastOneMemberAlive() {
+		Bugemon alive = makeBugemon("Alive");
+		Bugemon ko1 = makeBugemon("KO1");
+		Bugemon ko2 = makeBugemon("KO2");
+		Bugemon ko3 = makeBugemon("KO3");
+		Bugemon ko4 = makeBugemon("KO4");
+		Bugemon ko5 = makeBugemon("KO5");
+
+		ko1.changeFightStats(new Stats(-100, 0, 0, 0));
+		ko2.changeFightStats(new Stats(-100, 0, 0, 0));
+		ko3.changeFightStats(new Stats(-100, 0, 0, 0));
+		ko4.changeFightStats(new Stats(-100, 0, 0, 0));
+		ko5.changeFightStats(new Stats(-100, 0, 0, 0));
+
+		Team team = new Team(List.of(alive, ko1, ko2, ko3, ko4, ko5));
+
+		assertFalse(team.checkTeamKO());
+	}
+
+	@Test
+	public void checkTeamKO_returnsTrue_whenAllMembersKO() {
+		Bugemon ko1 = makeBugemon("KO1");
+		Bugemon ko2 = makeBugemon("KO2");
+		Bugemon ko3 = makeBugemon("KO3");
+		Bugemon ko4 = makeBugemon("KO4");
+		Bugemon ko5 = makeBugemon("KO5");
+		Bugemon ko6 = makeBugemon("KO6");
+
+		for (Bugemon b : List.of(ko1, ko2, ko3, ko4, ko5, ko6)) {
+			b.changeFightStats(new Stats(-100, 0, 0, 0));
+		}
+
+		Team team = new Team(List.of(ko1, ko2, ko3, ko4, ko5, ko6));
+
+		assertTrue(team.checkTeamKO());
+	}
 }

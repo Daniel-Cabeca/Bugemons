@@ -7,12 +7,21 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class Main extends Application {
+import ulb.model.Player;
+import ulb.view.MainMenu;
+import ulb.model.battle.BattleSnapshot;
 
+public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/MainMenu.fxml"));
 		Parent root = loader.load();
+
+		// Create a player instance
+		Player player = new Player("Player");
+
+		MainMenu controller = loader.getController();
+		controller.setPlayer(player);
 
 		Scene scene = new Scene(root);
 

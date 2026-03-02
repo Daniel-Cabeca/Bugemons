@@ -92,4 +92,25 @@ public class Team {
         }
         return removeByName(bugemon.getName());
     }
+
+	public boolean checkTeamKO(){
+		boolean dead = true;
+		for (int i = 0 ; i < 6 ; i++){
+			if (!this.members.get(i).isKO()) {
+				dead = false;
+				return dead;
+			}
+		}
+		return dead;
+	}
+
+	/**
+	 * Gives the Bugemon at a given index.
+	 *
+	 * @param index The index of the Bugemon
+	 * @return The Bugemon at the index
+	 */
+	public Bugemon getBugemon(int index) {
+		return this.members.get(index);
+	}
 }

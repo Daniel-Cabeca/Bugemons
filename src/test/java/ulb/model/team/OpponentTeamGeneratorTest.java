@@ -1,10 +1,11 @@
 package ulb.model.team;
 
-import org.junit.Test;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeAll;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import ulb.model.bugemon.Bugemon;
 import ulb.model.type.Type;
@@ -13,7 +14,7 @@ import ulb.model.sample.SamplesLoader;
 
 public class OpponentTeamGeneratorTest {
 
-	@BeforeClass
+	@BeforeAll
 	public static void load() throws Exception {
 		SamplesLoader.load();
 	}
@@ -40,10 +41,11 @@ public class OpponentTeamGeneratorTest {
 		assertTrue(opponentTeam.isValid());
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void cannotGenerateOpponentForEmptyTeam() throws Exception {
 		Team emptyTeam = new Team();
-		OpponentTeamGenerator.generateRandomOpponentTeam(emptyTeam);
+		assertThrows(IllegalArgumentException.class,
+      () -> OpponentTeamGenerator.generateRandomOpponentTeam(emptyTeam));
 	}
 }
 

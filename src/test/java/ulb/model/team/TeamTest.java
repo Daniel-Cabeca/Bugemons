@@ -107,4 +107,13 @@ public class TeamTest {
 
 		assertTrue(team.checkTeamKO());
 	}
+
+    @Test
+    public void checkTeamKOWorksWithSmallTeams() {
+        Team team = new Team(List.of(makeBugemon("A")));
+        assertFalse(team.checkTeamKO()); // pas KO => équipe pas KO
+
+        team.getBugemon(0).changeFightStats(new Stats(-9999, 0, 0, 0));
+        assertTrue(team.checkTeamKO());  // KO => équipe KO
+    }
 }

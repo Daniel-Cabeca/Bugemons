@@ -94,14 +94,10 @@ public class Team {
     }
 
 	public boolean checkTeamKO(){
-		boolean dead = true;
-		for (int i = 0 ; i < 6 ; i++){
-			if (!this.members.get(i).isKO()) {
-				dead = false;
-				return dead;
-			}
-		}
-		return dead;
+		for (Bugemon b : this.members) {
+            if (!b.isKO()) return false;
+        }
+        return true;
 	}
 
 	/**

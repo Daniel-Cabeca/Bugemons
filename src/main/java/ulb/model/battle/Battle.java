@@ -47,9 +47,13 @@ public class Battle {
 	public void setActiveBugemonA(Bugemon bugemon) { this.activeBugemonA = bugemon; }
 	public void setActiveBugemonB(Bugemon bugemon) { this.activeBugemonB = bugemon; }
 
-	public void setState(boolean isTeamA) {
-		// TO-DO
-	}
+	public void setState(boolean isTeamA, BattleState state) {
+		if (isTeamA) {
+			this.stateA = state;
+		} else {
+			this.stateB = state;
+		}
+    }
 
 
 	public boolean isBugemonAKO() {

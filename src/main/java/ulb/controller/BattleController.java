@@ -15,7 +15,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
-
+import ulb.controller.action.UseItem;
 import ulb.model.Player;
 import ulb.model.item.Item;
 
@@ -79,26 +79,7 @@ public class BattleController {
 	 */
 	public void useItem(Item item) {
 		player.getInventory().removeItem(item);
-		Bugemon activeBugemon = battleSnapshot.getActiveBugemonSelf();
-		Bugemon opponentBugemon = battleSnapshot.getActiveBugemonOpponent();
-
-		if (item.getEffect().getTarget().equals("adversaire")) {
-			item.use(opponentBugemon);
-		} else {
-			item.use(activeBugemon);
-		}
-
-		if (item.getEffect().getType().equals("switch")) {
-			// TODO: implement ability to choose next bugemon, for now: switch to first available
-			Team playerTeam = battleSnapshot.getTeamSelf();
-			Bugemon nextBugemon = playerTeam.getMembers().stream()
-					.filter(b -> !b.isKO() && b != activeBugemon)
-					.findFirst()
-					.orElse(null);
-			if (nextBugemon != null) {
-				battleSnapshot.setActiveBugemonSelf(nextBugemon);
-			}
-		}
+		battleSnapshot.useAction(new UseItem(item));
 	}
 
 

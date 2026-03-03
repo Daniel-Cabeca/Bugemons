@@ -4,6 +4,7 @@ import ulb.model.ability.Ability;
 import ulb.model.team.Team;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.Stats;
+import ulb.model.item.Item;
 import ulb.model.type.Effectiveness;
 import ulb.controller.action.*;
 import java.util.Vector;
@@ -150,15 +151,33 @@ public class BattleSnapshot {
 	}
 
 	public void useAction(Action action) {
-
 		if (action instanceof UseAbility) {
-			// useAbility(new Ability("1", "WaTeRPoUf", Type.AQUA, "Pouf d'eau giga mega stylé...", 10)); // exemple rando d'ability
+
+			UseAbility useAbilityAction = (UseAbility) action;
+			Ability ability = useAbilityAction.getAbility();
+			useAbility(ability);
+
 		} else if (action instanceof Swap) {
-			// appel fonction pour action SWAP
+
+			Swap swapAction = (Swap) action;
+			Bugemon bugemon = swapAction.getToSwap();
+			setActiveBugemonSelf(bugemon);
+
 		} else if (action instanceof Run) {
-			// appel fonction pour action RUN (abandon de la partie)
+
+			this.battle.setState(this.isTeamA, BattleState.LOST);
+			
 		} else if (action instanceof UseItem) {
-			// appel fonction pour action USEITEM
+
+			UseItem useItemAction = (UseItem) action;
+			Item item = useItemAction.getItem();
+			if (item.getEffect().getTarget().equals("adversaire")) {
+				item.use(getActiveBugemonOpponent());
+			} else {
+				item.use(getActiveBugemonSelf());
+			}
+
+			// implémenter "switch" plus tard
 		}
 	}
 

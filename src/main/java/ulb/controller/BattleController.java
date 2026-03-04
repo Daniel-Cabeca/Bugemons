@@ -10,6 +10,7 @@ import ulb.model.battle.BattleSnapshot;
 import ulb.model.team.Team;
 import ulb.model.bugemon.Bugemon;
 import ulb.view.BattleWindow;
+import ulb.view.BattleMenu;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;

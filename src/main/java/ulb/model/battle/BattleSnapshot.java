@@ -6,6 +6,7 @@ import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.Stats;
 import ulb.model.type.Effectiveness;
 import ulb.controller.action.*;
+import ulb.model.item.Item;
 import java.util.Vector;
 
 
@@ -15,6 +16,7 @@ import java.util.Vector;
 public class BattleSnapshot {
 	private Battle battle;
 	private boolean isTeamA;
+	private boolean hasTourEnded;
 
 	/**
 	 * Creates a battle snapshot as the point of view of either team A or team B.
@@ -28,6 +30,14 @@ public class BattleSnapshot {
 	}
 
 	public Battle getBattle() {return this.battle;}
+
+
+	/**
+	 * States if the tour of the player has ended or not
+	 * 
+	 * @return The boolean of the state of the tour
+	 */
+	public boolean getTourInfo() {return this.hasTourEnded;}
 
 	/**
 	 * Gives the team that the snapshot views itself as.
@@ -150,7 +160,6 @@ public class BattleSnapshot {
 	}
 
 	public void useAction(Action action) {
-
 		if (action instanceof UseAbility) {
 			// useAbility(new Ability("1", "WaTeRPoUf", Type.AQUA, "Pouf d'eau giga mega stylé...", 10)); // exemple rando d'ability
 		} else if (action instanceof Swap) {
@@ -158,11 +167,23 @@ public class BattleSnapshot {
 		} else if (action instanceof Run) {
 			// appel fonction pour action RUN (abandon de la partie)
 		} else if (action instanceof UseItem) {
-			// appel fonction pour action USEITEM
+
+			UseItem useItemAction = (UseItem) action;
+			Item item = useItemAction.getItem();
+			if (item.getEffect().getTarget().equals("adversaire")) {
+				item.use(getActiveBugemonOpponent());
+			} else {
+				item.use(getActiveBugemonSelf());
+			}
+
+			// implémenter "switch" plus tard
 		}
+
+		this.hasTourEnded = true;
 	}
 
 	public Vector<Action> getAvailableActions() {
+		this.hasTourEnded = false;
 
 		Vector<Action> actions = new Vector<Action>();
 		switch (this.battle.getState(this.isTeamA)) {

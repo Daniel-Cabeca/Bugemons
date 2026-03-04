@@ -1,6 +1,7 @@
 package ulb.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import ulb.model.ability.Ability;
@@ -17,6 +18,7 @@ import javafx.stage.Stage;
 
 import ulb.model.Player;
 import ulb.model.item.Item;
+import ulb.model.team.OpponentTeamGenerator;
 
 public class BattleController {
 	private Player player;
@@ -26,47 +28,64 @@ public class BattleController {
 		this.player = player;
 	}
 
-	/**
-	 * Switches to the battle window with the selected bugemons
-	 * @param selectedBugemons the list of selected bugemon names to create the teams for the battle
-	 * @throws IOException if the battle window FXML file cannot be loaded
-	 */
-	public void switchToBattleWindow(List<String> selectedBugemons, ActionEvent event) {
-		// create battle with the selected bugemons for both players
-		// (for now, we will use the same team for both players)
-
-		// create placeholder bugemons based on the names
-		Bugemon bugemon1 = new Bugemon("florachu");
-		Bugemon bugemon2 = new Bugemon("bugzilla");
-		Bugemon bugemon3 = new Bugemon("pyricore");
-		Bugemon bugemon4 = new Bugemon("pyroxis");
-		Bugemon bugemon5 = new Bugemon("mergeau");
-		Bugemon bugemon6 = new Bugemon("buildwave");
-
-		Team team1 = new Team(List.of(bugemon1, bugemon2, bugemon3, bugemon4, bugemon5, bugemon6));
-
-		Bugemon bugemon1_copy = new Bugemon("granitron");
-		Bugemon bugemon2_copy = new Bugemon("pebblit");
-		Bugemon bugemon3_copy = new Bugemon("refaquix");
-		Bugemon bugemon4_copy = new Bugemon("crasheon");
-		Bugemon bugemon5_copy = new Bugemon("exceflam");
-		Bugemon bugemon6_copy = new Bugemon("verdurion");
-
-		Team team2 = new Team(List.of(bugemon1_copy, bugemon2_copy, bugemon3_copy, bugemon4_copy, bugemon5_copy, bugemon6_copy));
-
-		// without multiplayer, player is always teamA
-		battleSnapshot = new BattleSnapshot(new Battle(team1, team2), true);
+	public void switchToBattleMenu(List<String> selectedBugemons, ActionEvent event) {
+		List<Bugemon> teamABugemons = new ArrayList<Bugemon>();
+		for (String bugemon: selectedBugemons) {
+			teamABugemons.add(new Bugemon(bugemon.toLowerCase()));
+		}
+		Team teamA = new Team(teamABugemons);
+		player.setTeam(teamA);
 
 		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/BattleMenu.fxml"));
+			Parent battleMenu = loader.load();
+
+			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			stage.getScene().setRoot(battleMenu);
+
+			BattleMenu controller = loader.getController();
+			controller.setBattleController(this);
+
+		} catch (IOException e) {
+			System.err.println("Failed to load battle menu window: " + e.getMessage());
+		}
+	}
+
+	/**
+	 * Switches to the battle window with the selected bugemons
+	 * @param teamA the list of selected bugemon names to create the teams for the battle
+	 * @throws IOException if the battle window FXML file cannot be loaded
+	 */
+	public void switchToBattleWindow(Team teamA, boolean automatic, ActionEvent event) {
+		// create battle with the selected bugemons for both players
+
+//		List<Bugemon> teamABugemons = new ArrayList<Bugemon>();
+//		for (String bugemon: selectedBugemons) {
+//			teamABugemons.add(new Bugemon(bugemon.toLowerCase()));
+//		}
+//		Team teamA = new Team(teamABugemons);
+		Team teamB = new Team();
+		try {
+			teamB = OpponentTeamGenerator.generateRandomOpponentTeam(teamA);
+		}
+		catch (Exception e) {}
+
+		// without multiplayer, player is always teamA
+		battleSnapshot = new BattleSnapshot(new Battle(teamA, teamB), true);
+
+		try {
+			// NewBattleWindow.fxml for graphic interface (connection methods to view needed, placeholders for now)
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/BattleWindow.fxml"));
 			Parent battleWindow = loader.load();
 
 			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-	    	stage.getScene().setRoot(battleWindow);
+			stage.getScene().setRoot(battleWindow);
 
 			BattleWindow controller = loader.getController();
 			controller.setBattleController(this);
-			controller.initializeBattle(team1, team2, player.getInventory());
+			controller.setPlayer(player);
+			controller.initializeBattle(teamA, teamB, player.getInventory(),automatic);
+
 		} catch (IOException e) {
 			System.err.println("Failed to load battle window: " + e.getMessage());
 		}
@@ -100,7 +119,14 @@ public class BattleController {
 		}
 	}
 
+	public Player getPlayer(){
 
+        return this.player;
+    }
+
+	public void setPlayer(Player player) {
+		this.player = player;
+	}
 
 	public void Damage(Ability ability){
 		battleSnapshot.useAbility(ability);

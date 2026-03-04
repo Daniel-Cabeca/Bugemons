@@ -43,6 +43,8 @@ public class Player {
 	public Team getTeam() {return this.team;}
 	public Inventory getInventory() {return this.inventory;}
 
+	public void setTeam(Team team) {this.team = team;}
+
 	/**
 	 * Loads all items and adds the default items to the player's inventory
 	 */

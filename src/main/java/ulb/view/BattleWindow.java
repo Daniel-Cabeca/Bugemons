@@ -44,7 +44,9 @@ public class BattleWindow {
 		this.battleController = battleController;
 	}
 
-	public void initializeBattle(Team playerTeam, Team opponentTeam, Inventory playerInventory) {
+	public void setPlayer(Player player) { this.player = player; }
+
+	public void initializeBattle(Team playerTeam, Team opponentTeam, Inventory playerInventory, boolean automatic) {
 		this.playerTeam = playerTeam;
 		this.opponentTeam = opponentTeam;
 		this.playerInventory = playerInventory;
@@ -129,6 +131,7 @@ public class BattleWindow {
 		Parent root = loader.load();
 		MainMenu controller = loader.getController();
 		controller.setPlayer(player);
+
 		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 		stage.getScene().setRoot(root);
 	}

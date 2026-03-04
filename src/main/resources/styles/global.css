@@ -12,6 +12,8 @@
 .button {
     -fx-background-color:#5F9598;
     -fx-text-fill: white;
+    -fx-border-color: #000000;
+    -fx-border-width:1;
 }
 
 .vbox {
@@ -23,7 +25,20 @@
     -fx-border-width: 2;
 }
 
+ProgressBar{
+	-fx-pref-height: 50px;
+}
+Label{
+	-fx-font-size: 20px;
+}
+
+
 /*Custom*/
+#availableBugemonsGrid{
+	-fx-alignment: center;
+    -fx-pref-width: 400px;
+    -fx-pref-height: 400px;
+}
 
 .availableBugemons{
 	-fx-border-color: gray;

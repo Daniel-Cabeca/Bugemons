@@ -1,45 +1,121 @@
 package ulb.model.parser;
 
 import org.junit.Test;
+import org.junit.BeforeClass;
 import static org.junit.Assert.*;
 
-import java.util.Vector;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+
+import java.text.ParseException;
 
 import ulb.model.bugemon.Bugemon;
+import ulb.model.bugemon.BugemonSpecies;
+import ulb.model.bugemon.BugemonDatabase;
+import ulb.model.bugemon.Stats;
+import ulb.model.type.Type;
+import ulb.model.ability.AbilitySet;
+import ulb.model.ability.AbilityDatabase;
+
+import ulb.model.sample.SamplesLoader;
+import ulb.model.bugemon.BugemonDatabaseTest;
 
 public class BugemonParserTest {
-    // @Test
-    // public void loadReturnsNonEmptyList() throws Exception {
-    //     String path = getClass().getResource("/json/bugemons.json").getPath();
-    //     Vector<Bugemon> bugemons = BugemonParser.loadBugemons(path);
-    //     assertFalse(bugemons.isEmpty());
-    // }
-    //
-    // @Test
-    // public void loadReturnsCorrectSize() throws Exception {
-    //     String path = getClass().getResource("/json/bugemons.json").getPath();
-    //     Vector<Bugemon> bugemons = BugemonParser.loadBugemons(path);
-    //     assertEquals(24, bugemons.size());
-    // }
-    //
-    // @Test
-    // public void loadParsesName() throws Exception {
-    //     String path = getClass().getResource("/json/bugemons.json").getPath();
-    //     Vector<Bugemon> bugemons = BugemonParser.loadBugemons(path);
-    //     assertEquals("Florachu", bugemons.get(0).getName());
-    // }
-    //
-    // @Test
-    // public void loadParsesType() throws Exception {
-    //     String path = getClass().getResource("/json/bugemons.json").getPath();
-    //     Vector<Bugemon> bugemons = BugemonParser.loadBugemons(path);
-    //     assertNotNull(bugemons.get(0).getType());
-    // }
+	@BeforeClass
+	public static void load() throws Exception {
+		SamplesLoader.load();
+	}
 
-    // @Test
-    // public void loadParsesAbilities() throws Exception {
-    //     String path = getClass().getResource("/json/bugemons.json").getPath();
-    //     Vector<Bugemon> bugemons = BugemonParser.loadBugemons(path);
-    //     assertFalse(bugemons.get(0).getAbilities().isEmpty());
-    // }
+	private static JsonNode getJsonNodeA() {
+		try {
+			String STR = """
+				{
+				"id": "a",
+				"nom": "A",
+				"type": "Flora",
+				"stats": {
+					"pv": 100,
+					"attaque": 10,
+					"defense": 10,
+					"initiative": 10
+				},
+				"attaques": ["a", "b", "c"],
+				"sprite": "florachu.png",
+				"starter": true
+				}
+				""";
+
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode node = mapper.readTree(STR);
+
+			return node;
+		} catch (Exception e) {
+			assertTrue(false);
+			return null;
+		}
+	}
+
+	private static BugemonSpecies getBugemonSpeciesA() {
+		return new BugemonSpecies(
+			"a",
+			"A",
+			Type.FLORA,
+			new Stats(100, 10, 10, 10),
+			new AbilitySet(
+				AbilityDatabase.getInstance().get("a"),
+				AbilityDatabase.getInstance().get("b"),
+				AbilityDatabase.getInstance().get("c")
+			),
+			"florachu.png",
+			true
+		);
+	}
+
+	@Test
+	public void testFromJsonCorrect() {
+		try {
+			JsonNode node = getJsonNodeA();
+			BugemonSpecies expected = getBugemonSpeciesA();
+			BugemonSpecies obtained = BugemonParser.fromJson(node);
+
+			assertEquals(expected.getId(), obtained.getId());
+			assertEquals(expected.getName(), obtained.getName());
+			assertEquals(expected.getType(), obtained.getType());
+			assertEquals(expected.getBaseStats(), obtained.getBaseStats());
+			assertEquals(expected.getAbilities(), obtained.getAbilities());
+			assertEquals(expected.getSprite(), obtained.getSprite());
+			assertEquals(expected.isStarter(), obtained.isStarter());
+		} catch (Exception e) {
+			assertTrue(false);
+		}
+	}
+
+	@Test
+	public void testFromJsonParseError() {
+		try {
+			String STR = """
+				{
+				"id": "a",
+				"nom": "A",
+				"type": "mdr",
+				"stats": {
+					"pv": 100,
+					"attaque": 10,
+					"defense": 10,
+					"initiative": 10
+				},
+				"attaques": ["a", "b", "c"],
+				"sprite": "florachu.png",
+				"starter": true
+				}
+				""";
+
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode node = mapper.readTree(STR);
+
+			assertThrows(ParseException.class, () -> { BugemonParser.fromJson(node); });
+		} catch (Exception e) {
+			assertTrue(false);
+		}
+	}
 }

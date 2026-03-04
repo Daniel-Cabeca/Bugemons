@@ -48,7 +48,7 @@ public class BattleMenu {
             sprite.setPreserveRatio(true);
 
             Label name = new Label(bugemon.getName());
-            name.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+            name.setStyle("-fx-font-weight: bold;");
 
             Label stats = new Label("HP: " + bugemon.getFightStats().getHp() +
                     " ATK: " + bugemon.getFightStats().getAttack() + " DEF: " +

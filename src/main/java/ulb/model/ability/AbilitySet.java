@@ -41,6 +41,25 @@ public class AbilitySet implements Iterable<Ability> {
 		};
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+
+		if (!(o instanceof AbilitySet)) {
+			return false;
+		}
+
+		for (int i = 0; i < SIZE; ++i) {
+			if (!this.getAbility(i).equals(((AbilitySet) o).getAbility(i))) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	/**
 	 * Gives the number of abilities in the abilitieset.
 	 *

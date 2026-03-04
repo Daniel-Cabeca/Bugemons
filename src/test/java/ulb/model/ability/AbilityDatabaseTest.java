@@ -11,6 +11,8 @@ import java.util.NoSuchElementException;
 
 import ulb.model.type.Type;
 
+import ulb.model.sample.AbilitySample;
+
 public class AbilityDatabaseTest {
 	public static AbilityDatabase newDatabase() {
 		// bypass the singleton pattern for unit tests
@@ -25,18 +27,10 @@ public class AbilityDatabaseTest {
 		return null;
 	}
 
-	private Ability getAbilityA() {
-		return new Ability("fouet_liane", "Fouet-Liane", Type.FLORA, "Inflige des dégâts et réduit légèrement la défense adverse.", 40);
-	}
-
-	private Ability getAbilityB() {
-		return new Ability("pollen_sournois", "Pollen Sournois", Type.FLORA, "Inflige des dégâts et réduit l'initiative adverse au prochain tour.", 35);
-	}
-
 	@Test
 	public void testAddThrow() {
 		AbilityDatabase database = newDatabase();
-		Ability a = getAbilityA();
+		Ability a = AbilitySample.getA();
 
 		database.add(a);
 		assertThrows(IllegalArgumentException.class, () -> { database.add(a); });
@@ -45,7 +39,7 @@ public class AbilityDatabaseTest {
 	@Test
 	public void testGetThrow() {
 		AbilityDatabase database = newDatabase();
-		Ability a = getAbilityA();
+		Ability a = AbilitySample.getA();
 
 		assertThrows(NoSuchElementException.class, () -> { database.get(a.getId()); });
 	}
@@ -53,7 +47,7 @@ public class AbilityDatabaseTest {
 	@Test
 	public void testAddGet() {
 		AbilityDatabase database = newDatabase();
-		Ability a = getAbilityA();
+		Ability a = AbilitySample.getA();
 
 		database.add(a);
 		assertEquals(a, database.get(a.getId()));
@@ -62,7 +56,7 @@ public class AbilityDatabaseTest {
 	@Test
 	public void testExistsTrue() {
 		AbilityDatabase database = newDatabase();
-		Ability a = getAbilityA();
+		Ability a = AbilitySample.getA();
 
 		database.add(a);
 		assertTrue(database.exists(a.getId()));
@@ -71,7 +65,7 @@ public class AbilityDatabaseTest {
 	@Test
 	public void testExistsFalse() {
 		AbilityDatabase database = newDatabase();
-		Ability a = getAbilityA();
+		Ability a = AbilitySample.getA();
 
 		assertFalse(database.exists(a.getId()));
 	}

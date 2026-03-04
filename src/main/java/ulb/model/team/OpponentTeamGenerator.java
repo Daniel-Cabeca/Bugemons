@@ -1,5 +1,6 @@
 package ulb.model.team;
 
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -40,4 +41,3 @@ public class OpponentTeamGenerator {
 		return opponentTeam;
 	}
 }
-

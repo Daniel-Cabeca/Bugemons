@@ -2,62 +2,37 @@ package ulb.model.ability;
 
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
 
-import ulb.model.type.Type;
 import java.util.Iterator;
 
+import ulb.model.sample.AbilitySample;
+import ulb.model.sample.AbilitySetSample;
+
 public class AbilitySetTest {
-	private Ability getAbilityA() {
-		return new Ability("fouet_liane", "Fouet-Liane", Type.FLORA, "Inflige des dégâts et réduit légèrement la défense adverse.", 40);
-	}
-
-	private Ability getAbilityB() {
-		return new Ability("pollen_sournois", "Pollen Sournois", Type.FLORA, "Inflige des dégâts et réduit l'initiative adverse au prochain tour.", 35);
-	}
-
-	private Ability getAbilityC() {
-		return new Ability("racines_vives", "Racines Vives", Type.FLORA, "Inflige des dégâts et augmente légèrement la défense du lanceur.", 35);
-	}
-
-	private Ability getAbilityD() {
-		return new Ability("spore_collante", "Spore Collante", Type.FLORA, "Inflige des dégâts et diminue l'initiative adverse.", 30);
-	}
-
-	private Ability getAbilityE() {
-		return new Ability("feuille_tranchante", "Feuille Tranchante", Type.FLORA, "Inflige des dégâts élevés.", 55);
-	}
-
-	private AbilitySet getAbilitySetA() {
-		Ability abilityA = getAbilityA();
-		Ability abilityB = getAbilityB();
-		Ability abilityC = getAbilityC();
-
-		return new AbilitySet(abilityA, abilityB, abilityC);
-	}
-
 	@Test
 	public void verifyContainsTrue() {
-		AbilitySet abilityset = getAbilitySetA();
-		Ability a = getAbilityA();
+		AbilitySet abilityset = AbilitySetSample.getABC();
+		Ability a = AbilitySample.getA();
 		assertTrue(abilityset.contains(a));
 	}
 
 	@Test
 	public void verifyContainsFalse() {
-		AbilitySet abilityset = getAbilitySetA();
-		Ability d = getAbilityD();
+		AbilitySet abilityset = AbilitySetSample.getABC();
+		Ability d = AbilitySample.getD();
 		assertFalse(abilityset.contains(d));
 	}
 
 	@Test
 	public void verifyGetAbilityCorrect() {
-		AbilitySet abilityset = getAbilitySetA();
-		Ability a = getAbilityA();
-		Ability b = getAbilityB();
-		Ability c = getAbilityC();
+		AbilitySet abilityset = AbilitySetSample.getABC();
+		Ability a = AbilitySample.getA();
+		Ability b = AbilitySample.getB();
+		Ability c = AbilitySample.getC();
 
 		assertEquals(abilityset.getAbility(0), a);
 		assertEquals(abilityset.getAbility(1), b);
@@ -66,7 +41,7 @@ public class AbilitySetTest {
 
 	@Test
 	public void verifyGetAbilityThrows() {
-		AbilitySet abilityset = getAbilitySetA();
+		AbilitySet abilityset = AbilitySetSample.getABC();
 
 		assertThrows(IndexOutOfBoundsException.class, () -> { abilityset.getAbility(-1); });
 		assertThrows(IndexOutOfBoundsException.class, () -> { abilityset.getAbility(abilityset.size()); });
@@ -74,8 +49,8 @@ public class AbilitySetTest {
 
 	@Test
 	public void verifySetAbilityCorrect() {
-		AbilitySet abilityset = getAbilitySetA();
-		Ability d = getAbilityD();
+		AbilitySet abilityset = AbilitySetSample.getABC();
+		Ability d = AbilitySample.getD();
 
 		abilityset.setAbility(0, d);
 		assertEquals(abilityset.getAbility(0), d);
@@ -83,8 +58,8 @@ public class AbilitySetTest {
 
 	@Test
 	public void verifySetAbilityThrows() {
-		AbilitySet abilityset = getAbilitySetA();
-		Ability d = getAbilityD();
+		AbilitySet abilityset = AbilitySetSample.getABC();
+		Ability d = AbilitySample.getD();
 
 		assertThrows(IndexOutOfBoundsException.class, () -> { abilityset.setAbility(-1, d); });
 		assertThrows(IndexOutOfBoundsException.class, () -> { abilityset.setAbility(abilityset.size(), d); });
@@ -92,30 +67,26 @@ public class AbilitySetTest {
 
 	@Test
 	public void verifyIterator() {
-		Ability a = getAbilityA();
-		Ability b = getAbilityB();
-		Ability c = getAbilityC();
-		AbilitySet abilityset = getAbilitySetA();
-
+		AbilitySet abilityset = AbilitySetSample.getABC();
 		Iterator<Ability> iterator = abilityset.iterator();
 
 		assertTrue(iterator.hasNext());
-		assertEquals(a, iterator.next());
+		assertSame(abilityset.getAbility(0), iterator.next());
 
 		assertTrue(iterator.hasNext());
-		assertEquals(b, iterator.next());
+		assertSame(abilityset.getAbility(1), iterator.next());
 
 		assertTrue(iterator.hasNext());
-		assertEquals(c, iterator.next());
+		assertSame(abilityset.getAbility(2), iterator.next());
 
 		assertFalse(iterator.hasNext());
 	}
 
 	@Test
 	public void verifySwapAbilityCorrect() {
-		Ability a = getAbilityA();
-		Ability d = getAbilityD();
-		AbilitySet abilityset = getAbilitySetA();
+		AbilitySet abilityset = AbilitySetSample.getABC();
+		Ability a = AbilitySample.getA();
+		Ability d = AbilitySample.getD();
 
 		abilityset.swapAbility(d, a);
 
@@ -125,10 +96,42 @@ public class AbilitySetTest {
 
 	@Test
 	public void verifySwapAbilityOldNotKnown() {
-		Ability d = getAbilityD();
-		Ability e = getAbilityE();
-		AbilitySet abilityset = getAbilitySetA();
+		AbilitySet abilityset = AbilitySetSample.getABC();
+		Ability d = AbilitySample.getD();
+		Ability e = AbilitySample.getE();
 
 		assertThrows(IllegalArgumentException.class, () -> { abilityset.swapAbility(d, e); });
+	}
+
+	@Test
+	public void testEqualsSame() {
+		AbilitySet a = AbilitySetSample.getABC();
+		AbilitySet b = AbilitySetSample.getABC();
+		assertTrue(a.equals(b));
+	}
+
+	@Test
+	public void testEqualsObject() {
+		AbilitySet a = AbilitySetSample.getABC();
+		assertFalse(a.equals(3));
+	}
+
+	@Test
+	public void testEqualsSameInstance() {
+		AbilitySet a = AbilitySetSample.getABC();
+		assertTrue(a.equals(a));
+	}
+
+	@Test
+	public void testEqualsDifferent() {
+		AbilitySet base = AbilitySetSample.getABC();
+
+		AbilitySet a = new AbilitySet(AbilitySample.getD(), AbilitySample.getB(), AbilitySample.getC());
+		AbilitySet b = new AbilitySet(AbilitySample.getA(), AbilitySample.getD(), AbilitySample.getC());
+		AbilitySet c = new AbilitySet(AbilitySample.getA(), AbilitySample.getB(), AbilitySample.getD());
+
+		assertFalse(base.equals(a));
+		assertFalse(base.equals(b));
+		assertFalse(base.equals(c));
 	}
 }

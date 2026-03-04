@@ -9,9 +9,11 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,7 +22,6 @@ import java.util.List;
 import ulb.model.Player;
 import ulb.model.bugemon.BugemonSpecies;
 import ulb.model.bugemon.BugemonDatabase;
-import java.util.Vector;
 
 
 import javafx.scene.image.Image;
@@ -29,7 +30,11 @@ import javafx.scene.image.ImageView;
 public class CreateTeamMenu {
 
 	@FXML
-	private GridPane availableBugemons;
+	private GridPane availableBugemonsGrid;
+
+	@FXML
+	private ScrollPane availableBugemonsScroll;
+
 	@FXML
 	private GridPane selectedBugemons;
 
@@ -58,15 +63,15 @@ public class CreateTeamMenu {
 		int col = 0, row = 0;
 
 		for (BugemonSpecies bugemon : BugemonDatabase.getInstance()) {
-			VBox cell = new VBox();
+			VBox cell = new VBox(8);
 			cell.getStyleClass().add("availableBugemons"); // add a css class
 
 			Label name = new Label(bugemon.getName());
 
 			Image image = new Image(bugemon.getSprite());
 			ImageView sprite = new ImageView(image);
-			sprite.setFitWidth(50);
-			sprite.setFitHeight(50);
+			sprite.setFitWidth(75);
+			sprite.setFitHeight(75);
 			sprite.setPreserveRatio(true);
 
 			CheckBox checkBox = new CheckBox();
@@ -80,8 +85,8 @@ public class CreateTeamMenu {
 				}
 			});
 
-			cell.getChildren().addAll(name, sprite, checkBox);
-			availableBugemons.add(cell, col, row);
+			cell.getChildren().addAll(name,sprite, checkBox);
+			availableBugemonsGrid.add(cell, col, row);
 
 			col++;
 			if (col == 3) { col = 0; row++; }

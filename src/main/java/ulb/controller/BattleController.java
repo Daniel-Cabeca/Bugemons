@@ -8,7 +8,6 @@ import ulb.model.battle.Battle;
 import ulb.model.battle.BattleSnapshot;
 import ulb.model.team.Team;
 import ulb.model.bugemon.Bugemon;
-import ulb.model.type.Type;
 import ulb.view.BattleWindow;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -59,7 +58,7 @@ public class BattleController {
 		battleSnapshot = new BattleSnapshot(new Battle(team1, team2), true);
 
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/NewBattleWindow.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/BattleWindow.fxml"));
 			Parent battleWindow = loader.load();
 
 			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

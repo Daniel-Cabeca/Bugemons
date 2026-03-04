@@ -132,7 +132,9 @@ public class CreateTeamMenu {
 	 */
 	public void handleConfirmTeam(ActionEvent event) {
 		if (!selected.isEmpty() && selected.size() <= 6) {
-			battleController.switchToBattleWindow(selected, event);
+
+			battleController.switchToBattleMenu(selected, event);
+			//battleController.switchToBattleWindow(selected, event);
 		} else {
 			throw new IllegalStateException("You must select between 1 and 6 bugemons to confirm your team.");
 		}

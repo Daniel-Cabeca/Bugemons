@@ -133,7 +133,6 @@ public class BattleWindow {
 		Parent root = loader.load();
 		MainMenu controller = loader.getController();
 		controller.setPlayer(player);
-
 		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 		stage.getScene().setRoot(root);
 	}

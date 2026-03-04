@@ -80,7 +80,7 @@ public class CreateTeamMenu {
 				}
 			});
 
-			cell.getChildren().addAll(name,sprite, checkBox);
+			cell.getChildren().addAll(name, sprite, checkBox);
 			availableBugemons.add(cell, col, row);
 
 			col++;

@@ -46,6 +46,7 @@ public class BattleController {
 
 			BattleMenu controller = loader.getController();
 			controller.setBattleController(this);
+			controller.displayTeam();
 
 		} catch (IOException e) {
 			System.err.println("Failed to load battle menu window: " + e.getMessage());
@@ -59,12 +60,6 @@ public class BattleController {
 	 */
 	public void switchToBattleWindow(Team teamA, boolean automatic, ActionEvent event) {
 		// create battle with the selected bugemons for both players
-
-//		List<Bugemon> teamABugemons = new ArrayList<Bugemon>();
-//		for (String bugemon: selectedBugemons) {
-//			teamABugemons.add(new Bugemon(bugemon.toLowerCase()));
-//		}
-//		Team teamA = new Team(teamABugemons);
 		Team teamB = new Team();
 		try {
 			teamB = OpponentTeamGenerator.generateRandomOpponentTeam(teamA);
@@ -85,7 +80,7 @@ public class BattleController {
 			BattleWindow controller = loader.getController();
 			controller.setBattleController(this);
 			controller.setPlayer(player);
-			controller.initializeBattle(teamA, teamB, player.getInventory(),automatic);
+			controller.initializeBattle(teamA, teamB, player.getInventory(), automatic);
 
 		} catch (IOException e) {
 			System.err.println("Failed to load battle window: " + e.getMessage());

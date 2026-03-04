@@ -1,11 +1,22 @@
 package ulb.view;
 
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import ulb.controller.BattleController;
+import ulb.model.bugemon.Bugemon;
+import ulb.model.team.Team;
 
 public class BattleMenu {
 
     private BattleController battleController;
+
+    @FXML
+    private GridPane playerTeamGrid;
 
     public void setBattleController(BattleController battleController) {
         this.battleController = battleController;
@@ -19,5 +30,33 @@ public class BattleMenu {
            battleController.switchToBattleWindow(battleController.getPlayer().getTeam(),false , actionEvent);
     }
 
-    
+    public void displayTeam() {
+        displayTeamWithStats(battleController.getPlayer().getTeam(), playerTeamGrid);
+
+    }
+
+    public void displayTeamWithStats(Team team, GridPane grid) {
+        grid.getChildren().clear();
+        int row = 0;
+        for (Bugemon bugemon : team.getMembers()) {
+            VBox cell = new VBox();
+
+            Image image = new Image(bugemon.getSprite());
+            ImageView sprite = new ImageView(image);
+            sprite.setFitWidth(50);
+            sprite.setFitHeight(50);
+            sprite.setPreserveRatio(true);
+
+            Label name = new Label(bugemon.getName());
+            name.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+
+            Label stats = new Label("HP: " + bugemon.getFightStats().getHp() +
+                    " ATK: " + bugemon.getFightStats().getAttack() + " DEF: " +
+                    bugemon.getFightStats().getDefense() + " INIT: " + bugemon.getFightStats().getInitiative());
+
+            cell.getChildren().addAll(name, sprite, stats);
+
+            grid.add(cell, 0, row++);
+        }
+    }
 }

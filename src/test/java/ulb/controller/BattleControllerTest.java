@@ -159,9 +159,7 @@ public class BattleControllerTest {
 		Team teamB = new Team(List.of(new Bugemon(Type.FLORA, 100, 10, 10, 10)));
 		Battle battle = new Battle(teamA, teamB);
 
-		Constructor<BattleSnapshot> constructor = BattleSnapshot.class.getDeclaredConstructor(Battle.class, boolean.class);
-		constructor.setAccessible(true);
-		BattleSnapshot snapshot = constructor.newInstance(battle, true);
+		BattleSnapshot snapshot = new BattleSnapshot(battle, true);
 
 		Field field = BattleController.class.getDeclaredField("battleSnapshot");
 		field.setAccessible(true);

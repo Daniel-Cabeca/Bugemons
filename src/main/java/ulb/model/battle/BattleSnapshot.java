@@ -177,7 +177,16 @@ public class BattleSnapshot {
 				item.use(getActiveBugemonSelf());
 			}
 
-			// implémenter "switch" plus tard
+			if (item.getEffect().getType().equals("switch")) {
+				Team playerTeam = this.getTeamSelf();
+				Bugemon nextBugemon = playerTeam.getMembers().stream()
+					.filter(b -> !b.isKO() && b != this.getActiveBugemonSelf())
+					.findFirst()
+					.orElse(null);
+				if (nextBugemon != null) {
+					this.setActiveBugemonSelf(nextBugemon);
+				}
+			}
 		}
 	}
 

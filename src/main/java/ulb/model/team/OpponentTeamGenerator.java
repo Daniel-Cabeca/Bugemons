@@ -1,10 +1,8 @@
 package ulb.model.team;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Vector;
 
 import ulb.model.bugemon.BugemonSpecies;
 import ulb.model.bugemon.BugemonDatabase;

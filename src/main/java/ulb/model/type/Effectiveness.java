@@ -7,6 +7,10 @@ public abstract class Effectiveness {
 		LOW,
 	}
 
+	public static final float FACTOR_LOW = 0.75f;
+	public static final float FACTOR_NORMAL = 1.0f;
+	public static final float FACTOR_HIGH = 1.5f;
+
 	/**
 	 * Gives the effectiveness category corresponding to the type of a move and the type of the target Bugemon.
 	 *
@@ -63,13 +67,13 @@ public abstract class Effectiveness {
 	public static float getFactor(Category category) {
 		switch(category) {
 			case HIGH:
-				return 1.5f;
+				return FACTOR_HIGH;
 
 			case LOW:
-				return 0.75f;
+				return FACTOR_LOW;
 
 			default:
-				return 1.0f;
+				return FACTOR_NORMAL;
 		}
 	}
 

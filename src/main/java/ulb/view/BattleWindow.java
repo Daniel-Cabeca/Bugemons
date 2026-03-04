@@ -48,9 +48,9 @@ public class BattleWindow {
 		this.playerTeam = playerTeam;
 		this.opponentTeam = opponentTeam;
 		this.playerInventory = playerInventory;
-		displayTeams();
-		setupInventoryList();
-		displayInventory();
+		//displayTeams();
+		//setupInventoryList();
+		//displayInventory();
 	}
 
 	private void displayTeams() {
@@ -62,8 +62,8 @@ public class BattleWindow {
 		grid.getChildren().clear();
 		int row = 0;
 		for (Bugemon bugemon : team.getMembers()) {
-			Label label = new Label(bugemon.getName() + " HP: " + bugemon.getFightStats().getHp() + 
-			" ATK: " + bugemon.getFightStats().getAttack() + " DEF: " + 
+			Label label = new Label(bugemon.getName() + " HP: " + bugemon.getFightStats().getHp() +
+			" ATK: " + bugemon.getFightStats().getAttack() + " DEF: " +
 			bugemon.getFightStats().getDefense() + " INIT: " + bugemon.getFightStats().getInitiative());
 			grid.add(label, 0, row++);
 		}

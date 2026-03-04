@@ -59,7 +59,7 @@ public class BattleController {
 		battleSnapshot = new BattleSnapshot(new Battle(team1, team2), true);
 
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/BattleWindow.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/NewBattleWindow.fxml"));
 			Parent battleWindow = loader.load();
 
 			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

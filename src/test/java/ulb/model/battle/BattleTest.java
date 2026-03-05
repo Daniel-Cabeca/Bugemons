@@ -1,9 +1,9 @@
 package ulb.model.battle;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import ulb.model.bugemon.Bugemon;
 import ulb.model.team.Team;
@@ -62,7 +62,7 @@ public class BattleTest {
 			}
 		}
 
-		assertTrue("Should sometimes pick A on tie", sawA);
-		assertTrue("Should sometimes pick B on tie", sawB);
+		assertTrue(sawA, "Should sometimes pick A on tie");
+		assertTrue(sawB, "Should sometimes pick B on tie");
 	}
 }

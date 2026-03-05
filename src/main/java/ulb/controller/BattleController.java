@@ -71,7 +71,7 @@ public class BattleController {
 
 		try {
 			// NewBattleWindow.fxml for graphic interface (connection methods to view needed, placeholders for now)
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/BattleWindow.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/NewBattleWindow.fxml"));
 			Parent battleWindow = loader.load();
 
 			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -115,6 +115,11 @@ public class BattleController {
 		}
 	}
 
+	public Bugemon getActiveBugemonSelf(){ return battleSnapshot.getActiveBugemonSelf();}
+	public Bugemon getActiveBugemonOpponent(){ return battleSnapshot.getActiveBugemonOpponent();}
+
+	public void setActiveBugemon(Bugemon bugemon){ battleSnapshot.setActiveBugemonSelf(bugemon);}
+
 	public Player getPlayer(){
 
         return this.player;
@@ -124,7 +129,7 @@ public class BattleController {
 		this.player = player;
 	}
 
-	public void Damage(Ability ability){
+	public void useAbility(Ability ability){
 		battleSnapshot.useAbility(ability);
 	}
 

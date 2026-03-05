@@ -242,8 +242,8 @@ public class BattleControllerTest {
 
 		Ability ability = new Ability("1", "Test Ability", Type.PYRO, "simple attack", 10);
 
-		// Act: use the Damage method on the controller
-		controller.Damage(ability);
+		// Act: use the useAbility method on the controller
+		controller.useAbility(ability);
 
 		// Assert: opponent's HP should have decreased
 		int finalHp = snapshot.getBattle().getActiveBugemonB().getFightStats().hp;

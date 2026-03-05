@@ -148,4 +148,5 @@ public class Bugemon {
 		this.xp = 0;
 		this.level = 1;
 	}
+
 }

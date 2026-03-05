@@ -1,8 +1,8 @@
 package ulb.model.parser;
 
-import org.junit.Test;
-import org.junit.BeforeClass;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeAll;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -21,7 +21,7 @@ import ulb.model.sample.SamplesLoader;
 import ulb.model.bugemon.BugemonDatabaseTest;
 
 public class BugemonParserTest {
-	@BeforeClass
+	@BeforeAll
 	public static void load() throws Exception {
 		SamplesLoader.load();
 	}

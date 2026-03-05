@@ -93,15 +93,22 @@ public class Team {
         return removeByName(bugemon.getName());
     }
 
+    /**
+	 * Checks if entire team is KO or not
+	 *
+	 * @return true if entire team is KO
+	 */
 	public boolean checkTeamKO(){
-		boolean dead = true;
-		for (int i = 0 ; i < 6 ; i++){
-			if (!this.members.get(i).isKO()) {
-				dead = false;
-				return dead;
-			}
-		}
-		return dead;
+		if (this.members.isEmpty()) {
+            return true;
+        }
+
+        for (Bugemon b : this.members) {
+            if (!b.isKO()) {
+                return false;
+            }
+        }
+        return true;
 	}
 
 	/**

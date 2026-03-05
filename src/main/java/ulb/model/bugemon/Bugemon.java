@@ -148,4 +148,13 @@ public class Bugemon {
 		this.xp = 0;
 		this.level = 1;
 	}
+
+	public boolean equals(Bugemon other){
+		return  this.species.equals(other.species) &&
+				this.baseStats.equals(other.baseStats) &&
+				this.fightStats.equals(other.fightStats) &&
+				this.xp == other.xp &&
+				this.level == other.level;
+	}
+
 }

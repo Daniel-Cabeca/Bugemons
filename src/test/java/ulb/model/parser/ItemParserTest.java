@@ -1,6 +1,6 @@
 package ulb.model.parser;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import ulb.model.item.Item;
 
 import java.io.File;
@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ItemParserTest {
 

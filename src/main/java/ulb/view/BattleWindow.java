@@ -29,6 +29,10 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.scene.control.ListCell;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
+import java.util.Optional;
 
 public class BattleWindow {
 	@FXML
@@ -61,7 +65,7 @@ public class BattleWindow {
 	@FXML
 	private Button backButton;
 	@FXML
-	private Button AutoButton;
+	private Button autoButton;
 	@FXML
 	private GridPane buttonsGrid;
 	@FXML
@@ -92,9 +96,26 @@ public class BattleWindow {
 
 	public void setPlayer(Player player) { this.player = player; }
 
+	/**
+	 * Initializes the battle according to parameters
+	 *
+	 * @param playerTeam the player's team
+	 * @param opponentTeam the opponent's team
+	 * @param playerInventory the player's inventory
+	 * @param automatic  {@code true} if the battle mode is automatic, {@code false} if the mode is controlled
+	 */
 	public void initializeBattle(Team playerTeam, Team opponentTeam, Inventory playerInventory, boolean automatic) {
 		this.playerTeam = playerTeam;
 		this.playerInventory = playerInventory;
+
+		if (automatic) {
+			attackButton.setDisable(true);
+			itemButton.setDisable(true);
+			runButton.setDisable(true);
+			switchButton.setDisable(true);
+		} else {
+			autoButton.setDisable(true);
+		}
 		
 		initializeGraphicalBattle();
 	}
@@ -156,8 +177,35 @@ public class BattleWindow {
 	}
 
 	/**
+	 * Handles the Auto button click - equivalent to a turn in the automatic battle
+	 *
+	 * @param event the action triggered by clicking the return button
+	 * @throws IOException if the main menu FXML file cannot be loaded when going back to main menu
+	 */
+	public void handleAuto(ActionEvent event) throws IOException {
+
+		battleController.useRandomAbility(true);
+		battleController.useRandomAbility(false);
+		initializeGraphicalBattle();
+
+		if (battleController.isTeamAKO()){
+			battleController.switchToBattleEndWindow(false, event);
+
+		} else if (battleController.isTeamBKO()){
+			battleController.switchToBattleEndWindow(true, event);
+
+		} else if(battleController.isBugemonAKO()){
+			 battleController.switchBugemonA();
+
+		} else if(battleController.isBugemonBKO()){
+			 battleController.switchBugemonB();
+		}
+	}
+
+	/**
 	 * Handles the Attack button click - shows abilities view
-	 */	public void handleAttack(ActionEvent event) {
+	 */
+	public void handleAttack(ActionEvent event) {
 		if (buttonsGrid != null && abilitiesView != null) {
 			buttonsGrid.setVisible(false);
 			buttonsGrid.setManaged(false);

@@ -23,11 +23,11 @@ public class BattleMenu {
     }
 
     public void handleAutomaticBattle(ActionEvent actionEvent) {
-           battleController.switchToBattleWindow(battleController.getPlayer().getTeam(),true , actionEvent);
+		battleController.switchToBattleWindow(battleController.getPlayer().getTeam(),true , actionEvent);
     }
 
     public void handleControlledBattle(ActionEvent actionEvent) {
-           battleController.switchToBattleWindow(battleController.getPlayer().getTeam(),false , actionEvent);
+		battleController.switchToBattleWindow(battleController.getPlayer().getTeam(),false , actionEvent);
     }
 
     public void displayTeam() {
@@ -35,6 +35,12 @@ public class BattleMenu {
 
     }
 
+	/**
+	 * Displays the player's team with corresponding stats
+	 *
+	 * @param team the team to display
+	 * @param grid the grid in which the bugemons are displayed
+	 */
     public void displayTeamWithStats(Team team, GridPane grid) {
         grid.getChildren().clear();
         int row = 0;

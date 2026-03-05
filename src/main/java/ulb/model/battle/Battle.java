@@ -51,7 +51,6 @@ public class Battle {
 		// TO-DO
 	}
 
-
 	public boolean isBugemonAKO() {
 		   return  getActiveBugemonA().isKO();
 	}
@@ -84,5 +83,7 @@ public class Battle {
 		}
 		return getActiveBugemonB();
 	}
+
+
 
 }

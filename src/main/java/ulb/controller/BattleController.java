@@ -9,6 +9,7 @@ import ulb.model.battle.Battle;
 import ulb.model.battle.BattleSnapshot;
 import ulb.model.team.Team;
 import ulb.model.bugemon.Bugemon;
+import ulb.view.BattleEndWindow;
 import ulb.view.BattleWindow;
 import ulb.view.BattleMenu;
 import javafx.event.ActionEvent;
@@ -29,6 +30,12 @@ public class BattleController {
 		this.player = player;
 	}
 
+	/**
+	 * Switches to the battle type menu
+	 *
+	 * @param selectedBugemons the list of selected bugemons in create team menu
+	 * @param event the action triggered by clicking the confirm team button
+	 */
 	public void switchToBattleMenu(List<String> selectedBugemons, ActionEvent event) {
 		List<Bugemon> teamABugemons = new ArrayList<Bugemon>();
 		for (String bugemon: selectedBugemons) {
@@ -86,6 +93,32 @@ public class BattleController {
 			System.err.println("Failed to load battle window: " + e.getMessage());
 		}
 	}
+	/**
+	 * Switches from the current battle view to the battle end window and displays the result.
+	 *
+	 * <p>This method loads the {@code BattleEndWindow.fxml}, replaces the current scene root
+	 * with the battle end window, and initializes the corresponding controller with the
+	 * current {@link Player} and the battle outcome.</p>
+	 *
+	 * @param victory {@code true} if the player won the battle, {@code false} if the player lost
+	 * @param event   the action event that triggered the transition, used to obtain the current stage
+	 */
+	public void switchToBattleEndWindow(boolean victory, ActionEvent event) {
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/BattleEndWindow.fxml"));
+			Parent battleEndWindow = loader.load();
+
+			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			stage.getScene().setRoot(battleEndWindow);
+
+			BattleEndWindow controller = loader.getController();
+			controller.setPlayer(player);
+			controller.setResult(victory);
+
+		} catch (IOException e) {
+			System.err.println("Failed to load battle_end_window: " + e.getMessage());
+		}
+	}
 
 	/**
 	 * Uses an item from the player's inventory during battle and updates the inventory display and the bugemon's stats
@@ -132,6 +165,40 @@ public class BattleController {
 	public void useAbility(Ability ability){
 		battleSnapshot.useAbility(ability);
 	}
+
+	/**
+	 * Uses a random ability for the current active Bugemon of the specified team.
+	 *
+	 * <p>If {@code isTeamA} is {@code true}, a random ability is selected from the
+	 * player's active Bugemon and applied to the opponent. If {@code isTeamA} is
+	 * {@code false}, a random ability is selected from the opponent's active Bugemon
+	 * and applied to the player's active Bugemon.</p>
+	 *
+	 * @param isTeamA {@code true} to make Team A (the player) use a random ability,
+	 *                {@code false} to make Team B (the opponent) use a random ability
+	 */
+	public void useRandomAbility(boolean isTeamA) {
+
+		Ability ability;
+		if (isTeamA) {
+			ability = battleSnapshot.getRandomAbilitySelf();
+			useAbility(ability);
+		} else {
+			ability = battleSnapshot.getRandomAbilityOpponent();
+			battleSnapshot.useAbilityOnA(ability);
+		}
+
+
+	}
+
+	public boolean isBugemonAKO(){return battleSnapshot.getBattle().isBugemonAKO();}
+	public boolean isBugemonBKO(){return battleSnapshot.getBattle().isBugemonBKO();}
+
+	public boolean isTeamAKO(){return battleSnapshot.getBattle().isTeamAKO();}
+	public boolean isTeamBKO(){return battleSnapshot.getBattle().isTeamBKO();}
+
+	public void switchBugemonA(){battleSnapshot.switchSelfAuto();}
+	public void switchBugemonB(){battleSnapshot.switchOpponentAuto();}
 
 
 }

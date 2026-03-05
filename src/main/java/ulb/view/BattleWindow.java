@@ -11,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.GridPane;
 
+import ulb.model.battle.BattleState;
 import ulb.model.bugemon.Bugemon;
 import ulb.controller.BattleController;
 import ulb.model.item.Inventory;
@@ -97,7 +98,7 @@ public class BattleWindow {
 	public void setPlayer(Player player) { this.player = player; }
 
 	/**
-	 * Initializes the battle according to parameters
+	 * Initializes the battle according to the teams, inventory and battle mode
 	 *
 	 * @param playerTeam the player's team
 	 * @param opponentTeam the opponent's team
@@ -108,6 +109,7 @@ public class BattleWindow {
 		this.playerTeam = playerTeam;
 		this.playerInventory = playerInventory;
 
+		// disables action buttons for the automatic mode
 		if (automatic) {
 			attackButton.setDisable(true);
 			itemButton.setDisable(true);
@@ -183,22 +185,13 @@ public class BattleWindow {
 	 * @throws IOException if the main menu FXML file cannot be loaded when going back to main menu
 	 */
 	public void handleAuto(ActionEvent event) throws IOException {
-
-		battleController.useRandomAbility(true);
-		battleController.useRandomAbility(false);
+		BattleState state = battleController.playAutoTurn();
 		initializeGraphicalBattle();
 
-		if (battleController.isTeamAKO()){
-			battleController.switchToBattleEndWindow(false, event);
-
-		} else if (battleController.isTeamBKO()){
+		if (state == BattleState.WON) {
 			battleController.switchToBattleEndWindow(true, event);
-
-		} else if(battleController.isBugemonAKO()){
-			 battleController.switchBugemonA();
-
-		} else if(battleController.isBugemonBKO()){
-			 battleController.switchBugemonB();
+		} else if (state == BattleState.LOST) {
+			battleController.switchToBattleEndWindow(false, event);
 		}
 	}
 

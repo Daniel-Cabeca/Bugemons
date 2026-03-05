@@ -113,7 +113,7 @@ public class BattleSnapshot {
 		}
 	}
 	/**
-	 * Sets the snapshot's active Bugemon to another one for the opponent
+	 * Sets the opponent's active Bugemon to another one
 	 *
 	 * @param bugemon The Bugemon to switch in
 	 */
@@ -155,7 +155,7 @@ public class BattleSnapshot {
 	}
 
 	/**
-	 * Use the ability given against the opposing active Bugemon
+	 * Use the given ability against the opposing active Bugemon
 	 *
 	 * @param ability the ability that is used
 	 */
@@ -175,8 +175,9 @@ public class BattleSnapshot {
 		defensive.changeFightStats(damage);
 
 	}
+
 	/**
-	 * Use the given ability against the active Bugemon A
+	 * Use the given ability against the active team A Bugemon
 	 *
 	 * @param ability the ability that is used
 	 */
@@ -184,11 +185,11 @@ public class BattleSnapshot {
 		Bugemon offensive;
 		Bugemon defensive;
 		if (this.isTeamA){
-			defensive = this.battle.getActiveBugemonA();
 			offensive = this.battle.getActiveBugemonB();
+			defensive = this.battle.getActiveBugemonA();
 		} else {
-			defensive = this.battle.getActiveBugemonB();
 			offensive = this.battle.getActiveBugemonA();
+			defensive = this.battle.getActiveBugemonB();
 		}
 
 		int abilityDamage = computeDamage(offensive, defensive, ability);
@@ -249,10 +250,11 @@ public class BattleSnapshot {
 		}
 		return actions;
 	}
+
 	/**
 	 * Returns a random ability from the active Bugemon on the player's side.
 	 *
-	 * @return a randomly selected {@link Ability} of the self (Team A) active Bugemon
+	 * @return a randomly selected Ability of the self (Team A) active Bugemon
 	 */
 	public Ability getRandomAbilitySelf() {
 	   AbilitySet AbilitiesA = this.getActiveBugemonSelf().getAbilities();
@@ -261,10 +263,11 @@ public class BattleSnapshot {
 
 	   return AbilitiesA.getAbility(i);
 	}
+
 	/**
 	 * Returns a random ability from the active Bugemon on the opponent's side.
 	 *
-	 * @return a randomly selected {@link Ability} of the opponent (Team B) active Bugemon
+	 * @return a randomly selected Ability of the opponent (Team B) active Bugemon
 	 */
 	public Ability getRandomAbilityOpponent() {
 		AbilitySet AbilitiesB = this.getActiveBugemonOpponent().getAbilities();
@@ -273,34 +276,32 @@ public class BattleSnapshot {
 
 		return AbilitiesB.getAbility(i);
 	}
+
 	/**
 	 * Switches the active Bugemon on the player's team to a random, non-KO Bugemon.
-	 *
-	 * <p>The new active Bugemon is chosen uniformly at random among all Bugemon
-	 * in Team A that are not KO.</p>
 	 */
-	public void switchSelfAuto() {
+	public void switchSelfBugemonAuto() {
 
+		// list of non-KO bugemons
 		List<Bugemon> availableBugemons = battle.getTeamA().getMembers().stream()
 				.filter(b -> !b.isKO())
 				.toList();
+
 		Random rand = new Random();
 		int i = rand.nextInt(availableBugemons.size());
 
 		setActiveBugemonSelf(availableBugemons.get(i));
-
 	}
+
 	/**
 	 * Switches the active Bugemon on the opponent's team to a random, non-KO Bugemon.
-	 *
-	 * <p>The new active Bugemon is chosen uniformly at random among all Bugemon
-	 * in Team B that are not KO.</p>
 	 */
-	public void switchOpponentAuto() {
+	public void switchOpponentBugemonAuto() {
 
 		List<Bugemon> availableBugemons = battle.getTeamB().getMembers().stream()
 				.filter(b -> !b.isKO())
 				.toList();
+
 		Random rand = new Random();
 		int i = rand.nextInt(availableBugemons.size());
 

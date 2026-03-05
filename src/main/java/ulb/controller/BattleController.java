@@ -7,6 +7,7 @@ import java.util.List;
 import ulb.model.ability.Ability;
 import ulb.model.battle.Battle;
 import ulb.model.battle.BattleSnapshot;
+import ulb.model.battle.BattleState;
 import ulb.model.team.Team;
 import ulb.model.bugemon.Bugemon;
 import ulb.view.BattleEndWindow;
@@ -62,7 +63,7 @@ public class BattleController {
 
 	/**
 	 * Switches to the battle window with the selected bugemons
-	 * @param teamA the list of selected bugemon names to create the teams for the battle
+	 * @param teamA the player's team of bugemons
 	 * @throws IOException if the battle window FXML file cannot be loaded
 	 */
 	public void switchToBattleWindow(Team teamA, boolean automatic, ActionEvent event) {
@@ -96,12 +97,7 @@ public class BattleController {
 	/**
 	 * Switches from the current battle view to the battle end window and displays the result.
 	 *
-	 * <p>This method loads the {@code BattleEndWindow.fxml}, replaces the current scene root
-	 * with the battle end window, and initializes the corresponding controller with the
-	 * current {@link Player} and the battle outcome.</p>
-	 *
 	 * @param victory {@code true} if the player won the battle, {@code false} if the player lost
-	 * @param event   the action event that triggered the transition, used to obtain the current stage
 	 */
 	public void switchToBattleEndWindow(boolean victory, ActionEvent event) {
 		try {
@@ -149,14 +145,12 @@ public class BattleController {
 	}
 
 	public Bugemon getActiveBugemonSelf(){ return battleSnapshot.getActiveBugemonSelf();}
+
 	public Bugemon getActiveBugemonOpponent(){ return battleSnapshot.getActiveBugemonOpponent();}
 
 	public void setActiveBugemon(Bugemon bugemon){ battleSnapshot.setActiveBugemonSelf(bugemon);}
 
-	public Player getPlayer(){
-
-        return this.player;
-    }
+	public Player getPlayer(){ return this.player;}
 
 	public void setPlayer(Player player) {
 		this.player = player;
@@ -168,11 +162,6 @@ public class BattleController {
 
 	/**
 	 * Uses a random ability for the current active Bugemon of the specified team.
-	 *
-	 * <p>If {@code isTeamA} is {@code true}, a random ability is selected from the
-	 * player's active Bugemon and applied to the opponent. If {@code isTeamA} is
-	 * {@code false}, a random ability is selected from the opponent's active Bugemon
-	 * and applied to the player's active Bugemon.</p>
 	 *
 	 * @param isTeamA {@code true} to make Team A (the player) use a random ability,
 	 *                {@code false} to make Team B (the opponent) use a random ability
@@ -187,8 +176,33 @@ public class BattleController {
 			ability = battleSnapshot.getRandomAbilityOpponent();
 			battleSnapshot.useAbilityOnA(ability);
 		}
+	}
 
+	/**
+	 * Plays a turn in the automatic battle mode
+	 *
+	 * @return BattleState indicating if the player lost, won or if the battle is ongoing
+	 */
+	public BattleState playAutoTurn() {
+		// the player's turn (always plays first)
+		useRandomAbility(true);
+		if (isTeamBKO()) {
+			return BattleState.WON;
+		}
+		if (isBugemonBKO()) {
+			switchBugemonB();
+		}
 
+		// the opponent's turn
+		useRandomAbility(false);
+		if (isTeamAKO()) {
+			return BattleState.LOST;
+		}
+		if (isBugemonAKO()) {
+			switchBugemonA();
+		}
+
+		return BattleState.INGAME;
 	}
 
 	public boolean isBugemonAKO(){return battleSnapshot.getBattle().isBugemonAKO();}
@@ -197,8 +211,7 @@ public class BattleController {
 	public boolean isTeamAKO(){return battleSnapshot.getBattle().isTeamAKO();}
 	public boolean isTeamBKO(){return battleSnapshot.getBattle().isTeamBKO();}
 
-	public void switchBugemonA(){battleSnapshot.switchSelfAuto();}
-	public void switchBugemonB(){battleSnapshot.switchOpponentAuto();}
-
+	public void switchBugemonA(){battleSnapshot.switchSelfBugemonAuto();}
+	public void switchBugemonB(){battleSnapshot.switchOpponentBugemonAuto();}
 
 }

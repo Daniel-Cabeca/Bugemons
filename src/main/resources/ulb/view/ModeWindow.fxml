@@ -3,10 +3,9 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.VBox?>
 
-
-<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" spacing="50.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" spacing="40.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ulb.view.windows.ModeWindow">
    <children>
-      <Button alignment="CENTER" mnemonicParsing="false" prefHeight="56.0" prefWidth="105.0" text="Solo Mode" />
-      <Button mnemonicParsing="false" prefHeight="55.0" prefWidth="102.0" text="Quit" />
+      <Button fx:id="SoloMode" mnemonicParsing="false" prefHeight="65.0" prefWidth="150.0" text="Solo Mode" />
+      <Button fx:id="Quit" mnemonicParsing="false" onAction="#quit" prefHeight="65.0" prefWidth="150.0" text="Quit" />
    </children>
 </VBox>

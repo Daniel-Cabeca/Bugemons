@@ -27,7 +27,7 @@ import ulb.model.bugemon.BugemonDatabase;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-public class CreateTeamMenu {
+public class CreateTeamWindow {
 
 	@FXML
 	private GridPane availableBugemonsGrid;

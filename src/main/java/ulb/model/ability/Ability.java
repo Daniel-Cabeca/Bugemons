@@ -1,6 +1,8 @@
 package ulb.model.ability;
 
 import ulb.model.type.Type;
+import ulb.model.Effect;
+import ulb.model.bugemon.Bugemon;
 
 /**
  * Represents a move that can be used by a Bugemon in battle.
@@ -11,9 +13,7 @@ public class Ability {
 	private Type type;
 	private String description;
 	private int power;
-
-
-	//TODO effects
+	private Effect effect;
 
 	public Ability(String id, String name, Type type, String description, int power) {
 		this.id = id;
@@ -21,7 +21,16 @@ public class Ability {
 		this.type = type;
 		this.description = description;
 		this.power = power;
-		//TODO effects
+		this.effect = null;
+	}
+
+	public Ability(String id, String name, Type type, String description, int power, Effect effect) {
+		this.id = id;
+		this.name = name;
+		this.type = type;
+		this.description = description;
+		this.power = power;
+		this.effect = effect;
 	}
 
 	public String getId() { return this.id; }
@@ -29,7 +38,13 @@ public class Ability {
 	public Type getType() { return this.type; }
 	public String getDescription() { return this.description; }
 	public int getPower() { return this.power; }
-	//TODO effects
+	public Effect getEffect() { return this.effect; }
+
+	public void applyEffect(Bugemon target) {
+		if (effect != null){
+			this.effect.apply(target);
+		}
+	}
 
 	@Override
 	public boolean equals(Object o) {

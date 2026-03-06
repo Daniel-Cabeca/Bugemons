@@ -74,16 +74,16 @@ public class Effect {
 				Stats statsChange = new Stats();
 				switch (this.stat) {
 					case "pv":
-						statsChange.change(new Stats(this.modifier, 0, 0, 0));
+						statsChange.plus(new Stats(this.modifier, 0, 0, 0));
 						break;
 					case "attaque":
-						statsChange.change(new Stats(0, this.modifier, 0, 0));
+						statsChange.plus(new Stats(0, this.modifier, 0, 0));
 						break;
 					case "defense":
-						statsChange.change(new Stats(0, 0, this.modifier, 0));
+						statsChange.plus(new Stats(0, 0, this.modifier, 0));
 						break;
 					case "initiative":
-						statsChange.change(new Stats(0, 0, 0, this.modifier));
+						statsChange.plus(new Stats(0, 0, 0, this.modifier));
 						break;
 				}
 				if (this.duration.equals("permanent")) {

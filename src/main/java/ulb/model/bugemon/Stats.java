@@ -35,6 +35,13 @@ public class Stats {
 		this.initiative = (this.initiative <= Math.abs(delta.initiative) && delta.initiative < 0)? 0: this.initiative + delta.initiative;
 	}
 
+	public void plus(Stats delta) {
+		this.hp += delta.hp;
+		this.attack += delta.attack;
+		this.defense += delta.defense;
+		this.initiative += delta.initiative;
+	}
+
 	/**
 	 * Raises all the stats to a given minimum.
 	 *

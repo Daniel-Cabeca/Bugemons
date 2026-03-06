@@ -216,17 +216,6 @@ public class BattleSnapshot {
 			this.battle.setState(this.isTeamA, BattleState.LOST);
 
 		} else if (action instanceof UseItem) {
-
-			UseItem useItemAction = (UseItem) action;
-			Item item = useItemAction.getItem();
-			if (item.getEffect().getTarget().equals("adversaire")) {
-				item.use(getActiveBugemonOpponent());
-			} else {
-				item.use(getActiveBugemonSelf());
-			}
-
-			// implémenter "switch" plus tard
-
 			UseItem useItemAction = (UseItem) action;
 			Item item = useItemAction.getItem();
 			if (item.getEffect().getTarget().equals("adversaire")) {

@@ -9,7 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 
 import ulb.model.bugemon.Bugemon;
-import ulb.model.Effect;
 import ulb.model.ability.Ability;
 import ulb.model.team.Team;
 import ulb.model.type.Type;

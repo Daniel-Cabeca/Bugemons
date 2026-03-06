@@ -1,10 +1,12 @@
 package ulb.model.ability;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import ulb.model.sample.AbilitySample;
+import ulb.model.sample.BugemonSample;
+import ulb.model.bugemon.Bugemon;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AbilityTest {
 	@Test
@@ -38,5 +40,21 @@ public class AbilityTest {
 		Ability a = AbilitySample.getA();
 		Ability b = AbilitySample.getA();
 		assertTrue(a.equals(b));
+	}
+
+	@Test
+	public void verifyApplyStatEffect(){
+		Ability a = AbilitySample.getG();
+		Bugemon b = BugemonSample.getA();
+		a.applyEffect(b);
+		assertEquals(b.getBaseStats().defense - 10, b.getDefense());
+	}
+
+	@Test
+	public void verifyApplyHealEffect(){
+		Ability a = AbilitySample.getF();
+		Bugemon b = BugemonSample.getG();
+		a.applyEffect(b);
+		assertEquals(b.getBaseStats().hp, b.getHp());
 	}
 }

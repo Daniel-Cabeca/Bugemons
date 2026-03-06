@@ -196,6 +196,7 @@ public class BattleSnapshot {
 		int abilityDamage = computeDamage(offensive, defensive, ability);
 		Stats damage = new Stats(-abilityDamage, 0, 0, 0);
 		defensive.changeFightStats(damage);
+		ability.applyEffect(defensive);
 	}
 
 	public void useAction(Action action) {

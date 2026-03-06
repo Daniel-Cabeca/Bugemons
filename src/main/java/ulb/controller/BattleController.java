@@ -117,12 +117,37 @@ public class BattleController {
 	}
 
 	/**
+	 * Checks if an item can be used or not given the stats of the bugemon
+	 * @param item the item that needs to be checked
+	 * @return if the item can be used or not (boolean)
+	 */
+	public boolean checkItem(Item item) {
+		if (item.getEffect().getType().equals("soin")) {
+			if (battleSnapshot.getTeamView()) {
+				int baseHp = battleSnapshot.getBattle().getActiveBugemonA().getBaseStats().getHp();
+				int fightHP = battleSnapshot.getBattle().getActiveBugemonA().getHp();
+				if (baseHp == fightHP) {
+					return false;
+				}
+			}
+			else {
+				int baseHp = battleSnapshot.getBattle().getActiveBugemonB().getBaseStats().getHp();
+				int fightHP = battleSnapshot.getBattle().getActiveBugemonB().getHp();
+				if (baseHp == fightHP) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	/**
 	 * Uses an item from the player's inventory during battle and updates the inventory display and the bugemon's stats
 	 * @param item the item to be used from the player's inventory
 	 */
 	public void useItem(Item item) {
-		player.getInventory().removeItem(item);
 		battleSnapshot.useAction(new UseItem(item));
+		player.getInventory().removeItem(item);
 	}
 
 	public Bugemon getActiveBugemonSelf(){ return battleSnapshot.getActiveBugemonSelf();}

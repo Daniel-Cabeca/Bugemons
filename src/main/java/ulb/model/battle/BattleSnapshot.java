@@ -36,6 +36,8 @@ public class BattleSnapshot {
 
 	public Battle getBattle() {return this.battle;}
 
+	public boolean getTeamView() {return this.isTeamA;}
+
 
 	/**
 	 * States if the tour of the player has ended or not

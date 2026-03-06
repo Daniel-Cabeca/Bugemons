@@ -262,6 +262,7 @@ public class BattleWindow {
 								System.err.println("Failed to load item image: " + e.getMessage());
 							}
 							label.setText(item.getName() + " x" + playerInventory.getItems().get(item));
+							button.setDisable(!battleController.checkItem(item));
 							setGraphic(hbox);
 						}
 					}

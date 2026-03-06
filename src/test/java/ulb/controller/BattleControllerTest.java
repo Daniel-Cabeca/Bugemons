@@ -25,6 +25,57 @@ import ulb.model.type.Type;
 public class BattleControllerTest {
 
 	@Test
+	public void testCheckItemTrue() throws Exception {
+		Player player = new Player("TestPlayer");
+		BattleController battleController = new BattleController(player);
+
+		Bugemon bugemon = new Bugemon(Type.PYRO, 50, 10, 10, 10);
+		bugemon.changeFightStats(new Stats(-1, 0, 0, 0));
+		Team teamA = new Team(List.of(bugemon));
+		Team teamB = new Team(List.of(new Bugemon(Type.FLORA, 100, 10, 10, 10)));
+		Battle battle = new Battle(teamA, teamB);
+
+		Constructor<BattleSnapshot> constructor = BattleSnapshot.class.getDeclaredConstructor(Battle.class, boolean.class);
+		constructor.setAccessible(true);
+		BattleSnapshot snapshot = constructor.newInstance(battle, true);
+
+		Field field = BattleController.class.getDeclaredField("battleSnapshot");
+		field.setAccessible(true);
+		field.set(battleController, snapshot);
+
+		Effect effect = new Effect("soin", "lanceur", 20);
+		Item item = new Item("potion", "Potion", "Restaure 20 pv.", "soin", effect, "potion.png");
+		player.getInventory().addItem(item, 1);
+
+		assertTrue(battleController.checkItem(item));
+	}
+
+	@Test
+	public void testCheckItemFalse() throws Exception {
+		Player player = new Player("TestPlayer");
+		BattleController battleController = new BattleController(player);
+
+		Bugemon bugemon = new Bugemon(Type.PYRO, 50, 10, 10, 10);
+		Team teamA = new Team(List.of(bugemon));
+		Team teamB = new Team(List.of(new Bugemon(Type.FLORA, 100, 10, 10, 10)));
+		Battle battle = new Battle(teamA, teamB);
+
+		Constructor<BattleSnapshot> constructor = BattleSnapshot.class.getDeclaredConstructor(Battle.class, boolean.class);
+		constructor.setAccessible(true);
+		BattleSnapshot snapshot = constructor.newInstance(battle, true);
+
+		Field field = BattleController.class.getDeclaredField("battleSnapshot");
+		field.setAccessible(true);
+		field.set(battleController, snapshot);
+
+		Effect effect = new Effect("soin", "lanceur", 20);
+		Item item = new Item("potion", "Potion", "Restaure 20 pv.", "soin", effect, "potion.png");
+		player.getInventory().addItem(item, 1);
+
+		assertFalse(battleController.checkItem(item));
+	}
+
+	@Test
 	public void testUsedItemRemovedFromInventory() throws Exception {
 		Player player = new Player("TestPlayer");
 		player.getInventory().getItems().clear();
@@ -69,6 +120,7 @@ public class BattleControllerTest {
 		BattleController battleController = new BattleController(player);
 
 		Bugemon bugemon = new Bugemon(Type.PYRO, 50, 10, 10, 10);
+		bugemon.changeFightStats(new Stats(-20, 0, 0, 0));
 		Team teamA = new Team(List.of(bugemon));
 		Team teamB = new Team(List.of(new Bugemon(Type.FLORA, 100, 10, 10, 10)));
 		Battle battle = new Battle(teamA, teamB);
@@ -87,7 +139,35 @@ public class BattleControllerTest {
 
 		battleController.useItem(item);
 
-		assertEquals(70, bugemon.getFightStats().getHp());
+		assertEquals(50, bugemon.getFightStats().getHp());
+	}
+
+	@Test
+	public void testOverHealedBugemon() throws Exception {
+		Player player = new Player("TestPlayer");
+		BattleController battleController = new BattleController(player);
+
+		Bugemon bugemon = new Bugemon(Type.PYRO, 50, 10, 10, 10);
+		bugemon.changeFightStats(new Stats(-20, 0, 0, 0));
+		Team teamA = new Team(List.of(bugemon));
+		Team teamB = new Team(List.of(new Bugemon(Type.FLORA, 100, 10, 10, 10)));
+		Battle battle = new Battle(teamA, teamB);
+
+		Constructor<BattleSnapshot> constructor = BattleSnapshot.class.getDeclaredConstructor(Battle.class, boolean.class);
+		constructor.setAccessible(true);
+		BattleSnapshot snapshot = constructor.newInstance(battle, true);
+
+		Field field = BattleController.class.getDeclaredField("battleSnapshot");
+		field.setAccessible(true);
+		field.set(battleController, snapshot);
+
+		Effect effect = new Effect("soin", "lanceur", 30);
+		Item item = new Item("potion", "Potion", "Restaure 20 pv.", "soin", effect, "potion.png");
+		player.getInventory().addItem(item, 1);
+
+		battleController.useItem(item);
+
+		assertEquals(50, bugemon.getFightStats().getHp());
 	}
 
 	@Test

@@ -53,6 +53,9 @@ public class Bugemon {
 
 	public void changeFightStats(Stats delta) {
 		this.getFightStats().change(delta);
+		if (this.getHp() > this.baseStats.getHp()) {
+			this.fightStats.setHp(this.baseStats.getHp());
+		}
 	}
 
 	/**

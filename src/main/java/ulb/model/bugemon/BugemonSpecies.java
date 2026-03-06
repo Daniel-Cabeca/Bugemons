@@ -78,4 +78,8 @@ public class BugemonSpecies {
 		this.sprite = null;
 		this.starter = false;
 	}
+
+	public boolean equals(BugemonSpecies other){
+		return this.id.equals(other.id);
+	}
 }

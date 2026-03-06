@@ -109,11 +109,27 @@ public class TeamTest {
 	}
 
     @Test
-    public void checkTeamKOWorksWithSmallTeams() {
-        Team team = new Team(List.of(makeBugemon("A")));
-        assertFalse(team.checkTeamKO()); // pas KO => équipe pas KO
+    public void checkTeamKOTeamWithOneBugemonNotKO() {
+        Bugemon b1 = makeBugemon("B1");
+        Team team = new Team(List.of(b1));
+        assertFalse(team.checkTeamKO());
+    }
 
-        team.getBugemon(0).changeFightStats(new Stats(-9999, 0, 0, 0));
-        assertTrue(team.checkTeamKO());  // KO => équipe KO
+    @Test
+    public void checkTeamKOTeamWithOneBugemonKO() {
+        Bugemon b1 = makeBugemon("B1");
+        b1.changeFightStats(new Stats(-100, 0, 0, 0));
+        Team team = new Team(List.of(b1));
+        assertTrue(team.checkTeamKO());
+    }
+
+    @Test
+    public void checkTeamKOTeamWithOneBugemonKOTwoNotKO() {
+        Bugemon b1 = makeBugemon("B1");
+        Bugemon b2 = makeBugemon("B2");
+        Bugemon b3 = makeBugemon("B3");
+        b1.changeFightStats(new Stats(-100, 0, 0, 0));
+        Team team = new Team(List.of(b1, b2, b3));
+        assertFalse(team.checkTeamKO());
     }
 }

@@ -45,7 +45,7 @@ public class OpponentTeamGeneratorTest {
 	public void cannotGenerateOpponentForEmptyTeam() throws Exception {
 		Team emptyTeam = new Team();
 		assertThrows(IllegalArgumentException.class,
-      () -> OpponentTeamGenerator.generateRandomOpponentTeam(emptyTeam));
+			() -> OpponentTeamGenerator.generateRandomOpponentTeam(emptyTeam));
 	}
 }
 

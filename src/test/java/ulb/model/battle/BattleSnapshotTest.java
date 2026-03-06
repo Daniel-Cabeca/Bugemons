@@ -5,13 +5,17 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 
 import ulb.model.bugemon.Bugemon;
-import ulb.controller.action.UseAbility;
 import ulb.model.ability.Ability;
 import ulb.model.team.Team;
 import ulb.model.type.Type;
+import ulb.controller.action.*;
+import ulb.model.item.*;
 import java.util.List;
+import java.util.Vector;
 
 public class BattleSnapshotTest {
 	private Battle getBattleA(){
@@ -176,6 +180,37 @@ public class BattleSnapshotTest {
 		snap.useAbility(floraAttack);
 		int hp = snap.getBattle().getActiveBugemonB().getFightStats().hp;
 		assertTrue(hp == 85 || hp == 77);	// 10 * 1.5 (* 1.5)
+	}
+
+	@Test
+	public void tourEndedAfterUseAction() {
+		Bugemon attacker = new Bugemon("att", Type.PYRO, 100, 10, 10, 10);
+		Bugemon defender = new Bugemon("def", Type.AQUA, 100, 10, 10, 10);
+
+		Team t1 = new Team(List.of(attacker));
+		Team t2 = new Team(List.of(defender));
+		BattleSnapshot snap = new BattleSnapshot(new Battle(t1, t2, attacker, defender), true);
+
+		Action useAbility = new UseAbility(new Ability("1", "a", Type.AQUA, "rien", 10));
+
+		snap.useAction(useAbility);
+
+		assertTrue(snap.getTourInfo());
+	}
+
+	@Test
+	public void tourBegun() {
+		Bugemon attacker = new Bugemon("att", Type.PYRO, 100, 10, 10, 10);
+		Bugemon defender = new Bugemon("def", Type.AQUA, 100, 10, 10, 10);
+
+		Team t1 = new Team(List.of(attacker));
+		Team t2 = new Team(List.of(defender));
+		BattleSnapshot snap = new BattleSnapshot(new Battle(t1, t2, attacker, defender), true);
+
+		Vector<Action> actions = snap.getAvailableActions();
+
+		assertFalse(snap.getTourInfo());
+
 	}
 
 }

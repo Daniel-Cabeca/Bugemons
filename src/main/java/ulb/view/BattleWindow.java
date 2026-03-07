@@ -347,6 +347,30 @@ public class BattleWindow {
 							setText(null);
 						} else {
 							label.setText(ability.getName());
+
+							String color;
+							switch (ability.getType()) {
+								case PYRO:
+									color = "#ED2424";
+									break;
+								case FLORA:
+									color = "#50A346";
+									break;
+								case AQUA:
+									color = "#51B0F0";
+									break;
+								case LITHO:
+									color = "#807979";
+									break;
+								default:
+									color = "#ced4da";
+							}
+							hbox.setStyle(
+									"-fx-background-color: " + color + ";" +
+											"-fx-padding: 6;" +
+											"-fx-background-radius: 6;"
+							);
+
 							setGraphic(hbox);
 						}
 					}

@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import ulb.model.parser.ItemParser;
+import ulb.repository.loader.parser.ItemParser;
 import ulb.model.item.Inventory;
 import ulb.model.item.Item;
 

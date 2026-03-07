@@ -1,4 +1,4 @@
-package ulb.model.parser;
+package ulb.repository.loader.parser;
 
 import ulb.model.type.Type;
 

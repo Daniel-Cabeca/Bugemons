@@ -1,10 +1,10 @@
-package ulb.model.parser;
+package ulb.repository.loader.parser;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import ulb.model.type.Type;
+import ulb.model.type.Type;import ulb.repository.loader.parser.TypeParser;
 
 public class TypeParserTest {
 	@Test

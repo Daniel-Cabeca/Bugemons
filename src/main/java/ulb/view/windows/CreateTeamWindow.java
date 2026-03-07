@@ -1,4 +1,4 @@
-package ulb.view;
+package ulb.view.windows;
 
 import ulb.controller.BattleController;
 
@@ -21,6 +21,7 @@ import java.util.List;
 
 import ulb.model.Player;
 import ulb.model.bugemon.BugemonSpecies;
+import ulb.view.MainMenu;
 import ulb.model.bugemon.BugemonDatabase;
 
 

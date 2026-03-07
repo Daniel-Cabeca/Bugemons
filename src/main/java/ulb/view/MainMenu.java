@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 import ulb.model.Player;
+import ulb.view.windows.CreateTeamWindow;
 
 public class MainMenu {
 

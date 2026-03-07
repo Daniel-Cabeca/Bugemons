@@ -96,13 +96,15 @@ public abstract class AbilityParser {
 
 			switch (effectType) {
 				case "soin":
-					effect = new Effect(effectType, target, effectNode.get("valeur").asInt());
+					effect = new Effect(Effect.EffectType.SOIN, Effect.EffectTarget.valueOf(target.toUpperCase()), 
+						Map.of(Effect.StatType.PV, effectNode.get("valeur").asInt()), Effect.EffectDuration.PERMANENT);
 					break;
 				case "stat_modifier":
-					effect = new Effect(effectType, target,
-							effectNode.get("stat").asText(),
-							effectNode.get("modificateur").asInt(),
-							effectNode.get("duree").asText());
+				String duration = effectNode.get("duree").asText().toUpperCase().replace("1_TOUR", "TOUR");
+				effect = new Effect(Effect.EffectType.STAT_MODIFIER, Effect.EffectTarget.valueOf(target.toUpperCase()), 
+					Map.of(Effect.StatType.valueOf(effectNode.get("stat").asText().toUpperCase()), 
+					effectNode.get("modificateur").asInt()), 
+					Effect.EffectDuration.valueOf(duration));
 					break;
 				default:
 					throw new IllegalArgumentException("Unknown effect type: " + type);

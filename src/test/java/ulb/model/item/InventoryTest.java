@@ -7,13 +7,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 import ulb.model.Effect;
+import ulb.model.sample.EffectSample;
 
 public class InventoryTest {
 	@Test
 	public void testAddItem() {
-		Effect baieEffect = new Effect("soin", "lanceur", 50);
+		Effect baieEffect = EffectSample.getHeal();
 		Item item = new Item("baie_tonique", "Baie Tonique", 
-		"Restaure 50 PV au Bugémon actif.", "soin", 
+		"Restaure 10 PV au Bugémon actif.", "soin", 
 		baieEffect, "baie_tonique.png");
 		Inventory inventory = new Inventory();
 		inventory.addItem(item, 3);
@@ -23,9 +24,9 @@ public class InventoryTest {
 
 	@Test
 	public void testRemoveItem() {
-		Effect baieEffect = new Effect("soin", "lanceur", 50);
+		Effect baieEffect = EffectSample.getHeal();
 		Item item = new Item("baie_tonique", "Baie Tonique", 
-		"Restaure 50 PV au Bugémon actif.", "soin", 
+		"Restaure 10 PV au Bugémon actif.", "soin", 
 		baieEffect, "baie_tonique.png");
 		Inventory inventory = new Inventory();
 		inventory.addItem(item, 3);

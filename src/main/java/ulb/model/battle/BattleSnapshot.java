@@ -9,6 +9,7 @@ import ulb.model.item.Item;
 import ulb.model.type.Effectiveness;
 import ulb.controller.action.*;
 import ulb.model.item.Item;
+import ulb.model.Effect;
 
 import java.util.List;
 import java.util.Random;
@@ -221,13 +222,13 @@ public class BattleSnapshot {
 		} else if (action instanceof UseItem) {
 			UseItem useItemAction = (UseItem) action;
 			Item item = useItemAction.getItem();
-			if (item.getEffect().getTarget().equals("adversaire")) {
+			if (item.getEffect().getTarget().equals(Effect.EffectTarget.ADVERSAIRE)) {
 				item.use(getActiveBugemonOpponent());
 			} else {
 				item.use(getActiveBugemonSelf());
 			}
 
-			if (item.getEffect().getType().equals("switch")) {
+			if (item.getEffect().getType().equals(Effect.EffectType.SWITCH)) {
 				Team playerTeam = this.getTeamSelf();
 				Bugemon nextBugemon = playerTeam.getMembers().stream()
 					.filter(b -> !b.isKO() && b != this.getActiveBugemonSelf())

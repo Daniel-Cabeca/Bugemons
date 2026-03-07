@@ -1,6 +1,8 @@
 package ulb.model.parser;
 
 import org.junit.jupiter.api.Test;
+
+import ulb.model.Effect;
 import ulb.model.item.Item;
 
 import java.io.File;
@@ -74,51 +76,51 @@ public class ItemParserTest {
     public void loadParsesEffectSoin() throws Exception {
         String path = getResourcePath(true);
         List<Item> items = ItemParser.loadItems(path);
-        assertEquals("soin", items.get(0).getEffect().getType());
-        assertEquals("lanceur", items.get(0).getEffect().getTarget());
-        assertEquals(20, items.get(0).getEffect().getValue());
+        assertEquals(Effect.EffectType.SOIN, items.get(0).getEffect().getType());
+        assertEquals(Effect.EffectTarget.LANCEUR, items.get(0).getEffect().getTarget());
+        assertEquals(20, items.get(0).getEffect().getModifiers().get(Effect.StatType.PV));
     }
 
     @Test
     public void loadParsesEffectStatModifier() throws Exception {
         String path = getResourcePath(true);
         List<Item> items = ItemParser.loadItems(path);
-        assertEquals("stat_modifier", items.get(2).getEffect().getType());
-        assertEquals("lanceur", items.get(2).getEffect().getTarget());
-        assertEquals("defense", items.get(2).getEffect().getStat());
-        assertEquals(10, items.get(2).getEffect().getModifier());
-        assertEquals("permanent", items.get(2).getEffect().getDuration());
+        assertEquals(Effect.EffectType.STAT_MODIFIER, items.get(2).getEffect().getType());
+        assertEquals(Effect.EffectTarget.LANCEUR, items.get(2).getEffect().getTarget());
+        assertEquals(Effect.StatType.DEFENSE, items.get(2).getEffect().getModifiers().keySet().iterator().next());
+        assertEquals(10, items.get(2).getEffect().getModifiers().get(Effect.StatType.DEFENSE));
+        assertEquals(Effect.EffectDuration.PERMANENT, items.get(2).getEffect().getDuration());
     }
 
     @Test
     public void loadParsesEffectResetMalus() throws Exception {
         String path = getResourcePath(true);
         List<Item> items = ItemParser.loadItems(path);
-        assertEquals("reset_malus", items.get(4).getEffect().getType());
-        assertEquals("lanceur", items.get(4).getEffect().getTarget());
+        assertEquals(Effect.EffectType.RESET_MALUS, items.get(4).getEffect().getType());
+        assertEquals(Effect.EffectTarget.LANCEUR, items.get(4).getEffect().getTarget());
     }
 
     @Test
     public void loadParsesEffectStatModifierMultiple() throws Exception {
         String path = getResourcePath(true);
         List<Item> items = ItemParser.loadItems(path);
-        // Finds the first item in the list with a stat_modifier_multiple effect type
+        // Finds an item in the list with a stat_modifier_multiple effect type
         Item item = items.stream()
-                .filter(i -> i.getEffect().getType().equals("stat_modifier_multiple"))
+                .filter(i -> i.getId().equals("orbe_stimulant"))
                 .findFirst()
                 .orElse(null);
 
-        assertEquals("stat_modifier_multiple", item.getEffect().getType());
-        assertEquals("lanceur", item.getEffect().getTarget());
+        assertEquals(Effect.EffectType.STAT_MODIFIER, item.getEffect().getType());
+        assertEquals(Effect.EffectTarget.LANCEUR, item.getEffect().getTarget());
         assertEquals(
                 Integer.valueOf(10),
-                item.getEffect().getModifiers().get("attaque")
+                item.getEffect().getModifiers().get(Effect.StatType.ATTAQUE)
         );
         assertEquals(
                 Integer.valueOf(10),
-                item.getEffect().getModifiers().get("initiative")
+                item.getEffect().getModifiers().get(Effect.StatType.INITIATIVE)
         );
-        assertEquals("tour", item.getEffect().getDuration());
+        assertEquals(Effect.EffectDuration.TOUR, item.getEffect().getDuration());
     }
 
     @Test

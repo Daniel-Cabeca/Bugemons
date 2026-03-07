@@ -22,6 +22,7 @@ import ulb.controller.action.UseItem;
 import ulb.model.Player;
 import ulb.model.item.Item;
 import ulb.model.team.OpponentTeamGenerator;
+import ulb.model.Effect;
 
 public class BattleController {
 	private Player player;
@@ -122,7 +123,7 @@ public class BattleController {
 	 * @return if the item can be used or not (boolean)
 	 */
 	public boolean checkItem(Item item) {
-		if (item.getEffect().getType().equals("soin")) {
+		if (item.getEffect().getType().equals(Effect.EffectType.SOIN)) {
 			if (battleSnapshot.getTeamView()) {
 				int baseHp = battleSnapshot.getBattle().getActiveBugemonA().getBaseStats().getHp();
 				int fightHP = battleSnapshot.getBattle().getActiveBugemonA().getHp();

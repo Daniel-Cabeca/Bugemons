@@ -1,14 +1,10 @@
 package ulb.view.windows;
 
-
 import java.io.IOException;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import ulb.view.handler.Window;
-
-
-
 
 final public class ModeWindow extends Window{
 

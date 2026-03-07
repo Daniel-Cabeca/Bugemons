@@ -3,6 +3,7 @@ package ulb.model.parser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ulb.model.Effect;
+import ulb.model.Effect.EffectType;
 import ulb.model.item.Item;
 
 import java.io.File;
@@ -42,23 +43,28 @@ public class ItemParser {
 
 				switch (type) {
 					case "soin":
-						effect = new Effect(type, target, effectNode.get("valeur").asInt());
+						effect = new Effect(Effect.EffectType.SOIN, Effect.EffectTarget.valueOf(target.toUpperCase()), 
+							Map.of(Effect.StatType.PV, effectNode.get("valeur").asInt()), Effect.EffectDuration.PERMANENT);
 						break;
 					case "stat_modifier":
-						effect = new Effect(type, target,
-								effectNode.get("stat").asText(),
-								effectNode.get("modificateur").asInt(),
-								effectNode.get("duree").asText());
+					String duration = effectNode.get("duree").asText().toUpperCase().replace("1_TOUR", "TOUR");
+					effect = new Effect(EffectType.STAT_MODIFIER, Effect.EffectTarget.valueOf(target.toUpperCase()), 
+						Map.of(Effect.StatType.valueOf(effectNode.get("stat").asText().toUpperCase()), 
+						effectNode.get("modificateur").asInt()), 
+						Effect.EffectDuration.valueOf(duration));
 						break;
 					case "stat_modifier_multiple":
 						JsonNode modifiersNode = effectNode.get("modificateurs");
-						Map<String, Integer> modifiers = new HashMap<>();
+						Map<Effect.StatType, Integer> modifiers = new HashMap<>();
 						modifiersNode.fields().forEachRemaining(entry ->
-								modifiers.put(entry.getKey(), entry.getValue().asInt()));
-						effect = new Effect(type, target, modifiers, effectNode.get("duree").asText());
+							modifiers.put(Effect.StatType.valueOf(entry.getKey().toUpperCase()), entry.getValue().asInt()));
+					String durationMulti = effectNode.get("duree").asText().toUpperCase().replace("1_TOUR", "TOUR");
+					effect = new Effect(EffectType.STAT_MODIFIER, Effect.EffectTarget.valueOf(target.toUpperCase()), 
+						modifiers, Effect.EffectDuration.valueOf(durationMulti));
 						break;
 					case "reset_malus", "switch":
-						effect = new Effect(type, target);
+						effect = new Effect(EffectType.valueOf(type.toUpperCase()), Effect.EffectTarget.valueOf(target.toUpperCase()), 
+							Map.of(), Effect.EffectDuration.TOUR);
 						break;
 					default:
 						throw new IllegalArgumentException("Unknown effect type: " + type);

@@ -7,8 +7,12 @@ import java.util.List;
 import ulb.model.ability.Ability;
 import ulb.model.battle.Battle;
 import ulb.model.battle.BattleSnapshot;
+import ulb.model.battle.BattleState;
 import ulb.model.team.Team;
 import ulb.model.bugemon.Bugemon;
+import ulb.model.type.Effectiveness;
+import ulb.model.type.Type;
+import ulb.view.BattleEndWindow;
 import ulb.view.BattleWindow;
 import ulb.view.BattleMenu;
 import javafx.event.ActionEvent;
@@ -16,22 +20,31 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
-
+import ulb.controller.action.UseItem;
 import ulb.model.Player;
 import ulb.model.item.Item;
 import ulb.model.team.OpponentTeamGenerator;
+import ulb.model.Effect;
 
 public class BattleController {
 	private Player player;
 	private BattleSnapshot battleSnapshot;
+	private int floorNumber = 1;
+	private boolean isBossFight = false;
 
 	public BattleController(Player player) {
 		this.player = player;
 	}
 
+	/**
+	 * Switches to the battle type menu
+	 *
+	 * @param selectedBugemons the list of selected bugemons in create team menu
+	 * @param event            the action triggered by clicking the confirm team button
+	 */
 	public void switchToBattleMenu(List<String> selectedBugemons, ActionEvent event) {
 		List<Bugemon> teamABugemons = new ArrayList<Bugemon>();
-		for (String bugemon: selectedBugemons) {
+		for (String bugemon : selectedBugemons) {
 			teamABugemons.add(new Bugemon(bugemon.toLowerCase()));
 		}
 		Team teamA = new Team(teamABugemons);
@@ -55,7 +68,8 @@ public class BattleController {
 
 	/**
 	 * Switches to the battle window with the selected bugemons
-	 * @param teamA the list of selected bugemon names to create the teams for the battle
+	 *
+	 * @param teamA the player's team of bugemons
 	 * @throws IOException if the battle window FXML file cannot be loaded
 	 */
 	public void switchToBattleWindow(Team teamA, boolean automatic, ActionEvent event) {
@@ -63,15 +77,15 @@ public class BattleController {
 		Team teamB = new Team();
 		try {
 			teamB = OpponentTeamGenerator.generateRandomOpponentTeam(teamA);
+		} catch (Exception e) {
 		}
-		catch (Exception e) {}
 
 		// without multiplayer, player is always teamA
 		battleSnapshot = new BattleSnapshot(new Battle(teamA, teamB), true);
 
 		try {
 			// NewBattleWindow.fxml for graphic interface (connection methods to view needed, placeholders for now)
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/BattleWindow.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/NewBattleWindow.fxml"));
 			Parent battleWindow = loader.load();
 
 			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -88,45 +102,208 @@ public class BattleController {
 	}
 
 	/**
-	 * Uses an item from the player's inventory during battle and updates the inventory display and the bugemon's stats
-	 * @param item the item to be used from the player's inventory
+	 * Switches from the current battle view to the battle end window and displays the result.
+	 *
+	 * @param victory {@code true} if the player won the battle, {@code false} if the player lost
 	 */
-	public void useItem(Item item) {
-		player.getInventory().removeItem(item);
-		Bugemon activeBugemon = battleSnapshot.getActiveBugemonSelf();
-		Bugemon opponentBugemon = battleSnapshot.getActiveBugemonOpponent();
+	public void switchToBattleEndWindow(boolean victory, ActionEvent event) {
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/BattleEndWindow.fxml"));
+			Parent battleEndWindow = loader.load();
 
-		if (item.getEffect().getTarget().equals("adversaire")) {
-			item.use(opponentBugemon);
-		} else {
-			item.use(activeBugemon);
-		}
+			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			stage.getScene().setRoot(battleEndWindow);
 
-		if (item.getEffect().getType().equals("switch")) {
-			// TODO: implement ability to choose next bugemon, for now: switch to first available
-			Team playerTeam = battleSnapshot.getTeamSelf();
-			Bugemon nextBugemon = playerTeam.getMembers().stream()
-					.filter(b -> !b.isKO() && b != activeBugemon)
-					.findFirst()
-					.orElse(null);
-			if (nextBugemon != null) {
-				battleSnapshot.setActiveBugemonSelf(nextBugemon);
-			}
+			BattleEndWindow controller = loader.getController();
+			controller.setPlayer(player);
+			controller.setResult(victory);
+
+		} catch (IOException e) {
+			System.err.println("Failed to load battle_end_window: " + e.getMessage());
 		}
 	}
 
-	public Player getPlayer(){
+	/**
+	 * Checks if an item can be used or not given the stats of the bugemon
+	 *
+	 * @param item the item that needs to be checked
+	 * @return if the item can be used or not (boolean)
+	 */
+	public boolean checkItem(Item item) {
+		if (item.getEffect().getType().equals(Effect.EffectType.SOIN)) {
+			if (battleSnapshot.getTeamView()) {
+				int baseHp = battleSnapshot.getBattle().getActiveBugemonA().getBaseStats().getHp();
+				int fightHP = battleSnapshot.getBattle().getActiveBugemonA().getHp();
+				if (baseHp == fightHP) {
+					return false;
+				}
+			} else {
+				int baseHp = battleSnapshot.getBattle().getActiveBugemonB().getBaseStats().getHp();
+				int fightHP = battleSnapshot.getBattle().getActiveBugemonB().getHp();
+				if (baseHp == fightHP) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 
-        return this.player;
-    }
+	/**
+	 * Uses an item from the player's inventory during battle and updates the inventory display and the bugemon's stats
+	 *
+	 * @param item the item to be used from the player's inventory
+	 */
+	public void useItem(Item item) {
+		battleSnapshot.useAction(new UseItem(item));
+		player.getInventory().removeItem(item);
+	}
+
+	public Bugemon getActiveBugemonSelf() {
+		return battleSnapshot.getActiveBugemonSelf();
+	}
+
+	public Bugemon getActiveBugemonOpponent() {
+		return battleSnapshot.getActiveBugemonOpponent();
+	}
+
+	public void setActiveBugemon(Bugemon bugemon) {
+		battleSnapshot.setActiveBugemonSelf(bugemon);
+	}
+
+	public Player getPlayer() {
+		return this.player;
+	}
 
 	public void setPlayer(Player player) {
 		this.player = player;
 	}
 
-	public void Damage(Ability ability){
+	public void useAbility(Ability ability) {
 		battleSnapshot.useAbility(ability);
 	}
 
+	/**
+	 * Uses a random ability for the current active Bugemon of the specified team.
+	 *
+	 * @param isTeamA {@code true} to make Team A (the player) use a random ability,
+	 *                {@code false} to make Team B (the opponent) use a random ability
+	 */
+	public void useRandomAbility(boolean isTeamA) {
 
+		Ability ability;
+		if (isTeamA) {
+			ability = battleSnapshot.getRandomAbilitySelf();
+			useAbility(ability);
+		} else {
+			ability = battleSnapshot.getRandomAbilityOpponent();
+			battleSnapshot.useAbilityOnA(ability);
+		}
+	}
+
+	/**
+	 * Plays a turn in the automatic battle mode
+	 *
+	 * @return BattleState indicating if the player lost, won or if the battle is ongoing
+	 */
+	public BattleState playAutoTurn() {
+		Battle battle = battleSnapshot.getBattle();
+		boolean playerFirst = battle.CheckInitiave() == battle.getActiveBugemonA();
+
+		useRandomAbility(playerFirst);
+		if (isTeamBKO()) return BattleState.WON;
+		if (isTeamAKO()) return BattleState.LOST;
+		if (isBugemonBKO()) switchBugemonB();
+		if (isBugemonAKO()) switchBugemonA();
+
+		useRandomAbility(!playerFirst);
+		if (isTeamBKO()) return BattleState.WON;
+		if (isTeamAKO()) return BattleState.LOST;
+		if (isBugemonBKO()) switchBugemonB();
+		if (isBugemonAKO()) switchBugemonA();
+
+		return BattleState.INGAME;
+	}
+
+	public boolean isBugemonAKO() {
+		return battleSnapshot.getBattle().isBugemonAKO();
+	}
+
+	public boolean isBugemonBKO() {
+		return battleSnapshot.getBattle().isBugemonBKO();
+	}
+
+	public boolean isTeamAKO() {
+		return battleSnapshot.getBattle().isTeamAKO();
+	}
+
+	public boolean isTeamBKO() {
+		return battleSnapshot.getBattle().isTeamBKO();
+	}
+
+	public void switchBugemonA() {
+		battleSnapshot.switchSelfBugemonAuto();
+	}
+
+	public void switchBugemonB() {
+		battleSnapshot.switchOpponentBugemonAuto();
+	}
+
+
+	public void setFloorNumber(int floor) {
+		this.floorNumber = floor;
+	}
+
+	public void setIsBossFight(boolean boss) {
+		this.isBossFight = boss;
+	}
+
+	public void handleBattleEnd(boolean victory) {
+		handleBattleEnd(victory, null);
+	}
+
+	public void handleBattleEnd(boolean victory, List<Bugemon> participants) {
+
+		for (Bugemon b : player.getTeam().getMembers()) b.removeStatsDebuffs();
+
+		if (!victory) return;
+
+		int mult = isBossFight ? 2 : 1;
+		int totalXp = 30 * floorNumber * mult * battleSnapshot.getBattle().getTeamB().size();
+		int xp = totalXp / player.getTeam().size();
+
+
+		// xp partagé avec toute l'équipe (pour l'instant) - filtrage à faire
+		for (Bugemon b : player.getTeam().getMembers()) {
+			System.out.println("xp before: " + b.getXp());
+			int levels = b.gainXp(xp);
+			System.out.println("xp after: " + b.getXp());
+			if (levels > 0) {
+				b.gainLevelsReward(levels);
+				b.getFightStats().setHp(b.getBaseStats().getHp());
+			}
+		}
+	}
+
+	/**
+	 * Gets the effectiveness factor of the current ability
+	 *
+	 * @param ability the ability whose type effectiveness is evaluated
+	 * @return the effectiveness message (or null if the effectiveness is normal)
+	 */
+	public String getEffectiveness(Ability ability) {
+		Bugemon opponent = getActiveBugemonOpponent();
+		float factor = Effectiveness.getFactor(ability.getType(), opponent.getType());
+		String message;
+		if (factor > 1) {
+			message = "Super effective!";
+		} else if (factor < 1) {
+			message = "Not very effective!";
+		} else {
+			message = null;
+		}
+		return message;
+	}
 }
+
+
+

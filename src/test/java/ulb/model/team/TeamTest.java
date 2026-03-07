@@ -1,10 +1,10 @@
 package ulb.model.team;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -107,4 +107,29 @@ public class TeamTest {
 
 		assertTrue(team.checkTeamKO());
 	}
+
+    @Test
+    public void checkTeamKOTeamWithOneBugemonNotKO() {
+        Bugemon b1 = makeBugemon("B1");
+        Team team = new Team(List.of(b1));
+        assertFalse(team.checkTeamKO());
+    }
+
+    @Test
+    public void checkTeamKOTeamWithOneBugemonKO() {
+        Bugemon b1 = makeBugemon("B1");
+        b1.changeFightStats(new Stats(-100, 0, 0, 0));
+        Team team = new Team(List.of(b1));
+        assertTrue(team.checkTeamKO());
+    }
+
+    @Test
+    public void checkTeamKOTeamWithOneBugemonKOTwoNotKO() {
+        Bugemon b1 = makeBugemon("B1");
+        Bugemon b2 = makeBugemon("B2");
+        Bugemon b3 = makeBugemon("B3");
+        b1.changeFightStats(new Stats(-100, 0, 0, 0));
+        Team team = new Team(List.of(b1, b2, b3));
+        assertFalse(team.checkTeamKO());
+    }
 }

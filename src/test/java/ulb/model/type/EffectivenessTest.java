@@ -1,8 +1,8 @@
 package ulb.model.type;
 
-import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EffectivenessTest {
 	// Factor
@@ -16,17 +16,17 @@ public class EffectivenessTest {
 
 	@Test
 	public void verifyFactorHigh() {
-		verifyFactor(Effectiveness.Category.HIGH, 1.5f);
+		verifyFactor(Effectiveness.Category.HIGH, Effectiveness.FACTOR_HIGH);
 	}
 
 	@Test
 	public void verifyFactorNormal() {
-		verifyFactor(Effectiveness.Category.NORMAL, 1.0f);
+		verifyFactor(Effectiveness.Category.NORMAL, Effectiveness.FACTOR_NORMAL);
 	}
 
 	@Test
 	public void verifyFactorLow() {
-		verifyFactor(Effectiveness.Category.LOW, 0.75f);
+		verifyFactor(Effectiveness.Category.LOW, Effectiveness.FACTOR_LOW);
 	}
 
 	// Category

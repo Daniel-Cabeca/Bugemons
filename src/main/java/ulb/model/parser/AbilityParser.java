@@ -10,10 +10,13 @@ import java.nio.file.Paths;
 import java.io.IOException;
 import java.text.ParseException;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 
 import ulb.model.ability.Ability;
 import ulb.model.ability.AbilityDatabase;
 import ulb.model.type.Type;
+import ulb.model.Effect;
 
 /**
  * Parser for abilities.
@@ -81,9 +84,33 @@ public abstract class AbilityParser {
 		String name = node.get("nom").asText();
 		Type type = readJsonType(node);
 		String description = node.get("description").asText();
-		int power = node.get("puissance").asInt();
 
-		//TODO effects
+		int power = node.get("puissance").asInt();
+		JsonNode effectsNode = node.get("effets");
+
+		for (JsonNode effectNode : effectsNode){
+			String effectType = effectNode.get("type").asText();
+			String target = effectNode.get("cible").asText();
+
+			Effect effect;
+
+			switch (effectType) {
+				case "soin":
+					effect = new Effect(Effect.EffectType.SOIN, Effect.EffectTarget.valueOf(target.toUpperCase()), 
+						Map.of(Effect.StatType.PV, effectNode.get("valeur").asInt()), Effect.EffectDuration.PERMANENT);
+					break;
+				case "stat_modifier":
+				String duration = effectNode.get("duree").asText().toUpperCase().replace("1_TOUR", "TOUR");
+				effect = new Effect(Effect.EffectType.STAT_MODIFIER, Effect.EffectTarget.valueOf(target.toUpperCase()), 
+					Map.of(Effect.StatType.valueOf(effectNode.get("stat").asText().toUpperCase()), 
+					effectNode.get("modificateur").asInt()), 
+					Effect.EffectDuration.valueOf(duration));
+					break;
+				default:
+					throw new IllegalArgumentException("Unknown effect type: " + type);
+			}
+			return new Ability(id, name, type, description, power, effect);
+		}
 
 		return new Ability(id, name, type, description, power);
 	}

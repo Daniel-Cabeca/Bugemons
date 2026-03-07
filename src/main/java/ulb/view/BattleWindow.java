@@ -134,9 +134,27 @@ public class BattleWindow {
 		} catch (Exception e) {
 			System.err.println("Failed to load player bugemon sprite: " + e.getMessage());
 		}
-		
+
+		String playerColor;
+		switch (playerBugemon.getType()) {
+			case PYRO:
+				playerColor = "#ED2424";
+				break;
+			case FLORA:
+				playerColor = "#50A346";
+				break;
+			case AQUA:
+				playerColor = "#51B0F0";
+				break;
+			case LITHO:
+				playerColor = "#807979";
+				break;
+			default:
+				playerColor = "#ced4da";
+		}
+
 		PlayerBugemonLabel.setText(playerBugemon.getName() + " (" + playerBugemon.getType().name() + ")");
-		PlayerBugemonHPNumber.setText("HP: " + playerBugemon.getFightStats().getHp() + "/" + playerBugemon.getBaseStats().getHp());
+		PlayerBugemonLabel.setStyle("-fx-text-fill: " + playerColor + ";");
 		PlayerBugemonHPBar.setProgress((double) playerBugemon.getFightStats().getHp() / playerBugemon.getBaseStats().getHp());
 		
 		// Set opponent Bugemon sprite and stats
@@ -146,9 +164,27 @@ public class BattleWindow {
 		} catch (Exception e) {
 			System.err.println("Failed to load opponent bugemon sprite: " + e.getMessage());
 		}
-		
+
+		String opponentColor;
+		switch (opponentBugemon.getType()) {
+			case PYRO:
+				opponentColor = "#ED2424";
+				break;
+			case FLORA:
+				opponentColor = "#50A346";
+				break;
+			case AQUA:
+				opponentColor = "#51B0F0";
+				break;
+			case LITHO:
+				opponentColor = "#807979";
+				break;
+			default:
+				opponentColor = "#ced4da";
+		}
+
 		OpponentBugemonLabel.setText(opponentBugemon.getName() + " (" + opponentBugemon.getType().name() + ")");
-		OpponentHPNumber.setText("HP: " + opponentBugemon.getFightStats().getHp() + "/" + opponentBugemon.getBaseStats().getHp());
+		OpponentBugemonLabel.setStyle("-fx-text-fill: " + opponentColor + ";");
 		OppentHPBar.setProgress((double) opponentBugemon.getFightStats().getHp() / opponentBugemon.getBaseStats().getHp());
 	}
 	

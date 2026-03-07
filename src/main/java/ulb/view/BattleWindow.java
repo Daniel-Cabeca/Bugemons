@@ -7,8 +7,7 @@ import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
 import ulb.model.battle.BattleState;
@@ -21,18 +20,14 @@ import ulb.model.Player;
 import ulb.model.ability.Ability;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
+
 import java.util.Optional;
 
 public class BattleWindow {
@@ -121,7 +116,7 @@ public class BattleWindow {
 		
 		initializeGraphicalBattle();
 	}
-	
+
 	private void initializeGraphicalBattle() {
 		// Get the active Bugemons (first non-KO Bugemon)
 		Bugemon playerBugemon = battleController.getActiveBugemonSelf();
@@ -187,6 +182,10 @@ public class BattleWindow {
 		OpponentBugemonLabel.setStyle("-fx-text-fill: " + opponentColor + ";");
 		OppentHPBar.setProgress((double) opponentBugemon.getFightStats().getHp() / opponentBugemon.getBaseStats().getHp());
 	}
+
+	public void initializebattleMessage(){
+
+	}
 	
 	/**
 	 * Handles the Item button click - shows inventory view
@@ -222,6 +221,9 @@ public class BattleWindow {
 	 */
 	public void handleAuto(ActionEvent event) throws IOException {
 		BattleState state = battleController.playAutoTurn();
+		String atkA = battleController.getActiveBugemonSelf().getName();
+		String atkB = battleController.getActiveBugemonOpponent().getName();
+
 		initializeGraphicalBattle();
 
 		if (state == BattleState.WON) {
@@ -407,7 +409,16 @@ public class BattleWindow {
 											"-fx-background-radius: 6;"
 							);
 
+							String effectiveness = battleController.getEffectiveness(ability);
+							Tooltip tooltip = new Tooltip(effectiveness);
+							// displays the message only if effectiveness is not normal
+							if (effectiveness != null) {
+								tooltip.setShowDelay(javafx.util.Duration.millis(100));
+								setTooltip(tooltip);
+							}
+
 							setGraphic(hbox);
+
 						}
 					}
 				};

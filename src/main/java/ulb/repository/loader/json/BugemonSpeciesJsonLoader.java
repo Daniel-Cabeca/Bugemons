@@ -1,10 +1,7 @@
 package ulb.repository.loader.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
 import java.io.InputStream;
-import java.net.URL;
-import java.io.IOException;
 
 import ulb.repository.loader.BugemonSpeciesLoader;
 import ulb.repository.loader.LoadFailureException;
@@ -28,19 +25,5 @@ public class BugemonSpeciesJsonLoader implements BugemonSpeciesLoader {
 		JsonNode bugemonsArray = node.get("bugemons");
 
 		return this.speciesParser.parseList(bugemonsArray);
-	}
-
-	/**
-	 * Gives the default input stream for loading Bugemons.
-	 *
-	 * @return The default input stream
-	 */
-	public static InputStream getDefaultStream() throws LoadFailureException {
-		try {
-			URL url = BugemonSpeciesJsonLoader.class.getResource("/json/bugemons.json");
-			return url.openStream();
-		} catch (IOException e) {
-			throw new LoadFailureException(e.getMessage());
-		}
 	}
 }

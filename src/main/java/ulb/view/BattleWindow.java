@@ -148,7 +148,8 @@ public class BattleWindow {
 				playerColor = "#ced4da";
 		}
 
-		PlayerBugemonLabel.setText(playerBugemon.getName() + " (" + playerBugemon.getType().name() + ")");
+		PlayerBugemonLabel.setText(playerBugemon.getName() + " (" + playerBugemon.getType().name() + ")"
+				+ " Level: " +  playerBugemon.getLevel());
 		PlayerBugemonLabel.setStyle("-fx-text-fill: " + playerColor + ";");
 		PlayerBugemonHPBar.setProgress((double) playerBugemon.getFightStats().getHp() / playerBugemon.getBaseStats().getHp());
 		
@@ -178,7 +179,8 @@ public class BattleWindow {
 				opponentColor = "#ced4da";
 		}
 
-		OpponentBugemonLabel.setText(opponentBugemon.getName() + " (" + opponentBugemon.getType().name() + ")");
+		OpponentBugemonLabel.setText(opponentBugemon.getName() + " (" + opponentBugemon.getType().name() + ")"
+				+ " Level: " + opponentBugemon.getLevel());
 		OpponentBugemonLabel.setStyle("-fx-text-fill: " + opponentColor + ";");
 		OppentHPBar.setProgress((double) opponentBugemon.getFightStats().getHp() / opponentBugemon.getBaseStats().getHp());
 	}

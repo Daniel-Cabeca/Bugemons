@@ -1,4 +1,4 @@
-package ulb.repository.loader.parser;
+package ulb.repository.loader.json;
 
 import ulb.model.type.Type;
 

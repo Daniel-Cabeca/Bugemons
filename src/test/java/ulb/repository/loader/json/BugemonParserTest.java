@@ -1,4 +1,4 @@
-package ulb.repository.loader.parser;
+package ulb.repository.loader.json;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
@@ -16,7 +16,6 @@ import ulb.model.ability.AbilitySet;
 import ulb.model.ability.AbilityDatabase;
 
 import ulb.model.sample.SamplesLoader;
-import ulb.repository.loader.parser.BugemonParser;
 
 public class BugemonParserTest {
 	@BeforeAll

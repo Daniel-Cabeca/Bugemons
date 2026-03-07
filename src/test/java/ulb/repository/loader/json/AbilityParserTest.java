@@ -1,4 +1,4 @@
-package ulb.repository.loader.parser;
+package ulb.repository.loader.json;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -14,7 +14,7 @@ import ulb.model.ability.Ability;
 import ulb.model.ability.AbilityDatabase;
 import ulb.model.type.Type;
 
-import ulb.model.ability.AbilityDatabaseTest;import ulb.repository.loader.parser.AbilityParser;
+import ulb.model.ability.AbilityDatabaseTest;
 
 public class AbilityParserTest {
 	private JsonNode getJsonNodeA() {

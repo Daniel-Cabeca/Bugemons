@@ -7,8 +7,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.ByteArrayInputStream;
-import java.nio.file.Path;
-import java.nio.file.Files;
 import java.net.URL;
 
 import ulb.repository.loader.LoadFailureException;
@@ -47,22 +45,6 @@ abstract class Json {
 	public static JsonNode getNode(String str) throws LoadFailureException {
 		InputStream stream = new ByteArrayInputStream(str.getBytes());
 		return getNode(stream);
-	}
-
-	/**
-	 * Convenience method for parsing from a local file.
-	 *
-	 * @param path The filename to read from
-	 * @return The json node
-	 * @throws LoadFailureException If an error occured
-	 */
-	public static JsonNode getNode(Path path) throws LoadFailureException {
-		try {
-			InputStream stream = Files.newInputStream(path);
-			return getNode(stream);
-		} catch (IOException e) {
-			throw new LoadFailureException(e.getMessage());
-		}
 	}
 
 	/**

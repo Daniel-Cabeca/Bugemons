@@ -112,4 +112,120 @@ public class BattleControllerTest {
 		assertFalse(player.getInventory().getItems().containsKey(item));
 	}
 
+
+	@Test
+	public void testNoXpOnLoss() throws Exception {
+		Player player = new Player("TestPlayer");
+		BattleController controller = new BattleController(player);
+
+		Bugemon a = BugemonSample.getA();
+		Team teamA = new Team(List.of(a));
+		Team teamB = new Team(List.of(BugemonSample.getB()));
+
+		Constructor<BattleSnapshot> constructor = BattleSnapshot.class.getDeclaredConstructor(Battle.class,
+				boolean.class);
+		constructor.setAccessible(true);
+		Field field = BattleController.class.getDeclaredField("battleSnapshot");
+		field.setAccessible(true);
+		field.set(controller, constructor.newInstance(new Battle(teamA, teamB), true));
+		player.setTeam(teamA);
+
+		controller.handleBattleEnd(false);
+		assertEquals(0, a.getXp());
+	}
+
+	@Test
+	public void testXpAfterWin() throws Exception {
+		Player player = new Player("TestPlayer");
+		BattleController controller = new BattleController(player);
+
+		Bugemon a = BugemonSample.getA();
+		Team teamA = new Team(List.of(a));
+		Team teamB = new Team(List.of(BugemonSample.getB()));
+		player.setTeam(teamA);
+
+		Constructor<BattleSnapshot> constructor = BattleSnapshot.class.getDeclaredConstructor(Battle.class,
+				boolean.class);
+		constructor.setAccessible(true);
+		Field field = BattleController.class.getDeclaredField("battleSnapshot");
+		field.setAccessible(true);
+		field.set(controller, constructor.newInstance(new Battle(teamA, teamB), true));
+
+		controller.setFloorNumber(5);
+		controller.handleBattleEnd(true);
+		assertEquals(3, a.getLevel());
+	}
+
+
+	@Test
+	public void testBossGivesMoreXp() throws Exception {
+		Player player = new Player("TestPlayer");
+		BattleController controller = new BattleController(player);
+
+		Bugemon a = BugemonSample.getA();
+		Team teamA = new Team(List.of(a));
+		Team teamB = new Team(List.of(BugemonSample.getB()));
+		player.setTeam(teamA);
+
+		Constructor<BattleSnapshot> constructor = BattleSnapshot.class.getDeclaredConstructor(Battle.class,
+				boolean.class);
+		constructor.setAccessible(true);
+		Field field = BattleController.class.getDeclaredField("battleSnapshot");
+		field.setAccessible(true);
+		field.set(controller, constructor.newInstance(new Battle(teamA, teamB), true));
+
+		controller.setFloorNumber(5);
+		controller.setIsBossFight(true);
+		controller.handleBattleEnd(true); 
+		assertEquals(4, a.getLevel());
+	}
+
+	@Test
+	public void testDebuffsRemovedAfterBattle() throws Exception {
+		Player player = new Player("TestPlayer");
+		BattleController controller = new BattleController(player);
+
+		Bugemon a = BugemonSample.getA();
+		Team teamA = new Team(List.of(a));
+		Team teamB = new Team(List.of(BugemonSample.getB()));
+
+		Constructor<BattleSnapshot> constructor = BattleSnapshot.class.getDeclaredConstructor(Battle.class,
+				boolean.class);
+		constructor.setAccessible(true);
+		Field field = BattleController.class.getDeclaredField("battleSnapshot");
+		field.setAccessible(true);
+		field.set(controller, constructor.newInstance(new Battle(teamA, teamB), true));
+		player.setTeam(teamA);
+
+		a.changeFightStats(new Stats(0, -10, 0, 0));
+		controller.handleBattleEnd(false);
+		assertTrue(a.getFightStats().getAttack() >= a.getBaseStats().getAttack());
+	}
+
+	@Test
+	public void testHpRestoredOnLevelUp() throws Exception {
+		Player player = new Player("TestPlayer");
+		BattleController controller = new BattleController(player);
+
+		Bugemon a = BugemonSample.getA();
+		Team teamA = new Team(List.of(a));
+		Team teamB = new Team(List.of(BugemonSample.getB()));
+
+		Constructor<BattleSnapshot> constructor = BattleSnapshot.class.getDeclaredConstructor(Battle.class,
+				boolean.class);
+		constructor.setAccessible(true);
+		Field field = BattleController.class.getDeclaredField("battleSnapshot");
+		field.setAccessible(true);
+		field.set(controller, constructor.newInstance(new Battle(teamA, teamB), true));
+		player.setTeam(teamA);
+
+		a.changeFightStats(new Stats(-50, 0, 0, 0));
+		controller.setFloorNumber(9);
+		controller.setIsBossFight(true);
+		controller.handleBattleEnd(true);
+
+		if (a.getLevel() > 1)
+			assertEquals(a.getBaseStats().getHp(), a.getFightStats().getHp());
+	}
+
 }

@@ -27,6 +27,8 @@ import ulb.model.Effect;
 public class BattleController {
 	private Player player;
 	private BattleSnapshot battleSnapshot;
+	private int floorNumber = 1;
+    private boolean isBossFight = false;
 
 	public BattleController(Player player) {
 		this.player = player;
@@ -191,23 +193,20 @@ public class BattleController {
 	 * @return BattleState indicating if the player lost, won or if the battle is ongoing
 	 */
 	public BattleState playAutoTurn() {
-		// the player's turn (always plays first)
-		useRandomAbility(true);
-		if (isTeamBKO()) {
-			return BattleState.WON;
-		}
-		if (isBugemonBKO()) {
-			switchBugemonB();
-		}
+		Battle battle = battleSnapshot.getBattle();
+		boolean playerFirst = battle.CheckInitiave() == battle.getActiveBugemonA();
 
-		// the opponent's turn
-		useRandomAbility(false);
-		if (isTeamAKO()) {
-			return BattleState.LOST;
-		}
-		if (isBugemonAKO()) {
-			switchBugemonA();
-		}
+		useRandomAbility(playerFirst);
+		if (isTeamBKO()) return BattleState.WON;
+		if (isTeamAKO()) return BattleState.LOST;
+		if (isBugemonBKO()) switchBugemonB();
+		if (isBugemonAKO()) switchBugemonA();
+
+		useRandomAbility(!playerFirst);
+		if (isTeamBKO()) return BattleState.WON;
+		if (isTeamAKO()) return BattleState.LOST;
+		if (isBugemonBKO()) switchBugemonB();
+		if (isBugemonAKO()) switchBugemonA();
 
 		return BattleState.INGAME;
 	}
@@ -220,5 +219,38 @@ public class BattleController {
 
 	public void switchBugemonA(){battleSnapshot.switchSelfBugemonAuto();}
 	public void switchBugemonB(){battleSnapshot.switchOpponentBugemonAuto();}
+
+
+	public void setFloorNumber(int floor) { this.floorNumber = floor; }
+    public void setIsBossFight(boolean boss) { this.isBossFight = boss; }
+
+	public void handleBattleEnd(boolean victory) {
+		handleBattleEnd(victory, null);
+	}
+
+
+	public void handleBattleEnd(boolean victory, List<Bugemon> participants) {
+		
+		for (Bugemon b : player.getTeam().getMembers())  b.removeStatsDebuffs();
+
+		if (!victory) return;
+
+		int mult = isBossFight ? 2 : 1;
+		int totalXp = 30 * floorNumber * mult * battleSnapshot.getBattle().getTeamB().size();
+		int xp = totalXp / player.getTeam().size(); 
+
+
+        // xp partagé avec toute l'équipe (pour l'instant) - filtrage à faire 
+		for (Bugemon b : player.getTeam().getMembers()) {
+			System.out.println("xp before: " + b.getXp());
+			int levels = b.gainXp(xp);
+			System.out.println("xp after: " + b.getXp());
+			if (levels > 0) {
+				b.gainLevelsReward(levels);
+				b.getFightStats().setHp(b.getBaseStats().getHp());
+			}
+		} 
+		 
+	}
 
 }

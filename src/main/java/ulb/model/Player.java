@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import ulb.repository.loader.json.ItemParser;
+import ulb.repository.loader.json.ItemJsonParser;
 import ulb.model.item.Inventory;
 import ulb.model.item.Item;
 
@@ -50,8 +50,8 @@ public class Player {
 	 */
 	public void addDefaultItems() {
 		try {
-			List<Item> items = ItemParser.loadItems(ITEMS_PATH);
-			Map<String, Integer> startingInventory = ItemParser.loadInventory(ITEMS_PATH);
+			List<Item> items = ItemJsonParser.loadItems(ITEMS_PATH);
+			Map<String, Integer> startingInventory = ItemJsonParser.loadInventory(ITEMS_PATH);
 
 			for (Item item : items) {
 				if (startingInventory.containsKey(item.getId())) {

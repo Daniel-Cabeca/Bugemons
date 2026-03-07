@@ -4,20 +4,19 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
-
-import java.text.ParseException;
 
 import ulb.model.bugemon.BugemonSpecies;
 import ulb.model.bugemon.Stats;
-import ulb.model.type.Type;
+import ulb.model.ability.Ability;
 import ulb.model.ability.AbilitySet;
 import ulb.model.ability.AbilityDatabase;
+import ulb.model.type.Type;
 
 import ulb.model.sample.SamplesLoader;
+import ulb.repository.loader.LoadFailureException;
 
-public class BugemonParserTest {
+public class BugemonSpeciesJsonParserTest {
 	@BeforeAll
 	public static void load() throws Exception {
 		SamplesLoader.load();
@@ -42,10 +41,7 @@ public class BugemonParserTest {
 				}
 				""";
 
-			ObjectMapper mapper = new ObjectMapper();
-			JsonNode node = mapper.readTree(STR);
-
-			return node;
+			return Json.getNode(STR);
 		} catch (Exception e) {
 			assertTrue(false);
 			return null;
@@ -71,9 +67,11 @@ public class BugemonParserTest {
 	@Test
 	public void testFromJsonCorrect() {
 		try {
+			BugemonSpeciesJsonParser parser = new BugemonSpeciesJsonParser();
+
 			JsonNode node = getJsonNodeA();
 			BugemonSpecies expected = getBugemonSpeciesA();
-			BugemonSpecies obtained = BugemonParser.fromJson(node);
+			BugemonSpecies obtained = parser.parseOne(node);
 
 			assertEquals(expected.getId(), obtained.getId());
 			assertEquals(expected.getName(), obtained.getName());
@@ -107,10 +105,11 @@ public class BugemonParserTest {
 				}
 				""";
 
-			ObjectMapper mapper = new ObjectMapper();
-			JsonNode node = mapper.readTree(STR);
+			BugemonSpeciesJsonParser parser = new BugemonSpeciesJsonParser();
 
-			assertThrows(ParseException.class, () -> { BugemonParser.fromJson(node); });
+			JsonNode node = Json.getNode(STR);
+
+			assertThrows(LoadFailureException.class, () -> { parser.parseOne(node); });
 		} catch (Exception e) {
 			assertTrue(false);
 		}

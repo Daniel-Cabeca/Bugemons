@@ -12,7 +12,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ItemParserTest {
+public class ItemJsonParserTest {
 
     /**
      * Gets the resource file as an absolute path
@@ -33,49 +33,49 @@ public class ItemParserTest {
     @Test
     public void loadReturnsNonEmptyList() throws Exception {
         String path = getResourcePath(true);
-        List<Item> items = ItemParser.loadItems(path);
+        List<Item> items = ItemJsonParser.loadItems(path);
         assertNotNull(items);
     }
 
     @Test
     public void loadReturnsCorrectSize() throws Exception {
         String path = getResourcePath(true);
-        List<Item> items = ItemParser.loadItems(path);
+        List<Item> items = ItemJsonParser.loadItems(path);
         assertEquals(10, items.size());
     }
 
     @Test
     public void loadParsesId() throws Exception {
         String path = getResourcePath(true);
-        List<Item> items = ItemParser.loadItems(path);
+        List<Item> items = ItemJsonParser.loadItems(path);
         assertEquals("baie_revigorante", items.get(0).getId());
     }
 
     @Test
     public void loadParsesName() throws Exception {
         String path = getResourcePath(true);
-        List<Item> items = ItemParser.loadItems(path);
+        List<Item> items = ItemJsonParser.loadItems(path);
         assertEquals("Baie Revigorante", items.get(0).getName());
     }
 
     @Test
     public void loadParsesDescription() throws Exception {
         String path = getResourcePath(true);
-        List<Item> items = ItemParser.loadItems(path);
+        List<Item> items = ItemJsonParser.loadItems(path);
         assertEquals("Restaure 20 PV au Bugémon actif.", items.get(0).getDescription());
     }
 
     @Test
     public void loadParsesCategory() throws Exception {
         String path = getResourcePath(true);
-        List<Item> items = ItemParser.loadItems(path);
+        List<Item> items = ItemJsonParser.loadItems(path);
         assertEquals("soin", items.get(0).getCategory());
     }
 
     @Test
     public void loadParsesEffectSoin() throws Exception {
         String path = getResourcePath(true);
-        List<Item> items = ItemParser.loadItems(path);
+        List<Item> items = ItemJsonParser.loadItems(path);
         assertEquals(Effect.EffectType.SOIN, items.get(0).getEffect().getType());
         assertEquals(Effect.EffectTarget.LANCEUR, items.get(0).getEffect().getTarget());
         assertEquals(20, items.get(0).getEffect().getModifiers().get(Effect.StatType.PV));
@@ -84,7 +84,7 @@ public class ItemParserTest {
     @Test
     public void loadParsesEffectStatModifier() throws Exception {
         String path = getResourcePath(true);
-        List<Item> items = ItemParser.loadItems(path);
+        List<Item> items = ItemJsonParser.loadItems(path);
         assertEquals(Effect.EffectType.STAT_MODIFIER, items.get(2).getEffect().getType());
         assertEquals(Effect.EffectTarget.LANCEUR, items.get(2).getEffect().getTarget());
         assertEquals(Effect.StatType.DEFENSE, items.get(2).getEffect().getModifiers().keySet().iterator().next());
@@ -95,7 +95,7 @@ public class ItemParserTest {
     @Test
     public void loadParsesEffectResetMalus() throws Exception {
         String path = getResourcePath(true);
-        List<Item> items = ItemParser.loadItems(path);
+        List<Item> items = ItemJsonParser.loadItems(path);
         assertEquals(Effect.EffectType.RESET_MALUS, items.get(4).getEffect().getType());
         assertEquals(Effect.EffectTarget.LANCEUR, items.get(4).getEffect().getTarget());
     }
@@ -103,7 +103,7 @@ public class ItemParserTest {
     @Test
     public void loadParsesEffectStatModifierMultiple() throws Exception {
         String path = getResourcePath(true);
-        List<Item> items = ItemParser.loadItems(path);
+        List<Item> items = ItemJsonParser.loadItems(path);
         // Finds an item in the list with a stat_modifier_multiple effect type
         Item item = items.stream()
                 .filter(i -> i.getId().equals("orbe_stimulant"))
@@ -126,39 +126,39 @@ public class ItemParserTest {
     @Test
     public void loadParsesSprite() throws Exception {
         String path = getResourcePath(true);
-        List<Item> items = ItemParser.loadItems(path);
+        List<Item> items = ItemJsonParser.loadItems(path);
         assertEquals("baie_revigorante.png", items.get(0).getSprite());
     }
 
     @Test
     public void loadSkipsItemWithUnknownEffectType() throws Exception {
         String path = getResourcePath(false);
-        List<Item> items = ItemParser.loadItems(path);
+        List<Item> items = ItemJsonParser.loadItems(path);
         assertEquals(0, items.size());
     }
     @Test
     public void loadThrowsOnInvalidPath() {
-        assertThrows(IOException.class, () -> ItemParser.loadItems("/nonexistent/path/to/file.json"));
+        assertThrows(IOException.class, () -> ItemJsonParser.loadItems("/nonexistent/path/to/file.json"));
     }
 
     @Test
     public void loadStartingInventoryReturnsNonNull() throws Exception {
         String path = getResourcePath(true);
-        Map<String, Integer> inventory = ItemParser.loadInventory(path);
+        Map<String, Integer> inventory = ItemJsonParser.loadInventory(path);
         assertNotNull(inventory);
     }
 
     @Test
     public void loadStartingInventoryReturnsCorrectSize() throws Exception {
         String path = getResourcePath(true);
-        Map<String, Integer> inventory = ItemParser.loadInventory(path);
+        Map<String, Integer> inventory = ItemJsonParser.loadInventory(path);
         assertEquals(4, inventory.size());
     }
 
     @Test
     public void loadStartingInventoryParsesQuantity() throws Exception {
         String path = getResourcePath(true);
-        Map<String, Integer> inventory = ItemParser.loadInventory(path);
+        Map<String, Integer> inventory = ItemJsonParser.loadInventory(path);
         assertEquals(Integer.valueOf(3), inventory.get("baie_revigorante"));
         assertEquals(Integer.valueOf(2), inventory.get("baie_tonique"));
         assertEquals(Integer.valueOf(1), inventory.get("gel_defensif"));
@@ -167,7 +167,7 @@ public class ItemParserTest {
 
     @Test
     public void loadStartingInventoryThrowsOnInvalidPath() {
-        assertThrows(IOException.class, () -> ItemParser.loadInventory("/nonexistent/path/to/file.json"));
+        assertThrows(IOException.class, () -> ItemJsonParser.loadInventory("/nonexistent/path/to/file.json"));
     }
 
 }

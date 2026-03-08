@@ -1,6 +1,10 @@
 package ulb.view;
 
 import ulb.controller.BattleController;
+import ulb.model.battle.Battle;
+import ulb.model.team.OpponentTeamGenerator;
+import ulb.model.team.Team;
+import ulb.controller.strategy.StrategyRandom;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -21,6 +25,7 @@ import java.util.List;
 
 import ulb.model.Player;
 import ulb.model.bugemon.BugemonSpecies;
+import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.BugemonDatabase;
 
 
@@ -44,8 +49,26 @@ public class CreateTeamMenu {
 
 	public void setPlayer(Player player) {
 		this.player = player;
-		this.battleController = new BattleController(player);
 	}
+
+	public void setBattle(List<String> selectedBugemons){
+		List<Bugemon> teamABugemons = new ArrayList<Bugemon>();
+		for (String bugemon : selectedBugemons) {
+			teamABugemons.add(new Bugemon(bugemon.toLowerCase()));
+		}
+		Team playerTeam = new Team(teamABugemons);
+		Team opponentTeam = new Team();
+		try{
+			opponentTeam = OpponentTeamGenerator.generateRandomOpponentTeam(playerTeam);
+		}catch(Exception e){
+			System.err.println(e);
+		}
+		Battle battle = new Battle(playerTeam, opponentTeam, player);
+		this.battleController = new BattleController(player, battle, true);
+		StrategyRandom strategyRandom = new StrategyRandom(battle);
+		// TODO THREAD
+		// strategyRandom.play();
+	}	
 
 	/**
 	* Initializes the create team menu
@@ -137,6 +160,8 @@ public class CreateTeamMenu {
 	 */
 	public void handleConfirmTeam(ActionEvent event) {
 		if (!selected.isEmpty() && selected.size() <= 6) {
+			setBattle(selected);
+			System.out.println("APRES BATTLE");
 			battleController.switchToBattleMenu(selected, event);
 		} else {
 			throw new IllegalStateException("You must select between 1 and 6 bugemons to confirm your team.");

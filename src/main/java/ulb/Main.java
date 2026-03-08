@@ -10,7 +10,6 @@ import javafx.stage.Stage;
 import ulb.model.Loader;
 import ulb.model.Player;
 import ulb.view.MainMenu;
-import ulb.model.battle.BattleSnapshot;
 
 public class Main extends Application {
 	@Override

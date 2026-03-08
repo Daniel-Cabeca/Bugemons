@@ -18,6 +18,10 @@ import ulb.model.item.Item;
 import ulb.model.team.Team;
 import ulb.model.Player;
 import ulb.model.ability.Ability;
+import ulb.controller.action.UseItem;
+import ulb.controller.strategy.StrategyRandom;
+import ulb.controller.action.UseAbility;
+import ulb.controller.action.Swap;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.image.Image;
@@ -222,7 +226,8 @@ public class BattleWindow {
 	 * @throws IOException if the main menu FXML file cannot be loaded when going back to main menu
 	 */
 	public void handleAuto(ActionEvent event) throws IOException {
-		BattleState state = battleController.playAutoTurn();
+		StrategyRandom strategyRandom = new StrategyRandom(battleController);
+		BattleState state = strategyRandom.playAutoTurn();
 		String atkA = battleController.getActiveBugemonSelf().getName();
 		String atkB = battleController.getActiveBugemonOpponent().getName();
 
@@ -281,7 +286,10 @@ public class BattleWindow {
 						button.setOnAction(event -> {
 							Item item = getItem();
 							if (item != null) {
-								battleController.useItem(item);
+								UseItem useItem = new UseItem(item);
+								System.out.println(battleController.getState());
+								battleController.useAction(useItem);
+								System.out.println(battleController.getState());
 								// Refresh display	
 								initializeGraphicalBattle();
 								displayInventory();
@@ -328,7 +336,8 @@ public class BattleWindow {
 						button.setOnAction(event -> {
 							Bugemon bugemon = getItem();
 							if (bugemon != null) {
-								battleController.setActiveBugemon(bugemon);
+								Swap swap = new Swap(bugemon);
+								battleController.useAction(swap);
 								// Refresh display	
 								initializeGraphicalBattle();
 								displayTeam();
@@ -372,7 +381,10 @@ public class BattleWindow {
 						button.setOnAction(event -> {
 							Ability ability = getItem();
 							if (ability != null) {
-								battleController.useAbility(ability);
+								UseAbility useAbility = new UseAbility(ability);
+								System.out.println(battleController.getState());
+								battleController.useAction(useAbility);
+								System.out.println(battleController.getState());
 								// Refresh display	
 								initializeGraphicalBattle();
 								displayTeam();

@@ -1,20 +1,51 @@
 package ulb.model.battle;
 
 import ulb.model.team.Team;
+import ulb.model.Player;
+import ulb.model.type.Effectiveness;
+import ulb.model.ability.Ability;
 import ulb.model.bugemon.Bugemon;
+import ulb.model.bugemon.Stats;
+import ulb.model.item.Item;
+import ulb.model.Effect;
+import ulb.controller.action.*;
 
 import java.util.Random;
+import java.util.Vector;
 
 
 public class Battle {
+	private Player playerA;
+	private Player playerB;
 	private Team teamA;
 	private Team teamB;
 	private Bugemon activeBugemonA;
 	private Bugemon activeBugemonB;
 	private BattleState stateA;
 	private BattleState stateB;
+	private Action actionA = null;
+	private Action actionB = null;
+	private boolean gameFinished = false;
 
-	public Battle(Team teamA, Team teamB) {
+	public enum TeamLabel {
+		TEAM_A,
+		TEAM_B
+	}
+
+	public Battle(Team teamA, Team teamB, Player playerA, Player playerB) {
+		this.playerA = playerA;
+		this.playerB = playerB;
+		this.teamA = teamA;
+		this.teamB = teamB;
+		this.activeBugemonA = this.teamA.getMembers().get(0);
+		this.activeBugemonB = this.teamB.getMembers().get(0);
+		this.stateA = BattleState.INGAME;
+		this.stateB = BattleState.INGAME;
+	}
+
+	public Battle(Team teamA, Team teamB, Player playerA) {
+		this.playerA = playerA;
+		this.playerB = new Player();
 		this.teamA = teamA;
 		this.teamB = teamB;
 		this.activeBugemonA = this.teamA.getMembers().get(0);
@@ -44,11 +75,11 @@ public class Battle {
 		return this.stateB;
 	}
 
-	public void setActiveBugemonA(Bugemon bugemon) { this.activeBugemonA = bugemon; }
-	public void setActiveBugemonB(Bugemon bugemon) { this.activeBugemonB = bugemon; }
+	private void setActiveBugemonA(Bugemon bugemon) { this.activeBugemonA = bugemon; }
+	private void setActiveBugemonB(Bugemon bugemon) { this.activeBugemonB = bugemon; }
 
-	public void setState(boolean isTeamA, BattleState state) {
-		if (isTeamA) {
+	private void setState(BattleState state, TeamLabel team) {
+		if (team == TeamLabel.TEAM_A) {
 			this.stateA = state;
 		} else {
 			this.stateB = state;
@@ -71,23 +102,343 @@ public class Battle {
 		return getTeamB().checkTeamKO();
 	}
 
-	public Bugemon CheckInitiave(){
+	public TeamLabel checkInitiave(){
 		if (getActiveBugemonA().getFightStats().getInitiative() > getActiveBugemonB().getFightStats().getInitiative()){
-			return getActiveBugemonA();
+			return TeamLabel.TEAM_A;
 		}
 		else if(getActiveBugemonA().getFightStats().getInitiative() == getActiveBugemonB().getFightStats().getInitiative()) {
 			 Random rand = new Random();
 			 int i = rand.nextInt(2);
 			 if (i == 0) {
-				 return getActiveBugemonA();
+				 return TeamLabel.TEAM_A;
 			 }
 			 else  {
-				 return getActiveBugemonB();
+				 return TeamLabel.TEAM_B;
 			}
 		}
-		return getActiveBugemonB();
+		return TeamLabel.TEAM_B;
+	}
+
+	/**
+	 * Checks if an item can be used or not given the stats of the bugemon
+	 *
+	 * @param item the item that needs to be checked
+	 * @return if the item can be used or not (boolean)
+	 */
+	public boolean checkItem(Item item, boolean isTeamA) {
+		if (item.getEffect().getType().equals(Effect.EffectType.SOIN)) {
+			if (isTeamA) {
+				int baseHp = getActiveBugemonA().getBaseStats().getHp();
+				int fightHP = getActiveBugemonA().getHp();
+				if (baseHp == fightHP) {
+					return false;
+				}
+			} else {
+				int baseHp = getActiveBugemonB().getBaseStats().getHp();
+				int fightHP = getActiveBugemonB().getHp();
+				if (baseHp == fightHP) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Compute the damage based on the complete formula
+	 *
+	 * @param offensive The bugemon that uses the ability
+	 * @param defensive The bugemon targeted by the ability
+	 * @param ability Ability from attacker used against defender
+	 * @return the computed damage based on the formula
+	 */
+	private int computeDamage(Bugemon offensive, Bugemon defensive, Ability ability) {
+		float attackValue = offensive.getFightStats().attack;
+		float defenseValue = defensive.getFightStats().defense;
+
+		float attackFactor = (100 + attackValue) / 100f;
+		float defenseFactor = 100f / (100 + defenseValue);
+
+		float baseDamage = attackFactor * defenseFactor * ability.getPower();
+
+		// Bugemon d'un type quelconque peut avoir des attaques de type t.q. type d'attaque ≠ type du pokemon
+		float typeFactor = Effectiveness.getFactor(ability.getType(), defensive.getType());
+
+		float criticalHitFactor = 1f;
+		if (Math.random() <= 0.1){
+			criticalHitFactor = 1.5f;
+		}
+
+		return Math.round(baseDamage * typeFactor * criticalHitFactor);
 	}
 
 
+	/**
+	 * Use the given ability against the opposing active Bugemon
+	 *
+	 * @param ability the ability that is used
+	 */
+	private void useAbility(Ability ability, TeamLabel team) {
+		Bugemon offensive;
+		Bugemon defensive;
+		if (team == TeamLabel.TEAM_A){
+			offensive = this.getActiveBugemonA();
+			defensive = this.getActiveBugemonB();
+		} else {
+			offensive = this.getActiveBugemonB();
+			defensive = this.getActiveBugemonA();
+		}
 
+		int abilityDamage = computeDamage(offensive, defensive, ability);
+		Stats damage = new Stats(-abilityDamage, 0, 0, 0);
+		defensive.changeFightStats(damage);
+
+	}
+
+	private void useItem(Item item, TeamLabel team){
+		if (item.getTarget().equals(Effect.EffectTarget.ADVERSAIRE)) {
+			switch (team) {
+				case TEAM_A:
+					item.use(this.activeBugemonB);
+					break;
+				
+				case TEAM_B:
+					item.use(this.activeBugemonA);
+					break;
+
+				default:
+					break;
+			}
+			
+		} else if (item.getTarget().equals(Effect.EffectTarget.LANCEUR)) {
+			switch (team) {
+				case TEAM_A:
+					item.use(this.activeBugemonA);
+					break;
+				
+				case TEAM_B:
+					item.use(this.activeBugemonB);
+					break;
+
+				default:
+					break;
+			}
+		} else {
+			switch (team) {
+				case TEAM_A:
+					for (Bugemon b : this.teamA.getMembers()){
+						item.use(b);
+					}
+					break;
+				
+				case TEAM_B:
+					for (Bugemon b : this.teamB.getMembers()){
+						item.use(b);
+					}
+					break;
+
+				default:
+					break;
+			}	
+		}
+		switch (team) {
+			case TEAM_A:
+				playerA.getInventory().removeItem(item);
+				break;
+			
+			case TEAM_B:
+				playerB.getInventory().removeItem(item);
+				break;
+
+			default:
+				break;
+		}
+	}
+
+	private void swap(Bugemon target, TeamLabel team){
+		if (team == TeamLabel.TEAM_A && teamA.contains(target)){
+			setActiveBugemonA(target);
+		} else if (team == TeamLabel.TEAM_B && teamB.contains(target)){
+			setActiveBugemonB(target);
+		}
+	}
+
+	public Vector<Action> getAvailableActions(boolean isTeamA) {
+		//this.hasTourEnded = false;
+
+		Vector<Action> actions = new Vector<Action>();
+		switch (this.getState(isTeamA)) {
+			case INGAME:
+				actions.add(new UseAbility());
+				actions.add(new Run());
+				actions.add(new Swap());
+				actions.add(new UseItem());
+				break;
+
+			case SWAPPING:
+				actions.add(new Swap());
+				break;
+
+			case LOST:
+				break;
+
+			case WON:
+				break;
+
+			case WAITING:
+				break;
+
+			default:
+				break;
+		}
+		return actions;
+	}
+
+	private void applyAction(Action action, TeamLabel team){
+		if (action instanceof UseAbility useAbilityAction) {
+
+			this.useAbility(useAbilityAction.getAbility(), team);
+
+		} else if (action instanceof Swap swapAction) {
+
+			this.swap(swapAction.getToSwap(), team);
+
+		} else if (action instanceof Run) {
+
+			this.setState(BattleState.LOST, team);
+
+		} else if (action instanceof UseItem useItemAction) {
+			this.useItem(useItemAction.getItem(), team);
+		}
+	}
+
+	public void setAction(Action action, boolean isTeamA){
+		if (isTeamA){
+			switch (this.stateA) {
+				case INGAME:
+					this.actionA = action;
+					setState(BattleState.WAITING, TeamLabel.TEAM_A);
+					break;
+				
+				case SWAPPING:
+					this.actionA = action;
+					if (action instanceof Swap){
+						applyAction(action, TeamLabel.TEAM_A);
+						setState(BattleState.INGAME, TeamLabel.TEAM_A);
+						setState(BattleState.INGAME, TeamLabel.TEAM_B);
+					}
+				default:
+					break;
+			}
+		} else {
+			switch (this.stateB) {
+				case INGAME:
+					this.actionB = action;
+					setState(BattleState.WAITING, TeamLabel.TEAM_A);
+					break;
+				
+				case SWAPPING:
+					this.actionB = action;
+					if (action instanceof Swap){
+						applyAction(action, TeamLabel.TEAM_A);
+						setState(BattleState.INGAME, TeamLabel.TEAM_A);
+						setState(BattleState.INGAME, TeamLabel.TEAM_B);
+					}
+				default:
+					break;
+			}
+		}
+	
+		if (this.stateA == BattleState.WAITING && this.stateB == BattleState.WAITING){
+			handleRound();
+		}
+		
+	}
+
+	private void handleRound(){
+		Action currentAction = this.actionA;
+		TeamLabel firstPlayer = this.checkInitiave();
+		if (firstPlayer == TeamLabel.TEAM_B){
+			currentAction = this.actionB;
+		}
+		this.applyAction(currentAction, firstPlayer);
+
+		if (handleActionFinished(firstPlayer)){
+			return;
+		}
+
+		TeamLabel secondPlayer = TeamLabel.TEAM_A;
+		currentAction = this.actionA;
+		if (firstPlayer == TeamLabel.TEAM_A){
+			secondPlayer = TeamLabel.TEAM_B;
+			currentAction = this.actionB;
+		} 
+
+		this.applyAction(currentAction, secondPlayer);
+		if (handleActionFinished(secondPlayer)){
+			return;
+		}
+		setState(BattleState.INGAME, TeamLabel.TEAM_A);
+		setState(BattleState.INGAME, TeamLabel.TEAM_B);
+	}
+
+
+	/**
+	 * Check if the round is finished and set the states depending on that
+	 * @param previousActiveTeam
+	 * @return a boolean depending on if the round is finished
+	 */
+	private boolean handleActionFinished(TeamLabel previousActiveTeam){
+		switch (previousActiveTeam) {
+			case TEAM_A:
+				if (this.isTeamBKO()){
+					setState(BattleState.LOST, TeamLabel.TEAM_B);
+					setState(BattleState.WON, TeamLabel.TEAM_A);
+					this.gameFinished = true;
+				} else if (this.isBugemonBKO()){
+					setState(BattleState.SWAPPING, TeamLabel.TEAM_B);
+				} else {
+					return false;
+				}
+				break;
+		
+			case TEAM_B:
+				if (this.isTeamBKO()){
+					setState(BattleState.LOST, TeamLabel.TEAM_A);
+					setState(BattleState.WON, TeamLabel.TEAM_B);
+					this.gameFinished = true;
+				} else if (this.isBugemonBKO()){
+					setState(BattleState.SWAPPING, TeamLabel.TEAM_A);
+				} else {
+					return false;
+				}
+				break;
+			default:
+				break;
+		}
+		return true;
+	}
+
+	private void handleBattleEnd(){
+		//TODO
+	}
+
+	public Vector<Bugemon> getAvailableBugemons(boolean isTeamA){
+		Team team = teamA;
+		if (!isTeamA){
+			team = teamB;
+		}
+		Vector<Bugemon> availablBugemons = new Vector<>();
+
+		for (Bugemon b : team.getMembers()){
+			if (!b.isKO()){
+				availablBugemons.add(b);
+			}
+		}
+		return availablBugemons;
+	}
+
+	public boolean isGameFinished(){
+		return this.gameFinished;
+	}
 }

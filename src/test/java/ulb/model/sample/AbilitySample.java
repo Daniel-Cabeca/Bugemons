@@ -80,4 +80,14 @@ public abstract class AbilitySample {
 				EffectSample.getDefenseDecreaseOther()
 		);
 	}
+
+	public static Ability getH(){
+		return new Ability(
+				"e",
+				"E",
+				Type.FLORA,
+				"Inflige aucun dégat",
+				0
+		);
+	}
 }

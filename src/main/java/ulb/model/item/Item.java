@@ -34,4 +34,8 @@ public class Item {
 	public int use(Bugemon target) {
 		return this.effect.apply(target);
 	}
+
+	public Effect.EffectTarget getTarget(){
+		return this.effect.getTarget();
+	}
 }

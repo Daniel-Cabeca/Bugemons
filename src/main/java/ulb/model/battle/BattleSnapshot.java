@@ -1,334 +1,334 @@
-package ulb.model.battle;
+// package ulb.model.battle;
 
-import ulb.model.ability.Ability;
-import ulb.model.ability.AbilitySet;
-import ulb.model.team.Team;
-import ulb.model.bugemon.Bugemon;
-import ulb.model.bugemon.Stats;
-import ulb.model.item.Item;
-import ulb.model.type.Effectiveness;
-import ulb.controller.action.*;
-import ulb.model.item.Item;
-import ulb.model.Effect;
+// import ulb.model.ability.Ability;
+// import ulb.model.ability.AbilitySet;
+// import ulb.model.team.Team;
+// import ulb.model.bugemon.Bugemon;
+// import ulb.model.bugemon.Stats;
+// import ulb.model.item.Item;
+// import ulb.model.type.Effectiveness;
+// import ulb.controller.action.*;
+// import ulb.model.item.Item;
+// import ulb.model.Effect;
 
-import java.util.List;
-import java.util.Random;
-import java.util.Vector;
-
-
-/**
- * View of the battle from the point of view of a player.
- */
-public class BattleSnapshot {
-	private Battle battle;
-	private boolean isTeamA;
-	private boolean hasTourEnded;
-
-	/**
-	 * Creates a battle snapshot as the point of view of either team A or team B.
-	 *
-	 * @param battle The battle
-	 * @param isTeamA True if the battle is viewed from team A's point of view, false otherwise
-	 */
-	public BattleSnapshot(Battle battle, boolean isTeamA){
-		this.battle = battle;
-		this.isTeamA = isTeamA;
-	}
-
-	public Battle getBattle() {return this.battle;}
-
-	public boolean getTeamView() {return this.isTeamA;}
+// import java.util.List;
+// import java.util.Random;
+// import java.util.Vector;
 
 
-	/**
-	 * States if the tour of the player has ended or not
-	 *
-	 * @return The boolean of the state of the tour
-	 */
-	public boolean getTourInfo() {return this.hasTourEnded;}
+// /**
+//  * View of the battle from the point of view of a player.
+//  */
+// public class BattleSnapshot {
+// 	private Battle battle;
+// 	private boolean isTeamA;
+// 	private boolean hasTourEnded;
 
-	/**
-	 * Gives the team that the snapshot views itself as.
-	 *
-	 * @return The snapshot's own team
-	 */
-	public Team getTeamSelf() {
-		if (this.isTeamA) {
-			return battle.getTeamA();
-		}
-		else {
-			return battle.getTeamB();
-		}
-	}
+// 	/**
+// 	 * Creates a battle snapshot as the point of view of either team A or team B.
+// 	 *
+// 	 * @param battle The battle
+// 	 * @param isTeamA True if the battle is viewed from team A's point of view, false otherwise
+// 	 */
+// 	public BattleSnapshot(Battle battle, boolean isTeamA){
+// 		this.battle = battle;
+// 		this.isTeamA = isTeamA;
+// 	}
 
-	/**
-	 * Gives the team that the snapshot views its opponent as.
-	 *
-	 * @return The snapshot's opponent team
-	 */
-	public Team getTeamOpponent() {
-		if (this.isTeamA) {
-			return battle.getTeamB();
-		}
-		else {
-			return battle.getTeamA();
-		}
-	}
+// 	public Battle getBattle() {return this.battle;}
 
-	/**
-	 * Gives the Bugemon that the snapshot views as its active Bugemon.
-	 *
-	 * @return The snapshot's active Bugemon
-	 */
-	public Bugemon getActiveBugemonSelf() {
-		if (this.isTeamA) {
-			return battle.getActiveBugemonA();
-		}
-		else {
-			return battle.getActiveBugemonB();
-		}
-	}
+// 	public boolean getTeamView() {return this.isTeamA;}
 
-	/**
-	 * Gives the Bugemon that the snapshot views as its opponent's active Bugemon.
-	 *
-	 * @return The snapshot's active Bugemon
-	 */
-	public Bugemon getActiveBugemonOpponent() {
-		if (this.isTeamA) {
-			return battle.getActiveBugemonB();
-		}
-		else {
-			return battle.getActiveBugemonA();
-		}
-	}
 
-	/**
-	 * Sets the snapshot's active Bugemon to another one.
-	 *
-	 * @param bugemon The Bugemon to switch in
-	 */
-	public void setActiveBugemonSelf(Bugemon bugemon) {
-		if (this.isTeamA) {
-			battle.setActiveBugemonA(bugemon);
-		}
-		else {
-			battle.setActiveBugemonB(bugemon);
-		}
-	}
-	/**
-	 * Sets the opponent's active Bugemon to another one
-	 *
-	 * @param bugemon The Bugemon to switch in
-	 */
-	public void setActiveBugemonOpponent(Bugemon bugemon) {
-		if (this.isTeamA) {
-			battle.setActiveBugemonB(bugemon);
-		}
-		else {
-			battle.setActiveBugemonA(bugemon);
-		}
-	}
+// 	/**
+// 	 * States if the tour of the player has ended or not
+// 	 *
+// 	 * @return The boolean of the state of the tour
+// 	 */
+// 	public boolean getTourInfo() {return this.hasTourEnded;}
 
-	/**
-	 * Compute the damage based on the complete formula
-	 *
-	 * @param offensive The bugemon that uses the ability
-	 * @param defensive The bugemon targeted by the ability
-	 * @param ability Ability from attacker used against defender
-	 * @return the computed damage based on the formula
-	 */
-	private int computeDamage(Bugemon offensive, Bugemon defensive, Ability ability) {
-		float attackValue = offensive.getFightStats().attack;
-		float defenseValue = defensive.getFightStats().defense;
+// 	/**
+// 	 * Gives the team that the snapshot views itself as.
+// 	 *
+// 	 * @return The snapshot's own team
+// 	 */
+// 	public Team getTeamSelf() {
+// 		if (this.isTeamA) {
+// 			return battle.getTeamA();
+// 		}
+// 		else {
+// 			return battle.getTeamB();
+// 		}
+// 	}
 
-		float attackFactor = (100 + attackValue) / 100f;
-		float defenseFactor = 100f / (100 + defenseValue);
+// 	/**
+// 	 * Gives the team that the snapshot views its opponent as.
+// 	 *
+// 	 * @return The snapshot's opponent team
+// 	 */
+// 	public Team getTeamOpponent() {
+// 		if (this.isTeamA) {
+// 			return battle.getTeamB();
+// 		}
+// 		else {
+// 			return battle.getTeamA();
+// 		}
+// 	}
 
-		float baseDamage = attackFactor * defenseFactor * ability.getPower();
+// 	/**
+// 	 * Gives the Bugemon that the snapshot views as its active Bugemon.
+// 	 *
+// 	 * @return The snapshot's active Bugemon
+// 	 */
+// 	public Bugemon getActiveBugemonSelf() {
+// 		if (this.isTeamA) {
+// 			return battle.getActiveBugemonA();
+// 		}
+// 		else {
+// 			return battle.getActiveBugemonB();
+// 		}
+// 	}
 
-		// Bugemon d'un type quelconque peut avoir des attaques de type t.q. type d'attaque ≠ type du pokemon
-		float typeFactor = Effectiveness.getFactor(ability.getType(), defensive.getType());
+// 	/**
+// 	 * Gives the Bugemon that the snapshot views as its opponent's active Bugemon.
+// 	 *
+// 	 * @return The snapshot's active Bugemon
+// 	 */
+// 	public Bugemon getActiveBugemonOpponent() {
+// 		if (this.isTeamA) {
+// 			return battle.getActiveBugemonB();
+// 		}
+// 		else {
+// 			return battle.getActiveBugemonA();
+// 		}
+// 	}
 
-		float criticalHitFactor = 1f;
-		if (Math.random() <= 0.1){
-			criticalHitFactor = 1.5f;
-		}
+// 	/**
+// 	 * Sets the snapshot's active Bugemon to another one.
+// 	 *
+// 	 * @param bugemon The Bugemon to switch in
+// 	 */
+// 	public void setActiveBugemonSelf(Bugemon bugemon) {
+// 		if (this.isTeamA) {
+// 			battle.setActiveBugemonA(bugemon);
+// 		}
+// 		else {
+// 			battle.setActiveBugemonB(bugemon);
+// 		}
+// 	}
+// 	/**
+// 	 * Sets the opponent's active Bugemon to another one
+// 	 *
+// 	 * @param bugemon The Bugemon to switch in
+// 	 */
+// 	public void setActiveBugemonOpponent(Bugemon bugemon) {
+// 		if (this.isTeamA) {
+// 			battle.setActiveBugemonB(bugemon);
+// 		}
+// 		else {
+// 			battle.setActiveBugemonA(bugemon);
+// 		}
+// 	}
 
-		return Math.round(baseDamage * typeFactor * criticalHitFactor);
-	}
+// 	/**
+// 	 * Compute the damage based on the complete formula
+// 	 *
+// 	 * @param offensive The bugemon that uses the ability
+// 	 * @param defensive The bugemon targeted by the ability
+// 	 * @param ability Ability from attacker used against defender
+// 	 * @return the computed damage based on the formula
+// 	 */
+// 	private int computeDamage(Bugemon offensive, Bugemon defensive, Ability ability) {
+// 		float attackValue = offensive.getFightStats().attack;
+// 		float defenseValue = defensive.getFightStats().defense;
 
-	/**
-	 * Use the given ability against the opposing active Bugemon
-	 *
-	 * @param ability the ability that is used
-	 */
-	public void useAbility(Ability ability) {
-		Bugemon offensive;
-		Bugemon defensive;
-		if (this.isTeamA){
-			offensive = this.battle.getActiveBugemonA();
-			defensive = this.battle.getActiveBugemonB();
-		} else {
-			offensive = this.battle.getActiveBugemonB();
-			defensive = this.battle.getActiveBugemonA();
-		}
+// 		float attackFactor = (100 + attackValue) / 100f;
+// 		float defenseFactor = 100f / (100 + defenseValue);
 
-		int abilityDamage = computeDamage(offensive, defensive, ability);
-		Stats damage = new Stats(-abilityDamage, 0, 0, 0);
-		defensive.changeFightStats(damage);
+// 		float baseDamage = attackFactor * defenseFactor * ability.getPower();
 
-	}
+// 		// Bugemon d'un type quelconque peut avoir des attaques de type t.q. type d'attaque ≠ type du pokemon
+// 		float typeFactor = Effectiveness.getFactor(ability.getType(), defensive.getType());
 
-	/**
-	 * Use the given ability against the active team A Bugemon
-	 *
-	 * @param ability the ability that is used
-	 */
-	public void useAbilityOnA(Ability ability) {
-		Bugemon offensive;
-		Bugemon defensive;
-		if (this.isTeamA){
-			offensive = this.battle.getActiveBugemonB();
-			defensive = this.battle.getActiveBugemonA();
-		} else {
-			offensive = this.battle.getActiveBugemonA();
-			defensive = this.battle.getActiveBugemonB();
-		}
+// 		float criticalHitFactor = 1f;
+// 		if (Math.random() <= 0.1){
+// 			criticalHitFactor = 1.5f;
+// 		}
 
-		int abilityDamage = computeDamage(offensive, defensive, ability);
-		Stats damage = new Stats(-abilityDamage, 0, 0, 0);
-		defensive.changeFightStats(damage);
-		ability.applyEffect(defensive);
-	}
+// 		return Math.round(baseDamage * typeFactor * criticalHitFactor);
+// 	}
 
-	public void useAction(Action action) {
-		if (action instanceof UseAbility) {
+// 	/**
+// 	 * Use the given ability against the opposing active Bugemon
+// 	 *
+// 	 * @param ability the ability that is used
+// 	 */
+// 	public void useAbility(Ability ability) {
+// 		Bugemon offensive;
+// 		Bugemon defensive;
+// 		if (this.isTeamA){
+// 			offensive = this.battle.getActiveBugemonA();
+// 			defensive = this.battle.getActiveBugemonB();
+// 		} else {
+// 			offensive = this.battle.getActiveBugemonB();
+// 			defensive = this.battle.getActiveBugemonA();
+// 		}
 
-			UseAbility useAbilityAction = (UseAbility) action;
-			Ability ability = useAbilityAction.getAbility();
-			useAbility(ability);
+// 		int abilityDamage = computeDamage(offensive, defensive, ability);
+// 		Stats damage = new Stats(-abilityDamage, 0, 0, 0);
+// 		defensive.changeFightStats(damage);
 
-		} else if (action instanceof Swap) {
+// 	}
 
-			Swap swapAction = (Swap) action;
-			Bugemon bugemon = swapAction.getToSwap();
-			setActiveBugemonSelf(bugemon);
+// 	/**
+// 	 * Use the given ability against the active team A Bugemon
+// 	 *
+// 	 * @param ability the ability that is used
+// 	 */
+// 	public void useAbilityOnA(Ability ability) {
+// 		Bugemon offensive;
+// 		Bugemon defensive;
+// 		if (this.isTeamA){
+// 			offensive = this.battle.getActiveBugemonB();
+// 			defensive = this.battle.getActiveBugemonA();
+// 		} else {
+// 			offensive = this.battle.getActiveBugemonA();
+// 			defensive = this.battle.getActiveBugemonB();
+// 		}
 
-		} else if (action instanceof Run) {
+// 		int abilityDamage = computeDamage(offensive, defensive, ability);
+// 		Stats damage = new Stats(-abilityDamage, 0, 0, 0);
+// 		defensive.changeFightStats(damage);
+// 		ability.applyEffect(defensive);
+// 	}
 
-			this.battle.setState(this.isTeamA, BattleState.LOST);
+// 	public void useAction(Action action) {
+// 		if (action instanceof UseAbility) {
 
-		} else if (action instanceof UseItem) {
-			UseItem useItemAction = (UseItem) action;
-			Item item = useItemAction.getItem();
-			if (item.getEffect().getTarget().equals(Effect.EffectTarget.ADVERSAIRE)) {
-				item.use(getActiveBugemonOpponent());
-			} else {
-				item.use(getActiveBugemonSelf());
-			}
+// 			UseAbility useAbilityAction = (UseAbility) action;
+// 			Ability ability = useAbilityAction.getAbility();
+// 			useAbility(ability);
 
-			if (item.getEffect().getType().equals(Effect.EffectType.SWITCH)) {
-				Team playerTeam = this.getTeamSelf();
-				Bugemon nextBugemon = playerTeam.getMembers().stream()
-					.filter(b -> !b.isKO() && b != this.getActiveBugemonSelf())
-					.findFirst()
-					.orElse(null);
-				if (nextBugemon != null) {
-					this.setActiveBugemonSelf(nextBugemon);
-				}
-			}
-		}
+// 		} else if (action instanceof Swap) {
 
-		this.hasTourEnded = true;
-	}
+// 			Swap swapAction = (Swap) action;
+// 			Bugemon bugemon = swapAction.getToSwap();
+// 			setActiveBugemonSelf(bugemon);
 
-	public Vector<Action> getAvailableActions() {
-		this.hasTourEnded = false;
+// 		} else if (action instanceof Run) {
 
-		Vector<Action> actions = new Vector<Action>();
-		switch (this.battle.getState(this.isTeamA)) {
-			case INGAME:
-				actions.add(new UseAbility());
-				actions.add(new Run());
-				actions.add(new Swap());
-				actions.add(new UseItem());
-				break;
+// 			this.battle.setState(this.isTeamA, BattleState.LOST);
 
-			case SWAPPING:
-				actions.add(new Swap());
-				break;
+// 		} else if (action instanceof UseItem) {
+// 			UseItem useItemAction = (UseItem) action;
+// 			Item item = useItemAction.getItem();
+// 			if (item.getEffect().getTarget().equals(Effect.EffectTarget.ADVERSAIRE)) {
+// 				item.use(getActiveBugemonOpponent());
+// 			} else {
+// 				item.use(getActiveBugemonSelf());
+// 			}
 
-			case LOST:
-				break;
+// 			if (item.getEffect().getType().equals(Effect.EffectType.SWITCH)) {
+// 				Team playerTeam = this.getTeamSelf();
+// 				Bugemon nextBugemon = playerTeam.getMembers().stream()
+// 					.filter(b -> !b.isKO() && b != this.getActiveBugemonSelf())
+// 					.findFirst()
+// 					.orElse(null);
+// 				if (nextBugemon != null) {
+// 					this.setActiveBugemonSelf(nextBugemon);
+// 				}
+// 			}
+// 		}
 
-			case WON:
-				break;
+// 		this.hasTourEnded = true;
+// 	}
 
-			case WAITING:
-				break;
+// 	public Vector<Action> getAvailableActions() {
+// 		this.hasTourEnded = false;
 
-			default:
-				break;
-		}
-		return actions;
-	}
+// 		Vector<Action> actions = new Vector<Action>();
+// 		switch (this.battle.getState(this.isTeamA)) {
+// 			case INGAME:
+// 				actions.add(new UseAbility());
+// 				actions.add(new Run());
+// 				actions.add(new Swap());
+// 				actions.add(new UseItem());
+// 				break;
 
-	/**
-	 * Returns a random ability from the active Bugemon on the player's side.
-	 *
-	 * @return a randomly selected Ability of the self (Team A) active Bugemon
-	 */
-	public Ability getRandomAbilitySelf() {
-	   AbilitySet AbilitiesA = this.getActiveBugemonSelf().getAbilities();
-	   Random rand = new Random();
-	   int i = rand.nextInt(AbilitiesA.SIZE);
+// 			case SWAPPING:
+// 				actions.add(new Swap());
+// 				break;
 
-	   return AbilitiesA.getAbility(i);
-	}
+// 			case LOST:
+// 				break;
 
-	/**
-	 * Returns a random ability from the active Bugemon on the opponent's side.
-	 *
-	 * @return a randomly selected Ability of the opponent (Team B) active Bugemon
-	 */
-	public Ability getRandomAbilityOpponent() {
-		AbilitySet AbilitiesB = this.getActiveBugemonOpponent().getAbilities();
-		Random rand = new Random();
-		int i = rand.nextInt(AbilitiesB.SIZE);
+// 			case WON:
+// 				break;
 
-		return AbilitiesB.getAbility(i);
-	}
+// 			case WAITING:
+// 				break;
 
-	/**
-	 * Switches the active Bugemon on the player's team to a random, non-KO Bugemon.
-	 */
-	public void switchSelfBugemonAuto() {
+// 			default:
+// 				break;
+// 		}
+// 		return actions;
+// 	}
 
-		// list of non-KO bugemons
-		List<Bugemon> availableBugemons = battle.getTeamA().getMembers().stream()
-				.filter(b -> !b.isKO())
-				.toList();
+// 	/**
+// 	 * Returns a random ability from the active Bugemon on the player's side.
+// 	 *
+// 	 * @return a randomly selected Ability of the self (Team A) active Bugemon
+// 	 */
+// 	public Ability getRandomAbilitySelf() {
+// 	   AbilitySet AbilitiesA = this.getActiveBugemonSelf().getAbilities();
+// 	   Random rand = new Random();
+// 	   int i = rand.nextInt(AbilitiesA.SIZE);
 
-		Random rand = new Random();
-		int i = rand.nextInt(availableBugemons.size());
+// 	   return AbilitiesA.getAbility(i);
+// 	}
 
-		setActiveBugemonSelf(availableBugemons.get(i));
-	}
+// 	/**
+// 	 * Returns a random ability from the active Bugemon on the opponent's side.
+// 	 *
+// 	 * @return a randomly selected Ability of the opponent (Team B) active Bugemon
+// 	 */
+// 	public Ability getRandomAbilityOpponent() {
+// 		AbilitySet AbilitiesB = this.getActiveBugemonOpponent().getAbilities();
+// 		Random rand = new Random();
+// 		int i = rand.nextInt(AbilitiesB.SIZE);
 
-	/**
-	 * Switches the active Bugemon on the opponent's team to a random, non-KO Bugemon.
-	 */
-	public void switchOpponentBugemonAuto() {
+// 		return AbilitiesB.getAbility(i);
+// 	}
 
-		List<Bugemon> availableBugemons = battle.getTeamB().getMembers().stream()
-				.filter(b -> !b.isKO())
-				.toList();
+// 	/**
+// 	 * Switches the active Bugemon on the player's team to a random, non-KO Bugemon.
+// 	 */
+// 	public void switchSelfBugemonAuto() {
 
-		Random rand = new Random();
-		int i = rand.nextInt(availableBugemons.size());
+// 		// list of non-KO bugemons
+// 		List<Bugemon> availableBugemons = battle.getTeamA().getMembers().stream()
+// 				.filter(b -> !b.isKO())
+// 				.toList();
 
-		setActiveBugemonOpponent(availableBugemons.get(i));
-	}
+// 		Random rand = new Random();
+// 		int i = rand.nextInt(availableBugemons.size());
 
-}
+// 		setActiveBugemonSelf(availableBugemons.get(i));
+// 	}
+
+// 	/**
+// 	 * Switches the active Bugemon on the opponent's team to a random, non-KO Bugemon.
+// 	 */
+// 	public void switchOpponentBugemonAuto() {
+
+// 		List<Bugemon> availableBugemons = battle.getTeamB().getMembers().stream()
+// 				.filter(b -> !b.isKO())
+// 				.toList();
+
+// 		Random rand = new Random();
+// 		int i = rand.nextInt(availableBugemons.size());
+
+// 		setActiveBugemonOpponent(availableBugemons.get(i));
+// 	}
+
+// }

@@ -71,6 +71,19 @@ public class Team {
         return false;
     }
 
+    public boolean contains(Bugemon bugemon){
+        if (bugemon == null){
+            return false;
+        }
+
+        for (Bugemon b : this.members) {
+            if (bugemon.equals(b)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean removeByName(String name) {
         if (name == null || name.isBlank()) {
             return false;

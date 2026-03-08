@@ -1,4 +1,4 @@
-package ulb.repository.loader.json;
+package ulb.repository.loader.json.parser;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
@@ -12,6 +12,7 @@ import ulb.model.ability.Ability;
 import ulb.model.ability.AbilitySet;
 import ulb.model.ability.AbilityDatabase;
 import ulb.model.type.Type;
+import ulb.repository.loader.json.Json;
 
 import ulb.model.sample.SamplesLoader;
 import ulb.repository.loader.LoadFailureException;

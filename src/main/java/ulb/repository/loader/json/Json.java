@@ -14,7 +14,7 @@ import ulb.repository.loader.LoadFailureException;
 /**
  * Utility class for parsing json inputs into json nodes.
  */
-abstract class Json {
+public abstract class Json {
 	/**
 	 * Parses a JsonNode from an input stream.
 	 *

@@ -1,4 +1,4 @@
-package ulb.repository.loader.json;
+package ulb.repository.loader.json.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.HashMap;
@@ -11,7 +11,7 @@ import ulb.repository.loader.LoadFailureException;
 /**
  * Parses effects from json nodes.
  */
-class EffectJsonParser {
+public class EffectJsonParser {
 	/**
 	 * Parses one effect from a json node.
 	 *

@@ -1,11 +1,11 @@
-package ulb.repository.loader.json;
+package ulb.repository.loader.json.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
 import ulb.model.type.Type;
 import ulb.repository.loader.LoadFailureException;
 
-class TypeJsonParser {
+public class TypeJsonParser {
 	public Type parseOne(JsonNode node) throws LoadFailureException {
 		String str = node.asText();
 		str = str.toLowerCase();

@@ -1,4 +1,4 @@
-package ulb.repository.loader.json;
+package ulb.repository.loader.json.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.List;
@@ -17,7 +17,7 @@ import ulb.repository.loader.LoadFailureException;
 /**
  * Parser for Bugemon species
  */
-class BugemonSpeciesJsonParser {
+public class BugemonSpeciesJsonParser {
 	private final TypeJsonParser typeParser;
 
 	public BugemonSpeciesJsonParser() {

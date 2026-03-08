@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.io.InputStream;
 
 import ulb.repository.loader.AbilityLoader;
+import ulb.repository.loader.json.parser.AbilityJsonParser;
 import ulb.repository.loader.LoadFailureException;
 import ulb.model.ability.Ability;
 

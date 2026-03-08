@@ -1,4 +1,4 @@
-package ulb.repository.loader.json;
+package ulb.repository.loader.json.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

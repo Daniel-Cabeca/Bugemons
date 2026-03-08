@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.io.InputStream;
 
 import ulb.repository.loader.BugemonSpeciesLoader;
+import ulb.repository.loader.json.parser.BugemonSpeciesJsonParser;
 import ulb.repository.loader.LoadFailureException;
 import ulb.model.bugemon.BugemonSpecies;
 

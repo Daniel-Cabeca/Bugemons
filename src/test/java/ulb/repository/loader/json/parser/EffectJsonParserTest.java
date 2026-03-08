@@ -1,4 +1,4 @@
-package ulb.repository.loader.json;
+package ulb.repository.loader.json.parser;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import ulb.model.Effect;
 import ulb.model.Effect.EffectType;
 import ulb.repository.loader.LoadFailureException;
+import ulb.repository.loader.json.Json;
 
 public class EffectJsonParserTest {
 	public static EffectType parseEffectTypeFromStr(String str) {

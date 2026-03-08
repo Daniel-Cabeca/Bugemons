@@ -1,9 +1,10 @@
-package ulb.repository.loader.json;
+package ulb.repository.loader.json.parser;
 
 import org.junit.jupiter.api.Test;
 
 import ulb.model.Effect;
 import ulb.model.item.Item;
+import ulb.repository.loader.json.Json;
 
 import java.io.File;
 import java.io.IOException;

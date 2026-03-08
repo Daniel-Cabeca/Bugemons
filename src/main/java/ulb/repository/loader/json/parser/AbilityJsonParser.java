@@ -1,4 +1,4 @@
-package ulb.repository.loader.json;
+package ulb.repository.loader.json.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.List;
@@ -19,7 +19,7 @@ import ulb.repository.loader.LoadFailureException;
 /**
  * Json parser for abilities.
  */
-class AbilityJsonParser {
+public class AbilityJsonParser {
 	private final TypeJsonParser typeParser;
 	private final EffectJsonParser effectParser;
 

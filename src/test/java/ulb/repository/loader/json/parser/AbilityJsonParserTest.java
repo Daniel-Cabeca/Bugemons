@@ -1,4 +1,4 @@
-package ulb.repository.loader.json;
+package ulb.repository.loader.json.parser;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,6 +13,7 @@ import java.text.ParseException;
 import ulb.model.ability.Ability;
 import ulb.model.type.Type;
 import ulb.repository.loader.LoadFailureException;
+import ulb.repository.loader.json.Json;
 
 public class AbilityJsonParserTest {
 	public static Ability parseAbilityFromString(String str) {

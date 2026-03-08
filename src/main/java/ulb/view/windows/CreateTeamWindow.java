@@ -14,7 +14,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,13 +21,14 @@ import java.util.List;
 import ulb.model.Player;
 import ulb.model.bugemon.BugemonSpecies;
 import ulb.view.MainMenu;
+import ulb.view.handler.Window;
 import ulb.model.bugemon.BugemonDatabase;
 
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-public class CreateTeamWindow {
+public class CreateTeamWindow extends Window {
 
 	@FXML
 	private GridPane availableBugemonsGrid;

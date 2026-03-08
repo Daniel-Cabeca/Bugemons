@@ -1,12 +1,20 @@
 package ulb.view.handler;
 
-import java.util.HashMap;
-import java.util.Map;
+import ulb.view.windows.CreateTeamWindow;
 
 public final class WindowContainer {
-	public Map<WindowName,Window> uiMap = new HashMap<WindowName, Window>();
+	CreateTeamWindow createTeamWindow;
 
-	public Window getUI(WindowName uiName){
-		return this.uiMap.get(uiName);
+	public WindowContainer(){
+		createTeamWindow = new CreateTeamWindow();
+	}
+
+	public Window getWindow(WindowName windowName){
+		switch (windowName) {
+			case CreateTeamWindow:
+				return createTeamWindow;
+			default:
+				return null;
+		}
 	}
 }

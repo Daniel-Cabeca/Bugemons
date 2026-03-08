@@ -6,7 +6,7 @@ import java.util.Map;
 
 import ulb.model.Effect;
 import ulb.model.Effect.EffectType;
-import ulb.repository.loader.LoadFailureException;
+import ulb.repository.loader.LoadException;
 
 /**
  * Parses effects from json nodes.
@@ -16,9 +16,9 @@ public class EffectJsonParser {
 	 * Parses one effect from a json node.
 	 *
 	 * @param node The json node
-	 * @throws LoadFailureException If a parsing error occured
+	 * @throws LoadException If a parsing error occured
 	 */
-	public Effect parseOne(JsonNode node) throws LoadFailureException {
+	public Effect parseOne(JsonNode node) throws LoadException {
 		EffectType effectType = this.parseEffectType(node.get("type"));
 		String target = node.get("cible").asText();
 
@@ -37,7 +37,7 @@ public class EffectJsonParser {
 					Effect.EffectDuration.valueOf(duration));
 				break;
 			default:
-				throw new LoadFailureException("Unhandled effect type");
+				throw new LoadException("Unhandled effect type");
 		}
 
 		return effect;
@@ -49,7 +49,7 @@ public class EffectJsonParser {
 	 *
 	 *
 	 */
-	public Effect parseList(JsonNode node) throws LoadFailureException {
+	public Effect parseList(JsonNode node) throws LoadException {
 		for (JsonNode effectNode: node) {
 			return this.parseOne(effectNode);
 		}
@@ -61,9 +61,9 @@ public class EffectJsonParser {
 	 * Parses an effect type from a json node.
 	 *
 	 * @param node The json node
-	 * @throws LoadFailureException If the type isn't recognized
+	 * @throws LoadException If the type isn't recognized
 	 */
-	public EffectType parseEffectType(JsonNode node) throws LoadFailureException {
+	public EffectType parseEffectType(JsonNode node) throws LoadException {
 		String str = node.asText();
 
 		switch(str) {
@@ -72,7 +72,7 @@ public class EffectJsonParser {
 			case "stat_modifier":
 				return EffectType.STAT_MODIFIER;
 			default:
-				throw new LoadFailureException("Unknown effect type: " + str);
+				throw new LoadException("Unknown effect type: " + str);
 		}
 	}
 }

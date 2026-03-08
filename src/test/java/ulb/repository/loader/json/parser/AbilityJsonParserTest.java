@@ -12,7 +12,7 @@ import java.text.ParseException;
 
 import ulb.model.ability.Ability;
 import ulb.model.type.Type;
-import ulb.repository.loader.LoadFailureException;
+import ulb.repository.loader.LoadException;
 import ulb.repository.loader.json.Json;
 
 public class AbilityJsonParserTest {

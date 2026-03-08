@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import ulb.model.Effect;
 import ulb.model.Effect.EffectType;
-import ulb.repository.loader.LoadFailureException;
+import ulb.repository.loader.LoadException;
 import ulb.repository.loader.json.Json;
 
 public class EffectJsonParserTest {
@@ -25,7 +25,7 @@ public class EffectJsonParserTest {
 
 	@Test
 	public void testEffectTypeIncorrect() {
-		assertThrows(LoadFailureException.class, () -> { parseEffectTypeFromStr("test"); });
+		assertThrows(LoadException.class, () -> { parseEffectTypeFromStr("test"); });
 	}
 
 	@Test

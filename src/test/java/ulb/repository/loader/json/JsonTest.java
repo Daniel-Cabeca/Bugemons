@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import ulb.repository.loader.LoadFailureException;
+import ulb.repository.loader.LoadException;
 
 public class JsonTest {
 	@Test
@@ -24,6 +24,6 @@ public class JsonTest {
 			{ property": "value" }
 			""";
 
-		assertThrows(LoadFailureException.class, () -> { Json.getNode(str); });
+		assertThrows(LoadException.class, () -> { Json.getNode(str); });
 	}
 }

@@ -5,7 +5,7 @@ import java.io.InputStream;
 
 import ulb.repository.loader.BugemonSpeciesLoader;
 import ulb.repository.loader.json.parser.BugemonSpeciesJsonParser;
-import ulb.repository.loader.LoadFailureException;
+import ulb.repository.loader.LoadException;
 import ulb.model.bugemon.BugemonSpecies;
 
 /**
@@ -21,7 +21,7 @@ public class BugemonSpeciesJsonLoader implements BugemonSpeciesLoader {
 	}
 
 	@Override
-	public Iterable<BugemonSpecies> loadAll() throws LoadFailureException {
+	public Iterable<BugemonSpecies> loadAll() throws LoadException {
 		JsonNode node = Json.getNode(this.stream);
 		JsonNode bugemonsArray = node.get("bugemons");
 

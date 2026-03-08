@@ -12,7 +12,7 @@ public interface ItemLoader {
 	 * Loads all items in the game data.
 	 *
 	 * @return An iterable object with all the loaded items
-	 * @throws LoadFailureException If a runtime error occurs during the loading
+	 * @throws LoadException If a runtime error occurs during the loading
 	 */
-	public Iterable<Item> loadAll() throws LoadFailureException;
+	public Iterable<Item> loadAll() throws LoadException;
 }

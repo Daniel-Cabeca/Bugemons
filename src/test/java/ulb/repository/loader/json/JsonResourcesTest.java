@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.net.URL;
 
-import ulb.repository.loader.LoadFailureException;
+import ulb.repository.loader.LoadException;
 
 public class JsonResourcesTest {
 	@Test
@@ -17,7 +17,7 @@ public class JsonResourcesTest {
 	@Test
 	public void testGetUrlIncorrect() {
 		String path = "doesnotexist";
-		assertThrows(LoadFailureException.class, () -> { JsonResources.getUrl(path); });
+		assertThrows(LoadException.class, () -> { JsonResources.getUrl(path); });
 	}
 
 	@Test
@@ -29,6 +29,6 @@ public class JsonResourcesTest {
 	@Test
 	public void testGetStreamIncorrect() {
 		String path = "doesnotexist";
-		assertThrows(LoadFailureException.class, () -> { JsonResources.getStream(path); });
+		assertThrows(LoadException.class, () -> { JsonResources.getStream(path); });
 	}
 }

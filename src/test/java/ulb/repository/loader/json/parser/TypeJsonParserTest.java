@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import ulb.model.type.Type;
-import ulb.repository.loader.LoadFailureException;
+import ulb.repository.loader.LoadException;
 import ulb.repository.loader.json.Json;
 
 public class TypeJsonParserTest {
@@ -18,7 +18,7 @@ public class TypeJsonParserTest {
 
 	@Test
 	public void testIncorrect() {
-		assertThrows(LoadFailureException.class, () -> { parseTypeFromString("ptdr"); });
+		assertThrows(LoadException.class, () -> { parseTypeFromString("ptdr"); });
 	}
 
 	@Test

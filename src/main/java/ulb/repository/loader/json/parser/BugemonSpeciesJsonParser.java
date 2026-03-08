@@ -12,7 +12,7 @@ import ulb.model.ability.Ability;
 import ulb.model.ability.AbilitySet;
 import ulb.model.ability.AbilityDatabase;
 
-import ulb.repository.loader.LoadFailureException;
+import ulb.repository.loader.LoadException;
 
 /**
  * Parser for Bugemon species
@@ -28,9 +28,9 @@ public class BugemonSpeciesJsonParser {
 	 * Parse species from a json node.
 	 *
 	 * @param filename The json node
-	 * @throws LoadFailureException If the parsing failed
+	 * @throws LoadException If the parsing failed
 	 */
-	public Iterable<BugemonSpecies> parseList(JsonNode node) throws LoadFailureException {
+	public Iterable<BugemonSpecies> parseList(JsonNode node) throws LoadException {
 		List<BugemonSpecies> res = new ArrayList<>();
 
 		for (JsonNode speciesNode: node) {
@@ -48,7 +48,7 @@ public class BugemonSpeciesJsonParser {
 	 * @param node The json node
 	 * @return The parsed species
 	 */
-	public BugemonSpecies parseOne(JsonNode node) throws LoadFailureException {
+	public BugemonSpecies parseOne(JsonNode node) throws LoadException {
 		String id = node.get("id").asText();
 		String name = node.get("nom").asText();
 		Type type = this.typeParser.parseOne(node.get("type"));

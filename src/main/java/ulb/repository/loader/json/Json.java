@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.ByteArrayInputStream;
 import java.net.URL;
 
-import ulb.repository.loader.LoadFailureException;
+import ulb.repository.loader.LoadException;
 
 /**
  * Utility class for parsing json inputs into json nodes.
@@ -20,18 +20,18 @@ public abstract class Json {
 	 *
 	 * @param stream The input stream
 	 * @return The json node
-	 * @throws LoadFailureException If an error occured
+	 * @throws LoadException If an error occured
 	 */
-	public static JsonNode getNode(InputStream stream) throws LoadFailureException {
+	public static JsonNode getNode(InputStream stream) throws LoadException {
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			JsonNode node = mapper.readTree(stream);
 
 			return node;
 		} catch (JsonProcessingException e) {
-			throw new LoadFailureException(e.getMessage());
+			throw new LoadException(e.getMessage());
 		} catch (IOException e) {
-			throw new LoadFailureException(e.getMessage());
+			throw new LoadException(e.getMessage());
 		}
 	}
 
@@ -40,9 +40,9 @@ public abstract class Json {
 	 *
 	 * @param stream The input string
 	 * @return The json node
-	 * @throws LoadFailureException If an error occured
+	 * @throws LoadException If an error occured
 	 */
-	public static JsonNode getNode(String str) throws LoadFailureException {
+	public static JsonNode getNode(String str) throws LoadException {
 		InputStream stream = new ByteArrayInputStream(str.getBytes());
 		return getNode(stream);
 	}
@@ -52,14 +52,14 @@ public abstract class Json {
 	 *
 	 * @param path The url to read from
 	 * @return The json node
-	 * @throws LoadFailureException If an error occured
+	 * @throws LoadException If an error occured
 	 */
-	public static JsonNode getNode(URL url) throws LoadFailureException {
+	public static JsonNode getNode(URL url) throws LoadException {
 		try {
 			InputStream stream = url.openStream();
 			return getNode(stream);
 		} catch (IOException e) {
-			throw new LoadFailureException(e.getMessage());
+			throw new LoadException(e.getMessage());
 		}
 	}
 }

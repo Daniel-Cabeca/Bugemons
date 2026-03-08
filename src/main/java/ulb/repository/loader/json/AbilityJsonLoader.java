@@ -5,7 +5,7 @@ import java.io.InputStream;
 
 import ulb.repository.loader.AbilityLoader;
 import ulb.repository.loader.json.parser.AbilityJsonParser;
-import ulb.repository.loader.LoadFailureException;
+import ulb.repository.loader.LoadException;
 import ulb.model.ability.Ability;
 
 /**
@@ -21,7 +21,7 @@ public class AbilityJsonLoader implements AbilityLoader {
 	}
 
 	@Override
-	public Iterable<Ability> loadAll() throws LoadFailureException {
+	public Iterable<Ability> loadAll() throws LoadException {
 		JsonNode node = Json.getNode(this.stream);
 		JsonNode abilityArray = node.get("attaques");
 

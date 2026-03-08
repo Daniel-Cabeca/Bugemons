@@ -12,7 +12,7 @@ public interface BugemonSpeciesLoader {
 	 * Loads all bugemon species in the game data.
 	 *
 	 * @return An iterable object with all the loaded species
-	 * @throws LoadFailureException If a runtime error occurs during the loading
+	 * @throws LoadException If a runtime error occurs during the loading
 	 */
-	public Iterable<BugemonSpecies> loadAll() throws LoadFailureException;
+	public Iterable<BugemonSpecies> loadAll() throws LoadException;
 }

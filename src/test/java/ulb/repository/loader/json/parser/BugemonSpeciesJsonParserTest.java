@@ -15,7 +15,7 @@ import ulb.model.type.Type;
 import ulb.repository.loader.json.Json;
 
 import ulb.model.sample.SamplesLoader;
-import ulb.repository.loader.LoadFailureException;
+import ulb.repository.loader.LoadException;
 
 public class BugemonSpeciesJsonParserTest {
 	@BeforeAll
@@ -110,7 +110,7 @@ public class BugemonSpeciesJsonParserTest {
 
 			JsonNode node = Json.getNode(STR);
 
-			assertThrows(LoadFailureException.class, () -> { parser.parseOne(node); });
+			assertThrows(LoadException.class, () -> { parser.parseOne(node); });
 		} catch (Exception e) {
 			assertTrue(false);
 		}

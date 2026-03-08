@@ -1,16 +1,21 @@
 package ulb.view.handler;
 
 import ulb.view.windows.CreateTeamWindow;
+import ulb.view.windows.ModeWindow;
 
 public final class WindowContainer {
-	CreateTeamWindow createTeamWindow;
+	private ModeWindow modeWindow;
+	private CreateTeamWindow createTeamWindow;
 
 	public WindowContainer(){
-		createTeamWindow = new CreateTeamWindow();
+		this.createTeamWindow = new CreateTeamWindow();
+		this.modeWindow = new ModeWindow();
 	}
 
 	public Window getWindow(WindowName windowName){
 		switch (windowName) {
+			case ModeWindow:
+				return modeWindow;
 			case CreateTeamWindow:
 				return createTeamWindow;
 			default:

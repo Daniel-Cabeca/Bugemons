@@ -14,6 +14,7 @@ import ulb.model.type.Effectiveness;
 import ulb.model.type.Type;
 import ulb.view.BattleEndWindow;
 import ulb.view.BattleWindow;
+import ulb.view.handler.WindowContainer;
 import ulb.view.BattleMenu;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -28,9 +29,18 @@ import ulb.model.Effect;
 
 public class BattleController {
 	private Player player;
+	private WindowContainer windowContainer;
 	private BattleSnapshot battleSnapshot;
 	private int floorNumber = 1;
 	private boolean isBossFight = false;
+
+	public BattleController(){
+		this.windowContainer = new WindowContainer();
+		init();
+	}
+	private void init(){
+		//System.out.println("Hello");
+	}
 
 	public BattleController(Player player) {
 		this.player = player;
@@ -304,6 +314,3 @@ public class BattleController {
 		return message;
 	}
 }
-
-
-

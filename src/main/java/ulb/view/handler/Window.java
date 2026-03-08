@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 import javafx.scene.Node;
 
 public abstract class Window{
-	public final String windowsPath= "/ulb/view/";
+	protected static final String WINDOWS_PATH= "/ulb/view/";
 
 	public void switchWindow(ActionEvent event, String windowFxmlPath) throws IOException{
 		Parent root = FXMLLoader.load(getClass().getResource(windowFxmlPath));

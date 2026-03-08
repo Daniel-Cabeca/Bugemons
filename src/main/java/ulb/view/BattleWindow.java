@@ -7,8 +7,7 @@ import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
 import ulb.model.battle.BattleState;
@@ -21,18 +20,14 @@ import ulb.model.Player;
 import ulb.model.ability.Ability;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
+
 import java.util.Optional;
 
 public class BattleWindow {
@@ -121,7 +116,7 @@ public class BattleWindow {
 		
 		initializeGraphicalBattle();
 	}
-	
+
 	private void initializeGraphicalBattle() {
 		// Get the active Bugemons (first non-KO Bugemon)
 		Bugemon playerBugemon = battleController.getActiveBugemonSelf();
@@ -134,9 +129,28 @@ public class BattleWindow {
 		} catch (Exception e) {
 			System.err.println("Failed to load player bugemon sprite: " + e.getMessage());
 		}
-		
-		PlayerBugemonLabel.setText(playerBugemon.getName() + " (" + playerBugemon.getType().name() + ")");
-		PlayerBugemonHPNumber.setText("HP: " + playerBugemon.getFightStats().getHp() + "/" + playerBugemon.getBaseStats().getHp());
+
+		String playerColor;
+		switch (playerBugemon.getType()) {
+			case PYRO:
+				playerColor = "#ED2424";
+				break;
+			case FLORA:
+				playerColor = "#50A346";
+				break;
+			case AQUA:
+				playerColor = "#51B0F0";
+				break;
+			case LITHO:
+				playerColor = "#807979";
+				break;
+			default:
+				playerColor = "#ced4da";
+		}
+
+		PlayerBugemonLabel.setText(playerBugemon.getName() + " (" + playerBugemon.getType().name() + ")"
+				+ " Level: " +  playerBugemon.getLevel());
+		PlayerBugemonLabel.setStyle("-fx-text-fill: " + playerColor + ";");
 		PlayerBugemonHPBar.setProgress((double) playerBugemon.getFightStats().getHp() / playerBugemon.getBaseStats().getHp());
 		
 		// Set opponent Bugemon sprite and stats
@@ -146,10 +160,33 @@ public class BattleWindow {
 		} catch (Exception e) {
 			System.err.println("Failed to load opponent bugemon sprite: " + e.getMessage());
 		}
-		
-		OpponentBugemonLabel.setText(opponentBugemon.getName() + " (" + opponentBugemon.getType().name() + ")");
-		OpponentHPNumber.setText("HP: " + opponentBugemon.getFightStats().getHp() + "/" + opponentBugemon.getBaseStats().getHp());
+
+		String opponentColor;
+		switch (opponentBugemon.getType()) {
+			case PYRO:
+				opponentColor = "#ED2424";
+				break;
+			case FLORA:
+				opponentColor = "#50A346";
+				break;
+			case AQUA:
+				opponentColor = "#51B0F0";
+				break;
+			case LITHO:
+				opponentColor = "#807979";
+				break;
+			default:
+				opponentColor = "#ced4da";
+		}
+
+		OpponentBugemonLabel.setText(opponentBugemon.getName() + " (" + opponentBugemon.getType().name() + ")"
+				+ " Level: " + opponentBugemon.getLevel());
+		OpponentBugemonLabel.setStyle("-fx-text-fill: " + opponentColor + ";");
 		OppentHPBar.setProgress((double) opponentBugemon.getFightStats().getHp() / opponentBugemon.getBaseStats().getHp());
+	}
+
+	public void initializebattleMessage(){
+
 	}
 	
 	/**
@@ -186,6 +223,9 @@ public class BattleWindow {
 	 */
 	public void handleAuto(ActionEvent event) throws IOException {
 		BattleState state = battleController.playAutoTurn();
+		String atkA = battleController.getActiveBugemonSelf().getName();
+		String atkB = battleController.getActiveBugemonOpponent().getName();
+
 		initializeGraphicalBattle();
 
 		if (state == BattleState.WON) {
@@ -347,7 +387,40 @@ public class BattleWindow {
 							setText(null);
 						} else {
 							label.setText(ability.getName());
+
+							String color;
+							switch (ability.getType()) {
+								case PYRO:
+									color = "#ED2424";
+									break;
+								case FLORA:
+									color = "#50A346";
+									break;
+								case AQUA:
+									color = "#51B0F0";
+									break;
+								case LITHO:
+									color = "#807979";
+									break;
+								default:
+									color = "#ced4da";
+							}
+							hbox.setStyle(
+									"-fx-background-color: " + color + ";" +
+											"-fx-padding: 6;" +
+											"-fx-background-radius: 6;"
+							);
+
+							String effectiveness = battleController.getEffectiveness(ability);
+							Tooltip tooltip = new Tooltip(effectiveness);
+							// displays the message only if effectiveness is not normal
+							if (effectiveness != null) {
+								tooltip.setShowDelay(javafx.util.Duration.millis(100));
+								setTooltip(tooltip);
+							}
+
 							setGraphic(hbox);
+
 						}
 					}
 				};

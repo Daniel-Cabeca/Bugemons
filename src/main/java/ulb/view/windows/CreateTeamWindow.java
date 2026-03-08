@@ -1,4 +1,4 @@
-package ulb.view;
+package ulb.view.windows;
 
 import ulb.controller.BattleController;
 
@@ -21,13 +21,14 @@ import java.util.List;
 
 import ulb.model.Player;
 import ulb.model.bugemon.BugemonSpecies;
+import ulb.view.MainMenu;
 import ulb.model.bugemon.BugemonDatabase;
 
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-public class CreateTeamMenu {
+public class CreateTeamWindow {
 
 	@FXML
 	private GridPane availableBugemonsGrid;

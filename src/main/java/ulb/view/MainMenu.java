@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 import ulb.model.Player;
+import ulb.view.windows.CreateTeamWindow;
 
 public class MainMenu {
 
@@ -25,7 +26,7 @@ public class MainMenu {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/CreateTeamMenu.fxml"));
 		Parent root = loader.load();
 
-		CreateTeamMenu controller = loader.getController();
+		CreateTeamWindow controller = loader.getController();
 		controller.setPlayer(player);
 		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 		stage.getScene().setRoot(root);
@@ -36,4 +37,4 @@ public class MainMenu {
 		Platform.exit();
 		System.exit(0);
 	}
-}	
+}

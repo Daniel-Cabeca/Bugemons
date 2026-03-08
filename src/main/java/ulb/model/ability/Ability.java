@@ -1,5 +1,6 @@
 package ulb.model.ability;
 
+import ulb.model.HasId;
 import ulb.model.type.Type;
 import ulb.model.Effect;
 import ulb.model.bugemon.Bugemon;
@@ -7,7 +8,7 @@ import ulb.model.bugemon.Bugemon;
 /**
  * Represents a move that can be used by a Bugemon in battle.
  */
-public class Ability {
+public class Ability implements HasId {
 	private String id;
 	private String name;
 	private Type type;
@@ -33,7 +34,9 @@ public class Ability {
 		this.effect = effect;
 	}
 
+	@Override
 	public String getId() { return this.id; }
+
 	public String getName() { return this.name; }
 	public Type getType() { return this.type; }
 	public String getDescription() { return this.description; }

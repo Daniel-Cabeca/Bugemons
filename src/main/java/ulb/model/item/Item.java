@@ -1,9 +1,10 @@
 package ulb.model.item;
 
+import ulb.model.HasId;
 import ulb.model.Effect;
 import ulb.model.bugemon.Bugemon;
 
-public class Item {
+public class Item implements HasId {
 	private String id;
 	private String name;
 	private String description;
@@ -23,7 +24,9 @@ public class Item {
 		this.sprite = sprite;
 	}
 
+	@Override
 	public String getId() { return this.id; }
+
 	public String getName() { return this.name; }
 	public String getDescription() { return this.description; }
 	public String getCategory() { return this.category; }

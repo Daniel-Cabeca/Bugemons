@@ -274,9 +274,7 @@ public class BattleController {
 
 		// xp partagé avec toute l'équipe (pour l'instant) - filtrage à faire
 		for (Bugemon b : player.getTeam().getMembers()) {
-			System.out.println("xp before: " + b.getXp());
 			int levels = b.gainXp(xp);
-			System.out.println("xp after: " + b.getXp());
 			if (levels > 0) {
 				b.gainLevelsReward(levels);
 				b.getFightStats().setHp(b.getBaseStats().getHp());

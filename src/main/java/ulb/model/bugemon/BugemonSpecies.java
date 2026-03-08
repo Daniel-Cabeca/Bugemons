@@ -1,12 +1,13 @@
 package ulb.model.bugemon;
 
+import ulb.model.HasId;
 import ulb.model.type.Type;
 import ulb.model.ability.AbilitySet;
 
 /**
  * Holds data on a Bugemon species.
  */
-public class BugemonSpecies {
+public class BugemonSpecies implements HasId {
 	private String id;
 	private String name;
 	private Type type;
@@ -34,8 +35,8 @@ public class BugemonSpecies {
 	public boolean isStarter() { return this.starter; }
 
 	public int getHp() { return this.getBaseStats().getHp(); }
-	public int getAttack() { return this.getBaseStats().getHp(); }
-	public int getDefense() { return this.getBaseStats().getAttack(); }
+	public int getAttack() { return this.getBaseStats().getAttack(); }
+	public int getDefense() { return this.getBaseStats().getDefense(); }
 	public int getInitiative() { return this.getBaseStats().getInitiative(); }
 
 	/**

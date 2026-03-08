@@ -14,7 +14,7 @@ import ulb.model.ability.Ability;
 
 /**
  * Mock repository for abilities.
- * Loads abilities from the json resource into an AbilityInMemoryRepository once and uses it in all its own instances.
+ * Acts as an actual repository but is actually just using a static instance of a true repository loaded only once, for performance reasons.
  */
 public class AbilityMockRepository implements AbilityRepository {
 	private static AbilityRepository abilityRepository = null;
@@ -33,6 +33,10 @@ public class AbilityMockRepository implements AbilityRepository {
 		Iterable<Ability> abilities = loader.loadAll();
 
 		abilityRepository = new AbilityInMemoryRepository(abilities);
+	}
+
+	public static void reload() {
+		load();
 	}
 
 	@Override

@@ -2,11 +2,10 @@ package ulb.model.bugemon;
 
 import java.util.NoSuchElementException;
 
-import ulb.model.HasId;
 import ulb.model.type.Type;
 import ulb.model.ability.AbilitySet;
 
-public class Bugemon implements HasId {
+public class Bugemon {
 	private BugemonSpecies species;
 	private Stats baseStats;
 	private Stats fightStats;
@@ -37,9 +36,7 @@ public class Bugemon implements HasId {
 	public int getXp() { return this.xp; }
 	public int getLevel() { return this.level; }
 
-	@Override
 	public String getId() { return this.getSpecies().getId(); }
-
 	public String getName() { return this.getSpecies().getName(); }
 	public Type getType() { return this.getSpecies().getType(); }
 	public AbilitySet getAbilities() { return this.getSpecies().getAbilities(); }

@@ -6,6 +6,7 @@ import java.io.InputStream;
 import ulb.repository.loader.BugemonSpeciesLoader;
 import ulb.repository.loader.json.parser.BugemonSpeciesJsonParser;
 import ulb.repository.loader.LoadException;
+import ulb.repository.AbilityRepository;
 import ulb.model.bugemon.BugemonSpecies;
 
 /**
@@ -15,9 +16,9 @@ public class BugemonSpeciesJsonLoader implements BugemonSpeciesLoader {
 	private final InputStream stream;
 	private final BugemonSpeciesJsonParser speciesParser;
 
-	public BugemonSpeciesJsonLoader(InputStream stream) {
+	public BugemonSpeciesJsonLoader(InputStream stream, AbilityRepository abilityRepository) {
 		this.stream = stream;
-		this.speciesParser = new BugemonSpeciesJsonParser();
+		this.speciesParser = new BugemonSpeciesJsonParser(abilityRepository);
 	}
 
 	@Override

@@ -12,6 +12,7 @@ import ulb.model.ability.Ability;
 import ulb.model.ability.AbilitySet;
 import ulb.model.ability.AbilityDatabase;
 
+import ulb.repository.AbilityRepository;
 import ulb.repository.loader.LoadException;
 
 /**
@@ -19,9 +20,11 @@ import ulb.repository.loader.LoadException;
  */
 public class BugemonSpeciesJsonParser {
 	private final TypeJsonParser typeParser;
+	private final AbilitySetJsonParser abilitySetParser;
 
-	public BugemonSpeciesJsonParser() {
+	public BugemonSpeciesJsonParser(AbilityRepository abilityRepository) {
 		this.typeParser = new TypeJsonParser();
+		this.abilitySetParser = new AbilitySetJsonParser(abilityRepository);
 	}
 
 	/**
@@ -35,7 +38,6 @@ public class BugemonSpeciesJsonParser {
 
 		for (JsonNode speciesNode: node) {
 			BugemonSpecies species = parseOne(node);
-
 			res.add(species);
 		}
 
@@ -52,15 +54,21 @@ public class BugemonSpeciesJsonParser {
 		String id = node.get("id").asText();
 		String name = node.get("nom").asText();
 		Type type = this.typeParser.parseOne(node.get("type"));
-		Stats baseStats = readJsonStats(node);
-		AbilitySet abilities = readJsonAbilities(node);
+		Stats baseStats = this.parseStats(node);
+		AbilitySet abilities = this.abilitySetParser.parseOne(node.get("attaques"));
 		String sprite = node.get("sprite").asText();
 		boolean starter = node.get("starter").asBoolean();
 
 		return new BugemonSpecies(id, name, type, baseStats, abilities, sprite, starter);
 	}
 
-	private Stats readJsonStats(JsonNode node) {
+	/**
+	 * Parse stats from a jspon node.
+	 *
+	 * @param node The json node
+	 * @return The parsed stats
+	 */
+	public Stats parseStats(JsonNode node) {
 		node = node.get("stats");
 
 		int hp = node.get("pv").asInt();
@@ -69,19 +77,5 @@ public class BugemonSpeciesJsonParser {
 		int initiative = node.get("initiative").asInt();
 
 		return new Stats(hp, attack, defense, initiative);
-	}
-
-	private AbilitySet readJsonAbilities(JsonNode node) {
-		AbilitySet abilities = new AbilitySet();
-		JsonNode abilitiesArray = node.get("attaques");
-		int i = 0;
-
-		for (JsonNode abilityNode: abilitiesArray) {
-			String id = abilityNode.asText();
-			Ability ability = AbilityDatabase.getInstance().get(id);
-			abilities.setAbility(i++, ability);
-		}
-
-		return abilities;
 	}
 }

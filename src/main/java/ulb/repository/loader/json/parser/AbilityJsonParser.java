@@ -30,9 +30,8 @@ public class AbilityJsonParser {
 	 */
 	public Iterable<Ability> parseList(JsonNode node) throws LoadException {
 		List<Ability> res = new ArrayList<>();
-		JsonNode abilitiesArray = node.get("attaques");
 
-		for (JsonNode abilityNode: abilitiesArray) {
+		for (JsonNode abilityNode: node) {
 			Ability ability = parseOne(abilityNode);
 			res.add(ability);
 		}

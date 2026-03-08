@@ -1,19 +1,13 @@
 package ulb.repository.loader.json.parser;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
-
-import java.text.ParseException;
+import ulb.repository.loader.json.Json;
 
 import ulb.model.ability.Ability;
 import ulb.model.type.Type;
-import ulb.repository.loader.LoadException;
-import ulb.repository.loader.json.Json;
 
 public class AbilityJsonParserTest {
 	public static Ability parseAbilityFromString(String str) {

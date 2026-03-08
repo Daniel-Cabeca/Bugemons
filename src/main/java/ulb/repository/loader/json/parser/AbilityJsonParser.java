@@ -4,12 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.util.List;
 import java.util.ArrayList;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.Map;
-
 import ulb.model.ability.Ability;
 import ulb.model.type.Type;
 import ulb.model.Effect;

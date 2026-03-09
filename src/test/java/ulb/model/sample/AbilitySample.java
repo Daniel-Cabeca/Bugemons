@@ -1,9 +1,7 @@
 package ulb.model.sample;
 
-import ulb.model.Effect;
 import ulb.model.ability.Ability;
 import ulb.model.type.Type;
-import ulb.model.sample.EffectSample;
 
 /**
  * Hard-coded abilities for testing purposes.
@@ -72,12 +70,32 @@ public abstract class AbilitySample {
 
 	public static Ability getG(){
 		return new Ability(
-				"e",
-				"E",
+				"g",
+				"G",
 				Type.FLORA,
 				"Inflige des dégâts et diminue la défense adverse.",
 				40,
 				EffectSample.getDefenseDecreaseOther()
+		);
+	}
+
+	public static Ability getH(){
+		return new Ability(
+				"h",
+				"H",
+				Type.FLORA,
+				"Inflige aucun dégat",
+				0
+		);
+	}
+
+	public static Ability getI(){
+		return new Ability(
+				"i",
+				"I",
+				Type.FLORA,
+				"Inflige des dégats gigantesques",
+				1000
 		);
 	}
 }

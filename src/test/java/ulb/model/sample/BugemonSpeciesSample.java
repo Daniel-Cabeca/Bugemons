@@ -1,9 +1,7 @@
 package ulb.model.sample;
 
 import ulb.model.bugemon.BugemonSpecies;
-import ulb.model.bugemon.Stats;
 import ulb.model.type.Type;
-import ulb.model.ability.AbilitySet;
 
 /**
  * Hard-coded Bugemon species for testing purposes.

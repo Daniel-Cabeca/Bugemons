@@ -86,7 +86,7 @@ public class Effect {
 				target.removeStatsDebuffs();
 				break;
 			case SWITCH:
-				// the logic is in BattleSnapshot
+				// The logic is in Battle (because we don't have access to the team here)
 				break;
 			default:
 				return 0;

@@ -17,6 +17,12 @@ import ulb.model.item.Item;
 import ulb.model.team.Team;
 import ulb.model.Player;
 import ulb.model.ability.Ability;
+import ulb.controller.action.UseItem;
+import ulb.controller.strategy.StrategyRandom;
+import ulb.controller.action.UseAbility;
+import ulb.controller.action.Swap;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
@@ -147,7 +153,8 @@ public class BattleWindow extends Window {
 				+ " Level: " +  playerBugemon.getLevel());
 		PlayerBugemonLabel.setStyle("-fx-text-fill: " + playerColor + ";");
 		PlayerBugemonHPBar.setProgress((double) playerBugemon.getFightStats().getHp() / playerBugemon.getBaseStats().getHp());
-
+		PlayerBugemonHPNumber.setText("HP: " + playerBugemon.getHp() + "/" + playerBugemon.getBaseStats().hp);
+		
 		// Set opponent Bugemon sprite and stats
 		try {
 			Image opponentImage = new Image(opponentBugemon.getSprite());
@@ -178,6 +185,7 @@ public class BattleWindow extends Window {
 				+ " Level: " + opponentBugemon.getLevel());
 		OpponentBugemonLabel.setStyle("-fx-text-fill: " + opponentColor + ";");
 		OppentHPBar.setProgress((double) opponentBugemon.getFightStats().getHp() / opponentBugemon.getBaseStats().getHp());
+		OpponentHPNumber.setText("HP: " + opponentBugemon.getHp() + "/" +  opponentBugemon.getBaseStats().hp);
 	}
 
 	public void initializebattleMessage(){
@@ -217,7 +225,8 @@ public class BattleWindow extends Window {
 	 * @throws IOException if the main menu FXML file cannot be loaded when going back to main menu
 	 */
 	public void handleAuto(ActionEvent event) throws IOException {
-		BattleState state = battleController.playAutoTurn();
+		StrategyRandom strategyRandom = new StrategyRandom(battleController);
+		BattleState state = strategyRandom.playAutoTurn();
 		String atkA = battleController.getActiveBugemonSelf().getName();
 		String atkB = battleController.getActiveBugemonOpponent().getName();
 
@@ -276,8 +285,9 @@ public class BattleWindow extends Window {
 						button.setOnAction(event -> {
 							Item item = getItem();
 							if (item != null) {
-								battleController.useItem(item);
-								// Refresh display
+								UseItem useItem = new UseItem(item);
+								battleController.useAction(useItem);
+								// Refresh display	
 								initializeGraphicalBattle();
 								displayInventory();
 							}
@@ -323,8 +333,11 @@ public class BattleWindow extends Window {
 						button.setOnAction(event -> {
 							Bugemon bugemon = getItem();
 							if (bugemon != null) {
-								battleController.setActiveBugemon(bugemon);
-								// Refresh display
+								System.out.println(bugemon.getName());
+								Swap swap = new Swap(bugemon);
+								battleController.useAction(swap);
+								System.out.println(battleController.getActiveBugemonSelf().getName());
+								// Refresh display	
 								initializeGraphicalBattle();
 								displayTeam();
 							}
@@ -367,8 +380,9 @@ public class BattleWindow extends Window {
 						button.setOnAction(event -> {
 							Ability ability = getItem();
 							if (ability != null) {
-								battleController.useAbility(ability);
-								// Refresh display
+								UseAbility useAbility = new UseAbility(ability);
+								battleController.useAction(useAbility);
+								// Refresh display	
 								initializeGraphicalBattle();
 								displayTeam();
 							}

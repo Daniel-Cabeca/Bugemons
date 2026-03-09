@@ -2,19 +2,19 @@
 
 Ce document contient l'éstimation de la durée et du risque de développement pour chacune des 28 User Stories.
 
-## Itération 1
+## Stories et Estimation
 
 | ID    | Titre                                         | Priorité client | Introduit dans l’itération |     État     | Durée estimée (h) | Risque estimé (1-3) |temps mis (h)|
 |------:|-----------------------------------------------|:---------------:|:--------------------------:|:------------:|:-----------------:|:-------------------:|:-----------:|
-| US-01 | Constituer une équipe                         |        1        |             1              | Done |        12         |          2                  | 20:15|
+| US-01 | Constituer une équipe                         |        1        |             1              | Finit |        12         |          2                  | 20:15|
 | US-02 | Sauvegarder et charger une équipe             |        2        |             /              |      /       |         16         |          3          | / |
 | US-03 | Modifier équipes sauvegardées                 |        2        |             /              |      /       |         15         |          3          | /|
-| US-04 | Combat automatique                            |        1        |             1              | Done |        16         |          2                 |21|
+| US-04 | Combat automatique                            |        1        |             1              | Finit |        16         |          2                 |21|
 | US-05 | Contrôle des actions en combat                |        1        |             1              | En Progrés |        15         |          2                 |7|
-| US-06 | Calcul de dégâts avec statistiques            |        1        |             1              | En Progrés |         7         |          2                 |2:45|
+| US-06 | Calcul de dégâts avec statistiques            |        1        |             1              | Finit |         7         |          2                 |2:45|
 | US-07 | Expérience et montée de niveau                |        1        |             1              | En Progrés |         8         |          2                 |2|
 | US-08 | Statuts                                       |        1        |             /              |      /       |         22         |          2          |/|
-| US-09 | Structure de la Tour NO                       |        1        |             1              |     TODO       |        51         |          2          |0|
+| US-09 | Structure de la Tour NO                       |        1        |             1              |     À Faire       |        51         |          2          |0|
 | US-10 | Utiliser un objet                             |        1        |             1              |  En Progrés |        21         |          2                 |11:10 |
 | US-11 | Récompenses d’étage                           |        1        |             /              |      /       |         18         |          3          |/|
 | US-12 | Bugédex                                       |        2        |             /              |      /       |        21         |          2          |/|
@@ -34,6 +34,8 @@ Ce document contient l'éstimation de la durée et du risque de développement p
 | US-26 | Chat                                          |        1        |             /              |       /     |        46         |          1            |/|
 | US-27 | Filtrer les messages inappropriés             |        3        |             /              |      /       |         16         |          3          |/|
 | US-28 | Leaderboard                                   |        1        |             /              |      /       |         31         |          2          |/|
+| US-A  |  Abandonner la partie                         |        1        |             1              |      À Faire  |         30         |          2          |0|
+| US-R  |  Refactoring                         			|        /        |             Tout              |      En Progrés  |         /         |          /          |12:15|
 
 ## Descriptions des User Stories
 ### US-01 - Constituer une équipe

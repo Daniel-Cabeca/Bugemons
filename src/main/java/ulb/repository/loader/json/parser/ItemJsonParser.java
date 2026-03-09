@@ -1,6 +1,20 @@
 package ulb.repository.loader.json.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
+
+import java.util.List;
+import java.util.ArrayList;
+
+import ulb.model.item.Item;
+import ulb.model.Effect;
+
+import ulb.repository.loader.LoadException;
+
+
+
+
+//TODO remove imports below
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ulb.model.Effect;
 import ulb.model.Effect.EffectType;
@@ -11,6 +25,43 @@ import java.io.IOException;
 import java.util.*;
 
 public class ItemJsonParser {
+	private final EffectJsonParser effectParser = new EffectJsonParser();
+
+	/**
+	 * Parses an item from a json node.
+	 *
+	 * @param node The json node
+	 * @return The parsed item
+	 * @throws LoadException If parsing failed
+	 */
+	public Item parseOne(JsonNode node) throws LoadException {
+		String id = node.get("id").asText();
+		String name = node.get("nom").asText();
+		String description = node.get("description").asText();
+		String category = node.get("categorie").asText();
+		Effect effect = this.effectParser.parseOne(node.get("effet"));
+		String sprite = node.get("sprite").asText();
+
+		return new Item(id, name, description, category, effect, sprite);
+	}
+
+	/**
+	 * Parses a list of items from a json node.
+	 *
+	 * @param node The json node
+	 * @return The parsed items
+	 * @throws LoadException If parsing failed
+	 */
+	public Iterable<Item> parseList(JsonNode node) throws LoadException {
+		List<Item> items = new ArrayList<>();
+
+		for (JsonNode itemNode: node) {
+			Item item = this.parseOne(itemNode);
+			items.add(item);
+		}
+
+		return items;
+	}
 
 	/**
 	 * Loads all items from a JSON file
@@ -20,34 +71,17 @@ public class ItemJsonParser {
 	 * @throws IllegalArgumentException if an item contains an unknown effect type
 	 */
 	public static List<Item> loadItems(String path) throws IOException, IllegalArgumentException {
-		EffectJsonParser effectParser = new EffectJsonParser();
+		//TODO move to ItemJsonLoader class
+
+		ItemJsonParser itemParser = new ItemJsonParser();
 
 
-		List<Item> items = new ArrayList<>();
 
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode root = mapper.readTree(new File(path));
+
         JsonNode itemsNode = root.get("objets");
-
-		for (JsonNode itemNode : itemsNode) {
-			try {
-				String id = itemNode.get("id").asText();
-				String name = itemNode.get("nom").asText();
-				String description = itemNode.get("description").asText();
-				String category = itemNode.get("categorie").asText();
-				String sprite = itemNode.get("sprite").asText();
-
-				JsonNode effectNode = itemNode.get("effet");
-				Effect effect = effectParser.parseOne(effectNode);
-
-				Item item = new Item(id, name, description, category, effect, sprite);
-
-				items.add(item);
-			}
-			catch (Exception e) {
-				System.err.println("Skipping invalid item: " + e.getMessage());
-			}
-		}
+		List<Item> items = (List<Item>) itemParser.parseList(itemsNode);
 
 		return items;
 	}
@@ -60,6 +94,8 @@ public class ItemJsonParser {
 	 * @throws IOException if the file cannot be read or JSON is malformed
 	 */
 	public static Map<String, Integer> loadInventory(String path) throws IOException {
+		//TODO move to ItemJsonLoader class or InventoryLoader class
+
 		Map<String, Integer> inventory = new HashMap<>();
 
 		ObjectMapper mapper = new ObjectMapper();

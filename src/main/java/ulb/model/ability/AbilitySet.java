@@ -8,7 +8,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * Is fixed to a size of 3 abilities.
  */
 public class AbilitySet implements Iterable<Ability> {
-	public final int SIZE = 3;
+	public static final int SIZE = 3;
 
 	private final Ability[] abilities = new Ability[SIZE];
 

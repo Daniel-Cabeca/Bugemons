@@ -9,7 +9,10 @@ import java.util.NoSuchElementException;
 /**
  * Lists and gives access to all loaded Bugemon species.
  * Uses a singleton pattern.
+ *
+ * @deprecated Should use services instead.
  */
+@Deprecated
 public class BugemonDatabase implements Iterable<BugemonSpecies> {
 	private static final BugemonDatabase INSTANCE = new BugemonDatabase();
 	private final Map<String, BugemonSpecies> species = new HashMap<>();

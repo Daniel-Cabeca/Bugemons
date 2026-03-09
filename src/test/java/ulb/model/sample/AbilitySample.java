@@ -70,8 +70,8 @@ public abstract class AbilitySample {
 
 	public static Ability getG(){
 		return new Ability(
-				"e",
-				"E",
+				"g",
+				"G",
 				Type.FLORA,
 				"Inflige des dégâts et diminue la défense adverse.",
 				40,
@@ -81,11 +81,21 @@ public abstract class AbilitySample {
 
 	public static Ability getH(){
 		return new Ability(
-				"e",
-				"E",
+				"h",
+				"H",
 				Type.FLORA,
 				"Inflige aucun dégat",
 				0
+		);
+	}
+
+	public static Ability getI(){
+		return new Ability(
+				"i",
+				"I",
+				Type.FLORA,
+				"Inflige des dégats gigantesques",
+				1000
 		);
 	}
 }

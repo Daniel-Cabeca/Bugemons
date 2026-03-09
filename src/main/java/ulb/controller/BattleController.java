@@ -236,13 +236,13 @@ public class BattleController {
 	// }
 
 
-	public void setFloorNumber(int floor) {
-		this.floorNumber = floor;
-	}
+	// public void setFloorNumber(int floor) {
+	// 	this.floorNumber = floor;
+	// }
 
-	public void setIsBossFight(boolean boss) {
-		this.isBossFight = boss;
-	}
+	// public void setIsBossFight(boolean boss) {
+	// 	this.isBossFight = boss;
+	// }
 
 	// public void handleBattleEnd(boolean victory) {
 	// 	handleBattleEnd(victory, null);

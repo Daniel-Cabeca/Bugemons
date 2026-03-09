@@ -10,21 +10,32 @@ import ulb.model.item.Item;
 import ulb.model.Effect;
 import ulb.controller.action.*;
 
+import java.util.List;
 import java.util.Random;
 import java.util.Vector;
 
 
 public class Battle {
+	private final int XP_COEF = 30;
+
 	private Player playerA;
 	private Player playerB;
+
 	private Team teamA;
 	private Team teamB;
 	private Bugemon activeBugemonA;
 	private Bugemon activeBugemonB;
+	private Vector<Bugemon> participantsA;
+	private Vector<Bugemon> participantsB;
+
 	private BattleState stateA;
 	private BattleState stateB;
 	private Action actionA = null;
 	private Action actionB = null;
+
+	private boolean isBossBattle = false;
+	private int floorNumber = 1;
+
 	private boolean gameFinished = false;
 
 	public enum TeamLabel {
@@ -41,17 +52,14 @@ public class Battle {
 		this.activeBugemonB = this.teamB.getMembers().get(0);
 		this.stateA = BattleState.INGAME;
 		this.stateB = BattleState.INGAME;
+		this.participantsA = new Vector<>() {};
+		this.participantsB = new Vector<>() {};
+		this.participantsA.add(activeBugemonA);
+		this.participantsB.add(activeBugemonB);
 	}
 
 	public Battle(Team teamA, Team teamB, Player playerA) {
-		this.playerA = playerA;
-		this.playerB = new Player();
-		this.teamA = teamA;
-		this.teamB = teamB;
-		this.activeBugemonA = this.teamA.getMembers().get(0);
-		this.activeBugemonB = this.teamB.getMembers().get(0);
-		this.stateA = BattleState.INGAME;
-		this.stateB = BattleState.INGAME;
+		this(teamA, teamB, playerA, new Player());
 	}
 
 	public Battle(Team teamA, Team teamB, Bugemon activeBugemonA, Bugemon activeBugemonB) {
@@ -75,8 +83,18 @@ public class Battle {
 		return this.stateB;
 	}
 
-	private void setActiveBugemonA(Bugemon bugemon) { this.activeBugemonA = bugemon; }
-	private void setActiveBugemonB(Bugemon bugemon) { this.activeBugemonB = bugemon; }
+	private void setActiveBugemonA(Bugemon bugemon) { 
+		this.activeBugemonA = bugemon; 
+		if (!participantsA.contains(bugemon)){
+			participantsA.add(bugemon);
+		}
+	}
+	private void setActiveBugemonB(Bugemon bugemon) { 
+		this.activeBugemonB = bugemon; 
+		if (!participantsB.contains(bugemon)){
+			participantsB.add(bugemon);
+		}
+	}
 
 	private void setState(BattleState state, TeamLabel team) {
 		if (team == TeamLabel.TEAM_A) {
@@ -101,6 +119,9 @@ public class Battle {
 	public boolean isTeamBKO() { // defeat
 		return getTeamB().checkTeamKO();
 	}
+
+	public void setFloorNumber(int floorNumber){ this.floorNumber = floorNumber; }
+	public void enableBossBattle() { this.isBossBattle = true; }
 
 	public TeamLabel checkInitiave(){
 		if (getActiveBugemonA().getFightStats().getInitiative() > getActiveBugemonB().getFightStats().getInitiative()){
@@ -301,6 +322,11 @@ public class Battle {
 		//this.hasTourEnded = false;
 
 		Vector<Action> actions = new Vector<Action>();
+
+		if (gameFinished){
+			return actions;
+		}
+
 		switch (this.getState(isTeamA)) {
 			case INGAME:
 				actions.add(new UseAbility());
@@ -385,11 +411,14 @@ public class Battle {
 	
 		if (this.stateA == BattleState.WAITING && this.stateB == BattleState.WAITING){
 			handleRound();
+		} else {
+			System.out.println("STILL WAITING FOR PLAYER");
 		}
 		
 	}
 
 	private void handleRound(){
+		System.out.println("HANDLING ROUND !!!!!!");
 		Action currentAction = this.actionA;
 		TeamLabel firstPlayer = this.checkInitiave();
 		if (firstPlayer == TeamLabel.TEAM_B){
@@ -398,6 +427,9 @@ public class Battle {
 		this.applyAction(currentAction, firstPlayer);
 
 		if (handleActionFinished(firstPlayer)){
+			if (gameFinished){
+				handleBattleEnd();
+			}
 			return;
 		}
 
@@ -410,6 +442,9 @@ public class Battle {
 
 		this.applyAction(currentAction, secondPlayer);
 		if (handleActionFinished(secondPlayer)){
+			if (gameFinished){
+				handleBattleEnd();
+			}
 			return;
 		}
 		setState(BattleState.INGAME, TeamLabel.TEAM_A);
@@ -454,7 +489,27 @@ public class Battle {
 	}
 
 	private void handleBattleEnd(){
-		//TODO
+		List<Bugemon> winners = this.participantsA;
+		Team losers = this.teamB;
+		if (this.stateB == BattleState.WON){
+			winners = this.participantsB;
+			losers = this.teamA;
+		}
+
+		int gainedXP = computeTotalXP(losers);
+		for (Bugemon b : winners){
+			b.gainXp(gainedXP / winners.size());
+		}
+
+		this.resetAllFightStats();
+	}
+
+	private int computeTotalXP(Team losers){
+		int boss_multiplicator = 1;
+		if (isBossBattle){
+			boss_multiplicator = 2;
+		}
+		return XP_COEF * floorNumber * boss_multiplicator * losers.size();
 	}
 
 	public Vector<Bugemon> getAvailableBugemons(boolean isTeamA){
@@ -474,5 +529,15 @@ public class Battle {
 
 	public boolean isGameFinished(){
 		return this.gameFinished;
+	}
+
+	private void resetAllFightStats(){
+		for (Bugemon b : this.teamA.getMembers()){
+			b.removeStatsDebuffs();
+		}
+
+		for (Bugemon b : this.teamB.getMembers()){
+			b.removeStatsDebuffs();
+		}
 	}
 }

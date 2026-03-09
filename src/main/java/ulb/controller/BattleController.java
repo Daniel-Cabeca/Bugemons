@@ -161,10 +161,6 @@ public class BattleController {
 		return this.battle.getActiveBugemonA();
 	}
 
-	// public void setActiveBugemon(Bugemon bugemon) {
-	// 	battleSnapshot.setActiveBugemonSelf(bugemon);
-	// }
-
 	public Player getPlayer() {
 		return this.player;
 	}
@@ -176,53 +172,6 @@ public class BattleController {
 		return this.battle.getTeamB();
 		
 	}
-
-	// public void setPlayer(Player player) {
-	// 	this.player = player;
-	// }
-
-
-	// /**
-	//  * Uses a random ability for the current active Bugemon of the specified team.
-	//  *
-	//  * @param isTeamA {@code true} to make Team A (the player) use a random ability,
-	//  *                {@code false} to make Team B (the opponent) use a random ability
-	//  */
-	// public void useRandomAbility(boolean isTeamA) {
-
-	// 	Ability ability;
-	// 	if (isTeamA) {
-	// 		ability = battleSnapshot.getRandomAbilitySelf();
-	// 		useAbility(ability);
-	// 	} else {
-	// 		ability = battleSnapshot.getRandomAbilityOpponent();
-	// 		battleSnapshot.useAbilityOnA(ability);
-	// 	}
-	// }
-
-	// /**
-	//  * Plays a turn in the automatic battle mode
-	//  *
-	//  * @return BattleState indicating if the player lost, won or if the battle is ongoing
-	//  */
-	// public BattleState playAutoTurn() {
-	// 	Battle battle = battleSnapshot.getBattle();
-	// 	boolean playerFirst = battle.CheckInitiave() == battle.getActiveBugemonA();
-
-	// 	useRandomAbility(playerFirst);
-	// 	if (isTeamBKO()) return BattleState.WON;
-	// 	if (isTeamAKO()) return BattleState.LOST;
-	// 	if (isBugemonBKO()) switchBugemonB();
-	// 	if (isBugemonAKO()) switchBugemonA();
-
-	// 	useRandomAbility(!playerFirst);
-	// 	if (isTeamBKO()) return BattleState.WON;
-	// 	if (isTeamAKO()) return BattleState.LOST;
-	// 	if (isBugemonBKO()) switchBugemonB();
-	// 	if (isBugemonAKO()) switchBugemonA();
-
-	// 	return BattleState.INGAME;
-	// }
 
 	public boolean isBugemonAKO() {
 		return this.battle.isBugemonAKO();
@@ -238,68 +187,6 @@ public class BattleController {
 
 	public boolean isTeamBKO() {
 		return this.battle.isTeamBKO();
-	}
-
-	// public void switchBugemonA() {
-	// 	battleSnapshot.switchSelfBugemonAuto();
-	// }
-
-	// public void switchBugemonB() {
-	// 	battleSnapshot.switchOpponentBugemonAuto();
-	// }
-
-
-	// public void setFloorNumber(int floor) {
-	// 	this.floorNumber = floor;
-	// }
-
-	// public void setIsBossFight(boolean boss) {
-	// 	this.isBossFight = boss;
-	// }
-
-	// public void handleBattleEnd(boolean victory) {
-	// 	handleBattleEnd(victory, null);
-	// }
-
-	public void handleBattleEnd(boolean victory, List<Bugemon> participants) {
-
-		for (Bugemon b : player.getTeam().getMembers()) b.removeStatsDebuffs();
-
-		if (!victory) return;
-
-		int mult = isBossFight ? 2 : 1;
-		int totalXp = 30 * floorNumber * mult * this.battle.getTeamB().size();
-		int xp = totalXp / player.getTeam().size();
-
-
-		// xp partagé avec toute l'équipe (pour l'instant) - filtrage à faire
-		for (Bugemon b : player.getTeam().getMembers()) {
-			int levels = b.gainXp(xp);
-			if (levels > 0) {
-				b.gainLevelsReward(levels);
-				b.getFightStats().setHp(b.getBaseStats().getHp());
-			}
-		}
-	}
-
-	/**
-	 * Gets the effectiveness factor of the current ability
-	 *
-	 * @param ability the ability whose type effectiveness is evaluated
-	 * @return the effectiveness message (or null if the effectiveness is normal)
-	 */
-	public String getEffectiveness(Ability ability) {
-		Bugemon opponent = getActiveBugemonOpponent();
-		float factor = Effectiveness.getFactor(ability.getType(), opponent.getType());
-		String message;
-		if (factor > 1) {
-			message = "Super effective!";
-		} else if (factor < 1) {
-			message = "Not very effective!";
-		} else {
-			message = null;
-		}
-		return message;
 	}
 
 	public void useAction(Action action) {
@@ -320,5 +207,25 @@ public class BattleController {
 
 	public BattleState getState(){
 		return this.battle.getState(isTeamA);
+	}
+
+	/**
+	 * Gets the effectiveness factor of the current ability
+	 *
+	 * @param ability the ability whose type effectiveness is evaluated
+	 * @return the effectiveness message (or null if the effectiveness is normal)
+	 */
+	public String getEffectiveness(Ability ability) {
+		Bugemon opponent = getActiveBugemonOpponent();
+		float factor = Effectiveness.getFactor(ability.getType(), opponent.getType());
+		String message;
+		if (factor > 1) {
+			message = "Super effective!";
+		} else if (factor < 1) {
+			message = "Not very effective!";
+		} else {
+			message = null;
+		}
+		return message;
 	}
 }

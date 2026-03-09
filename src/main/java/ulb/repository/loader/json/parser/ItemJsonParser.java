@@ -20,6 +20,8 @@ public class ItemJsonParser {
 	 * @throws IllegalArgumentException if an item contains an unknown effect type
 	 */
 	public static List<Item> loadItems(String path) throws IOException, IllegalArgumentException {
+		EffectJsonParser effectParser = new EffectJsonParser();
+
 
 		List<Item> items = new ArrayList<>();
 
@@ -36,39 +38,7 @@ public class ItemJsonParser {
 				String sprite = itemNode.get("sprite").asText();
 
 				JsonNode effectNode = itemNode.get("effet");
-				String type = effectNode.get("type").asText();
-				String target = effectNode.get("cible").asText();
-
-				Effect effect;
-
-				switch (type) {
-					case "soin":
-						effect = new Effect(Effect.EffectType.SOIN, Effect.EffectTarget.valueOf(target.toUpperCase()), 
-							Map.of(Effect.StatType.PV, effectNode.get("valeur").asInt()), Effect.EffectDuration.PERMANENT);
-						break;
-					case "stat_modifier":
-					String duration = effectNode.get("duree").asText().toUpperCase().replace("1_TOUR", "TOUR");
-					effect = new Effect(EffectType.STAT_MODIFIER, Effect.EffectTarget.valueOf(target.toUpperCase()), 
-						Map.of(Effect.StatType.valueOf(effectNode.get("stat").asText().toUpperCase()), 
-						effectNode.get("modificateur").asInt()), 
-						Effect.EffectDuration.valueOf(duration));
-						break;
-					case "stat_modifier_multiple":
-						JsonNode modifiersNode = effectNode.get("modificateurs");
-						Map<Effect.StatType, Integer> modifiers = new HashMap<>();
-						modifiersNode.fields().forEachRemaining(entry ->
-							modifiers.put(Effect.StatType.valueOf(entry.getKey().toUpperCase()), entry.getValue().asInt()));
-					String durationMulti = effectNode.get("duree").asText().toUpperCase().replace("1_TOUR", "TOUR");
-					effect = new Effect(EffectType.STAT_MODIFIER, Effect.EffectTarget.valueOf(target.toUpperCase()), 
-						modifiers, Effect.EffectDuration.valueOf(durationMulti));
-						break;
-					case "reset_malus", "switch":
-						effect = new Effect(EffectType.valueOf(type.toUpperCase()), Effect.EffectTarget.valueOf(target.toUpperCase()), 
-							Map.of(), Effect.EffectDuration.TOUR);
-						break;
-					default:
-						throw new IllegalArgumentException("Unknown effect type: " + type);
-				}
+				Effect effect = effectParser.parseOne(effectNode);
 
 				Item item = new Item(id, name, description, category, effect, sprite);
 

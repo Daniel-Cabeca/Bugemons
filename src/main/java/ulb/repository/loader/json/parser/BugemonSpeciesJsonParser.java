@@ -37,7 +37,7 @@ public class BugemonSpeciesJsonParser {
 		List<BugemonSpecies> res = new ArrayList<>();
 
 		for (JsonNode speciesNode: node) {
-			BugemonSpecies species = parseOne(node);
+			BugemonSpecies species = parseOne(speciesNode);
 			res.add(species);
 		}
 

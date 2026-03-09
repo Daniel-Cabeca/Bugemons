@@ -1,4 +1,4 @@
-package ulb.view;
+package ulb.view.windows;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -6,7 +6,6 @@ import java.util.List;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
@@ -18,18 +17,12 @@ import ulb.model.item.Item;
 import ulb.model.team.Team;
 import ulb.model.Player;
 import ulb.model.ability.Ability;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
-import javafx.stage.Stage;
 import javafx.util.Callback;
-import javafx.scene.control.Alert.AlertType;
 import ulb.view.handler.Window;
-
-import java.util.Optional;
 
 public class BattleWindow extends Window {
 

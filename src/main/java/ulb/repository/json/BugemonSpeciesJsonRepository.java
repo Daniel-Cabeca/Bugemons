@@ -22,6 +22,7 @@ public class BugemonSpeciesJsonRepository implements BugemonSpeciesRepository {
 	/**
 	 * Loads a repository from the default json files.
 	 *
+	 * @param abilityRepository The repository to use for abilities
 	 * @throws LoadException If loading failed
 	 */
 	public BugemonSpeciesJsonRepository(AbilityRepository abilityRepository) throws LoadException {
@@ -30,6 +31,15 @@ public class BugemonSpeciesJsonRepository implements BugemonSpeciesRepository {
 		BugemonSpeciesLoader loader = new BugemonSpeciesJsonLoader(stream, abilityRepository);
 
 		this.loadedSpeciesRepository = new BugemonSpeciesInMemoryRepository(loader.loadAll());
+	}
+
+	/**
+	 * Loads a repository from the default json files.
+	 *
+	 * @throws LoadException If loading failed
+	 */
+	public BugemonSpeciesJsonRepository() throws LoadException {
+		this(new AbilityJsonRepository());
 	}
 
 	@Override

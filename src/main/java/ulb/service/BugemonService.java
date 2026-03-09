@@ -54,6 +54,16 @@ public class BugemonService {
 	}
 
 	/**
+	 * Fetches a Bugemon species by its id.
+	 *
+	 * @param id The species' id
+	 * @throws NoSuchElementException If no species matches the id
+	 */
+	public BugemonSpecies getBugemonSpecies(String id) throws NoSuchElementException {
+		return this.speciesRepository.findById(id);
+	}
+
+	/**
 	 * Returns the list of all Bugemon species.
 	 *
 	 * @return An iterable of all the species

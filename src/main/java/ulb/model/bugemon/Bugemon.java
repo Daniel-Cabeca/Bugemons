@@ -5,6 +5,8 @@ import java.util.NoSuchElementException;
 import ulb.model.type.Type;
 import ulb.model.ability.AbilitySet;
 
+import ulb.service.ServiceLoader;
+
 public class Bugemon {
 	private BugemonSpecies species;
 	private Stats baseStats;
@@ -18,16 +20,6 @@ public class Bugemon {
 		this.fightStats = new Stats(this.species.getBaseStats());
 		this.xp = 0;
 		this.level = 1;
-	}
-
-	/**
-	 * Creates a Bugemon instance with a species given by its id.
-	 * Equivalent to PokemonDatabase.getInstance().get(id).spawn();
-	 *
-	 * @param id The idea
-	 */
-	public Bugemon(String id) throws NoSuchElementException {
-		this(BugemonDatabase.getInstance().get(id));
 	}
 
 	public BugemonSpecies getSpecies() { return this.species; }
@@ -117,7 +109,8 @@ public class Bugemon {
 
 	public boolean isKO() {return this.fightStats.hp <= 0;}
 
-	// Test constructors
+	// Deprecated constructors
+	// Should be replaced by the use of services
 
 	public Bugemon(int hp, int attack, int defense, int initiative) {
 		Stats stats = new Stats(hp, attack, defense, initiative);
@@ -150,6 +143,10 @@ public class Bugemon {
 		this.fightStats = new Stats(this.species.getBaseStats());
 		this.xp = 0;
 		this.level = 1;
+	}
+
+	public Bugemon(String id) throws NoSuchElementException {
+		this(ServiceLoader.getBugemonService().getBugemonSpecies(id));
 	}
 
 }

@@ -411,14 +411,11 @@ public class Battle {
 	
 		if (this.stateA == BattleState.WAITING && this.stateB == BattleState.WAITING){
 			handleRound();
-		} else {
-			System.out.println("STILL WAITING FOR PLAYER");
 		}
 		
 	}
 
 	private void handleRound(){
-		System.out.println("HANDLING ROUND !!!!!!");
 		Action currentAction = this.actionA;
 		TeamLabel firstPlayer = this.checkInitiave();
 		if (firstPlayer == TeamLabel.TEAM_B){

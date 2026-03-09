@@ -5,12 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.util.List;
 
 import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.Stats;
+import ulb.controller.action.Swap;
 import ulb.controller.action.UseAbility;
 import ulb.controller.action.UseItem;
 import ulb.model.Effect;
@@ -35,6 +34,26 @@ public class BattleControllerTest {
 	}
 
 	@Test
+	public void testBattleEndTeamKO(){
+		Player player = new Player("TestPlayer");
+
+		Bugemon a = BugemonSample.getA();
+		Team teamA = new Team(List.of(a));
+		Team teamB = new Team(List.of(BugemonSample.getB()));
+
+		Battle battle = new Battle(teamA, teamB, player);
+		BattleController controller = new BattleController(player, battle, true);
+		this.initiateOtherPlayerController(battle);
+
+		player.setTeam(teamA);
+
+		controller.useAction(new UseAbility(AbilitySample.getI()));
+		this.otherPlayerChooseAction(AbilitySample.getH());
+
+		assertTrue(controller.isGameFinished());
+	}
+
+	@Test
 	public void testCheckItemTrue() throws Exception {
 		Player player = new Player("TestPlayer");
 
@@ -45,14 +64,6 @@ public class BattleControllerTest {
 		Battle battle = new Battle(teamA, teamB, player);
 
 		BattleController battleController = new BattleController(player, battle, true);
-
-		// Constructor<BattleSnapshot> constructor = BattleSnapshot.class.getDeclaredConstructor(Battle.class, boolean.class);
-		// constructor.setAccessible(true);
-		// BattleSnapshot snapshot = constructor.newInstance(battle, true);
-
-		// Field field = BattleController.class.getDeclaredField("battleSnapshot");
-		// field.setAccessible(true);
-		// field.set(battleController, snapshot);
 
 		Effect effect = EffectSample.getHeal();
 		Item item = new Item("potion", "Potion", "Restaure 10 pv.", "soin", effect, "potion.png");
@@ -72,14 +83,6 @@ public class BattleControllerTest {
 		Battle battle = new Battle(teamA, teamB, player);
 		BattleController battleController = new BattleController(player, battle, true);
 
-		// Constructor<BattleSnapshot> constructor = BattleSnapshot.class.getDeclaredConstructor(Battle.class, boolean.class);
-		// constructor.setAccessible(true);
-		// BattleSnapshot snapshot = constructor.newInstance(battle, true);
-
-		// Field field = BattleController.class.getDeclaredField("battleSnapshot");
-		// field.setAccessible(true);
-		// field.set(battleController, snapshot);
-
 		Effect effect = EffectSample.getHeal();
 		Item item = new Item("potion", "Potion", "Restaure 10 pv.", "soin", effect, "potion.png");
 		player.getInventory().addItem(item, 1);
@@ -98,14 +101,6 @@ public class BattleControllerTest {
 
 		BattleController battleController = new BattleController(player, battle, true);
 		initiateOtherPlayerController(battle);
-
-		// Constructor<BattleSnapshot> constructor = BattleSnapshot.class.getDeclaredConstructor(Battle.class, boolean.class);
-		// constructor.setAccessible(true);
-		// BattleSnapshot snapshot = constructor.newInstance(battle, true);
-
-		// Field field = BattleController.class.getDeclaredField("battleSnapshot");
-		// field.setAccessible(true);
-		// field.set(battleController, snapshot);
 		
 		Effect effect = EffectSample.getHeal();
 		Item item = new Item("potion", "Potion", "Restaure 10 pv.", "soin", effect, "potion.png");
@@ -144,15 +139,7 @@ public class BattleControllerTest {
 		BattleController controller = new BattleController(player, battle, true);
 		this.initiateOtherPlayerController(battle);
 
-		// Constructor<BattleSnapshot> constructor = BattleSnapshot.class.getDeclaredConstructor(Battle.class,
-		// 		boolean.class);
-		// constructor.setAccessible(true);
-		// Field field = BattleController.class.getDeclaredField("battleSnapshot");
-		// field.setAccessible(true);
-		// field.set(controller, constructor.newInstance(new Battle(teamA, teamB), true));
 		player.setTeam(teamA);
-
-		// controller.handleBattleEnd(false);
 
 		this.otherPlayerChooseAction(AbilitySample.getI());	
 		controller.useAction(new UseAbility(AbilitySample.getH()));
@@ -174,24 +161,11 @@ public class BattleControllerTest {
 		BattleController controller = new BattleController(player, battle, true);
 		this.initiateOtherPlayerController(battle);
 
-		// Constructor<BattleSnapshot> constructor = BattleSnapshot.class.getDeclaredConstructor(Battle.class,
-		// 		boolean.class);
-		// constructor.setAccessible(true);
-		// Field field = BattleController.class.getDeclaredField("battleSnapshot");
-		// field.setAccessible(true);
-		// field.set(controller, constructor.newInstance(new Battle(teamA, teamB), true));
-
 		battle.setFloorNumber(5);
 
 		this.otherPlayerChooseAction(AbilitySample.getH());
-		System.err.println("STATE PLAYER B = " + battle.getState(false));
 		controller.useAction(new UseAbility(AbilitySample.getI()));
-		System.err.println("STATE PLAYER A = " + battle.getState(true));
 
-		// controller.handleBattleEnd(true);
-		System.out.println("GAME FINISHED = " + controller.isGameFinished());
-		System.err.println(teamA.getBugemon(0).getFightStats().hp);
-		System.out.println(teamB.getBugemon(0).getFightStats().hp);
 		assertTrue(controller.isGameFinished());
 		assertEquals(3, a.getLevel());
 	}
@@ -211,21 +185,42 @@ public class BattleControllerTest {
 		BattleController controller = new BattleController(player, battle, true);
 		this.initiateOtherPlayerController(battle);
 
-		// Constructor<BattleSnapshot> constructor = BattleSnapshot.class.getDeclaredConstructor(Battle.class,
-		// 		boolean.class);
-		// constructor.setAccessible(true);
-		// Field field = BattleController.class.getDeclaredField("battleSnapshot");
-		// field.setAccessible(true);
-		// field.set(controller, constructor.newInstance(new Battle(teamA, teamB), true));
-
 		battle.setFloorNumber(5);
 		battle.enableBossBattle();
 
 		this.otherPlayerChooseAction(AbilitySample.getH());
 		controller.useAction(new UseAbility(AbilitySample.getI()));
 
-		// controller.handleBattleEnd(true); 
 		assertEquals(4, a.getLevel());
+	}
+
+	@Test
+	public void testShareXPBetweenActivesBugemon(){
+		Player player = new Player("TestPlayer");
+
+		Bugemon a = BugemonSample.getA();
+		Bugemon c = BugemonSample.getC();
+		Team teamA = new Team(List.of(a, c));
+		Team teamB = new Team(List.of(BugemonSample.getB()));
+
+		Battle battle = new Battle(teamA, teamB, player);
+		BattleController controller = new BattleController(player, battle, true);
+		this.initiateOtherPlayerController(battle);
+
+		player.setTeam(teamA);
+
+		battle.setFloorNumber(4);
+
+		controller.useAction(new Swap(c));
+		this.otherPlayerChooseAction(AbilitySample.getH());
+
+		controller.useAction(new UseAbility(AbilitySample.getI()));
+		this.otherPlayerChooseAction(AbilitySample.getH());
+
+		assertEquals(2, a.getLevel());
+		assertEquals(2, c.getLevel());
+		assertEquals(10, a.getXp());
+		assertEquals(10, c.getXp());
 	}
 
 	@Test
@@ -241,12 +236,6 @@ public class BattleControllerTest {
 		BattleController controller = new BattleController(player, battle, true);
 		this.initiateOtherPlayerController(battle);
 
-		// Constructor<BattleSnapshot> constructor = BattleSnapshot.class.getDeclaredConstructor(Battle.class,
-		// 		boolean.class);
-		// constructor.setAccessible(true);
-		// Field field = BattleController.class.getDeclaredField("battleSnapshot");
-		// field.setAccessible(true);
-		// field.set(controller, constructor.newInstance(new Battle(teamA, teamB), true));
 		player.setTeam(teamA);
 
 		a.changeFightStats(new Stats(1, -10, 0, 0));
@@ -254,7 +243,6 @@ public class BattleControllerTest {
 		this.otherPlayerChooseAction(AbilitySample.getH());
 		controller.useAction(new UseAbility(AbilitySample.getI()));
 
-		// controller.handleBattleEnd(false);
 		assertTrue(a.getFightStats().getAttack() >= a.getBaseStats().getAttack());
 	}
 
@@ -270,12 +258,6 @@ public class BattleControllerTest {
 		BattleController controller = new BattleController(player, battle, true);
 		this.initiateOtherPlayerController(battle);
 
-		// Constructor<BattleSnapshot> constructor = BattleSnapshot.class.getDeclaredConstructor(Battle.class,
-		// 		boolean.class);
-		// constructor.setAccessible(true);
-		// Field field = BattleController.class.getDeclaredField("battleSnapshot");
-		// field.setAccessible(true);
-		// field.set(controller, constructor.newInstance(new Battle(teamA, teamB), true));
 		player.setTeam(teamA);
 
 		a.changeFightStats(new Stats(-50, 0, 0, 0));
@@ -285,10 +267,29 @@ public class BattleControllerTest {
 		this.otherPlayerChooseAction(AbilitySample.getH());
 		controller.useAction(new UseAbility(AbilitySample.getI()));
 
-		// controller.handleBattleEnd(true);
-
 		if (a.getLevel() > 1)
 			assertEquals(a.getBaseStats().getHp(), a.getFightStats().getHp());
+	}
+
+	@Test
+	public void testSwapBugemon(){
+		Player player = new Player("TestPlayer");
+
+		Bugemon a = BugemonSample.getA();
+		Bugemon c = BugemonSample.getC();
+		Team teamA = new Team(List.of(a, c));
+		Team teamB = new Team(List.of(BugemonSample.getB()));
+
+		Battle battle = new Battle(teamA, teamB, player);
+		BattleController controller = new BattleController(player, battle, true);
+		this.initiateOtherPlayerController(battle);
+
+		player.setTeam(teamA);
+
+		controller.useAction(new Swap(c));
+		this.otherPlayerChooseAction(AbilitySample.getH());
+
+		assertEquals(c.getId(), controller.getActiveBugemonSelf().getId());
 	}
 
 }

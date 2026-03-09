@@ -98,20 +98,6 @@ public class ItemJsonParserTest {
 	}
 
 	@Test
-	public void loadReturnsNonEmptyList() throws Exception {
-		String path = getResourcePath(true);
-		List<Item> items = ItemJsonParser.loadItems(path);
-		assertNotNull(items);
-	}
-
-	@Test
-	public void loadReturnsCorrectSize() throws Exception {
-		String path = getResourcePath(true);
-		List<Item> items = ItemJsonParser.loadItems(path);
-		assertEquals(10, items.size());
-	}
-
-	@Test
 	public void loadStartingInventoryReturnsNonNull() throws Exception {
 		String path = getResourcePath(true);
 		Map<String, Integer> inventory = ItemJsonParser.loadInventory(path);

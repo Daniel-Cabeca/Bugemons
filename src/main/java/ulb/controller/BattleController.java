@@ -36,10 +36,6 @@ public class BattleController {
 
 	public BattleController(){
 		this.windowContainer = new WindowContainer();
-		init();
-	}
-	private void init(){
-		//System.out.println("Hello");
 	}
 
 	public BattleController(Player player, Battle battle, boolean isTeamA) {

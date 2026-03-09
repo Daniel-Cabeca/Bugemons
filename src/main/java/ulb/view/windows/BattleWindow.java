@@ -336,10 +336,9 @@ public class BattleWindow extends Window {
 						button.setOnAction(event -> {
 							Bugemon bugemon = getItem();
 							if (bugemon != null) {
-								System.out.println(bugemon.getName());
 								Swap swap = new Swap(bugemon);
 								battleController.useAction(swap);
-								System.out.println(battleController.getActiveBugemonSelf().getName());
+
 								checkBattleEnd(battleController.getState(), event);
 								// Refresh display	
 								displayNextMessage();

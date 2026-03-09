@@ -34,7 +34,6 @@ public class StrategyRandom implements Strategy, Runnable {
     }   
 
     public void play(){
-        System.out.println("THREAD IS RUNNING ...");
         while (!battleController.isGameFinished()){
             this.playAutoTurn();
             try{

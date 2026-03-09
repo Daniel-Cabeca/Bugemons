@@ -55,8 +55,6 @@ public class CreateTeamWindow extends Window {
 	*/
 
 	public void setBattle(List<String> selectedBugemons){
-		System.out.println(selectedBugemons);
-
 		this.setPlayer(new Player("Player"));
 
 		List<Bugemon> teamABugemons = new ArrayList<Bugemon>();
@@ -147,7 +145,6 @@ public class CreateTeamWindow extends Window {
 	private void onSelectBugemon(String bugemon) {
 		if (!selected.contains(bugemon) && selected.size() < 6) {
 			selected.add(bugemon);
-			System.out.println(bugemon);
 			populateSelectedBugemons();
 		} else {
 			populateAvailableBugemons();
@@ -168,7 +165,6 @@ public class CreateTeamWindow extends Window {
 	public void handleConfirmTeam(ActionEvent event) {
 		if (!selected.isEmpty() && selected.size() <= 6) {
 			setBattle(selected);
-			System.out.println("APRES BATTLE");
 			battleController.switchToBattleMenu(event);
 		} else {
 			throw new IllegalStateException("You must select between 1 and 6 bugemons to confirm your team.");

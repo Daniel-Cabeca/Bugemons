@@ -228,4 +228,12 @@ public class BattleController {
 		}
 		return message;
 	}
+
+	public List<String> getLogMsg() {
+		return this.battle.getLogMsg();
+	}
+
+	public void clearLogMsg() {
+		this.battle.clearLogMsg();
+	}
 }

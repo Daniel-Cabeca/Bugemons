@@ -232,11 +232,7 @@ public class BattleWindow extends Window {
 
 		initializeGraphicalBattle();
 
-		if (state == BattleState.WON) {
-			battleController.switchToBattleEndWindow(true, event);
-		} else if (state == BattleState.LOST) {
-			battleController.switchToBattleEndWindow(false, event);
-		}
+		this.checkBattleEnd(state, event);
 	}
 
 	/**
@@ -287,6 +283,7 @@ public class BattleWindow extends Window {
 							if (item != null) {
 								UseItem useItem = new UseItem(item);
 								battleController.useAction(useItem);
+								checkBattleEnd(battleController.getState(), event);
 								// Refresh display	
 								initializeGraphicalBattle();
 								displayInventory();
@@ -337,6 +334,7 @@ public class BattleWindow extends Window {
 								Swap swap = new Swap(bugemon);
 								battleController.useAction(swap);
 								System.out.println(battleController.getActiveBugemonSelf().getName());
+								checkBattleEnd(battleController.getState(), event);
 								// Refresh display	
 								initializeGraphicalBattle();
 								displayTeam();
@@ -382,6 +380,7 @@ public class BattleWindow extends Window {
 							if (ability != null) {
 								UseAbility useAbility = new UseAbility(ability);
 								battleController.useAction(useAbility);
+								checkBattleEnd(battleController.getState(), event);
 								// Refresh display	
 								initializeGraphicalBattle();
 								displayTeam();
@@ -457,6 +456,14 @@ public class BattleWindow extends Window {
 	private void displayTeam() {
 		bugemonsList.getItems().setAll(playerTeam.getMembers());
 		setupBugemonsList();
+	}
+
+	public void checkBattleEnd(BattleState state, ActionEvent event){
+		if (state == BattleState.WON) {
+			battleController.switchToBattleEndWindow(true, event);
+		} else if (state == BattleState.LOST) {
+			battleController.switchToBattleEndWindow(false, event);
+		}
 	}
 
 	/**

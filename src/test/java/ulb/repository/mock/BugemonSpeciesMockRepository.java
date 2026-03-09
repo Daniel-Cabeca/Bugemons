@@ -3,15 +3,11 @@ package ulb.repository.mock;
 import java.util.NoSuchElementException;
 import java.io.InputStream;
 
-import ulb.repository.BugemonSpeciesRepository;
-import ulb.repository.AbilityRepository;
-import ulb.repository.inmemory.BugemonSpeciesInMemoryRepository;
-
-import ulb.repository.loader.BugemonSpeciesLoader;
-import ulb.repository.loader.json.JsonResources;
-import ulb.repository.loader.json.BugemonSpeciesJsonLoader;
-
 import ulb.model.bugemon.BugemonSpecies;
+import ulb.repository.BugemonSpeciesRepository;
+import ulb.repository.json.BugemonSpeciesJsonRepository;
+import ulb.repository.AbilityRepository;
+
 
 /**
  * Mock repository for abilities.
@@ -28,14 +24,7 @@ public class BugemonSpeciesMockRepository implements BugemonSpeciesRepository {
 
 	private static void load() {
 		AbilityRepository abilityRepository = new AbilityMockRepository();
-
-		String path = JsonResources.PATH_BUGEMON_SPECIES;
-		InputStream stream = JsonResources.getStream(path);
-
-		BugemonSpeciesLoader loader = new BugemonSpeciesJsonLoader(stream, abilityRepository);
-		Iterable<BugemonSpecies> abilities = loader.loadAll();
-
-		speciesRepository = new BugemonSpeciesInMemoryRepository(abilities);
+		speciesRepository = new BugemonSpeciesJsonRepository(abilityRepository);
 	}
 
 	public static void reload() {

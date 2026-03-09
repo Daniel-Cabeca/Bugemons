@@ -5,17 +5,13 @@ import ulb.repository.BugemonSpeciesRepository;
 import ulb.repository.json.BugemonSpeciesJsonRepository;
 
 /**
- * TODO temporary class
- * services need to be injected into objects that need them
- * this class is a step before that refactoring
+ * Gives access to services.
+ * Should eventually be deprecated ; services should be instanciated outside and injected into objects' constructors.
  */
 public abstract class ServiceLoader {
-	private static BugemonService bugemonService;
+	private static BugemonSpeciesRepository bugemonRepository = new BugemonSpeciesJsonRepository();
 
-	public static void load() throws LoadException {
-		BugemonSpeciesRepository bugemonRepository = new BugemonSpeciesJsonRepository();
-		bugemonService = new BugemonService(bugemonRepository);
-	}
+	private static BugemonService bugemonService = new BugemonService(bugemonRepository);
 
 	public static BugemonService getBugemonService() {
 		return bugemonService;

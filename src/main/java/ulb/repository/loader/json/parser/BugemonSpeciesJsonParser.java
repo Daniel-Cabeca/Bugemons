@@ -5,12 +5,10 @@ import java.util.List;
 import java.util.ArrayList;
 
 import ulb.model.bugemon.BugemonSpecies;
-import ulb.model.bugemon.BugemonDatabase;
 import ulb.model.bugemon.Stats;
 import ulb.model.type.Type;
 import ulb.model.ability.Ability;
 import ulb.model.ability.AbilitySet;
-import ulb.model.ability.AbilityDatabase;
 
 import ulb.repository.AbilityRepository;
 import ulb.repository.loader.LoadException;

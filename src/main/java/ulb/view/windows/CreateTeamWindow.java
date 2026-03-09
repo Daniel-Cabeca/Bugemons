@@ -17,7 +17,8 @@ import java.util.List;
 import ulb.model.Player;
 import ulb.model.bugemon.BugemonSpecies;
 import ulb.view.handler.Window;
-import ulb.model.bugemon.BugemonDatabase;
+import ulb.service.BugemonService;
+import ulb.service.ServiceLoader;
 
 
 import javafx.scene.image.Image;
@@ -58,9 +59,10 @@ public class CreateTeamWindow extends Window {
 	* Updates the available bugemons grid by adding a box for each bugemon in the list
 	*/
 	private void populateAvailableBugemons() {
+		BugemonService bugemonService = ServiceLoader.getBugemonService();
 		int col = 0, row = 0;
 
-		for (BugemonSpecies bugemon : BugemonDatabase.getInstance()) {
+		for (BugemonSpecies bugemon : bugemonService.getAllSpecies()) {
 			VBox cell = new VBox(8);
 			cell.getStyleClass().add("availableBugemons"); // add a css class
 

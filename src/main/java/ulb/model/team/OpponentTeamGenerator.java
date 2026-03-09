@@ -1,16 +1,16 @@
 package ulb.model.team;
 
-
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import ulb.model.bugemon.BugemonSpecies;
-import ulb.model.bugemon.BugemonDatabase;
+import ulb.model.bugemon.Bugemon;
+import ulb.service.BugemonService;
+import ulb.service.ServiceLoader;
 
 public class OpponentTeamGenerator {
 
 	public static Team generateRandomOpponentTeam(Team playerTeam) throws Exception {
+		BugemonService bugemonService = ServiceLoader.getBugemonService();
+
 		if (playerTeam == null) {
 			throw new IllegalArgumentException("Player team cannot be null.");
 		}
@@ -24,18 +24,11 @@ public class OpponentTeamGenerator {
 			throw new IllegalArgumentException("Player team must contain at least one Bugemon.");
 		}
 
-		List<BugemonSpecies> candidates = new ArrayList<>();
-		for (BugemonSpecies species: BugemonDatabase.getInstance()) {
-			candidates.add(species);
-		}
-
-		Collections.shuffle(candidates);
-
+		List<Bugemon> bugemons = bugemonService.spawnBugemonRandomDistinct(teamSize);
 		Team opponentTeam = new Team();
-		for (int i = 0; i < teamSize; i++) {
-			BugemonSpecies selected = candidates.get(i);
 
-			opponentTeam.add(selected.spawn());
+		for (Bugemon bugemon: bugemons) {
+			opponentTeam.add(bugemon);
 		}
 
 		return opponentTeam;

@@ -1,9 +1,7 @@
 package ulb.model.sample;
 
-import ulb.model.Effect;
 import ulb.model.ability.Ability;
 import ulb.model.type.Type;
-import ulb.model.sample.EffectSample;
 
 /**
  * Hard-coded abilities for testing purposes.

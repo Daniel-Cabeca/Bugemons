@@ -9,16 +9,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import java.text.ParseException;
 
-import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.BugemonSpecies;
-import ulb.model.bugemon.BugemonDatabase;
 import ulb.model.bugemon.Stats;
 import ulb.model.type.Type;
 import ulb.model.ability.AbilitySet;
 import ulb.model.ability.AbilityDatabase;
 
 import ulb.model.sample.SamplesLoader;
-import ulb.model.bugemon.BugemonDatabaseTest;
 
 public class BugemonParserTest {
 	@BeforeAll

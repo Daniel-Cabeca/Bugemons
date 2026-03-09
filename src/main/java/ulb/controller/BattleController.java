@@ -11,7 +11,6 @@ import ulb.model.battle.BattleState;
 import ulb.model.team.Team;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.type.Effectiveness;
-import ulb.model.type.Type;
 import ulb.view.BattleEndWindow;
 import ulb.view.BattleWindow;
 import ulb.view.BattleMenu;
@@ -24,7 +23,6 @@ import ulb.controller.action.*;
 import ulb.model.Player;
 import ulb.model.item.Item;
 import ulb.model.team.OpponentTeamGenerator;
-import ulb.model.Effect;
 
 public class BattleController {
 	private Player player;
@@ -82,8 +80,6 @@ public class BattleController {
 			teamB = OpponentTeamGenerator.generateRandomOpponentTeam(teamA);
 		} catch (Exception e) {
 		}
-
-		Player playerB = new Player();
 
 		// without multiplayer, player is always teamA
 		// battleSnapshot = new BattleSnapshot(new Battle(teamA, teamB, this.player, playerB), true);

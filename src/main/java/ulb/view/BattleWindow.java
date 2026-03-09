@@ -30,9 +30,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import javafx.scene.control.Alert.AlertType;
 
-import java.util.Optional;
 
 public class BattleWindow {
 	@FXML

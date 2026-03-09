@@ -10,7 +10,6 @@ import java.nio.file.Paths;
 import java.io.IOException;
 import java.text.ParseException;
 import java.net.URISyntaxException;
-import java.util.HashMap;
 import java.util.Map;
 
 import ulb.model.ability.Ability;

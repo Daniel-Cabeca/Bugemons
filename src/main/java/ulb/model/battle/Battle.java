@@ -241,6 +241,21 @@ public class Battle {
 					break;
 			}	
 		}
+
+		if (item.getEffect().getType().equals(Effect.EffectType.SWITCH)) {
+			if (team == TeamLabel.TEAM_A) {
+				Bugemon nextBugemon = getNextBugemon(this.teamA, this.activeBugemonA);
+				if (nextBugemon != null) {
+					setActiveBugemonA(nextBugemon);
+				}
+			} else {
+				Bugemon nextBugemon = getNextBugemon(this.teamB, this.activeBugemonB);
+				if (nextBugemon != null) {
+					setActiveBugemonB(nextBugemon);
+				}
+			}
+		}
+
 		switch (team) {
 			case TEAM_A:
 				playerA.getInventory().removeItem(item);
@@ -261,6 +276,25 @@ public class Battle {
 		} else if (team == TeamLabel.TEAM_B && teamB.contains(target)){
 			setActiveBugemonB(target);
 		}
+	}
+
+	private Bugemon getNextBugemon(Team team, Bugemon active) {
+		java.util.List<Bugemon> members = team.getMembers();
+		int currentIndex = members.indexOf(active);
+		
+		if (currentIndex == -1 || members.size() <= 1) {
+			return null;
+		}
+		
+		for (int i = 1; i < members.size(); i++) {
+			int nextIndex = (currentIndex + i) % members.size();
+			Bugemon candidate = members.get(nextIndex);
+			if (!candidate.isKO()) {
+				return candidate;
+			}
+		}
+		
+		return null;
 	}
 
 	public Vector<Action> getAvailableActions(boolean isTeamA) {
@@ -334,13 +368,13 @@ public class Battle {
 			switch (this.stateB) {
 				case INGAME:
 					this.actionB = action;
-					setState(BattleState.WAITING, TeamLabel.TEAM_A);
+					setState(BattleState.WAITING, TeamLabel.TEAM_B);
 					break;
 				
 				case SWAPPING:
 					this.actionB = action;
 					if (action instanceof Swap){
-						applyAction(action, TeamLabel.TEAM_A);
+						applyAction(action, TeamLabel.TEAM_B);
 						setState(BattleState.INGAME, TeamLabel.TEAM_A);
 						setState(BattleState.INGAME, TeamLabel.TEAM_B);
 					}
@@ -403,11 +437,11 @@ public class Battle {
 				break;
 		
 			case TEAM_B:
-				if (this.isTeamBKO()){
+				if (this.isTeamAKO()){
 					setState(BattleState.LOST, TeamLabel.TEAM_A);
 					setState(BattleState.WON, TeamLabel.TEAM_B);
 					this.gameFinished = true;
-				} else if (this.isBugemonBKO()){
+				} else if (this.isBugemonAKO()){
 					setState(BattleState.SWAPPING, TeamLabel.TEAM_A);
 				} else {
 					return false;

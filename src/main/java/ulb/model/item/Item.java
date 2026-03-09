@@ -11,9 +11,6 @@ public class Item {
 	private Effect effect;
 	private String sprite;
 
-
-
-
 	public Item(String id, String name, String description, String category, Effect effect, String sprite) {
 		this.id = id;
 		this.name = name;

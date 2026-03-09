@@ -365,8 +365,11 @@ public class Battle {
 
 		} else if (action instanceof Swap swapAction) {
 			if (checkSwappebleBugemon(swapAction.getToSwap(), team)){
+				System.out.println("WANT TO SWAP TO : " + swapAction.getToSwap().getName());
 				this.swap(swapAction.getToSwap(), team);
+				System.out.println("NEW ACTIF BUGEMON :" + this.getActiveBugemonA().getName());
 			} else {
+				System.out.println("CAN'T SWAP TO BUGEMON");
 				return false;
 			}
 
@@ -553,7 +556,20 @@ public class Battle {
 	public boolean checkSwappebleBugemon(Bugemon bugemon, TeamLabel team){
 		switch (team) {
 			case TEAM_A:
-				return this.teamA.contains(bugemon) && bugemon.getHp() > 0;
+				if (!this.teamA.contains(bugemon)){
+					System.out.println("BUGEMON NOT IN THE TEAM");
+					for (Bugemon b:this.teamA.getMembers()){
+						if (b.getName() == bugemon.getName()){
+							System.out.println("IN THE TEAM : " + b.getName() + " et HP : " + b.getHp());
+							System.out.println("OUT OF THE TEAM : " + bugemon.getName() + " et HP : " + bugemon.getHp());
+						}
+					}
+					return false;
+				} else if (bugemon.getHp() <= 0){
+					System.out.println("BUGEMON IS KO");
+					return false;
+				}
+				return true;
 			
 			case TEAM_B:
 				return this.teamB.contains(bugemon) && bugemon.getHp() > 0;

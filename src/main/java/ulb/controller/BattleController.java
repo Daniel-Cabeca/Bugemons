@@ -43,13 +43,7 @@ public class BattleController {
 	 * @param selectedBugemons the list of selected bugemons in create team menu
 	 * @param event            the action triggered by clicking the confirm team button
 	 */
-	public void switchToBattleMenu(List<String> selectedBugemons, ActionEvent event) {
-		List<Bugemon> teamABugemons = new ArrayList<Bugemon>();
-		for (String bugemon : selectedBugemons) {
-			teamABugemons.add(new Bugemon(bugemon.toLowerCase()));
-		}
-		Team teamA = new Team(teamABugemons);
-		player.setTeam(teamA);
+	public void switchToBattleMenu(ActionEvent event) {
 
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/BattleMenu.fxml"));
@@ -162,6 +156,14 @@ public class BattleController {
 
 	public Player getPlayer() {
 		return this.player;
+	}
+
+	public Team getTeam(){
+		if (isTeamA){
+			return this.battle.getTeamA();
+		}
+		return this.battle.getTeamB();
+		
 	}
 
 	// public void setPlayer(Player player) {

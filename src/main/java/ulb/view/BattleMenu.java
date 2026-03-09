@@ -23,15 +23,15 @@ public class BattleMenu {
     }
 
     public void handleAutomaticBattle(ActionEvent actionEvent) {
-		battleController.switchToBattleWindow(battleController.getPlayer().getTeam(),true , actionEvent);
+		battleController.switchToBattleWindow(battleController.getTeam(),true , actionEvent);
     }
 
     public void handleControlledBattle(ActionEvent actionEvent) {
-		battleController.switchToBattleWindow(battleController.getPlayer().getTeam(),false , actionEvent);
+		battleController.switchToBattleWindow(battleController.getTeam(),false , actionEvent);
     }
 
     public void displayTeam() {
-        displayTeamWithStats(battleController.getPlayer().getTeam(), playerTeamGrid);
+        displayTeamWithStats(battleController.getTeam(), playerTeamGrid);
 
     }
 

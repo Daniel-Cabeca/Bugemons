@@ -334,8 +334,10 @@ public class BattleWindow {
 						button.setOnAction(event -> {
 							Bugemon bugemon = getItem();
 							if (bugemon != null) {
+								System.out.println(bugemon.getName());
 								Swap swap = new Swap(bugemon);
 								battleController.useAction(swap);
+								System.out.println(battleController.getActiveBugemonSelf().getName());
 								// Refresh display	
 								initializeGraphicalBattle();
 								displayTeam();

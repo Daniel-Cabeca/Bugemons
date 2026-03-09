@@ -35,12 +35,13 @@ public class BattleController {
 		this.player = player;
 		this.battle = battle;
 		this.isTeamA = isTeamA;
+
+
 	}
 
 	/**
 	 * Switches to the battle type menu
 	 *
-	 * @param selectedBugemons the list of selected bugemons in create team menu
 	 * @param event            the action triggered by clicking the confirm team button
 	 */
 	public void switchToBattleMenu(ActionEvent event) {
@@ -297,6 +298,15 @@ public class BattleController {
 		this.battle.setAction(action, isTeamA);
 	}
 
+	public List<String> getLogMsg(){
+		return this.battle.getLogMsg();
+	}
+
+	public void clearLogMsg() {
+		this.battle.clearLogMsg();
+	}
+
+
 	public Vector<Action> getAvailableAction(){
 		return this.battle.getAvailableActions(isTeamA);
 	}
@@ -312,6 +322,8 @@ public class BattleController {
 	public BattleState getState(){
 		return this.battle.getState(isTeamA);
 	}
+
+
 }
 
 

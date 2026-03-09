@@ -82,6 +82,13 @@ public class BattleWindow {
 	private Button switchButton;
 	@FXML
 	private Button backToMenuButton;
+	@FXML
+	private Label battleLog;
+	@FXML
+	private Button nextMessageButton;
+
+
+
 
 	private Team playerTeam;
 	private Inventory playerInventory;
@@ -117,6 +124,7 @@ public class BattleWindow {
 		}
 		
 		initializeGraphicalBattle();
+
 	}
 
 	private void initializeGraphicalBattle() {
@@ -228,10 +236,8 @@ public class BattleWindow {
 	public void handleAuto(ActionEvent event) throws IOException {
 		StrategyRandom strategyRandom = new StrategyRandom(battleController);
 		BattleState state = strategyRandom.playAutoTurn();
-		String atkA = battleController.getActiveBugemonSelf().getName();
-		String atkB = battleController.getActiveBugemonOpponent().getName();
 
-		initializeGraphicalBattle();
+		displayNextMessage();
 
 		if (state == BattleState.WON) {
 			battleController.switchToBattleEndWindow(true, event);
@@ -289,7 +295,7 @@ public class BattleWindow {
 								UseItem useItem = new UseItem(item);
 								battleController.useAction(useItem);
 								// Refresh display	
-								initializeGraphicalBattle();
+								displayNextMessage();
 								displayInventory();
 							}
 						});
@@ -339,7 +345,7 @@ public class BattleWindow {
 								battleController.useAction(swap);
 								System.out.println(battleController.getActiveBugemonSelf().getName());
 								// Refresh display	
-								initializeGraphicalBattle();
+								displayNextMessage();
 								displayTeam();
 							}
 						});
@@ -384,8 +390,9 @@ public class BattleWindow {
 								UseAbility useAbility = new UseAbility(ability);
 								battleController.useAction(useAbility);
 								// Refresh display	
-								initializeGraphicalBattle();
+								displayNextMessage();
 								displayTeam();
+
 							}
 						});
 					}
@@ -463,7 +470,7 @@ public class BattleWindow {
 	/**
 	* Returns to the main menu
 	* @param event the action triggered by clicking the return button
-	* @throws IOException if the main menu FXML file cannot be loaded
+	* @throws IOException if the main menu FuXML file cannot be loaded
 	*/
 	public void handleReturn(ActionEvent event) throws IOException {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/MainMenu.fxml"));
@@ -472,5 +479,22 @@ public class BattleWindow {
 		controller.setPlayer(player);
 		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 		stage.getScene().setRoot(root);
+	}
+
+
+	/**
+	 * Displays the messages describing the actions of the current turn and updates the view
+	 */
+	public void displayNextMessage() {
+
+		List<String> logs = battleController.getLogMsg();
+		if (logs != null && !logs.isEmpty()) {
+			String allMessages = String.join("\n", logs);
+			battleLog.setText(allMessages);
+			battleController.clearLogMsg();
+		} else {
+			battleLog.setText("");
+		}
+		initializeGraphicalBattle();
 	}
 }

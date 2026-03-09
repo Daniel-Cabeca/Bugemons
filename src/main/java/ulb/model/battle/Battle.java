@@ -10,6 +10,7 @@ import ulb.model.item.Item;
 import ulb.model.Effect;
 import ulb.controller.action.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Vector;
@@ -38,10 +39,13 @@ public class Battle {
 
 	private boolean gameFinished = false;
 
+	private List<String> logMsg;
+
 	public enum TeamLabel {
 		TEAM_A,
 		TEAM_B
 	}
+
 
 	public Battle(Team teamA, Team teamB, Player playerA, Player playerB) {
 		this.playerA = playerA;
@@ -56,6 +60,7 @@ public class Battle {
 		this.participantsB = new Vector<>() {};
 		this.participantsA.add(activeBugemonA);
 		this.participantsB.add(activeBugemonB);
+		this.logMsg = new ArrayList<>();
 	}
 
 	public Battle(Team teamA, Team teamB, Player playerA) {
@@ -218,6 +223,8 @@ public class Battle {
 		Stats damage = new Stats(-abilityDamage, 0, 0, 0);
 		defensive.changeFightStats(damage);
 
+		logMsg.add(offensive.getName() + " used " + ability.getName() + ". " + defensive.getName() + " loses " +
+				abilityDamage + " HP!");
 	}
 
 	private void useItem(Item item, TeamLabel team){
@@ -225,10 +232,12 @@ public class Battle {
 			switch (team) {
 				case TEAM_A:
 					item.use(this.activeBugemonB);
+					logMsg.add("You used " + item.getName() + " on " + activeBugemonB.getName() + "!");
 					break;
 				
 				case TEAM_B:
 					item.use(this.activeBugemonA);
+					logMsg.add("Opponent used " + item.getName() + " on " + activeBugemonA.getName() + "!");
 					break;
 
 				default:
@@ -239,10 +248,12 @@ public class Battle {
 			switch (team) {
 				case TEAM_A:
 					item.use(this.activeBugemonA);
+					logMsg.add("You used " + item.getName() + " on " + activeBugemonA.getName() + "!");
 					break;
 				
 				case TEAM_B:
 					item.use(this.activeBugemonB);
+					logMsg.add("Opponent used " + item.getName() + " on " + activeBugemonB.getName() + "!");
 					break;
 
 				default:
@@ -254,12 +265,14 @@ public class Battle {
 					for (Bugemon b : this.teamA.getMembers()){
 						item.use(b);
 					}
+					logMsg.add("You used " + item.getName() + " on your whole team!");
 					break;
 				
 				case TEAM_B:
 					for (Bugemon b : this.teamB.getMembers()){
 						item.use(b);
 					}
+					logMsg.add("Opponent used " + item.getName() + " on their whole team!");
 					break;
 
 				default:
@@ -272,11 +285,13 @@ public class Battle {
 				Bugemon nextBugemon = getNextBugemon(this.teamA, this.activeBugemonA);
 				if (nextBugemon != null) {
 					setActiveBugemonA(nextBugemon);
+					logMsg.add("You switched to " + nextBugemon.getName() + " using " + item.getName() + "!");
 				}
 			} else {
 				Bugemon nextBugemon = getNextBugemon(this.teamB, this.activeBugemonB);
 				if (nextBugemon != null) {
 					setActiveBugemonB(nextBugemon);
+					logMsg.add("Opponent switched to " + nextBugemon.getName() + " using " + item.getName() + "!");
 				}
 			}
 		}
@@ -298,8 +313,10 @@ public class Battle {
 	private void swap(Bugemon target, TeamLabel team){
 		if (team == TeamLabel.TEAM_A && teamA.contains(target)){
 			setActiveBugemonA(target);
+			logMsg.add("You sent out " + target.getName() + "!");
 		} else if (team == TeamLabel.TEAM_B && teamB.contains(target)){
 			setActiveBugemonB(target);
+			logMsg.add("Opponent sent out " + target.getName() + "!");
 		}
 	}
 
@@ -380,6 +397,7 @@ public class Battle {
 		} else if (action instanceof UseItem useItemAction) {
 			this.useItem(useItemAction.getItem(), team);
 		}
+
 		return true;
 	}
 
@@ -578,5 +596,13 @@ public class Battle {
 				break;
 		}
 		return false;
+	}
+
+	public List<String> getLogMsg() {
+		return logMsg;
+	}
+
+	public void clearLogMsg() {
+		logMsg.clear();
 	}
 }

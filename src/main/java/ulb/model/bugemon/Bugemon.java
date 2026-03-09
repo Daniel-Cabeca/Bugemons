@@ -107,6 +107,13 @@ public class Bugemon {
 		return reward;
 	}
 
+	public boolean equals(Bugemon other){
+		return this.getName() == other.getName() && 
+			   this.getId() == other.getId() &&
+			   this.getFightStats().equals(other.getFightStats()) &&
+			   this.getBaseStats().equals(other.getBaseStats());
+	}
+
 	public boolean isKO() {return this.fightStats.hp <= 0;}
 
 	// Deprecated constructors

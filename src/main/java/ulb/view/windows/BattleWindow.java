@@ -81,6 +81,13 @@ public class BattleWindow extends Window {
 	private Button switchButton;
 	@FXML
 	private Button backToMenuButton;
+	@FXML
+	private Label battleLog;
+	@FXML
+	private Button nextMessageButton;
+
+
+
 
 	private Team playerTeam;
 	private Inventory playerInventory;
@@ -116,6 +123,7 @@ public class BattleWindow extends Window {
 		}
 
 		initializeGraphicalBattle();
+
 	}
 
 	private void initializeGraphicalBattle() {
@@ -154,7 +162,7 @@ public class BattleWindow extends Window {
 		PlayerBugemonLabel.setStyle("-fx-text-fill: " + playerColor + ";");
 		PlayerBugemonHPBar.setProgress((double) playerBugemon.getFightStats().getHp() / playerBugemon.getBaseStats().getHp());
 		PlayerBugemonHPNumber.setText("HP: " + playerBugemon.getHp() + "/" + playerBugemon.getBaseStats().hp);
-		
+
 		// Set opponent Bugemon sprite and stats
 		try {
 			Image opponentImage = new Image(opponentBugemon.getSprite());
@@ -227,10 +235,8 @@ public class BattleWindow extends Window {
 	public void handleAuto(ActionEvent event) throws IOException {
 		StrategyRandom strategyRandom = new StrategyRandom(battleController);
 		BattleState state = strategyRandom.playAutoTurn();
-		String atkA = battleController.getActiveBugemonSelf().getName();
-		String atkB = battleController.getActiveBugemonOpponent().getName();
 
-		initializeGraphicalBattle();
+		displayNextMessage();
 
 		this.checkBattleEnd(state, event);
 	}
@@ -285,7 +291,7 @@ public class BattleWindow extends Window {
 								battleController.useAction(useItem);
 								checkBattleEnd(battleController.getState(), event);
 								// Refresh display	
-								initializeGraphicalBattle();
+								displayNextMessage();
 								displayInventory();
 							}
 						});
@@ -336,7 +342,7 @@ public class BattleWindow extends Window {
 								System.out.println(battleController.getActiveBugemonSelf().getName());
 								checkBattleEnd(battleController.getState(), event);
 								// Refresh display	
-								initializeGraphicalBattle();
+								displayNextMessage();
 								displayTeam();
 							}
 						});
@@ -382,8 +388,9 @@ public class BattleWindow extends Window {
 								battleController.useAction(useAbility);
 								checkBattleEnd(battleController.getState(), event);
 								// Refresh display	
-								initializeGraphicalBattle();
+								displayNextMessage();
 								displayTeam();
+
 							}
 						});
 					}
@@ -469,9 +476,26 @@ public class BattleWindow extends Window {
 	/**
 	* Returns to the main menu
 	* @param event the action triggered by clicking the return button
-	* @throws IOException if the main menu FXML file cannot be loaded
+	* @throws IOException if the main menu FuXML file cannot be loaded
 	*/
 	public void handleReturn(ActionEvent event) throws IOException {
 		switchWindow(event, MODE_WINDOW_PATH);
+	}
+
+
+	/**
+	 * Displays the messages describing the actions of the current turn and updates the view
+	 */
+	public void displayNextMessage() {
+
+		List<String> logs = battleController.getLogMsg();
+		if (logs != null && !logs.isEmpty()) {
+			String allMessages = String.join("\n", logs);
+			battleLog.setText(allMessages);
+			battleController.clearLogMsg();
+		} else {
+			battleLog.setText("");
+		}
+		initializeGraphicalBattle();
 	}
 }

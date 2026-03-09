@@ -23,6 +23,24 @@
         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
     </rowConstraints>
     <children>
+        <Label fx:id="battleLog"
+               wrapText="true"
+               prefWidth="250.0"
+               style="-fx-font-size: 13px;"
+               GridPane.columnIndex="1"
+               GridPane.rowIndex="1"
+               GridPane.halignment="CENTER"
+               GridPane.valignment="CENTER"/>
+
+        <Button fx:id="nextMessageButton"
+                text="Next"
+                visible="false"
+                managed="false"
+                onAction="#displayNextMessage"
+                GridPane.columnIndex="1"
+                GridPane.rowIndex="2"
+                GridPane.halignment="CENTER"
+                GridPane.valignment="TOP"/>
         <ImageView fx:id="OpponentBugemon" fitHeight="144.0" fitWidth="109.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
             <image>
                 <Image url="@../../png/commitide.png" />

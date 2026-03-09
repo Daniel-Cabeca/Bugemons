@@ -20,6 +20,7 @@ import ulb.model.sample.EffectSample;
 import ulb.model.Player;
 import ulb.model.ability.Ability;
 import ulb.model.battle.Battle;
+import ulb.model.battle.BattleState;
 import ulb.model.team.Team;
 
 public class BattleControllerTest {
@@ -290,6 +291,30 @@ public class BattleControllerTest {
 		this.otherPlayerChooseAction(AbilitySample.getH());
 
 		assertEquals(c.getId(), controller.getActiveBugemonSelf().getId());
+	}
+
+	@Test
+	public void testSwapKOBugemon(){
+		Player player = new Player("TestPlayer");
+
+		Bugemon a = BugemonSample.getA();
+		Bugemon c = BugemonSample.getC();
+		c.changeFightStats(new Stats(-100, 0, 0, 0));
+
+		Team teamA = new Team(List.of(a, c));
+		Team teamB = new Team(List.of(BugemonSample.getB()));
+
+		Battle battle = new Battle(teamA, teamB, player);
+		BattleController controller = new BattleController(player, battle, true);
+		this.initiateOtherPlayerController(battle);
+
+		player.setTeam(teamA);
+
+		controller.useAction(new Swap(c));
+		this.otherPlayerChooseAction(AbilitySample.getH());
+
+		assertEquals(a.getId(), controller.getActiveBugemonSelf().getId());
+		assertEquals(controller.getState(), BattleState.INGAME);
 	}
 
 }

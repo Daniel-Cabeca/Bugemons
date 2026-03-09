@@ -210,6 +210,10 @@ public class Battle {
 			defensive = this.getActiveBugemonA();
 		}
 
+		if (offensive.isKO()){
+			return;
+		}
+
 		int abilityDamage = computeDamage(offensive, defensive, ability);
 		Stats damage = new Stats(-abilityDamage, 0, 0, 0);
 		defensive.changeFightStats(damage);
@@ -354,14 +358,17 @@ public class Battle {
 		return actions;
 	}
 
-	private void applyAction(Action action, TeamLabel team){
+	private boolean applyAction(Action action, TeamLabel team){
 		if (action instanceof UseAbility useAbilityAction) {
 
 			this.useAbility(useAbilityAction.getAbility(), team);
 
 		} else if (action instanceof Swap swapAction) {
-
-			this.swap(swapAction.getToSwap(), team);
+			if (checkSwappebleBugemon(swapAction.getToSwap(), team)){
+				this.swap(swapAction.getToSwap(), team);
+			} else {
+				return false;
+			}
 
 		} else if (action instanceof Run) {
 
@@ -370,6 +377,7 @@ public class Battle {
 		} else if (action instanceof UseItem useItemAction) {
 			this.useItem(useItemAction.getItem(), team);
 		}
+		return true;
 	}
 
 	public synchronized void setAction(Action action, boolean isTeamA){
@@ -400,9 +408,10 @@ public class Battle {
 				case SWAPPING:
 					this.actionB = action;
 					if (action instanceof Swap){
-						applyAction(action, TeamLabel.TEAM_B);
-						setState(BattleState.INGAME, TeamLabel.TEAM_A);
-						setState(BattleState.INGAME, TeamLabel.TEAM_B);
+						if (applyAction(action, TeamLabel.TEAM_B)){
+							setState(BattleState.INGAME, TeamLabel.TEAM_A);
+							setState(BattleState.INGAME, TeamLabel.TEAM_B);
+						}
 					}
 				default:
 					break;
@@ -539,5 +548,19 @@ public class Battle {
 		for (Bugemon b : this.teamB.getMembers()){
 			b.removeStatsDebuffs();
 		}
+	}
+
+	public boolean checkSwappebleBugemon(Bugemon bugemon, TeamLabel team){
+		switch (team) {
+			case TEAM_A:
+				return this.teamA.contains(bugemon) && bugemon.getHp() > 0;
+			
+			case TEAM_B:
+				return this.teamB.contains(bugemon) && bugemon.getHp() > 0;
+
+			default:
+				break;
+		}
+		return false;
 	}
 }

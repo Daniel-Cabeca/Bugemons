@@ -154,6 +154,7 @@ public class BattleWindow {
 				+ " Level: " +  playerBugemon.getLevel());
 		PlayerBugemonLabel.setStyle("-fx-text-fill: " + playerColor + ";");
 		PlayerBugemonHPBar.setProgress((double) playerBugemon.getFightStats().getHp() / playerBugemon.getBaseStats().getHp());
+		PlayerBugemonHPNumber.setText("HP: " + playerBugemon.getHp() + "/" + playerBugemon.getBaseStats().hp);
 		
 		// Set opponent Bugemon sprite and stats
 		try {
@@ -185,6 +186,7 @@ public class BattleWindow {
 				+ " Level: " + opponentBugemon.getLevel());
 		OpponentBugemonLabel.setStyle("-fx-text-fill: " + opponentColor + ";");
 		OppentHPBar.setProgress((double) opponentBugemon.getFightStats().getHp() / opponentBugemon.getBaseStats().getHp());
+		OpponentHPNumber.setText("HP: " + opponentBugemon.getHp() + "/" +  opponentBugemon.getBaseStats().hp);
 	}
 
 	public void initializebattleMessage(){

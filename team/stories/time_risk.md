@@ -71,6 +71,12 @@ L’interface affiche :
 - Les messages décrivant les actions (« Florachu utilise Fouet-Liane ! Pyricore perd 40
 PV ! »). Le joueur doit cliquer sur un bouton pour passer à l’action suivante. À la fin, le jeu affiche « VICTOIRE » ou « DÉFAITE » et retourne au menu principal.
 
+---
+
+A faire:
+
+- les actions du joueur se font automatiquement avec un certain temps d’attente entre chaque action (par ex : 1 seconde).
+
 ### US-05 - Contrôle des actions en combat
 
 Le joueur peut maintenant contrôler les actions de ses Bugémons pendant le combat. À chaque tour, au lieu de choisir automatiquement, le jeu présente au joueur 4 options :
@@ -330,3 +336,40 @@ Dans le chat, les messages inappropriés (obscènes, insultants, …) sont adouc
 ### US-28 - Leaderboard
 
 En mode multijoueurs, à chaque fois que 2 personnes s’affrontent, celle qui emporte la victoire gagne 1 point. Il y a ensuite un classement qui permet de voir quels joueurs ont obtenu le plus de points.
+
+### US-A - Abandonner la partie
+
+Bouton permettant d’arrêter la partie (donc d’abandonner l'ascension de la tour NO). Diffère du bouton “fuite” qui ne fait que abandonner le combat en cours, sans finir la partie.
+
+### US-R - Refactoring
+
+**Refactoring - general**:
+
+- Mettre à jour JUnit 5 sur toutes les branches
+- Mettre à jour Google Docs
+- Update checkTeamKO(), gère des équipes de 1 à 6 maintenant
+- homogenéiser effects (value/modifier -> modifiers, String -> ENUM)
+- refactor tests objets avec samples et les decaler de TestBattleController a TestItems
+- Supprimer Bugemon.getId(), ou le renommer en Bugemon.getSpeciesId() (petite tâche)
+
+**Refactoring − Repository & Services**:
+
+- Déplacer les parsers dans la couche repository (temps mis : 5min)
+- Chargement des items
+- Chargement des abilités
+- Chargement des bugémons
+- Créer un nouveau sous-module json.parser pour mieux marquer la distinction entre loaders et parsers
+- BugemonService
+- ItemService
+- Chargement et injection des services (besoin de tirer au clair l’architecture du programme avant de faire ça)
+- Supprimer BugemonDatabase, AbilityDatabase, model.sample, etc. (grosse tâche)
+- Supprimer les constructeurs dépréciés de Bugemon (grosse tâche)
+
+**Refactoring - Battle et BattleController**
+
+- Refactor BattleController, BattleSnashot et Battle en fonction du diagramme
+- Créer useAction dans Battle
+- Afficher les logs (“bugemon attaque, fait x dégats, …”) dans la view
+- instancier BattleController et battle (via des threads pour BattleController)
+- Déplacer le choix random des actions dans Strategy et l’instancier au début du combat
+- Griser les actions non disponibles dans la view

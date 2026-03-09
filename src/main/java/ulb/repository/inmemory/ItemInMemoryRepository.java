@@ -3,6 +3,7 @@ package ulb.repository.inmemory;
 import java.util.NoSuchElementException;
 
 import ulb.repository.ItemRepository;
+import ulb.model.item.Inventory;
 import ulb.model.item.Item;
 
 public class ItemInMemoryRepository implements ItemRepository {
@@ -44,5 +45,16 @@ public class ItemInMemoryRepository implements ItemRepository {
 	@Override
 	public Iterable<Item> findAll() {
 		return this.items;
+	}
+
+
+	@Override
+	public Inventory getStarterInventory() {
+		Inventory inventory = new Inventory();
+		inventory.addItem(this.findById("baie_revigorante"), 3);
+		inventory.addItem(this.findById("baie_tonique"), 2);
+		inventory.addItem(this.findById("gel_defensif"), 1);
+		inventory.addItem(this.findById("serum_offensif"), 1);
+		return inventory;
 	}
 }

@@ -2,6 +2,7 @@ package ulb.repository.mock;
 
 import java.util.NoSuchElementException;
 
+import ulb.model.item.Inventory;
 import ulb.model.item.Item;
 import ulb.repository.ItemRepository;
 import ulb.repository.json.ItemJsonRepository;
@@ -35,5 +36,11 @@ public class ItemMockRepository implements ItemRepository {
 	@Override
 	public Iterable<Item> findAll() {
 		return itemRepository.findAll();
+	}
+
+
+    @Override
+	public Inventory getStarterInventory() {
+		return itemRepository.getStarterInventory();
 	}
 }

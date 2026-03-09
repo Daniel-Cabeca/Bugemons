@@ -1,8 +1,10 @@
 package ulb.repository;
 
 import java.lang.Iterable;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
+import ulb.model.item.Inventory;
 import ulb.model.item.Item;
 
 /**
@@ -24,4 +26,7 @@ public interface ItemRepository {
 	 * @return An object iterable over the existing items
 	 */
 	public Iterable<Item> findAll();
+
+
+	public Inventory getStarterInventory();
 }

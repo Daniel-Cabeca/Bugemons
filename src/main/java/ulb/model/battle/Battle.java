@@ -372,7 +372,7 @@ public class Battle {
 		}
 	}
 
-	public void setAction(Action action, boolean isTeamA){
+	public synchronized void setAction(Action action, boolean isTeamA){
 		if (isTeamA){
 			switch (this.stateA) {
 				case INGAME:
@@ -408,7 +408,10 @@ public class Battle {
 					break;
 			}
 		}
-	
+		
+		System.out.println("STATE TEAM_A : " + this.stateA);
+		System.out.println("STATE TEAM_B : " + this.stateB);
+
 		if (this.stateA == BattleState.WAITING && this.stateB == BattleState.WAITING){
 			handleRound();
 		}

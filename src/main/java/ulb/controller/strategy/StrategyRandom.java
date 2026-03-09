@@ -13,15 +13,20 @@ import ulb.model.bugemon.Bugemon;
 import ulb.model.battle.Battle;
 import ulb.model.battle.BattleState;
 
-public class StrategyRandom implements Strategy {
+public class StrategyRandom implements Strategy, Runnable {
     private BattleController battleController;
-    private final long SLEEP_TIME = 500;
+    private final long SLEEP_TIME = 1000;
 
     public StrategyRandom(Battle battle) {
-        this.battleController = new BattleController(new Player(), battle, false);
+        this(new BattleController(new Player(), battle, false));
     }
     public StrategyRandom(BattleController battleController){
         this.battleController = battleController;
+    }
+
+    @Override
+    public void run(){
+        this.play();
     }
 
     public Action pickAction(){
@@ -29,6 +34,7 @@ public class StrategyRandom implements Strategy {
     }   
 
     public void play(){
+        System.out.println("THREAD IS RUNNING ...");
         while (!battleController.isGameFinished()){
             this.playAutoTurn();
             try{
@@ -46,15 +52,15 @@ public class StrategyRandom implements Strategy {
         Vector<Action> actions = battleController.getAvailableAction();
         UseAbility useAbility = new UseAbility();
         Swap swap = new Swap();
-        if (actions.contains(useAbility)){
+        if (actions.stream().anyMatch(a -> a instanceof UseAbility)){
             useRandomAbility();
-        } else if (actions.contains(swap)){
+        } else if (actions.stream().anyMatch(a -> a instanceof Swap)){
             Bugemon chosenBugemon = pickRandomBugemon();
             if (chosenBugemon != null){
                 swap.setToSwap(chosenBugemon);
                 battleController.useAction(swap);
             }
-        }
+        } 
         return this.battleController.getState();
 	}
 

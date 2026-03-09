@@ -285,9 +285,7 @@ public class BattleWindow {
 							Item item = getItem();
 							if (item != null) {
 								UseItem useItem = new UseItem(item);
-								System.out.println(battleController.getState());
 								battleController.useAction(useItem);
-								System.out.println(battleController.getState());
 								// Refresh display	
 								initializeGraphicalBattle();
 								displayInventory();
@@ -380,9 +378,7 @@ public class BattleWindow {
 							Ability ability = getItem();
 							if (ability != null) {
 								UseAbility useAbility = new UseAbility(ability);
-								System.out.println(battleController.getState());
 								battleController.useAction(useAbility);
-								System.out.println(battleController.getState());
 								// Refresh display	
 								initializeGraphicalBattle();
 								displayTeam();

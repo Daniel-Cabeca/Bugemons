@@ -66,8 +66,8 @@ public class CreateTeamMenu {
 		Battle battle = new Battle(playerTeam, opponentTeam, player);
 		this.battleController = new BattleController(player, battle, true);
 		StrategyRandom strategyRandom = new StrategyRandom(battle);
-		// TODO THREAD
-		// strategyRandom.play();
+		Thread thread = new Thread(strategyRandom);
+		thread.start();
 	}	
 
 	/**

@@ -1,4 +1,5 @@
 package ulb.controller.strategy;
+
 import ulb.controller.action.Action;
 
 

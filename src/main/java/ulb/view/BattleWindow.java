@@ -27,10 +27,12 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.scene.control.Alert.AlertType;
+import ulb.view.handler.Window;
 
 import java.util.Optional;
 
-public class BattleWindow {
+public class BattleWindow extends Window {
+
 	@FXML
 	private GridPane playerTeamGrid;
 	@FXML
@@ -41,7 +43,7 @@ public class BattleWindow {
 	private ListView<Bugemon> bugemonsList;
 	@FXML
 	private ListView<Ability> abilitiesList;
-	
+
 	@FXML
 	private ImageView OpponentBugemon;
 	@FXML
@@ -113,7 +115,7 @@ public class BattleWindow {
 		} else {
 			autoButton.setDisable(true);
 		}
-		
+
 		initializeGraphicalBattle();
 	}
 
@@ -121,7 +123,7 @@ public class BattleWindow {
 		// Get the active Bugemons (first non-KO Bugemon)
 		Bugemon playerBugemon = battleController.getActiveBugemonSelf();
 		Bugemon opponentBugemon = battleController.getActiveBugemonOpponent();
-		
+
 		// Set player Bugemon sprite and stats
 		try {
 			Image playerImage = new Image(playerBugemon.getSprite());
@@ -152,7 +154,7 @@ public class BattleWindow {
 				+ " Level: " +  playerBugemon.getLevel());
 		PlayerBugemonLabel.setStyle("-fx-text-fill: " + playerColor + ";");
 		PlayerBugemonHPBar.setProgress((double) playerBugemon.getFightStats().getHp() / playerBugemon.getBaseStats().getHp());
-		
+
 		// Set opponent Bugemon sprite and stats
 		try {
 			Image opponentImage = new Image(opponentBugemon.getSprite());
@@ -188,7 +190,7 @@ public class BattleWindow {
 	public void initializebattleMessage(){
 
 	}
-	
+
 	/**
 	 * Handles the Item button click - shows inventory view
 	 */
@@ -242,7 +244,7 @@ public class BattleWindow {
 		if (buttonsGrid != null && abilitiesView != null) {
 			buttonsGrid.setVisible(false);
 			buttonsGrid.setManaged(false);
-			abilitiesView.setVisible(true);	
+			abilitiesView.setVisible(true);
 			abilitiesView.setManaged(true);
 			displayAbilities();
 		}
@@ -282,7 +284,7 @@ public class BattleWindow {
 							Item item = getItem();
 							if (item != null) {
 								battleController.useItem(item);
-								// Refresh display	
+								// Refresh display
 								initializeGraphicalBattle();
 								displayInventory();
 							}
@@ -329,7 +331,7 @@ public class BattleWindow {
 							Bugemon bugemon = getItem();
 							if (bugemon != null) {
 								battleController.setActiveBugemon(bugemon);
-								// Refresh display	
+								// Refresh display
 								initializeGraphicalBattle();
 								displayTeam();
 							}
@@ -373,7 +375,7 @@ public class BattleWindow {
 							Ability ability = getItem();
 							if (ability != null) {
 								battleController.useAbility(ability);
-								// Refresh display	
+								// Refresh display
 								initializeGraphicalBattle();
 								displayTeam();
 							}
@@ -456,11 +458,6 @@ public class BattleWindow {
 	* @throws IOException if the main menu FXML file cannot be loaded
 	*/
 	public void handleReturn(ActionEvent event) throws IOException {
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/MainMenu.fxml"));
-		Parent root = loader.load();
-		MainMenu controller = loader.getController();
-		controller.setPlayer(player);
-		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-		stage.getScene().setRoot(root);
+		switchWindow(event, MODE_WINDOW_PATH);
 	}
 }

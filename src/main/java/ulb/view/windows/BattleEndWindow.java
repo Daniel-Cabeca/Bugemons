@@ -1,18 +1,14 @@
-package ulb.view;
+package ulb.view.windows;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
 import ulb.model.Player;
+import ulb.view.handler.Window;
 
 import java.io.IOException;
 
-public class BattleEndWindow {
-
+public class BattleEndWindow extends Window{
 	@FXML
 	public Label titleLabel;
 	@FXML
@@ -43,12 +39,7 @@ public class BattleEndWindow {
 	 * @throws IOException if the main menu FXML file cannot be loaded
 	 */
 	public void handleReturn(ActionEvent event) throws IOException {
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/MainMenu.fxml"));
-		Parent root = loader.load();
-		MainMenu controller = loader.getController();
-		controller.setPlayer(player);
-		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-		stage.getScene().setRoot(root);
+		switchWindow(event, MODE_WINDOW_PATH);
 
 	}
 }

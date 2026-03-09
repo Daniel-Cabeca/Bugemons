@@ -9,12 +9,12 @@ import javafx.fxml.FXML;
 import ulb.view.handler.Window;
 
 final public class ModeWindow extends Window{
-	public final String nextWindow= "CreateTeamWindow.fxml";
+	private static final String NEXT_WINDOW= WINDOWS_PATH+"CreateTeamWindow.fxml";
 
 	@FXML
 	private void goSoloMode(ActionEvent event) {
 		try{
-			switchWindow(event, windowsPath+nextWindow);
+			switchWindow(event, NEXT_WINDOW);
 		}
 		catch (IOException e){
 			throw new RuntimeException("Cannot load FXML", e);
@@ -24,6 +24,5 @@ final public class ModeWindow extends Window{
 	@FXML
 	private void quit(){
 		Platform.exit();
-		System.exit(0);
 	}
 }

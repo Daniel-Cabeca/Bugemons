@@ -7,7 +7,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.GridPane?>
 <VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" alignment="CENTER"
-      spacing="20.0" fx:controller="ulb.view.BattleMenu">
+      spacing="20.0" fx:controller="ulb.view.windows.BattleMenu">
 
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>

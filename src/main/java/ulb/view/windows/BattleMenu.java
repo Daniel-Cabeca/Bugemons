@@ -1,4 +1,4 @@
-package ulb.view;
+package ulb.view.windows;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

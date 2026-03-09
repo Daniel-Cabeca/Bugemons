@@ -1,12 +1,25 @@
 package ulb.view.handler;
 
-import java.util.HashMap;
-import java.util.Map;
+import ulb.view.windows.CreateTeamWindow;
+import ulb.view.windows.ModeWindow;
 
 public final class WindowContainer {
-	public Map<WindowName,Window> uiMap = new HashMap<WindowName, Window>();
+	private ModeWindow modeWindow;
+	private CreateTeamWindow createTeamWindow;
 
-	public Window getUI(WindowName uiName){
-		return this.uiMap.get(uiName);
+	public WindowContainer(){
+		this.createTeamWindow = new CreateTeamWindow();
+		this.modeWindow = new ModeWindow();
+	}
+
+	public Window getWindow(WindowName windowName){
+		switch (windowName) {
+			case ModeWindow:
+				return modeWindow;
+			case CreateTeamWindow:
+				return createTeamWindow;
+			default:
+				return null;
+		}
 	}
 }

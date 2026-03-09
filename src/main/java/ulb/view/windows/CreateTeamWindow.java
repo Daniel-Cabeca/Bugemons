@@ -4,16 +4,11 @@ import ulb.controller.BattleController;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,14 +16,15 @@ import java.util.List;
 
 import ulb.model.Player;
 import ulb.model.bugemon.BugemonSpecies;
-import ulb.view.MainMenu;
+import ulb.view.handler.Window;
 import ulb.model.bugemon.BugemonDatabase;
 
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-public class CreateTeamWindow {
+public class CreateTeamWindow extends Window {
+
 
 	@FXML
 	private GridPane availableBugemonsGrid;
@@ -45,7 +41,7 @@ public class CreateTeamWindow {
 
 	public void setPlayer(Player player) {
 		this.player = player;
-		this.battleController = new BattleController(player);
+
 	}
 
 	/**
@@ -54,6 +50,7 @@ public class CreateTeamWindow {
 
 	@FXML
 	public void initialize() {
+		this.battleController = new BattleController(new Player());
 		populateAvailableBugemons();
 	}
 
@@ -149,11 +146,6 @@ public class CreateTeamWindow {
 	* @param event the action triggered by clicking the return button
 	*/
 	public void handleReturn(ActionEvent event) throws IOException {
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/MainMenu.fxml"));
-		Parent root = loader.load();
-		MainMenu controller = loader.getController();
-		controller.setPlayer(player);
-		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-		stage.getScene().setRoot(root);
+		switchWindow(event, MODE_WINDOW_PATH);
 	}
 }

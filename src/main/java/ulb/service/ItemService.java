@@ -12,9 +12,12 @@ import java.util.ArrayList;
 import java.util.Random;
  
 public class ItemService {
-    private final ItemRepository itemRepository;
- 
+    private static final String ITEM_BAIE_REVIGORANTE = "baie_revigorante";
+    private static final String ITEM_BAIE_TONIQUE     = "baie_tonique";
+    private static final String ITEM_GEL_DEFENSIF     = "gel_defensif";
+    private static final String ITEM_SERUM_OFFENSIF   = "serum_offensif";
 
+    private final ItemRepository itemRepository;
 
     public ItemService(ItemRepository itemRepository) {
         this.itemRepository = itemRepository;
@@ -51,7 +54,12 @@ public class ItemService {
      * @return The starter Inventory
      */
     public Inventory createStarterInventory() {
-        return this.itemRepository.getStarterInventory();
+        Inventory inventory = new Inventory();
+        inventory.addItem(this.itemRepository.findById(ITEM_BAIE_REVIGORANTE), 3);
+        inventory.addItem(this.itemRepository.findById(ITEM_BAIE_TONIQUE), 2);
+        inventory.addItem(this.itemRepository.findById(ITEM_GEL_DEFENSIF), 1);
+        inventory.addItem(this.itemRepository.findById(ITEM_SERUM_OFFENSIF), 1);
+        return inventory;
     }
     /**
      * Uses an item on a target Bugemon.

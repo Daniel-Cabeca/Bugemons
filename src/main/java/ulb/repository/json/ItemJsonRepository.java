@@ -4,7 +4,6 @@ import java.util.NoSuchElementException;
 
 import ulb.repository.ItemRepository;
 import ulb.repository.inmemory.ItemInMemoryRepository;
-import ulb.model.item.Inventory;
 import ulb.model.item.Item;
 
 import ulb.repository.loader.LoadException;
@@ -40,11 +39,5 @@ public class ItemJsonRepository implements ItemRepository {
 	@Override
 	public Iterable<Item> findAll() {
 		return this.loadedItemRepository.findAll();
-	}
-
-
-	@Override
-	public Inventory getStarterInventory() {
-		return this.loadedItemRepository.getStarterInventory();
 	}
 }

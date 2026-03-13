@@ -51,7 +51,6 @@ public class BattleController {
 	/**
 	 * Switches to the battle type menu
 	 *
-	 * @param selectedBugemons the list of selected bugemons in create team menu
 	 * @param event            the action triggered by clicking the confirm team button
 	 */
 	public void switchToBattleMenu(ActionEvent event) {
@@ -228,4 +227,13 @@ public class BattleController {
 		}
 		return message;
 	}
+
+	public List<String> getLogMsg() {
+		return this.battle.getLogMsg();
+	}
+
+	public void clearLogMsg() {
+		this.battle.clearLogMsg();
+	}
+
 }

@@ -79,4 +79,23 @@ public class BugemonTest {
 		assertEquals(B.getBaseStats().defense, B.getFightStats().defense);
 		assertEquals(B.getBaseStats().initiative, B.getFightStats().initiative);
 	}
+
+	@Test
+	public void testApplyTemporaryStats() {
+		Bugemon B = new Bugemon(Type.AQUA, 100, 10, 10, 10);
+		B.applyTemporaryStats(new Stats(0, 5, 3, 2));
+		assertEquals(15, B.getFightStats().attack);
+		assertEquals(13, B.getFightStats().defense);
+		assertEquals(12, B.getFightStats().initiative);
+	}
+
+	@Test
+	public void testRevertTemporaryStats() {
+		Bugemon B = new Bugemon(Type.AQUA, 100, 10, 10, 10);
+		B.applyTemporaryStats(new Stats(0, 5, 3, 2));
+		B.revertTemporaryStats();
+		assertEquals(B.getBaseStats().attack, B.getFightStats().attack);
+		assertEquals(B.getBaseStats().defense, B.getFightStats().defense);
+		assertEquals(B.getBaseStats().initiative, B.getFightStats().initiative);
+	}
 }

@@ -78,8 +78,7 @@ public class Effect {
 				if (this.duration.equals(EffectDuration.PERMANENT)) {
 					target.changeFightStats(statsChange);
 				} else {
-					// TODO: battle rounds and revert after one round
-					target.changeFightStats(statsChange);
+					target.applyTemporaryStats(statsChange);
 				}
 				break;
 			case RESET_MALUS:

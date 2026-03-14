@@ -479,6 +479,7 @@ public class Battle {
 		this.applyAction(currentAction, firstPlayer);
 
 		if (handleActionFinished(firstPlayer)){
+			revertAllTemporaryStats();
 			if (gameFinished){
 				handleBattleEnd();
 			}
@@ -494,13 +495,20 @@ public class Battle {
 
 		this.applyAction(currentAction, secondPlayer);
 		if (handleActionFinished(secondPlayer)){
+			revertAllTemporaryStats();
 			if (gameFinished){
 				handleBattleEnd();
 			}
 			return;
 		}
+		revertAllTemporaryStats();
 		setState(BattleState.INGAME, TeamLabel.TEAM_A);
 		setState(BattleState.INGAME, TeamLabel.TEAM_B);
+	}
+
+	private void revertAllTemporaryStats() {
+		this.activeBugemonA.revertTemporaryStats();
+		this.activeBugemonB.revertTemporaryStats();
 	}
 
 

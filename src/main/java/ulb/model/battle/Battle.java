@@ -554,7 +554,7 @@ public class Battle {
 		this.resetAllFightStats();
 	}
 
-	private int computeTotalXP(Team losers){
+	public int computeTotalXP(Team losers){
 		int boss_multiplicator = 1;
 		if (isBossBattle){
 			boss_multiplicator = 2;

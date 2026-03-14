@@ -13,6 +13,8 @@ public class BattleEndWindow extends Window{
 	public Label titleLabel;
 	@FXML
 	public Label messageLabel;
+	@FXML
+	public Label gainXPLabel;
 
 	private Player player;
 
@@ -23,10 +25,11 @@ public class BattleEndWindow extends Window{
 	 *
 	 * @param victory boolean indicating if the player's team won
 	 */
-	public void setResult(boolean victory) {
+	public void setResult(boolean victory, int totalXP) {
 		if (victory) {
 			titleLabel.setText("Victory!");
 			messageLabel.setText("All enemy Bugemons are KO. You win!");
+			gainXPLabel.setText("Total XP gained: " + totalXP);
 		} else {
 			titleLabel.setText("Defeat");
 			messageLabel.setText("All your Bugemons are KO. You lost!");

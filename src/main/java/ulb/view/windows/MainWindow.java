@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 public class MainWindow extends Application{
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/RewardWindow.fxml"));
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/ModeWindow.fxml"));
 		Parent root = loader.load();
 		Scene scene = new Scene(root);
 		primaryStage.setTitle("INFO-F307 Groupe 10");

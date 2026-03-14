@@ -88,14 +88,14 @@ public class Battle {
 		return this.stateB;
 	}
 
-	private void setActiveBugemonA(Bugemon bugemon) { 
-		this.activeBugemonA = bugemon; 
+	private void setActiveBugemonA(Bugemon bugemon) {
+		this.activeBugemonA = bugemon;
 		if (!participantsA.contains(bugemon)){
 			participantsA.add(bugemon);
 		}
 	}
-	private void setActiveBugemonB(Bugemon bugemon) { 
-		this.activeBugemonB = bugemon; 
+	private void setActiveBugemonB(Bugemon bugemon) {
+		this.activeBugemonB = bugemon;
 		if (!participantsB.contains(bugemon)){
 			participantsB.add(bugemon);
 		}
@@ -198,6 +198,26 @@ public class Battle {
 		return Math.round(baseDamage * typeFactor * criticalHitFactor);
 	}
 
+	/**
+	 * Gets the effectiveness factor of the current ability
+	 *
+	 * @param ability the ability whose type effectiveness is evaluated
+	 * @return the effectiveness message (or null if the effectiveness is normal)
+	 */
+	public String getEffectiveness(Ability ability, Bugemon bugemon) {
+		Bugemon opponent = bugemon;
+		float factor = Effectiveness.getFactor(ability.getType(), opponent.getType());
+		String message;
+		if (factor > 1) {
+			message = "Super effective!";
+		} else if (factor < 1) {
+			message = "Not very effective!";
+		} else {
+			message = null;
+		}
+		return message;
+	}
+
 
 	/**
 	 * Use the given ability against the opposing active Bugemon
@@ -225,6 +245,12 @@ public class Battle {
 
 		logMsg.add(offensive.getName() + " used " + ability.getName() + ". " + defensive.getName() + " loses " +
 				abilityDamage + " HP!");
+
+		String effectiveness = getEffectiveness(ability, defensive);
+		if (effectiveness == null) {
+			effectiveness = "";
+		}
+		logMsg.add(effectiveness);
 	}
 
 	private void useItem(Item item, TeamLabel team){
@@ -234,7 +260,7 @@ public class Battle {
 					item.use(this.activeBugemonB);
 					logMsg.add("You used " + item.getName() + " on " + activeBugemonB.getName() + "!");
 					break;
-				
+
 				case TEAM_B:
 					item.use(this.activeBugemonA);
 					logMsg.add("Opponent used " + item.getName() + " on " + activeBugemonA.getName() + "!");
@@ -243,14 +269,14 @@ public class Battle {
 				default:
 					break;
 			}
-			
+
 		} else if (item.getTarget().equals(Effect.EffectTarget.LANCEUR)) {
 			switch (team) {
 				case TEAM_A:
 					item.use(this.activeBugemonA);
 					logMsg.add("You used " + item.getName() + " on " + activeBugemonA.getName() + "!");
 					break;
-				
+
 				case TEAM_B:
 					item.use(this.activeBugemonB);
 					logMsg.add("Opponent used " + item.getName() + " on " + activeBugemonB.getName() + "!");
@@ -267,7 +293,7 @@ public class Battle {
 					}
 					logMsg.add("You used " + item.getName() + " on your whole team!");
 					break;
-				
+
 				case TEAM_B:
 					for (Bugemon b : this.teamB.getMembers()){
 						item.use(b);
@@ -277,7 +303,7 @@ public class Battle {
 
 				default:
 					break;
-			}	
+			}
 		}
 
 		if (item.getEffect().getType().equals(Effect.EffectType.SWITCH)) {
@@ -300,7 +326,7 @@ public class Battle {
 			case TEAM_A:
 				playerA.getInventory().removeItem(item);
 				break;
-			
+
 			case TEAM_B:
 				playerB.getInventory().removeItem(item);
 				break;
@@ -323,11 +349,11 @@ public class Battle {
 	private Bugemon getNextBugemon(Team team, Bugemon active) {
 		java.util.List<Bugemon> members = team.getMembers();
 		int currentIndex = members.indexOf(active);
-		
+
 		if (currentIndex == -1 || members.size() <= 1) {
 			return null;
 		}
-		
+
 		for (int i = 1; i < members.size(); i++) {
 			int nextIndex = (currentIndex + i) % members.size();
 			Bugemon candidate = members.get(nextIndex);
@@ -335,7 +361,7 @@ public class Battle {
 				return candidate;
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -382,11 +408,8 @@ public class Battle {
 
 		} else if (action instanceof Swap swapAction) {
 			if (checkSwappebleBugemon(swapAction.getToSwap(), team)){
-				System.out.println("WANT TO SWAP TO : " + swapAction.getToSwap().getName());
 				this.swap(swapAction.getToSwap(), team);
-				System.out.println("NEW ACTIF BUGEMON :" + this.getActiveBugemonA().getName());
 			} else {
-				System.out.println("CAN'T SWAP TO BUGEMON");
 				return false;
 			}
 
@@ -408,7 +431,7 @@ public class Battle {
 					this.actionA = action;
 					setState(BattleState.WAITING, TeamLabel.TEAM_A);
 					break;
-				
+
 				case SWAPPING:
 					this.actionA = action;
 					if (action instanceof Swap){
@@ -425,7 +448,7 @@ public class Battle {
 					this.actionB = action;
 					setState(BattleState.WAITING, TeamLabel.TEAM_B);
 					break;
-				
+
 				case SWAPPING:
 					this.actionB = action;
 					if (action instanceof Swap){
@@ -438,14 +461,11 @@ public class Battle {
 					break;
 			}
 		}
-		
-		System.out.println("STATE TEAM_A : " + this.stateA);
-		System.out.println("STATE TEAM_B : " + this.stateB);
 
 		if (this.stateA == BattleState.WAITING && this.stateB == BattleState.WAITING){
 			handleRound();
 		}
-		
+
 	}
 
 	private void handleRound(){
@@ -468,7 +488,7 @@ public class Battle {
 		if (firstPlayer == TeamLabel.TEAM_A){
 			secondPlayer = TeamLabel.TEAM_B;
 			currentAction = this.actionB;
-		} 
+		}
 
 		this.applyAction(currentAction, secondPlayer);
 		if (handleActionFinished(secondPlayer)){
@@ -500,7 +520,7 @@ public class Battle {
 					return false;
 				}
 				break;
-		
+
 			case TEAM_B:
 				if (this.isTeamAKO()){
 					setState(BattleState.LOST, TeamLabel.TEAM_A);
@@ -574,21 +594,8 @@ public class Battle {
 	public boolean checkSwappebleBugemon(Bugemon bugemon, TeamLabel team){
 		switch (team) {
 			case TEAM_A:
-				if (!this.teamA.contains(bugemon)){
-					System.out.println("BUGEMON NOT IN THE TEAM");
-					for (Bugemon b:this.teamA.getMembers()){
-						if (b.getName() == bugemon.getName()){
-							System.out.println("IN THE TEAM : " + b.getName() + " et HP : " + b.getHp());
-							System.out.println("OUT OF THE TEAM : " + bugemon.getName() + " et HP : " + bugemon.getHp());
-						}
-					}
-					return false;
-				} else if (bugemon.getHp() <= 0){
-					System.out.println("BUGEMON IS KO");
-					return false;
-				}
-				return true;
-			
+				return this.teamA.contains(bugemon) && bugemon.getHp() > 0;
+
 			case TEAM_B:
 				return this.teamB.contains(bugemon) && bugemon.getHp() > 0;
 

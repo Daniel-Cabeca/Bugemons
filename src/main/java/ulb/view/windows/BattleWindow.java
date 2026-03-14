@@ -289,8 +289,8 @@ public class BattleWindow extends Window {
 							if (item != null) {
 								UseItem useItem = new UseItem(item);
 								battleController.useAction(useItem);
-								checkBattleEnd(battleController.getState(), event);
-								// Refresh display	
+								checkBattleState(battleController.getState(), event);
+								// Refresh display
 								displayNextMessage();
 								displayInventory();
 							}
@@ -336,12 +336,11 @@ public class BattleWindow extends Window {
 						button.setOnAction(event -> {
 							Bugemon bugemon = getItem();
 							if (bugemon != null) {
-								System.out.println(bugemon.getName());
 								Swap swap = new Swap(bugemon);
 								battleController.useAction(swap);
-								System.out.println(battleController.getActiveBugemonSelf().getName());
-								checkBattleEnd(battleController.getState(), event);
-								// Refresh display	
+
+								checkBattleState(battleController.getState(), event);
+								// Refresh display
 								displayNextMessage();
 								displayTeam();
 							}
@@ -386,8 +385,8 @@ public class BattleWindow extends Window {
 							if (ability != null) {
 								UseAbility useAbility = new UseAbility(ability);
 								battleController.useAction(useAbility);
-								checkBattleEnd(battleController.getState(), event);
-								// Refresh display	
+								checkBattleState(battleController.getState(), event);
+								// Refresh display
 								displayNextMessage();
 								displayTeam();
 
@@ -465,11 +464,23 @@ public class BattleWindow extends Window {
 		setupBugemonsList();
 	}
 
+	private void checkBattleState(BattleState state, ActionEvent event){
+		checkBattleEnd(state, event);
+		switchBugemon(state, event);
+	}
+
 	public void checkBattleEnd(BattleState state, ActionEvent event){
 		if (state == BattleState.WON) {
 			battleController.switchToBattleEndWindow(true, event);
 		} else if (state == BattleState.LOST) {
 			battleController.switchToBattleEndWindow(false, event);
+		}
+	}
+
+	private void switchBugemon(BattleState state, ActionEvent event){
+		if (state == BattleState.SWAPPING){
+			handleBackToMenu(event);
+			handleBugemonsMenu(event);
 		}
 	}
 
@@ -498,4 +509,6 @@ public class BattleWindow extends Window {
 		}
 		initializeGraphicalBattle();
 	}
+
+
 }

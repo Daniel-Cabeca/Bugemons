@@ -36,10 +36,6 @@ public class BattleController {
 
 	public BattleController(){
 		this.windowContainer = new WindowContainer();
-		init();
-	}
-	private void init(){
-		//System.out.println("Hello");
 	}
 
 	public BattleController(Player player, Battle battle, boolean isTeamA) {
@@ -169,7 +165,7 @@ public class BattleController {
 			return this.battle.getTeamA();
 		}
 		return this.battle.getTeamB();
-		
+
 	}
 
 	public boolean isBugemonAKO() {
@@ -215,17 +211,15 @@ public class BattleController {
 	 * @return the effectiveness message (or null if the effectiveness is normal)
 	 */
 	public String getEffectiveness(Ability ability) {
-		Bugemon opponent = getActiveBugemonOpponent();
-		float factor = Effectiveness.getFactor(ability.getType(), opponent.getType());
-		String message;
-		if (factor > 1) {
-			message = "Super effective!";
-		} else if (factor < 1) {
-			message = "Not very effective!";
-		} else {
-			message = null;
-		}
-		return message;
+		return battle.getEffectiveness(ability, getActiveBugemonOpponent());
+	}
+
+	public List<String> getLogMsg() {
+		return this.battle.getLogMsg();
+	}
+
+	public void clearLogMsg() {
+		this.battle.clearLogMsg();
 	}
 
 	public List<String> getLogMsg() {

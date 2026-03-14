@@ -11,7 +11,6 @@ public class Bugemon {
 	private BugemonSpecies species;
 	private Stats baseStats;
 	private Stats fightStats;
-	private Stats temporaryStats;
 	private int xp;
 	private int level;
 
@@ -19,7 +18,6 @@ public class Bugemon {
 		this.species = species;
 		this.baseStats = new Stats(this.species.getBaseStats());
 		this.fightStats = new Stats(this.species.getBaseStats());
-		this.temporaryStats = new Stats();
 		this.xp = 0;
 		this.level = 1;
 	}
@@ -58,23 +56,6 @@ public class Bugemon {
 	 */
 	public void removeStatsDebuffs() {
 		this.getFightStats().setMin(this.getBaseStats());
-	}
-
-	/**
-	 * Applies a temporary stat change (lasts one round) and records it for later revert.
-	 */
-	public void applyTemporaryStats(Stats delta) {
-		this.changeFightStats(delta);
-		this.temporaryStats.plus(delta);
-	}
-
-	/**
-	 * Reverts all temporary stat changes applied this round.
-	 */
-	public void revertTemporaryStats() {
-		Stats revert = new Stats(-temporaryStats.hp, -temporaryStats.attack, -temporaryStats.defense, -temporaryStats.initiative);
-		this.changeFightStats(revert);
-		this.temporaryStats = new Stats();
 	}
 
 	public int gainXp(int experience) {
@@ -127,7 +108,7 @@ public class Bugemon {
 	}
 
 	public boolean equals(Bugemon other){
-		return this.getName() == other.getName() && 
+		return this.getName() == other.getName() &&
 			   this.getId() == other.getId() &&
 			   this.getFightStats().equals(other.getFightStats()) &&
 			   this.getBaseStats().equals(other.getBaseStats());
@@ -145,7 +126,6 @@ public class Bugemon {
 		this.species = species;
 		this.baseStats = new Stats(this.species.getBaseStats());
 		this.fightStats = new Stats(this.species.getBaseStats());
-		this.temporaryStats = new Stats();
 		this.xp = 0;
 		this.level = 1;
 	}
@@ -157,7 +137,6 @@ public class Bugemon {
 		this.species = species;
 		this.baseStats = new Stats(this.species.getBaseStats());
 		this.fightStats = new Stats(this.species.getBaseStats());
-		this.temporaryStats = new Stats();
 		this.xp = 0;
 		this.level = 1;
 	}
@@ -169,7 +148,6 @@ public class Bugemon {
 		this.species = species;
 		this.baseStats = new Stats(this.species.getBaseStats());
 		this.fightStats = new Stats(this.species.getBaseStats());
-		this.temporaryStats = new Stats();
 		this.xp = 0;
 		this.level = 1;
 	}

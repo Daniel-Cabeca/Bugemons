@@ -40,6 +40,7 @@ public class Battle {
 	private boolean gameFinished = false;
 
 	private List<String> logMsg;
+	private List<ActiveEffect> activeEffects;
 
 	public enum TeamLabel {
 		TEAM_A,
@@ -61,6 +62,7 @@ public class Battle {
 		this.participantsA.add(activeBugemonA);
 		this.participantsB.add(activeBugemonB);
 		this.logMsg = new ArrayList<>();
+		this.activeEffects = new ArrayList<>();
 	}
 
 	public Battle(Team teamA, Team teamB, Player playerA) {
@@ -74,6 +76,7 @@ public class Battle {
 		this.activeBugemonB = activeBugemonB;
 		this.stateA = BattleState.INGAME;
 		this.stateB = BattleState.INGAME;
+		this.activeEffects = new ArrayList<>();
 	}
 
 	public Team getTeamA() {return this.teamA;}
@@ -254,15 +257,19 @@ public class Battle {
 	}
 
 	private void useItem(Item item, TeamLabel team){
+		List<Bugemon> targets = new ArrayList<>();
+
 		if (item.getTarget().equals(Effect.EffectTarget.ADVERSAIRE)) {
 			switch (team) {
 				case TEAM_A:
 					item.use(this.activeBugemonB);
+					targets.add(this.activeBugemonB);
 					logMsg.add("Tu as utilisé " + item.getName() + " sur " + activeBugemonB.getName() + "!");
 					break;
 
 				case TEAM_B:
 					item.use(this.activeBugemonA);
+					targets.add(this.activeBugemonA);
 					logMsg.add("L'adversaire a utilisé " + item.getName() + " sur " + activeBugemonA.getName() + "!");
 					break;
 
@@ -274,11 +281,13 @@ public class Battle {
 			switch (team) {
 				case TEAM_A:
 					item.use(this.activeBugemonA);
+					targets.add(this.activeBugemonA);
 					logMsg.add("Tu as utilisé " + item.getName() + " sur " + activeBugemonA.getName() + "!");
 					break;
 
 				case TEAM_B:
 					item.use(this.activeBugemonB);
+					targets.add(this.activeBugemonB);
 					logMsg.add("L'adversaire a utilisé " + item.getName() + " sur " + activeBugemonB.getName() + "!");
 					break;
 
@@ -290,6 +299,7 @@ public class Battle {
 				case TEAM_A:
 					for (Bugemon b : this.teamA.getMembers()){
 						item.use(b);
+						targets.add(b);
 					}
 					logMsg.add("Tu as utilisé " + item.getName() + " sur toute ton équipe!");
 					break;
@@ -297,12 +307,21 @@ public class Battle {
 				case TEAM_B:
 					for (Bugemon b : this.teamB.getMembers()){
 						item.use(b);
+						targets.add(b);
 					}
 					logMsg.add("L'adversaire a utilisé " + item.getName() + " sur toute son équipe!");
 					break;
 
 				default:
 					break;
+			}
+		}
+
+		if (item.getEffect().getDuration() == Effect.EffectDuration.TOUR
+				&& item.getEffect().getType() == Effect.EffectType.STAT_MODIFIER) {
+			Stats delta = item.getEffect().buildStatsChange();
+			for (Bugemon target : targets) {
+				activeEffects.add(new ActiveEffect(target, delta, 1));
 			}
 		}
 
@@ -479,7 +498,7 @@ public class Battle {
 		this.applyAction(currentAction, firstPlayer);
 
 		if (handleActionFinished(firstPlayer)){
-			revertAllTemporaryStats();
+			tickActiveEffects();
 			if (gameFinished){
 				handleBattleEnd();
 			}
@@ -495,20 +514,31 @@ public class Battle {
 
 		this.applyAction(currentAction, secondPlayer);
 		if (handleActionFinished(secondPlayer)){
-			revertAllTemporaryStats();
+			tickActiveEffects();
 			if (gameFinished){
 				handleBattleEnd();
 			}
 			return;
 		}
-		revertAllTemporaryStats();
+		tickActiveEffects();
 		setState(BattleState.INGAME, TeamLabel.TEAM_A);
 		setState(BattleState.INGAME, TeamLabel.TEAM_B);
 	}
 
-	private void revertAllTemporaryStats() {
-		this.activeBugemonA.revertTemporaryStats();
-		this.activeBugemonB.revertTemporaryStats();
+	/**
+	 * Decrements TTL of all active TOUR effects and reverts those that have expired.
+	 */
+	private void tickActiveEffects() {
+		List<ActiveEffect> expired = new ArrayList<>();
+		for (ActiveEffect ae : activeEffects) {
+			ae.ttl--;
+			if (ae.ttl <= 0) {
+				Stats revert = new Stats(-ae.delta.hp, -ae.delta.attack, -ae.delta.defense, -ae.delta.initiative);
+				ae.target.changeFightStats(revert);
+				expired.add(ae);
+			}
+		}
+		activeEffects.removeAll(expired);
 	}
 
 

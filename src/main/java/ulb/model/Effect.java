@@ -52,34 +52,34 @@ public class Effect {
 
 	public Map<StatType, Integer> getModifiers() { return this.modifiers; }
 
+	public Stats buildStatsChange() {
+		Stats statsChange = new Stats();
+		for (Map.Entry<StatType, Integer> entry : this.modifiers.entrySet()) {
+			switch (entry.getKey()) {
+				case PV:
+					statsChange.plus(new Stats(entry.getValue(), 0, 0, 0));
+					break;
+				case ATTAQUE:
+					statsChange.plus(new Stats(0, entry.getValue(), 0, 0));
+					break;
+				case DEFENSE:
+					statsChange.plus(new Stats(0, 0, entry.getValue(), 0));
+					break;
+				case INITIATIVE:
+					statsChange.plus(new Stats(0, 0, 0, entry.getValue()));
+					break;
+			}
+		}
+		return statsChange;
+	}
+
 	public int apply(Bugemon target) {
 		switch (this.type) {
 			case SOIN:
 				target.changeFightStats(new Stats(this.modifiers.get(StatType.PV), 0, 0, 0));
 				break;
 			case STAT_MODIFIER:
-				Stats statsChange = new Stats();
-				for (Map.Entry<StatType, Integer> entry : this.modifiers.entrySet()) {
-					switch (entry.getKey()) {
-						case PV:
-							statsChange.plus(new Stats(entry.getValue(), 0, 0, 0));
-							break;
-						case ATTAQUE:
-							statsChange.plus(new Stats(0, entry.getValue(), 0, 0));
-							break;
-						case DEFENSE:
-							statsChange.plus(new Stats(0, 0, entry.getValue(), 0));
-							break;
-						case INITIATIVE:
-							statsChange.plus(new Stats(0, 0, 0, entry.getValue()));
-							break;
-					}
-				}
-				if (this.duration.equals(EffectDuration.PERMANENT)) {
-					target.changeFightStats(statsChange);
-				} else {
-					target.applyTemporaryStats(statsChange);
-				}
+				target.changeFightStats(buildStatsChange());
 				break;
 			case RESET_MALUS:
 				target.removeStatsDebuffs();

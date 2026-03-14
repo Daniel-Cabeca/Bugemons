@@ -30,6 +30,6 @@
     </ScrollPane>
 
     <Button onAction="#handleConfirmTeam" prefHeight="50" prefWidth="200" text="Confirmer l'Équipe" />
-    <Button onAction="#handleReturn" prefHeight="50" prefWidth="200" text="Retourner au Menu Principal" />
+    <Button onAction="#handleReturn" prefHeight="50" prefWidth="200" text="Menu Principal" />
 
 </VBox>

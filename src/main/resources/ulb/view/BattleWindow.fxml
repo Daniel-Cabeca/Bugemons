@@ -37,6 +37,6 @@
 		</VBox>
 	</HBox>
 
-    <Button text="Retourner au Menu Principal" onAction="#handleReturn" prefWidth="200" prefHeight="50"/>
+    <Button text="Menu Principal" onAction="#handleReturn" prefWidth="200" prefHeight="50"/>
 
 </VBox>

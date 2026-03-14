@@ -7,7 +7,7 @@ import java.util.List;
 public class Floor {
 
     private int id;
-    private boolean victory = false;
+    private boolean completed = false;
     private List<Room> rooms;
 
     public Floor(int id, boolean isFinalBoss) {
@@ -38,7 +38,7 @@ public class Floor {
 
     public List<Room> getRooms() {return rooms;}
 
-    public boolean isVictory() {return victory;}
+    public boolean isFloorCompleted() {return completed;}
 
-    public void setVictory(boolean victory) {this.victory = victory;}
+    public void setFloorCompleted(boolean status) {this.completed = status;}
 }

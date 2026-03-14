@@ -31,7 +31,6 @@ public class BattleController {
 	private WindowContainer windowContainer;
 	private Battle battle;
 	private boolean isTeamA;
-	private int floorNumber = 1;
 	private boolean isBossFight = false;
 
 	public BattleController(){

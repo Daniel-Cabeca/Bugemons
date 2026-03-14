@@ -6,6 +6,7 @@ import java.util.List;
 public class Tower {
 
     private List<Floor> floors;
+	private boolean completedTower = false;
 
     public Tower() {
         floors = new ArrayList<>();
@@ -22,4 +23,7 @@ public class Tower {
 
     public List<Floor> getFloors() {return floors;}
 
+	public boolean getTowerCompleted() {return this.completedTower;}
+
+	public void setTowerCompleted(boolean status) {this.completedTower = status;}
 }

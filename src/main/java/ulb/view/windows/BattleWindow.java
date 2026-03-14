@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
+import ulb.controller.GameController;
 import ulb.model.battle.BattleState;
 import ulb.model.bugemon.Bugemon;
 import ulb.controller.BattleController;
@@ -86,17 +87,15 @@ public class BattleWindow extends Window {
 	@FXML
 	private Button nextMessageButton;
 
-
-
-
 	private Team playerTeam;
 	private Inventory playerInventory;
 	private BattleController battleController;
+	private GameController gameController;
 	private Player player;
 
-	public void setBattleController(BattleController battleController) {
-		this.battleController = battleController;
-	}
+	public void setBattleController(BattleController battleController) { this.battleController = battleController; }
+
+	public void setGameController(GameController gameController){ this.gameController = gameController;}
 
 	public void setPlayer(Player player) { this.player = player; }
 
@@ -319,7 +318,7 @@ public class BattleWindow extends Window {
 		});
 	}
 
-		private void setupBugemonsList() {
+	private void setupBugemonsList() {
 		bugemonsList.setCellFactory(new Callback<ListView<Bugemon>, ListCell<Bugemon>>() {
 			@Override
 			public ListCell<Bugemon> call(ListView<Bugemon> listView) {
@@ -471,9 +470,9 @@ public class BattleWindow extends Window {
 
 	public void checkBattleEnd(BattleState state, ActionEvent event){
 		if (state == BattleState.WON) {
-			battleController.switchToBattleEndWindow(true, event);
+			gameController.switchToBattleEndWindow(true, event);
 		} else if (state == BattleState.LOST) {
-			battleController.switchToBattleEndWindow(false, event);
+			gameController.switchToBattleEndWindow(false, event);
 		}
 	}
 

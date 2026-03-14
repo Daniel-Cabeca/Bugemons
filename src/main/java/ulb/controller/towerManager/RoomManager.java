@@ -19,7 +19,7 @@ public class RoomManager {
 
 	public boolean isRoomCompleted() {return room.isRoomCompleted();}
 
-	public void setRoomCompleted(boolean status) {this.setRoomCompleted(status);}
+	public void setRoomCompleted(boolean status) {room.setRoomCompleted(status);}
 
 	public void initializeRoomContent(RoomType type) {
 		switch (type) {
@@ -41,16 +41,32 @@ public class RoomManager {
 	}
 
 	public void initializeNormalBattleRoom(){
-
+		// TODO
 	}
 
 
 	public void initializeBosslBattleRoom(){
-
+		// TODO
 	}
 
 	public void initializeRewardRoom(){
-
+		// TODO
 	}
+
+	public Room getRoom() {return room;}
+
+	public void setRoom(Room room) {this.room = room;}
+
+	public Player getPlayer() {return player;}
+
+	public void setPlayer(Player player) {this.player = player;}
+
+	public Battle getBattle() {return battle;}
+
+	public void setBattle(Battle battle) {this.battle = battle;}
+
+	public boolean isTeamA() {return isTeamA;}
+
+	public void setTeamA(boolean teamA) {isTeamA = teamA;}
 
 }

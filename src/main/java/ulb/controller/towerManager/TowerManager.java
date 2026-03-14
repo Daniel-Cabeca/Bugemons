@@ -34,6 +34,19 @@ public class TowerManager {
 		return true;
 	}
 
+	public Player getPlayer() {return player;}
 
+	public void setPlayer(Player player) {this.player = player;}
 
+	public Tower getTower() {return tower;}
+
+	public void setTower(Tower tower) {this.tower = tower;}
+
+	public int getFloorNumber() {return floorNumber;}
+
+	public void setFloorNumber(int floorNumber) {this.floorNumber = floorNumber;}
+
+	public FloorManager getCurrentFloorManager() {return currentFloorManager;}
+
+	public void setCurrentFloorManager(FloorManager currentFloorManager) {this.currentFloorManager = currentFloorManager;}
 }

@@ -1,6 +1,7 @@
 package ulb.view.windows;
 
 import ulb.controller.BattleController;
+import ulb.controller.GameController;
 import ulb.model.battle.Battle;
 import ulb.model.team.OpponentTeamGenerator;
 import ulb.model.team.Team;
@@ -43,42 +44,23 @@ public class CreateTeamWindow extends Window {
 
 	private Player player;
 	private final List<String> selected = new ArrayList<>();
-	private BattleController battleController;
+	private GameController gameController = new GameController();
 
 	public void setPlayer(Player player) {
 		this.player = player;
-
 	}
 
 	/**
-	* Initializes the create team menu
-	*/
-
-	public void setBattle(List<String> selectedBugemons){
+	 * initializes the game with a player and the selected Bugemons
+	 * @param selectedBugemons The Bugemons the player selected
+	 */
+	public void setupGame(List<String> selectedBugemons){
 		this.setPlayer(new Player("Player"));
-
-		List<Bugemon> teamABugemons = new ArrayList<Bugemon>();
-		for (String bugemon : selectedBugemons) {
-			teamABugemons.add(new Bugemon(bugemon.toLowerCase()));
-		}
-		Team playerTeam = new Team(teamABugemons);
-		Team opponentTeam = new Team();
-		try{
-			opponentTeam = OpponentTeamGenerator.generateRandomOpponentTeam(playerTeam);
-		}catch(Exception e){
-			System.err.println(e);
-		}
-		Battle battle = new Battle(playerTeam, opponentTeam, player);
-		this.battleController = new BattleController(player, battle, true);
-		StrategyRandom strategyRandom = new StrategyRandom(battle);
-		Thread thread = new Thread(strategyRandom);
-		thread.start();
+		gameController.setupPlayer(this.player, selectedBugemons);
 	}	
-
 
 	@FXML
 	public void initialize() {
-		// this.battleController = new BattleController(new Player());
 		populateAvailableBugemons();
 	}
 
@@ -164,8 +146,8 @@ public class CreateTeamWindow extends Window {
 	 */
 	public void handleConfirmTeam(ActionEvent event) {
 		if (!selected.isEmpty() && selected.size() <= 6) {
-			setBattle(selected);
-			battleController.switchToBattleMenu(event);
+			setupGame(selected);
+			gameController.switchToBattleMenu(event);
 		} else {
 			throw new IllegalStateException("You must select between 1 and 6 bugemons to confirm your team.");
 		}

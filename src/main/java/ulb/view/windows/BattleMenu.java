@@ -8,30 +8,37 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import ulb.controller.BattleController;
+import ulb.controller.GameController;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.team.Team;
 
+import java.util.List;
+
 public class BattleMenu {
 
-    private BattleController battleController;
+	private GameController gameController;
 
     @FXML
     private GridPane playerTeamGrid;
 
-    public void setBattleController(BattleController battleController) {
-        this.battleController = battleController;
-    }
+	public void setGameController(GameController gameController) { this.gameController = gameController;}
+
+	public void setupBattle(){
+		gameController.setupNormalMode();
+	}
 
     public void handleAutomaticBattle(ActionEvent actionEvent) {
-		battleController.switchToBattleWindow(battleController.getTeam(),true , actionEvent);
+		setupBattle();
+		gameController.switchToBattleWindow(gameController.getTeam(), true, actionEvent);
     }
 
     public void handleControlledBattle(ActionEvent actionEvent) {
-		battleController.switchToBattleWindow(battleController.getTeam(),false , actionEvent);
+		setupBattle();
+		gameController.switchToBattleWindow(gameController.getTeam(), false, actionEvent);
     }
 
     public void displayTeam() {
-        displayTeamWithStats(battleController.getTeam(), playerTeamGrid);
+        displayTeamWithStats(gameController.getTeam(), playerTeamGrid);
 
     }
 

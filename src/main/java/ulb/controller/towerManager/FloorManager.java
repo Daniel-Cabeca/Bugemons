@@ -42,4 +42,16 @@ public class FloorManager {
 		return true;
 	}
 
+	public Player getPlayer() {return player;}
+
+	public void setPlayer(Player player) {this.player = player;}
+
+
+	public int getCurrentRoomIndex() {return currentRoomIndex;}
+
+	public void setCurrentRoomIndex(int currentRoomIndex) {this.currentRoomIndex = currentRoomIndex;}
+
+
+
+
 }

@@ -15,7 +15,7 @@ public class TowerTest {
     @Test
     public void checkLastFloorIsFinalBoss() {
         Tower tower = new Tower();
-        Floor lastFloor = tower.getFloors().getLast();
+        Floor lastFloor = tower.getFloors().get(tower.getFloors().size() - 1);
         assertEquals(1, lastFloor.getRooms().size());
         assertEquals(RoomType.BOSS, lastFloor.getRooms().get(0).getRoomType());
     }

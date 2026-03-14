@@ -161,7 +161,7 @@ public class BattleWindow extends Window {
 				+ " Level: " +  playerBugemon.getLevel());
 		PlayerBugemonLabel.setStyle("-fx-text-fill: " + playerColor + ";");
 		PlayerBugemonHPBar.setProgress((double) playerBugemon.getFightStats().getHp() / playerBugemon.getBaseStats().getHp());
-		PlayerBugemonHPNumber.setText("HP: " + playerBugemon.getHp() + "/" + playerBugemon.getBaseStats().hp);
+		PlayerBugemonHPNumber.setText("PV: " + playerBugemon.getHp() + "/" + playerBugemon.getBaseStats().hp);
 
 		// Set opponent Bugemon sprite and stats
 		try {
@@ -193,7 +193,7 @@ public class BattleWindow extends Window {
 				+ " Level: " + opponentBugemon.getLevel());
 		OpponentBugemonLabel.setStyle("-fx-text-fill: " + opponentColor + ";");
 		OppentHPBar.setProgress((double) opponentBugemon.getFightStats().getHp() / opponentBugemon.getBaseStats().getHp());
-		OpponentHPNumber.setText("HP: " + opponentBugemon.getHp() + "/" +  opponentBugemon.getBaseStats().hp);
+		OpponentHPNumber.setText("PV: " + opponentBugemon.getHp() + "/" +  opponentBugemon.getBaseStats().hp);
 	}
 
 	public void initializebattleMessage(){
@@ -278,7 +278,7 @@ public class BattleWindow extends Window {
 					private final HBox hbox = new HBox(10);
 					private final ImageView imageView = new ImageView();
 					private final Label label = new Label();
-					private final Button button = new Button("Use");
+					private final Button button = new Button("Utiliser");
 
 					{
 						imageView.setFitHeight(30);
@@ -327,7 +327,7 @@ public class BattleWindow extends Window {
 					private final HBox hbox = new HBox(10);
 					private final ImageView imageView = new ImageView();
 					private final Label label = new Label();
-					private final Button button = new Button("Switch");
+					private final Button button = new Button("Échanger");
 
 					{
 						imageView.setFitHeight(30);
@@ -376,7 +376,7 @@ public class BattleWindow extends Window {
 				return new ListCell<Ability>() {
 					private final HBox hbox = new HBox(10);
 					private final Label label = new Label();
-					private final Button button = new Button("Use");
+					private final Button button = new Button("Utiliser");
 
 					{
 						hbox.getChildren().addAll(label, button);

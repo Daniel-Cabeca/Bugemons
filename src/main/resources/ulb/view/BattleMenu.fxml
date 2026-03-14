@@ -14,11 +14,11 @@
     </padding>
 
     <VBox alignment="CENTER" spacing="10.0">
-        <Label text="Your Team:" style="-fx-font-size: 20px;"/>
+        <Label text="Votre Équipe:" style="-fx-font-size: 20px;"/>
         <GridPane fx:id="playerTeamGrid" hgap="10" vgap="10" alignment="CENTER"/>
     </VBox>
 
-    <Button text="Automatic Battle" onAction="#handleAutomaticBattle" prefWidth="200" prefHeight="50"/>
-    <Button text="Controlled Battle" onAction="#handleControlledBattle" prefWidth="200" prefHeight="50"/>
+    <Button text="Bataille Automatique" onAction="#handleAutomaticBattle" prefWidth="200" prefHeight="50"/>
+    <Button text="Bataille Controlée" onAction="#handleControlledBattle" prefWidth="200" prefHeight="50"/>
 
 </VBox>

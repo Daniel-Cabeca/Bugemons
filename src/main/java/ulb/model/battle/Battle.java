@@ -209,9 +209,9 @@ public class Battle {
 		float factor = Effectiveness.getFactor(ability.getType(), opponent.getType());
 		String message;
 		if (factor > 1) {
-			message = "Super effective!";
+			message = "Super efficace!";
 		} else if (factor < 1) {
-			message = "Not very effective!";
+			message = "Pas très efficace!";
 		} else {
 			message = null;
 		}
@@ -243,8 +243,8 @@ public class Battle {
 		Stats damage = new Stats(-abilityDamage, 0, 0, 0);
 		defensive.changeFightStats(damage);
 
-		logMsg.add(offensive.getName() + " used " + ability.getName() + ". " + defensive.getName() + " loses " +
-				abilityDamage + " HP!");
+		logMsg.add(offensive.getName() + " a utilisé " + ability.getName() + ". " + defensive.getName() + " perd " +
+				abilityDamage + " PV!");
 
 		String effectiveness = getEffectiveness(ability, defensive);
 		if (effectiveness == null) {
@@ -258,12 +258,12 @@ public class Battle {
 			switch (team) {
 				case TEAM_A:
 					item.use(this.activeBugemonB);
-					logMsg.add("You used " + item.getName() + " on " + activeBugemonB.getName() + "!");
+					logMsg.add("Tu as utilisé " + item.getName() + " sur " + activeBugemonB.getName() + "!");
 					break;
 
 				case TEAM_B:
 					item.use(this.activeBugemonA);
-					logMsg.add("Opponent used " + item.getName() + " on " + activeBugemonA.getName() + "!");
+					logMsg.add("L'adversaire a utilisé " + item.getName() + " sur " + activeBugemonA.getName() + "!");
 					break;
 
 				default:
@@ -274,12 +274,12 @@ public class Battle {
 			switch (team) {
 				case TEAM_A:
 					item.use(this.activeBugemonA);
-					logMsg.add("You used " + item.getName() + " on " + activeBugemonA.getName() + "!");
+					logMsg.add("Tu as utilisé " + item.getName() + " sur " + activeBugemonA.getName() + "!");
 					break;
 
 				case TEAM_B:
 					item.use(this.activeBugemonB);
-					logMsg.add("Opponent used " + item.getName() + " on " + activeBugemonB.getName() + "!");
+					logMsg.add("L'adversaire a utilisé " + item.getName() + " sur " + activeBugemonB.getName() + "!");
 					break;
 
 				default:
@@ -291,14 +291,14 @@ public class Battle {
 					for (Bugemon b : this.teamA.getMembers()){
 						item.use(b);
 					}
-					logMsg.add("You used " + item.getName() + " on your whole team!");
+					logMsg.add("Tu as utilisé " + item.getName() + " sur toute ton équipe!");
 					break;
 
 				case TEAM_B:
 					for (Bugemon b : this.teamB.getMembers()){
 						item.use(b);
 					}
-					logMsg.add("Opponent used " + item.getName() + " on their whole team!");
+					logMsg.add("L'adversaire a utilisé " + item.getName() + " sur toute son équipe!");
 					break;
 
 				default:
@@ -308,16 +308,18 @@ public class Battle {
 
 		if (item.getEffect().getType().equals(Effect.EffectType.SWITCH)) {
 			if (team == TeamLabel.TEAM_A) {
+				Bugemon switchedBugemon = this.activeBugemonA;
 				Bugemon nextBugemon = getNextBugemon(this.teamA, this.activeBugemonA);
 				if (nextBugemon != null) {
 					setActiveBugemonA(nextBugemon);
-					logMsg.add("You switched to " + nextBugemon.getName() + " using " + item.getName() + "!");
+					logMsg.add("Tu as échanger " + switchedBugemon + " avec " +nextBugemon.getName() + " en utilisant " + item.getName() + "!");
 				}
 			} else {
+				Bugemon switchedBugemon = this.activeBugemonA;
 				Bugemon nextBugemon = getNextBugemon(this.teamB, this.activeBugemonB);
 				if (nextBugemon != null) {
 					setActiveBugemonB(nextBugemon);
-					logMsg.add("Opponent switched to " + nextBugemon.getName() + " using " + item.getName() + "!");
+					logMsg.add("L'adversaire a échangé " + switchedBugemon + " avec " + nextBugemon.getName() + " en utilisant " + item.getName() + "!");
 				}
 			}
 		}
@@ -339,10 +341,10 @@ public class Battle {
 	private void swap(Bugemon target, TeamLabel team){
 		if (team == TeamLabel.TEAM_A && teamA.contains(target)){
 			setActiveBugemonA(target);
-			logMsg.add("You sent out " + target.getName() + "!");
+			logMsg.add("Tu as envoyé " + target.getName() + "!");
 		} else if (team == TeamLabel.TEAM_B && teamB.contains(target)){
 			setActiveBugemonB(target);
-			logMsg.add("Opponent sent out " + target.getName() + "!");
+			logMsg.add("L'adversaire a envoyé " + target.getName() + "!");
 		}
 	}
 

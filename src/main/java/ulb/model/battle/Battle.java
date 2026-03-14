@@ -204,9 +204,8 @@ public class Battle {
 	 * @param ability the ability whose type effectiveness is evaluated
 	 * @return the effectiveness message (or null if the effectiveness is normal)
 	 */
-	public String getEffectiveness(Ability ability, Bugemon bugemon) {
-		Bugemon opponent = bugemon;
-		float factor = Effectiveness.getFactor(ability.getType(), opponent.getType());
+	public String getEffectiveness(Ability ability, Bugemon opponent) {
+        float factor = Effectiveness.getFactor(ability.getType(), opponent.getType());
 		String message;
 		if (factor > 1) {
 			message = "Super effective!";
@@ -247,10 +246,9 @@ public class Battle {
 				abilityDamage + " HP!");
 
 		String effectiveness = getEffectiveness(ability, defensive);
-		if (effectiveness == null) {
-			effectiveness = "";
+		if (effectiveness != null) {
+			logMsg.add(effectiveness);
 		}
-		logMsg.add(effectiveness);
 	}
 
 	private void useItem(Item item, TeamLabel team){

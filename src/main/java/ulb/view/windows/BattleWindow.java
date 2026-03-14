@@ -289,9 +289,8 @@ public class BattleWindow extends Window {
 							if (item != null) {
 								UseItem useItem = new UseItem(item);
 								battleController.useAction(useItem);
-								checkBattleState(battleController.getState(), event);
-								// Refresh display
 								displayNextMessage();
+								checkBattleState(battleController.getState(), event);
 								displayInventory();
 							}
 						});
@@ -338,10 +337,8 @@ public class BattleWindow extends Window {
 							if (bugemon != null) {
 								Swap swap = new Swap(bugemon);
 								battleController.useAction(swap);
-
-								checkBattleState(battleController.getState(), event);
-								// Refresh display
 								displayNextMessage();
+								checkBattleState(battleController.getState(), event);
 								displayTeam();
 							}
 						});
@@ -385,9 +382,8 @@ public class BattleWindow extends Window {
 							if (ability != null) {
 								UseAbility useAbility = new UseAbility(ability);
 								battleController.useAction(useAbility);
-								checkBattleState(battleController.getState(), event);
-								// Refresh display
 								displayNextMessage();
+								checkBattleState(battleController.getState(), event);
 								displayTeam();
 
 							}

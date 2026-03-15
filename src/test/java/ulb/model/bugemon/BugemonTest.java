@@ -3,8 +3,6 @@ package ulb.model.bugemon;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.Vector;
-import java.util.List;
 
 import ulb.model.type.Type;
 
@@ -81,4 +79,5 @@ public class BugemonTest {
 		assertEquals(B.getBaseStats().defense, B.getFightStats().defense);
 		assertEquals(B.getBaseStats().initiative, B.getFightStats().initiative);
 	}
+
 }

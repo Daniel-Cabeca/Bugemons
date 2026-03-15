@@ -1,6 +1,10 @@
 package ulb.view.windows;
 
 import ulb.controller.BattleController;
+import ulb.model.battle.Battle;
+import ulb.model.team.OpponentTeamGenerator;
+import ulb.model.team.Team;
+import ulb.controller.strategy.StrategyRandom;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -15,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ulb.model.Player;
+import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.BugemonSpecies;
 import ulb.view.handler.Window;
 import ulb.service.BugemonService;
@@ -49,9 +54,31 @@ public class CreateTeamWindow extends Window {
 	* Initializes the create team menu
 	*/
 
+	public void setBattle(List<String> selectedBugemons){
+		this.setPlayer(new Player("Player"));
+
+		List<Bugemon> teamABugemons = new ArrayList<Bugemon>();
+		for (String bugemon : selectedBugemons) {
+			teamABugemons.add(new Bugemon(bugemon.toLowerCase()));
+		}
+		Team playerTeam = new Team(teamABugemons);
+		Team opponentTeam = new Team();
+		try{
+			opponentTeam = OpponentTeamGenerator.generateRandomOpponentTeam(playerTeam);
+		}catch(Exception e){
+			System.err.println(e);
+		}
+		Battle battle = new Battle(playerTeam, opponentTeam, player);
+		this.battleController = new BattleController(player, battle, true);
+		StrategyRandom strategyRandom = new StrategyRandom(battle);
+		Thread thread = new Thread(strategyRandom);
+		thread.start();
+	}	
+
+
 	@FXML
 	public void initialize() {
-		this.battleController = new BattleController(new Player());
+		// this.battleController = new BattleController(new Player());
 		populateAvailableBugemons();
 	}
 
@@ -137,9 +164,10 @@ public class CreateTeamWindow extends Window {
 	 */
 	public void handleConfirmTeam(ActionEvent event) {
 		if (!selected.isEmpty() && selected.size() <= 6) {
-			battleController.switchToBattleMenu(selected, event);
+			setBattle(selected);
+			battleController.switchToBattleMenu(event);
 		} else {
-			throw new IllegalStateException("You must select between 1 and 6 bugemons to confirm your team.");
+			throw new IllegalStateException("Tu dois selectionner entre 1 et 6 Bugemons pour confirmer ton équipe.");
 		}
 	}
 

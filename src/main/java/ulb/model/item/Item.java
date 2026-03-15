@@ -12,9 +12,6 @@ public class Item implements HasId {
 	private Effect effect;
 	private String sprite;
 
-
-
-
 	public Item(String id, String name, String description, String category, Effect effect, String sprite) {
 		this.id = id;
 		this.name = name;
@@ -36,5 +33,9 @@ public class Item implements HasId {
 
 	public int use(Bugemon target) {
 		return this.effect.apply(target);
+	}
+
+	public Effect.EffectTarget getTarget(){
+		return this.effect.getTarget();
 	}
 }

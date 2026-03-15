@@ -23,15 +23,15 @@ public class BattleMenu {
     }
 
     public void handleAutomaticBattle(ActionEvent actionEvent) {
-		battleController.switchToBattleWindow(battleController.getPlayer().getTeam(),true , actionEvent);
+		battleController.switchToBattleWindow(battleController.getTeam(),true , actionEvent);
     }
 
     public void handleControlledBattle(ActionEvent actionEvent) {
-		battleController.switchToBattleWindow(battleController.getPlayer().getTeam(),false , actionEvent);
+		battleController.switchToBattleWindow(battleController.getTeam(),false , actionEvent);
     }
 
     public void displayTeam() {
-        displayTeamWithStats(battleController.getPlayer().getTeam(), playerTeamGrid);
+        displayTeamWithStats(battleController.getTeam(), playerTeamGrid);
 
     }
 
@@ -53,10 +53,10 @@ public class BattleMenu {
             sprite.setFitHeight(50);
             sprite.setPreserveRatio(true);
 
-            Label name = new Label(bugemon.getName() + " (Level: " + bugemon.getLevel() + ")");
+            Label name = new Label(bugemon.getName() + " (Niveau: " + bugemon.getLevel() + ")");
             name.setStyle("-fx-font-weight: bold;");
 
-            Label stats = new Label("HP: " + bugemon.getFightStats().getHp() +
+            Label stats = new Label("PV: " + bugemon.getFightStats().getHp() +
                     " ATK: " + bugemon.getFightStats().getAttack() + " DEF: " +
                     bugemon.getFightStats().getDefense() + " INIT: " + bugemon.getFightStats().getInitiative());
 

@@ -132,4 +132,16 @@ public class TeamTest {
         Team team = new Team(List.of(b1, b2, b3));
         assertFalse(team.checkTeamKO());
     }
+
+    @Test
+    public void checkNotCopy(){
+        Bugemon b1 = makeBugemon("B1");
+        Bugemon b2 = makeBugemon("B2");
+        Bugemon b3 = makeBugemon("B3");
+        Team team = new Team(List.of(b1, b2, b3));
+
+        b1.changeFightStats(new Stats(-100, 0, 0, 0));
+        assertTrue(team.getMembers().get(0).getHp() == 0);
+        assertTrue(team.getBugemon(0).getHp() == 0);
+    }
 }

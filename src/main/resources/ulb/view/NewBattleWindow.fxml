@@ -23,6 +23,24 @@
         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
     </rowConstraints>
     <children>
+        <Label fx:id="battleLog"
+               wrapText="true"
+               prefWidth="250.0"
+               style="-fx-font-size: 13px;"
+               GridPane.columnIndex="1"
+               GridPane.rowIndex="1"
+               GridPane.halignment="CENTER"
+               GridPane.valignment="CENTER"/>
+
+        <Button fx:id="nextMessageButton"
+                text="Suivant"
+                visible="false"
+                managed="false"
+                onAction="#displayNextMessage"
+                GridPane.columnIndex="1"
+                GridPane.rowIndex="2"
+                GridPane.halignment="CENTER"
+                GridPane.valignment="TOP"/>
         <ImageView fx:id="OpponentBugemon" fitHeight="144.0" fitWidth="109.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
             <image>
                 <Image url="@../../png/commitide.png" />
@@ -36,15 +54,15 @@
         <VBox prefHeight="100.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.hgrow="NEVER" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
             <children>
                 <ProgressBar fx:id="PlayerBugemonHPBar" prefHeight="20.0" prefWidth="193.0" progress="1.0" />
-                <Label fx:id="PlayerBugemonLabel" text="Name+Type" />
-                <Label fx:id="PlayerBugemonHPNumber" layoutX="10.0" layoutY="30.0" text="HP: CurrentHP/ MaxHP" />
+                <Label fx:id="PlayerBugemonLabel" text="Nom+Type" />
+                <Label fx:id="PlayerBugemonHPNumber" layoutX="10.0" layoutY="30.0" text="PV: PVActuel/ MaxPV" />
             </children>
         </VBox>
         <VBox layoutX="277.0" layoutY="177.0" prefHeight="100.0" prefWidth="100.0" GridPane.columnIndex="1">
             <children>
-                <ProgressBar fx:id="OppentHPBar" prefHeight="20.0" prefWidth="193.0" progress="1.0" />
-                <Label fx:id="OpponentBugemonLabel" text="Name+Type" />
-                <Label fx:id="OpponentHPNumber" layoutX="10.0" layoutY="30.0" text="HP: CurrentHP/ MaxHP" />
+                <ProgressBar fx:id="OpponentHPBar" prefHeight="20.0" prefWidth="193.0" progress="1.0" />
+                <Label fx:id="OpponentBugemonLabel" text="Nom+Type" />
+                <Label fx:id="OpponentHPNumber" layoutX="10.0" layoutY="30.0" text="PV: PVActuel/ MaxPV" />
             </children>
         </VBox>
         <GridPane fx:id="buttonsGrid" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
@@ -58,28 +76,28 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
-				<Button fx:id="attackButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Attack" textFill="#a10404" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" onAction="#handleAttack"/>
-                <Button fx:id="itemButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Item" textFill="#a10404" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" onAction="#handleItemMenu"/>
-                <Button fx:id="runButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Run" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" onAction="#handleReturn"/>
-                <Button fx:id="switchButton" layoutX="160.0" layoutY="97.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Switch" textFill="#a10404" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" onAction="#handleBugemonsMenu"/>
+				<Button fx:id="attackButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Attaquer" textFill="#a10404" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" onAction="#handleAttack"/>
+                <Button fx:id="itemButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Objet" textFill="#a10404" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" onAction="#handleItemMenu"/>
+                <Button fx:id="runButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Fuir" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" onAction="#handleReturn"/>
+                <Button fx:id="switchButton" layoutX="160.0" layoutY="97.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Échanger" textFill="#a10404" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" onAction="#handleBugemonsMenu"/>
             </children>
         </GridPane>
         <VBox fx:id="inventoryView" visible="false" managed="false" spacing="10.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
             <children>
                 <ListView fx:id="inventoryList" prefHeight="265.0" prefWidth="200.0" />
-				<Button fx:id="backToMenuButton" text="Back" onAction="#handleBackToMenu" maxHeight="1.7976931348623157E308" maxWidth="Infinity" VBox.vgrow="ALWAYS"/>
+				<Button fx:id="backToMenuButton" text="Retour" onAction="#handleBackToMenu" maxHeight="1.7976931348623157E308" maxWidth="Infinity" VBox.vgrow="ALWAYS"/>
             </children>
         </VBox>
 		<VBox fx:id="bugemonsView" visible="false" managed="false" spacing="10.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
             <children>
                 <ListView fx:id="bugemonsList" prefHeight="265.0" prefWidth="200.0"/>
-				<Button fx:id="backToMenuButton" text="Back" onAction="#handleBackToMenu" maxHeight="1.7976931348623157E308" maxWidth="Infinity" VBox.vgrow="ALWAYS"/>
+				<Button fx:id="backToMenuButton" text="Retour" onAction="#handleBackToMenu" maxHeight="1.7976931348623157E308" maxWidth="Infinity" VBox.vgrow="ALWAYS"/>
             </children>
         </VBox>
 		<VBox fx:id="abilitiesView" visible="false" managed="false" spacing="10.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
             <children>
                 <ListView fx:id="abilitiesList" prefHeight="265.0" prefWidth="200.0" />
-				<Button fx:id="backToMenuButton" text="Back" onAction="#handleBackToMenu" maxHeight="1.7976931348623157E308" maxWidth="Infinity" VBox.vgrow="ALWAYS"/>
+				<Button fx:id="backToMenuButton" text="Retour" onAction="#handleBackToMenu" maxHeight="1.7976931348623157E308" maxWidth="Infinity" VBox.vgrow="ALWAYS"/>
             </children>
         </VBox>
         <Button fx:id="autoButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Auto" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.valignment="BOTTOM" onAction="#handleAuto" />

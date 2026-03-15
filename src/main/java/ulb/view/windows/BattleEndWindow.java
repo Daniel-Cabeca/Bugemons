@@ -25,11 +25,11 @@ public class BattleEndWindow extends Window{
 	 */
 	public void setResult(boolean victory) {
 		if (victory) {
-			titleLabel.setText("Victory!");
-			messageLabel.setText("All enemy Bugemons are KO. You win!");
+			titleLabel.setText("Victoire !");
+			messageLabel.setText("Tous les Bugemons ennemy sont KO. Tu as gagné !");
 		} else {
-			titleLabel.setText("Defeat");
-			messageLabel.setText("All your Bugemons are KO. You lost!");
+			titleLabel.setText("Défaite");
+			messageLabel.setText("Tous tes Bugemons sont KO. Tu as perdu !");
 		}
 	}
 

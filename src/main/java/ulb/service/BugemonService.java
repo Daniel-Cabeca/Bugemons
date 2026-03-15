@@ -97,7 +97,7 @@ public class BugemonService {
 	}
 
 	/**
-	 * Returns the list of all Bugemon species.
+	 * Returns the list of all loaded Bugemon species.
 	 *
 	 * @return An iterable of all the species
 	 */

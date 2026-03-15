@@ -2,38 +2,40 @@
 
 Ce document contient l'éstimation de la durée et du risque de développement pour chacune des 28 User Stories.
 
-## Itération 1
+## Stories et Estimation
 
-| ID    | Titre                                         | Priorité client | Introduit dans l’itération |     État     | Durée estimée (h) | Risque estimé (1-3) |
-|------:|-----------------------------------------------|:---------------:|:--------------------------:|:------------:|:-----------------:|:-------------------:|
-| US-01 | Constituer une équipe                         |        1        |             1              | To do |        12         |          2          |
-| US-02 | Sauvegarder et charger une équipe             |        2        |             /              |      /       |         6         |          3          |
-| US-03 | Modifier équipes sauvegardées                 |        2        |             /              |      /       |         9         |          3          |
-| US-04 | Combat automatique                            |        1        |             1              | To do |        16         |          2          |
-| US-05 | Contrôle des actions en combat                |        1        |             1              | To do |        15         |          2          |
-| US-06 | Calcul de dégâts avec statistiques            |        1        |             1              | To do |         7         |          2          |
-| US-07 | Expérience et montée de niveau                |        1        |             1              | To do |         8         |          2          |
-| US-08 | Statuts                                       |        1        |             /              |      /       |         9         |          2          |
-| US-09 | Structure de la Tour NO                       |        1        |             /              |      /       |        15         |          2          |
-| US-10 | Utiliser un objet                             |        1        |             1              | To do |        11         |          2          |
-| US-11 | Récompenses d’étage                           |        1        |             /              |      /       |         9         |          3          |
-| US-12 | Bugédex                                       |        2        |             /              |      /       |        11         |          2          |
-| US-13 | Ajouter des Bugémons                          |        2        |             /              |      /       |        11         |          3          |
-| US-14 | Exploration visuelle des étages               |        1        |             /              |      /       |        21         |          1          |
-| US-15 | Animations de combat                          |        3        |             /              |      /       |        17         |          2          |
-| US-16 | Animations de déplacement en mode exploration |        3        |             /              |      /       |        16         |          2          |
-| US-17 | Arbre de compétences                          |        2        |             /              |      /       |        21         |          1          |
-| US-18 | Jouer à la manette                            |        3        |             /              |      /       |         7         |          2          |
-| US-19 | Génération procédurale des étages             |        2        |             /              |      /       |        21         |          2          |
-| US-20 | Sauvegarder sa progression, et continuer      |        2        |             /              |      /       |        13         |          2          |
-| US-21 | Choisir un niveau de difficulté               |        2        |             /              |      /       |         9         |          2          |
-| US-22 | Intelligence artificielle de combat           |        2        |             /              |      /       |        19         |          1          |
-| US-23 | Générer une équipe dynamiquement              |        2        |             /              |      /       |        14         |          2          |
-| US-24 | Musique d’ambiance                            |        3        |             /              |      /       |         8         |          2          |
-| US-25 | Défier un autre joueur                        |        3        |             /              |      /       |        16         |          2          |
-| US-26 | Chat                                          |        1        |             1              | To |        15         |          1          |
-| US-27 | Filtrer les messages inappropriés             |        3        |             /              |      /       |         5         |          3          |
-| US-28 | Leaderboard                                   |        1        |             /              |      /       |         9         |          2          |
+| ID    | Titre                                         | Priorité client | Introduit dans l’itération |     État     | Durée estimée (h) | Risque estimé (1-3) |temps mis (h)|
+|------:|-----------------------------------------------|:---------------:|:--------------------------:|:------------:|:-----------------:|:-------------------:|:-----------:|
+| US-01 | Constituer une équipe                         |        1        |             1              | $${\color{green}Fini}$$ |        12         |          2                  | 20:15|
+| US-02 | Sauvegarder et charger une équipe             |        2        |             /              |      /       |         16         |          3          | / |
+| US-03 | Modifier équipes sauvegardées                 |        2        |             /              |      /       |         15         |          3          | /|
+| US-04 | Combat automatique                            |        1        |             1              | $${\color{green}Fini}$$ |        16         |          2                 |21|
+| US-05 | Contrôle des actions en combat                |        1        |             1              | $${\color{blue}En \space Progrès}$$ |        1         |          2                 |7|
+| US-06 | Calcul de dégâts avec statistiques            |        1        |             1              | $${\color{blue}En \space Progrès}$$ |         1         |          2                 |2:45|
+| US-07 | Expérience et montée de niveau                |        1        |             1              | $${\color{blue}En \space Progrès}$$ |         10         |          2                 |2|
+| US-08 | Statuts                                       |        1        |             /              |      /       |         22         |          2          |/|
+| US-09 | Structure de la Tour NO                       |        1        |             1              |     $${\color{red}À \space Faire}$$       |        51         |          2          |0|
+| US-10 | Utiliser un objet                             |        1        |             1              |  $${\color{blue}En \space Progrès}$$ |        21         |          2                 |11:10 |
+| US-11 | Récompenses d’étage                           |        1        |             /              |      /       |         18         |          3          |/|
+| US-12 | Bugédex                                       |        2        |             /              |      /       |        21         |          2          |/|
+| US-13 | Ajouter des Bugémons                          |        2        |             /              |      /       |        26         |          3          |/|
+| US-14 | Exploration visuelle des étages               |        1        |             /              |      /       |        48         |          1          |/|
+| US-15 | Animations de combat                          |        3        |             /              |      /       |        29         |          2          |/|
+| US-16 | Animations de déplacement en mode exploration |        3        |             /              |      /       |        29        |          2          |/|
+| US-17 | Arbre de compétences                          |        2        |             /              |      /       |        40         |          1          |/|
+| US-18 | Jouer à la manette                            |        3        |             /              |      /       |         18         |          2          |/|
+| US-19 | Génération procédurale des étages             |        2        |             /              |      /       |        43        |          2          |/|
+| US-20 | Sauvegarder sa progression, et continuer      |        2        |             /              |      /       |        38         |          2          |/|
+| US-21 | Choisir un niveau de difficulté               |        2        |             /              |      /       |         21         |          2          |/|
+| US-22 | Intelligence artificielle de combat           |        2        |             /              |      /       |        49         |          1          |/|
+| US-23 | Générer une équipe dynamiquement              |        2        |             /              |      /       |        38         |          2          |/|
+| US-24 | Musique d’ambiance                            |        3        |             /              |      /       |        25         |          2          |/|
+| US-25 | Défier un autre joueur                        |        3        |             /              |      /       |        52         |          2          |/|
+| US-26 | Chat                                          |        1        |             /              |       /     |        46         |          1            |/|
+| US-27 | Filtrer les messages inappropriés             |        3        |             /              |      /       |         16         |          3          |/|
+| US-28 | Leaderboard                                   |        1        |             /              |      /       |         31         |          2          |/|
+| US-A  |  Abandonner la partie                         |        1        |             1              |      $${\color{red}À \space Faire}$$  |         30         |          2          |0|
+| US-R  |  Refactoring                         			|        /        |             Tout              |      $${\color{blue}En \space Progrès}$$  |         /         |          /          |12:15|
 
 ## Descriptions des User Stories
 ### US-01 - Constituer une équipe
@@ -68,6 +70,12 @@ L’interface affiche :
 - Leurs PV restants (sous forme de barre)
 - Les messages décrivant les actions (« Florachu utilise Fouet-Liane ! Pyricore perd 40
 PV ! »). Le joueur doit cliquer sur un bouton pour passer à l’action suivante. À la fin, le jeu affiche « VICTOIRE » ou « DÉFAITE » et retourne au menu principal.
+
+---
+
+A faire:
+
+- les actions du joueur se font automatiquement avec un certain temps d’attente entre chaque action (par ex : 1 seconde).
 
 ### US-05 - Contrôle des actions en combat
 
@@ -328,3 +336,40 @@ Dans le chat, les messages inappropriés (obscènes, insultants, …) sont adouc
 ### US-28 - Leaderboard
 
 En mode multijoueurs, à chaque fois que 2 personnes s’affrontent, celle qui emporte la victoire gagne 1 point. Il y a ensuite un classement qui permet de voir quels joueurs ont obtenu le plus de points.
+
+### US-A - Abandonner la partie
+
+Bouton permettant d’arrêter la partie (donc d’abandonner l'ascension de la tour NO). Diffère du bouton “fuite” qui ne fait que abandonner le combat en cours, sans finir la partie.
+
+### US-R - Refactoring
+
+**Refactoring - general**:
+
+- Mettre à jour JUnit 5 sur toutes les branches
+- Mettre à jour Google Docs
+- Update checkTeamKO(), gère des équipes de 1 à 6 maintenant
+- homogenéiser effects (value/modifier -> modifiers, String -> ENUM)
+- refactor tests objets avec samples et les decaler de TestBattleController a TestItems
+- Supprimer Bugemon.getId(), ou le renommer en Bugemon.getSpeciesId() (petite tâche)
+
+**Refactoring − Repository & Services**:
+
+- Déplacer les parsers dans la couche repository (temps mis : 5min)
+- Chargement des items
+- Chargement des abilités
+- Chargement des bugémons
+- Créer un nouveau sous-module json.parser pour mieux marquer la distinction entre loaders et parsers
+- BugemonService
+- ItemService
+- Chargement et injection des services (besoin de tirer au clair l’architecture du programme avant de faire ça)
+- Supprimer BugemonDatabase, AbilityDatabase, model.sample, etc. (grosse tâche)
+- Supprimer les constructeurs dépréciés de Bugemon (grosse tâche)
+
+**Refactoring - Battle et BattleController**
+
+- Refactor BattleController, BattleSnashot et Battle en fonction du diagramme
+- Créer useAction dans Battle
+- Afficher les logs (“bugemon attaque, fait x dégats, …”) dans la view
+- instancier BattleController et battle (via des threads pour BattleController)
+- Déplacer le choix random des actions dans Strategy et l’instancier au début du combat
+- Griser les actions non disponibles dans la view

@@ -9,6 +9,8 @@ import ulb.model.bugemon.Bugemon;
 import ulb.model.team.Team;
 import ulb.model.type.Type;
 import java.util.List;
+import ulb.model.Player;
+import ulb.model.battle.Battle.TeamLabel;
 
 public class BattleTest {
 	@Test
@@ -18,10 +20,10 @@ public class BattleTest {
 
 		Team teamA = new Team(List.of(fast));
 		Team teamB = new Team(List.of(slow));
+		Player p = new Player();
+		Battle battle = new Battle(teamA, teamB, p);
 
-		Battle battle = new Battle(teamA, teamB);
-
-		assertSame(fast, battle.CheckInitiave());
+		assertSame(TeamLabel.TEAM_A, battle.checkInitiave());
 	}
 
 	@Test
@@ -32,9 +34,10 @@ public class BattleTest {
 		Team teamA = new Team(List.of(slow));
 		Team teamB = new Team(List.of(fast));
 
-		Battle battle = new Battle(teamA, teamB);
+		Player p = new Player();
+		Battle battle = new Battle(teamA, teamB, p);
 
-		assertSame(fast, battle.CheckInitiave());
+		assertSame(TeamLabel.TEAM_B, battle.checkInitiave());
 	}
 
 	@Test
@@ -45,16 +48,17 @@ public class BattleTest {
 		Team teamA = new Team(List.of(sameA));
 		Team teamB = new Team(List.of(sameB));
 
-		Battle battle = new Battle(teamA, teamB);
+		Player p = new Player();
+		Battle battle = new Battle(teamA, teamB, p);
 
 		boolean sawA = false;
 		boolean sawB = false;
 
 		for (int i = 0; i < 200; i++) {
-			Bugemon result = battle.CheckInitiave();
-			if (result == sameA) {
+			Battle.TeamLabel result = battle.checkInitiave();
+			if (result == TeamLabel.TEAM_A) {
 				sawA = true;
-			} else if (result == sameB) {
+			} else if (result == TeamLabel.TEAM_B) {
 				sawB = true;
 			}
 			if (sawA && sawB) {

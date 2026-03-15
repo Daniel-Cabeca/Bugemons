@@ -25,6 +25,7 @@ import ulb.controller.action.*;
 import ulb.model.Player;
 import ulb.model.item.Item;
 import ulb.model.team.OpponentTeamGenerator;
+import ulb.model.reward.Reward;;
 
 public class BattleController {
 	private Player player;
@@ -33,6 +34,8 @@ public class BattleController {
 	private boolean isTeamA;
 	private int floorNumber = 1;
 	private boolean isBossFight = false;
+
+	private Vector<Reward> rewards;
 
 	public BattleController(){
 		this.windowContainer = new WindowContainer();
@@ -202,6 +205,30 @@ public class BattleController {
 
 	public BattleState getState(){
 		return this.battle.getState(isTeamA);
+	}
+
+	/**
+	 * Get the possible random rewards from Battle and create a copy to avoid cheating
+	 * @param bugemonTarget the bugemon targeted by the reward
+	 * @return a vector of the copied rewards
+	 */
+	public Vector<Reward> getRewards(Bugemon bugemonTarget){
+		this.rewards = battle.computeRewards(bugemonTarget);
+		Vector<Reward> vector = new Vector<>();
+		for (Reward r : this.rewards){
+			vector.add(new Reward(r));
+		}
+		return vector;
+	}
+
+	public boolean applyReward(Bugemon bugemonTarget, Reward reward){
+		for (Reward r : this.rewards) {
+			if (r.getStats().equals(reward.getStats()) && r.getBugemon().equals(bugemonTarget)){
+				r.applyReward();
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

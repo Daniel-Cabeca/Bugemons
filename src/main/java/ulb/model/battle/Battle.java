@@ -9,6 +9,8 @@ import ulb.model.bugemon.Stats;
 import ulb.model.item.Item;
 import ulb.model.Effect;
 import ulb.controller.action.*;
+import ulb.model.reward.Reward;
+import ulb.model.reward.RewardType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -623,6 +625,16 @@ public class Battle {
 			}
 		}
 		return availablBugemons;
+	}
+
+	public Vector<Reward> computeRewards(Bugemon bugemonTarget){
+		Vector<Reward> rewards = new Vector<>();
+		for (int i=0; i < 3; i++){
+			Reward r = new Reward(bugemonTarget);
+			r.choseType(RewardType.COMBINATION);
+			rewards.add(r);
+		}
+		return rewards;
 	}
 
 	public boolean isGameFinished(){

@@ -5,5 +5,5 @@ public enum RewardType {
     ATTACK,
     DEFENSE,
     INITIATIVE,
-    // TO DO: COMBINATION
+    COMBINATION
 }

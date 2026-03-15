@@ -8,9 +8,53 @@ import java.util.Random;
 public class Reward {
 
     private Bugemon bugemon;
+    private Stats stats;
 
     public Reward(Bugemon bugemon) {
         this.bugemon = bugemon;
+        this.stats = new Stats();
+    }
+
+    public Reward(Reward otherReward){
+        this.bugemon = otherReward.bugemon;
+        this.stats = new Stats(otherReward.stats);
+    }
+
+    /**
+     * Generate random stats for the combinaison reward type
+     * @return the stats generated
+     */
+    private Stats generateRandomStats(){
+        Stats reward = new Stats();
+        for (int i = 0; i < 10; i++) {
+            int chosenStat = (int) (Math.random() * 4); // Number in [0, 3]
+
+            switch (chosenStat) {
+                case 0:
+                    reward.hp += 2;
+                    break;
+
+                case 1:
+                    reward.initiative += 2;
+                    break;
+
+                case 2:
+                    reward.attack += 1;
+                    break;
+
+                case 3:
+                    reward.defense += 1;
+                    break;
+
+                default:
+                    break;
+            }
+        }
+		return reward;
+    }
+
+    public void applyReward(){
+        bugemon.changeBaseStats(this.stats);
     }
 
     /**
@@ -18,26 +62,31 @@ public class Reward {
      *
      * @param chosenReward the chosen reward type
      */
-    public void gainStats(RewardType chosenReward) {
-        Stats reward  = new Stats();
+    public void choseType(RewardType chosenReward) {
         switch (chosenReward) {
             case HP:
-                reward.hp = 20;
+                this.stats.hp = 20;
                 break;
+
             case ATTACK:
-                reward.attack = 10;
+                this.stats.attack = 10;
                 break;
+
             case DEFENSE:
-                reward.defense = 10;
+                this.stats.defense = 10;
                 break;
+
             case INITIATIVE:
-                reward.initiative = 20;
+                this.stats.initiative = 20;
                 break;
-            // TO DO: add random combination reward
+            
+            case COMBINATION:
+                this.stats = this.generateRandomStats();
+                break;
+
             default:
                 break;
         }
-        bugemon.changeBaseStats(reward);
     }
 
     /**
@@ -48,5 +97,11 @@ public class Reward {
         int i = rand.nextInt(RewardType.values().length);
         return RewardType.values()[i];
     }
+
+    /**
+     * @return a copy of the stats reward
+     */
+    public Stats getStats(){ return new Stats(this.stats); }   
+    public Bugemon getBugemon() { return this.bugemon; }
 
 }

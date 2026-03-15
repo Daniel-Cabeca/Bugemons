@@ -8,13 +8,6 @@ import ulb.model.type.Type;
 
 public class BugemonTest {
 
-	int getGainedPoint(Stats previous, Stats actual){
-		Stats difference = new Stats(actual);
-		Stats opposite = new Stats(-previous.hp, -previous.attack, -previous.defense, -previous.initiative);
-		difference.change(opposite);
-		return difference.hp / 2 + difference.initiative / 2 + difference.attack + difference.defense;
-	}
-
 	@Test
 	public void xpBelowLevel() {
 		Bugemon B = new Bugemon(Type.AQUA, 10, 29, 35, 16);
@@ -40,24 +33,6 @@ public class BugemonTest {
 		assertEquals(4, B.getLevel());
 		assertEquals(0, B.getXp());
 		assertEquals(3, levelGained);
-	}
-
-	@Test
-	public void rewardSingleLevelGained(){
-		Stats s = new Stats(10,29, 35, 16);
-		Bugemon B = new Bugemon(Type.AQUA, s.hp, s.attack, s.defense, s.initiative);
-		int levelGained = B.gainXp(51);
-		B.gainLevelsReward(levelGained);
-		assertEquals(10, this.getGainedPoint(s, B.getBaseStats()));
-	}
-
-	@Test
-	public void rewardMultiLevelGained(){
-		Stats s = new Stats(10,29, 35, 16);
-		Bugemon B = new Bugemon(Type.AQUA, s.hp, s.attack, s.defense, s.initiative);
-		int levelGained = B.gainXp(300);
-		B.gainLevelsReward(levelGained);
-		assertEquals(30, this.getGainedPoint(s, B.getBaseStats()));
 	}
 
 	@Test

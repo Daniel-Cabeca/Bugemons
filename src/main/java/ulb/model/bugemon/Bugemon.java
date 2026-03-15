@@ -11,8 +11,9 @@ public class Bugemon {
 	private BugemonSpecies species;
 	private Stats baseStats;
 	private Stats fightStats;
-	private int xp;
-	private int level;
+	private int xp = 0;
+	private int level = 1;
+	private int remainingRewards = 0;
 
 	public Bugemon(BugemonSpecies species) {
 		this.species = species;
@@ -27,6 +28,8 @@ public class Bugemon {
 	public Stats getFightStats() { return this.fightStats; }
 	public int getXp() { return this.xp; }
 	public int getLevel() { return this.level; }
+	public int getRemainingReward() { return this.remainingRewards; }
+
 
 	public String getId() { return this.getSpecies().getId(); }
 	public String getName() { return this.getSpecies().getName(); }
@@ -66,45 +69,20 @@ public class Bugemon {
 			this.xp -= (50 + 50 * (this.level - 1));
 			this.level++;
 			gainLevels++;
+			this.remainingRewards++;
 		}
 		return gainLevels; // TO REMOVE : possibilité d'appeler directement gainLevelsReward
 	}
 
 	/**
-	 * Generate the rewards for all the levels gained randomly
-	 * @param levelsGained the number of levels gained
-	 * @return the rewards
+	 * Apply a reward to Base Stats
+	 * @param reward The reward applied
 	 */
-	public Stats gainLevelsReward(int levelsGained) {
-		Stats reward = new Stats();
-		for (int l = 0; l < levelsGained; l++) {
-			for (int i = 0; i < 10; i++) {
-				int chosenStat = (int) (Math.random() * 4); // Number in [0, 3]
-
-				switch (chosenStat) {
-					case 0:
-						reward.hp += 2;
-						break;
-
-					case 1:
-						reward.initiative += 2;
-						break;
-
-					case 2:
-						reward.attack += 1;
-						break;
-
-					case 3:
-						reward.defense += 1;
-						break;
-
-					default:
-						break;
-				}
-			}
+	public void applyLevelReward(Stats reward){
+		if (this.remainingRewards > 0){
+			changeBaseStats(reward);
+			this.remainingRewards++;
 		}
-		this.changeBaseStats(reward);
-		return reward;
 	}
 
 	public boolean equals(Bugemon other){

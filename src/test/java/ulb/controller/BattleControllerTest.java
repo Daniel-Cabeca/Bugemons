@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
+import java.util.Vector;
 
 import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.Stats;
@@ -14,6 +15,7 @@ import ulb.controller.action.UseAbility;
 import ulb.controller.action.UseItem;
 import ulb.model.Effect;
 import ulb.model.item.Item;
+import ulb.model.reward.Reward;
 import ulb.model.sample.AbilitySample;
 import ulb.model.sample.BugemonSample;
 import ulb.model.sample.EffectSample;
@@ -32,6 +34,13 @@ public class BattleControllerTest {
 
 	private void otherPlayerChooseAction(Ability a){
 		otherPlayerController.useAction(new UseAbility(a));
+	}
+
+	private int getGainedPoint(Stats previous, Stats actual){
+		Stats difference = new Stats(actual);
+		Stats opposite = new Stats(-previous.hp, -previous.attack, -previous.defense, -previous.initiative);
+		difference.change(opposite);
+		return difference.hp / 2 + difference.initiative / 2 + difference.attack + difference.defense;
 	}
 
 	@Test
@@ -315,6 +324,25 @@ public class BattleControllerTest {
 
 		assertEquals(a.getId(), controller.getActiveBugemonSelf().getId());
 		assertEquals(controller.getState(), BattleState.INGAME);
+	}
+
+	@Test
+	public void testApplyReward(){
+		Player player = new Player("TestPlayer");
+
+		Bugemon a = BugemonSample.getA();
+
+		Team teamA = new Team(List.of(a));
+		Team teamB = new Team(List.of(BugemonSample.getB()));
+
+		Battle battle = new Battle(teamA, teamB, player);
+		BattleController controller = new BattleController(player, battle, true);
+		
+		a.gainXp(50);
+		Stats previousStats = new Stats(a.getBaseStats());
+		Vector<Reward> rewards = controller.getRewards(a);
+		assertTrue(controller.applyReward(a, rewards.get(0)));
+		assertEquals(10, getGainedPoint(previousStats, a.getBaseStats()));
 	}
 
 }

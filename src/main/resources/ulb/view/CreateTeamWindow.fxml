@@ -21,7 +21,7 @@
 
     <Separator />
 
-    <Label style="-fx-font-size: 20px;" text="Bugémons Disponible:" />
+    <Label style="-fx-font-size: 20px;" text="Bugémons disponibles:" />
 
     <ScrollPane fx:id="availableBugemonsScroll" fitToWidth="true">
       <content>

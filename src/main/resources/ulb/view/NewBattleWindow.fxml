@@ -60,7 +60,7 @@
         </VBox>
         <VBox layoutX="277.0" layoutY="177.0" prefHeight="100.0" prefWidth="100.0" GridPane.columnIndex="1">
             <children>
-                <ProgressBar fx:id="OppentHPBar" prefHeight="20.0" prefWidth="193.0" progress="1.0" />
+                <ProgressBar fx:id="OpponentHPBar" prefHeight="20.0" prefWidth="193.0" progress="1.0" />
                 <Label fx:id="OpponentBugemonLabel" text="Nom+Type" />
                 <Label fx:id="OpponentHPNumber" layoutX="10.0" layoutY="30.0" text="PV: PVActuel/ MaxPV" />
             </children>

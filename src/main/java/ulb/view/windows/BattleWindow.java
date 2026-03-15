@@ -55,7 +55,7 @@ public class BattleWindow extends Window {
 	@FXML
 	private Label PlayerBugemonHPNumber;
 	@FXML
-	private ProgressBar OppentHPBar;
+	private ProgressBar OpponentHPBar;
 	@FXML
 	private Label OpponentBugemonLabel;
 	@FXML
@@ -197,7 +197,7 @@ public class BattleWindow extends Window {
 		OpponentBugemonLabel.setText(opponentBugemon.getName() + " (" + opponentBugemon.getType().name() + ")"
 				+ " Level: " + opponentBugemon.getLevel());
 		OpponentBugemonLabel.setStyle("-fx-text-fill: " + opponentColor + ";");
-		OppentHPBar.setProgress((double) opponentBugemon.getFightStats().getHp() / opponentBugemon.getBaseStats().getHp());
+		OpponentHPBar.setProgress((double) opponentBugemon.getFightStats().getHp() / opponentBugemon.getBaseStats().getHp());
 		OpponentHPNumber.setText("PV: " + opponentBugemon.getHp() + "/" +  opponentBugemon.getBaseStats().hp);
 	}
 

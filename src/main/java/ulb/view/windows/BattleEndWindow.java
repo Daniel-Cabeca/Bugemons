@@ -31,8 +31,8 @@ public class BattleEndWindow extends Window{
 			messageLabel.setText("All enemy Bugemons are KO. You win!");
 			gainXPLabel.setText("Total XP gained: " + totalXP);
 		} else {
-			titleLabel.setText("Defeat");
-			messageLabel.setText("All your Bugemons are KO. You lost!");
+			titleLabel.setText("Défaite");
+			messageLabel.setText("Tous tes Bugemons sont KO. Tu as perdu !");
 		}
 	}
 

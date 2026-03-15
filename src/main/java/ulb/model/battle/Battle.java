@@ -447,8 +447,13 @@ public class Battle {
 		if (isTeamA){
 			switch (this.stateA) {
 				case INGAME:
-					this.actionA = action;
-					setState(BattleState.WAITING, TeamLabel.TEAM_A);
+					if (action instanceof UseItem useItemAction
+							&& useItemAction.getItem().getEffect().getType() == Effect.EffectType.SWITCH) {
+						applyAction(action, TeamLabel.TEAM_A);
+					} else {
+						this.actionA = action;
+						setState(BattleState.WAITING, TeamLabel.TEAM_A);
+					}
 					break;
 
 				case SWAPPING:
@@ -464,8 +469,13 @@ public class Battle {
 		} else {
 			switch (this.stateB) {
 				case INGAME:
-					this.actionB = action;
-					setState(BattleState.WAITING, TeamLabel.TEAM_B);
+					if (action instanceof UseItem useItemAction
+							&& useItemAction.getItem().getEffect().getType() == Effect.EffectType.SWITCH) {
+						applyAction(action, TeamLabel.TEAM_B);
+					} else {
+						this.actionB = action;
+						setState(BattleState.WAITING, TeamLabel.TEAM_B);
+					}
 					break;
 
 				case SWAPPING:

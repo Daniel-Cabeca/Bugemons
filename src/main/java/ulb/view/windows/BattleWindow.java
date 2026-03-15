@@ -215,6 +215,7 @@ public class BattleWindow extends Window {
 			inventoryView.setVisible(true);
 			inventoryView.setManaged(true);
 			displayInventory();
+			updateBackButtonsState();
 		}
 	}
 
@@ -228,6 +229,7 @@ public class BattleWindow extends Window {
 			bugemonsView.setVisible(true);
 			bugemonsView.setManaged(true);
 			displayTeam();
+			updateBackButtonsState();
 		}
 	}
 
@@ -256,6 +258,7 @@ public class BattleWindow extends Window {
 			abilitiesView.setVisible(true);
 			abilitiesView.setManaged(true);
 			displayAbilities();
+			updateBackButtonsState();
 		}
 	}
 
@@ -263,6 +266,10 @@ public class BattleWindow extends Window {
 	 * Handles the Back button click from inventory - returns to battle menu
 	 */
 	public void handleBackToMenu(ActionEvent event) {
+		if (isForcedSwitch()) {
+			updateBackButtonsState();
+		}
+		
 		if (buttonsGrid != null && inventoryView != null) {
 			inventoryView.setVisible(false);
 			inventoryView.setManaged(false);
@@ -272,6 +279,29 @@ public class BattleWindow extends Window {
 			abilitiesView.setManaged(false);
 			buttonsGrid.setVisible(true);
 			buttonsGrid.setManaged(true);
+		}
+
+		updateBackButtonsState();
+	}
+
+	private boolean isForcedSwitch() {
+		return battleController != null && battleController.getState() == BattleState.SWAPPING;
+	}
+
+	private void updateBackButtonsState() {
+		boolean disableBack = isForcedSwitch();
+		setBackButtonDisabled(bugemonsView, disableBack);
+	}
+
+	private void setBackButtonDisabled(VBox view, boolean disabled) {
+		if (view == null) {
+			return;
+		}
+
+		for (Node child : view.getChildren()) {
+			if (child instanceof Button button) {
+				button.setDisable(disabled);
+			}
 		}
 	}
 
@@ -493,7 +523,6 @@ public class BattleWindow extends Window {
 		bugemonsView.setDisable(disabled);
 		abilitiesView.setDisable(disabled);
 	}
-
 
 	private void displayAbilities() {
 		List<Ability> abilities = new ArrayList<>();

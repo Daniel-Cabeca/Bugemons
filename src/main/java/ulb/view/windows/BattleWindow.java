@@ -95,7 +95,7 @@ public class BattleWindow extends Window {
 	private BattleController battleController;
 	private Player player;
 	private boolean automaticMode;
-	private boolean waitingForOpponentAction;
+	private boolean waitingForOpponentAction = false;
 
 
 	public void setBattleController(BattleController battleController) {
@@ -350,6 +350,7 @@ public class BattleWindow extends Window {
 						super.updateItem(bugemon, empty);
 						if (empty || bugemon == null || bugemon.equals(battleController.getActiveBugemonSelf())) {
 							setText(null);
+							setGraphic(null);
 						} else {
 							try {
 								Image image = new Image(getClass().getResourceAsStream(bugemon.getSprite()));
@@ -357,7 +358,7 @@ public class BattleWindow extends Window {
 							} catch (Exception e) {
 								System.err.println("Failed to load bugemon image: " + e.getMessage());
 							}
-							label.setText(bugemon.getName());
+							label.setText(bugemon.isKO() ? bugemon.getName() + " (KO)" : bugemon.getName());
 							button.setDisable(bugemon.isKO());
 							setGraphic(hbox);
 						}
@@ -440,13 +441,17 @@ public class BattleWindow extends Window {
 
 	private void refreshAfterAction(ActionEvent event) {
 		BattleState state = battleController.getState();
+
+		if (state != BattleState.SWAPPING) {
+			handleBackToMenu(event);
+		}
+
 		checkBattleState(state, event);
 		displayNextMessage();
 
 		if (state == BattleState.WAITING) {
 			waitingForOpponentAction(event);
 		}
-
 	}
 
 	private void waitingForOpponentAction(ActionEvent event) {
@@ -455,6 +460,7 @@ public class BattleWindow extends Window {
 		}
 
 		waitingForOpponentAction = true;
+		setBattleInputsDisabled(true);
 		
 		Thread waitingThread = new Thread(() -> {
 			try {
@@ -466,6 +472,7 @@ public class BattleWindow extends Window {
 				}
 			Platform.runLater(() -> {
 				waitingForOpponentAction = false;
+				setBattleInputsDisabled(false);
 				displayNextMessage();
 				checkBattleState(battleController.getState(), event);
 			});
@@ -473,6 +480,18 @@ public class BattleWindow extends Window {
 	
 		waitingThread.setDaemon(true);
 		waitingThread.start();
+	}
+
+	private void setBattleInputsDisabled(boolean disabled) {
+		attackButton.setDisable(disabled || automaticMode);
+		itemButton.setDisable(disabled || automaticMode);
+		runButton.setDisable(disabled || automaticMode);
+		switchButton.setDisable(disabled || automaticMode);
+		autoButton.setDisable(disabled || !automaticMode);
+
+		inventoryView.setDisable(disabled);
+		bugemonsView.setDisable(disabled);
+		abilitiesView.setDisable(disabled);
 	}
 
 

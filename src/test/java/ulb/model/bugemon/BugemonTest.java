@@ -79,4 +79,5 @@ public class BugemonTest {
 		assertEquals(B.getBaseStats().defense, B.getFightStats().defense);
 		assertEquals(B.getBaseStats().initiative, B.getFightStats().initiative);
 	}
+
 }

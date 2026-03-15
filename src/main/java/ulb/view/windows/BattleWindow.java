@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -93,6 +94,9 @@ public class BattleWindow extends Window {
 	private Inventory playerInventory;
 	private BattleController battleController;
 	private Player player;
+	private boolean automaticMode;
+	private boolean waitingForOpponentAction;
+
 
 	public void setBattleController(BattleController battleController) {
 		this.battleController = battleController;
@@ -111,6 +115,7 @@ public class BattleWindow extends Window {
 	public void initializeBattle(Team playerTeam, Team opponentTeam, Inventory playerInventory, boolean automatic) {
 		this.playerTeam = playerTeam;
 		this.playerInventory = playerInventory;
+		this.automaticMode = automatic;
 
 		// disables action buttons for the automatic mode
 		if (automatic) {
@@ -289,10 +294,7 @@ public class BattleWindow extends Window {
 							if (item != null) {
 								UseItem useItem = new UseItem(item);
 								battleController.useAction(useItem);
-								checkBattleState(battleController.getState(), event);
-								// Refresh display
-								displayNextMessage();
-								displayInventory();
+								refreshAfterAction(event);
 							}
 						});
 					}
@@ -338,11 +340,7 @@ public class BattleWindow extends Window {
 							if (bugemon != null) {
 								Swap swap = new Swap(bugemon);
 								battleController.useAction(swap);
-
-								checkBattleState(battleController.getState(), event);
-								// Refresh display
-								displayNextMessage();
-								displayTeam();
+								refreshAfterAction(event);
 							}
 						});
 					}
@@ -385,10 +383,7 @@ public class BattleWindow extends Window {
 							if (ability != null) {
 								UseAbility useAbility = new UseAbility(ability);
 								battleController.useAction(useAbility);
-								checkBattleState(battleController.getState(), event);
-								// Refresh display
-								displayNextMessage();
-								displayTeam();
+								refreshAfterAction(event);
 
 							}
 						});
@@ -440,6 +435,43 @@ public class BattleWindow extends Window {
 				};
 			}
 		});
+	}
+
+	private void refreshAfterAction(ActionEvent event) {
+		BattleState state = battleController.getState();
+		checkBattleState(state, event);
+		displayNextMessage();
+
+		if (state == BattleState.WAITING) {
+			waitingForOpponentAction(event);
+		}
+
+	}
+
+	private void waitingForOpponentAction(ActionEvent event) {
+		if (waitingForOpponentAction) {
+			return;
+		}
+
+		waitingForOpponentAction = true;
+		
+		Thread waitingThread = new Thread(() -> {
+			try {
+				while (battleController.getState() == BattleState.WAITING && !battleController.isGameFinished()) {
+					Thread.sleep(100);
+				}
+			} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+				}
+			Platform.runLater(() -> {
+				waitingForOpponentAction = false;
+				displayNextMessage();
+				checkBattleState(battleController.getState(), event);
+			});
+		});
+	
+		waitingThread.setDaemon(true);
+		waitingThread.start();
 	}
 
 

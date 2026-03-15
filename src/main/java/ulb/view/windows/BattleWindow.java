@@ -358,6 +358,7 @@ public class BattleWindow extends Window {
 								System.err.println("Failed to load bugemon image: " + e.getMessage());
 							}
 							label.setText(bugemon.getName());
+							button.setDisable(bugemon.isKO());
 							setGraphic(hbox);
 						}
 					}

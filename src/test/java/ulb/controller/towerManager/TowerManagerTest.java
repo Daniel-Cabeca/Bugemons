@@ -2,18 +2,28 @@ package ulb.controller.towerManager;
 
 import org.junit.jupiter.api.Test;
 
+import ulb.model.Player;
+import ulb.model.bugemon.Bugemon;
+import ulb.model.sample.BugemonSample;
+import ulb.model.team.Team;
 import ulb.model.tower.Floor;
 import ulb.model.tower.Room;
 import  ulb.model.tower.Tower;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TowerControllerTest {
+public class TowerManagerTest {
 
 
 	@Test
 	void towerIsNotCompletedOnCreation() {
-		TowerManager manager = new TowerManager();
+		Player player = new Player("TestPlayer");
+		Bugemon a = BugemonSample.getA();
+		Team teamA = new Team(List.of(a));
+		player.setTeam(teamA);
+		TowerManager manager = new TowerManager(player);
 
 		assertFalse(manager.isTowerCompleted(), "New tower should not be completed");
 
@@ -24,7 +34,11 @@ public class TowerControllerTest {
 
 	@Test
 	void isTowerCompletedReturnsTrueWhenAllFloorsCompleted() {
-		TowerManager manager = new TowerManager();
+		Player player = new Player("TestPlayer");
+		Bugemon a = BugemonSample.getA();
+		Team teamA = new Team(List.of(a));
+		player.setTeam(teamA);
+		TowerManager manager = new TowerManager(player);
 
 		Tower tower = manager.getTower();
 		// mark all floors as completed
@@ -36,8 +50,12 @@ public class TowerControllerTest {
 
 	@Test
 	void nextFloorAdvancesWhenCurrentFloorCompletedAndTowerNotCompleted() throws Exception {
-		TowerManager manager = new TowerManager();
 
+		Player player = new Player("TestPlayer");
+		Bugemon a = BugemonSample.getA();
+		Team teamA = new Team(List.of(a));
+		player.setTeam(teamA);
+		TowerManager manager = new TowerManager(player);
 		int before = manager.getFloorNumber();
 		FloorManager floorManager = manager.getCurrentFloorManager();
 		Floor currentFloor = floorManager.getFloor();
@@ -60,7 +78,11 @@ public class TowerControllerTest {
 
 	@Test
 	void nextFloorDoesNotAdvanceWhenTowerAlreadyCompleted() throws Exception {
-		TowerManager manager = new TowerManager();
+		Player player = new Player("TestPlayer");
+		Bugemon a = BugemonSample.getA();
+		Team teamA = new Team(List.of(a));
+		player.setTeam(teamA);
+		TowerManager manager = new TowerManager(player);
 		Tower tower = manager.getTower();
 		// mark all floors as completed
 		tower.getFloors().forEach(f -> f.setFloorCompleted(true));

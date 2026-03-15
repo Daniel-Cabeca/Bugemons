@@ -20,5 +20,6 @@
 
     <Button text="Automatic Battle" onAction="#handleAutomaticBattle" prefWidth="200" prefHeight="50"/>
     <Button text="Controlled Battle" onAction="#handleControlledBattle" prefWidth="200" prefHeight="50"/>
+    <Button text="Tower Mode" onAction="#handleTowerBattle" prefWidth="200" prefHeight="50"/>
 
 </VBox>

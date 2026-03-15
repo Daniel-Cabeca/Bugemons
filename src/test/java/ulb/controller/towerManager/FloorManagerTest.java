@@ -1,8 +1,14 @@
 package ulb.controller.towerManager;
 
 import org.junit.jupiter.api.Test;
+import ulb.model.Player;
+import ulb.model.bugemon.Bugemon;
+import ulb.model.sample.BugemonSample;
+import ulb.model.team.Team;
 import ulb.model.tower.Floor;
 import ulb.model.tower.Room;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -10,8 +16,12 @@ public class FloorManagerTest {
 
     @Test
     void floorIsNotCompletedOnCreation() {
+		Player player = new Player("TestPlayer");
         Floor floor = new Floor(1, false);
-        FloorManager manager = new FloorManager(floor);
+		Bugemon a = BugemonSample.getA();
+		Team teamA = new Team(List.of(a));
+		player.setTeam(teamA);
+        FloorManager manager = new FloorManager(floor, player);
 
         assertFalse(manager.isFloorCompleted());
         assertFalse(floor.isFloorCompleted());
@@ -19,8 +29,12 @@ public class FloorManagerTest {
 
     @Test
     void isFloorCompletedReturnsTrueWhenAllRoomsCompleted() {
+		Player player = new Player("TestPlayer");
+		Bugemon a = BugemonSample.getA();
+		Team teamA = new Team(List.of(a));
+		player.setTeam(teamA);
         Floor floor = new Floor(1, false);
-        FloorManager manager = new FloorManager(floor);
+        FloorManager manager = new FloorManager(floor, player);
 
         for (Room room : floor.getRooms()) {
             room.setRoomCompleted(true);
@@ -32,8 +46,12 @@ public class FloorManagerTest {
 
     @Test
     void nextRoomAdvancesWhenCurrentRoomCompletedAndFloorNotCompleted() {
+		Player player = new Player("TestPlayer");
+		Bugemon a = BugemonSample.getA();
+		Team teamA = new Team(List.of(a));
+		player.setTeam(teamA);
         Floor floor = new Floor(1, false);
-        FloorManager manager = new FloorManager(floor);
+        FloorManager manager = new FloorManager(floor, player);
 
         int beforeIndex = manager.getCurrentRoomIndex();
         Room currentRoom = manager.getCurrentRoomManager().getRoom();

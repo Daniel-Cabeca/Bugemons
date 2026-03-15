@@ -10,16 +10,17 @@ public class TowerManager {
 	private int floorNumber;
 	private FloorManager currentFloorManager;
 
-	public TowerManager() {
+	public TowerManager(Player player) {
+		this.player = player;
 		this.tower = new Tower();
 		this.floorNumber = 0;
-		this.currentFloorManager = new FloorManager(tower.getFloors().get(floorNumber));
+		this.currentFloorManager = new FloorManager(tower.getFloors().get(floorNumber), this.player);
 	}
 
 	public void nextFloor(){
 		if (currentFloorManager.isFloorCompleted() && !isTowerCompleted()) {
 			floorNumber++;
-			currentFloorManager = new FloorManager(tower.getFloors().get(floorNumber));
+			currentFloorManager = new FloorManager(tower.getFloors().get(floorNumber), this.player);
 		}
 	}
 
@@ -49,4 +50,8 @@ public class TowerManager {
 	public FloorManager getCurrentFloorManager() {return currentFloorManager;}
 
 	public void setCurrentFloorManager(FloorManager currentFloorManager) {this.currentFloorManager = currentFloorManager;}
+
+	public int getCurrentRoomIndex() {return getCurrentFloorManager().getCurrentRoomIndex();}
+
+	public RoomManager getCurrentRoomManager() {return this.currentFloorManager.getCurrentRoomManager();}
 }

@@ -10,6 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
 import ulb.controller.GameController;
+import ulb.controller.towerManager.TowerManager;
 import ulb.model.battle.BattleState;
 import ulb.model.bugemon.Bugemon;
 import ulb.controller.BattleController;
@@ -44,6 +45,10 @@ public class BattleWindow extends Window {
 	@FXML
 	private ListView<Ability> abilitiesList;
 
+	@FXML
+	private Label floorLabel;
+	@FXML
+	private Label roomLabel;
 	@FXML
 	private ImageView OpponentBugemon;
 	@FXML
@@ -90,6 +95,8 @@ public class BattleWindow extends Window {
 	private Team playerTeam;
 	private Inventory playerInventory;
 	private BattleController battleController;
+	private TowerManager towerManager;
+	private boolean tower;
 	private GameController gameController;
 	private Player player;
 
@@ -99,6 +106,8 @@ public class BattleWindow extends Window {
 
 	public void setPlayer(Player player) { this.player = player; }
 
+	public void setTowerManager(TowerManager towerManager) {this.towerManager = towerManager;}
+
 	/**
 	 * Initializes the battle according to the teams, inventory and battle mode
 	 *
@@ -107,9 +116,11 @@ public class BattleWindow extends Window {
 	 * @param playerInventory the player's inventory
 	 * @param automatic  {@code true} if the battle mode is automatic, {@code false} if the mode is controlled
 	 */
-	public void initializeBattle(Team playerTeam, Team opponentTeam, Inventory playerInventory, boolean automatic) {
+	public void initializeBattle(Team playerTeam, Team opponentTeam, Inventory playerInventory, boolean automatic,
+								 boolean tower) {
 		this.playerTeam = playerTeam;
 		this.playerInventory = playerInventory;
+		this.tower = tower;
 
 		// disables action buttons for the automatic mode
 		if (automatic) {
@@ -122,8 +133,12 @@ public class BattleWindow extends Window {
 		}
 
 		initializeGraphicalBattle();
-
+		if (tower) {
+			floorLabel.setText("Floor: " + towerManager.getFloorNumber());
+			roomLabel.setText("Room: " + towerManager.getCurrentRoomIndex());
+		}
 	}
+
 
 	private void initializeGraphicalBattle() {
 		// Get the active Bugemons (first non-KO Bugemon)
@@ -470,7 +485,11 @@ public class BattleWindow extends Window {
 
 	public void checkBattleEnd(BattleState state, ActionEvent event){
 		if (state == BattleState.WON) {
-			gameController.switchToBattleEndWindow(true, event);
+			if (!this.tower) {
+				gameController.switchToBattleEndWindow(true, event);
+			} else {
+				gameController.switchToNextRoomWindow(event);
+			}
 		} else if (state == BattleState.LOST) {
 			gameController.switchToBattleEndWindow(false, event);
 		}

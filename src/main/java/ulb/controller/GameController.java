@@ -6,12 +6,16 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
 import ulb.controller.strategy.StrategyRandom;
+import ulb.controller.towerManager.FloorManager;
+import ulb.controller.towerManager.RoomManager;
 import ulb.controller.towerManager.TowerManager;
 import ulb.model.Player;
 import ulb.model.battle.Battle;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.team.OpponentTeamGenerator;
 import ulb.model.team.Team;
+import ulb.model.tower.Room;
+import ulb.model.tower.RoomType;
 import ulb.view.windows.BattleEndWindow;
 import ulb.view.windows.BattleMenu;
 import ulb.view.windows.BattleWindow;
@@ -33,10 +37,9 @@ public class GameController {
 		this.towerModeTowerManager = towerManager;
 	}
 
-	public void setPlayer(Player player) {
-		this.player = player;
+	public void setPlayer(Player player) {this.player = player;}
 
-	}
+	public Player getPlayer() {return this.player;}
 
 	public Team getTeam() {return this.player.getTeam();}
 
@@ -62,7 +65,6 @@ public class GameController {
 	 * Setups the right settings for the normal mode
 	 */
 	public void setupNormalMode(){
-		System.out.println(player);
 		Team playerTeam = player.getTeam();
 		Team opponentTeam = new Team();
 		try{
@@ -75,6 +77,13 @@ public class GameController {
 		StrategyRandom strategyRandom = new StrategyRandom(battle);
 		Thread thread = new Thread(strategyRandom);
 		thread.start();
+	}
+
+	/**
+	 * Setups the right settings for the tower mode
+	 */
+	public void setupTowerMode(){
+		TowerManager towerModeTowerManager = new TowerManager(this.getPlayer());
 	}
 
 	/**
@@ -103,9 +112,11 @@ public class GameController {
 	 * Switches to the battle window with the selected bugemons
 	 *
 	 * @param teamA the player's team of bugemons
+	 * @param automatic whether the battle is in automatic mode or not
+	 * @param event the action triggered by clicking the confirm team button
 	 */
 	public void switchToBattleWindow(Team teamA, boolean automatic, ActionEvent event) {
-		// create battle with the selected bugemons for both players
+		// generate random opponent team
 		Team teamB = new Team();
 		try {
 			teamB = OpponentTeamGenerator.generateRandomOpponentTeam(teamA);
@@ -115,7 +126,6 @@ public class GameController {
 		// without multiplayer, player is always teamA
 
 		try {
-			// NewBattleWindow.fxml for graphic interface (connection methods to view needed, placeholders for now)
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/NewBattleWindow.fxml"));
 			Parent battleWindow = loader.load();
 
@@ -127,11 +137,50 @@ public class GameController {
 			controller.setBattleController(normalModeBattleController);
 
 			controller.setPlayer(player);
-			controller.initializeBattle(teamA, teamB, player.getInventory(), automatic);
+			controller.initializeBattle(teamA, teamB, player.getInventory(), automatic, false);
 
 		} catch (IOException e) {
 			System.err.println("Failed to load battle window: " + e.getMessage());
 		}
+	}
+
+	/**
+	 * Switches to the battle window in tower mode with the selected bugemons
+	 *
+	 * @param teamA the player's team of bugemons
+	 * @param event the action triggered by clicking the confirm team button
+	 */
+	public void switchToTowerBattleWindow(Team teamA, ActionEvent event) {
+		// generate random opponent team
+		Team teamB = new Team();
+		try {
+			teamB = OpponentTeamGenerator.generateRandomOpponentTeam(teamA);
+		} catch (Exception e) {
+		}
+
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/NewBattleWindow.fxml"));
+			Parent battleWindow = loader.load();
+
+			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			stage.getScene().setRoot(battleWindow);
+
+			BattleWindow controller = loader.getController();
+			controller.setGameController(this);
+			controller.setTowerManager(towerModeTowerManager);
+
+			controller.setBattleController(towerModeTowerManager.getCurrentRoomManager().getRoomBattleController());
+			controller.setPlayer(player);
+			// always manual battle in tower mode
+			controller.initializeBattle(teamA, teamB, player.getInventory(), false, true);
+
+		} catch (IOException e) {
+			System.err.println("Failed to load battle window: " + e.getMessage());
+		}
+	}
+
+	public void switchToTowerRewardWindow(Team teamA, ActionEvent event) {
+		// TODO
 	}
 
 	/**
@@ -153,6 +202,74 @@ public class GameController {
 
 		} catch (IOException e) {
 			System.err.println("Failed to load battle_end_window: " + e.getMessage());
+		}
+	}
+
+	/**
+	 * Switches to a button to go to the next room when in tower mode
+	 *
+	 * @param event the action triggered by clicking the confirm team button
+	 */
+	public void switchToNextRoomWindow(ActionEvent event) {
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/NextRoomWindow.fxml"));
+			Parent nextRoomWindow = loader.load();
+
+			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			stage.getScene().setRoot(nextRoomWindow);
+
+			ulb.view.windows.NextRoomWindow controller = loader.getController();
+			controller.setGameController(this);
+
+		} catch (IOException e) {
+			System.err.println("Failed to load next_room_window: " + e.getMessage());
+		}
+	}
+
+	/**
+	 * Handles each room when in tower mode: switches to the right window and initializes its content
+	 *
+	 * @param teamA the team that the player chose for the tower mode
+	 * @param event the action triggered by clicking the confirm team button
+	 */
+	public void handleTower(Team teamA, ActionEvent event)  {
+		if (towerModeTowerManager == null) {
+			towerModeTowerManager = new TowerManager(player);
+		}
+
+		if (!towerModeTowerManager.isTowerCompleted()) {
+			FloorManager floorManager = towerModeTowerManager.getCurrentFloorManager();
+
+			if (!floorManager.isFloorCompleted()) {
+				RoomManager roomManager = floorManager.getCurrentRoomManager();
+				Room currentRoom = roomManager.getRoom();
+				RoomType type = currentRoom.getRoomType();
+
+				switch (type) {
+					case BATTLE:
+						switchToTowerBattleWindow(teamA,event);
+						roomManager.initializeRoomContent(type);
+						roomManager.setRoomCompleted(true);
+						break;
+
+					case BOSS:
+						switchToTowerBattleWindow(teamA,event);
+						roomManager.initializeRoomContent(type);
+						roomManager.setRoomCompleted(true);
+						break;
+
+					case REWARD:
+						roomManager.setRoomCompleted(true);
+						break;
+
+					default:
+						roomManager.setRoomCompleted(true);
+						break;
+				}
+
+				floorManager.nextRoom();
+			}
+			towerModeTowerManager.nextFloor();
 		}
 	}
 

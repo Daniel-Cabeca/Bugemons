@@ -23,19 +23,20 @@ public class BattleMenu {
 
 	public void setGameController(GameController gameController) { this.gameController = gameController;}
 
-	public void setupBattle(){
-		gameController.setupNormalMode();
-	}
-
     public void handleAutomaticBattle(ActionEvent actionEvent) {
-		setupBattle();
+		gameController.setupNormalMode();
 		gameController.switchToBattleWindow(gameController.getTeam(), true, actionEvent);
     }
 
     public void handleControlledBattle(ActionEvent actionEvent) {
-		setupBattle();
+		gameController.setupNormalMode();
 		gameController.switchToBattleWindow(gameController.getTeam(), false, actionEvent);
     }
+
+	public void handleTowerBattle(ActionEvent actionEvent) {
+		gameController.setupTowerMode();
+		gameController.handleTower(gameController.getTeam(),actionEvent);
+	}
 
     public void displayTeam() {
         displayTeamWithStats(gameController.getTeam(), playerTeamGrid);

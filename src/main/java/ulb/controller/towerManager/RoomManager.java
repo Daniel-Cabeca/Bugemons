@@ -1,7 +1,10 @@
 package ulb.controller.towerManager;
 import ulb.controller.BattleController;
+import ulb.controller.strategy.StrategyRandom;
 import ulb.model.Player;
 import ulb.model.battle.Battle;
+import ulb.model.team.OpponentTeamGenerator;
+import ulb.model.team.Team;
 import ulb.model.tower.Room;
 import ulb.model.tower.RoomType;
 
@@ -11,9 +14,11 @@ public class RoomManager {
 	private Player player;
 	private Battle battle;
 	private boolean isTeamA;
+	private BattleController roomBattleController;
 
-	public RoomManager(Room room){
+	public RoomManager(Room room, Player player){
 		this.room = room;
+		this.player = player;
 		initializeRoomContent(room.getRoomType());
 	}
 
@@ -41,16 +46,38 @@ public class RoomManager {
 	}
 
 	public void initializeNormalBattleRoom(){
-		// TODO
+		Team playerTeam = player.getTeam();
+		Team opponentTeam = new Team();
+		try{
+			opponentTeam = OpponentTeamGenerator.generateRandomOpponentTeam(playerTeam);
+		}catch(Exception e){
+			System.err.println(e);
+		}
+		Battle battle = new Battle(playerTeam, opponentTeam, player);
+		this.roomBattleController = new BattleController(player, battle, true);
+		StrategyRandom strategyRandom = new StrategyRandom(battle);
+		Thread thread = new Thread(strategyRandom);
+		thread.start();
 	}
 
 
 	public void initializeBosslBattleRoom(){
-		// TODO
+		Team playerTeam = player.getTeam();
+		Team opponentTeam = new Team();
+		try{
+			opponentTeam = OpponentTeamGenerator.generateRandomOpponentTeam(playerTeam);
+		}catch(Exception e){
+			System.err.println(e);
+		}
+		Battle battle = new Battle(playerTeam, opponentTeam, player);
+		this.roomBattleController = new BattleController(player, battle, true);
+		StrategyRandom strategyRandom = new StrategyRandom(battle);
+		Thread thread = new Thread(strategyRandom);
+		thread.start();
 	}
 
 	public void initializeRewardRoom(){
-		// TODO
+		// TODO connecter avec le systeme de rewards
 	}
 
 	public Room getRoom() {return room;}
@@ -68,5 +95,7 @@ public class RoomManager {
 	public boolean isTeamA() {return isTeamA;}
 
 	public void setTeamA(boolean teamA) {isTeamA = teamA;}
+
+	public BattleController getRoomBattleController() {return this.roomBattleController;}
 
 }

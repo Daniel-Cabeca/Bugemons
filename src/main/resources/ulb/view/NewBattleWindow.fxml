@@ -23,6 +23,15 @@
         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
     </rowConstraints>
     <children>
+        <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.valignment="TOP" GridPane.halignment="LEFT">
+            <padding>
+                <javafx.geometry.Insets top="10" left="10"/>
+            </padding>
+            <children>
+                <Label fx:id="floorLabel" text="" style="-fx-font-weight: bold; -fx-font-size: 14px;" />
+                <Label fx:id="roomLabel" text="" style="-fx-font-weight: bold; -fx-font-size: 14px;" />
+            </children>
+        </VBox>
         <Label fx:id="battleLog"
                wrapText="true"
                prefWidth="250.0"

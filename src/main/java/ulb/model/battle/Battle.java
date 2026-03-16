@@ -172,6 +172,7 @@ public class Battle {
 				}
 			}
 		}
+		 
 		return true;
 	}
 
@@ -257,6 +258,9 @@ public class Battle {
 	}
 
 	private void useItem(Item item, TeamLabel team){
+		if (!checkItem(item, team == TeamLabel.TEAM_A)) {
+			return;
+		}
 		List<Bugemon> targets = new ArrayList<>();
 
 		if (item.getTarget().equals(Effect.EffectTarget.ADVERSAIRE)) {
@@ -334,7 +338,7 @@ public class Battle {
 					logMsg.add("Tu as échanger " + switchedBugemon + " avec " +nextBugemon.getName() + " en utilisant " + item.getName() + "!");
 				}
 			} else {
-				Bugemon switchedBugemon = this.activeBugemonA;
+				Bugemon switchedBugemon = this.activeBugemonB;
 				Bugemon nextBugemon = getNextBugemon(this.teamB, this.activeBugemonB);
 				if (nextBugemon != null) {
 					setActiveBugemonB(nextBugemon);

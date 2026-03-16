@@ -10,20 +10,6 @@ import ulb.model.Effect;
 
 import ulb.repository.loader.LoadException;
 
-
-
-
-//TODO remove imports below
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import ulb.model.Effect;
-import ulb.model.Effect.EffectType;
-import ulb.model.item.Item;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-
 public class ItemJsonParser {
 	private final EffectJsonParser effectParser = new EffectJsonParser();
 
@@ -61,51 +47,5 @@ public class ItemJsonParser {
 		}
 
 		return items;
-	}
-
-	/**
-	 * Loads all items from a JSON file
-	 * @param path the path to the JSON file containing the items
-	 * @return a list of loaded Item objects
-	 * @throws IOException if the file cannot be read or the JSON is malformed
-	 * @throws IllegalArgumentException if an item contains an unknown effect type
-	 */
-	public static List<Item> loadItems(String path) throws IOException, IllegalArgumentException {
-		//TODO move to ItemJsonLoader class
-
-		ItemJsonParser itemParser = new ItemJsonParser();
-
-
-
-		ObjectMapper mapper = new ObjectMapper();
-		JsonNode root = mapper.readTree(new File(path));
-
-        JsonNode itemsNode = root.get("objets");
-		List<Item> items = (List<Item>) itemParser.parseList(itemsNode);
-
-		return items;
-	}
-
-
-	/**
-	 * Loads the starting inventory from a JSON file
-	 *
-	 * @param path the path to the JSON file containing the inventory
-	 * @return a map of item id to quantity
-	 * @throws IOException if the file cannot be read or JSON is malformed
-	 */
-	public static Map<String, Integer> loadInventory(String path) throws IOException {
-		//TODO move to ItemJsonLoader class or InventoryLoader class
-
-		Map<String, Integer> inventory = new HashMap<>();
-
-		ObjectMapper mapper = new ObjectMapper();
-		JsonNode root = mapper.readTree(new File(path));
-		JsonNode inventoryNode = root.get("inventaire_depart");
-
-		inventoryNode.fields().forEachRemaining(entry ->
-				inventory.put(entry.getKey(), entry.getValue().asInt()));
-
-		return inventory;
 	}
 }

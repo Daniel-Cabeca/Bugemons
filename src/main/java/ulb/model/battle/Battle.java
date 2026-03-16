@@ -256,11 +256,6 @@ public class Battle {
 	}
 
 	private void useItem(Item item, TeamLabel team){
-
-		if (!checkItem(item, team == TeamLabel.TEAM_A)) {
-			return;
-		}
-
 		List<Bugemon> targets = new ArrayList<>();
 
 		if (item.getTarget().equals(Effect.EffectTarget.ADVERSAIRE)) {

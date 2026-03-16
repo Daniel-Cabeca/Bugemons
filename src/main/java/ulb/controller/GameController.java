@@ -19,10 +19,12 @@ import ulb.model.tower.RoomType;
 import ulb.view.windows.BattleEndWindow;
 import ulb.view.windows.BattleMenu;
 import ulb.view.windows.BattleWindow;
+import ulb.view.windows.FloorRewardWindow;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class GameController {
 	private Player player;
@@ -144,6 +146,7 @@ public class GameController {
 		}
 	}
 
+
 	/**
 	 * Switches to the battle window in tower mode with the selected bugemons
 	 *
@@ -179,8 +182,20 @@ public class GameController {
 		}
 	}
 
-	public void switchToTowerRewardWindow(Team teamA, ActionEvent event) {
-		// TODO
+	public void switchToFloorRewardWindow(Team teamA, ActionEvent event) {
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/FloorRewardWindow.fxml"));
+			Parent floorRewardWindow = loader.load();
+
+			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			stage.getScene().setRoot(floorRewardWindow);
+
+			FloorRewardWindow controller = loader.getController();
+			controller.setGameController(this);
+
+		} catch (IOException e) {
+			System.err.println("Failed to load floor reward window: " + e.getMessage());
+		}
 	}
 
 	/**
@@ -259,6 +274,8 @@ public class GameController {
 						break;
 
 					case REWARD:
+						switchToFloorRewardWindow(teamA,event);
+						roomManager.initializeRewardRoom();
 						roomManager.setRoomCompleted(true);
 						break;
 

@@ -1,22 +1,29 @@
 package ulb.service;
 
-import ulb.repository.loader.LoadException;
-import ulb.repository.BugemonSpeciesRepository;
-import ulb.repository.ItemRepository;
+import ulb.repository.json.AbilityJsonRepository;
 import ulb.repository.json.BugemonSpeciesJsonRepository;
 import ulb.repository.json.ItemJsonRepository;
+import ulb.repository.json.InventoryJsonRepository;
 
 /**
  * Gives access to services.
  * Should eventually be deprecated ; services should be instanciated outside and injected into objects' constructors.
  */
 public abstract class ServiceLoader {
-	private static BugemonSpeciesRepository bugemonRepository = new BugemonSpeciesJsonRepository();
+    private static ItemService itemService;
+	private static BugemonService bugemonService;
 
-	private static ItemRepository itemRepository = new ItemJsonRepository();
-    private static ItemService itemService = new ItemService(itemRepository);
+	static {
+		// loads the services
 
-	private static BugemonService bugemonService = new BugemonService(bugemonRepository);
+		AbilityJsonRepository abilityRepository = new AbilityJsonRepository();
+		BugemonSpeciesJsonRepository bugemonSpeciesRepository = new BugemonSpeciesJsonRepository(abilityRepository);
+		ItemJsonRepository itemRepository = new ItemJsonRepository();
+		InventoryJsonRepository inventoryRepository = new InventoryJsonRepository(itemRepository);
+
+		ServiceLoader.bugemonService = new BugemonService(bugemonSpeciesRepository);
+		ServiceLoader.itemService = new ItemService(itemRepository, inventoryRepository);
+	}
 
 	public static BugemonService getBugemonService() {
 		return bugemonService;

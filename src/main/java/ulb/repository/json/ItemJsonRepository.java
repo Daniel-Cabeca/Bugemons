@@ -1,22 +1,25 @@
 package ulb.repository.json;
 
-import java.util.NoSuchElementException;
+import java.io.InputStream;
+import com.fasterxml.jackson.databind.JsonNode;
+import ulb.repository.loader.json.Json;
+import ulb.repository.loader.json.JsonResources;
+import ulb.repository.loader.json.parser.ItemJsonParser;
+import ulb.repository.loader.json.parser.InventoryJsonParser;
 
 import ulb.repository.ItemRepository;
-import ulb.repository.inmemory.ItemInMemoryRepository;
 import ulb.model.item.Item;
+import ulb.model.item.Inventory;
 
+import java.util.NoSuchElementException;
 import ulb.repository.loader.LoadException;
-import ulb.repository.loader.json.JsonResources;
-import java.io.InputStream;
-import ulb.repository.loader.ItemLoader;
-import ulb.repository.loader.json.ItemJsonLoader;
 
 /**
  * An item repository loaded from a json file.
  */
 public class ItemJsonRepository implements ItemRepository {
-	private final ItemRepository loadedItemRepository;
+	private final IdSet<Item> items = new IdSet<>();
+	private final Inventory startingInventory;
 
 	/**
 	 * Loads a repository from the default json files.
@@ -24,20 +27,38 @@ public class ItemJsonRepository implements ItemRepository {
 	 * @throws LoadException If loading failed
 	 */
 	public ItemJsonRepository() throws LoadException {
-		String path = JsonResources.PATH_ITEMS;
-		InputStream stream = JsonResources.getStream(path);
-		ItemLoader loader = new ItemJsonLoader(stream);
+		this(JsonResources.getStream(JsonResources.PATH_ITEMS));
+	}
 
-		this.loadedItemRepository = new ItemInMemoryRepository(loader.loadAll());
+	/**
+	 * Loads a repository from a stream.
+	 *
+	 * @param stream The input stream
+	 * @throws LoadException If loading failed
+	 */
+	public ItemJsonRepository(InputStream stream) throws LoadException {
+		JsonNode node = Json.getNode(stream);
+		JsonNode itemArray = node.get("objets");
+		JsonNode startingInventoryNode = node.get("inventaire_depart");
+
+		ItemJsonParser itemParser = new ItemJsonParser();
+		for (Item item: itemParser.parseList(itemArray)) {
+			this.items.add(item);
+		}
+
+		InventoryJsonParser inventoryParser = new InventoryJsonParser(this);
+		this.startingInventory = inventoryParser.parseOne(startingInventoryNode);
 	}
 
 	@Override
 	public Item findById(String id) throws NoSuchElementException {
-		return this.loadedItemRepository.findById(id);
+		return this.items.get(id);
 	}
 
 	@Override
 	public Iterable<Item> findAll() {
-		return this.loadedItemRepository.findAll();
+		return this.items;
 	}
+
+	public Inventory getStartingInventory() { return this.startingInventory; }
 }

@@ -134,8 +134,8 @@ public class BattleWindow extends Window {
 
 		initializeGraphicalBattle();
 		if (tower) {
-			floorLabel.setText("Floor: " + towerManager.getFloorNumber());
-			roomLabel.setText("Room: " + towerManager.getCurrentRoomIndex());
+			floorLabel.setText("Etage: NO" + towerManager.getFloorNumber());
+			roomLabel.setText("Salle: " + towerManager.getCurrentRoomIndex());
 		}
 	}
 

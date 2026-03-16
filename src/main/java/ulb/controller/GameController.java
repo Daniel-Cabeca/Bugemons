@@ -31,6 +31,7 @@ public class GameController {
 	private TowerManager towerModeTowerManager;
 	private BattleController normalModeBattleController;
 
+	private boolean isNextFloor;
 
 	public GameController(){
 	}
@@ -115,7 +116,6 @@ public class GameController {
 	 *
 	 * @param teamA the player's team of bugemons
 	 * @param automatic whether the battle is in automatic mode or not
-	 * @param event the action triggered by clicking the confirm team button
 	 */
 	public void switchToBattleWindow(Team teamA, boolean automatic, ActionEvent event) {
 		// generate random opponent team
@@ -151,7 +151,6 @@ public class GameController {
 	 * Switches to the battle window in tower mode with the selected bugemons
 	 *
 	 * @param teamA the player's team of bugemons
-	 * @param event the action triggered by clicking the confirm team button
 	 */
 	public void switchToTowerBattleWindow(Team teamA, ActionEvent event) {
 		// generate random opponent team
@@ -182,6 +181,11 @@ public class GameController {
 		}
 	}
 
+	/**
+	 * Switches to the floor reward window (rewards not functional yet)
+	 *
+	 * @param teamA the player's team of bugemons
+	 */
 	public void switchToFloorRewardWindow(Team teamA, ActionEvent event) {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/FloorRewardWindow.fxml"));
@@ -192,6 +196,8 @@ public class GameController {
 
 			FloorRewardWindow controller = loader.getController();
 			controller.setGameController(this);
+			controller.setTowerManager(towerModeTowerManager);
+			controller.initializeLabels();
 
 		} catch (IOException e) {
 			System.err.println("Failed to load floor reward window: " + e.getMessage());
@@ -235,7 +241,8 @@ public class GameController {
 
 			ulb.view.windows.NextRoomWindow controller = loader.getController();
 			controller.setGameController(this);
-
+			// updates the button to say "Prochain etage" (instead of "Prochaine salle") if the floor is completed
+			controller.updateButtonText(isNextFloor);
 		} catch (IOException e) {
 			System.err.println("Failed to load next_room_window: " + e.getMessage());
 		}
@@ -245,7 +252,6 @@ public class GameController {
 	 * Handles each room when in tower mode: switches to the right window and initializes its content
 	 *
 	 * @param teamA the team that the player chose for the tower mode
-	 * @param event the action triggered by clicking the confirm team button
 	 */
 	public void handleTower(Team teamA, ActionEvent event)  {
 		if (towerModeTowerManager == null) {
@@ -253,6 +259,7 @@ public class GameController {
 		}
 
 		if (!towerModeTowerManager.isTowerCompleted()) {
+			isNextFloor = false;
 			FloorManager floorManager = towerModeTowerManager.getCurrentFloorManager();
 
 			if (!floorManager.isFloorCompleted()) {
@@ -271,11 +278,11 @@ public class GameController {
 						switchToTowerBattleWindow(teamA,event);
 						roomManager.initializeRoomContent(type);
 						roomManager.setRoomCompleted(true);
+						isNextFloor = true;
 						break;
 
 					case REWARD:
-						switchToFloorRewardWindow(teamA,event);
-						roomManager.initializeRewardRoom();
+						switchToFloorRewardWindow(teamA, event);
 						roomManager.setRoomCompleted(true);
 						break;
 
@@ -283,7 +290,6 @@ public class GameController {
 						roomManager.setRoomCompleted(true);
 						break;
 				}
-
 				floorManager.nextRoom();
 			}
 			towerModeTowerManager.nextFloor();

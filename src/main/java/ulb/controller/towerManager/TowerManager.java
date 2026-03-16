@@ -43,7 +43,10 @@ public class TowerManager {
 
 	public void setTower(Tower tower) {this.tower = tower;}
 
-	public int getFloorNumber() {return floorNumber;}
+	public int getFloorNumber() {
+		// + 2 since the floors start at NO2 and not 0
+		return floorNumber+2;
+	}
 
 	public void setFloorNumber(int floorNumber) {this.floorNumber = floorNumber;}
 
@@ -51,7 +54,10 @@ public class TowerManager {
 
 	public void setCurrentFloorManager(FloorManager currentFloorManager) {this.currentFloorManager = currentFloorManager;}
 
-	public int getCurrentRoomIndex() {return getCurrentFloorManager().getCurrentRoomIndex();}
+	public int getCurrentRoomIndex() {
+		// + 1 so the rooms start at 1 and not 0
+		return getCurrentFloorManager().getCurrentRoomIndex()+1;
+	}
 
 	public RoomManager getCurrentRoomManager() {return this.currentFloorManager.getCurrentRoomManager();}
 }

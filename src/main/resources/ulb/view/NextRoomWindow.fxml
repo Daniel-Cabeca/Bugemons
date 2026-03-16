@@ -12,6 +12,6 @@
     </padding>
 
     <Label fx:id="messageLabel" style="-fx-font-size: 14px;"/>
-    <Button onAction="#handleContinue" prefHeight="50" prefWidth="200" text="Prochaine Salle" />
+    <Button fx:id="nextButton" onAction="#handleContinue" prefHeight="50" prefWidth="200" text="Prochaine Salle" />
 
 </VBox>

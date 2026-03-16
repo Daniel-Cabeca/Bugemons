@@ -290,8 +290,13 @@ public class BattleWindow extends Window {
 								UseItem useItem = new UseItem(item);
 								battleController.useAction(useItem);
 								displayNextMessage();
-								checkBattleState(battleController.getState(), event);
-								displayInventory();
+								BattleState stateAfter = battleController.getState();
+								checkBattleState(stateAfter, event);
+								if (stateAfter == BattleState.WAITING || stateAfter == BattleState.INGAME) {
+									handleBackToMenu(event);
+								} else {
+									displayInventory();
+								}
 							}
 						});
 					}
@@ -338,8 +343,13 @@ public class BattleWindow extends Window {
 								Swap swap = new Swap(bugemon);
 								battleController.useAction(swap);
 								displayNextMessage();
-								checkBattleState(battleController.getState(), event);
-								displayTeam();
+								BattleState stateAfter = battleController.getState();
+								checkBattleState(stateAfter, event);
+								if (stateAfter == BattleState.WAITING || stateAfter == BattleState.INGAME) {
+									handleBackToMenu(event);
+								} else {
+									displayTeam();
+								}
 							}
 						});
 					}
@@ -348,7 +358,7 @@ public class BattleWindow extends Window {
 					protected void updateItem(Bugemon bugemon, boolean empty) {
 						super.updateItem(bugemon, empty);
 						if (empty || bugemon == null || bugemon.equals(battleController.getActiveBugemonSelf())) {
-							setText(null);
+							setGraphic(null);
 						} else {
 							try {
 								Image image = new Image(getClass().getResourceAsStream(bugemon.getSprite()));
@@ -356,7 +366,8 @@ public class BattleWindow extends Window {
 							} catch (Exception e) {
 								System.err.println("Failed to load bugemon image: " + e.getMessage());
 							}
-							label.setText(bugemon.getName());
+							label.setText(bugemon.getName() + (bugemon.isKO() ? " [KO]" : ""));
+							button.setDisable(bugemon.isKO());
 							setGraphic(hbox);
 						}
 					}
@@ -383,8 +394,11 @@ public class BattleWindow extends Window {
 								UseAbility useAbility = new UseAbility(ability);
 								battleController.useAction(useAbility);
 								displayNextMessage();
-								checkBattleState(battleController.getState(), event);
-								displayTeam();
+								BattleState stateAfter = battleController.getState();
+								checkBattleState(stateAfter, event);
+								if (stateAfter == BattleState.WAITING || stateAfter == BattleState.INGAME) {
+									handleBackToMenu(event);
+								}
 
 							}
 						});

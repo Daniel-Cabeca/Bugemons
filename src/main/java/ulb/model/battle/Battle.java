@@ -335,14 +335,14 @@ public class Battle {
 				Bugemon nextBugemon = getNextBugemon(this.teamA, this.activeBugemonA);
 				if (nextBugemon != null) {
 					setActiveBugemonA(nextBugemon);
-					logMsg.add("Tu as échanger " + switchedBugemon + " avec " +nextBugemon.getName() + " en utilisant " + item.getName() + "!");
+					logMsg.add("Tu as échangé " + switchedBugemon.getName() + " avec " + nextBugemon.getName() + " en utilisant " + item.getName() + "!");
 				}
 			} else {
 				Bugemon switchedBugemon = this.activeBugemonB;
 				Bugemon nextBugemon = getNextBugemon(this.teamB, this.activeBugemonB);
 				if (nextBugemon != null) {
 					setActiveBugemonB(nextBugemon);
-					logMsg.add("L'adversaire a échangé " + switchedBugemon + " avec " + nextBugemon.getName() + " en utilisant " + item.getName() + "!");
+					logMsg.add("L'adversaire a échangé " + switchedBugemon.getName() + " avec " + nextBugemon.getName() + " en utilisant " + item.getName() + "!");
 				}
 			}
 		}
@@ -469,6 +469,7 @@ public class Battle {
 						setState(BattleState.INGAME, TeamLabel.TEAM_A);
 						setState(BattleState.INGAME, TeamLabel.TEAM_B);
 					}
+					break;
 				default:
 					break;
 			}

@@ -5,15 +5,14 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-
 <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" spacing="20.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ulb.view.windows.FloorRewardWindow">
    <children>
       <Label alignment="CENTER" text="Choisis ta récomponse:" />
-      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
          <children>
-            <Button fx:id="rewardA" mnemonicParsing="false" onAction="#rewardA" prefHeight="60.0" prefWidth="120.0" text="Button" />
-            <Button fx:id="rewardB" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#rewardB" prefHeight="60.0" prefWidth="120.0" text="Button" />
-            <Button fx:id="rewardC" layoutX="70.0" layoutY="10.0" mnemonicParsing="false" onAction="#rewardC" prefHeight="60.0" prefWidth="120.0" text="Button" />
+            <Button fx:id="objectReward" mnemonicParsing="false" onAction="#objectReward" prefHeight="60.0" prefWidth="160.0" text="Objet" />
+            <Button fx:id="newAttackReward" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#newAttackReward" prefHeight="60.0" prefWidth="160.0" text="Nouvelle Attaque" />
+            <Button fx:id="bonusStatReward" layoutX="70.0" layoutY="10.0" mnemonicParsing="false" onAction="#bonusStatReward" prefHeight="60.0" prefWidth="160.0" text="Bonus de statistiques" />
          </children>
       </HBox>
    </children>

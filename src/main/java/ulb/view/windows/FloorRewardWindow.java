@@ -4,18 +4,19 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
 public class FloorRewardWindow {
+	//TODO: implement functions + add popup window to newAttque and BonusStat to select bugemon
 	@FXML
-	private Button rewardA;
+	private Button objectReward;
 	@FXML
-	private Button rewardB;
+	private Button newAttackReward;
 	@FXML
-	private Button rewardC;
+	private Button bonusStatReward;
 
 	@FXML
-	private void rewardA(){}
+	private void objectReward(){}
 	@FXML
-	private void rewardB(){}
+	private void newAttackReward(){}
 	@FXML
-	private void rewardC(){}
+	private void bonusStatReward(){}
 
 }

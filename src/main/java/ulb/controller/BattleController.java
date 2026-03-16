@@ -241,6 +241,14 @@ public class BattleController {
 		return battle.getEffectiveness(ability, getActiveBugemonOpponent());
 	}
 
+	public int getHpAfterFirstActionSelf() {
+		return isTeamA ? battle.getHpAfterFirstActionA() : battle.getHpAfterFirstActionB();
+	}
+
+	public int getHpAfterFirstActionOpponent() {
+		return isTeamA ? battle.getHpAfterFirstActionB() : battle.getHpAfterFirstActionA();
+	}
+
 	public List<String> getLogMsg() {
 		return this.battle.getLogMsg();
 	}

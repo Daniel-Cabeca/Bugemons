@@ -44,6 +44,9 @@ public class Battle {
 	private List<String> logMsg;
 	private List<ActiveEffect> activeEffects;
 
+	private int hpAfterFirstActionA = -1;
+	private int hpAfterFirstActionB = -1;
+
 	public enum TeamLabel {
 		TEAM_A,
 		TEAM_B
@@ -258,9 +261,6 @@ public class Battle {
 	}
 
 	private void useItem(Item item, TeamLabel team){
-		if (!checkItem(item, team == TeamLabel.TEAM_A)) {
-			return;
-		}
 		List<Bugemon> targets = new ArrayList<>();
 
 		if (item.getTarget().equals(Effect.EffectTarget.ADVERSAIRE)) {
@@ -520,6 +520,10 @@ public class Battle {
 			return;
 		}
 
+		hpAfterFirstActionA = activeBugemonA.getHp();
+		hpAfterFirstActionB = activeBugemonB.getHp();
+		logMsg.add(null); // separator between first and second action messages
+
 		TeamLabel secondPlayer = TeamLabel.TEAM_A;
 		currentAction = this.actionA;
 		if (firstPlayer == TeamLabel.TEAM_A){
@@ -669,6 +673,9 @@ public class Battle {
 		}
 		return false;
 	}
+
+	public int getHpAfterFirstActionA() { return hpAfterFirstActionA; }
+	public int getHpAfterFirstActionB() { return hpAfterFirstActionB; }
 
 	public List<String> getLogMsg() {
 		return logMsg;

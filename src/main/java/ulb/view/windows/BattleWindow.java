@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -289,14 +290,15 @@ public class BattleWindow extends Window {
 							if (item != null) {
 								UseItem useItem = new UseItem(item);
 								battleController.useAction(useItem);
-								displayNextMessage();
 								BattleState stateAfter = battleController.getState();
-								checkBattleState(stateAfter, event);
-								if (stateAfter == BattleState.WAITING || stateAfter == BattleState.INGAME) {
-									handleBackToMenu(event);
-								} else {
-									displayInventory();
-								}
+								displayMessagesSequentially(() -> {
+									checkBattleState(stateAfter, event);
+									if (stateAfter == BattleState.WAITING || stateAfter == BattleState.INGAME) {
+										handleBackToMenu(event);
+									} else {
+										displayInventory();
+									}
+								});
 							}
 						});
 					}
@@ -342,14 +344,15 @@ public class BattleWindow extends Window {
 							if (bugemon != null) {
 								Swap swap = new Swap(bugemon);
 								battleController.useAction(swap);
-								displayNextMessage();
 								BattleState stateAfter = battleController.getState();
-								checkBattleState(stateAfter, event);
-								if (stateAfter == BattleState.WAITING || stateAfter == BattleState.INGAME) {
-									handleBackToMenu(event);
-								} else {
-									displayTeam();
-								}
+								displayMessagesSequentially(() -> {
+									checkBattleState(stateAfter, event);
+									if (stateAfter == BattleState.WAITING || stateAfter == BattleState.INGAME) {
+										handleBackToMenu(event);
+									} else {
+										displayTeam();
+									}
+								});
 							}
 						});
 					}
@@ -393,13 +396,13 @@ public class BattleWindow extends Window {
 							if (ability != null) {
 								UseAbility useAbility = new UseAbility(ability);
 								battleController.useAction(useAbility);
-								displayNextMessage();
 								BattleState stateAfter = battleController.getState();
-								checkBattleState(stateAfter, event);
-								if (stateAfter == BattleState.WAITING || stateAfter == BattleState.INGAME) {
-									handleBackToMenu(event);
-								}
-
+								displayMessagesSequentially(() -> {
+									checkBattleState(stateAfter, event);
+									if (stateAfter == BattleState.WAITING || stateAfter == BattleState.INGAME) {
+										handleBackToMenu(event);
+									}
+								});
 							}
 						});
 					}
@@ -505,19 +508,62 @@ public class BattleWindow extends Window {
 
 
 	/**
-	 * Displays the messages describing the actions of the current turn and updates the view
+	 * Displays the messages describing the actions of the current turn and updates the view.
+	 * Used by auto mode which doesn't need sequential delays.
 	 */
 	public void displayNextMessage() {
-
 		List<String> logs = battleController.getLogMsg();
 		if (logs != null && !logs.isEmpty()) {
-			String allMessages = String.join("\n", logs);
+			String allMessages = String.join("\n", logs.stream().filter(m -> m != null).collect(java.util.stream.Collectors.toList()));
 			battleLog.setText(allMessages);
 			battleController.clearLogMsg();
 		} else {
 			battleLog.setText("");
 		}
 		initializeGraphicalBattle();
+	}
+
+	private void displayMessagesSequentially(Runnable onComplete) {
+		List<String> logs = new java.util.ArrayList<>(battleController.getLogMsg());
+		battleController.clearLogMsg();
+
+		if (logs.isEmpty()) {
+			initializeGraphicalBattle();
+			onComplete.run();
+			return;
+		}
+
+		// null is used as a separator between the two actions of a round
+		int sep = logs.indexOf(null);
+		if (sep < 0) {
+			battleLog.setText(String.join("\n", logs));
+			initializeGraphicalBattle();
+			onComplete.run();
+			return;
+		}
+
+		battleLog.setText(String.join("\n", logs.subList(0, sep)));
+		updateHPDisplay(battleController.getHpAfterFirstActionSelf(), battleController.getHpAfterFirstActionOpponent());
+
+		PauseTransition pause = new PauseTransition(javafx.util.Duration.seconds(1));
+		pause.setOnFinished(e -> {
+			List<String> second = logs.subList(sep + 1, logs.size());
+			if (!second.isEmpty()) {
+				battleLog.setText(String.join("\n", second));
+				initializeGraphicalBattle();
+			}
+			onComplete.run();
+		});
+		pause.play();
+	}
+
+	private void updateHPDisplay(int selfHp, int opponentHp) {
+		Bugemon self = battleController.getActiveBugemonSelf();
+		Bugemon opponent = battleController.getActiveBugemonOpponent();
+		PlayerBugemonHPBar.setProgress((double) selfHp / self.getBaseStats().getHp());
+		PlayerBugemonHPNumber.setText("PV: " + selfHp + "/" + self.getBaseStats().hp);
+		OppentHPBar.setProgress((double) opponentHp / opponent.getBaseStats().getHp());
+		OpponentHPNumber.setText("PV: " + opponentHp + "/" + opponent.getBaseStats().hp);
 	}
 
 

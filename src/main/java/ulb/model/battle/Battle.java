@@ -8,7 +8,7 @@ import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.Stats;
 import ulb.model.item.Item;
 import ulb.model.Effect;
-import ulb.controller.action.*;
+import ulb.controller.action.*; 
 
 import java.util.ArrayList;
 import java.util.List;
@@ -170,6 +170,7 @@ public class Battle {
 				}
 			}
 		}
+
 		return true;
 	}
 
@@ -207,9 +208,8 @@ public class Battle {
 	 * @param ability the ability whose type effectiveness is evaluated
 	 * @return the effectiveness message (or null if the effectiveness is normal)
 	 */
-	public String getEffectiveness(Ability ability, Bugemon bugemon) {
-		Bugemon opponent = bugemon;
-		float factor = Effectiveness.getFactor(ability.getType(), opponent.getType());
+	public String getEffectiveness(Ability ability, Bugemon opponent) {
+        float factor = Effectiveness.getFactor(ability.getType(), opponent.getType());
 		String message;
 		if (factor > 1) {
 			message = "Super efficace!";
@@ -250,10 +250,9 @@ public class Battle {
 				abilityDamage + " PV!");
 
 		String effectiveness = getEffectiveness(ability, defensive);
-		if (effectiveness == null) {
-			effectiveness = "";
+		if (effectiveness != null) {
+			logMsg.add(effectiveness);
 		}
-		logMsg.add(effectiveness);
 	}
 
 	private void useItem(Item item, TeamLabel team){
@@ -331,10 +330,10 @@ public class Battle {
 				Bugemon nextBugemon = getNextBugemon(this.teamA, this.activeBugemonA);
 				if (nextBugemon != null) {
 					setActiveBugemonA(nextBugemon);
-					logMsg.add("Tu as échanger " + switchedBugemon + " avec " +nextBugemon.getName() + " en utilisant " + item.getName() + "!");
+					logMsg.add("Tu as échangé " + switchedBugemon.getName() + " avec " + nextBugemon.getName() + " en utilisant " + item.getName() + "!");
 				}
 			} else {
-				Bugemon switchedBugemon = this.activeBugemonA;
+				Bugemon switchedBugemon = this.activeBugemonB;
 				Bugemon nextBugemon = getNextBugemon(this.teamB, this.activeBugemonB);
 				if (nextBugemon != null) {
 					setActiveBugemonB(nextBugemon);
@@ -449,25 +448,37 @@ public class Battle {
 		if (isTeamA){
 			switch (this.stateA) {
 				case INGAME:
-					this.actionA = action;
-					setState(BattleState.WAITING, TeamLabel.TEAM_A);
+					if (action instanceof UseItem useItemAction
+							&& useItemAction.getItem().getEffect().getType() == Effect.EffectType.SWITCH) {
+						applyAction(action, TeamLabel.TEAM_A);
+					} else {
+						this.actionA = action;
+						setState(BattleState.WAITING, TeamLabel.TEAM_A);
+					}
 					break;
 
 				case SWAPPING:
 					this.actionA = action;
 					if (action instanceof Swap){
-						applyAction(action, TeamLabel.TEAM_A);
-						setState(BattleState.INGAME, TeamLabel.TEAM_A);
-						setState(BattleState.INGAME, TeamLabel.TEAM_B);
+						if (applyAction(action, TeamLabel.TEAM_A)){
+							setState(BattleState.INGAME, TeamLabel.TEAM_A);
+							setState(BattleState.INGAME, TeamLabel.TEAM_B);
+						}
 					}
+					break;
 				default:
 					break;
 			}
 		} else {
 			switch (this.stateB) {
 				case INGAME:
-					this.actionB = action;
-					setState(BattleState.WAITING, TeamLabel.TEAM_B);
+					if (action instanceof UseItem useItemAction
+							&& useItemAction.getItem().getEffect().getType() == Effect.EffectType.SWITCH) {
+						applyAction(action, TeamLabel.TEAM_B);
+					} else {
+						this.actionB = action;
+						setState(BattleState.WAITING, TeamLabel.TEAM_B);
+					}
 					break;
 
 				case SWAPPING:
@@ -594,7 +605,7 @@ public class Battle {
 		this.resetAllFightStats();
 	}
 
-	private int computeTotalXP(Team losers){
+	public int computeTotalXP(Team losers){
 		int boss_multiplicator = 1;
 		if (isBossBattle){
 			boss_multiplicator = 2;
@@ -616,6 +627,8 @@ public class Battle {
 		}
 		return availablBugemons;
 	}
+
+ 
 
 	public boolean isGameFinished(){
 		return this.gameFinished;

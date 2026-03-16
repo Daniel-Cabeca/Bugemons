@@ -3,7 +3,7 @@ package ulb.repository.inmemory;
 import java.util.NoSuchElementException;
 
 import ulb.repository.AbilityRepository;
-import ulb.model.ability.Ability;
+import ulb.model.ability.Ability;import ulb.repository.json.IdSet;
 
 public class AbilityInMemoryRepository implements AbilityRepository {
 	private final IdSet<Ability> abilities = new IdSet<>();

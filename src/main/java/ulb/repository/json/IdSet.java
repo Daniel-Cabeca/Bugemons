@@ -1,4 +1,4 @@
-package ulb.repository.inmemory;
+package ulb.repository.json;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -11,7 +11,7 @@ import ulb.model.HasId;
  * Container for objects with a String id field for fast lookup.
  * Is not ordered. Entries are unique.
  */
-class IdSet<T extends HasId> implements Iterable<T> {
+public class IdSet<T extends HasId> implements Iterable<T> {
 	private final Map<String, T> entries = new HashMap<>();
 
 	/**

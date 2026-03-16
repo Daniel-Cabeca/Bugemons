@@ -1,4 +1,4 @@
-package ulb.repository.inmemory;
+package ulb.repository.json;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;

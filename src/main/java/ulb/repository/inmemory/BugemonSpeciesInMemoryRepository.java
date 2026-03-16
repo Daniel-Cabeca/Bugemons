@@ -3,7 +3,7 @@ package ulb.repository.inmemory;
 import java.util.NoSuchElementException;
 
 import ulb.repository.BugemonSpeciesRepository;
-import ulb.model.bugemon.BugemonSpecies;
+import ulb.model.bugemon.BugemonSpecies;import ulb.repository.json.IdSet;
 
 public class BugemonSpeciesInMemoryRepository implements BugemonSpeciesRepository {
 	private final IdSet<BugemonSpecies> species = new IdSet<>();

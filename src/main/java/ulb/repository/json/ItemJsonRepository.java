@@ -2,17 +2,15 @@ package ulb.repository.json;
 
 import java.io.InputStream;
 import com.fasterxml.jackson.databind.JsonNode;
-import ulb.repository.loader.json.Json;
-import ulb.repository.loader.json.JsonResources;
-import ulb.repository.loader.json.parser.ItemJsonParser;
-import ulb.repository.loader.json.parser.InventoryJsonParser;
+import ulb.repository.json.parser.ItemJsonParser;
+import ulb.repository.json.parser.InventoryJsonParser;
 
 import ulb.repository.ItemRepository;
 import ulb.model.item.Item;
 import ulb.model.item.Inventory;
 
 import java.util.NoSuchElementException;
-import ulb.repository.loader.LoadException;
+import ulb.repository.LoadException;
 
 /**
  * An item repository loaded from a json file.

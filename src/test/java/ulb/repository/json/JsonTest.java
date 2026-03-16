@@ -1,11 +1,11 @@
-package ulb.repository.loader.json;
+package ulb.repository.json;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import ulb.repository.loader.LoadException;
+import ulb.repository.LoadException;
 
 public class JsonTest {
 	@Test

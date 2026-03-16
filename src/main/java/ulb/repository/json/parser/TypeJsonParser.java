@@ -1,9 +1,9 @@
-package ulb.repository.loader.json.parser;
+package ulb.repository.json.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
 import ulb.model.type.Type;
-import ulb.repository.loader.LoadException;
+import ulb.repository.LoadException;
 
 public class TypeJsonParser {
 	public Type parseOne(JsonNode node) throws LoadException {

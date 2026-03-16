@@ -1,4 +1,4 @@
-package ulb.repository.loader.json.parser;
+package ulb.repository.json.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.NoSuchElementException;
@@ -7,7 +7,7 @@ import ulb.model.ability.Ability;
 import ulb.model.ability.AbilitySet;
 
 import ulb.repository.AbilityRepository;
-import ulb.repository.loader.LoadException;
+import ulb.repository.LoadException;
 
 public class AbilitySetJsonParser {
 	private AbilityRepository abilityRepository;

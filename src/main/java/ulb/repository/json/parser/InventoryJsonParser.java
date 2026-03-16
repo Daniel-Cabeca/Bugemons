@@ -1,4 +1,4 @@
-package ulb.repository.loader.json.parser;
+package ulb.repository.json.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.Map;
@@ -9,7 +9,7 @@ import ulb.model.item.Inventory;
 
 import ulb.repository.ItemRepository;
 
-import ulb.repository.loader.LoadException;
+import ulb.repository.LoadException;
 import java.util.NoSuchElementException;
 
 /**

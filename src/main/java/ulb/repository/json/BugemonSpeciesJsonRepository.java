@@ -2,15 +2,13 @@ package ulb.repository.json;
 
 import java.io.InputStream;
 import com.fasterxml.jackson.databind.JsonNode;
-import ulb.repository.loader.json.Json;
-import ulb.repository.loader.json.JsonResources;
-import ulb.repository.loader.json.parser.BugemonSpeciesJsonParser;
+import ulb.repository.json.parser.BugemonSpeciesJsonParser;
 
 import ulb.model.bugemon.BugemonSpecies;
 import ulb.repository.BugemonSpeciesRepository;
 
 import java.util.NoSuchElementException;
-import ulb.repository.loader.LoadException;
+import ulb.repository.LoadException;
 
 import ulb.repository.AbilityRepository;
 

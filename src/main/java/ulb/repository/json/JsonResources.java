@@ -1,10 +1,10 @@
-package ulb.repository.loader.json;
+package ulb.repository.json;
 
 import java.net.URL;
 import java.io.InputStream;
 import java.io.IOException;
 
-import ulb.repository.loader.LoadException;
+import ulb.repository.LoadException;
 
 /**
  * Gives access to the default json resource files.

@@ -2,15 +2,13 @@ package ulb.repository.json;
 
 import java.io.InputStream;
 import com.fasterxml.jackson.databind.JsonNode;
-import ulb.repository.loader.json.Json;
-import ulb.repository.loader.json.JsonResources;
-import ulb.repository.loader.json.parser.AbilityJsonParser;
+import ulb.repository.json.parser.AbilityJsonParser;
 
 import ulb.repository.AbilityRepository;
 import ulb.model.ability.Ability;
 
 import java.util.NoSuchElementException;
-import ulb.repository.loader.LoadException;
+import ulb.repository.LoadException;
 
 /**
  * An ability repository loaded from a json file.

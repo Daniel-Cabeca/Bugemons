@@ -1,17 +1,16 @@
-package ulb.repository.loader.json.parser;
+package ulb.repository.json.parser;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import ulb.repository.loader.json.Json;
+import ulb.repository.json.Json;
 
-import ulb.model.ability.Ability;
 import ulb.model.ability.AbilitySet;
 
 import ulb.repository.AbilityRepository;
 import ulb.repository.mock.AbilityMockRepository;
-import ulb.repository.loader.LoadException;
+import ulb.repository.LoadException;
 
 public class AbilitySetJsonParserTest {
 	public static AbilitySet getFromString(String str) {

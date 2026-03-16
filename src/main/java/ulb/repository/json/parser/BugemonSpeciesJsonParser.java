@@ -1,4 +1,4 @@
-package ulb.repository.loader.json.parser;
+package ulb.repository.json.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.List;
@@ -7,11 +7,10 @@ import java.util.ArrayList;
 import ulb.model.bugemon.BugemonSpecies;
 import ulb.model.bugemon.Stats;
 import ulb.model.type.Type;
-import ulb.model.ability.Ability;
 import ulb.model.ability.AbilitySet;
 
 import ulb.repository.AbilityRepository;
-import ulb.repository.loader.LoadException;
+import ulb.repository.LoadException;
 
 /**
  * Parser for Bugemon species

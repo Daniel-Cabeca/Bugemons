@@ -1,4 +1,4 @@
-package ulb.repository.loader.json;
+package ulb.repository.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.ByteArrayInputStream;
 import java.net.URL;
 
-import ulb.repository.loader.LoadException;
+import ulb.repository.LoadException;
 
 /**
  * Utility class for parsing json inputs into json nodes.

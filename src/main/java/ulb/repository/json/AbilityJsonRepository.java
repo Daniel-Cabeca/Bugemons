@@ -1,22 +1,22 @@
 package ulb.repository.json;
 
-import java.util.NoSuchElementException;
+import java.io.InputStream;
+import com.fasterxml.jackson.databind.JsonNode;
+import ulb.repository.loader.json.Json;
+import ulb.repository.loader.json.JsonResources;
+import ulb.repository.loader.json.parser.AbilityJsonParser;
 
 import ulb.repository.AbilityRepository;
-import ulb.repository.inmemory.AbilityInMemoryRepository;
 import ulb.model.ability.Ability;
 
+import java.util.NoSuchElementException;
 import ulb.repository.loader.LoadException;
-import ulb.repository.loader.json.JsonResources;
-import java.io.InputStream;
-import ulb.repository.loader.AbilityLoader;
-import ulb.repository.loader.json.AbilityJsonLoader;
 
 /**
  * An ability repository loaded from a json file.
  */
 public class AbilityJsonRepository implements AbilityRepository {
-	private final AbilityRepository loadedAbilityRepository;
+	private final IdSet<Ability> abilities = new IdSet<>();
 
 	/**
 	 * Loads a repository from the default json files.
@@ -24,15 +24,28 @@ public class AbilityJsonRepository implements AbilityRepository {
 	 * @throws LoadException If loading failed
 	 */
 	public AbilityJsonRepository() throws LoadException {
-		String path = JsonResources.PATH_ABILITIES;
-		InputStream stream = JsonResources.getStream(path);
-		AbilityLoader loader = new AbilityJsonLoader(stream);
+		this(JsonResources.getStream(JsonResources.PATH_ABILITIES));
+	}
 
-		this.loadedAbilityRepository = new AbilityInMemoryRepository(loader.loadAll());
+	/**
+	 * Loads a repository from a stream.
+	 *
+	 * @param stream The input stream
+	 * @throws LoadException If loading failed
+	 */
+	public AbilityJsonRepository(InputStream stream) throws LoadException {
+		JsonNode node = Json.getNode(stream);
+		JsonNode abilityArray = node.get("attaques");
+
+		AbilityJsonParser abilityParser = new AbilityJsonParser();
+
+		for (Ability ability: abilityParser.parseList(abilityArray)) {
+			this.abilities.add(ability);
+		}
 	}
 
 	@Override
 	public Ability findById(String id) throws NoSuchElementException {
-		return this.loadedAbilityRepository.findById(id);
+		return this.abilities.get(id);
 	}
 }

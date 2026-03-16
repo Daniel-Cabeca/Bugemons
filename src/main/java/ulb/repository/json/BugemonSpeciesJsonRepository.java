@@ -1,23 +1,24 @@
 package ulb.repository.json;
 
-import java.util.NoSuchElementException;
-
-import ulb.repository.BugemonSpeciesRepository;
-import ulb.repository.inmemory.BugemonSpeciesInMemoryRepository;
-import ulb.model.bugemon.BugemonSpecies;
-import ulb.repository.AbilityRepository;
-
-import ulb.repository.loader.LoadException;
-import ulb.repository.loader.json.JsonResources;
 import java.io.InputStream;
-import ulb.repository.loader.BugemonSpeciesLoader;
-import ulb.repository.loader.json.BugemonSpeciesJsonLoader;
+import com.fasterxml.jackson.databind.JsonNode;
+import ulb.repository.loader.json.Json;
+import ulb.repository.loader.json.JsonResources;
+import ulb.repository.loader.json.parser.BugemonSpeciesJsonParser;
+
+import ulb.model.bugemon.BugemonSpecies;
+import ulb.repository.BugemonSpeciesRepository;
+
+import java.util.NoSuchElementException;
+import ulb.repository.loader.LoadException;
+
+import ulb.repository.AbilityRepository;
 
 /**
  * A Bugemon species repository loaded from a json file.
  */
 public class BugemonSpeciesJsonRepository implements BugemonSpeciesRepository {
-	private final BugemonSpeciesRepository loadedSpeciesRepository;
+	private final IdSet<BugemonSpecies> entries = new IdSet<>();
 
 	/**
 	 * Loads a repository from the default json files.
@@ -26,11 +27,28 @@ public class BugemonSpeciesJsonRepository implements BugemonSpeciesRepository {
 	 * @throws LoadException If loading failed
 	 */
 	public BugemonSpeciesJsonRepository(AbilityRepository abilityRepository) throws LoadException {
-		String path = JsonResources.PATH_BUGEMON_SPECIES;
-		InputStream stream = JsonResources.getStream(path);
-		BugemonSpeciesLoader loader = new BugemonSpeciesJsonLoader(stream, abilityRepository);
+		this(
+			JsonResources.getStream(JsonResources.PATH_BUGEMON_SPECIES),
+			abilityRepository
+		);
+	}
 
-		this.loadedSpeciesRepository = new BugemonSpeciesInMemoryRepository(loader.loadAll());
+	/**
+	 * Loads a repository from a stream.
+	 *
+	 * @param stream The input stream
+	 * @param abilityRepository The repository to use for abilities
+	 * @throws LoadException If loading failed
+	 */
+	public BugemonSpeciesJsonRepository(InputStream stream, AbilityRepository abilityRepository) throws LoadException {
+		JsonNode node = Json.getNode(stream);
+		JsonNode bugemonArray = node.get("bugemons");
+
+		BugemonSpeciesJsonParser bugemonParser = new BugemonSpeciesJsonParser(abilityRepository);
+
+		for (BugemonSpecies entry: bugemonParser.parseList(bugemonArray)) {
+			this.entries.add(entry);
+		}
 	}
 
 	/**
@@ -44,11 +62,11 @@ public class BugemonSpeciesJsonRepository implements BugemonSpeciesRepository {
 
 	@Override
 	public BugemonSpecies findById(String id) throws NoSuchElementException {
-		return this.loadedSpeciesRepository.findById(id);
+		return this.entries.get(id);
 	}
 
 	@Override
 	public Iterable<BugemonSpecies> findAll() {
-		return this.loadedSpeciesRepository.findAll();
+		return this.entries;
 	}
 }

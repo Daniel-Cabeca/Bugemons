@@ -325,7 +325,7 @@ public class Battle {
 				&& item.getEffect().getType() == Effect.EffectType.STAT_MODIFIER) {
 			Stats delta = item.getEffect().buildStatsChange();
 			for (Bugemon target : targets) {
-				activeEffects.add(new ActiveEffect(target, delta, 1));
+				activeEffects.add(new ActiveEffect(target, delta, 1, item.getName()));
 			}
 		}
 
@@ -505,6 +505,8 @@ public class Battle {
 	}
 
 	private void handleRound(){
+		hpAfterFirstActionA = -1;
+		hpAfterFirstActionB = -1;
 		Action currentAction = this.actionA;
 		TeamLabel firstPlayer = this.checkInitiave();
 		if (firstPlayer == TeamLabel.TEAM_B){
@@ -554,6 +556,7 @@ public class Battle {
 			if (ae.ttl <= 0) {
 				Stats revert = new Stats(-ae.delta.hp, -ae.delta.attack, -ae.delta.defense, -ae.delta.initiative);
 				ae.target.changeFightStats(revert);
+				logMsg.add("L'effet de " + ae.itemName + " sur " + ae.target.getName() + " s'est dissipé!");
 				expired.add(ae);
 			}
 		}
@@ -574,7 +577,19 @@ public class Battle {
 					setState(BattleState.WON, TeamLabel.TEAM_A);
 					this.gameFinished = true;
 				} else if (this.isBugemonBKO()){
-					setState(BattleState.SWAPPING, TeamLabel.TEAM_B);
+					logMsg.add(activeBugemonB.getName() + " est KO!");
+					if (hpAfterFirstActionA == -1) {
+						hpAfterFirstActionA = activeBugemonA.getHp();
+						hpAfterFirstActionB = 0;
+					}
+					logMsg.add(null);
+					Bugemon nextB = getNextBugemon(teamB, activeBugemonB);
+					if (nextB != null) {
+						setActiveBugemonB(nextB);
+						logMsg.add("L'adversaire a envoyé " + nextB.getName() + "!");
+					}
+					setState(BattleState.INGAME, TeamLabel.TEAM_A);
+					setState(BattleState.INGAME, TeamLabel.TEAM_B);
 				} else {
 					return false;
 				}

@@ -547,7 +547,10 @@ public class BattleWindow extends Window {
 
 		PauseTransition pause = new PauseTransition(javafx.util.Duration.seconds(1));
 		pause.setOnFinished(e -> {
-			List<String> second = logs.subList(sep + 1, logs.size());
+			List<String> second = new java.util.ArrayList<>();
+			for (String msg : logs.subList(sep + 1, logs.size())) {
+				if (msg != null) second.add(msg);
+			}
 			if (!second.isEmpty()) {
 				battleLog.setText(String.join("\n", second));
 				initializeGraphicalBattle();

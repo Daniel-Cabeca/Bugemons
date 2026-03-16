@@ -21,7 +21,7 @@ public class RoomManagerTest {
 		Team teamA = new Team(List.of(a));
 		player.setTeam(teamA);
         Room room = new Room(1, RoomType.BATTLE);
-        RoomManager manager = new RoomManager(room, player);
+        RoomManager manager = new RoomManager(room, 1, player);
 
         assertFalse(manager.isRoomCompleted());
         assertFalse(room.isRoomCompleted());
@@ -34,7 +34,7 @@ public class RoomManagerTest {
 		Team teamA = new Team(List.of(a));
 		player.setTeam(teamA);
         Room room = new Room(1, RoomType.REWARD);
-        RoomManager manager = new RoomManager(room, player);
+        RoomManager manager = new RoomManager(room, 1, player);
 
         manager.setRoomCompleted(true);
 
@@ -50,7 +50,7 @@ public class RoomManagerTest {
 		player.setTeam(team);
 
 		Room room = new Room(1, RoomType.BATTLE);
-		RoomManager manager = new RoomManager(room, player);
+		RoomManager manager = new RoomManager(room, 1, player);
 
 		assertNotNull(manager.getRoomBattleController(),
 				"Battle controller should be initialized for a BATTLE room");

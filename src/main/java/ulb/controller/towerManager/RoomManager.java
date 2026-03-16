@@ -11,13 +11,15 @@ import ulb.model.tower.RoomType;
 
 public class RoomManager {
 	private Room room;
+	private final int floorNumber;
 	private Player player;
 	private Battle battle;
 	private boolean isTeamA;
 	private BattleController roomBattleController;
 
-	public RoomManager(Room room, Player player){
+	public RoomManager(Room room, int floorNumber, Player player){
 		this.room = room;
+		this.floorNumber = floorNumber;
 		this.player = player;
 		initializeRoomContent(room.getRoomType());
 	}
@@ -54,6 +56,7 @@ public class RoomManager {
 			System.err.println(e);
 		}
 		Battle battle = new Battle(playerTeam, opponentTeam, player);
+		battle.setFloorNumber(floorNumber);
 		this.roomBattleController = new BattleController(player, battle, true);
 		StrategyRandom strategyRandom = new StrategyRandom(battle);
 		Thread thread = new Thread(strategyRandom);
@@ -70,6 +73,8 @@ public class RoomManager {
 			System.err.println(e);
 		}
 		Battle battle = new Battle(playerTeam, opponentTeam, player);
+		battle.setFloorNumber(floorNumber);
+		battle.enableBossBattle();
 		this.roomBattleController = new BattleController(player, battle, true);
 		StrategyRandom strategyRandom = new StrategyRandom(battle);
 		Thread thread = new Thread(strategyRandom);

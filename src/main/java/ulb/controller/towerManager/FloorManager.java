@@ -14,7 +14,7 @@ public class FloorManager {
 		this.player = player;
 		this.floor = floor;
 		this.currentRoomIndex = 0;
-		this.currentRoomManager = new RoomManager(floor.getRooms().get(this.currentRoomIndex),this.player);
+		this.currentRoomManager = new RoomManager(floor.getRooms().get(this.currentRoomIndex), floor.getId(), this.player);
 	}
 
 	public Floor getFloor() {return this.floor;}
@@ -28,7 +28,7 @@ public class FloorManager {
 	public void nextRoom(){
 		if (currentRoomManager.isRoomCompleted() && !isFloorCompleted()) {
 			currentRoomIndex++;
-			currentRoomManager = new RoomManager(floor.getRooms().get(this.currentRoomIndex), this.player);
+			currentRoomManager = new RoomManager(floor.getRooms().get(this.currentRoomIndex), floor.getId(), this.player);
 		}
 	}
 

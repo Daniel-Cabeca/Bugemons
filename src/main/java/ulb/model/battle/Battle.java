@@ -46,7 +46,6 @@ public class Battle {
 		TEAM_B
 	}
 
-
 	public Battle(Team teamA, Team teamB, Player playerA, Player playerB) {
 		this.playerA = playerA;
 		this.playerB = playerB;

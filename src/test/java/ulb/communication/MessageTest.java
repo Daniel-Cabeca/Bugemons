@@ -60,25 +60,6 @@ public class MessageTest {
 
     }
 
-    // @Test
-    // void testActionMessageSerialization() throws IOException, ClassNotFoundException {
-    //     ItemRepository items = new ItemMockRepository();
-    //     Item originalItem = items.findById("baie_revigorante");
-    //     Action originalAction = new UseItem(originalItem);
-
-    //     ActionMessage originalMessage = new ActionMessage(originalAction);
-
-    //     ActionMessage deserializedMessage = (ActionMessage) serializeNdeserialze(originalMessage);
-
-    //     Action deserializedAction = deserializedMessage.getAction();
-    //     Item deserializedItem = ((UseItem) deserializedAction).getItem();
-
-    //     assertNotNull(deserializedMessage);
-
-    //     assertEquals(deserializedItem.getId(), deserializedItem.getId());
-
-    // }
-
 
     
 }

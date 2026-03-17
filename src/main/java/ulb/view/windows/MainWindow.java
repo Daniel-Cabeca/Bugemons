@@ -4,11 +4,13 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.stage.Stage;
+import javafx.scene.text.Font;import javafx.stage.Stage;
 
 public class MainWindow extends Application{
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+		Font.loadFont(getClass().getResourceAsStream("/fonts/pokemon-emerald-pro.otf"), 14);
+
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/ModeWindow.fxml"));
 		Parent root = loader.load();
 		Scene scene = new Scene(root);

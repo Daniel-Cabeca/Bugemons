@@ -134,7 +134,7 @@ public class BattleWindow extends Window {
 
 		// Set player Bugemon sprite and stats
 		try {
-			Image playerImage = new Image(playerBugemon.getSprite());
+			Image playerImage = new Image(getClass().getResourceAsStream(playerBugemon.getSprite()));
 			PlayerBugemon.setImage(playerImage);
 		} catch (Exception e) {
 			System.err.println("Failed to load player bugemon sprite: " + e.getMessage());
@@ -158,15 +158,16 @@ public class BattleWindow extends Window {
 				playerColor = "#ced4da";
 		}
 
-		PlayerBugemonLabel.setText(playerBugemon.getName() + " (" + playerBugemon.getType().name() + ")"
-				+ " Level: " +  playerBugemon.getLevel());
+		PlayerBugemonLabel.setText(playerBugemon.getName() + "  Lv." + playerBugemon.getLevel());
 		PlayerBugemonLabel.setStyle("-fx-text-fill: " + playerColor + ";");
-		PlayerBugemonHPBar.setProgress((double) playerBugemon.getFightStats().getHp() / playerBugemon.getBaseStats().getHp());
-		PlayerBugemonHPNumber.setText("PV: " + playerBugemon.getHp() + "/" + playerBugemon.getBaseStats().hp);
+		double playerRatio = (double) playerBugemon.getFightStats().getHp() / playerBugemon.getBaseStats().getHp();
+		PlayerBugemonHPBar.setProgress(playerRatio);
+		updateHPBarColor(PlayerBugemonHPBar, playerRatio);
+		PlayerBugemonHPNumber.setText(playerBugemon.getHp() + " / " + playerBugemon.getBaseStats().hp);
 
 		// Set opponent Bugemon sprite and stats
 		try {
-			Image opponentImage = new Image(opponentBugemon.getSprite());
+			Image opponentImage = new Image(getClass().getResourceAsStream(opponentBugemon.getSprite()));
 			OpponentBugemon.setImage(opponentImage);
 		} catch (Exception e) {
 			System.err.println("Failed to load opponent bugemon sprite: " + e.getMessage());
@@ -190,11 +191,12 @@ public class BattleWindow extends Window {
 				opponentColor = "#ced4da";
 		}
 
-		OpponentBugemonLabel.setText(opponentBugemon.getName() + " (" + opponentBugemon.getType().name() + ")"
-				+ " Level: " + opponentBugemon.getLevel());
+		OpponentBugemonLabel.setText(opponentBugemon.getName() + "  Lv." + opponentBugemon.getLevel());
 		OpponentBugemonLabel.setStyle("-fx-text-fill: " + opponentColor + ";");
-		OppentHPBar.setProgress((double) opponentBugemon.getFightStats().getHp() / opponentBugemon.getBaseStats().getHp());
-		OpponentHPNumber.setText("PV: " + opponentBugemon.getHp() + "/" +  opponentBugemon.getBaseStats().hp);
+		double opponentRatio = (double) opponentBugemon.getFightStats().getHp() / opponentBugemon.getBaseStats().getHp();
+		OppentHPBar.setProgress(opponentRatio);
+		updateHPBarColor(OppentHPBar, opponentRatio);
+		OpponentHPNumber.setText(opponentBugemon.getHp() + " / " + opponentBugemon.getBaseStats().hp);
 	}
 
 	public void initializebattleMessage(){
@@ -234,10 +236,16 @@ public class BattleWindow extends Window {
 	 * @throws IOException if the main menu FXML file cannot be loaded when going back to main menu
 	 */
 	public void handleAuto(ActionEvent event) throws IOException {
+		autoButton.setVisible(false);
+		autoButton.setManaged(false);
+
 		StrategyRandom strategyRandom = new StrategyRandom(battleController);
 		BattleState state = strategyRandom.playAutoTurn();
 
 		displayNextMessage();
+
+		autoButton.setVisible(true);
+		autoButton.setManaged(true);
 
 		this.checkBattleEnd(state, event);
 	}
@@ -523,7 +531,21 @@ public class BattleWindow extends Window {
 		initializeGraphicalBattle();
 	}
 
+	private void hideAllMenus() {
+		buttonsGrid.setVisible(false);
+		buttonsGrid.setManaged(false);
+		autoButton.setVisible(false);
+		autoButton.setManaged(false);
+		inventoryView.setVisible(false);
+		inventoryView.setManaged(false);
+		bugemonsView.setVisible(false);
+		bugemonsView.setManaged(false);
+		abilitiesView.setVisible(false);
+		abilitiesView.setManaged(false);
+	}
+
 	private void displayMessagesSequentially(Runnable onComplete) {
+		hideAllMenus();
 		List<String> logs = new java.util.ArrayList<>(battleController.getLogMsg());
 		battleController.clearLogMsg();
 
@@ -563,10 +585,25 @@ public class BattleWindow extends Window {
 	private void updateHPDisplay(int selfHp, int opponentHp) {
 		Bugemon self = battleController.getActiveBugemonSelf();
 		Bugemon opponent = battleController.getActiveBugemonOpponent();
-		PlayerBugemonHPBar.setProgress((double) selfHp / self.getBaseStats().getHp());
-		PlayerBugemonHPNumber.setText("PV: " + selfHp + "/" + self.getBaseStats().hp);
-		OppentHPBar.setProgress((double) opponentHp / opponent.getBaseStats().getHp());
-		OpponentHPNumber.setText("PV: " + opponentHp + "/" + opponent.getBaseStats().hp);
+		double selfRatio = (double) selfHp / self.getBaseStats().getHp();
+		double oppRatio = (double) opponentHp / opponent.getBaseStats().getHp();
+		PlayerBugemonHPBar.setProgress(selfRatio);
+		PlayerBugemonHPNumber.setText(selfHp + " / " + self.getBaseStats().hp);
+		updateHPBarColor(PlayerBugemonHPBar, selfRatio);
+		OppentHPBar.setProgress(oppRatio);
+		OpponentHPNumber.setText(opponentHp + " / " + opponent.getBaseStats().hp);
+		updateHPBarColor(OppentHPBar, oppRatio);
+	}
+
+	private void updateHPBarColor(ProgressBar bar, double ratio) {
+		bar.getStyleClass().removeAll("hp-bar-green", "hp-bar-yellow", "hp-bar-red");
+		if (ratio > 0.5) {
+			bar.getStyleClass().add("hp-bar-green");
+		} else if (ratio > 0.25) {
+			bar.getStyleClass().add("hp-bar-yellow");
+		} else {
+			bar.getStyleClass().add("hp-bar-red");
+		}
 	}
 
 

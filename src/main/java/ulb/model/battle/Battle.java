@@ -508,7 +508,14 @@ public class Battle {
 		hpAfterFirstActionA = -1;
 		hpAfterFirstActionB = -1;
 		Action currentAction = this.actionA;
-		TeamLabel firstPlayer = this.checkInitiave();
+		TeamLabel firstPlayer;
+		if (this.actionA instanceof Swap && !(this.actionB instanceof Swap)) {
+			firstPlayer = TeamLabel.TEAM_A;
+		} else if (this.actionB instanceof Swap && !(this.actionA instanceof Swap)) {
+			firstPlayer = TeamLabel.TEAM_B;
+		} else {
+			firstPlayer = this.checkInitiave();
+		}
 		if (firstPlayer == TeamLabel.TEAM_B){
 			currentAction = this.actionB;
 		}

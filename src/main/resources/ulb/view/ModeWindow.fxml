@@ -1,28 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.VBox?>
 
-
-<AnchorPane fx:controller="ulb.view.windows.ModeWindow" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #ccccff;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" spacing="40.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ulb.view.windows.ModeWindow">
    <children>
-      <Button fx:id="SoloMode" layoutX="102.0" layoutY="160.0" mnemonicParsing="false" onAction="#goSoloMode" prefHeight="80.0" prefWidth="170.0" style="-fx-background-color: #6699ff; -fx-border-color: #111111;" text="SOLO">
-         <font>
-            <Font name="System Bold" size="20.0" />
-         </font>
-      </Button>
-      <Button layoutX="332.0" layoutY="160.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="170.0" style="-fx-background-color: #ff9933; -fx-border-color: #111111;" text="MULTIPLAYER">
-         <font>
-            <Font name="System Bold" size="20.0" />
-         </font>
-      </Button>
-      <Button fx:id="Quit" layoutX="489.0" layoutY="344.0" mnemonicParsing="false" onAction="#quit" prefHeight="48.0" prefWidth="106.0" style="-fx-border-color: #111111; -fx-background-color: #800000;" text="QUITTER" textFill="#f2e2e2" />
-      <Label alignment="CENTER" layoutX="160.0" layoutY="52.0" prefHeight="80.0" prefWidth="281.0" text="BUGÉMON">
-         <font>
-            <Font name="System Bold Italic" size="40.0" />
-         </font>
-      </Label>
+      <Button fx:id="SoloMode" mnemonicParsing="false" onAction="#goSoloMode" prefHeight="65.0" prefWidth="150.0" text="Mode Solo" />
+      <Button fx:id="Quit" mnemonicParsing="false" onAction="#quit" prefHeight="65.0" prefWidth="150.0" text="Quitter" />
    </children>
-</AnchorPane>
+</VBox>

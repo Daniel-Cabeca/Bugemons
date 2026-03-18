@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -60,7 +61,7 @@ public class BattleWindow extends Window {
 	@FXML
 	private Label PlayerBugemonHPNumber;
 	@FXML
-	private ProgressBar OppentHPBar;
+	private ProgressBar OpponentHPBar;
 	@FXML
 	private Label OpponentBugemonLabel;
 	@FXML
@@ -99,6 +100,9 @@ public class BattleWindow extends Window {
 	private boolean tower;
 	private GameController gameController;
 	private Player player;
+	private boolean automaticMode;
+	private boolean waitingForOpponentAction = false;
+
 
 	public void setBattleController(BattleController battleController) { this.battleController = battleController; }
 
@@ -121,6 +125,7 @@ public class BattleWindow extends Window {
 		this.playerTeam = playerTeam;
 		this.playerInventory = playerInventory;
 		this.tower = tower;
+		this.automaticMode = automatic;
 
 		// disables action buttons for the automatic mode
 		if (automatic) {
@@ -175,7 +180,7 @@ public class BattleWindow extends Window {
 				+ " Level: " +  playerBugemon.getLevel());
 		PlayerBugemonLabel.setStyle("-fx-text-fill: " + playerColor + ";");
 		PlayerBugemonHPBar.setProgress((double) playerBugemon.getFightStats().getHp() / playerBugemon.getBaseStats().getHp());
-		PlayerBugemonHPNumber.setText("HP: " + playerBugemon.getHp() + "/" + playerBugemon.getBaseStats().hp);
+		PlayerBugemonHPNumber.setText("PV: " + playerBugemon.getHp() + "/" + playerBugemon.getBaseStats().hp);
 
 		// Set opponent Bugemon sprite and stats
 		try {
@@ -206,8 +211,8 @@ public class BattleWindow extends Window {
 		OpponentBugemonLabel.setText(opponentBugemon.getName() + " (" + opponentBugemon.getType().name() + ")"
 				+ " Level: " + opponentBugemon.getLevel());
 		OpponentBugemonLabel.setStyle("-fx-text-fill: " + opponentColor + ";");
-		OppentHPBar.setProgress((double) opponentBugemon.getFightStats().getHp() / opponentBugemon.getBaseStats().getHp());
-		OpponentHPNumber.setText("HP: " + opponentBugemon.getHp() + "/" +  opponentBugemon.getBaseStats().hp);
+		OpponentHPBar.setProgress((double) opponentBugemon.getFightStats().getHp() / opponentBugemon.getBaseStats().getHp());
+		OpponentHPNumber.setText("PV: " + opponentBugemon.getHp() + "/" +  opponentBugemon.getBaseStats().hp);
 	}
 
 	public void initializebattleMessage(){
@@ -224,6 +229,7 @@ public class BattleWindow extends Window {
 			inventoryView.setVisible(true);
 			inventoryView.setManaged(true);
 			displayInventory();
+			updateBackButtonsState();
 		}
 	}
 
@@ -237,6 +243,7 @@ public class BattleWindow extends Window {
 			bugemonsView.setVisible(true);
 			bugemonsView.setManaged(true);
 			displayTeam();
+			updateBackButtonsState();
 		}
 	}
 
@@ -265,6 +272,7 @@ public class BattleWindow extends Window {
 			abilitiesView.setVisible(true);
 			abilitiesView.setManaged(true);
 			displayAbilities();
+			updateBackButtonsState();
 		}
 	}
 
@@ -272,6 +280,10 @@ public class BattleWindow extends Window {
 	 * Handles the Back button click from inventory - returns to battle menu
 	 */
 	public void handleBackToMenu(ActionEvent event) {
+		if (isForcedSwitch()) {
+			updateBackButtonsState();
+		}
+		
 		if (buttonsGrid != null && inventoryView != null) {
 			inventoryView.setVisible(false);
 			inventoryView.setManaged(false);
@@ -281,6 +293,59 @@ public class BattleWindow extends Window {
 			abilitiesView.setManaged(false);
 			buttonsGrid.setVisible(true);
 			buttonsGrid.setManaged(true);
+		}
+
+		updateBackButtonsState();
+	}
+
+	/**
+	 * Indicates whether the player is currently in a forced switch state.
+	 *
+	 * Typical case:
+	 * - the player's active Bugémon has just been knocked out
+	 * - the game therefore forces the player to choose another one
+	 * - in this situation, the player must not be allowed to return
+	 *   to the main battle menu
+	 *
+	 * @return true if the current battle state is SWAPPING, false otherwise
+	 */
+	private boolean isForcedSwitch() {
+		return battleController != null && battleController.getState() == BattleState.SWAPPING;
+	}
+
+	/**
+	 * Updates the state of the "Back" buttons in the relevant views.
+	 *
+	 * If the player is in a forced switch, the "Back" button must be
+	 * disabled so they cannot leave the switch menu without choosing
+	 * a valid replacement Bugémon.
+	 */
+	private void updateBackButtonsState() {
+		boolean disableBack = isForcedSwitch();
+		setBackButtonDisabled(bugemonsView, disableBack);
+	}
+
+	/**
+	* Enables or disables all buttons contained in the given view.
+	*
+	* Here, this method is used to disable the "Back" button
+	* in the Bugémons view when switching is mandatory.
+	*
+	* @param view the view containing the buttons to update
+	* @param disabled true to disable the buttons, false to enable them again
+	*/
+	private void setBackButtonDisabled(VBox view, boolean disabled) {
+		// Safety check: if the view does not exist, do nothing
+		if (view == null) {
+			return;
+		}
+
+		// Iterate through all children of the view
+		for (Node child : view.getChildren()) {
+			// If the child is a button, update its disabled state
+			if (child instanceof Button button) {
+				button.setDisable(disabled);
+			}
 		}
 	}
 
@@ -292,7 +357,7 @@ public class BattleWindow extends Window {
 					private final HBox hbox = new HBox(10);
 					private final ImageView imageView = new ImageView();
 					private final Label label = new Label();
-					private final Button button = new Button("Use");
+					private final Button button = new Button("Utiliser");
 
 					{
 						imageView.setFitHeight(30);
@@ -303,10 +368,7 @@ public class BattleWindow extends Window {
 							if (item != null) {
 								UseItem useItem = new UseItem(item);
 								battleController.useAction(useItem);
-								checkBattleState(battleController.getState(), event);
-								// Refresh display
-								displayNextMessage();
-								displayInventory();
+								refreshAfterAction(event);
 							}
 						});
 					}
@@ -341,7 +403,7 @@ public class BattleWindow extends Window {
 					private final HBox hbox = new HBox(10);
 					private final ImageView imageView = new ImageView();
 					private final Label label = new Label();
-					private final Button button = new Button("Switch");
+					private final Button button = new Button("Échanger");
 
 					{
 						imageView.setFitHeight(30);
@@ -352,11 +414,7 @@ public class BattleWindow extends Window {
 							if (bugemon != null) {
 								Swap swap = new Swap(bugemon);
 								battleController.useAction(swap);
-
-								checkBattleState(battleController.getState(), event);
-								// Refresh display
-								displayNextMessage();
-								displayTeam();
+								refreshAfterAction(event);
 							}
 						});
 					}
@@ -366,6 +424,7 @@ public class BattleWindow extends Window {
 						super.updateItem(bugemon, empty);
 						if (empty || bugemon == null || bugemon.equals(battleController.getActiveBugemonSelf())) {
 							setText(null);
+							setGraphic(null);
 						} else {
 							try {
 								Image image = new Image(getClass().getResourceAsStream(bugemon.getSprite()));
@@ -373,7 +432,8 @@ public class BattleWindow extends Window {
 							} catch (Exception e) {
 								System.err.println("Failed to load bugemon image: " + e.getMessage());
 							}
-							label.setText(bugemon.getName());
+							label.setText(bugemon.isKO() ? bugemon.getName() + " (KO)" : bugemon.getName());
+							button.setDisable(bugemon.isKO());
 							setGraphic(hbox);
 						}
 					}
@@ -390,7 +450,7 @@ public class BattleWindow extends Window {
 				return new ListCell<Ability>() {
 					private final HBox hbox = new HBox(10);
 					private final Label label = new Label();
-					private final Button button = new Button("Use");
+					private final Button button = new Button("Utiliser");
 
 					{
 						hbox.getChildren().addAll(label, button);
@@ -399,10 +459,7 @@ public class BattleWindow extends Window {
 							if (ability != null) {
 								UseAbility useAbility = new UseAbility(ability);
 								battleController.useAction(useAbility);
-								checkBattleState(battleController.getState(), event);
-								// Refresh display
-								displayNextMessage();
-								displayTeam();
+								refreshAfterAction(event);
 
 							}
 						});
@@ -456,6 +513,120 @@ public class BattleWindow extends Window {
 		});
 	}
 
+	/**
+	 * Handles everything that must happen after a player action
+	 * (attack, item use, switch, etc.), i.e. refreshes everything.
+	 *
+	 * Steps:
+	 * 1. retrieve the current battle state
+	 * 2. return to the main menu unless the player is in a forced switch
+	 * 3. check whether the battle state requires a specific transition
+	 * 4. display the next battle message
+	 * 5. if waiting for the opponent's action, start the waiting logic
+	 *
+	 * @param event the JavaFX event that triggered the action
+	 */
+	private void refreshAfterAction(ActionEvent event) {
+		BattleState state = battleController.getState();
+
+		// Return to the main menu only if the player is not forced
+    	// to select a new Bugémon
+		if (state != BattleState.SWAPPING) {
+			handleBackToMenu(event);
+		}
+		// Check whether the current state requires a specific action
+    	// (end of game, forced switch, etc.)
+		checkBattleState(state, event);
+
+		// Display the next message in the battle message queue
+		displayNextMessage();
+
+		// If it is now the opponent's turn, wait for their action
+		if (state == BattleState.WAITING) {
+			waitingForOpponentAction(event);
+		}
+	}
+
+	/**
+	 * Waits until the opponent has finished their action (the opponent may play in a separate thread).
+	 * During that time:
+	 * - player interactions are disabled
+	 * - the code waits until the state is no longer WAITING
+	 * - the interface is then refreshed on the JavaFX thread
+	 *
+	 * @param event the original JavaFX event
+	 */
+	private void waitingForOpponentAction(ActionEvent event) {
+		// Prevent starting multiple waiting threads at the same time
+		if (waitingForOpponentAction) {
+			return;
+		}
+
+		waitingForOpponentAction = true;
+
+		// Disable battle controls while the opponent is playing
+		setBattleInputsDisabled(true);
+		
+		Thread waitingThread = new Thread(() -> {
+			try {
+				// Active waiting loop:
+				// as long as the opponent has not finished their turn
+				// and the game is not over, wait in short intervals
+				while (battleController.getState() == BattleState.WAITING && !battleController.isGameFinished()) {
+					Thread.sleep(100);
+				}
+			} catch (InterruptedException e) {
+				// Restore the interrupted status if the thread is interrupted	
+				Thread.currentThread().interrupt();
+				}
+			// Any JavaFX UI update must be executed on the UI thread	
+			Platform.runLater(() -> {
+				waitingForOpponentAction = false;
+
+				// Re-enable player interactions
+				setBattleInputsDisabled(false);
+
+				// Display any new messages generated by the opponent's action
+				displayNextMessage();
+
+				// Re-check the battle state after the opponent has acted
+				checkBattleState(battleController.getState(), event);
+			});
+		});
+		
+		// Mark the thread as daemon so it does not prevent the application from closing
+		waitingThread.setDaemon(true);
+		waitingThread.start();
+	}
+
+	/**
+	 * Enables or disables the main battle controls.
+	 *
+	 * When the opponent is playing or the interface is waiting for an update,
+	 * the player must not be able to interact with the battle buttons.
+	 *
+	 * The logic also takes automatic mode into account:
+	 * - in automatic mode, some buttons must remain disabled
+	 * - the auto button is enabled only when automatic mode is active
+	 *
+	 * @param disabled true to block interactions, false to allow them again
+	 */
+	private void setBattleInputsDisabled(boolean disabled) {
+		// Main battle buttons
+		attackButton.setDisable(disabled || automaticMode);
+		itemButton.setDisable(disabled || automaticMode);
+		runButton.setDisable(disabled || automaticMode);
+		switchButton.setDisable(disabled || automaticMode);
+
+		// The auto button is disabled if the interface is blocked
+    	// or if automatic mode is not enabled
+		autoButton.setDisable(disabled || !automaticMode);
+
+		// Also disable subviews to prevent any interaction while waiting
+		inventoryView.setDisable(disabled);
+		bugemonsView.setDisable(disabled);
+		abilitiesView.setDisable(disabled);
+	}
 
 	private void displayAbilities() {
 		List<Ability> abilities = new ArrayList<>();

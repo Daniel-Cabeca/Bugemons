@@ -6,9 +6,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import ulb.repository.loader.json.parser.ItemJsonParser;
 import ulb.model.item.Inventory;
-import ulb.model.item.Item;
+
+import ulb.service.ServiceLoader;
+import ulb.service.ItemService;
 
 public class Player {
 	private String name;
@@ -49,20 +50,7 @@ public class Player {
 	 * Loads all items and adds the default items to the player's inventory
 	 */
 	public void addDefaultItems() {
-		try {
-			List<Item> items = ItemJsonParser.loadItems(ITEMS_PATH);
-			Map<String, Integer> startingInventory = ItemJsonParser.loadInventory(ITEMS_PATH);
-
-			for (Item item : items) {
-				if (startingInventory.containsKey(item.getId())) {
-					this.inventory.addItem(item, startingInventory.get(item.getId()));
-				}
-			}
-
-		} catch (IllegalArgumentException e) {
-			System.err.println("Error loading items: " + e.getMessage());
-		} catch (IOException e) {
-			System.err.println("Error reading items file: " + e.getMessage());
-		}
+		ItemService itemService = ServiceLoader.getItemService();
+		this.inventory = itemService.createStarterInventory();
 	}
 }

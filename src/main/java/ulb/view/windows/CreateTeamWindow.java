@@ -149,7 +149,7 @@ public class CreateTeamWindow extends Window {
 			setupGame(selected);
 			gameController.switchToBattleMenu(event);
 		} else {
-			throw new IllegalStateException("You must select between 1 and 6 bugemons to confirm your team.");
+			throw new IllegalStateException("Tu dois selectionner entre 1 et 6 Bugemons pour confirmer ton équipe.");
 		}
 	}
 

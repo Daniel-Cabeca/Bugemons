@@ -108,7 +108,7 @@ public class Bugemon {
 	}
 
 	public boolean equals(Bugemon other){
-		return this.getName() == other.getName() && 
+		return this.getName() == other.getName() &&
 			   this.getId() == other.getId() &&
 			   this.getFightStats().equals(other.getFightStats()) &&
 			   this.getBaseStats().equals(other.getBaseStats());

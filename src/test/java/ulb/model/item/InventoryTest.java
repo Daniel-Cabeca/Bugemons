@@ -9,6 +9,9 @@ import org.junit.jupiter.api.Test;
 import ulb.model.Effect;
 import ulb.model.sample.EffectSample;
 
+import ulb.repository.ItemRepository;
+import ulb.repository.mock.ItemMockRepository;
+
 public class InventoryTest {
 	@Test
 	public void testAddItem() {
@@ -35,5 +38,25 @@ public class InventoryTest {
 		inventory.removeItem(item);
 		inventory.removeItem(item);
 		assertFalse(inventory.getItems().containsKey(item));
+	}
+
+	@Test
+	public void testGetQuantityNotPresent() {
+		ItemRepository itemRepository = new ItemMockRepository();
+		Item item = itemRepository.findById("baie_revigorante");
+
+		Inventory inventory = new Inventory();
+		assertEquals(0, inventory.getQuantity(item));
+	}
+
+	@Test
+	public void testGetQuantityPresent() {
+		ItemRepository itemRepository = new ItemMockRepository();
+		Item item = itemRepository.findById("baie_revigorante");
+
+		Inventory inventory = new Inventory();
+		inventory.addItem(item, 5);
+
+		assertEquals(5, inventory.getQuantity(item));
 	}
 }

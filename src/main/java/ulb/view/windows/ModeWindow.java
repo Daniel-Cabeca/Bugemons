@@ -24,5 +24,6 @@ final public class ModeWindow extends Window{
 	@FXML
 	private void quit(){
 		Platform.exit();
+		System.exit(0);
 	}
 }

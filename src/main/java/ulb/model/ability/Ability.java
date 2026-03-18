@@ -43,12 +43,6 @@ public class Ability implements HasId {
 	public int getPower() { return this.power; }
 	public Effect getEffect() { return this.effect; }
 
-	public void applyEffect(Bugemon target) {
-		if (effect != null){
-			this.effect.apply(target);
-		}
-	}
-
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {

@@ -8,6 +8,11 @@ import ulb.service.ServiceLoader;
 
 public class OpponentTeamGenerator {
 
+	/** Generates a random team for the opponent based on the player's team size
+	 * @param playerTeam the player's team based on which the opponent's is generated
+	 * @return the randomly generated opponent team
+	 * @throws Exception if the player team is null, empty or not valid
+	 */
 	public static Team generateRandomOpponentTeam(Team playerTeam) throws Exception {
 		BugemonService bugemonService = ServiceLoader.getBugemonService();
 

@@ -31,14 +31,17 @@ public class StrategyRandom implements Strategy, Runnable {
 
     public Action pickAction(){
         return new Run();
-    }   
+    }
 
+    /**
+     * Plays the game loop in the automatic battle mode
+     */
     public void play(){
         while (!battleController.isGameFinished()){
             this.playAutoTurn();
-            try{
+            try {
                 Thread.sleep(SLEEP_TIME);
-            }catch(Exception e){}
+            } catch(Exception e) {}
             
         }
     }
@@ -48,11 +51,12 @@ public class StrategyRandom implements Strategy, Runnable {
 	 */
 	public BattleState playAutoTurn() {
 
+        // the only available actions in auto mode are UseAbility and Swap
         Vector<Action> actions = battleController.getAvailableAction();
-        UseAbility useAbility = new UseAbility();
         Swap swap = new Swap();
-        if (actions.stream().anyMatch(a -> a instanceof UseAbility)){
+        if (actions.stream().anyMatch(a -> a instanceof UseAbility)){ // if the available action is UseAbility
             useRandomAbility();
+        // if the Bugemon is KO, it needs to be swapped (the only available action is SWAP)
         } else if (actions.stream().anyMatch(a -> a instanceof Swap)){
             Bugemon chosenBugemon = pickRandomBugemon();
             if (chosenBugemon != null){
@@ -86,9 +90,14 @@ public class StrategyRandom implements Strategy, Runnable {
 	    return AbilitiesA.getAbility(i);
 	}
 
+    /**
+     * Picks a random non-KO Bugemon from the team, or null if they are all KO
+     *
+     * @return the randomly chosen bugemon
+     */
     public Bugemon pickRandomBugemon(){
         Vector<Bugemon> availableBugemons = battleController.getAvailableBugemons();
-        if (availableBugemons.size() != 0){
+        if (!availableBugemons.isEmpty()){
             Random rand = new Random();
             int i = rand.nextInt(availableBugemons.size());
 

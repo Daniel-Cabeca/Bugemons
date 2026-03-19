@@ -28,6 +28,11 @@ public class Stats {
 		this.initiative = other.initiative;
 	}
 
+	/**
+	 * Changes each stat by adding a (positive or negative) value
+	 *
+	 * @param delta the value to add to each stat
+	 */
 	public void change(Stats delta) {
 		this.hp = (this.hp <= Math.abs(delta.hp) && delta.hp < 0)? 0: this.hp + delta.hp;
 		this.attack = (this.attack <= Math.abs(delta.attack) && delta.attack < 0)? 0: this.attack + delta.attack;
@@ -35,6 +40,11 @@ public class Stats {
 		this.initiative = (this.initiative <= Math.abs(delta.initiative) && delta.initiative < 0)? 0: this.initiative + delta.initiative;
 	}
 
+	/**
+	 * Adds a value to stats
+	 *
+	 * @param delta the value to add to each stat
+	 */
 	public void plus(Stats delta) {
 		this.hp += delta.hp;
 		this.attack += delta.attack;

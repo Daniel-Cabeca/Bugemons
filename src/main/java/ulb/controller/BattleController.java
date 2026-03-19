@@ -1,7 +1,5 @@
 package ulb.controller;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -10,28 +8,16 @@ import ulb.model.battle.Battle;
 import ulb.model.battle.BattleState;
 import ulb.model.team.Team;
 import ulb.model.bugemon.Bugemon;
-import ulb.model.type.Effectiveness;
-import ulb.model.type.Type;
 import ulb.view.handler.WindowContainer;
-import ulb.view.windows.BattleEndWindow;
-import ulb.view.windows.BattleMenu;
-import ulb.view.windows.BattleWindow;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.stage.Stage;
 import ulb.controller.action.*;
 import ulb.model.Player;
 import ulb.model.item.Item;
-import ulb.model.team.OpponentTeamGenerator;
 
 public class BattleController {
 	private Player player;
 	private WindowContainer windowContainer;
 	private Battle battle;
 	private boolean isTeamA;
-	private boolean isBossFight = false;
 
 	public BattleController(){
 		this.windowContainer = new WindowContainer();
@@ -55,9 +41,9 @@ public class BattleController {
 
 
 	/**
-	 * Gives the Bugemon that the snapshot views as its active Bugemon.
+	 * Gives the current active Bugemon.
 	 *
-	 * @return The snapshot's active Bugemon
+	 * @return the active Bugemon
 	 */
 	public Bugemon getActiveBugemonSelf() {
 		if (this.isTeamA) {
@@ -68,6 +54,11 @@ public class BattleController {
 		}
 	}
 
+	/**
+	 * Gives the opponent's team current active Bugemon
+	 *
+	 * @return the opponent's active Bugemon
+	 */
 	public Bugemon getActiveBugemonOpponent() {
 		if (this.isTeamA){
 			return this.battle.getActiveBugemonB();
@@ -86,29 +77,11 @@ public class BattleController {
 		return this.battle.getTeamB();
 	}
 
-	public boolean isBugemonAKO() {
-		return this.battle.isBugemonAKO();
-	}
-
-	public boolean isBugemonBKO() {
-		return this.battle.isBugemonBKO();
-	}
-
-	public boolean isTeamAKO() {
-		return this.battle.isTeamAKO();
-	}
-
-	public boolean isTeamBKO() {
-		return this.battle.isTeamBKO();
-	}
-
 	public void useAction(Action action) {
 		this.battle.setAction(action, isTeamA);
 	}
 
-	public Vector<Action> getAvailableAction(){
-		return this.battle.getAvailableActions(isTeamA);
-	}
+	public Vector<Action> getAvailableAction(){ return this.battle.getAvailableActions(isTeamA); }
 
 	public Vector<Bugemon> getAvailableBugemons(){
 		return this.battle.getAvailableBugemons(isTeamA);

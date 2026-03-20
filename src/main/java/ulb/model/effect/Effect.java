@@ -8,7 +8,8 @@ import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.Stats;
 
 import ulb.model.battle.Battle;
-import static ulb.model.battle.Battle.TeamLabel;
+import ulb.model.battle.Battle.TeamLabel;
+import ulb.model.battle.ActiveEffect;
 
 public class Effect {
 	private final EffectType type;
@@ -123,13 +124,21 @@ public class Effect {
 	public void apply(Battle battle, TeamLabel team) {
 		List<Bugemon> targets = this.getTargets(battle, team);
 
-		for (Bugemon bugemon: targets) {
-			this.apply(bugemon);
+		for (Bugemon target: targets) {
+			this.apply(target);
 		}
 
 		if (this.type == EffectType.SWITCH) {
 			Bugemon nextBugemon = battle.getOwnNextBugemon(team);
 			battle.setOwnActiveBugemon(team, nextBugemon);
+		}
+
+		if (this.getDuration() == EffectDuration.ROUND
+				&& this.getType() == EffectType.STAT_MODIFIER) {
+			Stats delta = this.buildStatsChange();
+			for (Bugemon target : targets) {
+				battle.getActiveEffects().add(new ActiveEffect(target, delta, 1, ""));
+			}
 		}
 	}
 

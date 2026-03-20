@@ -90,6 +90,8 @@ public class Battle {
 	public Bugemon getActiveBugemonA() {return this.activeBugemonA;}
 	public Bugemon getActiveBugemonB() {return this.activeBugemonB;}
 
+	public List<ActiveEffect> getActiveEffects() { return this.activeEffects; }
+
 	public BattleState getState(boolean isTeamA) {
 		if (isTeamA){
 			return this.stateA;
@@ -330,7 +332,7 @@ public class Battle {
 		}
 
 		if (ability.getEffect() != null) {
-			applyEffect(team, ability.getEffect());
+			ability.getEffect().apply(this, team);
 		}
 	}
 
@@ -355,33 +357,12 @@ public class Battle {
 	}
 
 	/**
-	 * Applies the effect of an item of the given team 
-	 * @param team the team which applies the effect
-	 * @param effect the applied effect
-	 */
-	private void applyEffect(TeamLabel team, Effect effect) {
-		List<Bugemon> targets = new ArrayList<>();
-
-		// apply effect on target (all except switch)
-		effect.apply(this, team);
-
-		// creates active effect for targeted Bugemons
-		if (effect.getDuration() == Effect.EffectDuration.ROUND
-				&& effect.getType() == Effect.EffectType.STAT_MODIFIER) {
-			Stats delta = effect.buildStatsChange();
-			for (Bugemon target : targets) {
-				activeEffects.add(new ActiveEffect(target, delta, 1, ""));
-			}
-		}
-	}
-
-	/**
 	 * Uses an item and manages its removal from the inventory
 	 * @param item the item which is used
 	 * @param team the team that uses the item
 	 */
 	private void useItem(Item item, TeamLabel team){
-		applyEffect(team, item.getEffect());
+		item.getEffect().apply(this, team);
 		removeUsedItemFromInventory(team, item);
 		logMsg.add("L'objet " + item.getName() + "a été utilisé.");
 	}

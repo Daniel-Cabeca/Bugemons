@@ -24,12 +24,13 @@ import ulb.view.handler.Window;
 import ulb.service.BugemonService;
 import ulb.service.ServiceLoader;
 
-
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class CreateTeamWindow extends Window {
 
+	@FXML
+	private VBox content;
 
 	@FXML
 	private GridPane availableBugemonsGrid;
@@ -41,60 +42,90 @@ public class CreateTeamWindow extends Window {
 	private final List<String> selected = new ArrayList<>();
 	private BattleController battleController;
 
+	private static final double BASE_WIDTH = 1000;
+	private static final double BASE_HEIGHT = 700;
+
 	public void setPlayer(Player player) {
 		this.player = player;
-
 	}
 
 	/**
-	* Initializes the create team menu
-	*/
+	 * Initializes the create team menu
+	 */
+	@FXML
+	public void initialize() {
+		populateAvailableBugemons();
 
-	public void setBattle(List<String> selectedBugemons){
+		content.sceneProperty().addListener((obs, oldScene, scene) -> {
+			if (scene != null) {
+
+				scene.widthProperty().addListener((o, oldVal, newVal) -> scale(scene));
+				scene.heightProperty().addListener((o, oldVal, newVal) -> scale(scene));
+
+				scale(scene);
+			}
+		});
+	}
+
+	private void scale(javafx.scene.Scene scene) {
+		double scaleX = scene.getWidth() / BASE_WIDTH;
+		double scaleY = scene.getHeight() / BASE_HEIGHT;
+
+		double scale = Math.min(scaleX, scaleY);
+
+		content.setScaleX(scale);
+		content.setScaleY(scale);
+	}
+
+	/**
+	 * Initializes the create team menu
+	 */
+	public void setBattle(List<String> selectedBugemons) {
 		this.setPlayer(new Player("Player"));
 
-		List<Bugemon> teamABugemons = new ArrayList<Bugemon>();
+		List<Bugemon> teamABugemons = new ArrayList<>();
 		for (String bugemon : selectedBugemons) {
 			teamABugemons.add(new Bugemon(bugemon.toLowerCase()));
 		}
+
 		Team playerTeam = new Team(teamABugemons);
-		Team opponentTeam = new Team();
-		try{
+		Team opponentTeam;
+
+		try {
 			opponentTeam = OpponentTeamGenerator.generateRandomOpponentTeam(playerTeam);
-		}catch(Exception e){
+		} catch (Exception e) {
 			System.err.println(e);
+			opponentTeam = new Team();
 		}
+
 		Battle battle = new Battle(playerTeam, opponentTeam, player);
 		this.battleController = new BattleController(player, battle, true);
+
 		StrategyRandom strategyRandom = new StrategyRandom(battle);
 		Thread thread = new Thread(strategyRandom);
 		thread.start();
-	}	
-
-
-	@FXML
-	public void initialize() {
-		// this.battleController = new BattleController(new Player());
-		populateAvailableBugemons();
 	}
 
 	/**
-	* Updates the available bugemons grid by adding a box for each bugemon in the list
-	*/
+	 * Updates the available bugemons grid by adding a box for each bugemon in the list
+	 */
 	private void populateAvailableBugemons() {
+		availableBugemonsGrid.getChildren().clear();
+
 		BugemonService bugemonService = ServiceLoader.getBugemonService();
 		int col = 0, row = 0;
 
 		for (BugemonSpecies bugemon : bugemonService.getAllSpecies()) {
+
 			VBox cell = new VBox(8);
-			cell.getStyleClass().add("availableBugemons"); // add a css class
+			cell.getStyleClass().add("availableBugemons");
 
 			Label name = new Label(bugemon.getName());
 
 			Image image = new Image(bugemon.getSprite());
 			ImageView sprite = new ImageView(image);
-			sprite.setFitWidth(75);
-			sprite.setFitHeight(75);
+			sprite.setFitWidth(90);
+			sprite.setFitHeight(90);
 			sprite.setPreserveRatio(true);
 
 			CheckBox checkBox = new CheckBox();
@@ -108,33 +139,39 @@ public class CreateTeamWindow extends Window {
 				}
 			});
 
-			cell.getChildren().addAll(name,sprite, checkBox);
+			cell.getChildren().addAll(name, sprite, checkBox);
 			availableBugemonsGrid.add(cell, col, row);
 
 			col++;
-			if (col == 8) { col = 0; row++; }
+			if (col == 8) {
+				col = 0;
+				row++;
+			}
 		}
 	}
 
 	/**
-	* Updates the selected bugemons grid by adding a box for each selected bugemon
-	*/
+	 * Updates the selected bugemons grid by adding a box for each selected bugemon
+	 */
 	private void populateSelectedBugemons() {
-		// Clears the grid to avoid placing cells on top of each other
 		selectedBugemons.getChildren().clear();
+
 		int col = 0, row = 0;
 
 		for (String bugemon : selected) {
 			VBox cell = new VBox();
-			cell.getStyleClass().add("selectedBugemons"); // add a css class
+			cell.getStyleClass().add("selectedBugemons");
 
 			Label name = new Label(bugemon);
 			cell.getChildren().add(name);
+
 			selectedBugemons.add(cell, col, row);
 
-			// Ensure there are 3 columns
 			col++;
-			if (col == 3) { col = 0; row++; }
+			if (col == 8) {
+				col = 0;
+				row++;
+			}
 		}
 	}
 
@@ -142,8 +179,6 @@ public class CreateTeamWindow extends Window {
 		if (!selected.contains(bugemon) && selected.size() < 6) {
 			selected.add(bugemon);
 			populateSelectedBugemons();
-		} else {
-			populateAvailableBugemons();
 		}
 	}
 
@@ -163,14 +198,16 @@ public class CreateTeamWindow extends Window {
 			setBattle(selected);
 			battleController.switchToBattleMenu(event);
 		} else {
-			throw new IllegalStateException("Tu dois selectionner entre 1 et 6 Bugemons pour confirmer ton équipe.");
+			throw new IllegalStateException(
+					"Tu dois sélectionner entre 1 et 6 Bugemons pour confirmer ton équipe."
+			);
 		}
 	}
 
 	/**
-	* Returns to the main menu
-	* @param event the action triggered by clicking the return button
-	*/
+	 * Returns to the main menu
+	 * @param event the action triggered by clicking the return button
+	 */
 	public void handleReturn(ActionEvent event) throws IOException {
 		switchWindow(event, MODE_WINDOW_PATH);
 	}

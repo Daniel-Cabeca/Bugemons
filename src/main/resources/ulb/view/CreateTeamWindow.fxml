@@ -1,33 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ulb.view.windows.CreateTeamWindow">
+<StackPane style="-fx-background-image:url(backgrounds/CreateTeamBackground.jpg); -fx-background-size: stretch;
+           -fx-background-repeat: no-repeat; -fx-background-position: center"
+           xmlns="http://javafx.com/javafx/23.0.1"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="ulb.view.windows.CreateTeamWindow">
 
-    <padding>
-        <Insets bottom="20" left="20" right="20" top="20" />
-    </padding>
+    <VBox fx:id="content"
+          alignment="CENTER"
+          spacing="20"
+          maxWidth="1000"
+          maxHeight="700">
 
+        <padding>
+            <Insets bottom="20" left="20" right="20" top="20"/>
+        </padding>
 
-    <Label style="-fx-font-size: 20px;" text="Votre Équipe:" />
+        <Label style="-fx-font-size: 50px;" text="Votre Équipe:" />
 
-    <GridPane fx:id="selectedBugemons" alignment="CENTER" hgap="10" vgap="10" />
+        <GridPane fx:id="selectedBugemons"
+                  alignment="CENTER"
+                  hgap="10" vgap="10" />
 
-    <Separator />
+        <Separator />
 
-    <Label style="-fx-font-size: 20px;" text="Bugémons Disponible:" />
+        <Label style="-fx-font-size: 30px;" text="Bugémons Disponible:" />
 
-    <ScrollPane fx:id="availableBugemonsScroll" fitToWidth="true" prefWidth="213.0">
-      <GridPane fx:id="availableBugemonsGrid" />
-    </ScrollPane>
+        <ScrollPane fx:id="availableBugemonsScroll"
+                    prefWidth="800" prefHeight="400" fitToWidth="true"
+                    style="-fx-background-color: rgba(0, 0, 0, 0.3); -fx-background: transparent">
 
-    <Button onAction="#handleConfirmTeam" prefHeight="50" prefWidth="200" text="Confirmer l'Équipe" />
-    <Button onAction="#handleReturn" prefHeight="50" prefWidth="200" text="Menu Principal" />
+            <content>
+                <GridPane fx:id="availableBugemonsGrid"
+                          hgap="15" vgap="15"/>
+            </content>
 
-</VBox>
+        </ScrollPane>
+
+        <Button onAction="#handleConfirmTeam"
+                prefHeight="50" prefWidth="250"
+                text="Confirmer l'Équipe" />
+
+        <Button onAction="#handleReturn"
+                prefHeight="50" prefWidth="250"
+                text="Menu Principal" />
+
+    </VBox>
+</StackPane>

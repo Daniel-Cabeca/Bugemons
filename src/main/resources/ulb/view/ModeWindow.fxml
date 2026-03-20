@@ -6,17 +6,25 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane style="-fx-background-image:url(backgrounds/ModeBackground.jpg); -fx-background-size: contain;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ulb.view.windows.ModeWindow">
+<StackPane style="-fx-background-image:url(backgrounds/ModeBackground.jpg); -fx-background-size: stretch;"
+           xmlns="http://javafx.com/javafx/25"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="ulb.view.windows.ModeWindow">
 
    <VBox fx:id="content" alignment="CENTER" maxHeight="600" maxWidth="800" spacing="50">
       <Label text="BUGÉMON" style="-fx-text-fill: #e6ffff; -fx-font-size: 50; -fx-font-weight: bold;" />
 
       <HBox alignment="CENTER" spacing="80">
-         <Button fx:id="SoloMode" onAction="#goSoloMode" prefHeight="100" prefWidth="200" style="-fx-background-color: #6699ff; -fx-border-color: black; -fx-font-size: 20px;" text="SOLO" />
+         <Button fx:id="SoloMode" onAction="#goSoloMode" prefHeight="100" prefWidth="200"
+                 style="-fx-background-color: #6699ff; -fx-border-color: black; -fx-font-size: 20px;" text="SOLO" />
 
-         <Button prefHeight="100" prefWidth="200" style="-fx-background-color: #ff9933; -fx-border-color: black; -fx-font-size: 20px;" text="MULTIPLAYER" />
+         <Button prefHeight="100" prefWidth="200"
+                 style="-fx-background-color: #ff9933; -fx-border-color: black; -fx-font-size: 20px;"
+                 text="MULTIPLAYER" />
       </HBox>
 
-      <Button fx:id="Quit" onAction="#quit" prefHeight="60" prefWidth="160" style="-fx-background-color: #800000; -fx-border-color: black; -fx-font-size: 16px;" text="QUITTER" textFill="white" />
+      <Button fx:id="Quit" onAction="#quit" prefHeight="60" prefWidth="160"
+              style="-fx-background-color: #800000; -fx-border-color: black; -fx-font-size: 16px;"
+              text="QUITTER" textFill="white" />
    </VBox>
 </StackPane>

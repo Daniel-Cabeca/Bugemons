@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class FloorManagerTest {
 
     @Test
-    void floorIsNotCompletedOnCreation() {
+    void floorIsNotCompletedOnInitialisation() {
 		Player player = new Player("TestPlayer");
         Floor floor = new Floor(1, false);
 		Bugemon a = BugemonSample.getA();
@@ -28,7 +28,7 @@ public class FloorManagerTest {
     }
 
     @Test
-    void isFloorCompletedReturnsTrueWhenAllRoomsCompleted() {
+    void floorIsCompletedWhenAllRoomsCompleted() {
 		Player player = new Player("TestPlayer");
 		Bugemon a = BugemonSample.getA();
 		Team teamA = new Team(List.of(a));
@@ -45,7 +45,7 @@ public class FloorManagerTest {
     }
 
     @Test
-    void nextRoomAdvancesWhenCurrentRoomCompletedAndFloorNotCompleted() {
+    void AdvanceToNextRoomWhenCurrentRoomCompletedAndFloorNotCompleted() {
 		Player player = new Player("TestPlayer");
 		Bugemon a = BugemonSample.getA();
 		Team teamA = new Team(List.of(a));

@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class RoomManagerTest {
 
     @Test
-    void roomIsInitiallyNotCompleted() {
+    void roomNotCompletedOnInitialisation() {
 		Player player = new Player("TestPlayer");
 		Bugemon a = BugemonSample.getA();
 		Team teamA = new Team(List.of(a));
@@ -28,7 +28,7 @@ public class RoomManagerTest {
     }
 
     @Test
-    void setRoomCompletedUpdatesUnderlyingRoom() {
+    void setRoomCompletedUpdatesManagerAndRoom() {
 		Player player = new Player("TestPlayer");
 		Bugemon a = BugemonSample.getA();
 		Team teamA = new Team(List.of(a));
@@ -43,7 +43,7 @@ public class RoomManagerTest {
     }
 
 	@Test
-	void initializeNormalBattleRoomCreatesBattleControllerForBattleRoom() {
+	void createBattleRoomInitializesBattleController() {
 		Player player = new Player("TestPlayer");
 		// give the player a minimal valid team
 		Team team = new Team(List.of(new Bugemon(10, 10, 10, 10)));

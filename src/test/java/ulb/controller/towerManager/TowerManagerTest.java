@@ -18,7 +18,7 @@ public class TowerManagerTest {
 
 
 	@Test
-	void towerIsNotCompletedOnCreation() {
+	void towerIsNotCompletedOnInitialisation() {
 		Player player = new Player("TestPlayer");
 		Bugemon a = BugemonSample.getA();
 		Team teamA = new Team(List.of(a));
@@ -33,7 +33,7 @@ public class TowerManagerTest {
 	}
 
 	@Test
-	void isTowerCompletedReturnsTrueWhenAllFloorsCompleted() {
+	void towerIsCompletedWhenAllFloorsCompleted() {
 		Player player = new Player("TestPlayer");
 		Bugemon a = BugemonSample.getA();
 		Team teamA = new Team(List.of(a));
@@ -49,7 +49,7 @@ public class TowerManagerTest {
 	}
 
 	@Test
-	void nextFloorAdvancesWhenCurrentFloorCompletedAndTowerNotCompleted() throws Exception {
+	void advanceFloorWhenCurrentFloorIsCompletedAndTowerIsNotCompleted()throws Exception {
 
 		Player player = new Player("TestPlayer");
 		Bugemon a = BugemonSample.getA();
@@ -77,7 +77,7 @@ public class TowerManagerTest {
 
 
 	@Test
-	void nextFloorDoesNotAdvanceWhenTowerAlreadyCompleted() throws Exception {
+	void doesNotAdvanceFloorWhenTowerIsCompleted() throws Exception {
 		Player player = new Player("TestPlayer");
 		Bugemon a = BugemonSample.getA();
 		Team teamA = new Team(List.of(a));

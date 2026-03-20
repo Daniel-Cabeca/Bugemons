@@ -110,6 +110,21 @@ public class Battle {
 		}
 	}
 
+	public void setOwnActiveBugemon(TeamLabel teamLabel, Bugemon bugemon) {
+		switch(teamLabel) {
+			case TEAM_A:
+				this.setActiveBugemonA(bugemon);
+				break;
+
+			case TEAM_B:
+				this.setActiveBugemonB(bugemon);
+				break;
+
+			default:
+				throw new IllegalArgumentException("This team label is not handled.");
+		}
+	}
+
 	private void setState(BattleState state, TeamLabel team) {
 		if (team == TeamLabel.TEAM_A) {
 			this.stateA = state;
@@ -320,24 +335,6 @@ public class Battle {
 	}
 
 	/**
-	 * Applies the switching effect on a team
-	 * @param team the team on which the effect applies
-	 */
-	private void applySwitchEffect(TeamLabel team) {
-		if (team == TeamLabel.TEAM_A) {
-			Bugemon nextBugemon = getNextBugemon(this.teamA, this.activeBugemonA);
-			if (nextBugemon != null) {
-				setActiveBugemonA(nextBugemon);
-			}
-		} else {
-			Bugemon nextBugemon = getNextBugemon(this.teamB, this.activeBugemonB);
-			if (nextBugemon != null) {
-				setActiveBugemonB(nextBugemon);
-			}
-		}
-	}
-
-	/**
 	 * Removes an item that has been used from the inventory of the team
 	 * @param team the team from which the item is removed
 	 * @param item the item which is removed from the inventory
@@ -367,11 +364,6 @@ public class Battle {
 
 		// apply effect on target (all except switch)
 		effect.apply(this, team);
-
-		// applies switch effect
-		if (effect.getType().equals(Effect.EffectType.SWITCH)) {
-			applySwitchEffect(team);
-		}
 
 		// creates active effect for targeted Bugemons
 		if (effect.getDuration() == Effect.EffectDuration.ROUND
@@ -432,6 +424,15 @@ public class Battle {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Returns the next available non-active Bugemon when switching.
+	 * @param team the team whose Bugemons are being considered
+	 * @return the next available non-active Bugemon or null if none available
+	 */
+	public Bugemon getOwnNextBugemon(TeamLabel team) {
+		return this.getNextBugemon(this.getOwnTeam(team), this.getOwnActiveBugemon(team));
 	}
 
 	/**

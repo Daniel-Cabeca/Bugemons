@@ -94,15 +94,20 @@ public class Effect {
 			case HEAL:
 				target.changeFightStats(new Stats(this.modifiers.get(StatType.HP), 0, 0, 0));
 				break;
+
 			case STAT_MODIFIER:
 				target.changeFightStats(buildStatsChange());
 				break;
+
 			case RESET_MALUS:
 				target.removeStatsDebuffs();
 				break;
+
 			case SWITCH:
-				// The logic is in Battle (because we don't have access to the team here)
+				// do nothing
+				// TODO this whole method should be replacer with polymorphism
 				break;
+
 			default:
 				return 0;
 		}
@@ -120,6 +125,11 @@ public class Effect {
 
 		for (Bugemon bugemon: targets) {
 			this.apply(bugemon);
+		}
+
+		if (this.type == EffectType.SWITCH) {
+			Bugemon nextBugemon = battle.getOwnNextBugemon(team);
+			battle.setOwnActiveBugemon(team, nextBugemon);
 		}
 	}
 

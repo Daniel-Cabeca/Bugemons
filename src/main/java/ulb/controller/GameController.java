@@ -17,7 +17,7 @@ import ulb.model.team.Team;
 import ulb.model.tower.Room;
 import ulb.model.tower.RoomType;
 import ulb.view.windows.BattleEndWindow;
-import ulb.view.windows.BattleMenu;
+import ulb.view.windows.BattleModeWindow;
 import ulb.view.windows.BattleWindow;
 import ulb.view.windows.FloorRewardWindow;
 
@@ -93,15 +93,15 @@ public class GameController {
 	 *
 	 * @param event the action triggered by clicking the confirm team button
 	 */
-	public void switchToBattleMenu(ActionEvent event) {
+	public void switchToBattleModeWindow(ActionEvent event) {
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/BattleMenu.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/BattleModeWindow.fxml"));
 			Parent battleMenu = loader.load();
 
 			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 			stage.getScene().setRoot(battleMenu);
 
-			BattleMenu controller = loader.getController();
+			BattleModeWindow controller = loader.getController();
 			controller.setGameController(this);
 			controller.displayTeam();
 
@@ -216,7 +216,7 @@ public class GameController {
 
 			BattleEndWindow controller = loader.getController();
 			controller.setPlayer(player);
-			controller.setResult(victory);
+			controller.setResult(victory, 10000000); // Needs to be refactored
 
 		} catch (IOException e) {
 			System.err.println("Failed to load battle_end_window: " + e.getMessage());

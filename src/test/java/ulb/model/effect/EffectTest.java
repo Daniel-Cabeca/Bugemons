@@ -1,0 +1,92 @@
+package ulb.model.effect;
+
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+import ulb.repository.mock.BugemonSpeciesMockRepository;
+import ulb.service.BugemonService;
+
+import java.util.List;
+import java.util.Map;
+
+import ulb.model.bugemon.Bugemon;
+import ulb.model.battle.Battle;
+import ulb.model.battle.Battle.TeamLabel;
+import ulb.model.team.Team;
+import ulb.model.Player;
+
+import ulb.model.effect.Effect.EffectType;
+import ulb.model.effect.Effect.EffectTarget;
+import ulb.model.effect.Effect.EffectDuration;
+
+public class EffectTest {
+	private static Battle getTestBattle() {
+		BugemonSpeciesMockRepository repository = new BugemonSpeciesMockRepository();
+		BugemonService service = new BugemonService(repository);
+
+		Team teamA = new Team(List.of(
+			service.spawnBugemon("florachu"),
+			service.spawnBugemon("pyricore")
+		));
+		Team teamB = new Team(List.of(
+			service.spawnBugemon("rockachu"),
+			service.spawnBugemon("obsidian")
+		));
+
+		Player player = new Player();
+		Battle battle = new Battle(teamA, teamB, player);
+
+		return battle;
+	}
+
+	@Test
+	public void testgetTargetsSelfBugemon() {
+		Battle battle = getTestBattle();
+		Effect effect = new Effect(EffectType.STAT_MODIFIER, EffectTarget.OWN_BUGEMON, Map.of(), EffectDuration.PERMANENT);
+
+		TeamLabel team = TeamLabel.TEAM_A;
+		List<Bugemon> targets = effect.getTargets(battle, team);
+
+		assertEquals(1, targets.size());
+		assertSame(battle.getOwnActiveBugemon(team), targets.get(0));
+	}
+
+	@Test
+	public void testgetTargetsOppositeBugemon() {
+		Battle battle = getTestBattle();
+		Effect effect = new Effect(EffectType.STAT_MODIFIER, EffectTarget.OPPOSITE_BUGEMON, Map.of(), EffectDuration.PERMANENT);
+
+		TeamLabel team = TeamLabel.TEAM_A;
+		List<Bugemon> targets = effect.getTargets(battle, team);
+
+		assertEquals(1, targets.size());
+		assertSame(battle.getOppositeActiveBugemon(team), targets.get(0));
+	}
+
+	@Test
+	public void testgetTargetsOwnTeam() {
+		Battle battle = getTestBattle();
+		Effect effect = new Effect(EffectType.STAT_MODIFIER, EffectTarget.OWN_TEAM, Map.of(), EffectDuration.PERMANENT);
+
+		TeamLabel team = TeamLabel.TEAM_A;
+		List<Bugemon> targets = effect.getTargets(battle, team);
+
+		boolean foundFlorachu = false;
+		boolean foundPyricore = false;
+
+		for (Bugemon bugemon: targets) {
+			if (!foundFlorachu && bugemon.getSpecies().getId().equals("florachu")) {
+				foundFlorachu = true;
+			}
+			else if (!foundPyricore && bugemon.getSpecies().getId().equals("pyricore")) {
+				foundPyricore = true;
+			}
+			else {
+				assertTrue(false, "Found an unexpected Bugemon in the targets list.");
+			}
+		}
+
+		assertTrue(foundFlorachu);
+		assertTrue(foundPyricore);
+	}
+}

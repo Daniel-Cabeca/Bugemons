@@ -1,9 +1,14 @@
 package ulb.model.effect;
 
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 
 import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.Stats;
+
+import ulb.model.battle.Battle;
+import static ulb.model.battle.Battle.TeamLabel;
 
 public class Effect {
 	private final EffectType type;
@@ -12,26 +17,26 @@ public class Effect {
 	private Map<StatType, Integer> modifiers;
 
 	public enum EffectType {
-		SOIN,
+		HEAL,
 		STAT_MODIFIER,
 		RESET_MALUS,
 		SWITCH
 	}
 
 	public enum EffectTarget {
-		LANCEUR,
-		ADVERSAIRE,
-		EQUIPE
+		OWN_BUGEMON,
+		OPPOSITE_BUGEMON,
+		OWN_TEAM
 	}
 
 	public enum EffectDuration {
 		PERMANENT,
-		TOUR
+		ROUND
 	}
 
 	public enum StatType {
-		PV,
-		ATTAQUE,
+		HP,
+		ATTACK,
 		DEFENSE,
 		INITIATIVE
 	}
@@ -61,10 +66,10 @@ public class Effect {
 		Stats statsChange = new Stats();
 		for (Map.Entry<StatType, Integer> entry : this.modifiers.entrySet()) {
 			switch (entry.getKey()) {
-				case PV:
+				case HP:
 					statsChange.plus(new Stats(entry.getValue(), 0, 0, 0));
 					break;
-				case ATTAQUE:
+				case ATTACK:
 					statsChange.plus(new Stats(0, entry.getValue(), 0, 0));
 					break;
 				case DEFENSE:
@@ -86,8 +91,8 @@ public class Effect {
 	 */
 	public int apply(Bugemon target) {
 		switch (this.type) {
-			case SOIN:
-				target.changeFightStats(new Stats(this.modifiers.get(StatType.PV), 0, 0, 0));
+			case HEAL:
+				target.changeFightStats(new Stats(this.modifiers.get(StatType.HP), 0, 0, 0));
 				break;
 			case STAT_MODIFIER:
 				target.changeFightStats(buildStatsChange());
@@ -102,5 +107,49 @@ public class Effect {
 				return 0;
 		}
 		return 1;
+	}
+
+	/**
+	 * Applies the effect in the given battle.
+	 *
+	 * @param battle The current battle
+	 * @param team The team using that effect
+	 */
+	public void apply(Battle battle, TeamLabel team) {
+		List<Bugemon> targets = this.getTargets(battle, team);
+
+		for (Bugemon bugemon: targets) {
+			this.apply(bugemon);
+		}
+	}
+
+	/**
+	 * Returns the list of Bugemons affected by the effect.
+	 *
+	 * @param battle The current battle
+	 * @param team The team using that effect
+	 * @return The list of affected Bugemons
+	 */
+	public List<Bugemon> getTargets(Battle battle, TeamLabel team) {
+		List<Bugemon> targets = new ArrayList<>();
+
+		switch(this.target) {
+			case OWN_BUGEMON:
+				targets.add(battle.getOwnActiveBugemon(team));
+				break;
+
+			case OPPOSITE_BUGEMON:
+				targets.add(battle.getOppositeActiveBugemon(team));
+				break;
+
+			case OWN_TEAM:
+				targets = battle.getOwnTeam(team).getMembers();
+				break;
+
+			default:
+				break;
+		}
+
+		return targets;
 	}
 }

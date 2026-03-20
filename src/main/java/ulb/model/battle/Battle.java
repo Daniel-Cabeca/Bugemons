@@ -1,5 +1,7 @@
 package ulb.model.battle;
 
+import java.lang.IllegalArgumentException;
+
 import ulb.model.team.Team;
 import ulb.model.Player;
 import ulb.model.type.Effectiveness;
@@ -135,6 +137,58 @@ public class Battle {
 	public void setFloorNumber(int floorNumber){ this.floorNumber = floorNumber; }
 	public void enableBossBattle() { this.isBossBattle = true; }
 
+	public Team getOwnTeam(TeamLabel teamLabel) {
+		switch(teamLabel) {
+			case TEAM_A:
+				return this.teamA;
+
+			case TEAM_B:
+				return this.teamB;
+
+			default:
+				throw new IllegalArgumentException("This team label is not handled.");
+		}
+	}
+
+	public Team getOppositeTeam(TeamLabel teamLabel) {
+		switch(teamLabel) {
+			case TEAM_A:
+				return this.teamB;
+
+			case TEAM_B:
+				return this.teamA;
+
+			default:
+				throw new IllegalArgumentException("This team label is not handled.");
+		}
+	}
+
+	public Bugemon getOwnActiveBugemon(TeamLabel teamLabel) {
+		switch(teamLabel) {
+			case TEAM_A:
+				return this.activeBugemonA;
+
+			case TEAM_B:
+				return this.activeBugemonB;
+
+			default:
+				throw new IllegalArgumentException("This team label is not handled.");
+		}
+	}
+
+	public Bugemon getOppositeActiveBugemon(TeamLabel teamLabel) {
+		switch(teamLabel) {
+			case TEAM_A:
+				return this.activeBugemonB;
+
+			case TEAM_B:
+				return this.activeBugemonA;
+
+			default:
+				throw new IllegalArgumentException("This team label is not handled.");
+		}
+	}
+
 	public TeamLabel checkInitiative(){
 		if (getActiveBugemonA().getFightStats().getInitiative() > getActiveBugemonB().getFightStats().getInitiative()){
 			return TeamLabel.TEAM_A;
@@ -159,7 +213,7 @@ public class Battle {
 	 * @return if the item can be used or not (boolean)
 	 */
 	public boolean checkItem(Item item, boolean isTeamA) {
-		if (item.getEffect().getType().equals(Effect.EffectType.SOIN)) {
+		if (item.getEffect().getType().equals(Effect.EffectType.HEAL)) {
 			if (isTeamA) {
 				int baseHp = getActiveBugemonA().getBaseStats().getHp();
 				int fightHP = getActiveBugemonA().getHp();
@@ -388,10 +442,10 @@ public class Battle {
 		List<Bugemon> targets = new ArrayList<>();
 
 		// apply effect on target (all except switch)
-		if (effect.getTarget().equals(Effect.EffectTarget.ADVERSAIRE)) {
+		if (effect.getTarget().equals(Effect.EffectTarget.OPPOSITE_BUGEMON)) {
 			applyEffectOnOppositeActiveBugemon(team, effect, targets);
 
-		} else if (effect.getTarget().equals(Effect.EffectTarget.LANCEUR)) {
+		} else if (effect.getTarget().equals(Effect.EffectTarget.OWN_BUGEMON)) {
 			applyEffectOnOwnActiveBugemon(team, effect, targets);
 		
 		} else {
@@ -404,7 +458,7 @@ public class Battle {
 		}
 
 		// creates active effect for targeted Bugemons
-		if (effect.getDuration() == Effect.EffectDuration.TOUR
+		if (effect.getDuration() == Effect.EffectDuration.ROUND
 				&& effect.getType() == Effect.EffectType.STAT_MODIFIER) {
 			Stats delta = effect.buildStatsChange();
 			for (Bugemon target : targets) {

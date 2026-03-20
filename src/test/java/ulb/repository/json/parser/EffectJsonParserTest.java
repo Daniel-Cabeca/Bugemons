@@ -10,6 +10,7 @@ import ulb.model.effect.Effect;
 import ulb.model.effect.Effect.EffectType;
 import ulb.model.effect.Effect.EffectTarget;
 import ulb.model.effect.Effect.EffectDuration;
+import ulb.model.effect.Effect.StatType;
 
 import ulb.repository.LoadException;
 
@@ -32,6 +33,12 @@ public class EffectJsonParserTest {
 		return parser.parseDuration(node);
 	}
 
+	public static StatType parseStatTypeFromStr(String str) {
+		EffectJsonParser parser = new EffectJsonParser();
+		JsonNode node = Json.getNode("\""+ str +"\"");
+		return parser.parseStatType(node);
+	}
+
 	// Target
 
 	@Test
@@ -41,17 +48,17 @@ public class EffectJsonParserTest {
 
 	@Test
 	public void testParseTargetLanceur() {
-		assertEquals(EffectTarget.LANCEUR, parseEffectTargetFromStr("lanceur"));
+		assertEquals(EffectTarget.OWN_BUGEMON, parseEffectTargetFromStr("lanceur"));
 	}
 
 	@Test
 	public void testParseTargetAdversaire() {
-		assertEquals(EffectTarget.ADVERSAIRE, parseEffectTargetFromStr("adversaire"));
+		assertEquals(EffectTarget.OPPOSITE_BUGEMON, parseEffectTargetFromStr("adversaire"));
 	}
 
 	@Test
 	public void testParseTargetEquipe() {
-		assertEquals(EffectTarget.EQUIPE, parseEffectTargetFromStr("equipe"));
+		assertEquals(EffectTarget.OWN_TEAM, parseEffectTargetFromStr("equipe"));
 	}
 
 	// Duration
@@ -68,8 +75,35 @@ public class EffectJsonParserTest {
 
 	@Test
 	public void testParseDurationOneTurn() {
-		assertEquals(EffectDuration.TOUR, parseEffectDurationFromStr("tour"));
-		assertEquals(EffectDuration.TOUR, parseEffectDurationFromStr("1_tour"));
+		assertEquals(EffectDuration.ROUND, parseEffectDurationFromStr("tour"));
+		assertEquals(EffectDuration.ROUND, parseEffectDurationFromStr("1_tour"));
+	}
+
+	// Stat type
+
+	@Test
+	public void testParseStatTypeError() {
+		assertThrows(LoadException.class, () -> { parseStatTypeFromStr("doesnotexist"); });
+	}
+
+	@Test
+	public void testParseStatTypeHp() {
+		assertEquals(StatType.HP, parseStatTypeFromStr("pv"));
+	}
+
+	@Test
+	public void testParseStatTypeAttack() {
+		assertEquals(StatType.ATTACK, parseStatTypeFromStr("attaque"));
+	}
+
+	@Test
+	public void testParseStatTypeDefense() {
+		assertEquals(StatType.DEFENSE, parseStatTypeFromStr("defense"));
+	}
+
+	@Test
+	public void testParseStatTypeInitiative() {
+		assertEquals(StatType.INITIATIVE, parseStatTypeFromStr("initiative"));
 	}
 
 	// ParseOne
@@ -86,7 +120,7 @@ public class EffectJsonParserTest {
 	}
 
 	@Test
-	public void testParseOneSoin() {
+	public void testParseOneHeal() {
 		String str = """
 			{
 				"type": "soin",
@@ -97,9 +131,9 @@ public class EffectJsonParserTest {
 
 		Effect obtained = parseEffectFromStr(str);
 
-		assertEquals(EffectType.SOIN, obtained.getType());
+		assertEquals(EffectType.HEAL, obtained.getType());
 		assertEquals(EffectDuration.PERMANENT, obtained.getDuration());
-		assertEquals(70, obtained.getModifiers().get(Effect.StatType.PV));
+		assertEquals(70, obtained.getModifiers().get(Effect.StatType.HP));
 	}
 
 	@Test
@@ -137,7 +171,7 @@ public class EffectJsonParserTest {
 		Effect obtained = parseEffectFromStr(str);
 
 		assertEquals(EffectType.STAT_MODIFIER, obtained.getType());
-		assertEquals(10, obtained.getModifiers().get(Effect.StatType.ATTAQUE));
+		assertEquals(10, obtained.getModifiers().get(Effect.StatType.ATTACK));
 		assertEquals(10, obtained.getModifiers().get(Effect.StatType.INITIATIVE));
 	}
 
@@ -153,7 +187,7 @@ public class EffectJsonParserTest {
 		Effect obtained = parseEffectFromStr(str);
 
 		assertEquals(EffectType.RESET_MALUS, obtained.getType());
-		assertEquals(EffectDuration.TOUR, obtained.getDuration());
+		assertEquals(EffectDuration.ROUND, obtained.getDuration());
 	}
 
 	@Test
@@ -168,6 +202,6 @@ public class EffectJsonParserTest {
 		Effect obtained = parseEffectFromStr(str);
 
 		assertEquals(EffectType.SWITCH, obtained.getType());
-		assertEquals(EffectDuration.TOUR, obtained.getDuration());
+		assertEquals(EffectDuration.ROUND, obtained.getDuration());
 	}
 }

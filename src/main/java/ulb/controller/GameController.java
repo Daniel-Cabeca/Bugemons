@@ -216,7 +216,7 @@ public class GameController {
 
 			BattleEndWindow controller = loader.getController();
 			controller.setPlayer(player);
-			controller.setResult(victory, 10000000); // Needs to be refactored
+			controller.setResult(victory, normalModeBattleController.getTotalXP()); // Needs to be refactored
 
 		} catch (IOException e) {
 			System.err.println("Failed to load battle_end_window: " + e.getMessage());

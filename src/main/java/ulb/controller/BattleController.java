@@ -162,5 +162,5 @@ public class BattleController {
 		this.battle.clearLogMsg();
 	}
 
-	private int getTotalXP() { return this.battle.computeTotalXP(this.battle.getTeamB());}
+	public int getTotalXP() { return this.battle.computeTotalXP(this.battle.getTeamB());}
 }

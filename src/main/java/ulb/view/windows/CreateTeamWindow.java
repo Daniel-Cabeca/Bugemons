@@ -10,7 +10,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
@@ -34,9 +33,6 @@ public class CreateTeamWindow extends Window {
 
 	@FXML
 	private GridPane availableBugemonsGrid;
-
-	@FXML
-	private ScrollPane availableBugemonsScroll;
 
 	@FXML
 	private GridPane selectedBugemons;
@@ -116,7 +112,7 @@ public class CreateTeamWindow extends Window {
 			availableBugemonsGrid.add(cell, col, row);
 
 			col++;
-			if (col == 3) { col = 0; row++; }
+			if (col == 8) { col = 0; row++; }
 		}
 	}
 

@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ulb.view.windows.CreateTeamWindow">
+<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ulb.view.windows.CreateTeamWindow">
 
     <padding>
         <Insets bottom="20" left="20" right="20" top="20" />
@@ -23,10 +23,8 @@
 
     <Label style="-fx-font-size: 20px;" text="Bugémons Disponible:" />
 
-    <ScrollPane fx:id="availableBugemonsScroll" fitToWidth="true">
-      <content>
+    <ScrollPane fx:id="availableBugemonsScroll" fitToWidth="true" prefWidth="213.0">
       <GridPane fx:id="availableBugemonsGrid" />
-      </content>
     </ScrollPane>
 
     <Button onAction="#handleConfirmTeam" prefHeight="50" prefWidth="200" text="Confirmer l'Équipe" />

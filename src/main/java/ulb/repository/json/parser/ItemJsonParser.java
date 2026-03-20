@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import ulb.model.item.Item;
-import ulb.model.Effect;
+import ulb.model.effect.Effect;
 
 import ulb.repository.LoadException;
 

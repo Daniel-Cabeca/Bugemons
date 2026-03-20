@@ -2,7 +2,7 @@ package ulb.model.sample;
 
 import java.util.Map;
 
-import ulb.model.Effect;
+import ulb.model.effect.Effect;
 
 public class EffectSample {
     static public Effect getHeal(){

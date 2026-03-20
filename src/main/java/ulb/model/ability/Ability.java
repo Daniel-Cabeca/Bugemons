@@ -2,8 +2,7 @@ package ulb.model.ability;
 
 import ulb.model.HasId;
 import ulb.model.type.Type;
-import ulb.model.Effect;
-import ulb.model.bugemon.Bugemon;
+import ulb.model.effect.Effect;
 
 /**
  * Represents a move that can be used by a Bugemon in battle.

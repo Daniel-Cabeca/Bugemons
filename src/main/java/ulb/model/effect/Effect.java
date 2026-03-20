@@ -1,4 +1,4 @@
-package ulb.model;
+package ulb.model.effect;
 
 import java.util.Map;
 

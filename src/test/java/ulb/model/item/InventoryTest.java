@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import ulb.model.Effect;
+import ulb.model.effect.Effect;
 import ulb.model.sample.EffectSample;
 
 import ulb.repository.ItemRepository;

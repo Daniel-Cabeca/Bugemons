@@ -4,10 +4,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.util.HashMap;
 import java.util.Map;
 
-import ulb.model.Effect;
-import ulb.model.Effect.EffectType;
-import ulb.model.Effect.EffectTarget;
-import ulb.model.Effect.EffectDuration;
+import ulb.model.effect.Effect;
+import ulb.model.effect.Effect.EffectType;
+import ulb.model.effect.Effect.EffectTarget;
+import ulb.model.effect.Effect.EffectDuration;
 
 import ulb.repository.LoadException;
 

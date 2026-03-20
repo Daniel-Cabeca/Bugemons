@@ -7,7 +7,7 @@ import ulb.model.ability.Ability;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.Stats;
 import ulb.model.item.Item;
-import ulb.model.Effect;
+import ulb.model.effect.Effect;
 import ulb.controller.action.*; 
 import ulb.model.reward.Reward;
 import ulb.model.reward.RewardType;

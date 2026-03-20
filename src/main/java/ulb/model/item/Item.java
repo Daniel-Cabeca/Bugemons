@@ -1,7 +1,7 @@
 package ulb.model.item;
 
 import ulb.model.HasId;
-import ulb.model.Effect;
+import ulb.model.effect.Effect;
 import ulb.model.bugemon.Bugemon;
 
 public class Item implements HasId {

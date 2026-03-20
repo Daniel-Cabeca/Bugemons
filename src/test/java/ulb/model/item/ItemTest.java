@@ -18,7 +18,7 @@ import ulb.model.bugemon.Stats;
 import ulb.model.sample.BugemonSample;
 import ulb.model.sample.EffectSample;
 import ulb.model.team.Team;
-import ulb.model.Effect;
+import ulb.model.effect.Effect;
 import ulb.model.sample.AbilitySample;
 
 public class ItemTest {

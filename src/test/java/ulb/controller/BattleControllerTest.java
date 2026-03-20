@@ -13,7 +13,7 @@ import ulb.model.bugemon.Stats;
 import ulb.controller.action.Swap;
 import ulb.controller.action.UseAbility;
 import ulb.controller.action.UseItem;
-import ulb.model.Effect;
+import ulb.model.effect.Effect;
 import ulb.model.item.Item;
 import ulb.model.reward.Reward;
 import ulb.model.sample.AbilitySample;

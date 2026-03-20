@@ -127,7 +127,7 @@ public class GameController {
 		// without multiplayer, player is always teamA
 
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/NewBattleWindow.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/BattleWindow.fxml"));
 			Parent battleWindow = loader.load();
 
 			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -160,7 +160,7 @@ public class GameController {
 		}
 
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/NewBattleWindow.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/BattleWindow.fxml"));
 			Parent battleWindow = loader.load();
 
 			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

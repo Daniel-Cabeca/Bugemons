@@ -130,7 +130,7 @@ public class Battle {
 	public void setFloorNumber(int floorNumber){ this.floorNumber = floorNumber; }
 	public void enableBossBattle() { this.isBossBattle = true; }
 
-	public TeamLabel checkInitiave(){
+	public TeamLabel checkInitiative(){
 		if (getActiveBugemonA().getFightStats().getInitiative() > getActiveBugemonB().getFightStats().getInitiative()){
 			return TeamLabel.TEAM_A;
 		}
@@ -459,7 +459,7 @@ public class Battle {
 	}
 
 	/**
-	 * Returns all available actions based on corrent game state
+	 * Returns all available actions based on current game state
 	 * @param isTeamA if the current team is A or B
 	 * @return the currently available actions
 	 */
@@ -587,9 +587,9 @@ public class Battle {
 	 * Handles one round of the battle
 	 */
 	private void handleRound(){
-		// checks who's action should be executed first and applies it
+		// checks whose action should be executed first and applies it
 		Action currentAction = this.actionA;
-		TeamLabel firstPlayer = this.checkInitiave();
+		TeamLabel firstPlayer = this.checkInitiative();
 		if (firstPlayer == TeamLabel.TEAM_B){
 			currentAction = this.actionB;
 		}
@@ -645,7 +645,7 @@ public class Battle {
 
 	/**
 	 * Check if the round is finished and set the states depending on that
-	 * @param previousActiveTeam
+	 * @param previousActiveTeam the team who just finished the round
 	 * @return a boolean depending on if the round is finished
 	 */
 	private boolean handleActionFinished(TeamLabel previousActiveTeam){

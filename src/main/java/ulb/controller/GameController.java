@@ -33,8 +33,7 @@ public class GameController {
 
 	private boolean isNextFloor;
 
-	public GameController(){
-	}
+	public GameController() {}
 
 	public GameController(TowerManager towerManager){
 		this.towerModeTowerManager = towerManager;
@@ -183,10 +182,8 @@ public class GameController {
 
 	/**
 	 * Switches to the floor reward window (rewards not functional yet)
-	 *
-	 * @param teamA the player's team of bugemons
 	 */
-	public void switchToFloorRewardWindow(Team teamA, ActionEvent event) {
+	public void switchToFloorRewardWindow(ActionEvent event) {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/FloorRewardWindow.fxml"));
 			Parent floorRewardWindow = loader.load();
@@ -282,7 +279,7 @@ public class GameController {
 						break;
 
 					case REWARD:
-						switchToFloorRewardWindow(teamA, event);
+						switchToFloorRewardWindow(event);
 						roomManager.setRoomCompleted(true);
 						break;
 

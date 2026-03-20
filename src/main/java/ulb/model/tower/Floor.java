@@ -22,7 +22,9 @@ public class Floor {
         }
     }
 
-
+    /**
+     * Builds the floor with the correct room types
+     */
     private void buildFloor() {
         Room room1 = new Room(1, RoomType.BATTLE);
         Room room2 = new Room(2, RoomType.REWARD);

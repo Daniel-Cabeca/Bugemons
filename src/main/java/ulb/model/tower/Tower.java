@@ -13,6 +13,9 @@ public class Tower {
         buildTower();
     }
 
+    /**
+     * Builds the tower with the correct floors
+     */
     private void buildTower() {
         for (int i = 0; i < 8; i++) {
             Floor floor = new Floor(i+1,false);

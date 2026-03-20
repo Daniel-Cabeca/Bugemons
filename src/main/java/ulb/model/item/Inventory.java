@@ -50,7 +50,6 @@ public class Inventory {
 	/**
 	 * Returns the quantity of an item in the inventory.
 	 *
-	 * @param id The item's id
 	 * @return The quantity of the item in the inventory (0 if not present)
 	 */
 	public int getQuantity(Item item) {

@@ -90,8 +90,6 @@ public class BattleWindow extends Window {
 	private Button backToMenuButton;
 	@FXML
 	private Label battleLog;
-	@FXML
-	private Button nextMessageButton;
 
 	private Team playerTeam;
 	private Inventory playerInventory;

@@ -320,82 +320,6 @@ public class Battle {
 	}
 
 	/**
-	 * Applies an effect on the active Bugemon of the opposite team
-	 * 
-	 * @param team the team which applies the effect
-	 * @param effect the applied effect
-	 * @param targets list of bugemons which have an applied effect
-	 */
-	private void applyEffectOnOppositeActiveBugemon(TeamLabel team, Effect effect, List<Bugemon> targets) {
-		switch (team) {
-			case TEAM_A:
-				effect.apply(this.activeBugemonB);
-				targets.add(this.activeBugemonB);
-				break;
-
-			case TEAM_B:
-				effect.apply(this.activeBugemonA);
-				targets.add(this.activeBugemonA);
-				break;
-
-			default:
-				break;
-		}
-	}
-
-	/**
-	 * Applies an effect on the active Bugemon of the user's team
-	 * 
-	 * @param team the team which applies the effect
-	 * @param effect the applied effect
-	 * @param targets list of bugemons which have an applied effect
-	 */
-	private void applyEffectOnOwnActiveBugemon(TeamLabel team, Effect effect, List<Bugemon> targets) {
-		switch (team) {
-			case TEAM_A:
-				effect.apply(this.activeBugemonA);
-				targets.add(this.activeBugemonA);
-				break;
-
-			case TEAM_B:
-				effect.apply(this.activeBugemonB);
-				targets.add(this.activeBugemonB);
-				break;
-
-			default:
-				break;
-		}
-	}
-
-	/**
-	 * Applies an effect on an entire team
-	 * 
-	 * @param team the team which applies the effect
-	 * @param effect the applied effect
-	 * @param targets list of bugemons which have an applied effect
-	 */
-	private void applyEffectOnEntireTeam(TeamLabel team, Effect effect, List<Bugemon> targets) {
-		switch (team) {
-			case TEAM_A:
-				for (Bugemon b : this.teamA.getMembers()){
-					effect.apply(b);
-					targets.add(b);
-				}
-				break;
-
-			case TEAM_B:
-				for (Bugemon b : this.teamB.getMembers()){
-					effect.apply(b);
-					targets.add(b);
-				}
-				break;
-
-			default:
-				break;
-		}
-	}
-
-	/**
 	 * Applies the switching effect on a team
 	 * @param team the team on which the effect applies
 	 */
@@ -442,15 +366,7 @@ public class Battle {
 		List<Bugemon> targets = new ArrayList<>();
 
 		// apply effect on target (all except switch)
-		if (effect.getTarget().equals(Effect.EffectTarget.OPPOSITE_BUGEMON)) {
-			applyEffectOnOppositeActiveBugemon(team, effect, targets);
-
-		} else if (effect.getTarget().equals(Effect.EffectTarget.OWN_BUGEMON)) {
-			applyEffectOnOwnActiveBugemon(team, effect, targets);
-		
-		} else {
-			applyEffectOnEntireTeam(team, effect, targets);
-		}
+		effect.apply(this, team);
 
 		// applies switch effect
 		if (effect.getType().equals(Effect.EffectType.SWITCH)) {

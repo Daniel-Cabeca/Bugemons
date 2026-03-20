@@ -24,10 +24,12 @@
             <GridPane fx:id="playerTeamGrid" hgap="10" vgap="10" alignment="CENTER"/>
         </VBox>
 
-        <Button style="-fx-background-color: #38466f"
-                text="Bataille Classique" onAction="#handleControlledBattle" prefWidth="200" prefHeight="50"/>
-        <Button style="-fx-background-color: #13550d"
-                text="Bataille Automatique" onAction="#handleAutomaticBattle" prefWidth="200" prefHeight="50"/>
+        <Button style="-fx-background-color: #8D89BA"
+                text="Combat Classique" onAction="#handleControlledBattle" prefWidth="200" prefHeight="50"/>
+        <Button style="-fx-background-color: #97B35F"
+                text="Combat Automatique" onAction="#handleAutomaticBattle" prefWidth="200" prefHeight="50"/>
+        <Button style="-fx-background-color: #9B3E62"
+                text="Tour NO" onAction="#handleTowerBattle" prefWidth="200" prefHeight="50"/>
 
     </VBox>
 </StackPane>

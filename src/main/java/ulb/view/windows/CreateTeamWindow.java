@@ -178,7 +178,7 @@ public class CreateTeamWindow extends Window {
 	public void handleConfirmTeam(ActionEvent event) {
 		if (!selected.isEmpty() && selected.size() <= 6) {
 			setupGame(selected);
-			gameController.switchToBattleMenu(event);
+			gameController.switchToBattleModeWindow(event);
 		} else {
 			throw new IllegalStateException(
 					"Tu dois sélectionner entre 1 et 6 Bugemons pour confirmer ton équipe."

@@ -1,7 +1,6 @@
 package ulb.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -10,11 +9,9 @@ import ulb.model.battle.Battle;
 import ulb.model.battle.BattleState;
 import ulb.model.team.Team;
 import ulb.model.bugemon.Bugemon;
-import ulb.model.type.Effectiveness;
-import ulb.model.type.Type;
 import ulb.view.handler.WindowContainer;
 import ulb.view.windows.BattleEndWindow;
-import ulb.view.windows.BattleMenu;
+import ulb.view.windows.BattleModeWindow;
 import ulb.view.windows.BattleWindow;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -25,7 +22,7 @@ import ulb.controller.action.*;
 import ulb.model.Player;
 import ulb.model.item.Item;
 import ulb.model.team.OpponentTeamGenerator;
-import ulb.model.reward.Reward;;
+import ulb.model.reward.Reward;
 
 public class BattleController {
 	private Player player;
@@ -55,13 +52,13 @@ public class BattleController {
 	public void switchToBattleMenu(ActionEvent event) {
 
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/BattleMenu.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/BattleModeWindow.fxml"));
 			Parent battleMenu = loader.load();
 
 			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 			stage.getScene().setRoot(battleMenu);
 
-			BattleMenu controller = loader.getController();
+			BattleModeWindow controller = loader.getController();
 			controller.setBattleController(this);
 			controller.displayTeam();
 
@@ -88,8 +85,8 @@ public class BattleController {
 		// battleSnapshot = new BattleSnapshot(new Battle(teamA, teamB, this.player, playerB), true);
 
 		try {
-			// NewBattleWindow.fxml for graphic interface (connection methods to view needed, placeholders for now)
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/NewBattleWindow.fxml"));
+			// BattleWindow.fxml for graphic interface (connection methods to view needed, placeholders for now)
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/BattleWindow.fxml"));
 			Parent battleWindow = loader.load();
 
 			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

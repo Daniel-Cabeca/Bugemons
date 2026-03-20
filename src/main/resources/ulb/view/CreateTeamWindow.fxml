@@ -4,17 +4,15 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<StackPane style="-fx-background-image:url(backgrounds/CreateTeamBackground.jpg); -fx-background-size: stretch;
+<StackPane style="-fx-background-image:url(backgrounds/CreateTeamBackground.png); -fx-background-size: stretch;
            -fx-background-repeat: no-repeat; -fx-background-position: center"
            xmlns="http://javafx.com/javafx/23.0.1"
            xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="ulb.view.windows.CreateTeamWindow">
 
     <VBox fx:id="content"
-          alignment="CENTER"
-          spacing="20"
-          maxWidth="1000"
-          maxHeight="700">
+          alignment="CENTER" spacing="20"
+          maxWidth="1000" maxHeight="700">
 
         <padding>
             <Insets bottom="20" left="20" right="20" top="20"/>
@@ -28,16 +26,14 @@
 
         <Separator />
 
-        <Label style="-fx-font-size: 30px;" text="Bugémons Disponible:" />
+        <Label style="-fx-font-size: 30px;" text="Bugémons Disponibles:" />
 
         <ScrollPane fx:id="availableBugemonsScroll"
                     prefWidth="800" prefHeight="400" fitToWidth="true"
                     style="-fx-background-color: rgba(0, 0, 0, 0.3); -fx-background: transparent">
 
-            <content>
                 <GridPane fx:id="availableBugemonsGrid"
                           hgap="15" vgap="15"/>
-            </content>
 
         </ScrollPane>
 

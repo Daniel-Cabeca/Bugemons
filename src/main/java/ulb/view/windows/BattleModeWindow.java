@@ -8,12 +8,17 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import ulb.controller.BattleController;
+import ulb.controller.GameController;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.team.Team;
 
+import java.util.List;
+
+import java.util.List; 
+
 public class BattleModeWindow {
 
-    private BattleController battleController;
+	private GameController gameController;
 
     @FXML
     private GridPane playerTeamGrid;
@@ -24,9 +29,7 @@ public class BattleModeWindow {
     private static final double BASE_WIDTH = 800;
     private static final double BASE_HEIGHT = 600;
 
-    public void setBattleController(BattleController battleController) {
-        this.battleController = battleController;
-    }
+	public void setGameController(GameController gameController) { this.gameController = gameController;}
 
     @FXML
     public void initialize() {
@@ -52,15 +55,22 @@ public class BattleModeWindow {
     }
 
     public void handleAutomaticBattle(ActionEvent actionEvent) {
-        battleController.switchToBattleWindow(battleController.getTeam(),true , actionEvent);
+		gameController.setupNormalMode();
+		gameController.switchToBattleWindow(gameController.getTeam(), true, actionEvent);
     }
 
     public void handleControlledBattle(ActionEvent actionEvent) {
-        battleController.switchToBattleWindow(battleController.getTeam(),false , actionEvent);
+		gameController.setupNormalMode();
+		gameController.switchToBattleWindow(gameController.getTeam(), false, actionEvent);
     }
 
+	public void handleTowerBattle(ActionEvent actionEvent) {
+		gameController.setupTowerMode();
+		gameController.handleTower(gameController.getTeam(),actionEvent);
+	}
+
     public void displayTeam() {
-        displayTeamWithStats(battleController.getTeam(), playerTeamGrid);
+        displayTeamWithStats(gameController.getTeam(), playerTeamGrid);
 
     }
 

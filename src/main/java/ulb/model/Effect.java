@@ -52,6 +52,11 @@ public class Effect {
 
 	public Map<StatType, Integer> getModifiers() { return this.modifiers; }
 
+	/**
+	 * Builds the Stats object used to change the Stats of a Bugemon
+	 *
+	 * @return the built Stats object
+	 */
 	public Stats buildStatsChange() {
 		Stats statsChange = new Stats();
 		for (Map.Entry<StatType, Integer> entry : this.modifiers.entrySet()) {
@@ -73,6 +78,12 @@ public class Effect {
 		return statsChange;
 	}
 
+	/**
+	 * Applies the effect on a Bugemon
+	 *
+	 * @param target the target Bugemon
+	 * @return 0 if no effect is applied, 1 if the effect is applied
+	 */
 	public int apply(Bugemon target) {
 		switch (this.type) {
 			case SOIN:

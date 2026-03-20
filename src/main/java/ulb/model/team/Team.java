@@ -45,6 +45,12 @@ public class Team {
         return !this.isEmpty() && this.size() <= MAX_PARTY_SIZE;
     }
 
+    /**
+     * Adds a Bugemon to the team
+     *
+     * @param bugemon the Bugemon to be added to the team
+     * @return {@code true} if the Bugemon can be added, {@code false} if it cannot be added
+     */
     public boolean add(Bugemon bugemon) {
         if (this.members.size() >= MAX_PARTY_SIZE) {
             return false;
@@ -58,6 +64,12 @@ public class Team {
         return true;
     }
 
+    /**
+     * Checks if the team contains a Bugemon with the same name
+     *
+     * @param name the name to be checked
+     * @return {@code true} if team contains a Bugemon with the same name, {@code false} otherwise
+     */
     public boolean containsName(String name) {
         if (name == null) {
             return false;
@@ -71,6 +83,12 @@ public class Team {
         return false;
     }
 
+    /**
+     * Checks if the team contains the Bugemon
+     *
+     * @param bugemon the Bugemon to be checked
+     * @return {@code true} if team contains the Bugemon, {@code false} otherwise
+     */
     public boolean contains(Bugemon bugemon){
         if (bugemon == null){
             return false;
@@ -84,6 +102,12 @@ public class Team {
         return false;
     }
 
+    /**
+     * Removes a Bugemon from the team based on its name
+     *
+     * @param name the name of the Bugemon to be removed
+     * @return {@code true} if the Bugemon was removed, {@code false} otherwise
+     */
     public boolean removeByName(String name) {
         if (name == null || name.isBlank()) {
             return false;
@@ -97,13 +121,6 @@ public class Team {
         }
 
         return false;
-    }
-
-    public boolean remove(Bugemon bugemon) {
-        if (bugemon == null) {
-            return false;
-        }
-        return removeByName(bugemon.getName());
     }
 
     /**

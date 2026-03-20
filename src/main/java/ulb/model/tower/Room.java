@@ -1,0 +1,21 @@
+package ulb.model.tower;
+
+public class Room {
+
+    private int id;
+    private RoomType roomType;
+	private boolean completedRoom = false;
+
+    public Room(int id, RoomType roomType) {
+        this.id = id;
+        this.roomType = roomType;
+    }
+
+    public RoomType getRoomType() {return roomType;}
+
+    public int getId() {return id;}
+
+	public boolean isRoomCompleted() {return this.completedRoom;}
+
+	public void setRoomCompleted(boolean status) {this.completedRoom = status;}
+}

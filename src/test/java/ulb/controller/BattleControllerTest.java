@@ -44,7 +44,7 @@ public class BattleControllerTest {
 	}
 
 	@Test
-	public void testBattleEndTeamKO(){
+	public void battleEndsWhenTeamKO(){
 		Player player = new Player("TestPlayer");
 
 		Bugemon a = BugemonSample.getA();
@@ -64,7 +64,7 @@ public class BattleControllerTest {
 	}
 
 	@Test
-	public void testCheckItemTrue() throws Exception {
+	public void allowUseOfHealItem() throws Exception {
 		Player player = new Player("TestPlayer");
 
 		Bugemon bugemon = BugemonSample.getA();
@@ -83,7 +83,7 @@ public class BattleControllerTest {
 	}
 
 	@Test
-	public void testCheckItemFalse() throws Exception {
+	public void doesNotAllowUseOfHealItem() throws Exception {
 		Player player = new Player("TestPlayer");
 		
 
@@ -101,7 +101,7 @@ public class BattleControllerTest {
 	}
 
 	@Test
-	public void testUsedItemRemovedFromInventory() throws Exception {
+	public void itemRemovedFromInventoryWhenUsed() throws Exception {
 		Player player = new Player("TestPlayer");
 		player.getInventory().getItems().clear();
 
@@ -138,7 +138,7 @@ public class BattleControllerTest {
 
 
 	@Test
-	public void testNoXpOnLoss() throws Exception {
+	public void noXpGainedOnLostBattle() throws Exception {
 		Player player = new Player("TestPlayer");
 
 		Bugemon a = BugemonSample.getA();
@@ -159,7 +159,7 @@ public class BattleControllerTest {
 	}
 
 	@Test
-	public void testXpAfterWin() throws Exception {
+	public void xpGainedOnWonBattle() throws Exception {
 		Player player = new Player("TestPlayer");
 
 		Bugemon a = BugemonSample.getA();
@@ -182,7 +182,7 @@ public class BattleControllerTest {
 
 
 	@Test
-	public void testBossGivesMoreXp() throws Exception {
+	public void winAgainstBossGivesMoreXp() throws Exception {
 		Player player = new Player("TestPlayer");
 		
 
@@ -205,7 +205,7 @@ public class BattleControllerTest {
 	}
 
 	@Test
-	public void testShareXPBetweenActivesBugemon(){
+	public void shareXpWonBetweenActiveBugemons(){
 		Player player = new Player("TestPlayer");
 
 		Bugemon a = BugemonSample.getA();
@@ -234,7 +234,7 @@ public class BattleControllerTest {
 	}
 
 	@Test
-	public void testDebuffsRemovedAfterBattle() throws Exception {
+	public void debuffsRemovedWhenBattleIsFinished() throws Exception {
 		Player player = new Player("TestPlayer");
 		
 
@@ -257,7 +257,7 @@ public class BattleControllerTest {
 	}
 
 	@Test
-	public void testHpRestoredOnLevelUp() throws Exception {
+	public void hpRestoredWhenLevelUp() throws Exception {
 		Player player = new Player("TestPlayer");
 
 		Bugemon a = BugemonSample.getA();
@@ -282,7 +282,7 @@ public class BattleControllerTest {
 	}
 
 	@Test
-	public void testSwapBugemon(){
+	public void swapBugemon(){
 		Player player = new Player("TestPlayer");
 
 		Bugemon a = BugemonSample.getA();
@@ -303,7 +303,7 @@ public class BattleControllerTest {
 	}
 
 	@Test
-	public void testSwapKOBugemon(){
+	public void swapKOBugemon(){
 		Player player = new Player("TestPlayer");
 
 		Bugemon a = BugemonSample.getA();
@@ -327,7 +327,7 @@ public class BattleControllerTest {
 	}
 
 	@Test
-	public void testApplyReward(){
+	public void applyReward(){
 		Player player = new Player("TestPlayer");
 
 		Bugemon a = BugemonSample.getA();

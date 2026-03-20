@@ -29,7 +29,7 @@ public class GameControllerTest {
 	}
 
 	@Test
-	void handleTowerOnBattleRoomMarksRoomCompletedAndAdvancesToNextRoom() {
+	void handleTowerCompletesRoomAndAdvancesToNextRoom() {
 		Player player = new Player("TestPlayer");
 		Team team = new Team(List.of(new Bugemon(10, 10, 10, 10)));
 		player.setTeam(team);

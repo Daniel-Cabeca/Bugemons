@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class AbilityTest {
 	@Test
-	public void AbilitiesAreEqual() {
+	public void abilitiesAreEqual() {
 		Ability a = AbilitySample.getA();
 		Ability b = AbilitySample.getA();
 		assertTrue(a.equals(b));

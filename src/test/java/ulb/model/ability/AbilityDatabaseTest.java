@@ -45,7 +45,7 @@ public class AbilityDatabaseTest {
 	}
 
 	@Test
-	public void getAbilityFunctionnality() {
+	public void addAndGetAbilityFunctionnality() {
 		AbilityDatabase database = newDatabase();
 		Ability a = AbilitySample.getA();
 

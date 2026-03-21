@@ -14,7 +14,7 @@ import ulb.model.battle.Battle.TeamLabel;
 
 public class BattleTest {
 	@Test
-	public void InitiaveReturnsAWhenAHasHigherInitiative() {
+	public void initiaveReturnsAWhenAHasHigherInitiative() {
 		Bugemon fast = new Bugemon("fast", Type.PYRO, 100, 10, 10, 20);
 		Bugemon slow = new Bugemon("slow", Type.AQUA, 100, 10, 10, 5);
 
@@ -27,7 +27,7 @@ public class BattleTest {
 	}
 
 	@Test
-	public void InitiaveReturnsBWhenBHasHigherInitiative() {
+	public void initiaveReturnsBWhenBHasHigherInitiative() {
 		Bugemon slow = new Bugemon("slow", Type.PYRO, 100, 10, 10, 5);
 		Bugemon fast = new Bugemon("fast", Type.AQUA, 100, 10, 10, 20);
 
@@ -41,7 +41,7 @@ public class BattleTest {
 	}
 
 	@Test
-	public void InitiaveIsRandomWhenInitiativesAreEqual() {
+	public void initiaveIsRandomWhenInitiativesAreEqual() {
 		Bugemon sameA = new Bugemon("sameA", Type.PYRO, 100, 10, 10, 10);
 		Bugemon sameB = new Bugemon("sameB", Type.AQUA, 100, 10, 10, 10);
 

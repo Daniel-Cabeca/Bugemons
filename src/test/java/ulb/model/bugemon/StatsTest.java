@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 public class StatsTest {
 	@Test
-	public void testPositifChange() {
+	public void positifStatsChange() {
 		Stats stat1 = new Stats(10, 10, 10, 10);
 		Stats stat2 = new Stats(10, 1, 5, 7);
 		stat1.change(stat2);
@@ -19,7 +19,7 @@ public class StatsTest {
 	}
 
 	@Test
-	public void testOverflowChange() {
+	public void negativeStatsOverflowChange() {
 		Stats stat1 = new Stats(10, 10, 10, 10);
 		Stats stat2 = new Stats(-11, -20, -8, -20);
 		stat1.change(stat2);
@@ -30,47 +30,47 @@ public class StatsTest {
 	}
 
 	@Test
-	public void testEqualsTrue() {
+	public void statsAreEqual() {
 		Stats a = new Stats(1, 1, 1, 1);
 		Stats b = new Stats(1, 1, 1, 1);
 		assertTrue(a.equals(b));
 	}
 
 	@Test
-	public void verifyEqualsSameInstance() {
+	public void sameInstancesAreEqual() {
 		Stats a = new Stats(1, 1, 1, 1);
 		assertTrue(a.equals(a));
 	}
 
 	@Test
-	public void testEqualsObject() {
+	public void statsAndObjectAreNotEqual() {
 		Stats a = new Stats(1, 1, 1, 1);
 		assertFalse(a.equals(3));
 	}
 
 	@Test
-	public void testEqualsDifferentHp() {
+	public void statsWithDifferentHpValuesAreNotEqual() {
 		Stats a = new Stats(1, 1, 1, 1);
 		Stats b = new Stats(2, 1, 1, 1);
 		assertFalse(a.equals(b));
 	}
 
 	@Test
-	public void testEqualsDifferentAttack() {
+	public void statsWithDifferentAttackValuesAreNotEqual() {
 		Stats a = new Stats(1, 1, 1, 1);
 		Stats b = new Stats(1, 2, 1, 1);
 		assertFalse(a.equals(b));
 	}
 
 	@Test
-	public void testEqualsDifferentDefense() {
+	public void statsWithDifferentDefenseValuesAreNotEqual() {
 		Stats a = new Stats(1, 1, 1, 1);
 		Stats b = new Stats(1, 1, 2, 1);
 		assertFalse(a.equals(b));
 	}
 
 	@Test
-	public void testEqualsDifferentInitiative() {
+	public void statsWithDifferentInitiativeValuesAreNotEqual() {
 		Stats a = new Stats(1, 1, 1, 1);
 		Stats b = new Stats(1, 1, 1, 2);
 		assertFalse(a.equals(b));

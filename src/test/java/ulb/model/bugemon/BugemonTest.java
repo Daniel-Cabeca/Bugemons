@@ -9,7 +9,7 @@ import ulb.model.type.Type;
 public class BugemonTest {
 
 	@Test
-	public void xpBelowLevel() {
+	public void xpGainsDoesNotAllowALevelUp() {
 		Bugemon B = new Bugemon(Type.AQUA, 10, 29, 35, 16);
 		int levelGained = B.gainXp(49);
 		assertEquals(1, B.getLevel());
@@ -18,7 +18,7 @@ public class BugemonTest {
 	}
 
 	@Test
-	public void xpAboveLevel() {
+	public void xpGainsAllowALevelUp() {
 		Bugemon B = new Bugemon(Type.AQUA, 10, 29, 35, 16);
 		int levelGained = B.gainXp(51);
 		assertEquals(2, B.getLevel());
@@ -27,7 +27,7 @@ public class BugemonTest {
 	}
 
 	@Test
-	public void xpAboveMultipleLevels() {
+	public void xpGainsAllowMultipleLevelUps() {
 		Bugemon B = new Bugemon(Type.AQUA, 10, 29, 35, 16);
 		int levelGained = B.gainXp(300);
 		assertEquals(4, B.getLevel());
@@ -36,7 +36,7 @@ public class BugemonTest {
 	}
 
 	@Test
-	public void testResetsFightStats(){
+	public void resetFightStatsToBaseStats(){
 		Stats s = new Stats(-10,-9, -5, -6); // debuff stats
 		Bugemon B = new Bugemon(Type.AQUA, 100, 20, 10, 10);
 

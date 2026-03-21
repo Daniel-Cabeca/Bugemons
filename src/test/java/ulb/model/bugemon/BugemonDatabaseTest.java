@@ -41,7 +41,7 @@ public class BugemonDatabaseTest {
 	}
 
 	@Test
-	public void testAddThrow() {
+	public void addAlreadyExistingBugemonSpeciesThrowsException() {
 		BugemonDatabase database = newDatabase();
 		BugemonSpecies a = getSpeciesA();
 
@@ -50,7 +50,7 @@ public class BugemonDatabaseTest {
 	}
 
 	@Test
-	public void testGetThrow() {
+	public void getNonExistingBugemonSpeciesThrowsEception() {
 		BugemonDatabase database = newDatabase();
 		BugemonSpecies a = getSpeciesA();
 
@@ -58,7 +58,7 @@ public class BugemonDatabaseTest {
 	}
 
 	@Test
-	public void testAddGet() {
+	public void addAndGetBugemonSpeciesFunctionnality() {
 		BugemonDatabase database = newDatabase();
 		BugemonSpecies a = getSpeciesA();
 
@@ -67,7 +67,7 @@ public class BugemonDatabaseTest {
 	}
 
 	@Test
-	public void testExistsTrue() {
+	public void existsIsTrueWhenBugemonSpeciesIsInDataBase() {
 		BugemonDatabase database = newDatabase();
 		BugemonSpecies a = getSpeciesA();
 
@@ -76,7 +76,7 @@ public class BugemonDatabaseTest {
 	}
 
 	@Test
-	public void testExistsFalse() {
+	public void existsIsFalseWhenBugemonSpeciesIsInDataBase() {
 		BugemonDatabase database = newDatabase();
 		BugemonSpecies a = getSpeciesA();
 

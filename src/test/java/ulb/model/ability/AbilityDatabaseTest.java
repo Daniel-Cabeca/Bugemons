@@ -28,7 +28,7 @@ public class AbilityDatabaseTest {
 	}
 
 	@Test
-	public void testAddThrow() {
+	public void addAlreadyExistingAbilityThrowsException() {
 		AbilityDatabase database = newDatabase();
 		Ability a = AbilitySample.getA();
 
@@ -37,7 +37,7 @@ public class AbilityDatabaseTest {
 	}
 
 	@Test
-	public void testGetThrow() {
+	public void getNonExistingAbilityThrowsException() {
 		AbilityDatabase database = newDatabase();
 		Ability a = AbilitySample.getA();
 
@@ -45,7 +45,7 @@ public class AbilityDatabaseTest {
 	}
 
 	@Test
-	public void testAddGet() {
+	public void getAbilityFunctionnality() {
 		AbilityDatabase database = newDatabase();
 		Ability a = AbilitySample.getA();
 
@@ -54,7 +54,7 @@ public class AbilityDatabaseTest {
 	}
 
 	@Test
-	public void testExistsTrue() {
+	public void existsIsTrueWhenAbilityIsInDatabase() {
 		AbilityDatabase database = newDatabase();
 		Ability a = AbilitySample.getA();
 
@@ -63,7 +63,7 @@ public class AbilityDatabaseTest {
 	}
 
 	@Test
-	public void testExistsFalse() {
+	public void existsIsFalseWhenAbilityIsNotInDatabase() {
 		AbilityDatabase database = newDatabase();
 		Ability a = AbilitySample.getA();
 

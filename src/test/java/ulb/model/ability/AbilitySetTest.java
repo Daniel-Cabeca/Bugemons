@@ -14,21 +14,21 @@ import ulb.model.sample.AbilitySetSample;
 
 public class AbilitySetTest {
 	@Test
-	public void verifyContainsTrue() {
+	public void containsIsTrueWhenAbilityInAbilitySet() {
 		AbilitySet abilityset = AbilitySetSample.getABC();
 		Ability a = AbilitySample.getA();
 		assertTrue(abilityset.contains(a));
 	}
 
 	@Test
-	public void verifyContainsFalse() {
+	public void containsIsFalseWhenAbilityNotInAbilitySet() {
 		AbilitySet abilityset = AbilitySetSample.getABC();
 		Ability d = AbilitySample.getD();
 		assertFalse(abilityset.contains(d));
 	}
 
 	@Test
-	public void verifyGetAbilityCorrect() {
+	public void getAbilityFunctionnality() {
 		AbilitySet abilityset = AbilitySetSample.getABC();
 		Ability a = AbilitySample.getA();
 		Ability b = AbilitySample.getB();
@@ -40,7 +40,7 @@ public class AbilitySetTest {
 	}
 
 	@Test
-	public void verifyGetAbilityThrows() {
+	public void getAbilityWhenIndexIsOutOfBoundThrowsException() {
 		AbilitySet abilityset = AbilitySetSample.getABC();
 
 		assertThrows(IndexOutOfBoundsException.class, () -> { abilityset.getAbility(-1); });
@@ -48,7 +48,7 @@ public class AbilitySetTest {
 	}
 
 	@Test
-	public void verifySetAbilityCorrect() {
+	public void setAbilityFunctionnality() {
 		AbilitySet abilityset = AbilitySetSample.getABC();
 		Ability d = AbilitySample.getD();
 
@@ -57,7 +57,7 @@ public class AbilitySetTest {
 	}
 
 	@Test
-	public void verifySetAbilityThrows() {
+	public void setAbilityThrowsExceptionWhenIndexIsOutOfBound() {
 		AbilitySet abilityset = AbilitySetSample.getABC();
 		Ability d = AbilitySample.getD();
 
@@ -66,7 +66,7 @@ public class AbilitySetTest {
 	}
 
 	@Test
-	public void verifyIterator() {
+	public void iteratorFunctionnality() {
 		AbilitySet abilityset = AbilitySetSample.getABC();
 		Iterator<Ability> iterator = abilityset.iterator();
 
@@ -83,7 +83,7 @@ public class AbilitySetTest {
 	}
 
 	@Test
-	public void verifySwapAbilityCorrect() {
+	public void swapAbilityFunctionnality() {
 		AbilitySet abilityset = AbilitySetSample.getABC();
 		Ability a = AbilitySample.getA();
 		Ability d = AbilitySample.getD();
@@ -95,7 +95,7 @@ public class AbilitySetTest {
 	}
 
 	@Test
-	public void verifySwapAbilityOldNotKnown() {
+	public void swapAbilityWhenOldAbilityNotKnownThrowsException() {
 		AbilitySet abilityset = AbilitySetSample.getABC();
 		Ability d = AbilitySample.getD();
 		Ability e = AbilitySample.getE();
@@ -104,26 +104,14 @@ public class AbilitySetTest {
 	}
 
 	@Test
-	public void testEqualsSame() {
+	public void abilitySetsAreEqual() {
 		AbilitySet a = AbilitySetSample.getABC();
 		AbilitySet b = AbilitySetSample.getABC();
 		assertTrue(a.equals(b));
 	}
 
 	@Test
-	public void testEqualsObject() {
-		AbilitySet a = AbilitySetSample.getABC();
-		assertFalse(a.equals(3));
-	}
-
-	@Test
-	public void testEqualsSameInstance() {
-		AbilitySet a = AbilitySetSample.getABC();
-		assertTrue(a.equals(a));
-	}
-
-	@Test
-	public void testEqualsDifferent() {
+	public void abilitySetsAreNotEqual() {
 		AbilitySet base = AbilitySetSample.getABC();
 
 		AbilitySet a = new AbilitySet(AbilitySample.getD(), AbilitySample.getB(), AbilitySample.getC());
@@ -134,4 +122,17 @@ public class AbilitySetTest {
 		assertFalse(base.equals(b));
 		assertFalse(base.equals(c));
 	}
+
+	@Test
+	public void abilitySetAndObjectAreNotEqual() {
+		AbilitySet a = AbilitySetSample.getABC();
+		assertFalse(a.equals(3));
+	}
+
+	@Test
+	public void sameInstancesAreEqual() {
+		AbilitySet a = AbilitySetSample.getABC();
+		assertTrue(a.equals(a));
+	}
+
 }

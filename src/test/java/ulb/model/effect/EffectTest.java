@@ -40,7 +40,7 @@ public class EffectTest {
 	}
 
 	@Test
-	public void testgetTargetsSelfBugemon() {
+	public void getTargetsIsOwnBugemmonWhenTargetIsOwnBugemon() {
 		Battle battle = getTestBattle();
 		Effect effect = new Effect(EffectType.STAT_MODIFIER, EffectTarget.OWN_BUGEMON, Map.of(), EffectDuration.PERMANENT);
 
@@ -52,7 +52,7 @@ public class EffectTest {
 	}
 
 	@Test
-	public void testgetTargetsOppositeBugemon() {
+	public void getTargetsIsActiveOpposingBugemonWhenTargetIsOpposingBugemon() {
 		Battle battle = getTestBattle();
 		Effect effect = new Effect(EffectType.STAT_MODIFIER, EffectTarget.OPPOSITE_BUGEMON, Map.of(), EffectDuration.PERMANENT);
 
@@ -64,7 +64,7 @@ public class EffectTest {
 	}
 
 	@Test
-	public void testgetTargetsOwnTeam() {
+	public void getTargetsIsOwnTeamWhenTargetIsOwnTeam() {
 		Battle battle = getTestBattle();
 		Effect effect = new Effect(EffectType.STAT_MODIFIER, EffectTarget.OWN_TEAM, Map.of(), EffectDuration.PERMANENT);
 

@@ -9,7 +9,8 @@
 
 
 
-<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/23.0.1" fx:controller="ulb.view.windows.FloorRewardWindow">
+<GridPane style="-fx-background-image:url(backgrounds/FloorRewardBackground.png); -fx-background-size: stretch;"
+        maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/23.0.1" fx:controller="ulb.view.windows.FloorRewardWindow">
   <columnConstraints>
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -23,16 +24,25 @@
    <children>
       <VBox prefHeight="200.0" prefWidth="100.0">
           <padding>
-              <javafx.geometry.Insets top="10" left="10"/>
+              <javafx.geometry.Insets top="20" left="30"/>
           </padding>
          <children>
-            <Label fx:id="floorLabel" text="Etage: NO" />
-            <Label fx:id="roomLabel" text="Salle:" />
+            <Label fx:id="floorLabel" text="Etage: NO"
+            style="-fx-font-size: 30px"/>
+            <Label fx:id="roomLabel" text="Salle:"
+                   style="-fx-font-size: 30px"/>
          </children>
       </VBox>
-      <Label text="Choisis la récompense:" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="TOP" />
-      <Button fx:id="objectReward" mnemonicParsing="false" onAction="#objectReward" text="Objet" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="TOP" />
-      <Button fx:id="newAttackReward" mnemonicParsing="false" onAction="#newAttackReward" text="Nouvelle Attaque" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="TOP" />
-      <Button fx:id="statReward" mnemonicParsing="false" onAction="#statReward" text="Bonus de Statistiques" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="TOP" />
+      <Label text="Choisis la récompense:" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="TOP"
+             style="-fx-font-size: 60px"/>
+      <Button fx:id="objectReward" mnemonicParsing="false" onAction="#objectReward" text="Objet" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="TOP"
+              prefHeight="70" prefWidth="300"
+              style="-fx-background-color: #8D89BA; -fx-border-color: black; -fx-font-size: 30px;"/>
+      <Button fx:id="newAttackReward" mnemonicParsing="false" onAction="#newAttackReward" text="Nouvelle Attaque" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="TOP"
+              prefHeight="70" prefWidth="300"
+              style="-fx-background-color: #97B35F; -fx-border-color: black; -fx-font-size: 30px;"/>
+      <Button fx:id="statReward" mnemonicParsing="false" onAction="#statReward" text="Bonus de Statistiques" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="TOP"
+              prefHeight="70" prefWidth="300"
+              style="-fx-background-color: #9B3E62; -fx-border-color: black; -fx-font-size: 30px;"/>
    </children>
 </GridPane>

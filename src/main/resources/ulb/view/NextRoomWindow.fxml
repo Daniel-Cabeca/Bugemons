@@ -4,7 +4,8 @@
 <?import javafx.scene.layout.*?>
 
 <?import javafx.geometry.Insets?>
-<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" alignment="CENTER"
+<VBox style="-fx-background-image:url(backgrounds/NextRoomBackground.png); -fx-background-size: stretch;"
+      xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" alignment="CENTER"
       spacing="20.0" fx:controller="ulb.view.windows.NextRoomWindow">
 
     <padding>
@@ -12,6 +13,7 @@
     </padding>
 
     <Label fx:id="messageLabel" style="-fx-font-size: 14px;"/>
-    <Button fx:id="nextButton" onAction="#handleContinue" prefHeight="50" prefWidth="200" text="Prochaine Salle" />
+    <Button style="-fx-background-color: #97B35F; -fx-border-color: black; -fx-font-size: 30px;"
+            fx:id="nextButton" onAction="#handleContinue" prefHeight="100" prefWidth="300" text="Prochaine Salle" />
 
 </VBox>

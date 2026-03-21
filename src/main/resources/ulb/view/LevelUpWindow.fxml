@@ -9,7 +9,10 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane prefHeight="450.0" prefWidth="750.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.LevelUpController">
+<StackPane prefHeight="450.0" prefWidth="750.0"
+           style="-fx-background-image: url(backgrounds/LevelUpBackground.png); -fx-background-size: stretch;"
+           xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="ulb.view.windows.LevelUpWindow">
 
     <VBox alignment="CENTER" spacing="20.0">
       <ImageView fx:id="bugemonSprite" fitHeight="105.0" fitWidth="88.0" pickOnBounds="true" preserveRatio="true">
@@ -28,25 +31,25 @@
             </Label>
          </children>
       </VBox>
-        <Label alignment="CENTER" prefWidth="172.0" style="-fx-text-fill:#444; -fx-font-size:18px;" text="Choisis ton bonus">
+        <Label alignment="CENTER" prefWidth="172.0" style="-fx-text-fill:#444; -fx-font-size:25px;" text="Choisis ton bonus">
          <font>
             <Font size="11.0" />
          </font></Label>
         <HBox alignment="CENTER" spacing="35">
 
-            <VBox alignment="CENTER" prefWidth="180" spacing="25" style="-fx-background-color:#f5f7ff;                          -fx-background-radius:15;                          -fx-padding:30;                          -fx-border-color:#3b82f6;                          -fx-border-radius:15;                          -fx-border-width:2;">
+            <VBox alignment="CENTER" prefWidth="180" spacing="25" style="-fx-background-color:#f5f7ff; -fx-padding:30; -fx-border-color:#3b82f6;">
                 <Label fx:id="rewardA" alignment="CENTER" style="-fx-text-fill:#111; -fx-font-size:18px; -fx-font-weight:bold;" textAlignment="CENTER" wrapText="true" />
-                <Button fx:id="chooseRewardA" onAction="#chooseRewardA" prefWidth="120" style="-fx-background-color:#3b82f6;                                -fx-text-fill:white;                                -fx-font-weight:bold;                                -fx-background-radius:10;" text="Choisir" />
+                <Button fx:id="chooseRewardA" onAction="#chooseRewardA" prefWidth="120" style="-fx-background-color:#3b82f6; -fx-text-fill:white; -fx-font-weight:bold;" text="Choisir" />
             </VBox>
 
-            <VBox alignment="CENTER" prefWidth="180" spacing="25" style="-fx-background-color:#f5f7ff;                          -fx-background-radius:15;                          -fx-padding:30;                          -fx-border-color:#3b82f6;                          -fx-border-radius:15;                          -fx-border-width:2;">
+            <VBox alignment="CENTER" prefWidth="180" spacing="25" style="-fx-background-color:#f5f7ff; -fx-padding:30; -fx-border-color:#3b82f6;">
                 <Label fx:id="rewardB" alignment="CENTER" style="-fx-text-fill:#111; -fx-font-size:18px; -fx-font-weight:bold;" textAlignment="CENTER" wrapText="true" />
-                <Button fx:id="chooseRewardB" onAction="#chooseRewardB" prefWidth="120" style="-fx-background-color:#3b82f6;                                -fx-text-fill:white;                                -fx-font-weight:bold;                                -fx-background-radius:10;" text="Choisir" />
+                <Button fx:id="chooseRewardB" onAction="#chooseRewardB" prefWidth="120" style="-fx-background-color:#3b82f6; -fx-text-fill:white;" text="Choisir" />
             </VBox>
 
-            <VBox alignment="CENTER" prefWidth="180" spacing="25" style="-fx-background-color:#f5f7ff;                          -fx-background-radius:15;                          -fx-padding:30;                          -fx-border-color:#3b82f6;                          -fx-border-radius:15;                          -fx-border-width:2;">
+            <VBox alignment="CENTER" prefWidth="180" spacing="25" style="-fx-background-color:#f5f7ff; -fx-padding:30; -fx-border-color:#3b82f6;">
                 <Label fx:id="rewardC" alignment="CENTER" style="-fx-text-fill:#111; -fx-font-size:18px; -fx-font-weight:bold;" textAlignment="CENTER" wrapText="true" />
-                <Button fx:id="chooseRewardC" onAction="#chooseRewardC" prefWidth="120" style="-fx-background-color:#3b82f6;                                -fx-text-fill:white;                                -fx-font-weight:bold;                                -fx-background-radius:10;" text="Choisir" />
+                <Button fx:id="chooseRewardC" onAction="#chooseRewardC" prefWidth="120" style="-fx-background-color:#3b82f6; -fx-text-fill:white;" text="Choisir" />
             </VBox>
         </HBox>
     </VBox>

@@ -1,13 +1,13 @@
 package ulb.view.windows;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.layout.VBox;
 import ulb.model.bugemon.Stats;
 import ulb.model.reward.Reward;
 import ulb.view.handler.Window;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+
+import java.util.Vector;
 
 public class LevelUpWindow extends Window {
 	@FXML
@@ -24,8 +24,6 @@ public class LevelUpWindow extends Window {
 	private Reward rA;
 	private Reward rB;
 	private Reward rC;
-	private String rewardsText;
-
 
 	private String createRewardsText(Reward r) {
 		String text;
@@ -35,14 +33,14 @@ public class LevelUpWindow extends Window {
 		return text;
 	}
 
-	public void setRewards(Reward A, Reward B, Reward C) {
-		rA = A;
-		rB = B;
-		rC = C;
+	public void setRewards(Vector<Reward> rewards) {
+		rA = rewards.get(0);
+		rB = rewards.get(1);
+		rC = rewards.get(2);
 
-		rewardA.setText(createRewardsText(A));
-		rewardB.setText(createRewardsText(B));
-		rewardC.setText(createRewardsText(C));
+		rewardA.setText(createRewardsText(rA));
+		rewardB.setText(createRewardsText(rB));
+		rewardC.setText(createRewardsText(rC));
 	}
 
 	public void setBugemonLevel() {

@@ -14,17 +14,17 @@ public class EffectivenessTest {
 	}
 
 	@Test
-	public void verifyFactorHigh() {
+	public void highEffectivenssFactor() {
 		verifyFactor(Effectiveness.Category.HIGH, Effectiveness.FACTOR_HIGH);
 	}
 
 	@Test
-	public void verifyFactorNormal() {
+	public void normalEffectivenessFactor() {
 		verifyFactor(Effectiveness.Category.NORMAL, Effectiveness.FACTOR_NORMAL);
 	}
 
 	@Test
-	public void verifyFactorLow() {
+	public void lowEffectivenessFactor() {
 		verifyFactor(Effectiveness.Category.LOW, Effectiveness.FACTOR_LOW);
 	}
 
@@ -38,88 +38,88 @@ public class EffectivenessTest {
 	// Pyro
 
 	@Test
-	public void verifyPyroToPyro() {
+	public void effectivenessPyroToPyro() {
 		verifyTypeEffectiveness(Type.PYRO, Type.PYRO, Effectiveness.Category.NORMAL);
 	}
 
 	@Test
-	public void verifyPyroToFlora() {
+	public void effectivenessPyroToFlora() {
 		verifyTypeEffectiveness(Type.PYRO, Type.FLORA, Effectiveness.Category.NORMAL);
 	}
 
 	@Test
-	public void verifyPyroToAqua() {
+	public void effectivenessPyroToAqua() {
 		verifyTypeEffectiveness(Type.PYRO, Type.AQUA, Effectiveness.Category.LOW);
 	}
 
 	@Test
-	public void verifyPyroToLitho() {
+	public void effectivenessPyroToLitho() {
 		verifyTypeEffectiveness(Type.PYRO, Type.LITHO, Effectiveness.Category.HIGH);
 	}
 
 	// Flora
 
 	@Test
-	public void verifyFloraToPyro() {
+	public void effectivenessFloraToPyro() {
 		verifyTypeEffectiveness(Type.FLORA, Type.PYRO, Effectiveness.Category.NORMAL);
 	}
 
 	@Test
-	public void verifyFloraToFlora() {
+	public void effectivenessFloraToFlora() {
 		verifyTypeEffectiveness(Type.FLORA, Type.FLORA, Effectiveness.Category.NORMAL);
 	}
 
 	@Test
-	public void verifyFloraToAqua() {
+	public void effectivenessFloraToAqua() {
 		verifyTypeEffectiveness(Type.FLORA, Type.AQUA, Effectiveness.Category.HIGH);
 	}
 
 	@Test
-	public void verifyFloraToLitho() {
+	public void effectivenessFloraToLitho() {
 		verifyTypeEffectiveness(Type.FLORA, Type.LITHO, Effectiveness.Category.LOW);
 	}
 
 	// Aqua
 
 	@Test
-	public void verifyAquaToPyro() {
+	public void effectivenessAquaToPyro() {
 		verifyTypeEffectiveness(Type.AQUA, Type.PYRO, Effectiveness.Category.HIGH);
 	}
 
 	@Test
-	public void verifyAquaToFlora() {
+	public void effectivenessAquaToFlora() {
 		verifyTypeEffectiveness(Type.AQUA, Type.FLORA, Effectiveness.Category.LOW);
 	}
 
 	@Test
-	public void verifyAquaToAqua() {
+	public void effectivenessAquaToAqua() {
 		verifyTypeEffectiveness(Type.AQUA, Type.AQUA, Effectiveness.Category.NORMAL);
 	}
 
 	@Test
-	public void verifyAquaToLitho() {
+	public void effectivenessAquaToLitho() {
 		verifyTypeEffectiveness(Type.AQUA, Type.LITHO, Effectiveness.Category.NORMAL);
 	}
 
 	// Litho
 
 	@Test
-	public void verifyLithoToPyro() {
+	public void effectivenessLithoToPyro() {
 		verifyTypeEffectiveness(Type.LITHO, Type.PYRO, Effectiveness.Category.LOW);
 	}
 
 	@Test
-	public void verifyLithoToFlora() {
+	public void effectivenessLithoToFlora() {
 		verifyTypeEffectiveness(Type.LITHO, Type.FLORA, Effectiveness.Category.HIGH);
 	}
 
 	@Test
-	public void verifyLithoToAqua() {
+	public void effectivenessLithoToAqua() {
 		verifyTypeEffectiveness(Type.LITHO, Type.AQUA, Effectiveness.Category.NORMAL);
 	}
 
 	@Test
-	public void verifyLithoToLitho() {
+	public void effectivenessLithoToLitho() {
 		verifyTypeEffectiveness(Type.LITHO, Type.LITHO, Effectiveness.Category.NORMAL);
 	}
 }

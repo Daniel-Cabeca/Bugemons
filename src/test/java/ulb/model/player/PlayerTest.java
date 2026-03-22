@@ -1,4 +1,4 @@
-package ulb.model;
+package ulb.model.player;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -6,11 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.Map;
 
 import ulb.model.item.Item;
+import ulb.model.Player;
 import ulb.model.item.Inventory;
 
 public class PlayerTest {
 	@Test
-	public void testAddDefaultItems() {
+	public void addDefaultItemsToInventoryOnPlayerInitialisation() {
 		Player player = new Player();
 		Inventory inventory = player.getInventory();
 		Map<Item, Integer> items = inventory.getItems();

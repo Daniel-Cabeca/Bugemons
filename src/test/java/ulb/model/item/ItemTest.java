@@ -51,7 +51,7 @@ public class ItemTest {
 	}
 
     @Test
-	public void testHealItemAppliesEffect() {
+	public void healItemAppliesFullEffect() {
 		Bugemon bugemon = BugemonSample.getA();
 		bugemon.changeFightStats(new Stats(-20, 0, 0, 0));
 
@@ -66,7 +66,7 @@ public class ItemTest {
 	}
 
 	@Test
-	public void testOverHealedBugemon() {
+	public void healItemAppliesPartialEffect() {
 		Bugemon bugemon = BugemonSample.getA();
 		bugemon.changeFightStats(new Stats(-5, 0, 0, 0));
 
@@ -82,7 +82,7 @@ public class ItemTest {
 	}
 
 	@Test
-	public void testStatModifierAppliesEffect() {
+	public void statModifierAppliesEffect() {
 		Bugemon bugemon = BugemonSample.getA();
         bugemon.changeFightStats(new Stats(0, -5, 0, 0));
 
@@ -99,7 +99,7 @@ public class ItemTest {
 	}
 
 	@Test
-	public void testMultipleStatModifierAppliesEffect() {
+	public void multipleStatModifierAppliesEffect() {
 		Bugemon bugemon = BugemonSample.getA();
         bugemon.changeFightStats(new Stats(0, -5, -5, 0));
 
@@ -117,7 +117,7 @@ public class ItemTest {
 	}
 
 	@Test
-	public void testSwitchItemTargetAppliesEffect() {
+	public void switchItemAppliesEffect() {
 		Bugemon bugemonA = BugemonSample.getA();
 		Bugemon bugemonB = BugemonSample.getB();
 		Team teamA = new Team(List.of(bugemonA, bugemonB));
@@ -143,7 +143,7 @@ public class ItemTest {
 	}
 
 	@Test
-	public void testResetMalusItemAppliesEffect() {
+	public void resetMalusItemAppliesEffect() {
 		Bugemon bugemon = BugemonSample.getA();
 		bugemon.changeFightStats(new Stats(-5, -5, -5, -5)); 
 

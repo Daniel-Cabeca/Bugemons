@@ -14,7 +14,7 @@ import ulb.repository.mock.ItemMockRepository;
 
 public class InventoryTest {
 	@Test
-	public void testAddItem() {
+	public void addItemFunctionnality() {
 		Effect baieEffect = EffectSample.getHeal();
 		Item item = new Item("baie_tonique", "Baie Tonique", 
 		"Restaure 10 PV au Bugémon actif.", "soin", 
@@ -26,7 +26,7 @@ public class InventoryTest {
 	}
 
 	@Test
-	public void testRemoveItem() {
+	public void removeItemFunctionnality() {
 		Effect baieEffect = EffectSample.getHeal();
 		Item item = new Item("baie_tonique", "Baie Tonique", 
 		"Restaure 10 PV au Bugémon actif.", "soin", 
@@ -41,7 +41,7 @@ public class InventoryTest {
 	}
 
 	@Test
-	public void testGetQuantityNotPresent() {
+	public void getQuantityOfItemNotInInventory() {
 		ItemRepository itemRepository = new ItemMockRepository();
 		Item item = itemRepository.findById("baie_revigorante");
 
@@ -50,7 +50,7 @@ public class InventoryTest {
 	}
 
 	@Test
-	public void testGetQuantityPresent() {
+	public void getQuantityOfItemInInventory() {
 		ItemRepository itemRepository = new ItemMockRepository();
 		Item item = itemRepository.findById("baie_revigorante");
 

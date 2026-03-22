@@ -46,7 +46,7 @@ public class TeamTest {
     }
 
     @Test
-    public void addSeventhBugemonIsRefused() {
+    public void addingSeventhBugemonGetsRefused() {
         Team team = new Team();
 
         for (int i = 1; i <= 6; i++) {
@@ -60,7 +60,7 @@ public class TeamTest {
     }
 
     @Test
-    public void addDuplicateNameIsRefused() {
+    public void addingDuplicateNameBugemonGetsRefused() {
         Team team = new Team();
         Bugemon first = makeBugemon("Florachu");
         Bugemon duplicatedPokemon = makeBugemon("Florachu");
@@ -71,7 +71,7 @@ public class TeamTest {
     }
 
 	@Test
-	public void checkTeamKO_returnsFalse_whenAtLeastOneMemberAlive() {
+	public void checkTeamKOReturnsFalseWhenAtLeastOneMemberAlive() {
 		Bugemon alive = makeBugemon("Alive");
 		Bugemon ko1 = makeBugemon("KO1");
 		Bugemon ko2 = makeBugemon("KO2");
@@ -91,7 +91,7 @@ public class TeamTest {
 	}
 
 	@Test
-	public void checkTeamKO_returnsTrue_whenAllMembersKO() {
+	public void checkTeamKOReturnsTrueWhenAllMembersKO() {
 		Bugemon ko1 = makeBugemon("KO1");
 		Bugemon ko2 = makeBugemon("KO2");
 		Bugemon ko3 = makeBugemon("KO3");
@@ -108,33 +108,9 @@ public class TeamTest {
 		assertTrue(team.checkTeamKO());
 	}
 
-    @Test
-    public void checkTeamKOTeamWithOneBugemonNotKO() {
-        Bugemon b1 = makeBugemon("B1");
-        Team team = new Team(List.of(b1));
-        assertFalse(team.checkTeamKO());
-    }
 
     @Test
-    public void checkTeamKOTeamWithOneBugemonKO() {
-        Bugemon b1 = makeBugemon("B1");
-        b1.changeFightStats(new Stats(-100, 0, 0, 0));
-        Team team = new Team(List.of(b1));
-        assertTrue(team.checkTeamKO());
-    }
-
-    @Test
-    public void checkTeamKOTeamWithOneBugemonKOTwoNotKO() {
-        Bugemon b1 = makeBugemon("B1");
-        Bugemon b2 = makeBugemon("B2");
-        Bugemon b3 = makeBugemon("B3");
-        b1.changeFightStats(new Stats(-100, 0, 0, 0));
-        Team team = new Team(List.of(b1, b2, b3));
-        assertFalse(team.checkTeamKO());
-    }
-
-    @Test
-    public void checkNotCopy(){
+    public void bugemonNotPassedToTeamByCopy(){
         Bugemon b1 = makeBugemon("B1");
         Bugemon b2 = makeBugemon("B2");
         Bugemon b3 = makeBugemon("B3");

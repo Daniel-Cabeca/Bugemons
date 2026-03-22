@@ -29,7 +29,7 @@ public class OpponentTeamGeneratorTest {
 	}
 
 	@Test
-	public void generatedOpponentTeamSameSizeAsPlayerTeam() throws Exception {
+	public void generateOpponentTeamSameSizeAsPlayerTeam() throws Exception {
 		Team playerTeam = new Team();
 		playerTeam.add(makeBugemon());
 		playerTeam.add(makeBugemon());

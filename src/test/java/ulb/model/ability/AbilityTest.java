@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.lang.Math;
 import java.util.Random;
 
+import ulb.utils.RandomTestUtils;
+
 import ulb.model.sample.AbilitySample;
 import ulb.model.sample.BugemonSample;
 import ulb.model.bugemon.Bugemon;
@@ -16,21 +18,6 @@ import ulb.model.ability.Ability;
 import ulb.model.ability.AbilitySet;
 
 public class AbilityTest {
-	public static int getSeedThatGivesDoubleBelowOrEqual(float value) {
-		int seed = 0;
-
-		while (true) {
-			Random random = new Random(seed);
-			double res = random.nextDouble();
-
-			if (res <= value) {
-				return seed;
-			}
-
-			++seed;
-		}
-	}
-
 	@Test
 	public void abilitiesAreEqual() {
 		Ability a = AbilitySample.getA();
@@ -66,7 +53,7 @@ public class AbilityTest {
 
 	@Test
 	public void correctDamageFormulaNoCrit() {
-		Random random = new Random(0);
+		Random random = RandomTestUtils.findRandom( (rand) -> { return rand.nextDouble() > Ability.CRITICAL_HIT_CHANCE; });
 
 		Ability abilityA = new Ability("idA", "nameA", Type.FLORA, "descriptionA", 10);
 		Ability abilityB = new Ability("idB", "nameB", Type.FLORA, "descriptionB", 10);
@@ -97,8 +84,7 @@ public class AbilityTest {
 
 	@Test
 	public void correctDamageFormulWithCrit() {
-		int seed = getSeedThatGivesDoubleBelowOrEqual(Ability.CRITICAL_HIT_CHANCE);
-		Random random = new Random(seed);
+		Random random = RandomTestUtils.findRandom( (rand) -> { return rand.nextDouble() <= Ability.CRITICAL_HIT_CHANCE; });
 
 		Ability abilityA = new Ability("idA", "nameA", Type.FLORA, "descriptionA", 10);
 		Ability abilityB = new Ability("idB", "nameB", Type.FLORA, "descriptionB", 10);

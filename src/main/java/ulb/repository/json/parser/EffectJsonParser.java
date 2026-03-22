@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ulb.model.effect.Effect;
+import ulb.model.effect.EffectList;
 import ulb.model.effect.Effect.EffectType;
 import ulb.model.effect.Effect.EffectTarget;
 import ulb.model.effect.Effect.EffectDuration;
@@ -44,18 +45,20 @@ public class EffectJsonParser {
 
 	/**
 	 * Parses a list of effects from a json node.
-	 * TODO Implement effect lists. Right now the method just returns the first effect of the json data.
 	 *
 	 * @param node The json node
 	 * @return A list of the parsed effects
 	 * @throws LoadException If parsing failed
 	 */
-	public Effect parseList(JsonNode node) throws LoadException {
+	public EffectList parseList(JsonNode node) throws LoadException {
+		EffectList effects = new EffectList();
+
 		for (JsonNode effectNode: node) {
-			return this.parseOne(effectNode);
+			Effect effect = this.parseOne(effectNode);
+			effects.add(effect);
 		}
 
-		return null;
+		return effects;
 	}
 
 	/**

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import ulb.repository.json.Json;
 
 import ulb.model.effect.Effect;
+import ulb.model.effect.EffectList;
 import ulb.model.effect.Effect.EffectType;
 import ulb.model.effect.Effect.EffectTarget;
 import ulb.model.effect.Effect.EffectDuration;
@@ -37,6 +38,12 @@ public class EffectJsonParserTest {
 		EffectJsonParser parser = new EffectJsonParser();
 		JsonNode node = Json.getNode("\""+ str +"\"");
 		return parser.parseStatType(node);
+	}
+
+	public static EffectList parseEffectListFromStr(String str) {
+		EffectJsonParser parser = new EffectJsonParser();
+		JsonNode node = Json.getNode(str);
+		return parser.parseList(node);
 	}
 
 	// Target
@@ -203,5 +210,33 @@ public class EffectJsonParserTest {
 
 		assertEquals(EffectType.SWITCH, obtained.getType());
 		assertEquals(EffectDuration.ROUND, obtained.getDuration());
+	}
+
+	// ParseList
+
+	@Test
+	public void parseListCorrectSize() {
+		String str = """
+			[
+				{
+					"type": "stat_modifier",
+					"cible": "lanceur",
+					"stat": "defense",
+					"modificateur": 15,
+					"duree": "permanent"
+				},
+				{
+					"type": "stat_modifier",
+					"cible": "adversaire",
+					"stat": "defense",
+					"modificateur": -6,
+					"duree": "permanent"
+				}
+			]
+			""";
+
+		EffectList obtained = parseEffectListFromStr(str);
+
+		assertEquals(2, obtained.getSize());
 	}
 }

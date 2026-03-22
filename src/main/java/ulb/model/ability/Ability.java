@@ -5,7 +5,7 @@ import java.util.Random;
 
 import ulb.model.HasId;
 import ulb.model.type.Type;
-import ulb.model.effect.Effect;
+import ulb.model.effect.EffectList;
 
 import ulb.model.battle.Battle;
 import ulb.model.battle.Battle.TeamLabel;
@@ -25,7 +25,7 @@ public class Ability implements HasId {
 	private Type type;
 	private String description;
 	private int power;
-	private Effect effect;
+	private EffectList effects;
 
 	public Ability(String id, String name, Type type, String description, int power) {
 		this.id = id;
@@ -33,16 +33,16 @@ public class Ability implements HasId {
 		this.type = type;
 		this.description = description;
 		this.power = power;
-		this.effect = null;
+		this.effects = new EffectList();
 	}
 
-	public Ability(String id, String name, Type type, String description, int power, Effect effect) {
+	public Ability(String id, String name, Type type, String description, int power, EffectList effects) {
 		this.id = id;
 		this.name = name;
 		this.type = type;
 		this.description = description;
 		this.power = power;
-		this.effect = effect;
+		this.effects = effects;
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class Ability implements HasId {
 	public Type getType() { return this.type; }
 	public String getDescription() { return this.description; }
 	public int getPower() { return this.power; }
-	public Effect getEffect() { return this.effect; }
+	public EffectList getEffects() { return this.effects; }
 
 	@Override
 	public boolean equals(Object o) {
@@ -87,19 +87,13 @@ public class Ability implements HasId {
 		Bugemon ownBugemon = battle.getOwnActiveBugemon(team);
 		Bugemon oppositeBugemon = battle.getOppositeActiveBugemon(team);
 
-		if (oppositeBugemon.isKO()) {
-			return;
-		}
-
 		int damage = this.getDamage(ownBugemon, oppositeBugemon, random);
 		Stats damageStats = new Stats(-damage, 0, 0, 0);
 		oppositeBugemon.changeFightStats(damageStats);
 
 		this.writeLogs(battle, ownBugemon, oppositeBugemon, damage);
 
-		if (this.effect != null) {
-			this.effect.apply(battle, team);
-		}
+		this.effects.apply(battle, team);
 	}
 
 	/**

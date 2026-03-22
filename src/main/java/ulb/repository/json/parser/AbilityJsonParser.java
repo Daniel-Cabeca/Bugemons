@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 import ulb.model.ability.Ability;
 import ulb.model.type.Type;
-import ulb.model.effect.Effect;
+import ulb.model.effect.EffectList;
 
 import ulb.repository.LoadException;
 
@@ -51,8 +51,8 @@ public class AbilityJsonParser {
 		Type type = this.typeParser.parseOne(node.get("type"));
 		String description = node.get("description").asText();
 		int power = node.get("puissance").asInt();
-		Effect effect = this.effectParser.parseList(node.get("effets"));
+		EffectList effects = this.effectParser.parseList(node.get("effets"));
 
-		return new Ability(id, name, type, description, power);
+		return new Ability(id, name, type, description, power, effects);
 	}
 }

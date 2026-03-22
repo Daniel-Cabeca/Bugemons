@@ -328,7 +328,11 @@ public class Battle {
 	 */
 	private boolean applyAction(Action action, TeamLabel team){
 		if (action instanceof UseAbility useAbilityAction) {
-			useAbilityAction.getAbility().use(this, team);
+			Bugemon oppositeBugemon = this.getOppositeActiveBugemon(team);
+
+			if (!oppositeBugemon.isKO()) {
+				useAbilityAction.getAbility().use(this, team);
+			}
 
 		} else if (action instanceof Swap swapAction) {
 			if (checkSwappableBugemon(swapAction.getToSwap(), team)){

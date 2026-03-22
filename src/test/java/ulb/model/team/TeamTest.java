@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ulb.model.bugemon.Bugemon;
@@ -119,5 +120,58 @@ public class TeamTest {
         b1.changeFightStats(new Stats(-100, 0, 0, 0));
         assertTrue(team.getMembers().get(0).getHp() == 0);
         assertTrue(team.getBugemon(0).getHp() == 0);
+    }
+
+    @Test
+    public void getNextBugemon(){
+        Bugemon b1 = makeBugemon("B1");
+        Bugemon b2 = makeBugemon("B2");
+        Bugemon b3 = makeBugemon("B3");
+        Team team = new Team(List.of(b1, b2, b3));
+
+        assertEquals(b3, team.getNextBugemon(b2));
+    }
+
+    @Test 
+    public void getNextNonKOBugemon(){
+        Bugemon b1 = makeBugemon("B1");
+        Bugemon b2 = makeBugemon("B2");
+        Bugemon b3 = makeBugemon("B3");
+        Team team = new Team(List.of(b1, b2, b3));
+        b2.changeFightStats(new Stats(-1000, 0, 0, 0));
+
+        assertEquals(b3, team.getNextBugemon(b1));
+    }
+
+    @Test 
+    public void getPreviousNonKOBugemon(){
+        Bugemon b1 = makeBugemon("B1");
+        Bugemon b2 = makeBugemon("B2");
+        Bugemon b3 = makeBugemon("B3");
+        Team team = new Team(List.of(b1, b2, b3));
+        b3.changeFightStats(new Stats(-1000, 0, 0, 0));
+
+        assertEquals(b1, team.getNextBugemon(b2));
+    }
+
+    @Test
+    public void getAllBugemonsAlive(){
+        Bugemon b1 = makeBugemon("B1");
+        Bugemon b2 = makeBugemon("B2");
+        Bugemon b3 = makeBugemon("B3");
+        Team team = new Team(List.of(b1, b2, b3));
+
+        assertEquals(new ArrayList<>(List.of(b1, b2, b3)), team.getBugemonsAlive());
+    }
+
+    @Test
+    public void getSomeBugemonsAlive(){
+        Bugemon b1 = makeBugemon("B1");
+        Bugemon b2 = makeBugemon("B2");
+        Bugemon b3 = makeBugemon("B3");
+        Team team = new Team(List.of(b1, b2, b3));
+        b3.changeFightStats(new Stats(-1000, 0, 0, 0));
+
+        assertEquals(new ArrayList<>(List.of(b1, b2)), team.getBugemonsAlive());
     }
 }

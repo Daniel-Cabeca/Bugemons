@@ -100,7 +100,7 @@ public class BattleController {
 
 	public Vector<Action> getAvailableAction(){ return this.battle.getAvailableActions(isTeamA); }
 
-	public Vector<Bugemon> getAvailableBugemons(){
+	public List<Bugemon> getAvailableBugemons(){
 		return this.battle.getAvailableBugemons(isTeamA);
 	}
 

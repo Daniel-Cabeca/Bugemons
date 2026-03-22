@@ -167,19 +167,6 @@ public class Battle {
 		}
 	}
 
-	public Team getOppositeTeam(TeamLabel teamLabel) {
-		switch(teamLabel) {
-			case TEAM_A:
-				return this.teamB;
-
-			case TEAM_B:
-				return this.teamA;
-
-			default:
-				throw new IllegalArgumentException("This team label is not handled.");
-		}
-	}
-
 	public Bugemon getOwnActiveBugemon(TeamLabel teamLabel) {
 		switch(teamLabel) {
 			case TEAM_A:
@@ -206,19 +193,13 @@ public class Battle {
 		}
 	}
 
-	public TeamLabel checkInitiative(){
-		if (getActiveBugemonA().getFightStats().getInitiative() > getActiveBugemonB().getFightStats().getInitiative()){
+	/**
+	 * get the team that have the initiative
+	 * @return the TeamLabel of the first team to play
+	 */
+	public TeamLabel getFirstTeamToPlay(){
+		if (getActiveBugemonA().checkInitiative(getActiveBugemonB())){
 			return TeamLabel.TEAM_A;
-		}
-		else if(getActiveBugemonA().getFightStats().getInitiative() == getActiveBugemonB().getFightStats().getInitiative()) {
-			 Random rand = new Random();
-			 int i = rand.nextInt(2);
-			 if (i == 0) {
-				 return TeamLabel.TEAM_A;
-			 }
-			 else  {
-				 return TeamLabel.TEAM_B;
-			}
 		}
 		return TeamLabel.TEAM_B;
 	}
@@ -383,37 +364,12 @@ public class Battle {
 	}
 
 	/**
-	 * Returns the next available non-active Bugemon when switching
-	 * @param team the team whose Bugemons are being considered
-	 * @param active the current active Bugemon
-	 * @return the next available non-active Bugemon or null if none available
-	 */
-	private Bugemon getNextBugemon(Team team, Bugemon active) {
-		java.util.List<Bugemon> members = team.getMembers();
-		int currentIndex = members.indexOf(active);
-
-		if (currentIndex == -1 || members.size() <= 1) {
-			return null;
-		}
-
-		for (int i = 1; i < members.size(); i++) {
-			int nextIndex = (currentIndex + i) % members.size();
-			Bugemon candidate = members.get(nextIndex);
-			if (!candidate.isKO()) {
-				return candidate;
-			}
-		}
-
-		return null;
-	}
-
-	/**
 	 * Returns the next available non-active Bugemon when switching.
 	 * @param team the team whose Bugemons are being considered
 	 * @return the next available non-active Bugemon or null if none available
 	 */
 	public Bugemon getOwnNextBugemon(TeamLabel team) {
-		return this.getNextBugemon(this.getOwnTeam(team), this.getOwnActiveBugemon(team));
+		return this.getOwnTeam(team).getNextBugemon(this.getOwnActiveBugemon(team));
 	}
 
 	/**
@@ -555,7 +511,7 @@ public class Battle {
 		} else if (this.actionB instanceof Swap && !(this.actionA instanceof Swap)) {
 			firstPlayer = TeamLabel.TEAM_B;
 		} else {
-			firstPlayer = this.checkInitiative();
+			firstPlayer = this.getFirstTeamToPlay();
 		}
 		if (firstPlayer == TeamLabel.TEAM_B){
 			currentAction = this.actionB;
@@ -634,7 +590,7 @@ public class Battle {
 						hpAfterFirstActionB = 0;
 					}
 					logMsg.add(null);
-					Bugemon nextB = getNextBugemon(teamB, activeBugemonB);
+					Bugemon nextB = teamB.getNextBugemon(activeBugemonB);
 					if (nextB != null) {
 						setActiveBugemonB(nextB);
 						logMsg.add("L'adversaire a envoyé " + nextB.getName() + "!");
@@ -700,19 +656,12 @@ public class Battle {
 	 * @param isTeamA if the current team is A or B
 	 * @return the available Bugemons
 	 */
-	public Vector<Bugemon> getAvailableBugemons(boolean isTeamA){
+	public List<Bugemon> getAvailableBugemons(boolean isTeamA){
 		Team team = teamA;
 		if (!isTeamA){
 			team = teamB;
 		}
-		Vector<Bugemon> availableBugemons = new Vector<>();
-
-		for (Bugemon b : team.getMembers()){
-			if (!b.isKO()){
-				availableBugemons.add(b);
-			}
-		}
-		return availableBugemons;
+		return team.getBugemonsAlive();
 	}
 
 	public Vector<Reward> computeRewards(Bugemon bugemonTarget){
@@ -749,17 +698,7 @@ public class Battle {
 	 * @return true if the Bugemon is available, false otherwise
 	 */
 	public boolean checkSwappableBugemon(Bugemon bugemon, TeamLabel team){
-		switch (team) {
-			case TEAM_A:
-				return this.teamA.contains(bugemon) && bugemon.getHp() > 0;
-
-			case TEAM_B:
-				return this.teamB.contains(bugemon) && bugemon.getHp() > 0;
-
-			default:
-				break;
-		}
-		return false;
+		return this.getOwnTeam(team).isBugemonOK(bugemon);
 	}
 
 	public int getHpAfterFirstActionA() { return hpAfterFirstActionA; }

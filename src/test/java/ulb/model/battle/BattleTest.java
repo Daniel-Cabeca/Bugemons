@@ -23,7 +23,7 @@ public class BattleTest {
 		Player p = new Player();
 		Battle battle = new Battle(teamA, teamB, p);
 
-		assertSame(TeamLabel.TEAM_A, battle.checkInitiative());
+		assertSame(TeamLabel.TEAM_A, battle.getFirstTeamToPlay());
 	}
 
 	@Test
@@ -37,7 +37,7 @@ public class BattleTest {
 		Player p = new Player();
 		Battle battle = new Battle(teamA, teamB, p);
 
-		assertSame(TeamLabel.TEAM_B, battle.checkInitiative());
+		assertSame(TeamLabel.TEAM_B, battle.getFirstTeamToPlay());
 	}
 
 	@Test
@@ -55,7 +55,7 @@ public class BattleTest {
 		boolean sawB = false;
 
 		for (int i = 0; i < 200; i++) {
-			Battle.TeamLabel result = battle.checkInitiative();
+			Battle.TeamLabel result = battle.getFirstTeamToPlay();
 			if (result == TeamLabel.TEAM_A) {
 				sawA = true;
 			} else if (result == TeamLabel.TEAM_B) {

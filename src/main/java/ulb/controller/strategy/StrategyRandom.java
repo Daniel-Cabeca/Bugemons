@@ -2,6 +2,7 @@ package ulb.controller.strategy;
 
 import java.util.Random;
 import java.util.Vector;
+import java.util.List;
 import java.lang.Thread;
 
 import ulb.controller.BattleController;
@@ -96,7 +97,7 @@ public class StrategyRandom implements Strategy, Runnable {
      * @return the randomly chosen bugemon
      */
     public Bugemon pickRandomBugemon(){
-        Vector<Bugemon> availableBugemons = battleController.getAvailableBugemons();
+        List<Bugemon> availableBugemons = battleController.getAvailableBugemons();
         if (!availableBugemons.isEmpty()){
             Random rand = new Random();
             int i = rand.nextInt(availableBugemons.size());

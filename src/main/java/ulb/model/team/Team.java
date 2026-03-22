@@ -156,6 +156,11 @@ public class Team {
         return this.members.indexOf(bugemon);
     }
 
+    /**
+	 * Returns the next available Bugemon
+	 * @param current the current Bugemon
+	 * @return the next available Bugemon or null if none available
+	 */
     public Bugemon getNextBugemon(Bugemon current) {
         int indexCurrent = this.getBugemonIndex(current);
         if (indexCurrent < 0) {

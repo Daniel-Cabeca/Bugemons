@@ -2,8 +2,9 @@ package ulb.model.bugemon;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
+import ulb.model.sample.BugemonSample;
 import ulb.model.type.Type;
 
 public class BugemonTest {
@@ -53,6 +54,15 @@ public class BugemonTest {
 		assertEquals(B.getBaseStats().attack, B.getFightStats().attack);
 		assertEquals(B.getBaseStats().defense, B.getFightStats().defense);
 		assertEquals(B.getBaseStats().initiative, B.getFightStats().initiative);
+	}
+
+	@Test
+	public void checkInitiative(){
+		Bugemon A = BugemonSample.getA();
+		Bugemon B = BugemonSample.getB();
+		B.changeFightStats(new Stats(0, 0, 0, -1));
+
+		assertTrue(A.checkInitiative(B));
 	}
 
 }

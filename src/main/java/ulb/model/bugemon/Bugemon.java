@@ -1,6 +1,7 @@
 package ulb.model.bugemon;
 
 import java.util.NoSuchElementException;
+import java.util.Random;
 
 import ulb.model.type.Type;
 import ulb.model.ability.AbilitySet;
@@ -41,6 +42,7 @@ public class Bugemon {
 	public int getAttack() { return this.getFightStats().getAttack(); }
 	public int getDefense() { return this.getFightStats().getDefense(); }
 	public int getInitiative() { return this.getFightStats().getInitiative(); }
+	public boolean isKO() {return this.fightStats.hp <= 0;}
 
 	public void changeBaseStats(Stats delta) {
 		this.getBaseStats().change(delta);
@@ -92,7 +94,18 @@ public class Bugemon {
 			   this.getBaseStats().equals(other.getBaseStats());
 	}
 
-	public boolean isKO() {return this.fightStats.hp <= 0;}
+	/**
+	 * Check if this bugemon have the initiative higher than the other one
+	 * @param other the other bugemon to check the initiative with
+	 * @return a boolean depending if this bugemon have a higher initiative, or a random boolean if both are equals
+	 */
+	public boolean checkInitiative(Bugemon other){
+		if (this.getInitiative() != other.getInitiative()){
+			return this.getInitiative() > other.getInitiative();
+		} 
+		Random rand = new Random();
+		return rand.nextInt(2) == 0;
+	}
 
 	// Deprecated constructors
 	// Should be replaced by the use of services

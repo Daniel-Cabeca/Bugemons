@@ -227,92 +227,6 @@ public class Battle {
 	}
 
 	/**
-	 * Compute the damage based on the complete formula
-	 *
-	 * @param offensive The bugemon that uses the ability
-	 * @param defensive The bugemon targeted by the ability
-	 * @param ability Ability from attacker used against defender
-	 * @return the computed damage based on the formula
-	 */
-	private int computeDamage(Bugemon offensive, Bugemon defensive, Ability ability) {
-		float attackValue = offensive.getFightStats().attack;
-		float defenseValue = defensive.getFightStats().defense;
-
-		float attackFactor = (100 + attackValue) / 100f;
-		float defenseFactor = 100f / (100 + defenseValue);
-
-		float baseDamage = attackFactor * defenseFactor * ability.getPower();
-
-		// Bugemon d'un type quelconque peut avoir des attaques de type t.q. type d'attaque ≠ type du pokemon
-		float typeFactor = Effectiveness.getFactor(ability.getType(), defensive.getType());
-
-		float criticalHitFactor = 1f;
-		if (Math.random() <= 0.1){
-			criticalHitFactor = 1.5f;
-		}
-
-		return Math.round(baseDamage * typeFactor * criticalHitFactor);
-	}
-
-	/**
-	 * Gets the effectiveness factor of the current ability
-	 *
-	 * @param ability the ability whose type effectiveness is evaluated
-	 * @return the effectiveness message (or null if the effectiveness is normal)
-	 */
-	public String getEffectiveness(Ability ability, Bugemon opponent) {
-        float factor = Effectiveness.getFactor(ability.getType(), opponent.getType());
-		String message;
-		if (factor > 1) {
-			message = "Super efficace!";
-		} else if (factor < 1) {
-			message = "Pas très efficace!";
-		} else {
-			message = null;
-		}
-		return message;
-	}
-
-
-	/**
-	 * Use the given ability against the opposing active Bugemon
-	 *
-	 * @param ability the ability that is used
-	 * @param team the team using the ability
-	 */
-	private void useAbility(Ability ability, TeamLabel team) {
-		Bugemon offensive;
-		Bugemon defensive;
-		if (team == TeamLabel.TEAM_A){
-			offensive = this.getActiveBugemonA();
-			defensive = this.getActiveBugemonB();
-		} else {
-			offensive = this.getActiveBugemonB();
-			defensive = this.getActiveBugemonA();
-		}
-
-		if (offensive.isKO()){
-			return;
-		}
-
-		int abilityDamage = computeDamage(offensive, defensive, ability);
-		Stats damage = new Stats(-abilityDamage, 0, 0, 0);
-		defensive.changeFightStats(damage);
-
-		logMsg.add(offensive.getName() + " a utilisé " + ability.getName() + ". " + defensive.getName() + " perd " +
-				abilityDamage + " PV!");
-
-		String effectiveness = getEffectiveness(ability, defensive);
-		if (effectiveness != null) {
-			logMsg.add(effectiveness);
-		}
-
-		if (ability.getEffect() != null) {
-			ability.getEffect().apply(this, team);
-		}
-	}
-
-	/**
 	 * Removes an item that has been used from the inventory of the team
 	 * @param team the team from which the item is removed
 	 * @param item the item which is removed from the inventory
@@ -414,8 +328,7 @@ public class Battle {
 	 */
 	private boolean applyAction(Action action, TeamLabel team){
 		if (action instanceof UseAbility useAbilityAction) {
-
-			this.useAbility(useAbilityAction.getAbility(), team);
+			useAbilityAction.getAbility().use(this, team);
 
 		} else if (action instanceof Swap swapAction) {
 			if (checkSwappableBugemon(swapAction.getToSwap(), team)){

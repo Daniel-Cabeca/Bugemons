@@ -1,14 +1,36 @@
 package ulb.model.ability;
 
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.lang.Math;
+import java.util.Random;
 
 import ulb.model.sample.AbilitySample;
 import ulb.model.sample.BugemonSample;
 import ulb.model.bugemon.Bugemon;
-
-import static org.junit.jupiter.api.Assertions.*;
+import ulb.model.bugemon.BugemonSpecies;
+import ulb.model.type.Type;
+import ulb.model.bugemon.Stats;
+import ulb.model.ability.Ability;
+import ulb.model.ability.AbilitySet;
 
 public class AbilityTest {
+	public static int getSeedThatGivesDoubleBelowOrEqual(float value) {
+		int seed = 0;
+
+		while (true) {
+			Random random = new Random(seed);
+			double res = random.nextDouble();
+
+			if (res <= value) {
+				return seed;
+			}
+
+			++seed;
+		}
+	}
+
 	@Test
 	public void abilitiesAreEqual() {
 		Ability a = AbilitySample.getA();
@@ -42,4 +64,66 @@ public class AbilityTest {
 		assertFalse(a.equals(b));
 	}
 
+	@Test
+	public void correctDamageFormulaNoCrit() {
+		Random random = new Random(0);
+
+		Ability abilityA = new Ability("idA", "nameA", Type.FLORA, "descriptionA", 10);
+		Ability abilityB = new Ability("idB", "nameB", Type.FLORA, "descriptionB", 10);
+		Ability abilityC = new Ability("idC", "nameC", Type.FLORA, "descriptionC", 10);
+
+		BugemonSpecies testSpecies = new BugemonSpecies(
+			"id",
+			"name",
+			Type.FLORA,
+			new Stats(100, 100, 100, 100),
+			new AbilitySet(abilityA, abilityB, abilityC),
+			"sprite",
+			true
+		);
+
+		Bugemon ownBugemon = new Bugemon(testSpecies);
+		Bugemon oppositeBugemon = new Bugemon(testSpecies);
+
+		int obtainedDamage = abilityA.getDamage(ownBugemon, oppositeBugemon, random);
+
+		float expectedAttackFactor = (100.0f + ownBugemon.getAttack()) / 100.0f; // = 2
+		float expectedDefenseFactor = 100.0f / (100.0f + oppositeBugemon.getDefense()); // = 0.5
+		float expectedRawDamage = abilityA.getPower() * expectedAttackFactor * expectedDefenseFactor; // = 10
+		int expectedDamage = Math.round(expectedRawDamage); // no crit, no effectiveness
+
+		assertEquals(expectedDamage, obtainedDamage);
+	}
+
+	@Test
+	public void correctDamageFormulWithCrit() {
+		int seed = getSeedThatGivesDoubleBelowOrEqual(Ability.CRITICAL_HIT_CHANCE);
+		Random random = new Random(seed);
+
+		Ability abilityA = new Ability("idA", "nameA", Type.FLORA, "descriptionA", 10);
+		Ability abilityB = new Ability("idB", "nameB", Type.FLORA, "descriptionB", 10);
+		Ability abilityC = new Ability("idC", "nameC", Type.FLORA, "descriptionC", 10);
+
+		BugemonSpecies testSpecies = new BugemonSpecies(
+			"id",
+			"name",
+			Type.FLORA,
+			new Stats(100, 100, 100, 100),
+			new AbilitySet(abilityA, abilityB, abilityC),
+			"sprite",
+			true
+		);
+
+		Bugemon ownBugemon = new Bugemon(testSpecies);
+		Bugemon oppositeBugemon = new Bugemon(testSpecies);
+
+		int obtainedDamage = abilityA.getDamage(ownBugemon, oppositeBugemon, random);
+
+		float expectedAttackFactor = (100.0f + ownBugemon.getAttack()) / 100.0f; // = 2
+		float expectedDefenseFactor = 100.0f / (100.0f + oppositeBugemon.getDefense()); // = 0.5
+		float expectedRawDamage = abilityA.getPower() * expectedAttackFactor * expectedDefenseFactor; // = 10
+		int expectedDamage = Math.round(expectedRawDamage * Ability.CRITICAL_HIT_FACTOR); // with crit, no effectiveness
+
+		assertEquals(expectedDamage, obtainedDamage);
+	}
 }

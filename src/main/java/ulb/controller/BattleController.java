@@ -143,7 +143,8 @@ public class BattleController {
 	 * @return the effectiveness message (or null if the effectiveness is normal)
 	 */
 	public String getEffectiveness(Ability ability) {
-		return battle.getEffectiveness(ability, getActiveBugemonOpponent());
+		Bugemon oppositeBugemon = getActiveBugemonOpponent();
+		return ability.getEffectivenessMessage(oppositeBugemon);
 	}
 
 	public int getHpAfterFirstActionSelf() {

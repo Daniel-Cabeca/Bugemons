@@ -7,13 +7,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class TowerTest {
 
     @Test
-    public void checkFloorNumber() {
+    public void amountOfFloorsInTowerOnInitialisation() {
         Tower tower = new Tower();
         assertEquals(9, tower.getFloors().size());
     }
 
     @Test
-    public void checkLastFloorIsFinalBoss() {
+    public void lastFloorIsFinalBossRoomOnly() {
         Tower tower = new Tower();
         Floor lastFloor = tower.getFloors().get(tower.getFloors().size() - 1);
         assertEquals(1, lastFloor.getRooms().size());

@@ -2,6 +2,7 @@ package ulb.model.team;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import ulb.model.bugemon.Bugemon;
 
@@ -150,4 +151,40 @@ public class Team {
 	public Bugemon getBugemon(int index) {
 		return this.members.get(index);
 	}
+
+    private int getBugemonIndex(Bugemon bugemon) {
+        return this.members.indexOf(bugemon);
+    }
+
+    public Bugemon getNextBugemon(Bugemon current) {
+        int indexCurrent = this.getBugemonIndex(current);
+        if (indexCurrent < 0) {
+            return null;
+        } 
+
+        for (int i = indexCurrent+1; i % members.size() != indexCurrent; i++) {
+			Bugemon candidate = members.get(i % this.members.size());
+			if (!candidate.isKO()) {
+				return candidate;
+			}
+		}
+
+        return null;
+    }
+
+    public List<Bugemon> getBugemonsAlive() {
+        List<Bugemon> availableBugemons = new ArrayList<>();
+
+		for (Bugemon b : this.getMembers()) {
+			if (!b.isKO()) {
+				availableBugemons.add(b);
+			}
+		}
+		return availableBugemons;
+    }
+
+    public boolean isBugemonOK(Bugemon bugemon) {
+        return this.contains(bugemon) && !bugemon.isKO();
+    }
+        
 }

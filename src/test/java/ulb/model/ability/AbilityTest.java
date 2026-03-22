@@ -83,7 +83,7 @@ public class AbilityTest {
 	}
 
 	@Test
-	public void correctDamageFormulWithCrit() {
+	public void correctDamageFormulaWithCrit() {
 		Random random = RandomTestUtils.findRandom( (rand) -> { return rand.nextDouble() <= Ability.CRITICAL_HIT_CHANCE; });
 
 		Ability abilityA = new Ability("idA", "nameA", Type.FLORA, "descriptionA", 10);

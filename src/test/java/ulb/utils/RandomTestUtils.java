@@ -4,6 +4,8 @@ import java.util.Random;
 
 /**
  * Collection of utilities for writing tests for features using RNG.
+ *
+ * Way more performance-heavy than using a proper mock library. We should switch to Mockito if we start using a lot of RNG in the game.
  */
 public class RandomTestUtils {
 	public interface RandomCondition {

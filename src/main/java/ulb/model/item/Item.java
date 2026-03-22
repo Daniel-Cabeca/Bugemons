@@ -3,6 +3,7 @@ package ulb.model.item;
 import ulb.model.HasId;
 import ulb.model.effect.Effect;
 import ulb.model.bugemon.Bugemon;
+import ulb.model.battle.Battle;
 
 public class Item implements HasId {
 	private String id;
@@ -33,6 +34,10 @@ public class Item implements HasId {
 
 	public int use(Bugemon target) {
 		return this.effect.apply(target);
+	}
+
+	public void use(Battle battle, Battle.TeamLabel team){
+		this.effect.apply(battle, team);
 	}
 
 	public Effect.EffectTarget getTarget(){

@@ -154,6 +154,13 @@ public class Battle {
 	public void setFloorNumber(int floorNumber){ this.floorNumber = floorNumber; }
 	public void enableBossBattle() { this.isBossBattle = true; }
 
+	public TeamLabel getTeamLabel(boolean isTeamA){
+		if (isTeamA){
+			return TeamLabel.TEAM_A;
+		}
+		return TeamLabel.TEAM_B;
+	}
+
 	public Team getOwnTeam(TeamLabel teamLabel) {
 		switch(teamLabel) {
 			case TEAM_A:
@@ -212,19 +219,7 @@ public class Battle {
 	 */
 	public boolean checkItem(Item item, boolean isTeamA) {
 		if (item.getEffect().getType().equals(Effect.EffectType.HEAL)) {
-			if (isTeamA) {
-				int baseHp = getActiveBugemonA().getBaseStats().getHp();
-				int fightHP = getActiveBugemonA().getHp();
-				if (baseHp == fightHP) {
-					return false;
-				}
-			} else {
-				int baseHp = getActiveBugemonB().getBaseStats().getHp();
-				int fightHP = getActiveBugemonB().getHp();
-				if (baseHp == fightHP) {
-					return false;
-				}
-			}
+			return this.getOwnActiveBugemon(this.getTeamLabel(isTeamA)).hasHPDecreased();
 		}
 		 
 
@@ -343,7 +338,7 @@ public class Battle {
 	 * @param team the team that uses the item
 	 */
 	private void useItem(Item item, TeamLabel team){
-		item.getEffect().apply(this, team);
+		item.use(this, team);
 		removeUsedItemFromInventory(team, item);
 		logMsg.add("L'objet " + item.getName() + "a été utilisé.");
 	}

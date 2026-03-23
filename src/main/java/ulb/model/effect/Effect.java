@@ -129,8 +129,8 @@ public class Effect {
 		}
 
 		if (this.type == EffectType.SWITCH) {
-			Bugemon nextBugemon = battle.getOwnNextBugemon(team);
-			battle.setOwnActiveBugemon(team, nextBugemon);
+			Bugemon nextBugemon = battle.getNextBugemon(team);
+			battle.setActiveBugemon(nextBugemon, team);
 		}
 
 		if (this.getDuration() == EffectDuration.ROUND
@@ -154,15 +154,15 @@ public class Effect {
 
 		switch(this.target) {
 			case OWN_BUGEMON:
-				targets.add(battle.getOwnActiveBugemon(team));
+				targets.add(battle.getActiveBugemon(team));
 				break;
 
 			case OPPOSITE_BUGEMON:
-				targets.add(battle.getOppositeActiveBugemon(team));
+				targets.add(battle.getActiveBugemon(battle.getOpponentTeamLabel(team)));
 				break;
 
 			case OWN_TEAM:
-				targets = battle.getOwnTeam(team).getMembers();
+				targets = battle.getTeam(team).getMembers();
 				break;
 
 			default:

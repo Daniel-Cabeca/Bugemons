@@ -50,6 +50,7 @@ public class BattleControllerTest {
 		Bugemon a = BugemonSample.getA();
 		Team teamA = new Team(List.of(a));
 		Team teamB = new Team(List.of(BugemonSample.getB()));
+		teamB.getBugemon(0).changeFightStats(new Stats(0, 0, 0, -1));
 
 		Battle battle = new Battle(teamA, teamB, player);
 		BattleController controller = new BattleController(player, battle, true);

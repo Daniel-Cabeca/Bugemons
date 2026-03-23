@@ -84,8 +84,8 @@ public class Ability implements HasId {
 	 * @param random The random number generator
 	 */
 	public void use(Battle battle, TeamLabel team, Random random) {
-		Bugemon ownBugemon = battle.getOwnActiveBugemon(team);
-		Bugemon oppositeBugemon = battle.getOppositeActiveBugemon(team);
+		Bugemon ownBugemon = battle.getActiveBugemon(team);
+		Bugemon oppositeBugemon = battle.getActiveBugemon(battle.getOpponentTeamLabel(team));
 
 		int damage = this.getDamage(ownBugemon, oppositeBugemon, random);
 		Stats damageStats = new Stats(-damage, 0, 0, 0);

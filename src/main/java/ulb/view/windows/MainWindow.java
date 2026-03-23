@@ -5,8 +5,15 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.text.Font;import javafx.stage.Stage;
+import ulb.controller.GameController;
 
 public class MainWindow extends Application{
+
+	private static GameController gameController;
+
+	public static void setGameController(GameController controller) {
+		gameController = controller ;
+	}
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		Font.loadFont(getClass().getResourceAsStream("/fonts/pokemon-emerald-pro.otf"), 14);
@@ -21,4 +28,5 @@ public class MainWindow extends Application{
 	 	scene.getStylesheets().add(getClass().getResource("/styles/global.css").toExternalForm());
 		primaryStage.show();
 	}
+
 }

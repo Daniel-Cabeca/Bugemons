@@ -205,6 +205,13 @@ public class Battle {
 	 * @return the TeamLabel of the first team to play
 	 */
 	public TeamLabel getFirstTeamToPlay(){
+
+		if (this.actionA instanceof Swap && !(this.actionB instanceof Swap)) {
+			return TeamLabel.TEAM_A;
+		} else if (this.actionB instanceof Swap && !(this.actionA instanceof Swap)) {
+			return TeamLabel.TEAM_B;
+		}
+
 		if (getActiveBugemonA().checkInitiative(getActiveBugemonB())){
 			return TeamLabel.TEAM_A;
 		}
@@ -221,7 +228,6 @@ public class Battle {
 		if (item.getEffect().getType().equals(Effect.EffectType.HEAL)) {
 			return this.getOwnActiveBugemon(this.getTeamLabel(isTeamA)).hasHPDecreased();
 		}
-		 
 
 		return true;
 	}
@@ -263,10 +269,10 @@ public class Battle {
 	 * @param team the team on which the active Bugemon will be replaced
 	 */
 	private void swap(Bugemon target, TeamLabel team){
-		if (team == TeamLabel.TEAM_A && teamA.contains(target)){
+		if (team == TeamLabel.TEAM_A && checkSwappableBugemon(target, team)){
 			setActiveBugemonA(target);
 			logMsg.add("Tu as envoyé " + target.getName() + "!");
-		} else if (team == TeamLabel.TEAM_B && teamB.contains(target)){
+		} else if (team == TeamLabel.TEAM_B && checkSwappableBugemon(target, team)){
 			setActiveBugemonB(target);
 			logMsg.add("L'adversaire a envoyé " + target.getName() + "!");
 		}
@@ -359,7 +365,7 @@ public class Battle {
 	 * @param oppositeTeam the opposite team, whose state changes if ownTeam swaps active Bugemons
 	 * @param ownState the current state of the team registering the action
 	 */
-	public void registerAction(Action action, TeamLabel ownTeam, TeamLabel oppositeTeam, BattleState ownState) {
+	private void registerAction(Action action, TeamLabel ownTeam, TeamLabel oppositeTeam, BattleState ownState) {
 		switch (ownState) {
 			case INGAME:
 				if (action instanceof UseItem useItemAction
@@ -410,56 +416,57 @@ public class Battle {
 	}
 
 	/**
+	 * handle the round of one of the two players
+	 * @param playerTeam the player who plays now
+	 * @return a boolean depending on if the turn continues
+	 */
+	private boolean handlePlayerTurn(TeamLabel playerTeam){
+		Action currentAction = this.actionA;
+		if (playerTeam == TeamLabel.TEAM_B){
+			currentAction = this.actionB;
+		}
+
+		this.applyAction(currentAction, playerTeam);
+
+		if (handleActionFinished(playerTeam)){
+			tickActiveEffects();
+			if (gameFinished){
+				handleBattleEnd();
+			}
+			return false;
+		}
+		return true;
+	}
+
+	/**
 	 * Handles one round of the battle
 	 */
 	private void handleRound(){
 		// checks whose action should be executed first and applies it
 		hpAfterFirstActionA = -1;
 		hpAfterFirstActionB = -1;
-		Action currentAction = this.actionA;
-		TeamLabel firstPlayer;
-		if (this.actionA instanceof Swap && !(this.actionB instanceof Swap)) {
-			firstPlayer = TeamLabel.TEAM_A;
-		} else if (this.actionB instanceof Swap && !(this.actionA instanceof Swap)) {
-			firstPlayer = TeamLabel.TEAM_B;
-		} else {
-			firstPlayer = this.getFirstTeamToPlay();
-		}
-		if (firstPlayer == TeamLabel.TEAM_B){
-			currentAction = this.actionB;
-		}
-		this.applyAction(currentAction, firstPlayer);
 
-		// updates the ttl of active items or handles the end of the battle
-		if (handleActionFinished(firstPlayer)){
-			tickActiveEffects();
-			if (gameFinished){
-				handleBattleEnd();
-			}
+		TeamLabel firstPlayer;
+		TeamLabel secondPlayer;
+
+		firstPlayer = this.getFirstTeamToPlay();
+		secondPlayer = TeamLabel.TEAM_A;
+		if (firstPlayer == TeamLabel.TEAM_A){
+			secondPlayer = TeamLabel.TEAM_B;
+		}
+		
+		if (! this.handlePlayerTurn(firstPlayer)){
 			return;
 		}
 
 		hpAfterFirstActionA = activeBugemonA.getHp();
 		hpAfterFirstActionB = activeBugemonB.getHp();
 		logMsg.add(null); // separator between first and second action messages 
-
-		// applies the action of the second player
-		TeamLabel secondPlayer = TeamLabel.TEAM_A;
-		currentAction = this.actionA;
-		if (firstPlayer == TeamLabel.TEAM_A){
-			secondPlayer = TeamLabel.TEAM_B;
-			currentAction = this.actionB;
-		}
-		this.applyAction(currentAction, secondPlayer);
-
-		// updates the ttl of active items or handles the end of the battle
-		if (handleActionFinished(secondPlayer)){
-			tickActiveEffects();
-			if (gameFinished){
-				handleBattleEnd();
-			}
+		
+		if (! this.handlePlayerTurn(secondPlayer)){
 			return;
 		}
+
 		tickActiveEffects();
 		setState(BattleState.INGAME, TeamLabel.TEAM_A);
 		setState(BattleState.INGAME, TeamLabel.TEAM_B);

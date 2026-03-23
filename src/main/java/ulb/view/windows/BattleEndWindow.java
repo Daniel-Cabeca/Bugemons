@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+import ulb.controller.GameController;
 import ulb.model.Player;
 import ulb.view.handler.Window;
 
@@ -24,6 +25,7 @@ public class BattleEndWindow extends Window{
 	private static final double BASE_HEIGHT = 600;
 
 	private Player player;
+
 
 	public void setPlayer(Player player) {this.player = player;}
 
@@ -72,6 +74,6 @@ public class BattleEndWindow extends Window{
 	 * @throws IOException if the main menu FXML file cannot be loaded
 	 */
 	public void handleReturn(ActionEvent event) throws IOException {
-		switchWindow(event, MODE_WINDOW_PATH);
+		switchWindow(event, MODE_WINDOW_PATH,null);
 	}
 }

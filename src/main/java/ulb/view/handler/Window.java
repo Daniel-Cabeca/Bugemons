@@ -7,14 +7,27 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
 import javafx.scene.Node;
+import ulb.controller.GameController;
+import ulb.view.windows.BattleEndWindow;
+import ulb.view.windows.BattleWindow;
+import ulb.view.windows.CreateTeamWindow;
+import ulb.view.windows.ModeWindow;
 
 public abstract class Window{
 	protected static final String WINDOWS_PATH= "/ulb/view/";
 	protected static final String MODE_WINDOW_PATH = WINDOWS_PATH + "ModeWindow.fxml";
 
-	public void switchWindow(ActionEvent event, String windowFxmlPath) throws IOException{
-		Parent root = FXMLLoader.load(getClass().getResource(windowFxmlPath));
-
+	public void switchWindow(ActionEvent event, String windowFxmlPath, GameController gameController) throws IOException{
+		FXMLLoader loader = new FXMLLoader(getClass().getResource(windowFxmlPath));
+		Parent root = loader.load();
+		Object windowController = loader.getController();
+		if (windowController instanceof CreateTeamWindow) {
+			((CreateTeamWindow) windowController).setGameController(gameController);
+		} else if (windowController instanceof ModeWindow) {
+			((ModeWindow) windowController).setGameController(gameController);
+		} else if (windowController instanceof BattleWindow) {
+			((BattleWindow) windowController).setGameController(gameController);
+		}
   		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 		stage.getScene().setRoot(root);
 	}

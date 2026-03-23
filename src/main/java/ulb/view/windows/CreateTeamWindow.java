@@ -39,16 +39,13 @@ public class CreateTeamWindow extends Window {
 	@FXML
 	private GridPane selectedBugemons;
 
-	private Player player;
 	private final List<String> selected = new ArrayList<>();
-	private GameController gameController = new GameController();
+	private GameController gameController;
 
 	private static final double BASE_WIDTH = 1000;
 	private static final double BASE_HEIGHT = 700;
 
-	public void setPlayer(Player player) {
-		this.player = player;
-	}
+
 
 	/**
 	 * Initializes the create team menu
@@ -78,14 +75,6 @@ public class CreateTeamWindow extends Window {
 		content.setScaleY(scale);
 	}
 
-	/**
-	 * initializes the game with a player and the selected Bugemons
-	 * @param selectedBugemons The Bugemons the player selected
-	 */
-	public void setupGame(List<String> selectedBugemons){
-		this.setPlayer(new Player("Player"));
-		gameController.setupPlayer(this.player, selectedBugemons);
-	}	
 
 
 	/**
@@ -177,7 +166,7 @@ public class CreateTeamWindow extends Window {
 	 */
 	public void handleConfirmTeam(ActionEvent event) {
 		if (!selected.isEmpty() && selected.size() <= 6) {
-			setupGame(selected);
+			gameController.setupTeam(selected);
 			gameController.switchToBattleModeWindow(event);
 		} else {
 			throw new IllegalStateException(
@@ -191,6 +180,8 @@ public class CreateTeamWindow extends Window {
 	 * @param event the action triggered by clicking the return button
 	 */
 	public void handleReturn(ActionEvent event) throws IOException {
-		switchWindow(event, MODE_WINDOW_PATH);
+		switchWindow(event, MODE_WINDOW_PATH,gameController);
 	}
+
+	public void setGameController(GameController gameController) { this.gameController = gameController;}
 }

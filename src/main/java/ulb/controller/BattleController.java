@@ -64,12 +64,6 @@ public class BattleController {
 	 */
 	public Bugemon getActiveBugemonSelf() {
 		return this.battle.getActiveBugemon(this.battle.getTeamLabel(this.isTeamA));
-		// if (this.isTeamA) {
-		// 	return battle.getActiveBugemonA();
-		// }
-		// else {
-		// 	return battle.getActiveBugemonB();
-		// }
 	}
 
 	/**
@@ -79,10 +73,6 @@ public class BattleController {
 	 */
 	public Bugemon getActiveBugemonOpponent() {
 		return this.battle.getActiveBugemon(this.battle.getTeamLabel(!this.isTeamA));
-		// if (this.isTeamA){
-		// 	return this.battle.getActiveBugemonB();
-		// }
-		// return this.battle.getActiveBugemonA();
 	}
 
 	public Player getPlayer() {
@@ -91,10 +81,6 @@ public class BattleController {
 
 	public Team getTeam(){
 		return this.battle.getTeam(this.battle.getTeamLabel(this.isTeamA));
-		// if (isTeamA){
-		// 	return this.battle.getTeamA();
-		// }
-		// return this.battle.getTeamB();
 	}
 
 	public void useAction(Action action) {

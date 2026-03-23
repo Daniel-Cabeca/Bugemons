@@ -53,7 +53,7 @@ public class BattleController {
 	 * @return if the item can be used or not (boolean)
 	 */
 	public boolean checkItem(Item item) {
-		return this.battle.checkItem(item, isTeamA);
+		return this.battle.checkItem(item, this.isTeamA);
 	}
 
 
@@ -63,12 +63,13 @@ public class BattleController {
 	 * @return the active Bugemon
 	 */
 	public Bugemon getActiveBugemonSelf() {
-		if (this.isTeamA) {
-			return battle.getActiveBugemonA();
-		}
-		else {
-			return battle.getActiveBugemonB();
-		}
+		return this.battle.getActiveBugemon(this.battle.getTeamLabel(this.isTeamA));
+		// if (this.isTeamA) {
+		// 	return battle.getActiveBugemonA();
+		// }
+		// else {
+		// 	return battle.getActiveBugemonB();
+		// }
 	}
 
 	/**
@@ -77,10 +78,11 @@ public class BattleController {
 	 * @return the opponent's active Bugemon
 	 */
 	public Bugemon getActiveBugemonOpponent() {
-		if (this.isTeamA){
-			return this.battle.getActiveBugemonB();
-		}
-		return this.battle.getActiveBugemonA();
+		return this.battle.getActiveBugemon(this.battle.getTeamLabel(!this.isTeamA));
+		// if (this.isTeamA){
+		// 	return this.battle.getActiveBugemonB();
+		// }
+		// return this.battle.getActiveBugemonA();
 	}
 
 	public Player getPlayer() {
@@ -88,14 +90,15 @@ public class BattleController {
 	}
 
 	public Team getTeam(){
-		if (isTeamA){
-			return this.battle.getTeamA();
-		}
-		return this.battle.getTeamB();
+		return this.battle.getTeam(this.battle.getTeamLabel(this.isTeamA));
+		// if (isTeamA){
+		// 	return this.battle.getTeamA();
+		// }
+		// return this.battle.getTeamB();
 	}
 
 	public void useAction(Action action) {
-		this.battle.setAction(action, isTeamA);
+		this.battle.chooseAction(action, isTeamA);
 	}
 
 	public Vector<Action> getAvailableAction(){ return this.battle.getAvailableActions(isTeamA); }
@@ -163,5 +166,7 @@ public class BattleController {
 		this.battle.clearLogMsg();
 	}
 
-	public int getTotalXP() { return this.battle.computeTotalXP(this.battle.getTeamB());}
+	public int getTotalXP() { 
+		return this.battle.computeTotalXP(!this.isTeamA); // TO REFACTOR
+	}
 }

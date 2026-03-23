@@ -135,11 +135,11 @@ public class ItemTest {
 			effect, "switch.png");
 		player.getInventory().addItem(item, 1);
 
-		Bugemon activeBefore = battle.getActiveBugemonA();
+		Bugemon activeBefore = battle.getActiveBugemon(battle.getTeamLabel(true));
 		playTurnWithPassiveOpponent(new UseItem(item));
 
-		assertNotEquals(activeBefore, battle.getActiveBugemonA());
-		assertEquals(bugemonB, battle.getActiveBugemonA());
+		assertNotEquals(activeBefore, battle.getActiveBugemon(battle.getTeamLabel(true)));
+		assertEquals(bugemonB, battle.getActiveBugemon(battle.getTeamLabel(true)));
 	}
 
 	@Test

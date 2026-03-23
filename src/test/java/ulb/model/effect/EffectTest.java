@@ -48,7 +48,7 @@ public class EffectTest {
 		List<Bugemon> targets = effect.getTargets(battle, team);
 
 		assertEquals(1, targets.size());
-		assertSame(battle.getOwnActiveBugemon(team), targets.get(0));
+		assertSame(battle.getActiveBugemon(team), targets.get(0));
 	}
 
 	@Test
@@ -60,7 +60,7 @@ public class EffectTest {
 		List<Bugemon> targets = effect.getTargets(battle, team);
 
 		assertEquals(1, targets.size());
-		assertSame(battle.getOppositeActiveBugemon(team), targets.get(0));
+		assertSame(battle.getActiveBugemon(battle.getOpponentTeamLabel(team)), targets.get(0));
 	}
 
 	@Test

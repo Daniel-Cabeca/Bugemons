@@ -1,6 +1,5 @@
 package ulb.controller;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Vector;
 
@@ -9,26 +8,13 @@ import ulb.model.battle.Battle;
 import ulb.model.battle.BattleState;
 import ulb.model.team.Team;
 import ulb.model.bugemon.Bugemon;
-import ulb.model.type.Effectiveness;
-import ulb.model.type.Type;
-import ulb.view.handler.WindowContainer;
-import ulb.view.windows.BattleEndWindow;
-import ulb.view.windows.BattleModeWindow;
-import ulb.view.windows.BattleWindow;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.stage.Stage;
 import ulb.controller.action.*;
 import ulb.model.Player;
 import ulb.model.item.Item;
-import ulb.model.team.OpponentTeamGenerator;
 import ulb.model.reward.Reward;
 
 public class BattleController {
 	private Player player;
-	private WindowContainer windowContainer;
 	private Battle battle;
 	private boolean isTeamA;
 	private int floorNumber = 1;
@@ -36,9 +22,6 @@ public class BattleController {
 
 	private Vector<Reward> rewards;
 
-	public BattleController(){
-		this.windowContainer = new WindowContainer();
-	}
 
 	public BattleController(Player player, Battle battle, boolean isTeamA) {
 		this.player = player;

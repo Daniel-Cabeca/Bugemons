@@ -6,14 +6,13 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.text.Font;import javafx.stage.Stage;
 import ulb.controller.GameController;
+import ulb.view.windows.ModeWindow;
 
 public class MainWindow extends Application{
 
 	private static GameController gameController;
 
-	public static void setGameController(GameController controller) {
-		gameController = controller ;
-	}
+	public static void setGameController(GameController controller) { gameController = controller ;}
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		Font.loadFont(getClass().getResourceAsStream("/fonts/pokemon-emerald-pro.otf"), 14);
@@ -22,6 +21,8 @@ public class MainWindow extends Application{
 		// FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/LevelUpWindow.fxml"));
 		Parent root = loader.load();
 		Scene scene = new Scene(root);
+		ModeWindow modeWindowController = loader.getController();
+		modeWindowController.setGameController(gameController);
 		primaryStage.setTitle("INFO-F307 Groupe 10");
 		primaryStage.setScene(scene);
 		primaryStage.setFullScreen(true);

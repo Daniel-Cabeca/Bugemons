@@ -710,7 +710,7 @@ public class BattleWindow extends Window {
 	* @throws IOException if the main menu FuXML file cannot be loaded
 	*/
 	public void handleReturn(ActionEvent event) throws IOException {
-		switchWindow(event, MODE_WINDOW_PATH);
+		switchWindow(event, MODE_WINDOW_PATH,gameController);
 	}
 
 

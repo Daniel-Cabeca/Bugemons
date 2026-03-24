@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
+import ulb.controller.action.TeamController;
 import ulb.controller.strategy.StrategyRandom;
 import ulb.controller.towerManager.FloorManager;
 import ulb.controller.towerManager.RoomManager;
@@ -291,6 +292,11 @@ public class GameController {
 			}
 			towerModeTowerManager.nextFloor();
 		}
+	}
+
+	public void setupTeam(List<String> selectedBugemons){
+		TeamController teamController = new TeamController(this.player);
+		teamController.setTeam(selectedBugemons);
 	}
 
 }

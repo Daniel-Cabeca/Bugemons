@@ -10,8 +10,6 @@ import javafx.scene.Node;
 import ulb.communication.Message;
 import ulb.controller.GameController;
 import ulb.model.Player;
-import ulb.utils.Scaling;
-import ulb.view.windows.BattleEndWindow;
 import ulb.view.windows.BattleWindow;
 import ulb.view.windows.CreateTeamWindow;
 import ulb.view.windows.ModeWindow;

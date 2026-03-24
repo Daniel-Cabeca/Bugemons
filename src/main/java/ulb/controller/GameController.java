@@ -25,7 +25,6 @@ import ulb.view.windows.BattleModeWindow;
 import ulb.view.windows.BattleWindow;
 import ulb.view.windows.FloorRewardWindow;
 
-import javax.swing.text.View;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;

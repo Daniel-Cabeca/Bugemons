@@ -98,7 +98,6 @@ public class BattleWindow extends Window {
 	private TowerManager towerManager;
 	private boolean tower;
 	private GameController gameController;
-	private Player player;
 	private boolean automaticMode;
 	private boolean waitingForOpponentAction = false;
 
@@ -106,8 +105,6 @@ public class BattleWindow extends Window {
 	public void setBattleController(BattleController battleController) { this.battleController = battleController; }
 
 	public void setGameController(GameController gameController){ this.gameController = gameController;}
-
-	public void setPlayer(Player player) { this.player = player; }
 
 	public void setTowerManager(TowerManager towerManager) {this.towerManager = towerManager;}
 

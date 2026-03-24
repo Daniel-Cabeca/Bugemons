@@ -6,6 +6,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import ulb.controller.GameController;
 import ulb.model.Player;
+import ulb.utils.Scaling;
 import ulb.view.handler.Window;
 
 import java.io.IOException;
@@ -21,35 +22,9 @@ public class BattleEndWindow extends Window{
 	@FXML
 	private VBox content;
 
-	private static final double BASE_WIDTH = 800;
-	private static final double BASE_HEIGHT = 600;
-
-	private Player player;
-
-
-	public void setPlayer(Player player) {this.player = player;}
-
 	@FXML
 	public void initialize() {
-		content.sceneProperty().addListener((obs, oldScene, scene) -> {
-			if (scene != null) {
-
-				scene.widthProperty().addListener((o, oldVal, newVal) -> scale(scene));
-				scene.heightProperty().addListener((o, oldVal, newVal) -> scale(scene));
-
-				scale(scene);
-			}
-		});
-	}
-
-	private void scale(javafx.scene.Scene scene) {
-		double scaleX = scene.getWidth() / BASE_WIDTH;
-		double scaleY = scene.getHeight() / BASE_HEIGHT;
-
-		double scale = Math.min(scaleX, scaleY);
-
-		content.setScaleX(scale);
-		content.setScaleY(scale);
+		Scaling.applyScaling(content);
 	}
 
 	/**

@@ -5,6 +5,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
+import ulb.communication.Message;
+import ulb.communication.types.SwitchWindowMessage;
 import ulb.controller.action.TeamController;
 import ulb.controller.strategy.StrategyRandom;
 import ulb.controller.towerManager.FloorManager;
@@ -17,11 +19,13 @@ import ulb.model.team.OpponentTeamGenerator;
 import ulb.model.team.Team;
 import ulb.model.tower.Room;
 import ulb.model.tower.RoomType;
+import ulb.view.ViewManager;
 import ulb.view.windows.BattleEndWindow;
 import ulb.view.windows.BattleModeWindow;
 import ulb.view.windows.BattleWindow;
 import ulb.view.windows.FloorRewardWindow;
 
+import javax.swing.text.View;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +35,7 @@ public class GameController {
 	private Player player;
 	private TowerManager towerModeTowerManager;
 	private BattleController normalModeBattleController;
+	private ViewManager viewManager;
 
 	private boolean isNextFloor;
 
@@ -297,6 +302,17 @@ public class GameController {
 	public void setupTeam(List<String> selectedBugemons){
 		TeamController teamController = new TeamController(this.player);
 		teamController.setTeam(selectedBugemons);
+	}
+
+
+	public void setViewManager(ViewManager vManager) {
+		this.viewManager = vManager;
+	}
+
+	public void handleMessage(Message m) throws IOException {
+		if (m instanceof SwitchWindowMessage) {
+			viewManager.switchWindow(((SwitchWindowMessage) m).getSwitchWindow(), ((SwitchWindowMessage) m).getEvent());
+		}
 	}
 
 }

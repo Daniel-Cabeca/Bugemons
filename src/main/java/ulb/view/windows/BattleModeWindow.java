@@ -7,14 +7,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import ulb.controller.BattleController;
 import ulb.controller.GameController;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.team.Team;
+import ulb.utils.Scaling;
 
-import java.util.List;
-
-import java.util.List; 
 
 public class BattleModeWindow {
 
@@ -26,32 +23,11 @@ public class BattleModeWindow {
     @FXML
     private VBox content;
 
-    private static final double BASE_WIDTH = 800;
-    private static final double BASE_HEIGHT = 600;
-
 	public void setGameController(GameController gameController) { this.gameController = gameController;}
 
     @FXML
     public void initialize() {
-        content.sceneProperty().addListener((obs, oldScene, scene) -> {
-            if (scene != null) {
-
-                scene.widthProperty().addListener((o, oldVal, newVal) -> scale(scene));
-                scene.heightProperty().addListener((o, oldVal, newVal) -> scale(scene));
-
-                scale(scene);
-            }
-        });
-    }
-
-    private void scale(javafx.scene.Scene scene) {
-        double scaleX = scene.getWidth() / BASE_WIDTH;
-        double scaleY = scene.getHeight() / BASE_HEIGHT;
-
-        double scale = Math.min(scaleX, scaleY);
-
-        content.setScaleX(scale);
-        content.setScaleY(scale);
+        Scaling.applyScaling(content);
     }
 
     public void handleAutomaticBattle(ActionEvent actionEvent) {

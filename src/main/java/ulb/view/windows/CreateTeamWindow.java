@@ -1,12 +1,6 @@
 package ulb.view.windows;
 
-import ulb.controller.BattleController;
 import ulb.controller.GameController;
-import ulb.model.battle.Battle;
-import ulb.model.team.OpponentTeamGenerator;
-import ulb.model.team.Team;
-import ulb.controller.strategy.StrategyRandom;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -18,9 +12,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import ulb.model.Player;
-import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.BugemonSpecies;
+import ulb.utils.Scaling;
 import ulb.view.handler.Window;
 import ulb.service.BugemonService;
 import ulb.service.ServiceLoader;
@@ -42,10 +35,6 @@ public class CreateTeamWindow extends Window {
 	private final List<String> selected = new ArrayList<>();
 	private GameController gameController;
 
-	private static final double BASE_WIDTH = 1000;
-	private static final double BASE_HEIGHT = 700;
-
-
 
 	/**
 	 * Initializes the create team menu
@@ -53,28 +42,8 @@ public class CreateTeamWindow extends Window {
 	@FXML
 	public void initialize() {
 		populateAvailableBugemons();
-
-		content.sceneProperty().addListener((obs, oldScene, scene) -> {
-			if (scene != null) {
-
-				scene.widthProperty().addListener((o, oldVal, newVal) -> scale(scene));
-				scene.heightProperty().addListener((o, oldVal, newVal) -> scale(scene));
-
-				scale(scene);
-			}
-		});
+		Scaling.applyScaling(content);
 	}
-
-	private void scale(javafx.scene.Scene scene) {
-		double scaleX = scene.getWidth() / BASE_WIDTH;
-		double scaleY = scene.getHeight() / BASE_HEIGHT;
-
-		double scale = Math.min(scaleX, scaleY);
-
-		content.setScaleX(scale);
-		content.setScaleY(scale);
-	}
-
 
 
 	/**

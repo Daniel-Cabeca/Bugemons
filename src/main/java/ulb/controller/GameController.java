@@ -220,6 +220,7 @@ public class GameController {
 			stage.getScene().setRoot(battleEndWindow);
 
 			BattleEndWindow controller = loader.getController();
+			controller.setGameController(this);
 			controller.setPlayer(player);
 			controller.setResult(victory, normalModeBattleController.getTotalXP()); // Needs to be refactored
 

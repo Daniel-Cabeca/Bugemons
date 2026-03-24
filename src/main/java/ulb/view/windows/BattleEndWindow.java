@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+import ulb.controller.GameController;
 import ulb.utils.Scaling;
 import ulb.view.handler.Window;
 
@@ -19,6 +20,10 @@ public class BattleEndWindow extends Window{
 	public Label gainXPLabel;
 	@FXML
 	private VBox content;
+
+	private GameController gameController;
+
+	public void setGameController(GameController gameController){ this.gameController = gameController;}
 
 	@FXML
 	public void initialize() {
@@ -47,6 +52,6 @@ public class BattleEndWindow extends Window{
 	 * @throws IOException if the main menu FXML file cannot be loaded
 	 */
 	public void handleReturn(ActionEvent event) throws IOException {
-		switchWindow(event, MODE_WINDOW_PATH,null);
+		switchWindow(event, MODE_WINDOW_PATH,gameController);
 	}
 }

@@ -3,6 +3,7 @@ package ulb.view.windows;
 import ulb.controller.GameController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
@@ -34,6 +35,7 @@ public class CreateTeamWindow extends Window {
 
 	private final List<String> selected = new ArrayList<>();
 	private GameController gameController;
+	private int limitedBugemonsNumber = 6;
 
 
 	/**
@@ -113,7 +115,29 @@ public class CreateTeamWindow extends Window {
 				row++;
 			}
 		}
+		disableNoneSelectedBugemons();
 	}
+
+	/**
+	 * Disable all bugemons after 6 are selected so that no more can be selected
+	 */
+	private void disableNoneSelectedBugemons() {
+		if (selected.size() == limitedBugemonsNumber) {
+			for (Node node: availableBugemonsGrid.getChildren()) {
+				VBox vbox = (VBox) node;
+				String bugemon_name = ((Label)(vbox.getChildren().get(0))).getText();
+				if (!selected.contains(bugemon_name)) {  // contains name of the bugemon
+					vbox.setDisable(true);
+				}
+			}
+		}else{
+			for (Node node: availableBugemonsGrid.getChildren()) {
+				VBox vbox = (VBox) node;
+				vbox.setDisable(false);
+			}
+		}
+	}
+
 
 	private void onSelectBugemon(String bugemon) {
 		if (!selected.contains(bugemon) && selected.size() < 6) {

@@ -35,7 +35,7 @@ public class CreateTeamWindow extends Window {
 
 	private final List<String> selected = new ArrayList<>();
 	private GameController gameController;
-	private int limitedBugemonsNumber = 6;
+	private final int LIMITED_BUGEMONS_NUMBER =6;
 
 
 	/**
@@ -119,10 +119,10 @@ public class CreateTeamWindow extends Window {
 	}
 
 	/**
-	 * Disable all bugemons after @limitedBugemonsNumber are selected so that no more can be selected
+	 * Disable all bugemons after @LIMITED_BUGEMONS_NUMBER are selected so that no more can be selected
 	 */
 	private void checkDisableBugemons() {
-		if (selected.size() == limitedBugemonsNumber) {
+		if (selected.size() == LIMITED_BUGEMONS_NUMBER) {
 			disableNoneSelectedBugemons();
 		}
 		else {
@@ -155,7 +155,7 @@ public class CreateTeamWindow extends Window {
 
 
 	private void onSelectBugemon(String bugemon) {
-		if (!selected.contains(bugemon) && selected.size() < limitedBugemonsNumber) {
+		if (!selected.contains(bugemon) && selected.size() < LIMITED_BUGEMONS_NUMBER) {
 			selected.add(bugemon);
 			populateSelectedBugemons();
 		}
@@ -173,7 +173,7 @@ public class CreateTeamWindow extends Window {
 	 * @throws IllegalStateException if the team is empty or has more than 6 bugemons
 	 */
 	public void handleConfirmTeam(ActionEvent event) {
-		if (!selected.isEmpty() && selected.size() <= limitedBugemonsNumber) {
+		if (!selected.isEmpty() && selected.size() <= LIMITED_BUGEMONS_NUMBER) {
 			gameController.setupTeam(selected);
 			gameController.switchToBattleModeWindow(event);
 		} else {

@@ -59,6 +59,9 @@ public class BattleModeWindow {
     public void displayTeamWithStats(Team team, GridPane grid) {
         grid.getChildren().clear();
         int row = 0;
+        int col = 0;
+        int count =0;
+
         for (Bugemon bugemon : team.getMembers()) {
             VBox cell = new VBox();
 
@@ -76,8 +79,15 @@ public class BattleModeWindow {
                     bugemon.getFightStats().getDefense() + " INIT: " + bugemon.getFightStats().getInitiative());
 
             cell.getChildren().addAll(name, sprite, stats);
+            grid.add(cell, col, row++);
 
-            grid.add(cell, 0, row++);
+            count++;
+            if (count == 3){ // put 3 bugemons in each col
+            	col++;
+             	row=0;
+            }
+
         }
+
     }
 }

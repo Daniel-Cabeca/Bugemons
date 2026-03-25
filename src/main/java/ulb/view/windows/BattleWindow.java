@@ -759,6 +759,14 @@ public class BattleWindow extends Window {
 		}
 
 		battleLog.setText(String.join("\n", logs.subList(0, sep)));
+
+		// Only force a full refresh during the first phase when that phase actually
+		// contains a switch message. This makes the newly entered Bugémon visible
+		// before the counter-attack, while avoiding KO side effects where the next
+		// Bugémon would temporarily inherit the previous one's displayed HP state.
+		if (containsSwitchMessage(logs.subList(0, sep))) {
+			initializeGraphicalBattle();
+		}
 		updateHPDisplay(battleController.getHpAfterFirstActionSelf(), battleController.getHpAfterFirstActionOpponent());
 
 		PauseTransition pause = new PauseTransition(javafx.util.Duration.seconds(1));
@@ -774,6 +782,22 @@ public class BattleWindow extends Window {
 			onComplete.run();
 		});
 		pause.play();
+	}
+
+
+	/**
+	 * Checks whether the provided messages include a Bugémon switch announcement.
+	 *
+	 * @param messages the messages displayed for the current phase
+	 * @return {@code true} if a switch announcement is present, {@code false} otherwise
+	 */
+	private boolean containsSwitchMessage(List<String> messages) {
+		for (String message : messages) {
+			if (message != null && message.contains("envoyé")) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void updateHPDisplay(int selfHp, int opponentHp) {

@@ -1,7 +1,5 @@
 package ulb.view.windows;
 
-import ulb.controller.GameController;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
@@ -9,18 +7,17 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import ulb.model.bugemon.BugemonSpecies;
 import ulb.utils.Scaling;
-import ulb.view.handler.Window;
 import ulb.service.BugemonService;
 import ulb.service.ServiceLoader;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import ulb.view.WindowPath;
 
 public class CreateTeamWindow extends Window {
 
@@ -31,11 +28,10 @@ public class CreateTeamWindow extends Window {
 	private GridPane availableBugemonsGrid;
 
 	@FXML
-	private GridPane selectedBugemons;
+	private GridPane selectedBugemonsGrid;
 
-	private final List<String> selected = new ArrayList<>();
-	private GameController gameController;
-	private final int LIMITED_BUGEMONS_NUMBER =6;
+	private final List<String> selectedBugemons = new ArrayList<>();
+	private final int MAX_BUGEMONS =6;
 
 
 	/**
@@ -46,7 +42,6 @@ public class CreateTeamWindow extends Window {
 		populateAvailableBugemons();
 		Scaling.applyScaling(content);
 	}
-
 
 	/**
 	 * Updates the available bugemons grid by adding a box for each bugemon in the list
@@ -71,7 +66,7 @@ public class CreateTeamWindow extends Window {
 			sprite.setPreserveRatio(true);
 
 			CheckBox checkBox = new CheckBox();
-			checkBox.setSelected(selected.contains(bugemon.getName()));
+			checkBox.setSelected(selectedBugemons.contains(bugemon.getName()));
 
 			checkBox.setOnAction(e -> {
 				if (checkBox.isSelected()) {
@@ -93,21 +88,21 @@ public class CreateTeamWindow extends Window {
 	}
 
 	/**
-	 * Updates the selected bugemons grid by adding a box for each selected bugemon
+	 * Updates the selectedBugemons bugemons grid by adding a box for each selectedBugemons bugemon
 	 */
 	private void populateSelectedBugemons() {
-		selectedBugemons.getChildren().clear();
+		selectedBugemonsGrid.getChildren().clear();
 
 		int col = 0, row = 0;
 
-		for (String bugemon : selected) {
+		for (String bugemon : selectedBugemons) {
 			VBox cell = new VBox();
-			cell.getStyleClass().add("selectedBugemons");
+			cell.getStyleClass().add("selectedBugemonsGrid");
 
 			Label name = new Label(bugemon);
 			cell.getChildren().add(name);
 
-			selectedBugemons.add(cell, col, row);
+			selectedBugemonsGrid.add(cell, col, row);
 
 			col++;
 			if (col == 8) {
@@ -119,11 +114,11 @@ public class CreateTeamWindow extends Window {
 	}
 
 	/**
-	 * Disable all bugemons after @LIMITED_BUGEMONS_NUMBER are selected so that no more can be selected
+	 * Disable all bugemons after @MAX_BUGEMONS are selected so that no more can be selected
 	 */
 	private void checkDisableBugemons() {
-		if (selected.size() == LIMITED_BUGEMONS_NUMBER) {
-			disableNoneSelectedBugemons();
+		if (selectedBugemons.size() == MAX_BUGEMONS) {
+			disableAllBugemons();
 		}
 		else {
 			enableAllBugemons();
@@ -131,20 +126,20 @@ public class CreateTeamWindow extends Window {
 	}
 
 	/**
-	 * Disable all none selected bugemon
+	 * Disable all not selected bugemons
 	 */
-	private void disableNoneSelectedBugemons(){
+	private void disableAllBugemons(){
 		for (Node node: availableBugemonsGrid.getChildren()) {
 			VBox vbox = (VBox) node;
 			String bugemon_name = ((Label)(vbox.getChildren().get(0))).getText();
-			if (!selected.contains(bugemon_name)) {  // contains name of the bugemon
+			if (!selectedBugemons.contains(bugemon_name)) {  // contains name of the bugemon
 				vbox.setDisable(true);
 			}
 		}
 	}
 
 	/**
-	 * Enables all bugemons if disabled
+	 * Enables all bugemons if they were disabled
 	 */
 	private void enableAllBugemons() {
 		for (Node node: availableBugemonsGrid.getChildren()) { // enable all bugemons els
@@ -154,42 +149,47 @@ public class CreateTeamWindow extends Window {
 	}
 
 
+	/**
+	 * Adds the selected bugemon to the selectedBugemons list when clicking the checkbox
+	 *
+	 * @param bugemon the name of the bugemon that was selected
+	 */
 	private void onSelectBugemon(String bugemon) {
-		if (!selected.contains(bugemon) && selected.size() < LIMITED_BUGEMONS_NUMBER) {
-			selected.add(bugemon);
+		if (!selectedBugemons.contains(bugemon) && selectedBugemons.size() < MAX_BUGEMONS) {
+			selectedBugemons.add(bugemon);
 			populateSelectedBugemons();
 		}
 	}
 
+	/**
+	 * Removes the selected bugemon from the selectedBugemons list when clicking the checkbox
+	 *
+	 * @param bugemon the name of the bugemon that was deselected
+	 */
 	private void onDeselectBugemon(String bugemon) {
-		selected.remove(bugemon);
+		selectedBugemons.remove(bugemon);
 		populateSelectedBugemons();
 	}
 
 	/**
-	 * Confirms the selected team and asks the controller to switch to the battle window
+	 * Confirms the selectedBugemons team and asks the controller to switch to the battle window
 	 * then, closes the current window
-	 * @param event the action triggered by clicking the confirm button
 	 * @throws IllegalStateException if the team is empty or has more than 6 bugemons
 	 */
-	public void handleConfirmTeam(ActionEvent event) {
-		if (!selected.isEmpty() && selected.size() <= LIMITED_BUGEMONS_NUMBER) {
-			gameController.setupTeam(selected);
-			gameController.switchToBattleModeWindow(event);
+	public void handleConfirmTeam() {
+		if (!selectedBugemons.isEmpty() && selectedBugemons.size() <= MAX_BUGEMONS) {
+			gameController.setupTeam(selectedBugemons);
+			sendWindowSwitchMessage(WindowPath.BATTLE_MODE);
 		} else {
-			throw new IllegalStateException(
-					"Tu dois sélectionner entre 1 et 6 Bugemons pour confirmer ton équipe."
-			);
+			throw new IllegalStateException("Tu dois sélectionner entre 1 et 6 Bugémons pour confirmer ton équipe.");
 		}
 	}
 
 	/**
 	 * Returns to the main menu
-	 * @param event the action triggered by clicking the return button
 	 */
-	public void handleReturn(ActionEvent event) throws IOException {
-		switchWindow(event, MODE_WINDOW_PATH,gameController);
+	public void handleReturn()  {
+		sendWindowSwitchMessage(WindowPath.MODE);
 	}
 
-	public void setGameController(GameController gameController) { this.gameController = gameController;}
 }

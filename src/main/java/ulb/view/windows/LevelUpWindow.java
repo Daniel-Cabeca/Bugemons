@@ -3,7 +3,6 @@ package ulb.view.windows;
 import javafx.fxml.FXML;
 import ulb.model.bugemon.Stats;
 import ulb.model.reward.Reward;
-import ulb.view.handler.Window;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 

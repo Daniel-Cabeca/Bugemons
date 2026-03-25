@@ -11,7 +11,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
-import ulb.controller.GameController;
 import ulb.controller.towerManager.TowerManager;
 import ulb.model.battle.BattleState;
 import ulb.model.bugemon.Bugemon;
@@ -30,7 +29,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.util.Callback;
-import ulb.view.handler.Window;
+import ulb.view.WindowPath;
 
 public class BattleWindow extends Window {
 
@@ -95,14 +94,12 @@ public class BattleWindow extends Window {
 	private BattleController battleController;
 	private TowerManager towerManager;
 	private boolean tower;
-	private GameController gameController;
 	private boolean automaticMode;
 	private boolean waitingForOpponentAction = false;
 
 
 	public void setBattleController(BattleController battleController) { this.battleController = battleController; }
 
-	public void setGameController(GameController gameController){ this.gameController = gameController;}
 
 	public void setTowerManager(TowerManager towerManager) {this.towerManager = towerManager;}
 
@@ -705,7 +702,7 @@ public class BattleWindow extends Window {
 	* @throws IOException if the main menu FuXML file cannot be loaded
 	*/
 	public void handleReturn(ActionEvent event) throws IOException {
-		switchWindow(event, MODE_WINDOW_PATH,gameController);
+		sendWindowSwitchMessage(WindowPath.MODE);
 	}
 
 

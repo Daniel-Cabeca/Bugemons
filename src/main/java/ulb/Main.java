@@ -7,6 +7,8 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import ulb.controller.GameController;
 import ulb.model.Player;
+import ulb.view.ViewManager;
+import ulb.view.WindowPath;
 import ulb.view.windows.ModeWindow;
 
 public class Main extends Application {
@@ -25,17 +27,17 @@ public class Main extends Application {
 		Player player = new Player("Player");
 		gameController.setPlayer(player);
 
-		Font.loadFont(getClass().getResourceAsStream("/fonts/pokemon-emerald-pro.otf"), 14);
+		ViewManager viewManager = new ViewManager(primaryStage, gameController);
+		gameController.setViewManager(viewManager);
 
-		FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/ModeWindow.fxml"));
-		Parent root = loader.load();
-		Scene scene = new Scene(root);
-		ModeWindow modeWindowController = loader.getController();
-		modeWindowController.setGameController(gameController);
+		Font.loadFont(getClass().getResourceAsStream("/fonts/pokemon-emerald-pro.otf"), 14);
 		primaryStage.setTitle("INFO-F307 Groupe 10");
-		primaryStage.setScene(scene);
 		primaryStage.setFullScreen(true);
-		scene.getStylesheets().add(getClass().getResource("/styles/global.css").toExternalForm());
+
+		viewManager.switchWindow(WindowPath.MODE);
+
+		primaryStage.getScene().getStylesheets().add(getClass().getResource("/styles/global.css").toExternalForm());
+
 		primaryStage.show();
 	}
 }

@@ -20,7 +20,7 @@
 
         <Label style="-fx-font-size: 50px;" text="Votre Équipe:" />
 
-        <GridPane fx:id="selectedBugemons"
+        <GridPane fx:id="selectedBugemonsGrid"
                   alignment="CENTER"
                   hgap="10" vgap="10" />
 

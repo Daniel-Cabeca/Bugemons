@@ -91,7 +91,7 @@ public class GameController {
 	 * Setups the right settings for the tower mode
 	 */
 	public void setupTowerMode(){
-		TowerManager towerModeTowerManager = new TowerManager(this.getPlayer());
+		towerModeTowerManager = new TowerManager(this.getPlayer());
 	}
 
 	/**
@@ -143,7 +143,6 @@ public class GameController {
 			controller.setGameController(this);
 			controller.setBattleController(normalModeBattleController);
 
-			controller.setPlayer(player);
 			controller.initializeBattle(teamA, teamB, player.getInventory(), automatic, false);
 
 		} catch (IOException e) {
@@ -177,7 +176,6 @@ public class GameController {
 			controller.setTowerManager(towerModeTowerManager);
 
 			controller.setBattleController(towerModeTowerManager.getCurrentRoomManager().getRoomBattleController());
-			controller.setPlayer(player);
 			// always manual battle in tower mode
 			controller.initializeBattle(teamA, teamB, player.getInventory(), false, true);
 
@@ -222,7 +220,6 @@ public class GameController {
 
 			BattleEndWindow controller = loader.getController();
 			controller.setGameController(this);
-			controller.setPlayer(player);
 			controller.setResult(victory, normalModeBattleController.getTotalXP()); // Needs to be refactored
 
 		} catch (IOException e) {
@@ -258,9 +255,6 @@ public class GameController {
 	 * @param teamA the team that the player chose for the tower mode
 	 */
 	public void handleTower(Team teamA, ActionEvent event)  {
-		if (towerModeTowerManager == null) {
-			towerModeTowerManager = new TowerManager(player);
-		}
 
 		if (!towerModeTowerManager.isTowerCompleted()) {
 			isNextFloor = false;
@@ -310,9 +304,9 @@ public class GameController {
 		this.viewManager = vManager;
 	}
 
-	public void handleMessage(Message m) throws IOException {
+	public void handleMessage(Message m) {
 		if (m instanceof SwitchWindowMessage) {
-			viewManager.switchWindow(((SwitchWindowMessage) m).getSwitchWindow(), ((SwitchWindowMessage) m).getEvent());
+			viewManager.switchWindow(((SwitchWindowMessage) m).getSwitchWindow());
 		}
 	}
 

@@ -4,13 +4,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import ulb.controller.GameController;
 import ulb.controller.towerManager.TowerManager;
 
-public class FloorRewardWindow {
+public class FloorRewardWindow extends Window {
 	//TODO: implement functions + add popup window to newAttackReward and StatReward to select bugemon
 
-	private GameController gameController;
 	private TowerManager towerManager;
 
 	@FXML
@@ -27,7 +25,6 @@ public class FloorRewardWindow {
 	private void switchToNextRoomWindow(ActionEvent event){
 		gameController.switchToNextRoomWindow(event);
 	}
-	public void setGameController(GameController gameController){ this.gameController = gameController;}
 	public void setTowerManager(TowerManager towerManager){ this.towerManager = towerManager;}
 
 	public void initializeLabels() {
@@ -37,9 +34,7 @@ public class FloorRewardWindow {
 
 	// for now simply switches to next room window (no reward gained)
 	@FXML
-	private void objectReward(ActionEvent event){
-		switchToNextRoomWindow(event);
-	}
+	private void objectReward(ActionEvent event){ switchToNextRoomWindow(event); }
 	@FXML
 	private void newAttackReward(ActionEvent event){
 		switchToNextRoomWindow(event);

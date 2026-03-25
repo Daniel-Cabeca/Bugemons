@@ -3,23 +3,16 @@ package ulb.view.windows;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import ulb.controller.GameController;
 import javafx.scene.control.Label;
 
 import java.io.IOException;
 
-public class NextRoomWindow {
+public class NextRoomWindow extends Window {
 	@FXML
 	public Label messageLabel;
 
 	@FXML
 	public Button nextButton;
-
-	private GameController gameController;
-
-	public void setGameController(GameController gameController) {
-		this.gameController = gameController;
-	}
 
 	/**
 	 * Goes to the next room in tower mode

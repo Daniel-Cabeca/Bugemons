@@ -7,15 +7,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import ulb.controller.GameController;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.team.Team;
 import ulb.utils.Scaling;
 
 
-public class BattleModeWindow {
-
-	private GameController gameController;
+public class BattleModeWindow extends Window {
 
     @FXML
     private GridPane playerTeamGrid;
@@ -23,12 +20,19 @@ public class BattleModeWindow {
     @FXML
     private VBox content;
 
-	public void setGameController(GameController gameController) { this.gameController = gameController;}
-
     @FXML
     public void initialize() {
         Scaling.applyScaling(content);
     }
+
+    /**
+     * Called after the window is created and the controller is set
+     */
+    @Override
+    public void onLoad() {
+        displayTeam();
+    }
+
 
     public void handleAutomaticBattle(ActionEvent actionEvent) {
 		gameController.setupNormalMode();
@@ -47,7 +51,6 @@ public class BattleModeWindow {
 
     public void displayTeam() {
         displayTeamWithStats(gameController.getTeam(), playerTeamGrid);
-
     }
 
     /**

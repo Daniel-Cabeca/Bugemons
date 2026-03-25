@@ -115,32 +115,47 @@ public class CreateTeamWindow extends Window {
 				row++;
 			}
 		}
-		disableNoneSelectedBugemons();
+		checkDisableBugemons();
 	}
 
 	/**
-	 * Disable all bugemons after 6 are selected so that no more can be selected
+	 * Disable all bugemons after @limitedBugemonsNumber are selected so that no more can be selected
 	 */
-	private void disableNoneSelectedBugemons() {
+	private void checkDisableBugemons() {
 		if (selected.size() == limitedBugemonsNumber) {
-			for (Node node: availableBugemonsGrid.getChildren()) {
-				VBox vbox = (VBox) node;
-				String bugemon_name = ((Label)(vbox.getChildren().get(0))).getText();
-				if (!selected.contains(bugemon_name)) {  // contains name of the bugemon
-					vbox.setDisable(true);
-				}
+			disableNoneSelectedBugemons();
+		}
+		else {
+			enableAllBugemons();
+		}
+	}
+
+	/**
+	 * Disable all none selected bugemon
+	 */
+	private void disableNoneSelectedBugemons(){
+		for (Node node: availableBugemonsGrid.getChildren()) {
+			VBox vbox = (VBox) node;
+			String bugemon_name = ((Label)(vbox.getChildren().get(0))).getText();
+			if (!selected.contains(bugemon_name)) {  // contains name of the bugemon
+				vbox.setDisable(true);
 			}
-		}else{
-			for (Node node: availableBugemonsGrid.getChildren()) {
-				VBox vbox = (VBox) node;
-				vbox.setDisable(false);
-			}
+		}
+	}
+
+	/**
+	 * Enables all bugemons if disabled
+	 */
+	private void enableAllBugemons() {
+		for (Node node: availableBugemonsGrid.getChildren()) { // enable all bugemons els
+			VBox vbox = (VBox) node;
+			vbox.setDisable(false);
 		}
 	}
 
 
 	private void onSelectBugemon(String bugemon) {
-		if (!selected.contains(bugemon) && selected.size() < 6) {
+		if (!selected.contains(bugemon) && selected.size() < limitedBugemonsNumber) {
 			selected.add(bugemon);
 			populateSelectedBugemons();
 		}
@@ -158,7 +173,7 @@ public class CreateTeamWindow extends Window {
 	 * @throws IllegalStateException if the team is empty or has more than 6 bugemons
 	 */
 	public void handleConfirmTeam(ActionEvent event) {
-		if (!selected.isEmpty() && selected.size() <= 6) {
+		if (!selected.isEmpty() && selected.size() <= limitedBugemonsNumber) {
 			gameController.setupTeam(selected);
 			gameController.switchToBattleModeWindow(event);
 		} else {

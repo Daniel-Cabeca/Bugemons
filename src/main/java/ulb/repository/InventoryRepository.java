@@ -1,8 +1,5 @@
 package ulb.repository;
 
-import java.lang.Iterable;
-import java.util.NoSuchElementException;
-
 import ulb.model.item.Inventory;
 
 /**

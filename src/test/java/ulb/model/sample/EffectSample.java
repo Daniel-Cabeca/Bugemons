@@ -3,57 +3,36 @@ package ulb.model.sample;
 import java.util.Map;
 
 import ulb.model.effect.Effect;
+import ulb.model.effect.EffectHeal;
+import ulb.model.effect.EffectResetMalus;
+import ulb.model.effect.EffectStatModifier;
+import ulb.model.effect.EffectSwitch;
 
 public class EffectSample {
     static public Effect getHeal(){
-        return new Effect(Effect.EffectType.HEAL, Effect.EffectTarget.OWN_BUGEMON, Map.of(Effect.StatType.HP, 10), Effect.EffectDuration.PERMANENT);
-    }
-
-    static public Effect getDefenseDecreaseSelf(){
-        return new Effect(Effect.EffectType.STAT_MODIFIER, Effect.EffectTarget.OWN_BUGEMON,
-            Map.of(Effect.StatType.DEFENSE, -10), Effect.EffectDuration.PERMANENT);
+        return new EffectHeal(Effect.EffectTarget.OWN_BUGEMON, 10);
     }
 
     static public Effect getDefenseDecreaseOther(){
-        return new Effect(Effect.EffectType.STAT_MODIFIER, Effect.EffectTarget.OPPOSITE_BUGEMON,
-            Map.of(Effect.StatType.DEFENSE, -10), Effect.EffectDuration.PERMANENT);
-    }
-
-    static public Effect getAttackDecreaseSelf(){
-        return new Effect(Effect.EffectType.STAT_MODIFIER, Effect.EffectTarget.OWN_BUGEMON,
-            Map.of(Effect.StatType.ATTACK, -10), Effect.EffectDuration.PERMANENT);
-    }
-
-    static public Effect getAttackDecreaseOther(){
-        return new Effect(Effect.EffectType.STAT_MODIFIER, Effect.EffectTarget.OPPOSITE_BUGEMON,
-            Map.of(Effect.StatType.ATTACK, -10), Effect.EffectDuration.PERMANENT);
+        return new EffectStatModifier(Effect.EffectTarget.OPPOSITE_BUGEMON,
+            EffectStatModifier.EffectDuration.PERMANENT, Map.of(EffectStatModifier.StatType.DEFENSE, -10));
     }
 
     static public Effect getAttackIncreaseSelf(){
-        return new Effect(Effect.EffectType.STAT_MODIFIER, Effect.EffectTarget.OWN_BUGEMON,
-            Map.of(Effect.StatType.ATTACK, 10), Effect.EffectDuration.PERMANENT);
-    }
-
-    static public Effect getInitiativeDecreaseSelf(){
-        return new Effect(Effect.EffectType.STAT_MODIFIER, Effect.EffectTarget.OWN_BUGEMON,
-            Map.of(Effect.StatType.INITIATIVE, -10), Effect.EffectDuration.PERMANENT);
-    }
-
-    static public Effect getInitiativeDecreaseOther(){
-        return new Effect(Effect.EffectType.STAT_MODIFIER, Effect.EffectTarget.OPPOSITE_BUGEMON,
-            Map.of(Effect.StatType.INITIATIVE, -10), Effect.EffectDuration.PERMANENT);
+        return new EffectStatModifier(Effect.EffectTarget.OWN_BUGEMON, EffectStatModifier.EffectDuration.PERMANENT,
+            Map.of(EffectStatModifier.StatType.ATTACK, 10));
     }
 
     static public Effect getMultiEffect(){
-        return new Effect(Effect.EffectType.STAT_MODIFIER, Effect.EffectTarget.OWN_BUGEMON,
-            Map.of(Effect.StatType.ATTACK, 10, Effect.StatType.DEFENSE, 10), Effect.EffectDuration.PERMANENT);
+        return new EffectStatModifier(Effect.EffectTarget.OWN_BUGEMON, EffectStatModifier.EffectDuration.PERMANENT,
+            Map.of(EffectStatModifier.StatType.ATTACK, 10, EffectStatModifier.StatType.DEFENSE, 10));
     }
 
     static public Effect getSwitchEffect(){
-        return new Effect(Effect.EffectType.SWITCH, Effect.EffectTarget.OWN_BUGEMON, Map.of(), Effect.EffectDuration.PERMANENT);
+        return new EffectSwitch(Effect.EffectTarget.OWN_BUGEMON);
     }
 
     static public Effect getResetMalusEffect(){
-        return new Effect(Effect.EffectType.RESET_MALUS, Effect.EffectTarget.OWN_BUGEMON, Map.of(), Effect.EffectDuration.PERMANENT);
+        return new EffectResetMalus(Effect.EffectTarget.OWN_BUGEMON);
     }
 }

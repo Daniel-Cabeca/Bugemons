@@ -2,7 +2,6 @@ package ulb.model.item;
 
 import ulb.model.HasId;
 import ulb.model.effect.Effect;
-import ulb.model.bugemon.Bugemon;
 import ulb.model.battle.Battle;
 
 public class Item implements HasId {
@@ -30,11 +29,6 @@ public class Item implements HasId {
 	public String getCategory() { return this.category; }
 	public Effect getEffect() { return this.effect; }
 	public String getSprite() { return this.sprite; }
-
-
-	public int use(Bugemon target) {
-		return this.effect.apply(target);
-	}
 
 	public void use(Battle battle, Battle.ParticipantLabel team){
 		this.effect.apply(battle, team);

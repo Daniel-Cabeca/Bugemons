@@ -1,13 +1,11 @@
 package ulb.service;
 
 import java.util.NoSuchElementException;
-import java.util.Map;
 
 import ulb.repository.ItemRepository;
 import ulb.repository.InventoryRepository;
 import ulb.model.item.Item;
 import ulb.model.item.Inventory;
-import ulb.model.bugemon.Bugemon;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
@@ -54,17 +52,6 @@ public class ItemService {
 	public Inventory createStarterInventory() {
 		return this.inventoryRepository.findStartingInventory();
 	}
-	/**
-	* Uses an item on a target Bugemon.
-	*
-	* @param item   The item to use
-	* @param target The Bugemon to apply the item's effect on
-	* @return 1 if the effect was applied successfully, 0 otherwise
-	*/
-	public int useItem(Item item, Bugemon target) {
-		return item.use(target);
-	}
-
 
 	public Item getRandomItem() {
 		List<Item> items = new ArrayList<>();

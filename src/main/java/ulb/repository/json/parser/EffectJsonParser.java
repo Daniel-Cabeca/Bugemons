@@ -6,11 +6,13 @@ import java.util.Map;
 
 import ulb.model.effect.Effect;
 import ulb.model.effect.EffectList;
-import ulb.model.effect.Effect.EffectType;
+import ulb.model.effect.EffectResetMalus;
+import ulb.model.effect.EffectStatModifier;
+import ulb.model.effect.EffectHeal;
 import ulb.model.effect.Effect.EffectTarget;
-import ulb.model.effect.Effect.EffectDuration;
-import ulb.model.effect.Effect.StatType;
-
+import ulb.model.effect.EffectStatModifier.EffectDuration;
+import ulb.model.effect.EffectStatModifier.StatType;
+import ulb.model.effect.EffectSwitch;
 import ulb.repository.LoadException;
 
 /**
@@ -141,59 +143,47 @@ public class EffectJsonParser {
 	}
 
 	private Effect parseOneHeal(JsonNode node) throws LoadException {
-		EffectType type = EffectType.HEAL;
 		EffectTarget target = this.parseTarget(node.get("cible"));
-		EffectDuration duration = EffectDuration.PERMANENT;
 
-		Map<Effect.StatType, Integer> modifiers = Map.of(Effect.StatType.HP, node.get("valeur").asInt());
+		int value = node.get("valeur").asInt();
 
-		return new Effect(type, target, modifiers, duration);
+		return new EffectHeal(target, value);
 	}
 
 	private Effect parseOneStatModifier(JsonNode node) throws LoadException {
-		EffectType type = EffectType.STAT_MODIFIER;
 		EffectTarget target = this.parseTarget(node.get("cible"));
 		EffectDuration duration = this.parseDuration(node.get("duree"));
 
 		StatType statType = this.parseStatType(node.get("stat"));
 		int modifierValue = node.get("modificateur").asInt();
-		Map<Effect.StatType, Integer> modifiers = Map.of(statType, modifierValue);
+		Map<StatType, Integer> modifiers = Map.of(statType, modifierValue);
 
-		return new Effect(type, target, modifiers, duration);
+		return new EffectStatModifier(target, duration, modifiers);
 	}
 
 	private Effect parseOneStatModifierMultiple(JsonNode node) throws LoadException {
-		EffectType type = EffectType.STAT_MODIFIER;
 		EffectTarget target = this.parseTarget(node.get("cible"));
 		EffectDuration duration = this.parseDuration(node.get("duree"));
 
 		JsonNode modifiersNode = node.get("modificateurs");
-		Map<Effect.StatType, Integer> modifiers = new HashMap<>();
+		Map<StatType, Integer> modifiers = new HashMap<>();
 		modifiersNode.fields().forEachRemaining(entry -> modifiers.put(
 				this.parseStatType(entry.getKey()),
 				entry.getValue().asInt()
 			));
 
-		return new Effect(type, target, modifiers, duration);
+		return new EffectStatModifier(target, duration, modifiers);
 	}
 
 	private Effect parseOneResetMalus(JsonNode node) throws LoadException {
-		EffectType type = EffectType.RESET_MALUS;
 		EffectTarget target = this.parseTarget(node.get("cible"));
-		EffectDuration duration = EffectDuration.ROUND;
 
-		Map<Effect.StatType, Integer> modifiers = Map.of();
-
-		return new Effect(type, target, modifiers, duration);
+		return new EffectResetMalus(target);
 	}
 
 	private Effect parseOneSwitch(JsonNode node) throws LoadException {
-		EffectType type = EffectType.SWITCH;
 		EffectTarget target = this.parseTarget(node.get("cible"));
-		EffectDuration duration = EffectDuration.ROUND;
 
-		Map<Effect.StatType, Integer> modifiers = Map.of();
-
-		return new Effect(type, target, modifiers, duration);
+		return new EffectSwitch(target);
 	}
 }

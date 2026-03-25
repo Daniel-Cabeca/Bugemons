@@ -8,10 +8,14 @@ import ulb.repository.json.Json;
 
 import ulb.model.effect.Effect;
 import ulb.model.effect.EffectList;
+import ulb.model.effect.EffectHeal;
+import ulb.model.effect.EffectResetMalus;
+import ulb.model.effect.EffectStatModifier;
+import ulb.model.effect.EffectSwitch;
 import ulb.model.effect.Effect.EffectType;
 import ulb.model.effect.Effect.EffectTarget;
-import ulb.model.effect.Effect.EffectDuration;
-import ulb.model.effect.Effect.StatType;
+import ulb.model.effect.EffectStatModifier.EffectDuration;
+import ulb.model.effect.EffectStatModifier.StatType;
 
 import ulb.repository.LoadException;
 
@@ -139,8 +143,8 @@ public class EffectJsonParserTest {
 		Effect obtained = parseEffectFromStr(str);
 
 		assertEquals(EffectType.HEAL, obtained.getType());
-		assertEquals(EffectDuration.PERMANENT, obtained.getDuration());
-		assertEquals(70, obtained.getModifiers().get(Effect.StatType.HP));
+		assertInstanceOf(EffectHeal.class, obtained);
+		assertEquals(EffectTarget.OWN_BUGEMON, obtained.getTarget());
 	}
 
 	@Test
@@ -156,9 +160,11 @@ public class EffectJsonParserTest {
 			""";
 
 		Effect obtained = parseEffectFromStr(str);
+		EffectStatModifier obtainedStatModifier = (EffectStatModifier) obtained;
 
 		assertEquals(EffectType.STAT_MODIFIER, obtained.getType());
-		assertEquals(10, obtained.getModifiers().get(Effect.StatType.INITIATIVE));
+		assertEquals(EffectDuration.PERMANENT, obtainedStatModifier.getDuration());
+		assertEquals(10, obtainedStatModifier.getModifiers().get(StatType.INITIATIVE));
 	}
 
 	@Test
@@ -176,10 +182,12 @@ public class EffectJsonParserTest {
 			""";
 
 		Effect obtained = parseEffectFromStr(str);
+		EffectStatModifier obtainedStatModifier = (EffectStatModifier) obtained;
 
 		assertEquals(EffectType.STAT_MODIFIER, obtained.getType());
-		assertEquals(10, obtained.getModifiers().get(Effect.StatType.ATTACK));
-		assertEquals(10, obtained.getModifiers().get(Effect.StatType.INITIATIVE));
+		assertEquals(EffectDuration.ROUND, obtainedStatModifier.getDuration());
+		assertEquals(10, obtainedStatModifier.getModifiers().get(StatType.ATTACK));
+		assertEquals(10, obtainedStatModifier.getModifiers().get(StatType.INITIATIVE));
 	}
 
 	@Test
@@ -194,7 +202,8 @@ public class EffectJsonParserTest {
 		Effect obtained = parseEffectFromStr(str);
 
 		assertEquals(EffectType.RESET_MALUS, obtained.getType());
-		assertEquals(EffectDuration.ROUND, obtained.getDuration());
+		assertInstanceOf(EffectResetMalus.class, obtained);
+		assertEquals(EffectTarget.OWN_BUGEMON, obtained.getTarget());
 	}
 
 	@Test
@@ -209,7 +218,8 @@ public class EffectJsonParserTest {
 		Effect obtained = parseEffectFromStr(str);
 
 		assertEquals(EffectType.SWITCH, obtained.getType());
-		assertEquals(EffectDuration.ROUND, obtained.getDuration());
+		assertInstanceOf(EffectSwitch.class, obtained);
+		assertEquals(EffectTarget.OWN_BUGEMON, obtained.getTarget());
 	}
 
 	// ParseList

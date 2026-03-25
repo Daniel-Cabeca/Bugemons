@@ -6,6 +6,7 @@ import java.util.Vector;
 import ulb.model.ability.Ability;
 import ulb.model.battle.Battle;
 import ulb.model.battle.BattleState;
+import ulb.model.battle.Battle.ParticipantLabel;
 import ulb.model.team.Team;
 import ulb.model.bugemon.Bugemon;
 import ulb.controller.action.*;
@@ -16,17 +17,14 @@ import ulb.model.reward.Reward;
 public class BattleController {
 	private Player player;
 	private Battle battle;
-	private boolean isTeamA;
-	private int floorNumber = 1;
-	private boolean isBossFight = false;
+	private ParticipantLabel participantLabel;
 
 	private Vector<Reward> rewards;
 
-
-	public BattleController(Player player, Battle battle, boolean isTeamA) {
+	public BattleController(Player player, Battle battle, ParticipantLabel participantLabel) {
 		this.player = player;
 		this.battle = battle;
-		this.isTeamA = isTeamA;
+		this.participantLabel = participantLabel;
 	}
 
 	/**
@@ -36,52 +34,7 @@ public class BattleController {
 	 * @return if the item can be used or not (boolean)
 	 */
 	public boolean checkItem(Item item) {
-		return this.battle.checkItem(item, this.isTeamA);
-	}
-
-
-	/**
-	 * Gives the current active Bugemon.
-	 *
-	 * @return the active Bugemon
-	 */
-	public Bugemon getActiveBugemonSelf() {
-		return this.battle.getActiveBugemon(this.battle.getTeamLabel(this.isTeamA));
-	}
-
-	/**
-	 * Gives the opponent's team current active Bugemon
-	 *
-	 * @return the opponent's active Bugemon
-	 */
-	public Bugemon getActiveBugemonOpponent() {
-		return this.battle.getActiveBugemon(this.battle.getTeamLabel(!this.isTeamA));
-	}
-
-	public Player getPlayer() {
-		return this.player;
-	}
-
-	public Team getTeam(){
-		return this.battle.getTeam(this.battle.getTeamLabel(this.isTeamA));
-	}
-
-	public void useAction(Action action) {
-		this.battle.chooseAction(action, isTeamA);
-	}
-
-	public Vector<Action> getAvailableAction(){ return this.battle.getAvailableActions(isTeamA); }
-
-	public List<Bugemon> getAvailableBugemons(){
-		return this.battle.getAvailableBugemons(isTeamA);
-	}
-
-	public boolean isGameFinished(){
-		return this.battle.isGameFinished();
-	}
-
-	public BattleState getState(){
-		return this.battle.getState(isTeamA);
+		return this.battle.checkItem(item, this.participantLabel);
 	}
 
 	/**
@@ -119,23 +72,31 @@ public class BattleController {
 		return ability.getEffectivenessMessage(oppositeBugemon);
 	}
 
-	public int getHpAfterFirstActionSelf() {
-		return isTeamA ? battle.getHpAfterFirstActionA() : battle.getHpAfterFirstActionB();
-	}
+	public Bugemon getActiveBugemonSelf() { return this.battle.getActiveBugemon(this.participantLabel); }
 
-	public int getHpAfterFirstActionOpponent() {
-		return isTeamA ? battle.getHpAfterFirstActionB() : battle.getHpAfterFirstActionA();
-	}
+	public Bugemon getActiveBugemonOpponent() { return this.battle.getActiveBugemon(battle.getOpponentTeamLabel(this.participantLabel)); }
 
-	public List<String> getLogMsg() {
-		return this.battle.getLogMsg();
-	}
+	public Player getPlayer() { return this.player; }
 
-	public void clearLogMsg() {
-		this.battle.clearLogMsg();
-	}
+	public Team getTeam() { return this.battle.getTeam(this.participantLabel); }
 
-	public int getTotalXP() { 
-		return this.battle.computeTotalXP(!this.isTeamA); // TO REFACTOR
-	}
+	public void useAction(Action action) { this.battle.chooseAction(action, this.participantLabel); }
+
+	public Vector<Action> getAvailableAction() { return this.battle.getAvailableActions(this.participantLabel); }
+
+	public List<Bugemon> getAvailableBugemons() { return this.battle.getAvailableBugemons(this.participantLabel); }
+
+	public boolean isGameFinished() { return this.battle.isGameFinished(); }
+
+	public BattleState getState() { return this.battle.getState(this.participantLabel); }
+
+	public int getHpAfterFirstActionSelf() { return battle.getHpAfterFirstActionSelf(this.participantLabel); }
+
+	public int getHpAfterFirstActionOpponent() { return battle.getHpAfterFirstActionOpponent(this.participantLabel); }
+
+	public List<String> getLogMsg() { return this.battle.getLogMsg(); }
+
+	public void clearLogMsg() { this.battle.clearLogMsg(); }
+
+	public int getTotalXP() { return this.battle.computeTotalXP(battle.getTeam(battle.getOpponentTeamLabel(participantLabel))); }
 }

@@ -1,11 +1,7 @@
 package ulb.model.battle;
 
-import java.lang.IllegalArgumentException;
-
 import ulb.model.team.Team;
 import ulb.model.Player;
-import ulb.model.type.Effectiveness;
-import ulb.model.ability.Ability;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.Stats;
 import ulb.model.item.Item;
@@ -16,27 +12,14 @@ import ulb.model.reward.RewardType;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.Vector;
 
 
 public class Battle {
 	private final int XP_COEF = 30;
 
-	private Player playerA;
-	private Player playerB;
-
-	private Team teamA;
-	private Team teamB;
-	private Bugemon activeBugemonA;
-	private Bugemon activeBugemonB;
-	private Vector<Bugemon> participantsA;
-	private Vector<Bugemon> participantsB;
-
-	private BattleState stateA;
-	private BattleState stateB;
-	private Action actionA = null;
-	private Action actionB = null;
+	private BattleParticipant participantA;
+	private BattleParticipant participantB;
 
 	private boolean isBossBattle = false;
 	private int floorNumber = 1;
@@ -46,27 +29,14 @@ public class Battle {
 	private List<String> logMsg;
 	private List<ActiveEffect> activeEffects;
 
-	private int hpAfterFirstActionA = -1;
-	private int hpAfterFirstActionB = -1;
-
-	public enum TeamLabel {
+	public enum ParticipantLabel {
 		TEAM_A,
 		TEAM_B
 	}
 
 	public Battle(Team teamA, Team teamB, Player playerA, Player playerB) {
-		this.playerA = playerA;
-		this.playerB = playerB;
-		this.teamA = teamA;
-		this.teamB = teamB;
-		this.activeBugemonA = this.teamA.getMembers().get(0);
-		this.activeBugemonB = this.teamB.getMembers().get(0);
-		this.stateA = BattleState.INGAME;
-		this.stateB = BattleState.INGAME;
-		this.participantsA = new Vector<>() {};
-		this.participantsB = new Vector<>() {};
-		this.participantsA.add(activeBugemonA);
-		this.participantsB.add(activeBugemonB);
+		this.participantA = new BattleParticipant(playerA, teamA);
+		this.participantB = new BattleParticipant(playerB, teamB);
 		this.logMsg = new ArrayList<>();
 		this.activeEffects = new ArrayList<>();
 	}
@@ -76,138 +46,82 @@ public class Battle {
 	}
 
 	public Battle(Team teamA, Team teamB, Bugemon activeBugemonA, Bugemon activeBugemonB) {
-		this.teamA = teamA;
-		this.teamB = teamB;
-		this.activeBugemonA = activeBugemonA;
-		this.activeBugemonB = activeBugemonB;
-		this.stateA = BattleState.INGAME;
-		this.stateB = BattleState.INGAME;
+		this.participantA = new BattleParticipant(null, teamA, activeBugemonA);
+		this.participantA = new BattleParticipant(null, teamB, activeBugemonB);
 		this.activeEffects = new ArrayList<>();
+		this.logMsg = new ArrayList<>();
 	}
 
-	public Team getTeam(TeamLabel team){
-		if (team == TeamLabel.TEAM_A){
-			return this.teamA;
+	public BattleParticipant getParticipant(ParticipantLabel team) {
+		if (team == ParticipantLabel.TEAM_A) {
+			return this.participantA;
+		} else {
+			return this.participantB;
 		}
-		return this.teamB;
 	}
 
-	public Bugemon getActiveBugemon(TeamLabel team){
-		if (team == TeamLabel.TEAM_A){
-			return this.activeBugemonA;
-		}
-		return this.activeBugemonB;
-	}
+	public Team getTeam(ParticipantLabel team) { return this.getParticipant(team).getTeam(); }
 
-	public Player getPlayer(TeamLabel team){
-		if (team == TeamLabel.TEAM_A){
-			return this.playerA;
-		}
-		return this.playerB;
-	}
+	public Bugemon getActiveBugemon(ParticipantLabel team) { return this.getParticipant(team).getActiveBugemon(); }
 
-	public Action getAction(TeamLabel team){
-		if (team == TeamLabel.TEAM_A){
-			return this.actionA;
-		}
-		return this.actionB;
-	}
+	public Player getPlayer(ParticipantLabel team) { return this.getParticipant(team).getPlayer(); }
+
+	public Action getAction(ParticipantLabel team) { return this.getParticipant(team).getAction(); }
 
 	public List<ActiveEffect> getActiveEffects() { return this.activeEffects; }
 
-	public BattleState getState(boolean isTeamA) {
-		if (isTeamA){
-			return this.stateA;
-		}
-		return this.stateB;
+	public BattleState getState(ParticipantLabel team) { return this.getParticipant(team).getState(); }
+
+	public ParticipantLabel getOpponentTeamLabel(ParticipantLabel currentTeam) { 
+		return currentTeam == ParticipantLabel.TEAM_B ? ParticipantLabel.TEAM_A : ParticipantLabel.TEAM_B; 
 	}
 
-	public TeamLabel getOpponentTeamLabel(TeamLabel currentTeam){
-		return currentTeam == TeamLabel.TEAM_B ? TeamLabel.TEAM_A : TeamLabel.TEAM_B;
-	}
+	public int getHpAfterFirstActionSelf(ParticipantLabel team) { return this.getParticipant(team).getHpAfterFirstAction(); }
 
-	public void setAction(Action action, TeamLabel team){
-		if (team == TeamLabel.TEAM_A){
-			this.actionA = action;
-		} else {
-			this.actionB = action;
-		}
-	}
+	public int getHpAfterFirstActionOpponent(ParticipantLabel team) { return this.getParticipant(getOpponentTeamLabel(team)).getHpAfterFirstAction(); }
 
-	public void setActiveBugemon(Bugemon bugemon, TeamLabel team){
-		switch (team) {
-			case TEAM_A:
-				this.activeBugemonA = bugemon;
-				if (!participantsA.contains(bugemon)){
-					participantsA.add(bugemon);
-				}
-				break;
-		
-			case TEAM_B:
-				this.activeBugemonB = bugemon;
-				if (!participantsB.contains(bugemon)){
-					participantsB.add(bugemon);
-				}
-				break;
+	public void setAction(Action action, ParticipantLabel team) { this.getParticipant(team).setAction(action); }
 
-			default:
-				throw new IllegalArgumentException("This team label is not handled.");
-		}
-	}
+	public void setActiveBugemon(Bugemon bugemon, ParticipantLabel team) { this.getParticipant(team).setActiveBugemon(bugemon); }
 
-	private void setState(BattleState state, TeamLabel team) {
-		if (team == TeamLabel.TEAM_A) {
-			this.stateA = state;
-		} else {
-			this.stateB = state;
-		}
-    }
+	private void setState(BattleState state, ParticipantLabel team) { this.getParticipant(team).setState(state); }
 
-	public boolean isBugemonKO(TeamLabel team){
-		return getActiveBugemon(team).isKO();
-	}
+	public boolean isBugemonKO(ParticipantLabel team){ return this.getActiveBugemon(team).isKO(); }
 
-	public boolean isTeamKO(TeamLabel team){
-		return getTeam(team).checkTeamKO();
-	}
+	public boolean isTeamKO(ParticipantLabel team){ return getTeam(team).checkTeamKO(); }
 
 	public void setFloorNumber(int floorNumber){ this.floorNumber = floorNumber; }
+
 	public void enableBossBattle() { this.isBossBattle = true; }
 
-	public TeamLabel getTeamLabel(boolean isTeamA){
-		if (isTeamA){
-			return TeamLabel.TEAM_A;
-		}
-		return TeamLabel.TEAM_B;
-	}
-
 	/**
-	 * get the team that have the initiative
+	 * get the team that has the initiative
 	 * @return the TeamLabel of the first team to play
 	 */
-	public TeamLabel getFirstTeamToPlay(){
+	public ParticipantLabel getFirstTeamToPlay(){
 
-		if (this.actionA instanceof Swap && !(this.actionB instanceof Swap)) {
-			return TeamLabel.TEAM_A;
-		} else if (this.actionB instanceof Swap && !(this.actionA instanceof Swap)) {
-			return TeamLabel.TEAM_B;
+		if (this.getAction(ParticipantLabel.TEAM_A) instanceof Swap && !(this.getAction(ParticipantLabel.TEAM_B) instanceof Swap)) {
+			return ParticipantLabel.TEAM_A;
+		} else if (this.getAction(ParticipantLabel.TEAM_B) instanceof Swap && !(this.getAction(ParticipantLabel.TEAM_A) instanceof Swap)) {
+			return ParticipantLabel.TEAM_B;
 		}
 
-		if (getActiveBugemon(TeamLabel.TEAM_A).checkInitiative(getActiveBugemon(TeamLabel.TEAM_B))){
-			return TeamLabel.TEAM_A;
+		if (getActiveBugemon(ParticipantLabel.TEAM_A).checkInitiative(getActiveBugemon(ParticipantLabel.TEAM_B))){
+			return ParticipantLabel.TEAM_A;
 		}
-		return TeamLabel.TEAM_B;
+		return ParticipantLabel.TEAM_B;
 	}
 
 	/**
 	 * Checks if an item can be used or not given the stats of the bugemon
 	 *
 	 * @param item the item that needs to be checked
+	 * @param team the team for which the item is checked
 	 * @return if the item can be used or not (boolean)
 	 */
-	public boolean checkItem(Item item, boolean isTeamA) {
+	public boolean checkItem(Item item, ParticipantLabel team) {
 		if (item.getEffect().getType().equals(Effect.EffectType.HEAL)) {
-			return this.getActiveBugemon(this.getTeamLabel(isTeamA)).hasHPDecreased();
+			return this.getActiveBugemon(team).hasHPDecreased();
 		}
 
 		return true;
@@ -218,7 +132,7 @@ public class Battle {
 	 * @param team the team from which the item is removed
 	 * @param item the item which is removed from the inventory
 	 */
-	private void removeUsedItemFromInventory(TeamLabel team, Item item) {
+	private void removeUsedItemFromInventory(ParticipantLabel team, Item item) {
 		getPlayer(team).getInventory().removeItem(item);
 	}
 
@@ -227,7 +141,7 @@ public class Battle {
 	 * @param item the item which is used
 	 * @param team the team that uses the item
 	 */
-	private void useItem(Item item, TeamLabel team){
+	private void useItem(Item item, ParticipantLabel team){
 		item.use(this, team);
 		removeUsedItemFromInventory(team, item);
 		logMsg.add("L'objet " + item.getName() + "a été utilisé.");
@@ -238,11 +152,11 @@ public class Battle {
 	 * @param target the Bugemon which will replace the current active Bugemon
 	 * @param team the team on which the active Bugemon will be replaced
 	 */
-	private void swap(Bugemon target, TeamLabel team){
+	private void swap(Bugemon target, ParticipantLabel team){
 		if (checkSwappableBugemon(target, team)){
 			setActiveBugemon(target, team);
-			if (team == TeamLabel.TEAM_A){
-			logMsg.add("Tu as envoyé " + target.getName() + "!");
+			if (team == ParticipantLabel.TEAM_A){
+				logMsg.add("Tu as envoyé " + target.getName() + "!");
 			} else {
 				logMsg.add("L'adversaire a envoyé " + target.getName() + "!");
 			}
@@ -254,23 +168,23 @@ public class Battle {
 	 * @param team the team whose Bugemons are being considered
 	 * @return the next available non-active Bugemon or null if none available
 	 */
-	public Bugemon getNextBugemon(TeamLabel team){
+	public Bugemon getNextBugemon(ParticipantLabel team){
 		return this.getTeam(team).getNextBugemon(this.getActiveBugemon(team));
 	}
 
 	/**
 	 * Returns all available actions based on current game state
-	 * @param isTeamA if the current team is A or B
+	 * @param team the team whose available actions are returned
 	 * @return the currently available actions
 	 */
-	public Vector<Action> getAvailableActions(boolean isTeamA) {
+	public Vector<Action> getAvailableActions(ParticipantLabel team) {
 		Vector<Action> actions = new Vector<Action>();
 
 		if (gameFinished){
 			return actions;
 		}
 
-		switch (this.getState(isTeamA)) {
+		switch (this.getState(team)) {
 			case INGAME:
 				actions.add(new UseAbility());
 				actions.add(new Run());
@@ -303,7 +217,7 @@ public class Battle {
 	 * @param team the team on which the action is applied
 	 * @return boolean indicating if the action succeeded
 	 */
-	private boolean applyAction(Action action, TeamLabel team){
+	private boolean applyAction(Action action, ParticipantLabel team){
 		if (action instanceof UseAbility useAbilityAction) {
 			Bugemon oppositeBugemon = this.getActiveBugemon(getOpponentTeamLabel(team));
 
@@ -336,7 +250,7 @@ public class Battle {
 	 * @param oppositeTeam the opposite team, whose state changes if ownTeam swaps active Bugemons
 	 * @param ownState the current state of the team registering the action
 	 */
-	private void registerAction(Action action, TeamLabel ownTeam, TeamLabel oppositeTeam, BattleState ownState) {
+	private void registerAction(Action action, ParticipantLabel ownTeam, ParticipantLabel oppositeTeam, BattleState ownState) {
 		switch (ownState) {
 			case INGAME:
 				if (action instanceof UseItem useItemAction
@@ -361,7 +275,7 @@ public class Battle {
 			default:
 				break;
 		}
-		if (this.stateA == BattleState.WAITING && this.stateB == BattleState.WAITING){
+		if (this.getState(ownTeam) == BattleState.WAITING && this.getState(oppositeTeam) == BattleState.WAITING){
 			handleRound();
 		}
 	}
@@ -369,13 +283,10 @@ public class Battle {
 	/**
 	 * Registers an action of a specific team
 	 * @param action the action to be registered
-	 * @param isTeamA the team registering the action
+	 * @param team team registering the action
 	 */
-	public synchronized void chooseAction(Action action, boolean isTeamA){
-		registerAction(action, 
-					   getTeamLabel(isTeamA), 
-					   getOpponentTeamLabel(getTeamLabel(isTeamA)), 
-					   getState(isTeamA));
+	public synchronized void chooseAction(Action action, ParticipantLabel team){
+		registerAction(action, team, getOpponentTeamLabel(team), getState(team));
 	}
 
 	/**
@@ -383,7 +294,7 @@ public class Battle {
 	 * @param playerTeam the player who plays now
 	 * @return a boolean depending on if the turn continues
 	 */
-	private boolean handlePlayerTurn(TeamLabel playerTeam){
+	private boolean handlePlayerTurn(ParticipantLabel playerTeam){
 		Action currentAction = getAction(playerTeam);
 
 		this.applyAction(currentAction, playerTeam);
@@ -403,18 +314,19 @@ public class Battle {
 	 */
 	private void handleRound(){
 		// checks whose action should be executed first and applies it
-		hpAfterFirstActionA = -1;
-		hpAfterFirstActionB = -1;
+		this.participantA.setHpAfterFirstAction(-1);
+		this.participantB.setHpAfterFirstAction(-1);
 
-		TeamLabel firstPlayer = this.getFirstTeamToPlay();
-		TeamLabel secondPlayer = getOpponentTeamLabel(firstPlayer);
+		ParticipantLabel firstPlayer = this.getFirstTeamToPlay();
+		ParticipantLabel secondPlayer = getOpponentTeamLabel(firstPlayer);
 		
 		if (! this.handlePlayerTurn(firstPlayer)){
 			return;
 		}
 
-		hpAfterFirstActionA = activeBugemonA.getHp();
-		hpAfterFirstActionB = activeBugemonB.getHp();
+		this.participantA.setHpAfterFirstAction(this.participantA.getActiveBugemon().getHp());
+		this.participantB.setHpAfterFirstAction(this.participantB.getActiveBugemon().getHp());
+
 		logMsg.add(null); // separator between first and second action messages 
 		
 		if (! this.handlePlayerTurn(secondPlayer)){
@@ -422,8 +334,8 @@ public class Battle {
 		}
 
 		tickActiveEffects();
-		setState(BattleState.INGAME, TeamLabel.TEAM_A);
-		setState(BattleState.INGAME, TeamLabel.TEAM_B);
+		setState(BattleState.INGAME, ParticipantLabel.TEAM_A);
+		setState(BattleState.INGAME, ParticipantLabel.TEAM_B);
 	}
 
 	/**
@@ -449,8 +361,8 @@ public class Battle {
 	 * @param previousActiveTeam the team who just finished the round
 	 * @return a boolean depending on if the round is finished
 	 */
-	private boolean handleActionFinished(TeamLabel previousActiveTeam){
-		TeamLabel opponentTeam = getOpponentTeamLabel(previousActiveTeam);
+	private boolean handleActionFinished(ParticipantLabel previousActiveTeam){
+		ParticipantLabel opponentTeam = getOpponentTeamLabel(previousActiveTeam);
 		if (this.isTeamKO(opponentTeam)){
 			setState(BattleState.LOST, opponentTeam);
 			setState(BattleState.WON, previousActiveTeam);
@@ -459,22 +371,23 @@ public class Battle {
 		} else if (this.isBugemonKO(opponentTeam)){
 			setState(BattleState.SWAPPING, opponentTeam);
 			setState(BattleState.WAITING, previousActiveTeam);
-			if (previousActiveTeam == TeamLabel.TEAM_A){
-				logMsg.add(activeBugemonB.getName() + " est KO!");
-				if (hpAfterFirstActionA == -1) {
-					hpAfterFirstActionA = activeBugemonA.getHp();
-					hpAfterFirstActionB = 0;
+			if (previousActiveTeam == ParticipantLabel.TEAM_A){
+				logMsg.add(this.participantB.getActiveBugemon().getName() + " est KO!");
+				if (this.participantA.getHpAfterFirstAction() == -1) {
+					this.participantA.setHpAfterFirstAction(this.participantA.getActiveBugemon().getHp());
+					this.participantB.setHpAfterFirstAction(0);
+
 				}
 
 				logMsg.add(null);
-				Bugemon nextB = teamB.getNextBugemon(activeBugemonB);
+				Bugemon nextB = getTeam(ParticipantLabel.TEAM_B).getNextBugemon(this.participantB.getActiveBugemon());
 
 				if (nextB != null) {
-					setActiveBugemon(nextB, TeamLabel.TEAM_B);
+					setActiveBugemon(nextB, ParticipantLabel.TEAM_B);
 					logMsg.add("L'adversaire a envoyé " + nextB.getName() + "!");
 				} // TO REFACTOR : le changement de bugemon ne doit pas se faire dans battle mais dans strategy, refactor des logs en fonction de ça.
-				setState(BattleState.INGAME, TeamLabel.TEAM_A);
-				setState(BattleState.INGAME, TeamLabel.TEAM_B); // TO REFACTOR TOO
+				setState(BattleState.INGAME, ParticipantLabel.TEAM_A);
+				setState(BattleState.INGAME, ParticipantLabel.TEAM_B); // TO REFACTOR TOO
 			}
 			
 		} else {
@@ -487,11 +400,11 @@ public class Battle {
 	 * Handles the end of the battle
 	 */
 	private void handleBattleEnd(){
-		List<Bugemon> winners = this.participantsA;
-		Team losers = this.teamB;
-		if (this.stateB == BattleState.WON){
-			winners = this.participantsB;
-			losers = this.teamA;
+		List<Bugemon> winners = this.participantA.getParticipatingBugemons();
+		Team losers = this.getTeam(ParticipantLabel.TEAM_B);
+		if (this.getState(ParticipantLabel.TEAM_B) == BattleState.WON){
+			winners = this.participantB.getParticipatingBugemons();
+			losers = this.getTeam(ParticipantLabel.TEAM_A);
 		}
 
 		int gainedXP = computeTotalXP(losers);
@@ -515,20 +428,20 @@ public class Battle {
 		return XP_COEF * floorNumber * boss_multiplicator * losers.size();
 	}
 
-	public int computeTotalXP(boolean isLoserTeamA){
-		return this.computeTotalXP(getTeam(getTeamLabel(isLoserTeamA)));
+	/**
+	 * Returns the available Bugemons
+	 * @param team the team whose available Bugemons are returned
+	 * @return the available Bugemons
+	 */
+	public List<Bugemon> getAvailableBugemons(ParticipantLabel teamLabel){
+		return getTeam(teamLabel).getBugemonsAlive();
 	}
 
 	/**
-	 * Returns the available Bugemons
-	 * @param isTeamA if the current team is A or B
-	 * @return the available Bugemons
+	 * Computes rewards for Bugemons which have to receive them
+	 * @param bugemonTarget the Bugemons receiving a reward
+	 * @return the rewards computed
 	 */
-	public List<Bugemon> getAvailableBugemons(boolean isTeamA){
-		Team team = getTeam(getTeamLabel(isTeamA));
-		return team.getBugemonsAlive();
-	}
-
 	public Vector<Reward> computeRewards(Bugemon bugemonTarget){
 		Vector<Reward> rewards = new Vector<>();
 		for (int i=0; i < 3; i++){
@@ -547,11 +460,11 @@ public class Battle {
 	 * Resets all fight stats
 	 */
 	private void resetAllFightStats(){
-		for (Bugemon b : this.teamA.getMembers()){
+		for (Bugemon b : this.getTeam(ParticipantLabel.TEAM_A).getMembers()){
 			b.removeStatsDebuffs();
 		}
 
-		for (Bugemon b : this.teamB.getMembers()){
+		for (Bugemon b : this.getTeam(ParticipantLabel.TEAM_B).getMembers()){
 			b.removeStatsDebuffs();
 		}
 	}
@@ -562,12 +475,12 @@ public class Battle {
 	 * @param team the team on which the Bugemon should be
 	 * @return true if the Bugemon is available, false otherwise
 	 */
-	public boolean checkSwappableBugemon(Bugemon bugemon, TeamLabel team){
+	public boolean checkSwappableBugemon(Bugemon bugemon, ParticipantLabel team){
 		return this.getTeam(team).isBugemonOK(bugemon);
 	}
 
-	public int getHpAfterFirstActionA() { return hpAfterFirstActionA; }
-	public int getHpAfterFirstActionB() { return hpAfterFirstActionB; }
+	public int getHpAfterFirstActionA() { return this.participantA.getHpAfterFirstAction(); }
+	public int getHpAfterFirstActionB() { return this.participantB.getHpAfterFirstAction(); }
 
 	public List<String> getLogMsg() { return logMsg; } 
 

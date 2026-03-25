@@ -3,6 +3,7 @@ import ulb.controller.BattleController;
 import ulb.controller.strategy.StrategyRandom;
 import ulb.model.Player;
 import ulb.model.battle.Battle;
+import ulb.model.battle.Battle.ParticipantLabel;
 import ulb.model.team.OpponentTeamGenerator;
 import ulb.model.team.Team;
 import ulb.model.tower.Room;
@@ -57,7 +58,7 @@ public class RoomManager {
 		}
 		Battle battle = new Battle(playerTeam, opponentTeam, player);
 		battle.setFloorNumber(floorNumber);
-		this.roomBattleController = new BattleController(player, battle, true);
+		this.roomBattleController = new BattleController(player, battle, ParticipantLabel.TEAM_A);
 		StrategyRandom strategyRandom = new StrategyRandom(battle);
 		Thread thread = new Thread(strategyRandom);
 		thread.start();
@@ -75,7 +76,7 @@ public class RoomManager {
 		Battle battle = new Battle(playerTeam, opponentTeam, player);
 		battle.setFloorNumber(floorNumber);
 		battle.enableBossBattle();
-		this.roomBattleController = new BattleController(player, battle, true);
+		this.roomBattleController = new BattleController(player, battle, ParticipantLabel.TEAM_A);
 		StrategyRandom strategyRandom = new StrategyRandom(battle);
 		Thread thread = new Thread(strategyRandom);
 		thread.start();

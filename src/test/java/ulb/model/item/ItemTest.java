@@ -13,6 +13,7 @@ import ulb.controller.action.UseItem;
 import ulb.model.Player;
 import ulb.model.ability.Ability;
 import ulb.model.battle.Battle;
+import ulb.model.battle.Battle.ParticipantLabel;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.Stats;
 import ulb.model.sample.BugemonSample;
@@ -41,8 +42,8 @@ public class ItemTest {
 		Player otherPlayer = new Player("OtherPlayer");
 		otherPlayer.setTeam(teamB);
 		this.battle = new Battle(teamA, teamB, this.player, otherPlayer);
-		this.playerController = new BattleController(this.player, battle, true);
-		this.otherPlayerController = new BattleController(otherPlayer, battle, false);
+		this.playerController = new BattleController(this.player, battle, ParticipantLabel.TEAM_A);
+		this.otherPlayerController = new BattleController(otherPlayer, battle, ParticipantLabel.TEAM_B);
 	}
 
 	private void playTurnWithPassiveOpponent(UseItem action) {
@@ -127,19 +128,19 @@ public class ItemTest {
 		Player otherPlayer = new Player("OtherPlayer");
 		otherPlayer.setTeam(teamB);
 		battle = new Battle(teamA, teamB, player, otherPlayer);
-		playerController = new BattleController(player, battle, true);
-		otherPlayerController = new BattleController(otherPlayer, battle, false);
+		playerController = new BattleController(player, battle, ParticipantLabel.TEAM_A);
+		otherPlayerController = new BattleController(otherPlayer, battle, ParticipantLabel.TEAM_B);
 
 		Effect effect = EffectSample.getSwitchEffect();
 		Item item = new Item("switch", "Switch", "Switch a un autre Bugemon.", "switch", 
 			effect, "switch.png");
 		player.getInventory().addItem(item, 1);
 
-		Bugemon activeBefore = battle.getActiveBugemon(battle.getTeamLabel(true));
+		Bugemon activeBefore = battle.getActiveBugemon(ParticipantLabel.TEAM_A);
 		playTurnWithPassiveOpponent(new UseItem(item));
 
-		assertNotEquals(activeBefore, battle.getActiveBugemon(battle.getTeamLabel(true)));
-		assertEquals(bugemonB, battle.getActiveBugemon(battle.getTeamLabel(true)));
+		assertNotEquals(activeBefore, battle.getActiveBugemon(ParticipantLabel.TEAM_A));
+		assertEquals(bugemonB, battle.getActiveBugemon(ParticipantLabel.TEAM_A));
 	}
 
 	@Test

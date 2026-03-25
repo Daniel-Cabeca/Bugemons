@@ -8,7 +8,7 @@ import ulb.model.type.Type;
 import ulb.model.effect.EffectList;
 
 import ulb.model.battle.Battle;
-import ulb.model.battle.Battle.TeamLabel;
+import ulb.model.battle.Battle.ParticipantLabel;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.Stats;
 import ulb.model.type.Effectiveness;
@@ -83,7 +83,7 @@ public class Ability implements HasId {
 	 * @param team The team of the Bugemon using the ability
 	 * @param random The random number generator
 	 */
-	public void use(Battle battle, TeamLabel team, Random random) {
+	public void use(Battle battle, ParticipantLabel team, Random random) {
 		Bugemon ownBugemon = battle.getActiveBugemon(team);
 		Bugemon oppositeBugemon = battle.getActiveBugemon(battle.getOpponentTeamLabel(team));
 
@@ -141,7 +141,7 @@ public class Ability implements HasId {
 	 * @param battle The current battle
 	 * @param team The team of the Bugemon using the ability
 	 */
-	public void use(Battle battle, TeamLabel team) {
+	public void use(Battle battle, ParticipantLabel team) {
 		this.use(battle, team, new Random());
 	}
 

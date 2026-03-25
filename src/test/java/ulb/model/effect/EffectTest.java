@@ -11,7 +11,7 @@ import java.util.Map;
 
 import ulb.model.bugemon.Bugemon;
 import ulb.model.battle.Battle;
-import ulb.model.battle.Battle.TeamLabel;
+import ulb.model.battle.Battle.ParticipantLabel;
 import ulb.model.team.Team;
 import ulb.model.Player;
 
@@ -44,7 +44,7 @@ public class EffectTest {
 		Battle battle = getTestBattle();
 		Effect effect = new Effect(EffectType.STAT_MODIFIER, EffectTarget.OWN_BUGEMON, Map.of(), EffectDuration.PERMANENT);
 
-		TeamLabel team = TeamLabel.TEAM_A;
+		ParticipantLabel team = ParticipantLabel.TEAM_A;
 		List<Bugemon> targets = effect.getTargets(battle, team);
 
 		assertEquals(1, targets.size());
@@ -56,7 +56,7 @@ public class EffectTest {
 		Battle battle = getTestBattle();
 		Effect effect = new Effect(EffectType.STAT_MODIFIER, EffectTarget.OPPOSITE_BUGEMON, Map.of(), EffectDuration.PERMANENT);
 
-		TeamLabel team = TeamLabel.TEAM_A;
+		ParticipantLabel team = ParticipantLabel.TEAM_A;
 		List<Bugemon> targets = effect.getTargets(battle, team);
 
 		assertEquals(1, targets.size());
@@ -68,7 +68,7 @@ public class EffectTest {
 		Battle battle = getTestBattle();
 		Effect effect = new Effect(EffectType.STAT_MODIFIER, EffectTarget.OWN_TEAM, Map.of(), EffectDuration.PERMANENT);
 
-		TeamLabel team = TeamLabel.TEAM_A;
+		ParticipantLabel team = ParticipantLabel.TEAM_A;
 		List<Bugemon> targets = effect.getTargets(battle, team);
 
 		boolean foundFlorachu = false;

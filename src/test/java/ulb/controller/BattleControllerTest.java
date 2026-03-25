@@ -22,6 +22,7 @@ import ulb.model.sample.EffectSample;
 import ulb.model.Player;
 import ulb.model.ability.Ability;
 import ulb.model.battle.Battle;
+import ulb.model.battle.Battle.ParticipantLabel;
 import ulb.model.battle.BattleState;
 import ulb.model.team.Team;
 
@@ -29,7 +30,7 @@ public class BattleControllerTest {
 	BattleController otherPlayerController;
 
 	public void initiateOtherPlayerController(Battle battle){
-		otherPlayerController = new BattleController(new Player(), battle, false);
+		otherPlayerController = new BattleController(new Player(), battle, ParticipantLabel.TEAM_B);
 	}
 
 	private void otherPlayerChooseAction(Ability a){
@@ -53,7 +54,7 @@ public class BattleControllerTest {
 		teamB.getBugemon(0).changeFightStats(new Stats(0, 0, 0, -1));
 
 		Battle battle = new Battle(teamA, teamB, player);
-		BattleController controller = new BattleController(player, battle, true);
+		BattleController controller = new BattleController(player, battle, ParticipantLabel.TEAM_A);
 		this.initiateOtherPlayerController(battle);
 
 		player.setTeam(teamA);
@@ -74,7 +75,7 @@ public class BattleControllerTest {
 		Team teamB = new Team(List.of(BugemonSample.getB()));
 		Battle battle = new Battle(teamA, teamB, player);
 
-		BattleController battleController = new BattleController(player, battle, true);
+		BattleController battleController = new BattleController(player, battle, ParticipantLabel.TEAM_A);
 
 		Effect effect = EffectSample.getHeal();
 		Item item = new Item("potion", "Potion", "Restaure 10 pv.", "soin", effect, "potion.png");
@@ -92,7 +93,7 @@ public class BattleControllerTest {
 		Team teamA = new Team(List.of(bugemon));
 		Team teamB = new Team(List.of(BugemonSample.getB()));
 		Battle battle = new Battle(teamA, teamB, player);
-		BattleController battleController = new BattleController(player, battle, true);
+		BattleController battleController = new BattleController(player, battle, ParticipantLabel.TEAM_A);
 
 		Effect effect = EffectSample.getHeal();
 		Item item = new Item("potion", "Potion", "Restaure 10 pv.", "soin", effect, "potion.png");
@@ -110,7 +111,7 @@ public class BattleControllerTest {
 		Team teamB = new Team(List.of(BugemonSample.getB()));
 		Battle battle = new Battle(teamA, teamB, player);
 
-		BattleController battleController = new BattleController(player, battle, true);
+		BattleController battleController = new BattleController(player, battle, ParticipantLabel.TEAM_A);
 		initiateOtherPlayerController(battle);
 		
 		Effect effect = EffectSample.getHeal();
@@ -147,7 +148,7 @@ public class BattleControllerTest {
 		Team teamB = new Team(List.of(BugemonSample.getB()));
 		Battle battle = new Battle(teamA, teamB, player);
 
-		BattleController controller = new BattleController(player, battle, true);
+		BattleController controller = new BattleController(player, battle, ParticipantLabel.TEAM_A);
 		this.initiateOtherPlayerController(battle);
 
 		player.setTeam(teamA);
@@ -169,7 +170,7 @@ public class BattleControllerTest {
 		player.setTeam(teamA);
 
 		Battle battle = new Battle(teamA, teamB, player);
-		BattleController controller = new BattleController(player, battle, true);
+		BattleController controller = new BattleController(player, battle, ParticipantLabel.TEAM_A);
 		this.initiateOtherPlayerController(battle);
 
 		battle.setFloorNumber(5);
@@ -193,7 +194,7 @@ public class BattleControllerTest {
 		player.setTeam(teamA);
 
 		Battle battle = new Battle(teamA, teamB, player);
-		BattleController controller = new BattleController(player, battle, true);
+		BattleController controller = new BattleController(player, battle, ParticipantLabel.TEAM_A);
 		this.initiateOtherPlayerController(battle);
 
 		battle.setFloorNumber(5);
@@ -215,7 +216,7 @@ public class BattleControllerTest {
 		Team teamB = new Team(List.of(BugemonSample.getB()));
 
 		Battle battle = new Battle(teamA, teamB, player);
-		BattleController controller = new BattleController(player, battle, true);
+		BattleController controller = new BattleController(player, battle, ParticipantLabel.TEAM_A);
 		this.initiateOtherPlayerController(battle);
 
 		player.setTeam(teamA);
@@ -244,7 +245,7 @@ public class BattleControllerTest {
 		Team teamB = new Team(List.of(BugemonSample.getB()));
 
 		Battle battle = new Battle(teamA, teamB, player);
-		BattleController controller = new BattleController(player, battle, true);
+		BattleController controller = new BattleController(player, battle, ParticipantLabel.TEAM_A);
 		this.initiateOtherPlayerController(battle);
 
 		player.setTeam(teamA);
@@ -266,7 +267,7 @@ public class BattleControllerTest {
 		Team teamB = new Team(List.of(BugemonSample.getB()));
 
 		Battle battle = new Battle(teamA, teamB, player);
-		BattleController controller = new BattleController(player, battle, true);
+		BattleController controller = new BattleController(player, battle, ParticipantLabel.TEAM_A);
 		this.initiateOtherPlayerController(battle);
 
 		player.setTeam(teamA);
@@ -292,7 +293,7 @@ public class BattleControllerTest {
 		Team teamB = new Team(List.of(BugemonSample.getB()));
 
 		Battle battle = new Battle(teamA, teamB, player);
-		BattleController controller = new BattleController(player, battle, true);
+		BattleController controller = new BattleController(player, battle, ParticipantLabel.TEAM_A);
 		this.initiateOtherPlayerController(battle);
 
 		player.setTeam(teamA);
@@ -315,7 +316,7 @@ public class BattleControllerTest {
 		Team teamB = new Team(List.of(BugemonSample.getB()));
 
 		Battle battle = new Battle(teamA, teamB, player);
-		BattleController controller = new BattleController(player, battle, true);
+		BattleController controller = new BattleController(player, battle, ParticipantLabel.TEAM_A);
 		this.initiateOtherPlayerController(battle);
 
 		player.setTeam(teamA);
@@ -337,7 +338,7 @@ public class BattleControllerTest {
 		Team teamB = new Team(List.of(BugemonSample.getB()));
 
 		Battle battle = new Battle(teamA, teamB, player);
-		BattleController controller = new BattleController(player, battle, true);
+		BattleController controller = new BattleController(player, battle, ParticipantLabel.TEAM_A);
 		
 		a.gainXp(50);
 		Stats previousStats = new Stats(a.getBaseStats());

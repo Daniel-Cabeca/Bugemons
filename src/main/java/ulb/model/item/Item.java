@@ -36,7 +36,7 @@ public class Item implements HasId {
 		return this.effect.apply(target);
 	}
 
-	public void use(Battle battle, Battle.TeamLabel team){
+	public void use(Battle battle, Battle.ParticipantLabel team){
 		this.effect.apply(battle, team);
 	}
 

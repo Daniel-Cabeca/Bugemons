@@ -13,13 +13,14 @@ import ulb.model.ability.AbilitySet;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.battle.Battle;
 import ulb.model.battle.BattleState;
+import ulb.model.battle.Battle.ParticipantLabel;
 
 public class StrategyRandom implements Strategy, Runnable {
     private BattleController battleController;
     private final long SLEEP_TIME = 1000;
 
     public StrategyRandom(Battle battle) {
-        this(new BattleController(new Player(), battle, false));
+        this(new BattleController(new Player(), battle, ParticipantLabel.TEAM_B));
     }
     public StrategyRandom(BattleController battleController){
         this.battleController = battleController;
@@ -86,7 +87,7 @@ public class StrategyRandom implements Strategy, Runnable {
         Bugemon bugemon = this.battleController.getActiveBugemonSelf();
 	    AbilitySet AbilitiesA = bugemon.getAbilities();
 	    Random rand = new Random();
-	    int i = rand.nextInt(AbilitiesA.SIZE);
+	    int i = rand.nextInt(AbilitiesA.size());
 
 	    return AbilitiesA.getAbility(i);
 	}

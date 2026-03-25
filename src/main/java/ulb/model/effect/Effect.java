@@ -8,7 +8,7 @@ import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.Stats;
 
 import ulb.model.battle.Battle;
-import ulb.model.battle.Battle.TeamLabel;
+import ulb.model.battle.Battle.ParticipantLabel;
 import ulb.model.battle.ActiveEffect;
 
 public class Effect {
@@ -121,7 +121,7 @@ public class Effect {
 	 * @param battle The current battle
 	 * @param team The team using that effect
 	 */
-	public void apply(Battle battle, TeamLabel team) {
+	public void apply(Battle battle, ParticipantLabel team) {
 		List<Bugemon> targets = this.getTargets(battle, team);
 
 		for (Bugemon target: targets) {
@@ -149,7 +149,7 @@ public class Effect {
 	 * @param team The team using that effect
 	 * @return The list of affected Bugemons
 	 */
-	public List<Bugemon> getTargets(Battle battle, TeamLabel team) {
+	public List<Bugemon> getTargets(Battle battle, ParticipantLabel team) {
 		List<Bugemon> targets = new ArrayList<>();
 
 		switch(this.target) {

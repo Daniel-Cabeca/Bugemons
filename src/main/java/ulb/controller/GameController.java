@@ -14,6 +14,7 @@ import ulb.controller.towerManager.RoomManager;
 import ulb.controller.towerManager.TowerManager;
 import ulb.model.Player;
 import ulb.model.battle.Battle;
+import ulb.model.battle.Battle.ParticipantLabel;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.team.OpponentTeamGenerator;
 import ulb.model.team.Team;
@@ -80,7 +81,7 @@ public class GameController {
 			System.err.println(e);
 		}
 		Battle battle = new Battle(playerTeam, opponentTeam, player);
-		this.normalModeBattleController = new BattleController(player, battle, true);
+		this.normalModeBattleController = new BattleController(player, battle, ParticipantLabel.TEAM_A);
 		StrategyRandom strategyRandom = new StrategyRandom(battle);
 		Thread thread = new Thread(strategyRandom);
 		thread.start();

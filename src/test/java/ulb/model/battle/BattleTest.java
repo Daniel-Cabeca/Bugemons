@@ -10,7 +10,7 @@ import ulb.model.team.Team;
 import ulb.model.type.Type;
 import java.util.List;
 import ulb.model.Player;
-import ulb.model.battle.Battle.TeamLabel;
+import ulb.model.battle.Battle.ParticipantLabel;
 
 public class BattleTest {
 	@Test
@@ -23,7 +23,7 @@ public class BattleTest {
 		Player p = new Player();
 		Battle battle = new Battle(teamA, teamB, p);
 
-		assertSame(TeamLabel.TEAM_A, battle.getFirstTeamToPlay());
+		assertSame(ParticipantLabel.TEAM_A, battle.getFirstTeamToPlay());
 	}
 
 	@Test
@@ -37,7 +37,7 @@ public class BattleTest {
 		Player p = new Player();
 		Battle battle = new Battle(teamA, teamB, p);
 
-		assertSame(TeamLabel.TEAM_B, battle.getFirstTeamToPlay());
+		assertSame(ParticipantLabel.TEAM_B, battle.getFirstTeamToPlay());
 	}
 
 	@Test
@@ -55,10 +55,10 @@ public class BattleTest {
 		boolean sawB = false;
 
 		for (int i = 0; i < 200; i++) {
-			Battle.TeamLabel result = battle.getFirstTeamToPlay();
-			if (result == TeamLabel.TEAM_A) {
+			Battle.ParticipantLabel result = battle.getFirstTeamToPlay();
+			if (result == ParticipantLabel.TEAM_A) {
 				sawA = true;
-			} else if (result == TeamLabel.TEAM_B) {
+			} else if (result == ParticipantLabel.TEAM_B) {
 				sawB = true;
 			}
 			if (sawA && sawB) {

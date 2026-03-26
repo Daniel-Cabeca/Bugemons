@@ -679,10 +679,12 @@ public class BattleWindow extends Window {
 
 	public void checkBattleEnd(BattleState state, ActionEvent event){
 		if (state == BattleState.WON) {
-			if (!this.tower) {
-				gameController.switchToBattleEndWindow(true, event);
-			} else {
-				gameController.switchToNextRoomWindow(event);
+			if (!gameController.startLevelUpSequenceIfNeeded(battleController, this.tower, event)) {
+				if (!this.tower) {
+					gameController.switchToBattleEndWindow(true, event);
+				} else {
+					gameController.switchToNextRoomWindow(event);
+				}
 			}
 		} else if (state == BattleState.LOST) {
 			gameController.switchToBattleEndWindow(false, event);

@@ -54,7 +54,7 @@ public class Reward {
     }
 
     public void applyReward(){
-        bugemon.changeBaseStats(this.stats);
+        bugemon.consumeLevelReward(this.stats);
     }
 
     /**

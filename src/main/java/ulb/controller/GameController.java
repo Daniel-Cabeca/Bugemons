@@ -20,14 +20,18 @@ import ulb.model.team.OpponentTeamGenerator;
 import ulb.model.team.Team;
 import ulb.model.tower.Room;
 import ulb.model.tower.RoomType;
+import ulb.model.reward.Reward;
 import ulb.view.ViewManager;
 import ulb.view.windows.BattleEndWindow;
 import ulb.view.windows.BattleModeWindow;
 import ulb.view.windows.BattleWindow;
 import ulb.view.windows.FloorRewardWindow;
+import ulb.view.windows.LevelUpWindow;
 
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 
 
@@ -38,6 +42,10 @@ public class GameController {
 	private ViewManager viewManager;
 
 	private boolean isNextFloor;
+	private final Deque<Bugemon> pendingLevelUpBugemons = new ArrayDeque<>();
+	private BattleController pendingRewardBattleController;
+	private boolean rewardSequenceReturnsToNextRoom;
+	private int pendingBattleXP;
 
 	public GameController() {}
 
@@ -211,6 +219,14 @@ public class GameController {
 	 * @param victory {@code true} if the player won the battle, {@code false} if the player lost
 	 */
 	public void switchToBattleEndWindow(boolean victory, ActionEvent event) {
+		int totalXP = 0;
+		if (normalModeBattleController != null) {
+			totalXP = normalModeBattleController.getTotalXP();
+		}
+		this.switchToBattleEndWindow(victory, totalXP, event);
+	}
+
+	public void switchToBattleEndWindow(boolean victory, int totalXP, ActionEvent event) {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/BattleEndWindow.fxml"));
 			Parent battleEndWindow = loader.load();
@@ -220,7 +236,7 @@ public class GameController {
 
 			BattleEndWindow controller = loader.getController();
 			controller.setGameController(this);
-			controller.setResult(victory, normalModeBattleController.getTotalXP()); // Needs to be refactored
+			controller.setResult(victory, totalXP);
 
 		} catch (IOException e) {
 			System.err.println("Failed to load battle_end_window: " + e.getMessage());
@@ -247,6 +263,84 @@ public class GameController {
 		} catch (IOException e) {
 			System.err.println("Failed to load next_room_window: " + e.getMessage());
 		}
+	}
+
+	public boolean startLevelUpSequenceIfNeeded(BattleController battleController, boolean returnToNextRoom, ActionEvent event) {
+		pendingLevelUpBugemons.clear();
+
+		for (Bugemon bugemon : player.getTeam().getMembers()) {
+			if (bugemon.getRemainingReward() > 0) {
+				pendingLevelUpBugemons.addLast(bugemon);
+			}
+		}
+
+		if (pendingLevelUpBugemons.isEmpty()) {
+			return false;
+		}
+
+		this.pendingRewardBattleController = battleController;
+		this.rewardSequenceReturnsToNextRoom = returnToNextRoom;
+		this.pendingBattleXP = battleController.getTotalXP();
+		switchToLevelUpWindow(event);
+		return true;
+	}
+
+	public void handleLevelUpRewardChoice(Reward reward, ActionEvent event) {
+		Bugemon currentBugemon = pendingLevelUpBugemons.peekFirst();
+		if (currentBugemon == null || pendingRewardBattleController == null) {
+			return;
+		}
+
+		boolean rewardApplied = pendingRewardBattleController.applyReward(currentBugemon, reward);
+		if (!rewardApplied) {
+			return;
+		}
+
+		while (!pendingLevelUpBugemons.isEmpty() && pendingLevelUpBugemons.peekFirst().getRemainingReward() <= 0) {
+			pendingLevelUpBugemons.removeFirst();
+		}
+
+		if (!pendingLevelUpBugemons.isEmpty()) {
+			switchToLevelUpWindow(event);
+			return;
+		}
+
+		boolean returnToNextRoom = rewardSequenceReturnsToNextRoom;
+		int totalXP = pendingBattleXP;
+		clearPendingLevelUpState();
+		if (returnToNextRoom) {
+			switchToNextRoomWindow(event);
+		} else {
+			switchToBattleEndWindow(true, totalXP, event);
+		}
+	}
+
+	private void switchToLevelUpWindow(ActionEvent event) {
+		Bugemon currentBugemon = pendingLevelUpBugemons.peekFirst();
+		if (currentBugemon == null || pendingRewardBattleController == null) {
+			return;
+		}
+
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/LevelUpWindow.fxml"));
+			Parent levelUpWindow = loader.load();
+
+			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+			stage.getScene().setRoot(levelUpWindow);
+
+			LevelUpWindow controller = loader.getController();
+			controller.setGameController(this);
+			controller.initializeRewardSelection(currentBugemon, pendingRewardBattleController.getRewards(currentBugemon));
+		} catch (IOException e) {
+			System.err.println("Failed to load level_up_window: " + e.getMessage());
+		}
+	}
+
+	private void clearPendingLevelUpState() {
+		pendingLevelUpBugemons.clear();
+		pendingRewardBattleController = null;
+		rewardSequenceReturnsToNextRoom = false;
+		pendingBattleXP = 0;
 	}
 
 	/**

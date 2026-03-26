@@ -1,9 +1,12 @@
 package ulb.view.windows;
 
 import javafx.fxml.FXML;
+import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.Stats;
 import ulb.model.reward.Reward;
+import javafx.event.ActionEvent;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import java.util.Vector;
@@ -25,11 +28,15 @@ public class LevelUpWindow extends Window {
 	private Reward rC;
 
 	private String createRewardsText(Reward r) {
-		String text;
 		Stats addedStats = r.getStats();
-		text = "HP: +" + addedStats.getHp() + "\nAttaque: +" + addedStats.getAttack() + "\nDefense: +" + addedStats.getDefense()
+		return "HP: +" + addedStats.getHp() + "\nAttaque: +" + addedStats.getAttack() + "\nDefense: +" + addedStats.getDefense()
 				+ "\nInitiative: +" + addedStats.getInitiative();
-		return text;
+	}
+
+	public void initializeRewardSelection(Bugemon bugemon, Vector<Reward> rewards) {
+		setRewards(rewards);
+		setBugemonLevel(bugemon);
+		setBugemonSprite(bugemon);
 	}
 
 	public void setRewards(Vector<Reward> rewards) {
@@ -42,20 +49,18 @@ public class LevelUpWindow extends Window {
 		rewardC.setText(createRewardsText(rC));
 	}
 
-	public void setBugemonLevel() {
-		bugemonLevel.setText("Bugémon a atteint le niveau " + rA.getBugemon().getLevel() + "!");
+	public void setBugemonLevel(Bugemon bugemon) {
+		bugemonLevel.setText("Bugémon a atteint le niveau " + bugemon.getLevel() + "!");
 	}
 
-	public void setBugemonSprite() {
-		bugemonSprite = new ImageView(rA.getBugemon().getSprite());
+	public void setBugemonSprite(Bugemon bugemon) {
+		bugemonSprite.setImage(new Image(getClass().getResourceAsStream(bugemon.getSprite())));
 	}
 
 	@FXML
-	private void chooseRewardA() {rA.applyReward();}
+	private void chooseRewardA(ActionEvent event) { gameController.handleLevelUpRewardChoice(rA, event); }
 	@FXML
-	private void chooseRewardB() {rB.applyReward();}
+	private void chooseRewardB(ActionEvent event) { gameController.handleLevelUpRewardChoice(rB, event); }
 	@FXML
-	private void chooseRewardC() {rC.applyReward();}
-
-
+	private void chooseRewardC(ActionEvent event) { gameController.handleLevelUpRewardChoice(rC, event); }
 }

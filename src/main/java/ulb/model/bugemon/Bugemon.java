@@ -81,14 +81,31 @@ public class Bugemon {
 	}
 
 	/**
+	 * Applies one pending level-up reward to this Bugémon.
+	 *
+	 * The reward is applied both to base stats and current fight stats so the
+	 * Bugémon remains consistent after the battle that granted the level.
+	 *
+	 * @param reward The reward applied
+	 * @return {@code true} if a pending reward was consumed, {@code false} otherwise
+	 */
+	public boolean consumeLevelReward(Stats reward){
+		if (this.remainingRewards <= 0){
+			return false;
+		}
+
+		changeBaseStats(reward);
+		changeFightStats(reward);
+		this.remainingRewards--;
+		return true;
+	}
+
+	/**
 	 * Apply a reward to Base Stats
 	 * @param reward The reward applied
 	 */
 	public void applyLevelReward(Stats reward){
-		if (this.remainingRewards > 0){
-			changeBaseStats(reward);
-			this.remainingRewards++;
-		}
+		consumeLevelReward(reward);
 	}
 
 	public boolean equals(Bugemon other){

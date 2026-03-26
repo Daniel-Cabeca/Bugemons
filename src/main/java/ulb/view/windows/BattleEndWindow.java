@@ -4,12 +4,15 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+import ulb.communication.Message;
+import ulb.communication.types.SwitchWindowMessage;
 import ulb.utils.Scaling;
+import ulb.view.ViewManager;
 import ulb.view.WindowPath;
 
 import java.io.IOException;
 
-public class BattleEndWindow extends Window{
+public class BattleEndWindow extends ViewManager {
 
 	@FXML
 	public Label titleLabel;
@@ -45,6 +48,9 @@ public class BattleEndWindow extends Window{
 	 * Returns to the main menu
 	 */
 	public void handleReturn() {
-		sendWindowSwitchMessage(WindowPath.MODE);
+		Message switchToModeMenu = new SwitchWindowMessage(WindowPath.MODE);
+		this.handleInput(switchToModeMenu);
+		///sendWindowSwitchMessage(WindowPath.MODE);
+
 	}
 }

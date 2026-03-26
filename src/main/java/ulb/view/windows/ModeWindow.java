@@ -3,10 +3,13 @@ package ulb.view.windows;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
+import ulb.communication.Message;
+import ulb.communication.types.SwitchWindowMessage;
 import ulb.utils.Scaling;
+import ulb.view.ViewManager;
 import ulb.view.WindowPath;
 
-public final class ModeWindow extends Window {
+public final class ModeWindow extends ViewManager {
 
 	@FXML
 	private VBox content;
@@ -18,7 +21,9 @@ public final class ModeWindow extends Window {
 
 	@FXML
 	private void goSoloMode() {
-		sendWindowSwitchMessage(WindowPath.CREATE_TEAM);
+		Message switchToSoloModeWindow = new SwitchWindowMessage(WindowPath.CREATE_TEAM);
+		System.out.println("mode :" + this.getGameController());
+		this.handleInput(switchToSoloModeWindow);
 	}
 
 	@FXML

@@ -4,10 +4,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import ulb.view.ViewManager;
 
 import java.io.IOException;
 
-public class NextRoomWindow extends Window {
+public class NextRoomWindow extends ViewManager {
 	@FXML
 	public Label messageLabel;
 
@@ -23,8 +24,8 @@ public class NextRoomWindow extends Window {
 	@FXML
 	public void handleContinue(ActionEvent event) throws IOException {
 		messageLabel.setText("Vous avez mis tous les Bugémons ennemis KO!");
-		if (gameController != null) {
-			gameController.handleTower(gameController.getTeam(), event);
+		if (getGameController() != null) {
+			getGameController().handleTower(getGameController().getTeam(), event);
 		}
 	}
 

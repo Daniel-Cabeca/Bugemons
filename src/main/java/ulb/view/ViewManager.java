@@ -4,20 +4,33 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import ulb.communication.Message;
+import ulb.communication.types.ErrorMessage;
+import ulb.communication.types.SwitchWindowMessage;
 import ulb.controller.GameController;
 import ulb.view.windows.Window;
 
 import java.io.IOException;
 
-public class ViewManager {
-    private final Stage stage;
-    private final GameController controller;
+public abstract class ViewManager {
+    private Stage stage;
+    private GameController controller;
 
-    public ViewManager(Stage stage, GameController controller) {
-        this.stage = stage;
-        this.controller = controller;
+
+
+    public void setGameController(GameController gameController) { this.controller = gameController; }
+
+    public void setStage(Stage stageNew){this.stage = stageNew;}
+
+    public GameController getGameController() {
+        return this.controller;
     }
 
+    public Stage getStage(){
+        return this.stage;
+    }
+
+    public void onLoad() {}
     /**
      * Switches to the window by loading the fxml file and setting the controller
      *
@@ -28,8 +41,10 @@ public class ViewManager {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(windowFxmlPath));
             Parent root = loader.load();
 
-            if (loader.getController() instanceof Window window) {
+            if (loader.getController() instanceof ViewManager window) {
+                System.out.println("stage :" + stage);
                 window.setGameController(controller);
+                window.setStage(stage);
                 window.onLoad();
             }
 
@@ -45,4 +60,14 @@ public class ViewManager {
             e.printStackTrace();
         }
     }
+
+    public void handleInput(Message message) {
+        System.out.println("handle :" + this.getGameController());
+        Message controllerResponse = this.controller.handleMessage(message);
+        if (controllerResponse instanceof SwitchWindowMessage) {
+            this.switchWindow(((SwitchWindowMessage) controllerResponse).getSwitchWindow());
+        }
+
+    }
+
 }

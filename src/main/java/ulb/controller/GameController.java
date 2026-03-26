@@ -107,7 +107,7 @@ public class GameController {
 	 *
 	 * @param event the action triggered by clicking the confirm team button
 	 */
-	public void switchToBattleModeWindow(ActionEvent event) {
+	public void switchToBattleModeWindow(ActionEvent event) { // TODO refactor
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/BattleModeWindow.fxml"));
 			Parent battleMenu = loader.load();
@@ -130,7 +130,7 @@ public class GameController {
 	 * @param teamA the player's team of bugemons
 	 * @param automatic whether the battle is in automatic mode or not
 	 */
-	public void switchToBattleWindow(Team teamA, boolean automatic, ActionEvent event) {
+	public void switchToBattleWindow(Team teamA, boolean automatic, ActionEvent event) { //TODO refactor
 		// generate random opponent team
 		Team teamB = new Team();
 		try {
@@ -149,6 +149,7 @@ public class GameController {
 
 			BattleWindow controller = loader.getController();
 			controller.setGameController(this);
+			controller.setStage(stage);
 			controller.setBattleController(normalModeBattleController);
 
 			controller.initializeBattle(teamA, teamB, player.getInventory(), automatic, false);
@@ -164,7 +165,7 @@ public class GameController {
 	 *
 	 * @param teamA the player's team of bugemons
 	 */
-	public void switchToTowerBattleWindow(Team teamA, ActionEvent event) {
+	public void switchToTowerBattleWindow(Team teamA, ActionEvent event) { //TODO refactor
 		// generate random opponent team
 		Team teamB = new Team();
 		try {
@@ -182,6 +183,7 @@ public class GameController {
 			BattleWindow controller = loader.getController();
 			controller.setGameController(this);
 			controller.setTowerManager(towerModeTowerManager);
+			controller.setStage(stage);
 
 			controller.setBattleController(towerModeTowerManager.getCurrentRoomManager().getRoomBattleController());
 			// always manual battle in tower mode
@@ -195,7 +197,7 @@ public class GameController {
 	/**
 	 * Switches to the floor reward window (rewards not functional yet)
 	 */
-	public void switchToFloorRewardWindow(ActionEvent event) {
+	public void switchToFloorRewardWindow(ActionEvent event) { //TODO refactor
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/FloorRewardWindow.fxml"));
 			Parent floorRewardWindow = loader.load();
@@ -205,6 +207,7 @@ public class GameController {
 
 			FloorRewardWindow controller = loader.getController();
 			controller.setGameController(this);
+			controller.setStage(stage);
 			controller.setTowerManager(towerModeTowerManager);
 			controller.initializeLabels();
 
@@ -218,7 +221,7 @@ public class GameController {
 	 *
 	 * @param victory {@code true} if the player won the battle, {@code false} if the player lost
 	 */
-	public void switchToBattleEndWindow(boolean victory, ActionEvent event) {
+	public void switchToBattleEndWindow(boolean victory, ActionEvent event) { //TODO refactor
 		int totalXP = 0;
 		if (normalModeBattleController != null) {
 			totalXP = normalModeBattleController.getTotalXP();
@@ -226,7 +229,7 @@ public class GameController {
 		this.switchToBattleEndWindow(victory, totalXP, event);
 	}
 
-	public void switchToBattleEndWindow(boolean victory, int totalXP, ActionEvent event) {
+	public void switchToBattleEndWindow(boolean victory, int totalXP, ActionEvent event) { //TODO refactor
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/BattleEndWindow.fxml"));
 			Parent battleEndWindow = loader.load();
@@ -236,6 +239,7 @@ public class GameController {
 
 			BattleEndWindow controller = loader.getController();
 			controller.setGameController(this);
+			controller.setStage(stage);
 			controller.setResult(victory, totalXP);
 
 		} catch (IOException e) {
@@ -248,7 +252,7 @@ public class GameController {
 	 *
 	 * @param event the action triggered by clicking the confirm team button
 	 */
-	public void switchToNextRoomWindow(ActionEvent event) {
+	public void switchToNextRoomWindow(ActionEvent event) { //TODO refactor
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/NextRoomWindow.fxml"));
 			Parent nextRoomWindow = loader.load();
@@ -258,6 +262,7 @@ public class GameController {
 
 			ulb.view.windows.NextRoomWindow controller = loader.getController();
 			controller.setGameController(this);
+			controller.setStage(stage);
 			// updates the button to say "Prochain etage" (instead of "Prochaine salle") if the floor is completed
 			controller.updateButtonText(isNextFloor);
 		} catch (IOException e) {
@@ -315,7 +320,7 @@ public class GameController {
 		}
 	}
 
-	private void switchToLevelUpWindow(ActionEvent event) {
+	private void switchToLevelUpWindow(ActionEvent event) { //TODO refactor
 		Bugemon currentBugemon = pendingLevelUpBugemons.peekFirst();
 		if (currentBugemon == null || pendingRewardBattleController == null) {
 			return;
@@ -330,6 +335,7 @@ public class GameController {
 
 			LevelUpWindow controller = loader.getController();
 			controller.setGameController(this);
+			controller.setStage(stage);
 			controller.initializeRewardSelection(currentBugemon, pendingRewardBattleController.getRewards(currentBugemon));
 		} catch (IOException e) {
 			System.err.println("Failed to load level_up_window: " + e.getMessage());
@@ -398,10 +404,12 @@ public class GameController {
 		this.viewManager = vManager;
 	}
 
-	public void handleMessage(Message m) {
+	public Message handleMessage(Message m) {
 		if (m instanceof SwitchWindowMessage) {
-			viewManager.switchWindow(((SwitchWindowMessage) m).getSwitchWindow());
+			return m;
+			//viewManager.switchWindow(((SwitchWindowMessage) m).getSwitchWindow());
 		}
-	}
+        return m;
+    }
 
 }

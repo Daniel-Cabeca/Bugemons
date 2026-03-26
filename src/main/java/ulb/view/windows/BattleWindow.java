@@ -11,6 +11,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
+import ulb.communication.Message;
+import ulb.communication.types.SwitchWindowMessage;
 import ulb.controller.towerManager.TowerManager;
 import ulb.model.battle.BattleState;
 import ulb.model.bugemon.Bugemon;
@@ -29,9 +31,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.util.Callback;
+import ulb.view.ViewManager;
 import ulb.view.WindowPath;
 
-public class BattleWindow extends Window {
+public class BattleWindow extends ViewManager {
 
 	@FXML
 	private GridPane playerTeamGrid;
@@ -679,15 +682,15 @@ public class BattleWindow extends Window {
 
 	public void checkBattleEnd(BattleState state, ActionEvent event){
 		if (state == BattleState.WON) {
-			if (!gameController.startLevelUpSequenceIfNeeded(battleController, this.tower, event)) {
+			if (!getGameController().startLevelUpSequenceIfNeeded(battleController, this.tower, event)) {
 				if (!this.tower) {
-					gameController.switchToBattleEndWindow(true, event);
+					getGameController().switchToBattleEndWindow(true, event);
 				} else {
-					gameController.switchToNextRoomWindow(event);
+					getGameController().switchToNextRoomWindow(event);
 				}
 			}
 		} else if (state == BattleState.LOST) {
-			gameController.switchToBattleEndWindow(false, event);
+			getGameController().switchToBattleEndWindow(false, event);
 		}
 	}
 
@@ -704,7 +707,8 @@ public class BattleWindow extends Window {
 	* @throws IOException if the main menu FuXML file cannot be loaded
 	*/
 	public void handleReturn(ActionEvent event) throws IOException {
-		sendWindowSwitchMessage(WindowPath.MODE);
+		Message switchToModeMenu = new SwitchWindowMessage(WindowPath.MODE);
+		this.handleInput(switchToModeMenu);
 	}
 
 

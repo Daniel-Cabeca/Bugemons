@@ -1,6 +1,7 @@
 package ulb.view.windows;
 
 import javafx.fxml.FXML;
+import ulb.controller.GameController;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.Stats;
 import ulb.model.reward.Reward;
@@ -8,10 +9,11 @@ import javafx.event.ActionEvent;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import ulb.view.ViewManager;
 
 import java.util.Vector;
 
-public class LevelUpWindow extends Window {
+public class LevelUpWindow extends ViewManager {
 	@FXML
 	private Label bugemonLevel;
 	@FXML
@@ -58,9 +60,9 @@ public class LevelUpWindow extends Window {
 	}
 
 	@FXML
-	private void chooseRewardA(ActionEvent event) { gameController.handleLevelUpRewardChoice(rA, event); }
+	private void chooseRewardA(ActionEvent event) { getGameController().handleLevelUpRewardChoice(rA, event); }
 	@FXML
-	private void chooseRewardB(ActionEvent event) { gameController.handleLevelUpRewardChoice(rB, event); }
+	private void chooseRewardB(ActionEvent event) { getGameController().handleLevelUpRewardChoice(rB, event); }
 	@FXML
-	private void chooseRewardC(ActionEvent event) { gameController.handleLevelUpRewardChoice(rC, event); }
+	private void chooseRewardC(ActionEvent event) { getGameController().handleLevelUpRewardChoice(rC, event); }
 }

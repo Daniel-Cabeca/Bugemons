@@ -1,4 +1,4 @@
-# réunion 5 | 10 mars
+# Réunion 5 | 10 mars
 ## tâches attribuées
 - vérifier quelles histoires/fonctionnalités sont implementées - Zia et Daniel B
 - burndown chart - Sam

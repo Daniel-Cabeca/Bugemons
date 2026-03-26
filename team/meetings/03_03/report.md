@@ -1,4 +1,4 @@
-# réunion 4 | 3 mars
+# Réunion 4 | 3 mars
 ## Binômes
 - comme décidé avant, on change toutes les semaines de binôme aléatoirement
 ## Répartition des tâches

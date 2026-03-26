@@ -10,6 +10,7 @@ import javafx.scene.layout.VBox;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.team.Team;
 import ulb.utils.Scaling;
+import ulb.view.WindowPath;
 
 
 public class BattleModeWindow extends Window {
@@ -47,6 +48,11 @@ public class BattleModeWindow extends Window {
 	public void handleTowerBattle(ActionEvent actionEvent) {
 		gameController.setupTowerMode();
 		gameController.handleTower(gameController.getTeam(),actionEvent);
+	}
+
+	@FXML
+	private void handleReturn(){
+		sendWindowSwitchMessage(WindowPath.CREATE_TEAM);
 	}
 
     public void displayTeam() {

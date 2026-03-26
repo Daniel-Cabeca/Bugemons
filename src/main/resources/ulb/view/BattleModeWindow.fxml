@@ -1,35 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.*?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
-<StackPane style="-fx-background-image: url(backgrounds/BattleModeBackground.png); -fx-background-size: stretch"
-           xmlns="http://javafx.com/javafx"
-           xmlns:fx="http://javafx.com/fxml"
-           fx:controller="ulb.view.windows.BattleModeWindow">
+<StackPane style="-fx-background-image: url(backgrounds/BattleModeBackground.png); -fx-background-size: stretch" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ulb.view.windows.BattleModeWindow">
 
-    <VBox fx:id="content"
-          alignment="CENTER"
-          spacing="20.0"
-          maxWidth="800"
-          maxHeight="600">
+    <VBox fx:id="content" alignment="CENTER" maxHeight="600" maxWidth="800" spacing="20.0">
 
         <padding>
-            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
         </padding>
 
         <VBox alignment="CENTER" spacing="10.0">
-            <Label text="Votre Équipe:" style="-fx-font-size: 20px;"/>
-            <GridPane fx:id="playerTeamGrid" hgap="10" vgap="10" alignment="CENTER"/>
+            <Label style="-fx-font-size: 20px;" text="Votre Équipe:" />
+            <GridPane fx:id="playerTeamGrid" alignment="CENTER" hgap="10" vgap="10" />
         </VBox>
 
-        <Button style="-fx-background-color: #8D89BA"
-                text="Combat Classique" onAction="#handleControlledBattle" prefWidth="200" prefHeight="50"/>
-        <Button style="-fx-background-color: #97B35F"
-                text="Combat Automatique" onAction="#handleAutomaticBattle" prefWidth="200" prefHeight="50"/>
-        <Button style="-fx-background-color: #9B3E62"
-                text="Tour NO" onAction="#handleTowerBattle" prefWidth="200" prefHeight="50"/>
+        <Button onAction="#handleControlledBattle" prefHeight="50" prefWidth="200" style="-fx-background-color: #8D89BA" text="Combat Classique" />
+        <Button onAction="#handleAutomaticBattle" prefHeight="50" prefWidth="200" style="-fx-background-color: #97B35F" text="Combat Automatique" />
+        <Button onAction="#handleTowerBattle" prefHeight="50" prefWidth="200" style="-fx-background-color: #9B3E62" text="Tour NO" />
+      <Button layoutX="30.0" layoutY="229.0" onAction="#handleReturn" prefHeight="50" prefWidth="200" style="-fx-background-color: #777777;" text="Return" />
 
     </VBox>
 </StackPane>

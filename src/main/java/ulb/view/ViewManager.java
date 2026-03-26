@@ -10,9 +10,6 @@ import ulb.view.windows.Window;
 import java.io.IOException;
 
 public class ViewManager {
-    protected static final String WINDOWS_PATH= "/ulb/view/";
-    protected static final String MODE_WINDOW_PATH = WINDOWS_PATH + "ModeWindow.fxml";
-
     private final Stage stage;
     private final GameController controller;
 

@@ -1,4 +1,4 @@
-# réunion 1 | 18 février
+# Réunion 1 | 18 février
 ## Décisions prises
 ### Trace écrite
 - Absences (mais pas les retards) lors des réunions

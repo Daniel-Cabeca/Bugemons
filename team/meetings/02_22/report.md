@@ -1,4 +1,4 @@
-# réunion 2 | 22 février
+# Réunion 2 | 22 février
 ## Décisions prises
 ### Pair programming
 - Pour le premier binôme on choisit quelqu'un qu'on connait pour s'habituer/voir comment le pair programming fonctionne

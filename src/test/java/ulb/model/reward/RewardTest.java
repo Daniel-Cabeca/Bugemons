@@ -20,6 +20,7 @@ public class RewardTest {
     public void checkGainsHPReward() {
         Bugemon bugemon =  new Bugemon(Type.AQUA, 10, 29, 35, 16);
         Reward reward = new Reward(bugemon);
+        bugemon.gainXp(50);
         reward.choseType(RewardType.HP);
         reward.applyReward();
         assertEquals(30, bugemon.getBaseStats().getHp());
@@ -29,6 +30,7 @@ public class RewardTest {
     public void checkGainsAttackReward() {
         Bugemon bugemon =  new Bugemon(Type.AQUA, 10, 29, 35, 16);
         Reward reward = new Reward(bugemon);
+        bugemon.gainXp(50);
         reward.choseType(RewardType.ATTACK);
         reward.applyReward();
         assertEquals(39, bugemon.getBaseStats().getAttack());
@@ -38,6 +40,7 @@ public class RewardTest {
     public void checkGainsDefenseReward() {
         Bugemon bugemon =  new Bugemon(Type.AQUA, 10, 29, 35, 16);
         Reward reward = new Reward(bugemon);
+        bugemon.gainXp(50);
         reward.choseType(RewardType.DEFENSE);
         reward.applyReward();
         assertEquals(45, bugemon.getBaseStats().getDefense());
@@ -47,6 +50,7 @@ public class RewardTest {
     public void checkGainsInitiativeReward() {
         Bugemon bugemon =  new Bugemon(Type.AQUA, 10, 29, 35, 16);
         Reward reward = new Reward(bugemon);
+        bugemon.gainXp(50);
         reward.choseType(RewardType.INITIATIVE);
         reward.applyReward();
         assertEquals(36, bugemon.getBaseStats().getInitiative());
@@ -56,6 +60,7 @@ public class RewardTest {
     public void checkGainsCombinationReward(){
         Bugemon bugemon =  new Bugemon(Type.AQUA, 10, 29, 35, 16);
         Reward reward = new Reward(bugemon);
+        bugemon.gainXp(50);
         reward.choseType(RewardType.COMBINATION);
         Stats previousBugemonStats = new Stats(bugemon.getBaseStats());
         reward.applyReward();

@@ -8,7 +8,6 @@ import ulb.model.item.Item;
 import ulb.model.effect.Effect;
 import ulb.controller.action.*; 
 import ulb.model.reward.Reward;
-import ulb.model.reward.RewardType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -446,7 +445,7 @@ public class Battle {
 		Vector<Reward> rewards = new Vector<>();
 		for (int i=0; i < 3; i++){
 			Reward r = new Reward(bugemonTarget);
-			r.choseType(RewardType.COMBINATION);
+			r.configureReward(r.generateRandomReward());
 			rewards.add(r);
 		}
 		return rewards;

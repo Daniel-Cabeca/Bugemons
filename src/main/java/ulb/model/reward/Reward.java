@@ -58,11 +58,11 @@ public class Reward {
     }
 
     /**
-     * Gains chosen reward by adding to the base stats of the bugemon
+     * Initializes the reward stats based on the given reward type
      *
-     * @param chosenReward the chosen reward type
+     * @param chosenReward the type of reward to initialize stats for
      */
-    public void choseType(RewardType chosenReward) {
+    public void configureReward(RewardType chosenReward) {
         switch (chosenReward) {
             case HP:
                 this.stats.hp = 20;

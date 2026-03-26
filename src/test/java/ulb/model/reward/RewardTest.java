@@ -21,7 +21,7 @@ public class RewardTest {
         Bugemon bugemon =  new Bugemon(Type.AQUA, 10, 29, 35, 16);
         Reward reward = new Reward(bugemon);
         bugemon.gainXp(50);
-        reward.choseType(RewardType.HP);
+        reward.configureReward(RewardType.HP);
         reward.applyReward();
         assertEquals(30, bugemon.getBaseStats().getHp());
     }
@@ -31,7 +31,7 @@ public class RewardTest {
         Bugemon bugemon =  new Bugemon(Type.AQUA, 10, 29, 35, 16);
         Reward reward = new Reward(bugemon);
         bugemon.gainXp(50);
-        reward.choseType(RewardType.ATTACK);
+        reward.configureReward(RewardType.ATTACK);
         reward.applyReward();
         assertEquals(39, bugemon.getBaseStats().getAttack());
     }
@@ -41,7 +41,7 @@ public class RewardTest {
         Bugemon bugemon =  new Bugemon(Type.AQUA, 10, 29, 35, 16);
         Reward reward = new Reward(bugemon);
         bugemon.gainXp(50);
-        reward.choseType(RewardType.DEFENSE);
+        reward.configureReward(RewardType.DEFENSE);
         reward.applyReward();
         assertEquals(45, bugemon.getBaseStats().getDefense());
     }
@@ -51,7 +51,7 @@ public class RewardTest {
         Bugemon bugemon =  new Bugemon(Type.AQUA, 10, 29, 35, 16);
         Reward reward = new Reward(bugemon);
         bugemon.gainXp(50);
-        reward.choseType(RewardType.INITIATIVE);
+        reward.configureReward(RewardType.INITIATIVE);
         reward.applyReward();
         assertEquals(36, bugemon.getBaseStats().getInitiative());
     }
@@ -61,7 +61,7 @@ public class RewardTest {
         Bugemon bugemon =  new Bugemon(Type.AQUA, 10, 29, 35, 16);
         Reward reward = new Reward(bugemon);
         bugemon.gainXp(50);
-        reward.choseType(RewardType.COMBINATION);
+        reward.configureReward(RewardType.COMBINATION);
         Stats previousBugemonStats = new Stats(bugemon.getBaseStats());
         reward.applyReward();
         assertEquals(10, getGainedPoint(previousBugemonStats, bugemon.getBaseStats()));

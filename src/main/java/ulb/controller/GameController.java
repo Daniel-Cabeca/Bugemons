@@ -406,11 +406,12 @@ public class GameController {
 
 	/**
 	 * Vérifie si le message passer en paramètre peut être fait ou non
-	 * @param m, le message qui comport l'action qu'on veut faire
+	 * @param m, le message qui comporte l'action qu'on veut faire
 	 * @return m, qui est soit un message d'erreur soit le message passé en paramètre si on peut le faire
 	 */
 	public Message handleMessage(Message m) {
-		if (m instanceof SwitchWindowMessage) {
+		if (m instanceof SwitchWindowMessage) { // pour l'instant on a pas de vérification à faire pour ce type d'action,
+			// mais c'est ici qu'on doit faire les vérif
 			return m;
 		}
         return m;

@@ -29,9 +29,7 @@ public class Main extends Application {
 
 		ViewManager viewManager = new ViewManager() {};
 		viewManager.setGameController(gameController);
-		System.out.println("main gameController:" + viewManager.getGameController());
 		viewManager.setStage(primaryStage);
-		System.out.println("main stage :" + viewManager.getStage());
 		gameController.setViewManager(viewManager); // possible change
 
 		Font.loadFont(getClass().getResourceAsStream("/fonts/pokemon-emerald-pro.otf"), 14);

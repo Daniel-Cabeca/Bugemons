@@ -184,7 +184,6 @@ public class CreateTeamWindow extends ViewManager {
 			this.getGameController().setupTeam(selectedBugemons);
 			Message switchToBattleMenu = new SwitchWindowMessage(WindowPath.BATTLE_MODE);
 			this.handleInput(switchToBattleMenu);
-			//sendWindowSwitchMessage(WindowPath.BATTLE_MODE);
 		} else {
 			throw new IllegalStateException("Tu dois sélectionner entre 1 et 6 Bugémons pour confirmer ton équipe.");
 		}
@@ -194,7 +193,6 @@ public class CreateTeamWindow extends ViewManager {
 	 * Returns to the main menu
 	 */
 	public void handleReturn()  {
-		//sendWindowSwitchMessage(WindowPath.MODE);
 		Message switchToModeMenu = new SwitchWindowMessage(WindowPath.MODE);
 		this.handleInput(switchToModeMenu);
 	}

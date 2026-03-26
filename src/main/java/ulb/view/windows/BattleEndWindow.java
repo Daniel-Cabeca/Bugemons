@@ -50,7 +50,5 @@ public class BattleEndWindow extends ViewManager {
 	public void handleReturn() {
 		Message switchToModeMenu = new SwitchWindowMessage(WindowPath.MODE);
 		this.handleInput(switchToModeMenu);
-		///sendWindowSwitchMessage(WindowPath.MODE);
-
 	}
 }

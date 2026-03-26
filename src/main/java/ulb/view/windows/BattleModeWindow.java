@@ -59,7 +59,6 @@ public class BattleModeWindow extends ViewManager {
 	private void handleReturn(){
         Message switchCreatTeamMenu = new SwitchWindowMessage(WindowPath.CREATE_TEAM);
         this.handleInput(switchCreatTeamMenu);
-		//sendWindowSwitchMessage(WindowPath.CREATE_TEAM);
 	}
 
     public void displayTeam() {

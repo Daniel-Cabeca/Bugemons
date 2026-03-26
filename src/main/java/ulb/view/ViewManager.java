@@ -42,7 +42,6 @@ public abstract class ViewManager {
             Parent root = loader.load();
 
             if (loader.getController() instanceof ViewManager window) {
-                System.out.println("stage :" + stage);
                 window.setGameController(controller);
                 window.setStage(stage);
                 window.onLoad();
@@ -61,13 +60,15 @@ public abstract class ViewManager {
         }
     }
 
+    /**
+     * Gère les demandes de toute les windows
+     * @param message
+     */
     public void handleInput(Message message) {
-        System.out.println("handle :" + this.getGameController());
         Message controllerResponse = this.controller.handleMessage(message);
         if (controllerResponse instanceof SwitchWindowMessage) {
             this.switchWindow(((SwitchWindowMessage) controllerResponse).getSwitchWindow());
         }
-
     }
 
 }

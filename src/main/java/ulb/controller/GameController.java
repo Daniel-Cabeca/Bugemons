@@ -404,10 +404,14 @@ public class GameController {
 		this.viewManager = vManager;
 	}
 
+	/**
+	 * Vérifie si le message passer en paramètre peut être fait ou non
+	 * @param m, le message qui comport l'action qu'on veut faire
+	 * @return m, qui est soit un message d'erreur soit le message passé en paramètre si on peut le faire
+	 */
 	public Message handleMessage(Message m) {
 		if (m instanceof SwitchWindowMessage) {
 			return m;
-			//viewManager.switchWindow(((SwitchWindowMessage) m).getSwitchWindow());
 		}
         return m;
     }

@@ -6,7 +6,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
 import ulb.communication.Message;
-import ulb.communication.types.SwitchWindowMessage;
+import ulb.communication.types.*;
 import ulb.controller.action.TeamController;
 import ulb.controller.strategy.StrategyRandom;
 import ulb.controller.towerManager.FloorManager;
@@ -23,25 +23,25 @@ import ulb.model.tower.RoomType;
 import ulb.model.reward.Reward;
 import ulb.view.ViewManager;
 import ulb.view.windows.BattleEndWindow;
-import ulb.view.windows.BattleModeWindow;
 import ulb.view.windows.BattleWindow;
 import ulb.view.windows.FloorRewardWindow;
 import ulb.view.windows.LevelUpWindow;
 
 import java.io.IOException;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
 
 public class GameController {
 	private Player player;
+	private Team opponentTeam;
 	private TowerManager towerModeTowerManager;
 	private BattleController normalModeBattleController;
 	private ViewManager viewManager;
 
 	private boolean isNextFloor;
+	private GameMode gameMode;
 	private final Deque<Bugemon> pendingLevelUpBugemons = new ArrayDeque<>();
 	private BattleController pendingRewardBattleController;
 	private boolean rewardSequenceReturnsToNextRoom;
@@ -59,30 +59,12 @@ public class GameController {
 
 	public Team getTeam() {return this.player.getTeam();}
 
-	/**
-	 * Adds the chosen Bugemons to the player's team
-	 *
-	 * @param player The player whose team needs to be set up
-	 * @param selectedBugemons The bugemons the player selected to be in their team
-	 */
-	public void setupPlayer(Player player , List<String> selectedBugemons){
-		this.setPlayer(player);
-
-		List<Bugemon> teamABugemons = new ArrayList<Bugemon>();
-		for (String bugemon : selectedBugemons) {
-			teamABugemons.add(new Bugemon(bugemon.toLowerCase()));
-		}
-
-		Team playerTeam = new Team(teamABugemons);
-		player.setTeam(playerTeam);
-	}
 
 	/**
 	 * Setups the right settings for the normal mode
 	 */
 	public void setupNormalMode(){
 		Team playerTeam = player.getTeam();
-		Team opponentTeam = new Team();
 		try{
 			opponentTeam = OpponentTeamGenerator.generateRandomOpponentTeam(playerTeam);
 		}catch(Exception e){
@@ -103,74 +85,11 @@ public class GameController {
 	}
 
 	/**
-	 * Switches to the battle type menu
-	 *
-	 * @param event the action triggered by clicking the confirm team button
-	 */
-	public void switchToBattleModeWindow(ActionEvent event) { // TODO refactor
-		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/BattleModeWindow.fxml"));
-			Parent battleMenu = loader.load();
-
-			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-			stage.getScene().setRoot(battleMenu);
-
-			BattleModeWindow controller = loader.getController();
-			controller.setViewManager(viewManager);
-			controller.displayTeam();
-
-		} catch (IOException e) {
-			System.err.println("Failed to load battle menu window: " + e.getMessage());
-		}
-	}
-
-	/**
-	 * Switches to the battle window with the selected bugemons
-	 *
-	 * @param teamA the player's team of bugemons
-	 * @param automatic whether the battle is in automatic mode or not
-	 */
-	public void switchToBattleWindow(Team teamA, boolean automatic, ActionEvent event) { //TODO refactor
-		// generate random opponent team
-		Team teamB = new Team();
-		try {
-			teamB = OpponentTeamGenerator.generateRandomOpponentTeam(teamA);
-		} catch (Exception e) {
-		}
-
-		// without multiplayer, player is always teamA
-
-		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/BattleWindow.fxml"));
-			Parent battleWindow = loader.load();
-
-			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-			stage.getScene().setRoot(battleWindow);
-
-			BattleWindow controller = loader.getController();
-			controller.setViewManager(viewManager);
-			controller.setBattleController(normalModeBattleController);
-
-			controller.initializeBattle(teamA, teamB, player.getInventory(), automatic, false);
-
-		} catch (IOException e) {
-			System.err.println("Failed to load battle window: " + e.getMessage());
-		}
-	}
-
-
-	/**
 	 * Switches to the battle window in tower mode with the selected bugemons
 	 *
 	 * @param teamA the player's team of bugemons
 	 */
 	public void switchToTowerBattleWindow(Team teamA, ActionEvent event) { //TODO refactor
-		// generate random opponent team
-		Team teamB = new Team();
-		try {
-			teamB = OpponentTeamGenerator.generateRandomOpponentTeam(teamA);
-		} catch (Exception e) {
-		}
 
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/BattleWindow.fxml"));
@@ -185,7 +104,7 @@ public class GameController {
 
 			controller.setBattleController(towerModeTowerManager.getCurrentRoomManager().getRoomBattleController());
 			// always manual battle in tower mode
-			controller.initializeBattle(teamA, teamB, player.getInventory(), false, true);
+			controller.initializeBattle(teamA, player.getInventory(), GameMode.TOWER);
 
 		} catch (IOException e) {
 			System.err.println("Failed to load battle window: " + e.getMessage());
@@ -258,7 +177,7 @@ public class GameController {
 
 			ulb.view.windows.NextRoomWindow controller = loader.getController();
 			controller.setViewManager(viewManager);
-			// updates the button to say "Prochain etage" (instead of "Prochaine salle") if the floor is completed
+			// updates the button to say "Prochain étage" (instead of "Prochaine salle") if the floor is completed
 			controller.updateButtonText(isNextFloor);
 		} catch (IOException e) {
 			System.err.println("Failed to load next_room_window: " + e.getMessage());
@@ -393,22 +312,46 @@ public class GameController {
 		teamController.setTeam(selectedBugemons);
 	}
 
+	public TowerManager getTowerManager() {
+		return towerModeTowerManager;
+	}
 
 	public void setViewManager(ViewManager vManager) {
 		this.viewManager = vManager;
 	}
 
 	/**
-	 * Vérifie si le message passer en paramètre peut être fait ou non
-	 * @param m, le message qui comporte l'action qu'on veut faire
-	 * @return m, qui est soit un message d'erreur soit le message passé en paramètre si on peut le faire
+	 * Handles a message received from ViewManager
+	 * @param m the message received from ViewManager
+	 * @return m the answer message to transfer to ViewManager
 	 */
 	public Message handleMessage(Message m) {
-		if (m instanceof SwitchWindowMessage) { // pour l'instant on a pas de vérification à faire pour ce type d'action,
+		if (m instanceof SwitchWindowMessage) { // pour l'instant, on n'a pas de vérification à faire pour ce type d'action,
 			// mais c'est ici qu'on doit faire les vérif
 			return m;
+		} else if (m instanceof SetupTeamMessage) {
+			setupTeam(((SetupTeamMessage) m).getSelectedBugemons());
+		} else if (m instanceof SetupGameModeMessage) {
+			handleSetupGameModeMessage((SetupGameModeMessage) m);
+		} else if (m instanceof GetInfoMessage) {
+			if (gameMode == GameMode.TOWER) {
+				m = new SetupGameModeMessage(gameMode, getTeam(), opponentTeam, player.getInventory(), towerModeTowerManager.getCurrentBattleController());
+			} else {
+				m = new SetupGameModeMessage(gameMode, getTeam(), opponentTeam, player.getInventory(), normalModeBattleController);
+			}
 		}
         return m;
     }
+
+	private void handleSetupGameModeMessage(SetupGameModeMessage m) {
+		gameMode = m.getGameMode();
+		switch (gameMode) {
+			case AUTO, CONTROLLED:
+				setupNormalMode();
+				break;
+			case TOWER:
+				setupTowerMode();
+		}
+	}
 
 }

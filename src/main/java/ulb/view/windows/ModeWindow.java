@@ -21,8 +21,7 @@ public final class ModeWindow extends Window {
 
 	@FXML
 	private void goSoloMode() {
-		Message switchToSoloModeWindow = new SwitchWindowMessage(WindowPath.CREATE_TEAM);
-		viewManager.handleInput(switchToSoloModeWindow);
+		sendSwitchWindowMessage(WindowPath.CREATE_TEAM);
 	}
 
 	@FXML

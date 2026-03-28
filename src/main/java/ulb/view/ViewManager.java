@@ -5,8 +5,12 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import ulb.communication.Message;
+import ulb.communication.types.SetupGameModeMessage;
+import ulb.communication.types.SetupTeamMessage;
 import ulb.communication.types.SwitchWindowMessage;
+import ulb.controller.BattleController;
 import ulb.controller.GameController;
+import ulb.view.windows.BattleWindow;
 import ulb.view.windows.Window;
 
 import java.io.IOException;
@@ -14,7 +18,6 @@ import java.io.IOException;
 public abstract class ViewManager {
     private Stage stage;
     private GameController controller;
-
 
     public void setGameController(GameController gameController) { this.controller = gameController; }
 
@@ -36,6 +39,9 @@ public abstract class ViewManager {
 
             if (loader.getController() instanceof Window window) {
                 window.setViewManager(this);
+                if (window instanceof BattleWindow battleWindow) {
+                    battleWindow.setTowerManager(controller.getTowerManager());
+                }
                 window.onLoad();
             }
 
@@ -56,11 +62,14 @@ public abstract class ViewManager {
      * Handles all messages received from a window
      * @param message the message received from a window
      */
-    public void handleInput(Message message) {
+    public Message handleMessage(Message message) {
         Message controllerResponse = this.controller.handleMessage(message);
         if (controllerResponse instanceof SwitchWindowMessage) {
             this.switchWindow(((SwitchWindowMessage) controllerResponse).getSwitchWindow());
+        }  else if (controllerResponse instanceof SetupGameModeMessage) {
+            return controllerResponse;
         }
+        return null;
     }
 
 }

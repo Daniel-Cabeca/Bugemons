@@ -12,6 +12,7 @@ import java.util.List;
 
 import ulb.communication.Message;
 import ulb.communication.types.SwitchWindowMessage;
+import ulb.communication.types.SetupTeamMessage;
 import ulb.model.bugemon.BugemonSpecies;
 import ulb.utils.Scaling;
 import ulb.service.BugemonService;
@@ -19,7 +20,6 @@ import ulb.service.ServiceLoader;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import ulb.view.ViewManager;
 import ulb.view.WindowPath;
 
 public class CreateTeamWindow extends Window {
@@ -181,9 +181,9 @@ public class CreateTeamWindow extends Window {
 	 */
 	public void handleConfirmTeam() {
 		if (!selectedBugemons.isEmpty() && selectedBugemons.size() <= MAX_BUGEMONS) {
-			viewManager.getGameController().setupTeam(selectedBugemons);
-			Message switchToBattleMenu = new SwitchWindowMessage(WindowPath.BATTLE_MODE);
-			viewManager.handleInput(switchToBattleMenu);
+			SetupTeamMessage message = new SetupTeamMessage(selectedBugemons);
+			viewManager.handleMessage(message);
+			sendSwitchWindowMessage(WindowPath.BATTLE_MODE);
 		} else {
 			throw new IllegalStateException("Tu dois sélectionner entre 1 et 6 Bugémons pour confirmer ton équipe.");
 		}
@@ -192,9 +192,8 @@ public class CreateTeamWindow extends Window {
 	/**
 	 * Returns to the main menu
 	 */
-	public void handleReturn()  {
-		Message switchToModeMenu = new SwitchWindowMessage(WindowPath.MODE);
-		viewManager.handleInput(switchToModeMenu);
+	public void handleReturn() {
+		sendSwitchWindowMessage(WindowPath.MODE);
 	}
 
 }

@@ -1,16 +1,12 @@
 package ulb.view.windows;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import ulb.communication.Message;
 import ulb.communication.types.SwitchWindowMessage;
 import ulb.utils.Scaling;
-import ulb.view.ViewManager;
 import ulb.view.WindowPath;
-
-import java.io.IOException;
 
 public class BattleEndWindow extends Window {
 
@@ -49,6 +45,6 @@ public class BattleEndWindow extends Window {
 	 */
 	public void handleReturn() {
 		Message switchToModeMenu = new SwitchWindowMessage(WindowPath.MODE);
-		viewManager.handleInput(switchToModeMenu);
+		viewManager.handleMessage(switchToModeMenu);
 	}
 }

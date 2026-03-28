@@ -12,6 +12,9 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
 import ulb.communication.Message;
+import ulb.communication.types.GameMode;
+import ulb.communication.types.GetInfoMessage;
+import ulb.communication.types.SetupGameModeMessage;
 import ulb.communication.types.SwitchWindowMessage;
 import ulb.controller.GameController;
 import ulb.controller.towerManager.TowerManager;
@@ -32,7 +35,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.util.Callback;
-import ulb.view.ViewManager;
 import ulb.view.WindowPath;
 
 public class BattleWindow extends Window {
@@ -97,33 +99,36 @@ public class BattleWindow extends Window {
 	private Inventory playerInventory;
 	private BattleController battleController;
 	private TowerManager towerManager;
-	private boolean tower;
-	private boolean automaticMode;
+	private GameMode gameMode;
 	private boolean waitingForOpponentAction = false;
 
 
 	public void setBattleController(BattleController battleController) { this.battleController = battleController; }
 
-
 	public void setTowerManager(TowerManager towerManager) {this.towerManager = towerManager;}
+
+	@Override
+	public void onLoad() {
+		Message m = viewManager.handleMessage(new GetInfoMessage());
+		if (m instanceof SetupGameModeMessage setup) {
+			this.battleController = setup.getBattleController();
+			initializeBattle(setup.getTeamA(), setup.getInventory(), setup.getGameMode());
+		}
+	}
 
 	/**
 	 * Initializes the battle according to the teams, inventory and battle mode
 	 *
 	 * @param playerTeam the player's team
-	 * @param opponentTeam the opponent's team
 	 * @param playerInventory the player's inventory
-	 * @param automatic  {@code true} if the battle mode is automatic, {@code false} if the mode is controlled
 	 */
-	public void initializeBattle(Team playerTeam, Team opponentTeam, Inventory playerInventory, boolean automatic,
-								 boolean tower) {
+	public void initializeBattle(Team playerTeam, Inventory playerInventory, GameMode gameMode) {
 		this.playerTeam = playerTeam;
 		this.playerInventory = playerInventory;
-		this.tower = tower;
-		this.automaticMode = automatic;
+		this.gameMode = gameMode;
 
 		// disables action buttons for the automatic mode
-		if (automatic) {
+		if (gameMode == GameMode.AUTO) {
 			attackButton.setDisable(true);
 			itemButton.setDisable(true);
 			runButton.setDisable(true);
@@ -133,7 +138,7 @@ public class BattleWindow extends Window {
 		}
 
 		initializeGraphicalBattle();
-		if (tower) {
+		if (gameMode == GameMode.TOWER) {
 			floorLabel.setText("Etage: NO" + towerManager.getFloorNumber());
 			roomLabel.setText("Salle: " + towerManager.getCurrentRoomIndex());
 		}
@@ -640,14 +645,14 @@ public class BattleWindow extends Window {
 	 */
 	private void setBattleInputsDisabled(boolean disabled) {
 		// Main battle buttons
-		attackButton.setDisable(disabled || automaticMode);
-		itemButton.setDisable(disabled || automaticMode);
-		runButton.setDisable(disabled || automaticMode);
-		switchButton.setDisable(disabled || automaticMode);
+		attackButton.setDisable(disabled || gameMode == GameMode.AUTO);
+		itemButton.setDisable(disabled || gameMode == GameMode.AUTO);
+		runButton.setDisable(disabled || gameMode == GameMode.AUTO);
+		switchButton.setDisable(disabled || gameMode == GameMode.AUTO);
 
 		// The auto button is disabled if the interface is blocked
     	// or if automatic mode is not enabled
-		autoButton.setDisable(disabled || !automaticMode);
+		autoButton.setDisable(disabled || gameMode != GameMode.AUTO);
 
 		// Also disable subviews to prevent any interaction while waiting
 		inventoryView.setDisable(disabled);
@@ -684,8 +689,9 @@ public class BattleWindow extends Window {
 	public void checkBattleEnd(BattleState state, ActionEvent event){
 		GameController controller = viewManager.getGameController();
 		if (state == BattleState.WON) {
-			if (!controller.startLevelUpSequenceIfNeeded(battleController, this.tower, event)) {
-				if (!this.tower) {
+			boolean isTower = gameMode == GameMode.TOWER;
+			if (!controller.startLevelUpSequenceIfNeeded(battleController, isTower, event)) {
+				if (!isTower) {
 					controller.switchToBattleEndWindow(true, event);
 				} else {
 					controller.switchToNextRoomWindow(event);
@@ -710,7 +716,7 @@ public class BattleWindow extends Window {
 	*/
 	public void handleReturn(ActionEvent event) throws IOException {
 		Message switchToModeMenu = new SwitchWindowMessage(WindowPath.MODE);
-		viewManager.handleInput(switchToModeMenu);
+		viewManager.handleMessage(switchToModeMenu);
 	}
 
 

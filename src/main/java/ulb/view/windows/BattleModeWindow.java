@@ -8,15 +8,14 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import ulb.communication.Message;
+import ulb.communication.types.GameMode;
+import ulb.communication.types.SetupGameModeMessage;
 import ulb.communication.types.SwitchWindowMessage;
 import ulb.controller.GameController;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.team.Team;
 import ulb.utils.Scaling;
-import ulb.view.ViewManager;
 import ulb.view.WindowPath;
-
-import javax.swing.text.View;
 
 
 public class BattleModeWindow extends Window {
@@ -42,27 +41,37 @@ public class BattleModeWindow extends Window {
 
 
     public void handleAutomaticBattle(ActionEvent actionEvent) {
-        GameController controller = viewManager.getGameController();
-		controller.setupNormalMode();
-		controller.switchToBattleWindow(controller.getTeam(), true, actionEvent);
+        SetupGameModeMessage setupMessage = new SetupGameModeMessage(GameMode.AUTO);
+        viewManager.handleMessage(setupMessage);
+        sendSwitchWindowMessage(WindowPath.BATTLE);
+        //GameController controller = viewManager.getGameController();
+		//controller.setupNormalMode();
+		//controller.switchToBattleWindow(controller.getTeam(), true, actionEvent);
     }
 
     public void handleControlledBattle(ActionEvent actionEvent) {
-        GameController controller = viewManager.getGameController();
-        controller.setupNormalMode();
-        controller.switchToBattleWindow(controller.getTeam(), false, actionEvent);
+        SetupGameModeMessage setupMessage = new SetupGameModeMessage(GameMode.CONTROLLED);
+        viewManager.handleMessage(setupMessage);
+        sendSwitchWindowMessage(WindowPath.BATTLE);
+
+//        GameController controller = viewManager.getGameController();
+//        controller.setupNormalMode();
+//        controller.switchToBattleWindow(controller.getTeam(), actionEvent);
     }
 
 	public void handleTowerBattle(ActionEvent actionEvent) {
-        GameController controller = viewManager.getGameController();
-        controller.setupTowerMode();
-		controller.handleTower(controller.getTeam(),actionEvent);
+        SetupGameModeMessage setupMessage = new SetupGameModeMessage(GameMode.TOWER);
+        viewManager.handleMessage(setupMessage);
+        sendSwitchWindowMessage(WindowPath.BATTLE);
+//        GameController controller = viewManager.getGameController();
+//        controller.setupTowerMode();
+//		controller.handleTower(controller.getTeam(),actionEvent);
 	}
 
 	@FXML
 	private void handleReturn(){
         Message switchCreatTeamMenu = new SwitchWindowMessage(WindowPath.CREATE_TEAM);
-        viewManager.handleInput(switchCreatTeamMenu);
+        viewManager.handleMessage(switchCreatTeamMenu);
 	}
 
     public void displayTeam() {

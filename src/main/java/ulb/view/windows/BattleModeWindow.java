@@ -40,38 +40,27 @@ public class BattleModeWindow extends Window {
     }
 
 
-    public void handleAutomaticBattle(ActionEvent actionEvent) {
+    public void handleAutomaticBattle() {
         SetupGameModeMessage setupMessage = new SetupGameModeMessage(GameMode.AUTO);
         viewManager.handleMessage(setupMessage);
         sendSwitchWindowMessage(WindowPath.BATTLE);
-        //GameController controller = viewManager.getGameController();
-		//controller.setupNormalMode();
-		//controller.switchToBattleWindow(controller.getTeam(), true, actionEvent);
     }
 
-    public void handleControlledBattle(ActionEvent actionEvent) {
+    public void handleControlledBattle() {
         SetupGameModeMessage setupMessage = new SetupGameModeMessage(GameMode.CONTROLLED);
         viewManager.handleMessage(setupMessage);
         sendSwitchWindowMessage(WindowPath.BATTLE);
-
-//        GameController controller = viewManager.getGameController();
-//        controller.setupNormalMode();
-//        controller.switchToBattleWindow(controller.getTeam(), actionEvent);
     }
 
-	public void handleTowerBattle(ActionEvent actionEvent) {
+	public void handleTowerBattle() {
         SetupGameModeMessage setupMessage = new SetupGameModeMessage(GameMode.TOWER);
         viewManager.handleMessage(setupMessage);
         sendSwitchWindowMessage(WindowPath.BATTLE);
-//        GameController controller = viewManager.getGameController();
-//        controller.setupTowerMode();
-//		controller.handleTower(controller.getTeam(),actionEvent);
 	}
 
 	@FXML
 	private void handleReturn(){
-        Message switchCreatTeamMenu = new SwitchWindowMessage(WindowPath.CREATE_TEAM);
-        viewManager.handleMessage(switchCreatTeamMenu);
+        sendSwitchWindowMessage(WindowPath.CREATE_TEAM);
 	}
 
     public void displayTeam() {

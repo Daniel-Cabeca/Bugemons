@@ -35,7 +35,6 @@ import java.util.List;
 
 public class GameController {
 	private Player player;
-	private Team opponentTeam;
 	private TowerManager towerModeTowerManager;
 	private BattleController normalModeBattleController;
 	private ViewManager viewManager;
@@ -65,6 +64,7 @@ public class GameController {
 	 */
 	public void setupNormalMode(){
 		Team playerTeam = player.getTeam();
+		Team opponentTeam = new Team();
 		try{
 			opponentTeam = OpponentTeamGenerator.generateRandomOpponentTeam(playerTeam);
 		}catch(Exception e){
@@ -335,14 +335,19 @@ public class GameController {
 			handleSetupGameModeMessage((SetupGameModeMessage) m);
 		} else if (m instanceof GetInfoMessage) {
 			if (gameMode == GameMode.TOWER) {
-				m = new SetupGameModeMessage(gameMode, getTeam(), opponentTeam, player.getInventory(), towerModeTowerManager.getCurrentBattleController());
+				m = new SetupGameModeMessage(gameMode, getTeam(), player.getInventory(), towerModeTowerManager.getCurrentBattleController());
 			} else {
-				m = new SetupGameModeMessage(gameMode, getTeam(), opponentTeam, player.getInventory(), normalModeBattleController);
+				m = new SetupGameModeMessage(gameMode, getTeam(), player.getInventory(), normalModeBattleController);
 			}
 		}
         return m;
     }
 
+	/**
+	 * Sets up the game based on the chosen game mode
+	 *
+	 * @param m the message containing the chosen game mode
+	 */
 	private void handleSetupGameModeMessage(SetupGameModeMessage m) {
 		gameMode = m.getGameMode();
 		switch (gameMode) {

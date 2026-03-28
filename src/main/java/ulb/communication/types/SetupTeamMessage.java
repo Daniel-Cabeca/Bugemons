@@ -4,6 +4,9 @@ import ulb.communication.Message;
 
 import java.util.List;
 
+/**
+ * Message used by the view to send the chosen bugemons to the controller
+ */
 public class SetupTeamMessage implements Message {
 
     List<String> selectedBugemons;

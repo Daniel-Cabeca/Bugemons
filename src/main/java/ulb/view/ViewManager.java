@@ -5,7 +5,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import ulb.communication.Message;
-import ulb.communication.types.ErrorMessage;
 import ulb.communication.types.SwitchWindowMessage;
 import ulb.controller.GameController;
 import ulb.view.windows.Window;
@@ -17,7 +16,6 @@ public abstract class ViewManager {
     private GameController controller;
 
 
-
     public void setGameController(GameController gameController) { this.controller = gameController; }
 
     public void setStage(Stage stageNew){this.stage = stageNew;}
@@ -26,11 +24,6 @@ public abstract class ViewManager {
         return this.controller;
     }
 
-    public Stage getStage(){
-        return this.stage;
-    }
-
-    public void onLoad() {}
     /**
      * Switches to the window by loading the fxml file and setting the controller
      *
@@ -41,9 +34,8 @@ public abstract class ViewManager {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(windowFxmlPath));
             Parent root = loader.load();
 
-            if (loader.getController() instanceof ViewManager window) {
-                window.setGameController(controller);
-                window.setStage(stage);
+            if (loader.getController() instanceof Window window) {
+                window.setViewManager(this);
                 window.onLoad();
             }
 
@@ -61,8 +53,8 @@ public abstract class ViewManager {
     }
 
     /**
-     * Gère les demandes de toute les windows
-     * @param message
+     * Handles all messages received from a window
+     * @param message the message received from a window
      */
     public void handleInput(Message message) {
         Message controllerResponse = this.controller.handleMessage(message);

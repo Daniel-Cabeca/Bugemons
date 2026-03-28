@@ -9,6 +9,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import ulb.communication.Message;
 import ulb.communication.types.SwitchWindowMessage;
+import ulb.controller.GameController;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.team.Team;
 import ulb.utils.Scaling;
@@ -18,7 +19,7 @@ import ulb.view.WindowPath;
 import javax.swing.text.View;
 
 
-public class BattleModeWindow extends ViewManager {
+public class BattleModeWindow extends Window {
 
     @FXML
     private GridPane playerTeamGrid;
@@ -41,28 +42,31 @@ public class BattleModeWindow extends ViewManager {
 
 
     public void handleAutomaticBattle(ActionEvent actionEvent) {
-		getGameController().setupNormalMode();
-		getGameController().switchToBattleWindow(getGameController().getTeam(), true, actionEvent);
+        GameController controller = viewManager.getGameController();
+		controller.setupNormalMode();
+		controller.switchToBattleWindow(controller.getTeam(), true, actionEvent);
     }
 
     public void handleControlledBattle(ActionEvent actionEvent) {
-		getGameController().setupNormalMode();
-        getGameController().switchToBattleWindow(getGameController().getTeam(), false, actionEvent);
+        GameController controller = viewManager.getGameController();
+        controller.setupNormalMode();
+        controller.switchToBattleWindow(controller.getTeam(), false, actionEvent);
     }
 
 	public void handleTowerBattle(ActionEvent actionEvent) {
-		getGameController().setupTowerMode();
-		getGameController().handleTower(getGameController().getTeam(),actionEvent);
+        GameController controller = viewManager.getGameController();
+        controller.setupTowerMode();
+		controller.handleTower(controller.getTeam(),actionEvent);
 	}
 
 	@FXML
 	private void handleReturn(){
         Message switchCreatTeamMenu = new SwitchWindowMessage(WindowPath.CREATE_TEAM);
-        this.handleInput(switchCreatTeamMenu);
+        viewManager.handleInput(switchCreatTeamMenu);
 	}
 
     public void displayTeam() {
-        displayTeamWithStats(getGameController().getTeam(), playerTeamGrid);
+        displayTeamWithStats(viewManager.getGameController().getTeam(), playerTeamGrid);
     }
 
     /**

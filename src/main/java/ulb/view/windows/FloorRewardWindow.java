@@ -7,7 +7,7 @@ import javafx.scene.control.Label;
 import ulb.controller.towerManager.TowerManager;
 import ulb.view.ViewManager;
 
-public class FloorRewardWindow extends ViewManager {
+public class FloorRewardWindow extends Window {
 	//TODO: implement functions + add popup window to newAttackReward and StatReward to select bugemon
 
 	private TowerManager towerManager;
@@ -23,7 +23,7 @@ public class FloorRewardWindow extends ViewManager {
 	@FXML
 	private Label roomLabel;
 
-	private void switchToNextRoomWindow(ActionEvent event){getGameController().switchToNextRoomWindow(event);}
+	private void switchToNextRoomWindow(ActionEvent event){viewManager.getGameController().switchToNextRoomWindow(event);}
 	public void setTowerManager(TowerManager towerManager){ this.towerManager = towerManager;}
 
 	public void initializeLabels() {

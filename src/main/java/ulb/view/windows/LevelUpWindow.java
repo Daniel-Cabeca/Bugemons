@@ -13,7 +13,7 @@ import ulb.view.ViewManager;
 
 import java.util.Vector;
 
-public class LevelUpWindow extends ViewManager {
+public class LevelUpWindow extends Window {
 	@FXML
 	private Label bugemonLevel;
 	@FXML
@@ -60,9 +60,9 @@ public class LevelUpWindow extends ViewManager {
 	}
 
 	@FXML
-	private void chooseRewardA(ActionEvent event) { getGameController().handleLevelUpRewardChoice(rA, event); }
+	private void chooseRewardA(ActionEvent event) { viewManager.getGameController().handleLevelUpRewardChoice(rA, event); }
 	@FXML
-	private void chooseRewardB(ActionEvent event) { getGameController().handleLevelUpRewardChoice(rB, event); }
+	private void chooseRewardB(ActionEvent event) { viewManager.getGameController().handleLevelUpRewardChoice(rB, event); }
 	@FXML
-	private void chooseRewardC(ActionEvent event) { getGameController().handleLevelUpRewardChoice(rC, event); }
+	private void chooseRewardC(ActionEvent event) { viewManager.getGameController().handleLevelUpRewardChoice(rC, event); }
 }

@@ -5,16 +5,16 @@ import java.io.IOException;
 import ulb.communication.Message;
 import ulb.communication.types.SwitchWindowMessage;
 import ulb.controller.GameController;
+import ulb.view.ViewManager;
 
-public abstract class Window{
+import javax.swing.text.View;
 
-	protected GameController gameController;
+public abstract class Window {
 
-	public void setGameController(GameController gameController) { this.gameController = gameController; }
+	protected ViewManager viewManager;
+
+	public void setViewManager(ViewManager viewManager) { this.viewManager = viewManager; }
 
 	public void onLoad() {}
 
-	protected void sendWindowSwitchMessage(String fxmlPath) {
-		gameController.handleMessage(new SwitchWindowMessage(fxmlPath));
-	}
 }

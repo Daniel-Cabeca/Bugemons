@@ -12,7 +12,7 @@ import ulb.view.WindowPath;
 
 import java.io.IOException;
 
-public class BattleEndWindow extends ViewManager {
+public class BattleEndWindow extends Window {
 
 	@FXML
 	public Label titleLabel;
@@ -49,6 +49,6 @@ public class BattleEndWindow extends ViewManager {
 	 */
 	public void handleReturn() {
 		Message switchToModeMenu = new SwitchWindowMessage(WindowPath.MODE);
-		this.handleInput(switchToModeMenu);
+		viewManager.handleInput(switchToModeMenu);
 	}
 }

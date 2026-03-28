@@ -13,6 +13,7 @@ import javafx.scene.layout.GridPane;
 
 import ulb.communication.Message;
 import ulb.communication.types.SwitchWindowMessage;
+import ulb.controller.GameController;
 import ulb.controller.towerManager.TowerManager;
 import ulb.model.battle.BattleState;
 import ulb.model.bugemon.Bugemon;
@@ -34,7 +35,7 @@ import javafx.util.Callback;
 import ulb.view.ViewManager;
 import ulb.view.WindowPath;
 
-public class BattleWindow extends ViewManager {
+public class BattleWindow extends Window {
 
 	@FXML
 	private GridPane playerTeamGrid;
@@ -681,16 +682,17 @@ public class BattleWindow extends ViewManager {
 	}
 
 	public void checkBattleEnd(BattleState state, ActionEvent event){
+		GameController controller = viewManager.getGameController();
 		if (state == BattleState.WON) {
-			if (!getGameController().startLevelUpSequenceIfNeeded(battleController, this.tower, event)) {
+			if (!controller.startLevelUpSequenceIfNeeded(battleController, this.tower, event)) {
 				if (!this.tower) {
-					getGameController().switchToBattleEndWindow(true, event);
+					controller.switchToBattleEndWindow(true, event);
 				} else {
-					getGameController().switchToNextRoomWindow(event);
+					controller.switchToNextRoomWindow(event);
 				}
 			}
 		} else if (state == BattleState.LOST) {
-			getGameController().switchToBattleEndWindow(false, event);
+			controller.switchToBattleEndWindow(false, event);
 		}
 	}
 
@@ -708,7 +710,7 @@ public class BattleWindow extends ViewManager {
 	*/
 	public void handleReturn(ActionEvent event) throws IOException {
 		Message switchToModeMenu = new SwitchWindowMessage(WindowPath.MODE);
-		this.handleInput(switchToModeMenu);
+		viewManager.handleInput(switchToModeMenu);
 	}
 
 

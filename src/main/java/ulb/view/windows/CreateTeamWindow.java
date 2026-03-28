@@ -22,7 +22,7 @@ import javafx.scene.image.ImageView;
 import ulb.view.ViewManager;
 import ulb.view.WindowPath;
 
-public class CreateTeamWindow extends ViewManager {
+public class CreateTeamWindow extends Window {
 
 	@FXML
 	private VBox content;
@@ -181,9 +181,9 @@ public class CreateTeamWindow extends ViewManager {
 	 */
 	public void handleConfirmTeam() {
 		if (!selectedBugemons.isEmpty() && selectedBugemons.size() <= MAX_BUGEMONS) {
-			this.getGameController().setupTeam(selectedBugemons);
+			viewManager.getGameController().setupTeam(selectedBugemons);
 			Message switchToBattleMenu = new SwitchWindowMessage(WindowPath.BATTLE_MODE);
-			this.handleInput(switchToBattleMenu);
+			viewManager.handleInput(switchToBattleMenu);
 		} else {
 			throw new IllegalStateException("Tu dois sélectionner entre 1 et 6 Bugémons pour confirmer ton équipe.");
 		}
@@ -194,7 +194,7 @@ public class CreateTeamWindow extends ViewManager {
 	 */
 	public void handleReturn()  {
 		Message switchToModeMenu = new SwitchWindowMessage(WindowPath.MODE);
-		this.handleInput(switchToModeMenu);
+		viewManager.handleInput(switchToModeMenu);
 	}
 
 }

@@ -116,7 +116,7 @@ public class GameController {
 			stage.getScene().setRoot(battleMenu);
 
 			BattleModeWindow controller = loader.getController();
-			controller.setGameController(this);
+			controller.setViewManager(viewManager);
 			controller.displayTeam();
 
 		} catch (IOException e) {
@@ -148,8 +148,7 @@ public class GameController {
 			stage.getScene().setRoot(battleWindow);
 
 			BattleWindow controller = loader.getController();
-			controller.setGameController(this);
-			controller.setStage(stage);
+			controller.setViewManager(viewManager);
 			controller.setBattleController(normalModeBattleController);
 
 			controller.initializeBattle(teamA, teamB, player.getInventory(), automatic, false);
@@ -181,9 +180,8 @@ public class GameController {
 			stage.getScene().setRoot(battleWindow);
 
 			BattleWindow controller = loader.getController();
-			controller.setGameController(this);
+			controller.setViewManager(viewManager);
 			controller.setTowerManager(towerModeTowerManager);
-			controller.setStage(stage);
 
 			controller.setBattleController(towerModeTowerManager.getCurrentRoomManager().getRoomBattleController());
 			// always manual battle in tower mode
@@ -206,8 +204,7 @@ public class GameController {
 			stage.getScene().setRoot(floorRewardWindow);
 
 			FloorRewardWindow controller = loader.getController();
-			controller.setGameController(this);
-			controller.setStage(stage);
+			controller.setViewManager(viewManager);
 			controller.setTowerManager(towerModeTowerManager);
 			controller.initializeLabels();
 
@@ -238,8 +235,7 @@ public class GameController {
 			stage.getScene().setRoot(battleEndWindow);
 
 			BattleEndWindow controller = loader.getController();
-			controller.setGameController(this);
-			controller.setStage(stage);
+			controller.setViewManager(viewManager);
 			controller.setResult(victory, totalXP);
 
 		} catch (IOException e) {
@@ -261,8 +257,7 @@ public class GameController {
 			stage.getScene().setRoot(nextRoomWindow);
 
 			ulb.view.windows.NextRoomWindow controller = loader.getController();
-			controller.setGameController(this);
-			controller.setStage(stage);
+			controller.setViewManager(viewManager);
 			// updates the button to say "Prochain etage" (instead of "Prochaine salle") if the floor is completed
 			controller.updateButtonText(isNextFloor);
 		} catch (IOException e) {
@@ -334,8 +329,7 @@ public class GameController {
 			stage.getScene().setRoot(levelUpWindow);
 
 			LevelUpWindow controller = loader.getController();
-			controller.setGameController(this);
-			controller.setStage(stage);
+			controller.setViewManager(viewManager);
 			controller.initializeRewardSelection(currentBugemon, pendingRewardBattleController.getRewards(currentBugemon));
 		} catch (IOException e) {
 			System.err.println("Failed to load level_up_window: " + e.getMessage());

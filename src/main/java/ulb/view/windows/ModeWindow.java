@@ -9,7 +9,7 @@ import ulb.utils.Scaling;
 import ulb.view.ViewManager;
 import ulb.view.WindowPath;
 
-public final class ModeWindow extends ViewManager {
+public final class ModeWindow extends Window {
 
 	@FXML
 	private VBox content;
@@ -22,8 +22,7 @@ public final class ModeWindow extends ViewManager {
 	@FXML
 	private void goSoloMode() {
 		Message switchToSoloModeWindow = new SwitchWindowMessage(WindowPath.CREATE_TEAM);
-		System.out.println("mode :" + this.getGameController());
-		this.handleInput(switchToSoloModeWindow);
+		viewManager.handleInput(switchToSoloModeWindow);
 	}
 
 	@FXML

@@ -12,6 +12,7 @@ import ulb.repository.json.AbilityJsonRepository;
  */
 public class AbilityMockRepository implements AbilityRepository {
 	private static AbilityRepository abilityRepository = null;
+	private static AbilityRepository mockData = null;
 
 	public AbilityMockRepository() {
 		if (abilityRepository == null) {
@@ -21,6 +22,7 @@ public class AbilityMockRepository implements AbilityRepository {
 
 	private static void load() {
 		abilityRepository = new AbilityJsonRepository();
+		mockData = new AbilityJsonRepository(MockResources.getStream(MockResources.PATH_ABILITIES));
 	}
 
 	public static void reload() {
@@ -29,6 +31,10 @@ public class AbilityMockRepository implements AbilityRepository {
 
 	@Override
 	public Ability findById(String id) throws NoSuchElementException {
-		return abilityRepository.findById(id);
+		try {
+			return abilityRepository.findById(id);
+		} catch (NoSuchElementException e) {
+			return mockData.findById(id);
+		}
 	}
 }

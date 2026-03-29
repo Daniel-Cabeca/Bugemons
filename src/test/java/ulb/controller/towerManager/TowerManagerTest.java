@@ -1,26 +1,34 @@
 package ulb.controller.towerManager;
 
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.List;
 
 import ulb.model.Player;
 import ulb.model.bugemon.Bugemon;
-import ulb.model.sample.BugemonSample;
 import ulb.model.team.Team;
 import ulb.model.tower.Floor;
 import ulb.model.tower.Room;
 import  ulb.model.tower.Tower;
 
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
+import ulb.repository.BugemonSpeciesRepository;
+import ulb.repository.mock.BugemonSpeciesMockRepository;
+import ulb.service.BugemonService;
 
 public class TowerManagerTest {
 
+	private Bugemon makeBugemon() {
+		BugemonSpeciesRepository bugemonRepository = new BugemonSpeciesMockRepository();
+		BugemonService bugemonService = new BugemonService(bugemonRepository);
+
+		return bugemonService.spawnBugemon("florachu");
+	}
 
 	@Test
 	void towerIsNotCompletedOnInitialisation() {
 		Player player = new Player("TestPlayer");
-		Bugemon a = BugemonSample.getA();
+		Bugemon a = makeBugemon();
 		Team teamA = new Team(List.of(a));
 		player.setTeam(teamA);
 		TowerManager manager = new TowerManager(player);
@@ -35,7 +43,7 @@ public class TowerManagerTest {
 	@Test
 	void towerIsCompletedWhenAllFloorsCompleted() {
 		Player player = new Player("TestPlayer");
-		Bugemon a = BugemonSample.getA();
+		Bugemon a = makeBugemon();
 		Team teamA = new Team(List.of(a));
 		player.setTeam(teamA);
 		TowerManager manager = new TowerManager(player);
@@ -52,7 +60,7 @@ public class TowerManagerTest {
 	void advanceFloorWhenCurrentFloorIsCompletedAndTowerIsNotCompleted()throws Exception {
 
 		Player player = new Player("TestPlayer");
-		Bugemon a = BugemonSample.getA();
+		Bugemon a = makeBugemon();
 		Team teamA = new Team(List.of(a));
 		player.setTeam(teamA);
 		TowerManager manager = new TowerManager(player);
@@ -79,7 +87,7 @@ public class TowerManagerTest {
 	@Test
 	void doesNotAdvanceFloorWhenTowerIsCompleted() throws Exception {
 		Player player = new Player("TestPlayer");
-		Bugemon a = BugemonSample.getA();
+		Bugemon a = makeBugemon();
 		Team teamA = new Team(List.of(a));
 		player.setTeam(teamA);
 		TowerManager manager = new TowerManager(player);

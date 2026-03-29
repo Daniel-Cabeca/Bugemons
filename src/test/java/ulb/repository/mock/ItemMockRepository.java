@@ -12,6 +12,7 @@ import ulb.repository.json.ItemJsonRepository;
  */
 public class ItemMockRepository implements ItemRepository {
 	private static ItemRepository itemRepository = null;
+	private static ItemRepository mockData = null;
 
 	public ItemMockRepository() {
 		if (itemRepository == null) {
@@ -21,6 +22,7 @@ public class ItemMockRepository implements ItemRepository {
 
 	private static void load() {
 		itemRepository = new ItemJsonRepository();
+		mockData = new ItemJsonRepository(MockResources.getStream(MockResources.PATH_ITEMS));
 	}
 
 	public static void reload() {
@@ -29,7 +31,11 @@ public class ItemMockRepository implements ItemRepository {
 
 	@Override
 	public Item findById(String id) throws NoSuchElementException {
-		return itemRepository.findById(id);
+		try {
+			return itemRepository.findById(id);
+		} catch (NoSuchElementException e) {
+			return mockData.findById(id);
+		}
 	}
 
 	@Override

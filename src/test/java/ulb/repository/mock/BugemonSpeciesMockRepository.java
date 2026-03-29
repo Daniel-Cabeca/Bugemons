@@ -15,6 +15,7 @@ import ulb.repository.AbilityRepository;
  */
 public class BugemonSpeciesMockRepository implements BugemonSpeciesRepository {
 	private static BugemonSpeciesRepository speciesRepository = null;
+	private static BugemonSpeciesRepository mockData = null;
 
 	public BugemonSpeciesMockRepository() {
 		if (speciesRepository == null) {
@@ -24,7 +25,9 @@ public class BugemonSpeciesMockRepository implements BugemonSpeciesRepository {
 
 	private static void load() {
 		AbilityRepository abilityRepository = new AbilityMockRepository();
+
 		speciesRepository = new BugemonSpeciesJsonRepository(abilityRepository);
+		mockData = new BugemonSpeciesJsonRepository(MockResources.getStream(MockResources.PATH_BUGEMON_SPECIES), abilityRepository);
 	}
 
 	public static void reload() {
@@ -33,7 +36,11 @@ public class BugemonSpeciesMockRepository implements BugemonSpeciesRepository {
 
 	@Override
 	public BugemonSpecies findById(String id) throws NoSuchElementException {
-		return speciesRepository.findById(id);
+		try {
+			return speciesRepository.findById(id);
+		} catch (NoSuchElementException e) {
+			return mockData.findById(id);
+		}
 	}
 
 	@Override

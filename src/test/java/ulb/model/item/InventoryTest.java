@@ -6,19 +6,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import ulb.model.effect.Effect;
-import ulb.model.sample.EffectSample;
-
 import ulb.repository.ItemRepository;
 import ulb.repository.mock.ItemMockRepository;
 
 public class InventoryTest {
 	@Test
 	public void addItemFunctionnality() {
-		Effect baieEffect = EffectSample.getHeal();
-		Item item = new Item("baie_tonique", "Baie Tonique", 
-		"Restaure 10 PV au Bugémon actif.", "soin", 
-		baieEffect, "baie_tonique.png");
+		ItemRepository repository = new ItemMockRepository();
+		Item item = repository.findById("baie_tonique");
+
 		Inventory inventory = new Inventory();
 		inventory.addItem(item, 3);
 		assertTrue(inventory.getItems().containsKey(item));
@@ -27,10 +23,9 @@ public class InventoryTest {
 
 	@Test
 	public void removeItemFunctionnality() {
-		Effect baieEffect = EffectSample.getHeal();
-		Item item = new Item("baie_tonique", "Baie Tonique", 
-		"Restaure 10 PV au Bugémon actif.", "soin", 
-		baieEffect, "baie_tonique.png");
+		ItemRepository repository = new ItemMockRepository();
+		Item item = repository.findById("baie_tonique");
+
 		Inventory inventory = new Inventory();
 		inventory.addItem(item, 3);
 		inventory.removeItem(item);

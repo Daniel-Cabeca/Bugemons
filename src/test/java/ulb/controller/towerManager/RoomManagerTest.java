@@ -1,23 +1,33 @@
 package ulb.controller.towerManager;
 
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.List;
+
 import ulb.model.Player;
 import ulb.model.bugemon.Bugemon;
-import ulb.model.sample.BugemonSample;
 import ulb.model.team.Team;
 import ulb.model.tower.Room;
 import ulb.model.tower.RoomType;
 
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
+import ulb.repository.BugemonSpeciesRepository;
+import ulb.repository.mock.BugemonSpeciesMockRepository;
+import ulb.service.BugemonService;
 
 public class RoomManagerTest {
+
+	private Bugemon makeBugemon() {
+		BugemonSpeciesRepository bugemonRepository = new BugemonSpeciesMockRepository();
+		BugemonService bugemonService = new BugemonService(bugemonRepository);
+
+		return bugemonService.spawnBugemon("florachu");
+	}
 
     @Test
     void roomNotCompletedOnInitialisation() {
 		Player player = new Player("TestPlayer");
-		Bugemon a = BugemonSample.getA();
+		Bugemon a = makeBugemon();
 		Team teamA = new Team(List.of(a));
 		player.setTeam(teamA);
         Room room = new Room(1, RoomType.BATTLE);
@@ -30,7 +40,7 @@ public class RoomManagerTest {
     @Test
     void setRoomCompletedUpdatesManagerAndRoom() {
 		Player player = new Player("TestPlayer");
-		Bugemon a = BugemonSample.getA();
+		Bugemon a = makeBugemon();
 		Team teamA = new Team(List.of(a));
 		player.setTeam(teamA);
         Room room = new Room(1, RoomType.REWARD);
@@ -46,7 +56,7 @@ public class RoomManagerTest {
 	void createBattleRoomInitializesBattleController() {
 		Player player = new Player("TestPlayer");
 		// give the player a minimal valid team
-		Team team = new Team(List.of(new Bugemon(10, 10, 10, 10)));
+		Team team = new Team(List.of(makeBugemon()));
 		player.setTeam(team);
 
 		Room room = new Room(1, RoomType.BATTLE);

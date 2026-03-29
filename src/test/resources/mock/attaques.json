@@ -1,0 +1,22 @@
+{
+	"attaques": [
+		{
+			"id": "insta_kill",
+			"nom": "Instant Kill",
+			"type": "Flora",
+			"description": "Inflige assez de dégâts pour mettre n'importe quel adversaire KO en une attaque.",
+			"puissance": 9999999999,
+			"effets": [
+			]
+		},
+		{
+			"id": "pass_turn",
+			"nom": "Pass Turn",
+			"type": "Flora",
+			"description": "Attaque qui ne fait rien.",
+			"puissance": 0,
+			"effets": [
+			]
+		}
+	]
+}

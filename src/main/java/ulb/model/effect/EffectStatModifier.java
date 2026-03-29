@@ -11,53 +11,53 @@ import ulb.model.bugemon.Stats;
 
 public class EffectStatModifier extends Effect {
 
-    public enum StatType {
+	public enum StatType {
 		HP,
 		ATTACK,
 		DEFENSE,
 		INITIATIVE
 	}
 
-    public enum EffectDuration {
+	public enum EffectDuration {
 		PERMANENT,
 		ROUND
 	}
 
-    private Map<EffectStatModifier.StatType, Integer> modifiers;
-    private EffectDuration duration;
+	public Map<EffectStatModifier.StatType, Integer> modifiers;
+	private EffectDuration duration;
 
-    public EffectStatModifier(EffectTarget targetType, EffectDuration duration, Map<StatType, Integer> modifiers){
-        super(EffectType.STAT_MODIFIER, targetType);
-        this.modifiers = modifiers;
+	public EffectStatModifier(EffectTarget targetType, EffectDuration duration, Map<StatType, Integer> modifiers){
+		super(EffectType.STAT_MODIFIER, targetType);
+		this.modifiers = modifiers;
 		this.duration = duration;
 
-    }
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void apply(Battle battle, ParticipantLabel team) {
-        List<Bugemon> targets = this.getTargets(battle, team);
+	/**
+	* {@inheritDoc}
+	*/
+	@Override
+	public void apply(Battle battle, ParticipantLabel team) {
+		List<Bugemon> targets = this.getTargets(battle, team);
 
 		for (Bugemon target: targets) {
 			target.changeFightStats(buildStatsChange());
 		}
 
-        if (this.getDuration() == EffectDuration.ROUND) {
+		if (this.getDuration() == EffectDuration.ROUND) {
 			Stats delta = this.buildStatsChange();
 			for (Bugemon target : targets) {
 				battle.getActiveEffects().add(new ActiveEffect(target, delta, 1, ""));
 			}
 		}
 
-    }
+	}
 
-    /**
-     * Builds the Stats object used to change the Stats of a Bugemon
-     *
-     * @return the built Stats object
-     */
+	/**
+	* Builds the Stats object used to change the Stats of a Bugemon
+	*
+	* @return the built Stats object
+	*/
 	public Stats buildStatsChange() {
 		Stats statsChange = new Stats();
 		for (Map.Entry<StatType, Integer> entry : this.modifiers.entrySet()) {
@@ -80,7 +80,7 @@ public class EffectStatModifier extends Effect {
 	}
 
 	public Map<EffectStatModifier.StatType, Integer> getModifiers() { return this.modifiers; }
-    public EffectDuration getDuration() { return this.duration;}
+	public EffectDuration getDuration() { return this.duration;}
 
 
 }

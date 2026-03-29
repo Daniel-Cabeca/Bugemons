@@ -1,0 +1,74 @@
+{
+  "bugemons": [
+    {
+      "id": "pass_turn",
+      "nom": "Pass Turn",
+      "type": "Flora",
+      "stats": {
+        "pv": 100,
+        "attaque": 10,
+        "defense": 10,
+        "initiative": 10
+      },
+      "attaques": ["pass_turn", "pollen_sournois", "racines_vives"],
+      "sprite": "florachu.png",
+      "starter": true
+    },
+    {
+      "id": "insta_kill",
+      "nom": "Insta Kill",
+      "type": "Flora",
+      "stats": {
+        "pv": 100,
+        "attaque": 10,
+        "defense": 10,
+        "initiative": 10
+      },
+      "attaques": ["insta_kill", "pollen_sournois", "racines_vives"],
+      "sprite": "florachu.png",
+      "starter": true
+    },
+    {
+      "id": "100all",
+      "nom": "100 All Stats",
+      "type": "Flora",
+      "stats": {
+        "pv": 100,
+        "attaque": 100,
+        "defense": 100,
+        "initiative": 100
+      },
+      "attaques": ["fouet_liane", "pollen_sournois", "racines_vives"],
+      "sprite": "florachu.png",
+      "starter": true
+    },
+    {
+      "id": "100hp",
+      "nom": "100 HP",
+      "type": "Flora",
+      "stats": {
+        "pv": 100,
+        "attaque": 10,
+        "defense": 10,
+        "initiative": 10
+      },
+      "attaques": ["fouet_liane", "pollen_sournois", "racines_vives"],
+      "sprite": "florachu.png",
+      "starter": true
+    },
+    {
+      "id": "50atk",
+      "nom": "50 Attack",
+      "type": "Flora",
+      "stats": {
+        "pv": 100,
+        "attaque": 50,
+        "defense": 10,
+        "initiative": 10
+      },
+      "attaques": ["fouet_liane", "pollen_sournois", "racines_vives"],
+      "sprite": "florachu.png",
+      "starter": true
+    }
+  ]
+}

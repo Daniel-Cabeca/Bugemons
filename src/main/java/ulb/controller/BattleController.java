@@ -99,4 +99,6 @@ public class BattleController {
 	public void clearLogMsg() { this.battle.clearLogMsg(); }
 
 	public int getTotalXP() { return this.battle.computeTotalXP(battle.getTeam(battle.getOpponentTeamLabel(participantLabel))); }
+
+	public Battle getBattle() { return this.battle; }
 }

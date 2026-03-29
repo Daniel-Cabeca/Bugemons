@@ -1,0 +1,70 @@
+{
+	"objets": [
+		{
+			"id": "heal_10",
+			"nom": "Heal (self, 10)",
+			"description": "Restaure 10 PV au Bugémon actif.",
+			"categorie": "soin",
+			"effet": {
+				"type": "soin",
+				"cible": "lanceur",
+				"valeur": 10
+			},
+			"sprite": "baie_revigorante.png"
+		},
+		{
+			"id": "+10atk",
+			"nom": "+10 Attack",
+			"description": "Augmente l'attaque du Bugémon actif de 10 jusqu'à la fin du combat.",
+			"categorie": "boost",
+			"effet": {
+				"type": "stat_modifier",
+				"cible": "lanceur",
+				"stat": "attaque",
+				"modificateur": 10,
+				"duree": "permanent"
+			},
+			"sprite": "serum_offensif.png"
+		},
+		{
+			"id": "+10atk_+10def",
+			"nom": "+10 Attack & +10 Def",
+			"description": "Augmente l'attaque et la défense du Bugémon actif de 10 jusqu'à la fin du combat.",
+			"categorie": "boost",
+			"effet": {
+				"type": "stat_modifier_multiple",
+				"cible": "lanceur",
+				"modificateurs": {
+					"attaque": 10,
+					"defense": 10
+				},
+				"duree": "permanent"
+			},
+			"sprite": "serum_offensif.png"
+		},
+		{
+			"id": "switch",
+			"nom": "Switch",
+			"description": "Permet de changer de Bugémon sans perdre l’initiative du tour.",
+			"categorie": "tactique",
+			"effet": {
+				"type": "switch",
+				"cible": "lanceur"
+			},
+			"sprite": "pierre_retraite.png"
+		},
+		{
+			"id": "reset_malus",
+			"nom": "Reset Malus",
+			"description": "Annule tous les malus de statistiques du Bugémon actif.",
+			"categorie": "soin",
+			"effet": {
+				"type": "reset_malus",
+				"cible": "lanceur"
+			},
+			"sprite": "baume_reparateur.png"
+		}
+	],
+	"inventaire_depart": {
+	}
+}

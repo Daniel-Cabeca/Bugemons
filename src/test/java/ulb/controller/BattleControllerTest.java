@@ -10,151 +10,170 @@ import java.util.Vector;
 
 import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.Stats;
+import ulb.controller.action.Action;
 import ulb.controller.action.Swap;
 import ulb.controller.action.UseAbility;
 import ulb.controller.action.UseItem;
 import ulb.model.effect.Effect;
+import ulb.model.effect.EffectHeal;
 import ulb.model.item.Item;
 import ulb.model.reward.Reward;
-import ulb.model.sample.AbilitySample;
-import ulb.model.sample.BugemonSample;
-import ulb.model.sample.EffectSample;
 import ulb.model.Player;
 import ulb.model.ability.Ability;
 import ulb.model.battle.Battle;
 import ulb.model.battle.Battle.ParticipantLabel;
 import ulb.model.battle.BattleState;
 import ulb.model.team.Team;
+import ulb.repository.BugemonSpeciesRepository;
+import ulb.repository.ItemRepository;
+import ulb.repository.mock.BugemonSpeciesMockRepository;
+import ulb.repository.mock.ItemMockRepository;
+import ulb.service.BugemonService;
+import ulb.model.type.Type;
 
 public class BattleControllerTest {
-	BattleController otherPlayerController;
-
-	public void initiateOtherPlayerController(Battle battle){
-		otherPlayerController = new BattleController(new Player(), battle, ParticipantLabel.TEAM_B);
+	private static Item getItem(String id) {
+		ItemRepository repository = new ItemMockRepository();
+		return repository.findById(id);
 	}
 
-	private void otherPlayerChooseAction(Ability a){
-		otherPlayerController.useAction(new UseAbility(a));
-	}
-
-	private int getGainedPoint(Stats previous, Stats actual){
+	private static int getGainedPoint(Stats previous, Stats actual){
 		Stats difference = new Stats(actual);
 		Stats opposite = new Stats(-previous.hp, -previous.attack, -previous.defense, -previous.initiative);
 		difference.change(opposite);
 		return difference.hp / 2 + difference.initiative / 2 + difference.attack + difference.defense;
 	}
 
-	@Test
-	public void battleEndsWhenTeamKO(){
+	private static BattleController makeBattleController1v1(String bugemonIdA, String bugemonIdB) {
+		BugemonSpeciesRepository bugemonRepository = new BugemonSpeciesMockRepository();
+		BugemonService bugemonService = new BugemonService(bugemonRepository);
+
+		Bugemon bugemonA = bugemonService.spawnBugemon(bugemonIdA);
+		Bugemon bugemonB = bugemonService.spawnBugemon(bugemonIdB);
+
+		Team teamA = new Team(List.of(bugemonA));
+		Team teamB = new Team(List.of(bugemonB));
+
 		Player player = new Player("TestPlayer");
-
-		Bugemon a = BugemonSample.getA();
-		Team teamA = new Team(List.of(a));
-		Team teamB = new Team(List.of(BugemonSample.getB()));
-		teamB.getBugemon(0).changeFightStats(new Stats(0, 0, 0, -1));
-
-		Battle battle = new Battle(teamA, teamB, player);
-		BattleController controller = new BattleController(player, battle, ParticipantLabel.TEAM_A);
-		this.initiateOtherPlayerController(battle);
-
 		player.setTeam(teamA);
 
-		controller.useAction(new UseAbility(AbilitySample.getI()));
-		this.otherPlayerChooseAction(AbilitySample.getH());
+		Player otherPlayer = new Player("OtherPlayer");
+		otherPlayer.setTeam(teamB);
 
-		assertTrue(controller.isGameFinished());
+		Battle battle = new Battle(teamA, teamB, player, otherPlayer);
+		return new BattleController(player, battle, ParticipantLabel.TEAM_A);
+	}
+
+	private static BattleController makeBattleController2v1(String bugemonIdA1, String bugemonIdA2, String bugemonIdB) {
+		BugemonSpeciesRepository bugemonRepository = new BugemonSpeciesMockRepository();
+		BugemonService bugemonService = new BugemonService(bugemonRepository);
+
+		Bugemon bugemonA1 = bugemonService.spawnBugemon(bugemonIdA1);
+		Bugemon bugemonA2 = bugemonService.spawnBugemon(bugemonIdA2);
+		Bugemon bugemonB = bugemonService.spawnBugemon(bugemonIdB);
+
+		Team teamA = new Team(List.of(bugemonA1, bugemonA2));
+		Team teamB = new Team(List.of(bugemonB));
+
+		Player player = new Player("TestPlayer");
+		player.setTeam(teamA);
+
+		Player otherPlayer = new Player("OtherPlayer");
+		otherPlayer.setTeam(teamB);
+
+		Battle battle = new Battle(teamA, teamB, player, otherPlayer);
+		return new BattleController(player, battle, ParticipantLabel.TEAM_A);
+	}
+
+	private BattleController makeOtherPlayerBattleController(BattleController selfController) {
+		Battle battle = selfController.getBattle();
+		Player otherPlayer = battle.getPlayer(ParticipantLabel.TEAM_B);
+
+		return new BattleController(otherPlayer, battle, ParticipantLabel.TEAM_B);
+	}
+
+	private static void playTurn(BattleController controllerA, BattleController controllerB, Action actionA, Action actionB) {
+		controllerA.useAction(actionA);
+		controllerB.useAction(actionB);
+	}
+
+	private static void playTurn(BattleController controllerA, BattleController controllerB, Action actionA) {
+		Ability abilityB = controllerA.getBattle().getActiveBugemon(ParticipantLabel.TEAM_B).getAbilities().getAbility(0);
+		playTurn(controllerA, controllerB, actionA, new UseAbility(abilityB));
+	}
+
+	private static void playTurn(BattleController controllerA, BattleController controllerB, Item item) {
+		playTurn(controllerA, controllerB, new UseItem(item));
+	}
+
+	private static void playTurn(BattleController controllerA, BattleController controllerB) {
+		Ability abilityA = controllerA.getBattle().getActiveBugemon(ParticipantLabel.TEAM_A).getAbilities().getAbility(0);
+		playTurn(controllerA, controllerB, new UseAbility(abilityA));
+	}
+
+	@Test
+	public void battleEndsWhenTeamKO(){
+		BattleController controllerA = makeBattleController1v1("insta_kill", "pass_turn");
+		BattleController controllerB = makeOtherPlayerBattleController(controllerA);
+
+		playTurn(controllerA, controllerB);
+		assertTrue(controllerA.isGameFinished());
 	}
 
 	@Test
 	public void allowUseOfHealItem() throws Exception {
-		Player player = new Player("TestPlayer");
+		BattleController controllerA = makeBattleController1v1("florachu", "pyricore");
 
-		Bugemon bugemon = BugemonSample.getA();
-		bugemon.changeFightStats(new Stats(-1, 0, 0, 0));
-		Team teamA = new Team(List.of(bugemon));
-		Team teamB = new Team(List.of(BugemonSample.getB()));
-		Battle battle = new Battle(teamA, teamB, player);
-
-		BattleController battleController = new BattleController(player, battle, ParticipantLabel.TEAM_A);
-
-		Effect effect = EffectSample.getHeal();
-		Item item = new Item("potion", "Potion", "Restaure 10 pv.", "soin", effect, "potion.png");
+		Item item = getItem("heal_10");
+		Player player = controllerA.getPlayer();
 		player.getInventory().addItem(item, 1);
 
-		assertTrue(battleController.checkItem(item));
+		controllerA.getBattle().getTeam(ParticipantLabel.TEAM_A).getBugemon(0).changeFightStats(new Stats(-1, 0, 0, 0));
+		assertTrue(controllerA.checkItem(item));
 	}
 
 	@Test
 	public void doesNotAllowUseOfHealItem() throws Exception {
-		Player player = new Player("TestPlayer");
-		
+		BattleController controllerA = makeBattleController1v1("florachu", "pyricore");
 
-		Bugemon bugemon = BugemonSample.getA();
-		Team teamA = new Team(List.of(bugemon));
-		Team teamB = new Team(List.of(BugemonSample.getB()));
-		Battle battle = new Battle(teamA, teamB, player);
-		BattleController battleController = new BattleController(player, battle, ParticipantLabel.TEAM_A);
-
-		Effect effect = EffectSample.getHeal();
-		Item item = new Item("potion", "Potion", "Restaure 10 pv.", "soin", effect, "potion.png");
+		Item item = getItem("heal_10");
+		Player player = controllerA.getPlayer();
 		player.getInventory().addItem(item, 1);
 
-		assertFalse(battleController.checkItem(item));
+		assertFalse(controllerA.checkItem(item));
 	}
 
 	@Test
 	public void itemRemovedFromInventoryWhenUsed() throws Exception {
-		Player player = new Player("TestPlayer");
-		player.getInventory().getItems().clear();
+		BattleController controllerA = makeBattleController1v1("insta_kill", "pass_turn");
+		BattleController controllerB = makeOtherPlayerBattleController(controllerA);
 
-		Team teamA = new Team(List.of(BugemonSample.getA()));
-		Team teamB = new Team(List.of(BugemonSample.getB()));
-		Battle battle = new Battle(teamA, teamB, player);
-
-		BattleController battleController = new BattleController(player, battle, ParticipantLabel.TEAM_A);
-		initiateOtherPlayerController(battle);
-		
-		Effect effect = EffectSample.getHeal();
-		Item item = new Item("potion", "Potion", "Restaure 10 pv.", "soin", effect, "potion.png");
+		Item item = getItem("heal_10");
+		Player player = controllerA.getPlayer();
 		player.getInventory().addItem(item, 3);
-		
-		assertTrue(player.getInventory().getItems().containsKey(item));
+
 		assertEquals(3, (int) player.getInventory().getItems().get(item));
 
-		battleController.useAction(new UseItem(item));
-		this.otherPlayerChooseAction(AbilitySample.getH());
-
-		assertTrue(player.getInventory().getItems().containsKey(item));
+		playTurn(controllerA, controllerB, item);
 		assertEquals(2, (int) player.getInventory().getItems().get(item));
 
-		battleController.useAction(new UseItem(item));
-		this.otherPlayerChooseAction(AbilitySample.getH());
-
+		playTurn(controllerA, controllerB, item);
 		assertEquals(1, (int) player.getInventory().getItems().get(item));
 
-		battleController.useAction(new UseItem(item));
-		this.otherPlayerChooseAction(AbilitySample.getH());
-
+		playTurn(controllerA, controllerB, item);
 		assertFalse(player.getInventory().getItems().containsKey(item));
 	}
 
 
 	@Test
 	public void noXpGainedOnLostBattle() throws Exception {
-		Player player = new Player("TestPlayer");
+		BattleController controllerA = makeBattleController1v1("pass_turn", "insta_kill");
+		BattleController controllerB = makeOtherPlayerBattleController(controllerA);
 
-		Bugemon a = BugemonSample.getA();
-		Team teamA = new Team(List.of(a));
-		Team teamB = new Team(List.of(BugemonSample.getB()));
-		Battle battle = new Battle(teamA, teamB, player);
+		Battle battle = controllerA.getBattle();
+		Bugemon a = battle.getTeam(ParticipantLabel.TEAM_A).getBugemon(0);
 
-		BattleController controller = new BattleController(player, battle, ParticipantLabel.TEAM_A);
-		this.initiateOtherPlayerController(battle);
-
-		player.setTeam(teamA);
-
-		this.otherPlayerChooseAction(AbilitySample.getI());	
-		controller.useAction(new UseAbility(AbilitySample.getH()));
+		playTurn(controllerA, controllerB);
 
 		assertEquals(0, a.getXp());
 		assertEquals(1, a.getLevel());
@@ -162,122 +181,85 @@ public class BattleControllerTest {
 
 	@Test
 	public void xpGainedOnWonBattle() throws Exception {
-		Player player = new Player("TestPlayer");
+		BattleController controllerA = makeBattleController1v1("insta_kill", "pass_turn");
+		BattleController controllerB = makeOtherPlayerBattleController(controllerA);
 
-		Bugemon a = BugemonSample.getA();
-		Team teamA = new Team(List.of(a));
-		Team teamB = new Team(List.of(BugemonSample.getB()));
-		player.setTeam(teamA);
-
-		Battle battle = new Battle(teamA, teamB, player);
-		BattleController controller = new BattleController(player, battle, ParticipantLabel.TEAM_A);
-		this.initiateOtherPlayerController(battle);
+		Battle battle = controllerA.getBattle();
+		Bugemon a = battle.getTeam(ParticipantLabel.TEAM_A).getBugemon(0);
 
 		battle.setFloorNumber(5);
 
-		this.otherPlayerChooseAction(AbilitySample.getH());
-		controller.useAction(new UseAbility(AbilitySample.getI()));
+		playTurn(controllerA, controllerB);
 
-		assertTrue(controller.isGameFinished());
+		assertTrue(controllerA.isGameFinished());
 		assertEquals(3, a.getLevel());
 	}
 
-
 	@Test
 	public void winAgainstBossGivesMoreXp() throws Exception {
-		Player player = new Player("TestPlayer");
-		
+		BattleController controllerA = makeBattleController1v1("insta_kill", "pass_turn");
+		BattleController controllerB = makeOtherPlayerBattleController(controllerA);
 
-		Bugemon a = BugemonSample.getA();
-		Team teamA = new Team(List.of(a));
-		Team teamB = new Team(List.of(BugemonSample.getB()));
-		player.setTeam(teamA);
-
-		Battle battle = new Battle(teamA, teamB, player);
-		BattleController controller = new BattleController(player, battle, ParticipantLabel.TEAM_A);
-		this.initiateOtherPlayerController(battle);
+		Battle battle = controllerA.getBattle();
+		Bugemon a = battle.getTeam(ParticipantLabel.TEAM_A).getBugemon(0);
 
 		battle.setFloorNumber(5);
 		battle.enableBossBattle();
 
-		this.otherPlayerChooseAction(AbilitySample.getH());
-		controller.useAction(new UseAbility(AbilitySample.getI()));
+		playTurn(controllerA, controllerB);
 
 		assertEquals(4, a.getLevel());
 	}
 
 	@Test
 	public void shareXpWonBetweenActiveBugemons(){
-		Player player = new Player("TestPlayer");
+		BattleController controllerA = makeBattleController2v1("florachu", "insta_kill", "pass_turn");
+		BattleController controllerB = makeOtherPlayerBattleController(controllerA);
 
-		Bugemon a = BugemonSample.getA();
-		Bugemon c = BugemonSample.getC();
-		Team teamA = new Team(List.of(a, c));
-		Team teamB = new Team(List.of(BugemonSample.getB()));
-
-		Battle battle = new Battle(teamA, teamB, player);
-		BattleController controller = new BattleController(player, battle, ParticipantLabel.TEAM_A);
-		this.initiateOtherPlayerController(battle);
-
-		player.setTeam(teamA);
+		Battle battle = controllerA.getBattle();
+		Bugemon a1 = battle.getTeam(ParticipantLabel.TEAM_A).getBugemon(0);
+		Bugemon a2 = battle.getTeam(ParticipantLabel.TEAM_A).getBugemon(1);
 
 		battle.setFloorNumber(4);
 
-		controller.useAction(new Swap(c));
-		this.otherPlayerChooseAction(AbilitySample.getH());
+		playTurn(controllerA, controllerB, new Swap(a2));
+		playTurn(controllerA, controllerB);
 
-		controller.useAction(new UseAbility(AbilitySample.getI()));
-		this.otherPlayerChooseAction(AbilitySample.getH());
-
-		assertEquals(2, a.getLevel());
-		assertEquals(2, c.getLevel());
-		assertEquals(10, a.getXp());
-		assertEquals(10, c.getXp());
+		assertEquals(2, a1.getLevel());
+		assertEquals(2, a2.getLevel());
+		assertEquals(10, a1.getXp());
+		assertEquals(10, a2.getXp());
 	}
 
 	@Test
 	public void debuffsRemovedWhenBattleIsFinished() throws Exception {
-		Player player = new Player("TestPlayer");
-		
+		BattleController controllerA = makeBattleController1v1("insta_kill", "pass_turn");
+		BattleController controllerB = makeOtherPlayerBattleController(controllerA);
 
-		Bugemon a = BugemonSample.getA();
-		Team teamA = new Team(List.of(a));
-		Team teamB = new Team(List.of(BugemonSample.getB()));
-
-		Battle battle = new Battle(teamA, teamB, player);
-		BattleController controller = new BattleController(player, battle, ParticipantLabel.TEAM_A);
-		this.initiateOtherPlayerController(battle);
-
-		player.setTeam(teamA);
+		Battle battle = controllerA.getBattle();
+		Bugemon a = battle.getTeam(ParticipantLabel.TEAM_A).getBugemon(0);
 
 		a.changeFightStats(new Stats(1, -10, 0, 0));
-		
-		this.otherPlayerChooseAction(AbilitySample.getH());
-		controller.useAction(new UseAbility(AbilitySample.getI()));
+
+		playTurn(controllerA, controllerB);
 
 		assertTrue(a.getFightStats().getAttack() >= a.getBaseStats().getAttack());
 	}
 
 	@Test
 	public void hpRestoredWhenLevelUp() throws Exception {
-		Player player = new Player("TestPlayer");
+		BattleController controllerA = makeBattleController1v1("insta_kill", "pass_turn");
+		BattleController controllerB = makeOtherPlayerBattleController(controllerA);
 
-		Bugemon a = BugemonSample.getA();
-		Team teamA = new Team(List.of(a));
-		Team teamB = new Team(List.of(BugemonSample.getB()));
-
-		Battle battle = new Battle(teamA, teamB, player);
-		BattleController controller = new BattleController(player, battle, ParticipantLabel.TEAM_A);
-		this.initiateOtherPlayerController(battle);
-
-		player.setTeam(teamA);
+		Battle battle = controllerA.getBattle();
+		Bugemon a = battle.getTeam(ParticipantLabel.TEAM_A).getBugemon(0);
 
 		a.changeFightStats(new Stats(-50, 0, 0, 0));
+
 		battle.setFloorNumber(9);
 		battle.enableBossBattle();
 
-		this.otherPlayerChooseAction(AbilitySample.getH());
-		controller.useAction(new UseAbility(AbilitySample.getI()));
+		playTurn(controllerA, controllerB);
 
 		if (a.getLevel() > 1)
 			assertEquals(a.getBaseStats().getHp(), a.getFightStats().getHp());
@@ -285,65 +267,49 @@ public class BattleControllerTest {
 
 	@Test
 	public void swapBugemon(){
-		Player player = new Player("TestPlayer");
+		BattleController controllerA = makeBattleController2v1("pass_turn", "florachu", "pass_turn");
+		BattleController controllerB = makeOtherPlayerBattleController(controllerA);
 
-		Bugemon a = BugemonSample.getA();
-		Bugemon c = BugemonSample.getC();
-		Team teamA = new Team(List.of(a, c));
-		Team teamB = new Team(List.of(BugemonSample.getB()));
+		Battle battle = controllerA.getBattle();
+		Bugemon a1 = battle.getTeam(ParticipantLabel.TEAM_A).getBugemon(0);
+		Bugemon a2 = battle.getTeam(ParticipantLabel.TEAM_A).getBugemon(1);
 
-		Battle battle = new Battle(teamA, teamB, player);
-		BattleController controller = new BattleController(player, battle, ParticipantLabel.TEAM_A);
-		this.initiateOtherPlayerController(battle);
+		playTurn(controllerA, controllerB, new Swap(a2));
 
-		player.setTeam(teamA);
-
-		controller.useAction(new Swap(c));
-		this.otherPlayerChooseAction(AbilitySample.getH());
-
-		assertEquals(c.getId(), controller.getActiveBugemonSelf().getId());
+		assertEquals(a2.getId(), controllerA.getActiveBugemonSelf().getId());
 	}
 
 	@Test
 	public void swapKOBugemon(){
-		Player player = new Player("TestPlayer");
+		BattleController controllerA = makeBattleController2v1("pass_turn", "florachu", "pass_turn");
+		BattleController controllerB = makeOtherPlayerBattleController(controllerA);
 
-		Bugemon a = BugemonSample.getA();
-		Bugemon c = BugemonSample.getC();
-		c.changeFightStats(new Stats(-100, 0, 0, 0));
+		Battle battle = controllerA.getBattle();
+		Bugemon a1 = battle.getTeam(ParticipantLabel.TEAM_A).getBugemon(0);
+		Bugemon a2 = battle.getTeam(ParticipantLabel.TEAM_A).getBugemon(1);
 
-		Team teamA = new Team(List.of(a, c));
-		Team teamB = new Team(List.of(BugemonSample.getB()));
+		a2.changeFightStats(new Stats(-100000, 0, 0, 0));
 
-		Battle battle = new Battle(teamA, teamB, player);
-		BattleController controller = new BattleController(player, battle, ParticipantLabel.TEAM_A);
-		this.initiateOtherPlayerController(battle);
+		playTurn(controllerA, controllerB, new Swap(a2));
 
-		player.setTeam(teamA);
-
-		controller.useAction(new Swap(c));
-		this.otherPlayerChooseAction(AbilitySample.getH());
-
-		assertEquals(a.getId(), controller.getActiveBugemonSelf().getId());
-		assertEquals(controller.getState(), BattleState.INGAME);
+		assertEquals(a1.getId(), controllerA.getActiveBugemonSelf().getId());
+		assertEquals(controllerA.getState(), BattleState.INGAME);
 	}
 
 	@Test
 	public void applyReward(){
-		Player player = new Player("TestPlayer");
+		BattleController controllerA = makeBattleController1v1("insta_kill", "pass_turn");
+		BattleController controllerB = makeOtherPlayerBattleController(controllerA);
 
-		Bugemon a = BugemonSample.getA();
+		Battle battle = controllerA.getBattle();
+		Bugemon a = battle.getTeam(ParticipantLabel.TEAM_A).getBugemon(0);
 
-		Team teamA = new Team(List.of(a));
-		Team teamB = new Team(List.of(BugemonSample.getB()));
-
-		Battle battle = new Battle(teamA, teamB, player);
-		BattleController controller = new BattleController(player, battle, ParticipantLabel.TEAM_A);
-		
 		a.gainXp(50);
+
 		Stats previousStats = new Stats(a.getBaseStats());
-		Vector<Reward> rewards = controller.getRewards(a);
-		assertTrue(controller.applyReward(a, rewards.get(0)));
+		Vector<Reward> rewards = controllerA.getRewards(a);
+
+		assertTrue(controllerA.applyReward(a, rewards.get(0)));
 		assertEquals(10, getGainedPoint(previousStats, a.getBaseStats()));
 	}
 

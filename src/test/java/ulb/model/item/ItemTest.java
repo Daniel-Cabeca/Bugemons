@@ -1,166 +1,169 @@
 package ulb.model.item;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
+import java.util.Map;
 
-import org.junit.jupiter.api.Test;
+import ulb.model.ability.Ability;
+import ulb.model.bugemon.Bugemon;
+import ulb.model.bugemon.Stats;
 
+import ulb.model.Player;
+import ulb.model.team.Team;
+import ulb.model.battle.Battle;
+import ulb.model.battle.Battle.ParticipantLabel;
 import ulb.controller.BattleController;
 import ulb.controller.action.UseAbility;
 import ulb.controller.action.UseItem;
-import ulb.model.Player;
-import ulb.model.ability.Ability;
-import ulb.model.battle.Battle;
-import ulb.model.battle.Battle.ParticipantLabel;
-import ulb.model.bugemon.Bugemon;
-import ulb.model.bugemon.Stats;
-import ulb.model.sample.BugemonSample;
-import ulb.model.sample.EffectSample;
-import ulb.model.team.Team;
-import ulb.model.effect.Effect;
-import ulb.model.sample.AbilitySample;
+
+import ulb.service.BugemonService;
+import ulb.repository.mock.BugemonSpeciesMockRepository;
+import ulb.repository.ItemRepository;
+import ulb.repository.mock.ItemMockRepository;
 
 public class ItemTest {
-	public Battle battle;
-	public BattleController playerController;
-	public BattleController otherPlayerController;
-	public Player player;
-
-	private void otherPlayerChooseAction(){
-		Ability a = AbilitySample.getH();
-		otherPlayerController.useAction(new UseAbility(a));
+	private static Item getItem(String id) {
+		ItemRepository repository = new ItemMockRepository();
+		return repository.findById(id);
 	}
 
-	private void setupBattle(Bugemon... bugemons) {
-		List<Bugemon> bugemonList = bugemons.length > 0 ? List.of(bugemons) : List.of(BugemonSample.getA());
+	private static Bugemon spawnBugemon(String id) {
+		BugemonService service = new BugemonService(new BugemonSpeciesMockRepository());
+		return service.spawnBugemon(id);
+	}
+
+	private BattleController makeBattleController(Bugemon... bugemons) {
+		List<Bugemon> bugemonList = bugemons.length > 0 ? List.of(bugemons) : List.of(spawnBugemon("florachu"));
 		Team teamA = new Team(bugemonList);
-		Team teamB = new Team(List.of(BugemonSample.getB()));
-		this.player = new Player("TestPlayer");
-		this.player.setTeam(teamA);
+		Team teamB = new Team(List.of(spawnBugemon("pass_turn")));
+
+		Player player = new Player("TestPlayer");
+		player.setTeam(teamA);
+
 		Player otherPlayer = new Player("OtherPlayer");
 		otherPlayer.setTeam(teamB);
-		this.battle = new Battle(teamA, teamB, this.player, otherPlayer);
-		this.playerController = new BattleController(this.player, battle, ParticipantLabel.TEAM_A);
-		this.otherPlayerController = new BattleController(otherPlayer, battle, ParticipantLabel.TEAM_B);
+
+		Battle battle = new Battle(teamA, teamB, player, otherPlayer);
+		return new BattleController(player, battle, ParticipantLabel.TEAM_A);
 	}
 
-	private void playTurnWithPassiveOpponent(UseItem action) {
-		this.playerController.useAction(action);
-		otherPlayerChooseAction();
+	private BattleController makeOtherPlayerBattleController(BattleController selfController) {
+		Battle battle = selfController.getBattle();
+		Player otherPlayer = battle.getPlayer(ParticipantLabel.TEAM_B);
+
+		return new BattleController(otherPlayer, battle, ParticipantLabel.TEAM_B);
+	}
+
+	private void playTurnWithItem(BattleController controller, BattleController otherController, Item item) {
+		Ability otherAbility = otherController.getBattle().getActiveBugemon(ParticipantLabel.TEAM_B).getAbilities().getAbility(0);
+
+		controller.useAction(new UseItem(item));
+		otherController.useAction(new UseAbility(otherAbility));
 	}
 
     @Test
 	public void healItemAppliesFullEffect() {
-		Bugemon bugemon = BugemonSample.getA();
+		Bugemon bugemon = spawnBugemon("100hp");
 		bugemon.changeFightStats(new Stats(-20, 0, 0, 0));
 
-		setupBattle(bugemon);
+		BattleController controller = makeBattleController(bugemon);
+		Player player = controller.getPlayer();
+		BattleController otherController = makeOtherPlayerBattleController(controller);
 
-		Effect effect = EffectSample.getHeal();
-		Item item = new Item("potion", "Potion", "Restaure 10 pv.", "soin", effect, "potion.png");
+		Item item = getItem("heal_10");
 		player.getInventory().addItem(item, 1);
 
-		playTurnWithPassiveOpponent(new UseItem(item));
+		playTurnWithItem(controller, otherController, item);
 		assertEquals(90, bugemon.getFightStats().getHp());
 	}
 
 	@Test
 	public void healItemAppliesPartialEffect() {
-		Bugemon bugemon = BugemonSample.getA();
+		Bugemon bugemon = spawnBugemon("100hp");
 		bugemon.changeFightStats(new Stats(-5, 0, 0, 0));
 
-		setupBattle(bugemon);
+		BattleController controller = makeBattleController(bugemon);
+		Player player = controller.getPlayer();
+		BattleController otherController = makeOtherPlayerBattleController(controller);
 
-		Effect effect = EffectSample.getHeal();
-		Item item = new Item("potion", "Potion", "Restaure 10 pv.", "soin", effect, "potion.png");
+		Item item = getItem("heal_10");
 		player.getInventory().addItem(item, 1);
 
-		playTurnWithPassiveOpponent(new UseItem(item));
+		playTurnWithItem(controller, otherController, item);
 
 		assertEquals(100, bugemon.getFightStats().getHp());
 	}
 
 	@Test
 	public void statModifierAppliesEffect() {
-		Bugemon bugemon = BugemonSample.getA();
-        bugemon.changeFightStats(new Stats(0, -5, 0, 0));
+		Bugemon bugemon = spawnBugemon("50atk");
 
-		setupBattle(bugemon);
+		BattleController controller = makeBattleController(bugemon);
+		Player player = controller.getPlayer();
+		BattleController otherController = makeOtherPlayerBattleController(controller);
 
-		Effect effect = EffectSample.getAttackIncreaseSelf();
-		Item item = new Item("attack boost", "Attack Boost", "Augmente l'attaque de 10 points.", 
-			"stat modifier", effect, "attack_boost.png");
+		Item item = getItem("+10atk");
 		player.getInventory().addItem(item, 1);
 
-		playTurnWithPassiveOpponent(new UseItem(item));
+		playTurnWithItem(controller, otherController, item);
 
-		assertEquals(15, bugemon.getFightStats().getAttack());
+		assertEquals(60, bugemon.getFightStats().getAttack());
 	}
 
 	@Test
 	public void multipleStatModifierAppliesEffect() {
-		Bugemon bugemon = BugemonSample.getA();
-        bugemon.changeFightStats(new Stats(0, -5, -5, 0));
+		Bugemon bugemon = spawnBugemon("100all");
 
-		setupBattle(bugemon);
+		BattleController controller = makeBattleController(bugemon);
+		Player player = controller.getPlayer();
+		BattleController otherController = makeOtherPlayerBattleController(controller);
 
-		Effect effect = EffectSample.getMultiEffect();
-		Item item = new Item("mixed boost", "Mixed Boost", "Augmente l'attaque et la défense de 10 points.", 
-		"stat modifier multiple", effect, "mixed_boost.png");
+		Item item = getItem("+10atk_+10def");
 		player.getInventory().addItem(item, 1);
 
-		playTurnWithPassiveOpponent(new UseItem(item));
+		playTurnWithItem(controller, otherController, item);
 
-		assertEquals(15, bugemon.getFightStats().getAttack());
-		assertEquals(15, bugemon.getFightStats().getDefense());
+		assertEquals(110, bugemon.getFightStats().getAttack());
+		assertEquals(110, bugemon.getFightStats().getDefense());
 	}
 
 	@Test
 	public void switchItemAppliesEffect() {
-		Bugemon bugemonA = BugemonSample.getA();
-		Bugemon bugemonB = BugemonSample.getB();
-		Team teamA = new Team(List.of(bugemonA, bugemonB));
-		Team teamB = new Team(List.of(BugemonSample.getC()));
-		player = new Player("TestPlayer");
-		player.setTeam(teamA);
-		Player otherPlayer = new Player("OtherPlayer");
-		otherPlayer.setTeam(teamB);
-		battle = new Battle(teamA, teamB, player, otherPlayer);
-		playerController = new BattleController(player, battle, ParticipantLabel.TEAM_A);
-		otherPlayerController = new BattleController(otherPlayer, battle, ParticipantLabel.TEAM_B);
+		BattleController controller = makeBattleController(spawnBugemon("florachu"), spawnBugemon("pyricore"));
+		BattleController otherController = makeOtherPlayerBattleController(controller);
+		Player player = controller.getPlayer();
+		Battle battle = controller.getBattle();
 
-		Effect effect = EffectSample.getSwitchEffect();
-		Item item = new Item("switch", "Switch", "Switch a un autre Bugemon.", "switch", 
-			effect, "switch.png");
+		Item item = getItem("switch");
 		player.getInventory().addItem(item, 1);
 
 		Bugemon activeBefore = battle.getActiveBugemon(ParticipantLabel.TEAM_A);
-		playTurnWithPassiveOpponent(new UseItem(item));
+		playTurnWithItem(controller, otherController, item);
 
-		assertNotEquals(activeBefore, battle.getActiveBugemon(ParticipantLabel.TEAM_A));
-		assertEquals(bugemonB, battle.getActiveBugemon(ParticipantLabel.TEAM_A));
+		assertNotEquals("florachu", battle.getActiveBugemon(ParticipantLabel.TEAM_A).getSpecies().getId());
+		assertEquals("pyricore", battle.getActiveBugemon(ParticipantLabel.TEAM_A).getSpecies().getId());
 	}
 
 	@Test
 	public void resetMalusItemAppliesEffect() {
-		Bugemon bugemon = BugemonSample.getA();
+		Bugemon bugemon = spawnBugemon("100all");
 		bugemon.changeFightStats(new Stats(-5, -5, -5, -5)); 
 
-		setupBattle(bugemon);
+		BattleController controller = makeBattleController(bugemon);
+		Player player = controller.getPlayer();
+		BattleController otherController = makeOtherPlayerBattleController(controller);
 
-		Effect effect = EffectSample.getResetMalusEffect();
-		Item item = new Item("antidote", "Antidote", "Enlève les malus de stats.", "reset malus", 
-			effect, "antidote.png");
+		Item item = getItem("reset_malus");
 		player.getInventory().addItem(item, 1);
 
-		playTurnWithPassiveOpponent(new UseItem(item));
+		playTurnWithItem(controller, otherController, item);
 
 		assertEquals(100, bugemon.getFightStats().getHp());
-		assertEquals(10, bugemon.getFightStats().getAttack());
-		assertEquals(10, bugemon.getFightStats().getDefense());
-		assertEquals(10, bugemon.getFightStats().getInitiative());
+		assertEquals(100, bugemon.getFightStats().getAttack());
+		assertEquals(100, bugemon.getFightStats().getDefense());
+		assertEquals(100, bugemon.getFightStats().getInitiative());
 	}
     
 }

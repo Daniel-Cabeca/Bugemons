@@ -1,38 +1,57 @@
 package ulb.model.ability;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Iterator;
 
-import ulb.model.sample.AbilitySample;
-import ulb.model.sample.AbilitySetSample;
+import ulb.model.type.Type;
 
 public class AbilitySetTest {
+	private static Ability makeAbilityA() {
+		return new Ability("a", "A", Type.FLORA, "Inflige des dégâts.", 40);
+	}
+
+	private static Ability makeAbilityB() {
+		return new Ability("b", "B", Type.FLORA, "Inflige des dégâts.", 40);
+	}
+
+	private static Ability makeAbilityC() {
+		return new Ability("c", "C", Type.FLORA, "Inflige des dégâts.", 40);
+	}
+
+	private static Ability makeAbilityD() {
+		return new Ability("d", "D", Type.FLORA, "Inflige des dégâts.", 40);
+	}
+
+	private static Ability makeAbilityE() {
+		return new Ability("e", "E", Type.FLORA, "Inflige des dégâts.", 40);
+	}
+
+	private static AbilitySet makeAbilitySetABC() {
+		return new AbilitySet(makeAbilityA(), makeAbilityB(), makeAbilityC());
+	}
+
 	@Test
 	public void containsIsTrueWhenAbilityInAbilitySet() {
-		AbilitySet abilityset = AbilitySetSample.getABC();
-		Ability a = AbilitySample.getA();
+		AbilitySet abilityset = makeAbilitySetABC();
+		Ability a = makeAbilityA();
 		assertTrue(abilityset.contains(a));
 	}
 
 	@Test
 	public void containsIsFalseWhenAbilityNotInAbilitySet() {
-		AbilitySet abilityset = AbilitySetSample.getABC();
-		Ability d = AbilitySample.getD();
+		AbilitySet abilityset = makeAbilitySetABC();
+		Ability d = makeAbilityD();
 		assertFalse(abilityset.contains(d));
 	}
 
 	@Test
 	public void getAbilityFunctionnality() {
-		AbilitySet abilityset = AbilitySetSample.getABC();
-		Ability a = AbilitySample.getA();
-		Ability b = AbilitySample.getB();
-		Ability c = AbilitySample.getC();
+		AbilitySet abilityset = makeAbilitySetABC();
+		Ability a = makeAbilityA();
+		Ability b = makeAbilityB();
+		Ability c = makeAbilityC();
 
 		assertEquals(abilityset.getAbility(0), a);
 		assertEquals(abilityset.getAbility(1), b);
@@ -41,7 +60,7 @@ public class AbilitySetTest {
 
 	@Test
 	public void getAbilityWhenIndexIsOutOfBoundThrowsException() {
-		AbilitySet abilityset = AbilitySetSample.getABC();
+		AbilitySet abilityset = makeAbilitySetABC();
 
 		assertThrows(IndexOutOfBoundsException.class, () -> { abilityset.getAbility(-1); });
 		assertThrows(IndexOutOfBoundsException.class, () -> { abilityset.getAbility(abilityset.size()); });
@@ -49,8 +68,8 @@ public class AbilitySetTest {
 
 	@Test
 	public void setAbilityFunctionnality() {
-		AbilitySet abilityset = AbilitySetSample.getABC();
-		Ability d = AbilitySample.getD();
+		AbilitySet abilityset = makeAbilitySetABC();
+		Ability d = makeAbilityD();
 
 		abilityset.setAbility(0, d);
 		assertEquals(abilityset.getAbility(0), d);
@@ -58,8 +77,8 @@ public class AbilitySetTest {
 
 	@Test
 	public void setAbilityThrowsExceptionWhenIndexIsOutOfBound() {
-		AbilitySet abilityset = AbilitySetSample.getABC();
-		Ability d = AbilitySample.getD();
+		AbilitySet abilityset = makeAbilitySetABC();
+		Ability d = makeAbilityD();
 
 		assertThrows(IndexOutOfBoundsException.class, () -> { abilityset.setAbility(-1, d); });
 		assertThrows(IndexOutOfBoundsException.class, () -> { abilityset.setAbility(abilityset.size(), d); });
@@ -67,7 +86,7 @@ public class AbilitySetTest {
 
 	@Test
 	public void iteratorFunctionnality() {
-		AbilitySet abilityset = AbilitySetSample.getABC();
+		AbilitySet abilityset = makeAbilitySetABC();
 		Iterator<Ability> iterator = abilityset.iterator();
 
 		assertTrue(iterator.hasNext());
@@ -84,9 +103,9 @@ public class AbilitySetTest {
 
 	@Test
 	public void swapAbilityFunctionnality() {
-		AbilitySet abilityset = AbilitySetSample.getABC();
-		Ability a = AbilitySample.getA();
-		Ability d = AbilitySample.getD();
+		AbilitySet abilityset = makeAbilitySetABC();
+		Ability a = makeAbilityA();
+		Ability d = makeAbilityD();
 
 		abilityset.swapAbility(d, a);
 
@@ -96,27 +115,27 @@ public class AbilitySetTest {
 
 	@Test
 	public void swapAbilityWhenOldAbilityNotKnownThrowsException() {
-		AbilitySet abilityset = AbilitySetSample.getABC();
-		Ability d = AbilitySample.getD();
-		Ability e = AbilitySample.getE();
+		AbilitySet abilityset = makeAbilitySetABC();
+		Ability d = makeAbilityD();
+		Ability e = makeAbilityE();
 
 		assertThrows(IllegalArgumentException.class, () -> { abilityset.swapAbility(d, e); });
 	}
 
 	@Test
 	public void abilitySetsAreEqual() {
-		AbilitySet a = AbilitySetSample.getABC();
-		AbilitySet b = AbilitySetSample.getABC();
+		AbilitySet a = makeAbilitySetABC();
+		AbilitySet b = makeAbilitySetABC();
 		assertTrue(a.equals(b));
 	}
 
 	@Test
 	public void abilitySetsAreNotEqual() {
-		AbilitySet base = AbilitySetSample.getABC();
+		AbilitySet base = makeAbilitySetABC();
 
-		AbilitySet a = new AbilitySet(AbilitySample.getD(), AbilitySample.getB(), AbilitySample.getC());
-		AbilitySet b = new AbilitySet(AbilitySample.getA(), AbilitySample.getD(), AbilitySample.getC());
-		AbilitySet c = new AbilitySet(AbilitySample.getA(), AbilitySample.getB(), AbilitySample.getD());
+		AbilitySet a = new AbilitySet(makeAbilityD(), makeAbilityB(), makeAbilityC());
+		AbilitySet b = new AbilitySet(makeAbilityA(), makeAbilityD(), makeAbilityC());
+		AbilitySet c = new AbilitySet(makeAbilityA(), makeAbilityB(), makeAbilityD());
 
 		assertFalse(base.equals(a));
 		assertFalse(base.equals(b));
@@ -125,13 +144,13 @@ public class AbilitySetTest {
 
 	@Test
 	public void abilitySetAndObjectAreNotEqual() {
-		AbilitySet a = AbilitySetSample.getABC();
+		AbilitySet a = makeAbilitySetABC();
 		assertFalse(a.equals(3));
 	}
 
 	@Test
 	public void sameInstancesAreEqual() {
-		AbilitySet a = AbilitySetSample.getABC();
+		AbilitySet a = makeAbilitySetABC();
 		assertTrue(a.equals(a));
 	}
 

@@ -4,8 +4,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import ulb.model.sample.BugemonSample;
 import ulb.model.type.Type;
+import ulb.repository.BugemonSpeciesRepository;
+import ulb.repository.mock.BugemonSpeciesMockRepository;
+import ulb.service.BugemonService;
 
 public class BugemonTest {
 
@@ -58,11 +60,14 @@ public class BugemonTest {
 
 	@Test
 	public void checkInitiative(){
-		Bugemon A = BugemonSample.getA();
-		Bugemon B = BugemonSample.getB();
-		B.changeFightStats(new Stats(0, 0, 0, -1));
+		BugemonSpeciesRepository repository = new BugemonSpeciesMockRepository();
+		BugemonService service = new BugemonService(repository);
 
-		assertTrue(A.checkInitiative(B));
+		Bugemon a = service.spawnBugemon("florachu");
+		Bugemon b = service.spawnBugemon("florachu");
+		b.changeFightStats(new Stats(0, 0, 0, -1));
+
+		assertTrue(a.checkInitiative(b));
 	}
 
 }

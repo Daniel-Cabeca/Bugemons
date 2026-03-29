@@ -8,8 +8,6 @@ import java.util.Random;
 
 import ulb.utils.RandomTestUtils;
 
-import ulb.model.sample.AbilitySample;
-import ulb.model.sample.BugemonSample;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.BugemonSpecies;
 import ulb.model.type.Type;
@@ -18,35 +16,47 @@ import ulb.model.ability.Ability;
 import ulb.model.ability.AbilitySet;
 
 public class AbilityTest {
+	private Ability makeAbilityA() {
+		return new Ability("a", "A", Type.FLORA, "Ability a", 10);
+	}
+
+	private Ability makeAbilityB() {
+		return new Ability("b", "B", Type.FLORA, "Ability b", 10);
+	}
+
+	private Ability makeAbilityC() {
+		return new Ability("c", "C", Type.FLORA, "Ability c", 10);
+	}
+
 	@Test
 	public void abilitiesAreEqual() {
-		Ability a = AbilitySample.getA();
-		Ability b = AbilitySample.getA();
-		assertTrue(a.equals(b));
+		Ability a = makeAbilityA();
+		Ability abis = makeAbilityA();
+		assertTrue(a.equals(abis));
 	}
 
 	@Test
 	public void abilitiesAreNotEqual() {
-		Ability a = AbilitySample.getA();
-		Ability b = AbilitySample.getB();
+		Ability a = makeAbilityA();
+		Ability b = makeAbilityB();
 		assertFalse(a.equals(b));
 	}
 
 	@Test
 	public void abilityAndObjectAreNotEqual() {
-		Ability a = AbilitySample.getA();
+		Ability a = makeAbilityA();
 		assertFalse(a.equals(3));
 	}
 
 	@Test
 	public void sameInstancesAreEqual() {
-		Ability a = AbilitySample.getA();
+		Ability a = makeAbilityA();
 		assertTrue(a.equals(a));
 	}
 
 	@Test
 	public void abilityAndStringAreNotEqual() {
-		Ability a = AbilitySample.getB();
+		Ability a = makeAbilityA();
 		String b = new String("fouet_liane");
 		assertFalse(a.equals(b));
 	}

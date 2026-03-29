@@ -21,7 +21,9 @@ public class Main extends Application {
 	static int SERVER_PORT = 8080;
 	public static void main(String[] args){
 		try {
-			if (args[0].equals("--client")){
+			if (args.length == 0){
+				launch(args);
+			}else if (args[0].equals("--client")){
 				Client client = new Client(SERVER_IP, SERVER_PORT);
 
 				client.sendMessage(new ConnectMessage("Bonjour server !"));
@@ -36,7 +38,7 @@ public class Main extends Application {
 				Server server = new Server(SERVER_PORT);
 				server.start();
 			} else {
-				launch(args);
+				System.err.println("Unknown arguments.");
 			}
 
 		} catch (Exception e) {

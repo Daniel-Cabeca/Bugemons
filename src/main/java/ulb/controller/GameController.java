@@ -6,16 +6,28 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
 import ulb.communication.Message;
+import ulb.communication.Messenger.AutoTurnRequestMessage;
+import ulb.communication.Messenger.AutoTurnResponseMessage;
+import ulb.communication.Messenger.BattleEndCheckMessage;
+import ulb.communication.Messenger.SwapRequestMessage;
+import ulb.communication.Messenger.UseAbilityRequestMessage;
+import ulb.communication.Messenger.UseItemRequestMessage;
 import ulb.communication.types.*;
+import ulb.controller.action.Swap;
 import ulb.controller.action.TeamController;
+import ulb.controller.action.UseAbility;
+import ulb.controller.action.UseItem;
 import ulb.controller.strategy.StrategyRandom;
 import ulb.controller.towerManager.FloorManager;
 import ulb.controller.towerManager.RoomManager;
 import ulb.controller.towerManager.TowerManager;
+import ulb.model.battle.BattleState;
 import ulb.model.Player;
 import ulb.model.battle.Battle;
 import ulb.model.battle.Battle.ParticipantLabel;
+import ulb.model.ability.Ability;
 import ulb.model.bugemon.Bugemon;
+import ulb.model.item.Item;
 import ulb.model.team.OpponentTeamGenerator;
 import ulb.model.team.Team;
 import ulb.model.tower.Room;
@@ -37,6 +49,11 @@ public class GameController {
 	private Player player;
 	private TowerManager towerModeTowerManager;
 	private BattleController normalModeBattleController;
+	/**
+	 * The battle currently shown in tower mode. After {@link FloorManager#nextRoom()}, {@link TowerManager#getCurrentBattleController()}
+	 * points at the next room, so message handlers must use this until the player leaves the fight screen.
+	 */
+	private BattleController towerActiveBattleController;
 	private ViewManager viewManager;
 
 	private boolean isNextFloor;
@@ -82,6 +99,7 @@ public class GameController {
 	 */
 	public void setupTowerMode(){
 		towerModeTowerManager = new TowerManager(this.getPlayer());
+		towerActiveBattleController = null;
 	}
 
 	/**
@@ -102,7 +120,9 @@ public class GameController {
 			controller.setViewManager(viewManager);
 			controller.setTowerManager(towerModeTowerManager);
 
-			controller.setBattleController(towerModeTowerManager.getCurrentRoomManager().getRoomBattleController());
+			BattleController towerBattle = towerModeTowerManager.getCurrentRoomManager().getRoomBattleController();
+			controller.setBattleController(towerBattle);
+			this.towerActiveBattleController = towerBattle;
 			// always manual battle in tower mode
 			controller.initializeBattle(teamA, player.getInventory(), GameMode.TOWER);
 
@@ -115,6 +135,7 @@ public class GameController {
 	 * Switches to the floor reward window (rewards not functional yet)
 	 */
 	public void switchToFloorRewardWindow(ActionEvent event) { //TODO refactor
+		towerActiveBattleController = null;
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/FloorRewardWindow.fxml"));
 			Parent floorRewardWindow = loader.load();
@@ -146,6 +167,9 @@ public class GameController {
 	}
 
 	public void switchToBattleEndWindow(boolean victory, int totalXP, ActionEvent event) { //TODO refactor
+		if (gameMode == GameMode.TOWER) {
+			towerActiveBattleController = null;
+		}
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/BattleEndWindow.fxml"));
 			Parent battleEndWindow = loader.load();
@@ -168,6 +192,7 @@ public class GameController {
 	 * @param event the action triggered by clicking the confirm team button
 	 */
 	public void switchToNextRoomWindow(ActionEvent event) { //TODO refactor
+		towerActiveBattleController = null;
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/NextRoomWindow.fxml"));
 			Parent nextRoomWindow = loader.load();
@@ -281,13 +306,12 @@ public class GameController {
 				switch (type) {
 					case BATTLE:
 						switchToTowerBattleWindow(teamA,event);
-						roomManager.initializeRoomContent(type);
+						// battle already initialized in RoomManager constructor; avoid replacing roomBattleController
 						roomManager.setRoomCompleted(true);
 						break;
 
 					case BOSS:
 						switchToTowerBattleWindow(teamA,event);
-						roomManager.initializeRoomContent(type);
 						roomManager.setRoomCompleted(true);
 						isNextFloor = true;
 						break;
@@ -305,6 +329,33 @@ public class GameController {
 			}
 			towerModeTowerManager.nextFloor();
 		}
+	}
+
+	/**
+	 * Resolves the {@link BattleController} that tower-mode messages must target.
+	 * After {@code FloorManager.nextRoom()} the tower “current” room may point ahead of the fight
+	 * still on screen; in that case {@link #towerActiveBattleController} is used.
+	 *
+	 * @return the battle controller wired for tower messaging, or {@code null} if none applies
+	 */
+	private BattleController towerBattleControllerForMessages() {
+		if (towerActiveBattleController != null) {
+			return towerActiveBattleController;
+		}
+		return towerModeTowerManager != null ? towerModeTowerManager.getCurrentBattleController() : null;
+	}
+
+	/**
+	 * Battle controller for executing one manual player action (item, swap, or ability).
+	 *
+	 * @return tower battle from {@link #towerBattleControllerForMessages()} when in tower mode,
+	 *         otherwise {@link #normalModeBattleController}
+	 */
+	private BattleController battleControllerForManualTurn() {
+		if (gameMode == GameMode.TOWER && towerModeTowerManager != null) {
+			return towerBattleControllerForMessages();
+		}
+		return normalModeBattleController;
 	}
 
 	public void setupTeam(List<String> selectedBugemons){
@@ -335,9 +386,61 @@ public class GameController {
 			handleSetupGameModeMessage((SetupGameModeMessage) m);
 		} else if (m instanceof GetInfoMessage) {
 			if (gameMode == GameMode.TOWER) {
-				m = new SetupGameModeMessage(gameMode, getTeam(), player.getInventory(), towerModeTowerManager.getCurrentBattleController());
+				m = new SetupGameModeMessage(gameMode, getTeam(), player.getInventory(), towerBattleControllerForMessages());
 			} else {
 				m = new SetupGameModeMessage(gameMode, getTeam(), player.getInventory(), normalModeBattleController);
+			}
+		} else if (m instanceof AutoTurnRequestMessage) {
+			StrategyRandom strategyRandom = new StrategyRandom(normalModeBattleController);
+			BattleState state = strategyRandom.playAutoTurn();
+			return new AutoTurnResponseMessage(state);
+
+		} else if (m instanceof UseItemRequestMessage) {
+			Item item = ((UseItemRequestMessage) m).getItem();
+			BattleController bc = battleControllerForManualTurn();
+			if (bc != null && item != null) {
+				bc.useAction(new UseItem(item));
+				return new AutoTurnResponseMessage(bc.getState());
+			}
+		} else if (m instanceof SwapRequestMessage) {
+			Bugemon bugemon = ((SwapRequestMessage) m).getBugemon();
+			BattleController bc = battleControllerForManualTurn();
+			if (bc != null && bugemon != null) {
+				bc.useAction(new Swap(bugemon));
+				return new AutoTurnResponseMessage(bc.getState());
+			}
+		} else if (m instanceof UseAbilityRequestMessage) {
+			Ability ability = ((UseAbilityRequestMessage) m).getAbility();
+			BattleController bc = battleControllerForManualTurn();
+			if (bc != null && ability != null) {
+				bc.useAction(new UseAbility(ability));
+				return new AutoTurnResponseMessage(bc.getState());
+			}
+		} else if (m instanceof BattleEndCheckMessage) {
+			BattleEndCheckMessage endMsg = (BattleEndCheckMessage) m;
+			BattleState state = endMsg.getBattleState();
+			ActionEvent event = endMsg.getActionEvent();
+			if (event != null) {
+				BattleController bc = null;
+				if (gameMode == GameMode.TOWER && towerModeTowerManager != null) {
+					bc = towerBattleControllerForMessages();
+				} else {
+					bc = normalModeBattleController;
+				}
+				if (bc != null) {
+					if (state == BattleState.WON) {
+						boolean isTower = gameMode == GameMode.TOWER;
+						if (!startLevelUpSequenceIfNeeded(bc, isTower, event)) {
+							if (!isTower) {
+								switchToBattleEndWindow(true, event);
+							} else {
+								switchToNextRoomWindow(event);
+							}
+						}
+					} else if (state == BattleState.LOST) {
+						switchToBattleEndWindow(false, event);
+					}
+				}
 			}
 		}
         return m;

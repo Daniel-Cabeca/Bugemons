@@ -12,11 +12,16 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
 import ulb.communication.Message;
+import ulb.communication.Messenger.AutoTurnRequestMessage;
+import ulb.communication.Messenger.AutoTurnResponseMessage;
+import ulb.communication.Messenger.BattleEndCheckMessage;
+import ulb.communication.Messenger.SwapRequestMessage;
+import ulb.communication.Messenger.UseAbilityRequestMessage;
+import ulb.communication.Messenger.UseItemRequestMessage;
 import ulb.communication.types.GameMode;
 import ulb.communication.types.GetInfoMessage;
 import ulb.communication.types.SetupGameModeMessage;
 import ulb.communication.types.SwitchWindowMessage;
-import ulb.controller.GameController;
 import ulb.controller.towerManager.TowerManager;
 import ulb.model.battle.BattleState;
 import ulb.model.bugemon.Bugemon;
@@ -25,10 +30,6 @@ import ulb.model.item.Inventory;
 import ulb.model.item.Item;
 import ulb.model.team.Team;
 import ulb.model.ability.Ability;
-import ulb.controller.action.UseItem;
-import ulb.controller.strategy.StrategyRandom;
-import ulb.controller.action.UseAbility;
-import ulb.controller.action.Swap;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -259,15 +260,20 @@ public class BattleWindow extends Window {
 		autoButton.setVisible(false);
 		autoButton.setManaged(false);
 
-		StrategyRandom strategyRandom = new StrategyRandom(battleController);
-		BattleState state = strategyRandom.playAutoTurn();
+		Message response = viewManager.handleMessage(new AutoTurnRequestMessage());
+		BattleState state = null;
+		if (response instanceof AutoTurnResponseMessage autoTurnResponse) {
+			state = autoTurnResponse.getBattleState();
+		}
 
 		displayNextMessage();
 
 		autoButton.setVisible(true);
 		autoButton.setManaged(true);
 
-		this.checkBattleEnd(state, event);
+		if (state != null) {
+			viewManager.handleMessage(new BattleEndCheckMessage(state, event));
+		}
 	}
 
 	/**
@@ -357,6 +363,22 @@ public class BattleWindow extends Window {
 		}
 	}
 
+	/**
+	 * Applies a manual battle action by sending {@code request} through {@link ulb.view.ViewManager}
+	 * and returns the resulting {@link BattleState}. If the controller does not answer with
+	 * {@link AutoTurnResponseMessage}, falls back to this window's {@link #battleController} state.
+	 *
+	 * @param request a message such as {@link ulb.communication.Messenger.UseItemRequestMessage}
+	 * @return state after the action, or {@code null} if no controller state is available
+	 */
+	private BattleState battleStateAfterManualMessage(Message request) {
+		Message response = viewManager.handleMessage(request);
+		if (response instanceof AutoTurnResponseMessage r) {
+			return r.getBattleState();
+		}
+		return battleController != null ? battleController.getState() : null;
+	}
+
 	private void setupInventoryList() {
 		inventoryList.setCellFactory(new Callback<ListView<Item>, ListCell<Item>>() {
 			@Override
@@ -374,9 +396,7 @@ public class BattleWindow extends Window {
 						button.setOnAction(event -> {
 							Item item = getItem();
 							if (item != null) {
-								UseItem useItem = new UseItem(item);
-								battleController.useAction(useItem);
-								BattleState stateAfter = battleController.getState();
+								BattleState stateAfter = battleStateAfterManualMessage(new UseItemRequestMessage(item));
 								displayMessagesSequentially(() -> {
 									checkBattleState(stateAfter, event);
 									if (stateAfter == BattleState.WAITING || stateAfter == BattleState.INGAME) {
@@ -429,9 +449,7 @@ public class BattleWindow extends Window {
 						button.setOnAction(event -> {
 							Bugemon bugemon = getItem();
 							if (bugemon != null) {
-								Swap swap = new Swap(bugemon);
-								battleController.useAction(swap);
-								BattleState stateAfter = battleController.getState();
+								BattleState stateAfter = battleStateAfterManualMessage(new SwapRequestMessage(bugemon));
 								displayMessagesSequentially(() -> {
 									checkBattleState(stateAfter, event);
 									if (stateAfter == BattleState.WAITING || stateAfter == BattleState.INGAME) {
@@ -483,9 +501,7 @@ public class BattleWindow extends Window {
 						button.setOnAction(event -> {
 							Ability ability = getItem();
 							if (ability != null) {
-								UseAbility useAbility = new UseAbility(ability);
-								battleController.useAction(useAbility);
-								BattleState stateAfter = battleController.getState();
+								BattleState stateAfter = battleStateAfterManualMessage(new UseAbilityRequestMessage(ability));
 								displayMessagesSequentially(() -> {
 									checkBattleState(stateAfter, event);
 									if (stateAfter == BattleState.WAITING || stateAfter == BattleState.INGAME) {
@@ -682,25 +698,10 @@ public class BattleWindow extends Window {
 	}
 
 	private void checkBattleState(BattleState state, ActionEvent event){
-		checkBattleEnd(state, event);
+		viewManager.handleMessage(new BattleEndCheckMessage(state, event));
 		switchBugemon(state, event);
 	}
 
-	public void checkBattleEnd(BattleState state, ActionEvent event){
-		GameController controller = viewManager.getGameController();
-		if (state == BattleState.WON) {
-			boolean isTower = gameMode == GameMode.TOWER;
-			if (!controller.startLevelUpSequenceIfNeeded(battleController, isTower, event)) {
-				if (!isTower) {
-					controller.switchToBattleEndWindow(true, event);
-				} else {
-					controller.switchToNextRoomWindow(event);
-				}
-			}
-		} else if (state == BattleState.LOST) {
-			controller.switchToBattleEndWindow(false, event);
-		}
-	}
 
 	private void switchBugemon(BattleState state, ActionEvent event){
 		if (state == BattleState.SWAPPING){

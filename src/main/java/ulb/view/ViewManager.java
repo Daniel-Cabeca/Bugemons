@@ -5,6 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import ulb.communication.Message;
+import ulb.communication.Messenger.AutoTurnResponseMessage;
 import ulb.communication.types.SetupGameModeMessage;
 import ulb.communication.types.SetupTeamMessage;
 import ulb.communication.types.SwitchWindowMessage;
@@ -67,6 +68,8 @@ public abstract class ViewManager {
         if (controllerResponse instanceof SwitchWindowMessage) {
             this.switchWindow(((SwitchWindowMessage) controllerResponse).getSwitchWindow());
         }  else if (controllerResponse instanceof SetupGameModeMessage) {
+            return controllerResponse;
+        } else if (controllerResponse instanceof AutoTurnResponseMessage) {
             return controllerResponse;
         }
         return null;

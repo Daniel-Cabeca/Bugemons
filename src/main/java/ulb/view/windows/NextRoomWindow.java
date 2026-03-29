@@ -6,6 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import ulb.controller.GameController;
 import ulb.view.ViewManager;
+import ulb.view.WindowPath;
 
 import java.io.IOException;
 
@@ -42,5 +43,10 @@ public class NextRoomWindow extends Window {
 		} else {
 			nextButton.setText("Prochaine salle");
 		}
+	}
+
+	@FXML
+	public void handleReturn(ActionEvent actionEvent) {
+		sendSwitchWindowMessage(WindowPath.MODE);
 	}
 }

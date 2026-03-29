@@ -11,10 +11,34 @@ import ulb.view.ViewManager;
 import ulb.view.WindowPath;
 import ulb.view.windows.ModeWindow;
 
+import ulb.communication.Message;
+import ulb.communication.types.ConnectMessage;
+import ulb.communication.Server;
+import ulb.communication.Client;
+
 public class Main extends Application {
+	static String SERVER_IP = "127.0.0.1";
+	static int SERVER_PORT = 8080;
 	public static void main(String[] args){
 		try {
-			launch(args);
+			if (args[0].equals("--client")){
+				Client client = new Client(SERVER_IP, SERVER_PORT);
+
+				client.sendMessage(new ConnectMessage("Bonjour server !"));
+
+				Message message = client.receiveMessage();
+				if (message instanceof ConnectMessage connectMessage){
+					System.out.println("message reçu du serveur : " + connectMessage.getConnectMessage());
+				}
+
+				client.closeSocket();
+			} else if (args[0].equals("--server")){
+				Server server = new Server(SERVER_PORT);
+				server.start();
+			} else {
+				launch(args);
+			}
+
 		} catch (Exception e) {
 			System.err.println("Uncaught error.");
 			System.err.println(e.getMessage());

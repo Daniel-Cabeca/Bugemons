@@ -6,11 +6,6 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
 import ulb.communication.Message;
-import ulb.communication.types.AutoTurnResponseMessage;
-import ulb.communication.types.BattleEndCheckMessage;
-import ulb.communication.types.SwapRequestMessage;
-import ulb.communication.types.UseAbilityRequestMessage;
-import ulb.communication.types.UseItemRequestMessage;
 import ulb.communication.types.*;
 import ulb.controller.action.Swap;
 import ulb.controller.action.TeamController;
@@ -79,6 +74,7 @@ public class GameController {
 		this.normalModeBattleController = new BattleController(player, battle, ParticipantLabel.TEAM_A);
 		StrategyRandom strategyRandom = new StrategyRandom(battle);
 		Thread thread = new Thread(strategyRandom);
+		thread.setDaemon(true);
 		thread.start();
 	}
 

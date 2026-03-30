@@ -60,6 +60,7 @@ public class RoomManager {
 		this.roomBattleController = new BattleController(player, battle, ParticipantLabel.TEAM_A);
 		StrategyRandom strategyRandom = new StrategyRandom(battle);
 		Thread thread = new Thread(strategyRandom);
+		thread.setDaemon(true);
 		thread.start();
 	}
 

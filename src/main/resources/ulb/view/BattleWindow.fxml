@@ -12,12 +12,12 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.ListView?>
 
-<GridPane style="-fx-background-image: url(backgrounds/BattleBackground.png); -fx-background-size: stretch"
+<GridPane
           alignment="BOTTOM_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ulb.view.windows.BattleWindow">
     <columnConstraints>
         <ColumnConstraints hgrow="ALWAYS" minWidth="200.0" prefWidth="300.0" />
         <ColumnConstraints hgrow="ALWAYS" minWidth="200.0" prefWidth="300.0" />
-        <ColumnConstraints hgrow="ALWAYS" minWidth="200.0" prefWidth="300.0" />
+        <ColumnConstraints hgrow="ALWAYS" minWidth="347.0" prefWidth="390.0" />
     </columnConstraints>
     <rowConstraints>
         <RowConstraints minHeight="150.0" prefHeight="220.0" valignment="CENTER" vgrow="SOMETIMES" />
@@ -38,21 +38,12 @@
                 <Label fx:id="roomLabel"/>
             </children>
         </VBox>
-        <Label fx:id="battleLog"
-               wrapText="true"
-               VBox.vgrow="ALWAYS"
-               prefWidth="250.0"
-               style="-fx-font-size: 13px;"
-               GridPane.columnIndex="1"
-               GridPane.rowIndex="1"
-               GridPane.halignment="CENTER"
-               GridPane.valignment="CENTER"/>
-        <ImageView fx:id="OpponentBugemon" fitHeight="220.0" fitWidth="220.0" preserveRatio="true" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+        <ImageView fx:id="OpponentBugemon" fitHeight="300.0" fitWidth="300.0" preserveRatio="true" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" translateX="-40">
             <image>
                 <Image url="@../../png/commitide.png" />
             </image>
         </ImageView>
-        <ImageView fx:id="PlayerBugemon" fitHeight="250.0" fitWidth="250.0" nodeOrientation="RIGHT_TO_LEFT" preserveRatio="true" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+        <ImageView fx:id="PlayerBugemon" fitHeight="358.0" fitWidth="358.0" nodeOrientation="RIGHT_TO_LEFT" preserveRatio="true" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" translateY="-60" translateX="20">
             <image>
                 <Image url="@../../png/lichenox.png" />
             </image>
@@ -60,11 +51,17 @@
         <VBox styleClass="stat-box" GridPane.columnIndex="1" GridPane.rowIndex="2"
               GridPane.halignment="LEFT" GridPane.valignment="CENTER"
               GridPane.vgrow="NEVER" GridPane.fillHeight="false"
-              maxWidth="280" spacing="5">
-            <Label fx:id="PlayerBugemonLabel" styleClass="bugemon-name"/>
-            <HBox alignment="CENTER_LEFT" spacing="6">
+              prefWidth="600" maxWidth="600" spacing="11"
+              style="-fx-padding: 17 30 17 30;"
+              translateY="-120" translateX="600">
+            <HBox alignment="CENTER_LEFT" maxWidth="Infinity">
+                <Label fx:id="PlayerBugemonLabel" styleClass="bugemon-name"/>
+                <javafx.scene.layout.Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="PlayerLevelLabel" styleClass="bugemon-level"/>
+            </HBox>
+            <HBox alignment="CENTER_RIGHT" spacing="13">
                 <Label text="HP" styleClass="hp-label"/>
-                <ProgressBar fx:id="PlayerBugemonHPBar" maxWidth="Infinity" maxHeight="12" progress="1.0" HBox.hgrow="ALWAYS"/>
+                <ProgressBar fx:id="PlayerBugemonHPBar" prefWidth="468" maxWidth="468" maxHeight="68" progress="1.0"/>
             </HBox>
             <Label fx:id="PlayerBugemonHPNumber" styleClass="hp-number" maxWidth="Infinity"/>
         </VBox>
@@ -72,29 +69,42 @@
         <VBox styleClass="stat-box" GridPane.columnIndex="1" GridPane.rowIndex="0"
               GridPane.halignment="RIGHT" GridPane.valignment="CENTER"
               GridPane.vgrow="NEVER" GridPane.fillHeight="false"
-              maxWidth="280" spacing="5">
-            <Label fx:id="OpponentBugemonLabel" styleClass="bugemon-name"/>
-            <HBox alignment="CENTER_LEFT" spacing="6">
+              prefWidth="600" maxWidth="600" spacing="11"
+              style="-fx-padding: 17 30 17 30;"
+              translateX="-560">
+            <HBox alignment="CENTER_LEFT" maxWidth="Infinity">
+                <Label fx:id="OpponentBugemonLabel" styleClass="bugemon-name"/>
+                <javafx.scene.layout.Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="OpponentLevelLabel" styleClass="bugemon-level"/>
+            </HBox>
+            <HBox alignment="CENTER_RIGHT" spacing="13">
                 <Label text="HP" styleClass="hp-label"/>
-                <ProgressBar fx:id="OpponentHPBar" maxWidth="Infinity" maxHeight="12" progress="1.0" HBox.hgrow="ALWAYS"/>
+                <ProgressBar fx:id="OpponentHPBar" prefWidth="468" maxWidth="468" maxHeight="68" progress="1.0"/>
             </HBox>
             <Label fx:id="OpponentHPNumber" styleClass="hp-number" maxWidth="Infinity"/>
         </VBox>
-        <GridPane fx:id="buttonsGrid" alignment="CENTER" prefHeight="220.0" maxHeight="220.0" maxWidth="Infinity" nodeOrientation="LEFT_TO_RIGHT" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" GridPane.fillHeight="false">
+        <VBox fx:id="messageBox" styleClass="battle-message-box"
+              visible="false" managed="false"
+              prefHeight="250.0" maxHeight="250.0" maxWidth="Infinity"
+              GridPane.columnIndex="0" GridPane.columnSpan="3" GridPane.rowIndex="2"
+              GridPane.halignment="CENTER" GridPane.valignment="BOTTOM"
+              GridPane.fillHeight="true">
+            <Label fx:id="battleLog" wrapText="true" maxWidth="Infinity" VBox.vgrow="ALWAYS"/>
+        </VBox>
+        <GridPane fx:id="buttonsGrid" styleClass="battle-menu" alignment="CENTER" prefHeight="250.0" maxHeight="250.0" maxWidth="Infinity" scaleX="1.3" translateX="-40" nodeOrientation="LEFT_TO_RIGHT" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" GridPane.fillHeight="false">
             <columnConstraints>
-                <ColumnConstraints />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
             </rowConstraints>
             <children>
-                <Button fx:id="attackButton" maxHeight="Infinity" maxWidth="Infinity" mnemonicParsing="false" text="Attaquer" textFill="#a10404" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" onAction="#handleAttack"/>
-                <Button fx:id="itemButton" maxHeight="Infinity" maxWidth="Infinity" mnemonicParsing="false" text="Objet" textFill="#a10404" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" onAction="#handleItemMenu"/>
-                <Button fx:id="runButton" maxHeight="Infinity" maxWidth="Infinity" mnemonicParsing="false" text="Fuir" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" onAction="#handleReturn"/>
-                <Button fx:id="switchButton" layoutX="160.0" layoutY="97.0" maxHeight="Infinity" maxWidth="Infinity" mnemonicParsing="false" text="Échanger" textFill="#a10404" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" onAction="#handleBugemonsMenu"/>
+                <Button fx:id="attackButton" maxHeight="Infinity" maxWidth="Infinity" mnemonicParsing="false" text="Attaquer" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" onAction="#handleAttack"/>
+                <Button fx:id="itemButton" maxHeight="Infinity" maxWidth="Infinity" mnemonicParsing="false" text="Objet" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" onAction="#handleItemMenu"/>
+                <Button fx:id="runButton" maxHeight="Infinity" maxWidth="Infinity" mnemonicParsing="false" text="Fuir" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" onAction="#handleReturn"/>
+                <Button fx:id="switchButton" maxHeight="Infinity" maxWidth="Infinity" mnemonicParsing="false" text="Échanger" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" onAction="#handleBugemonsMenu"/>
             </children>
         </GridPane>
         <VBox fx:id="inventoryView" visible="false" managed="false" spacing="10.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" GridPane.fillHeight="false" maxHeight="220.0" maxWidth="Infinity">
@@ -115,6 +125,5 @@
                 <Button text="Retour" onAction="#handleBackToMenu" maxHeight="Infinity" maxWidth="Infinity" VBox.vgrow="ALWAYS"/>
             </children>
         </VBox>
-        <Button fx:id="autoButton" maxWidth="Infinity" mnemonicParsing="false" text="Auto" GridPane.columnIndex="2" GridPane.rowIndex="2" GridPane.halignment="CENTER" GridPane.valignment="BOTTOM" GridPane.fillHeight="false" GridPane.vgrow="NEVER" translateY="-220" onAction="#handleAuto" />
     </children>
 </GridPane>

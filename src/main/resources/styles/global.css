@@ -57,27 +57,33 @@ Label{
 .stat-box {
     -fx-background-color: #f0ead0;
     -fx-background-radius: 10;
-    -fx-border-color: #7a6340;
-    -fx-border-width: 2;
+    -fx-border-color: #000000;
+    -fx-border-width: 4;
     -fx-border-radius: 10;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.30), 5, 0, 2, 3);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.50), 8, 0, 3, 4);
     -fx-padding: 8 14 8 14;
 }
 
 .bugemon-name {
     -fx-font-weight: bold;
-    -fx-font-size: 15px;
-    -fx-text-fill: #1a1a1a;
+    -fx-font-size: 30px;
+    -fx-text-fill: #000000;
+}
+
+.bugemon-level {
+    -fx-font-weight: bold;
+    -fx-font-size: 26px;
+    -fx-text-fill: #000000;
 }
 
 .hp-label {
-    -fx-font-size: 11px;
+    -fx-font-size: 18px;
     -fx-font-weight: bold;
     -fx-text-fill: #555555;
 }
 
 .hp-number {
-    -fx-font-size: 13px;
+    -fx-font-size: 20px;
     -fx-alignment: center-right;
     -fx-text-fill: #222222;
 }
@@ -99,4 +105,46 @@ Label{
     -fx-background-color: linear-gradient(to bottom, #f55b42, #c91a06);
     -fx-background-insets: 0;
     -fx-background-radius: 4;
+}
+
+.battle-menu {
+    -fx-background-color: #666666;
+    -fx-border-color: #444444;
+    -fx-border-width: 6;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-hgap: 1;
+    -fx-vgap: 1;
+    -fx-padding: 1;
+}
+
+.battle-menu .button {
+    -fx-background-color: #FFFFFF;
+    -fx-text-fill: #000000;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-radius: 0;
+    -fx-font-size: 24px;
+}
+
+.battle-menu .button:hover {
+    -fx-background-color: #f0f0f0;
+}
+
+.battle-message-box {
+    -fx-background-color: #27AE60;
+    -fx-border-color: #000000, #C0392B;
+    -fx-border-width: 4, 5 20 5 20;
+    -fx-border-insets: 0, 4;
+    -fx-border-radius: 8, 6;
+    -fx-background-radius: 8;
+    -fx-padding: 20 24 20 24;
+    -fx-alignment: CENTER_LEFT;
+    -fx-spacing: 0;
+}
+
+.battle-message-box .label {
+    -fx-text-fill: white;
+    -fx-font-size: 39px;
+    -fx-wrap-text: true;
 }

@@ -9,6 +9,8 @@ import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.layout.GridPane;
 
 import ulb.controller.GameController;
@@ -60,11 +62,15 @@ public class BattleWindow extends Window {
 	@FXML
 	private Label PlayerBugemonLabel;
 	@FXML
+	private Label PlayerLevelLabel;
+	@FXML
 	private Label PlayerBugemonHPNumber;
 	@FXML
 	private ProgressBar OpponentHPBar;
 	@FXML
 	private Label OpponentBugemonLabel;
+	@FXML
+	private Label OpponentLevelLabel;
 	@FXML
 	private Label OpponentHPNumber;
 	@FXML
@@ -79,6 +85,8 @@ public class BattleWindow extends Window {
 	private VBox bugemonsView;
 	@FXML
 	private VBox abilitiesView;
+	@FXML
+	private VBox messageBox;
 	@FXML
 	private Button attackButton;
 	@FXML
@@ -101,6 +109,7 @@ public class BattleWindow extends Window {
 	private Player player;
 	private boolean automaticMode;
 	private boolean waitingForOpponentAction = false;
+	private MediaPlayer mediaPlayer;
 
 
 	public void setBattleController(BattleController battleController) { this.battleController = battleController; }
@@ -132,17 +141,29 @@ public class BattleWindow extends Window {
 			itemButton.setDisable(true);
 			runButton.setDisable(true);
 			switchButton.setDisable(true);
-		} else {
-			autoButton.setDisable(true);
 		}
 
 		initializeGraphicalBattle();
+		playBattleMusic();
 		if (tower) {
 			floorLabel.setText("Etage: NO" + towerManager.getFloorNumber());
 			roomLabel.setText("Salle: " + towerManager.getCurrentRoomIndex());
 		}
 	}
 
+
+	private void playBattleMusic() {
+		try {
+			java.net.URL resource = getClass().getResource("/audio/2-29. Battle! (Elite Four).mp3");
+			if (resource != null) {
+				mediaPlayer = new MediaPlayer(new Media(resource.toExternalForm()));
+				mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+				mediaPlayer.play();
+			}
+		} catch (Exception e) {
+			System.err.println("Failed to load battle music: " + e.getMessage());
+		}
+	}
 
 	private void initializeGraphicalBattle() {
 		// Get the active Bugemons (first non-KO Bugemon)
@@ -175,8 +196,8 @@ public class BattleWindow extends Window {
 				playerColor = "#ced4da";
 		}
 
-		PlayerBugemonLabel.setText(playerBugemon.getName() + "  Lv." + playerBugemon.getLevel());
-		PlayerBugemonLabel.setStyle("-fx-text-fill: " + playerColor + ";");
+		PlayerBugemonLabel.setText(playerBugemon.getName());
+		PlayerLevelLabel.setText("Lv." + playerBugemon.getLevel());
 		double playerRatio = (double) playerBugemon.getFightStats().getHp() / playerBugemon.getBaseStats().getHp();
 		PlayerBugemonHPBar.setProgress(playerRatio);
 		updateHPBarColor(PlayerBugemonHPBar, playerRatio);
@@ -208,17 +229,14 @@ public class BattleWindow extends Window {
 				opponentColor = "#ced4da";
 		}
 
-		OpponentBugemonLabel.setText(opponentBugemon.getName() + "  Lv." + opponentBugemon.getLevel());
-		OpponentBugemonLabel.setStyle("-fx-text-fill: " + opponentColor + ";");
+		OpponentBugemonLabel.setText(opponentBugemon.getName());
+		OpponentLevelLabel.setText("Lv." + opponentBugemon.getLevel());
 		double opponentRatio = (double) opponentBugemon.getFightStats().getHp() / opponentBugemon.getBaseStats().getHp();
 		OpponentHPBar.setProgress(opponentRatio);
 		updateHPBarColor(OpponentHPBar, opponentRatio);
 		OpponentHPNumber.setText(opponentBugemon.getHp() + " / " + opponentBugemon.getBaseStats().hp);
 	}
 
-	public void initializebattleMessage(){
-
-	}
 
 	/**
 	 * Handles the Item button click - shows inventory view
@@ -255,16 +273,10 @@ public class BattleWindow extends Window {
 	 * @throws IOException if the main menu FXML file cannot be loaded when going back to main menu
 	 */
 	public void handleAuto(ActionEvent event) throws IOException {
-		autoButton.setVisible(false);
-		autoButton.setManaged(false);
-
 		StrategyRandom strategyRandom = new StrategyRandom(battleController);
 		BattleState state = strategyRandom.playAutoTurn();
 
 		displayNextMessage();
-
-		autoButton.setVisible(true);
-		autoButton.setManaged(true);
 
 		this.checkBattleEnd(state, event);
 	}
@@ -649,9 +661,7 @@ public class BattleWindow extends Window {
 		runButton.setDisable(disabled || automaticMode);
 		switchButton.setDisable(disabled || automaticMode);
 
-		// The auto button is disabled if the interface is blocked
-    	// or if automatic mode is not enabled
-		autoButton.setDisable(disabled || !automaticMode);
+
 
 		// Also disable subviews to prevent any interaction while waiting
 		inventoryView.setDisable(disabled);
@@ -687,13 +697,23 @@ public class BattleWindow extends Window {
 
 	public void checkBattleEnd(BattleState state, ActionEvent event){
 		if (state == BattleState.WON) {
+			stopBattleMusic();
 			if (!this.tower) {
 				gameController.switchToBattleEndWindow(true, event);
 			} else {
 				gameController.switchToNextRoomWindow(event);
 			}
 		} else if (state == BattleState.LOST) {
+			stopBattleMusic();
 			gameController.switchToBattleEndWindow(false, event);
+		}
+	}
+
+	private void stopBattleMusic() {
+		if (mediaPlayer != null) {
+			mediaPlayer.stop();
+			mediaPlayer.dispose();
+			mediaPlayer = null;
 		}
 	}
 
@@ -710,6 +730,7 @@ public class BattleWindow extends Window {
 	* @throws IOException if the main menu FuXML file cannot be loaded
 	*/
 	public void handleReturn(ActionEvent event) throws IOException {
+		stopBattleMusic();
 		switchWindow(event, MODE_WINDOW_PATH);
 	}
 
@@ -723,9 +744,13 @@ public class BattleWindow extends Window {
 		if (logs != null && !logs.isEmpty()) {
 			String allMessages = String.join("\n", logs.stream().filter(m -> m != null).collect(java.util.stream.Collectors.toList()));
 			battleLog.setText(allMessages);
+			messageBox.setVisible(true);
+			messageBox.setManaged(true);
 			battleController.clearLogMsg();
 		} else {
 			battleLog.setText("");
+			messageBox.setVisible(false);
+			messageBox.setManaged(false);
 		}
 		initializeGraphicalBattle();
 	}
@@ -733,8 +758,6 @@ public class BattleWindow extends Window {
 	private void hideAllMenus() {
 		buttonsGrid.setVisible(false);
 		buttonsGrid.setManaged(false);
-		autoButton.setVisible(false);
-		autoButton.setManaged(false);
 		inventoryView.setVisible(false);
 		inventoryView.setManaged(false);
 		bugemonsView.setVisible(false);
@@ -745,39 +768,72 @@ public class BattleWindow extends Window {
 
 	private void displayMessagesSequentially(Runnable onComplete) {
 		hideAllMenus();
-		List<String> logs = new java.util.ArrayList<>(battleController.getLogMsg());
+		List<String> rawLogs = new java.util.ArrayList<>(battleController.getLogMsg());
 		battleController.clearLogMsg();
 
-		if (logs.isEmpty()) {
-			initializeGraphicalBattle();
-			onComplete.run();
-			return;
-		}
-
 		// null is used as a separator between the two actions of a round
-		int sep = logs.indexOf(null);
+		int sep = rawLogs.indexOf(null);
+		List<String> phase1;
+		List<String> phase2;
 		if (sep < 0) {
-			battleLog.setText(String.join("\n", logs));
+			phase1 = rawLogs.stream().filter(m -> m != null).collect(java.util.stream.Collectors.toList());
+			phase2 = new java.util.ArrayList<>();
+		} else {
+			phase1 = rawLogs.subList(0, sep).stream().filter(m -> m != null).collect(java.util.stream.Collectors.toList());
+			phase2 = rawLogs.subList(sep + 1, rawLogs.size()).stream().filter(m -> m != null).collect(java.util.stream.Collectors.toList());
+		}
+
+		if (phase1.isEmpty() && phase2.isEmpty()) {
 			initializeGraphicalBattle();
 			onComplete.run();
 			return;
 		}
 
-		battleLog.setText(String.join("\n", logs.subList(0, sep)));
-		updateHPDisplay(battleController.getHpAfterFirstActionSelf(), battleController.getHpAfterFirstActionOpponent());
+		messageBox.setVisible(true);
+		messageBox.setManaged(true);
 
-		PauseTransition pause = new PauseTransition(javafx.util.Duration.seconds(1));
-		pause.setOnFinished(e -> {
-			List<String> second = new java.util.ArrayList<>();
-			for (String msg : logs.subList(sep + 1, logs.size())) {
-				if (msg != null) second.add(msg);
-			}
-			if (!second.isEmpty()) {
-				battleLog.setText(String.join("\n", second));
-				initializeGraphicalBattle();
-			}
+		// Update HP BEFORE showing messages so graphics match what the text describes
+		if (sep >= 0) {
+			// Phase 1 describes the player's action: show HP after player's action
+			updateHPDisplay(battleController.getHpAfterFirstActionSelf(), battleController.getHpAfterFirstActionOpponent());
+		} else {
+			// No separator: show final state immediately
+			initializeGraphicalBattle();
+		}
+
+		Runnable closeAndComplete = () -> {
+			battleLog.setText("Quelle sera votre prochaine action ?");
 			onComplete.run();
-		});
+		};
+
+		Runnable afterPhase1 = () -> {
+			if (phase2.isEmpty()) {
+				closeAndComplete.run();
+			} else {
+				// Phase 2 describes the opponent's action: show final HP before phase 2
+				initializeGraphicalBattle();
+				displayPhase(phase2, 0, closeAndComplete);
+			}
+		};
+
+		if (phase1.isEmpty()) {
+			afterPhase1.run();
+		} else {
+			displayPhase(phase1, 0, afterPhase1);
+		}
+	}
+
+	/**
+	 * Displays messages from a list one by one, advancing automatically with a 1-second delay.
+	 */
+	private void displayPhase(List<String> messages, int index, Runnable onComplete) {
+		if (index >= messages.size()) {
+			onComplete.run();
+			return;
+		}
+		battleLog.setText(messages.get(index));
+		PauseTransition pause = new PauseTransition(javafx.util.Duration.seconds(1));
+		pause.setOnFinished(e -> displayPhase(messages, index + 1, onComplete));
 		pause.play();
 	}
 

@@ -569,9 +569,13 @@ public class BattleWindow extends Window {
 	* @param event the action triggered by clicking the return button
 	* @throws IOException if the main menu FXML file cannot be loaded
 	*/
+	// In tower mode, fleeing goes back to the next room screen — otherwise returns to main menu
 	public void handleReturn(ActionEvent event) throws IOException {
-		Message switchToModeMenu = new SwitchWindowMessage(WindowPath.MODE);
-		viewManager.handleMessage(switchToModeMenu);
+		if (gameMode == GameMode.TOWER) {
+			viewManager.handleMessage(new TowerFleeMessage());
+		} else {
+			viewManager.handleMessage(new SwitchWindowMessage(WindowPath.MODE));
+		}
 	}
 
 

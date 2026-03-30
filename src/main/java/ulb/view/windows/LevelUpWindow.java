@@ -21,15 +21,15 @@ public class LevelUpWindow extends Window {
 	@FXML
 	private ImageView bugemonSprite;
 	@FXML
-	private Label rewardA;
+	private Label rewardALabel;
 	@FXML
-	private Label rewardB;
+	private Label rewardBLabel;
 	@FXML
-	private Label rewardC;
+	private Label rewardCLabel;
 
-	private Reward rA;
-	private Reward rB;
-	private Reward rC;
+	private Reward rewardA;
+	private Reward rewardB;
+	private Reward rewardC;
 
 	@Override
 	public void onLoad() {
@@ -52,13 +52,13 @@ public class LevelUpWindow extends Window {
 	}
 
 	public void setRewards(Vector<Reward> rewards) {
-		rA = rewards.get(0);
-		rB = rewards.get(1);
-		rC = rewards.get(2);
+		rewardA = rewards.get(0);
+		rewardB = rewards.get(1);
+		rewardC = rewards.get(2);
 
-		rewardA.setText(createRewardsText(rA));
-		rewardB.setText(createRewardsText(rB));
-		rewardC.setText(createRewardsText(rC));
+		rewardALabel.setText(createRewardsText(rewardA));
+		rewardBLabel.setText(createRewardsText(rewardB));
+		rewardCLabel.setText(createRewardsText(rewardC));
 	}
 
 	public void setBugemonLevel(Bugemon bugemon) {
@@ -71,16 +71,19 @@ public class LevelUpWindow extends Window {
 
 	@FXML
 	private void chooseRewardA(ActionEvent event) {
-		viewManager.getGameController().handleLevelUpRewardChoice(rA, event);
+		LevelUpMessage levelUpMessage = new LevelUpMessage(rewardA, event);
+		viewManager.handleMessage(levelUpMessage);
 	}
 
 	@FXML
 	private void chooseRewardB(ActionEvent event) {
-		viewManager.getGameController().handleLevelUpRewardChoice(rB, event);
+		LevelUpMessage levelUpMessage = new LevelUpMessage(rewardB, event);
+		viewManager.handleMessage(levelUpMessage);
 	}
 
 	@FXML
 	private void chooseRewardC(ActionEvent event) {
-		viewManager.getGameController().handleLevelUpRewardChoice(rC, event);
+		LevelUpMessage levelUpMessage = new LevelUpMessage(rewardC, event);
+		viewManager.handleMessage(levelUpMessage);
 	}
 }

@@ -287,6 +287,9 @@ public class GameController {
 			case BATTLE_END_CHECK:
 				handleBattleEndCheckMessage((BattleEndCheckMessage) m);
 				break;
+			case LEVEL_UP:
+				LevelUpMessage levelUpMessage = (LevelUpMessage) m;
+				handleLevelUpRewardChoice(levelUpMessage.getReward(), levelUpMessage.getEvent());
 		}
         return response;
     }
@@ -327,7 +330,7 @@ public class GameController {
 				 break;
 			case LEVEL_UP:
 				Bugemon currentBugemon = pendingLevelUpBugemons.peekFirst();
-				if (currentBugemon != null || pendingRewardBattleController != null) {
+				if (currentBugemon != null && pendingRewardBattleController != null) {
 					answer = new LevelUpMessage(pendingLevelUpBugemons.peekFirst(), pendingRewardBattleController.getRewards(currentBugemon));
 				}
 				break;

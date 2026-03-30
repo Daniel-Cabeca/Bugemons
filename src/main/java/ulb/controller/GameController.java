@@ -84,24 +84,6 @@ public class GameController {
 		towerModeTowerManager = new TowerManager(this.getPlayer());
 	}
 
-	/**
-	 * Switches from the current battle view to the battle end window and displays the result.
-	 *
-	 * @param victory true if the player won the battle, false if the player lost
-	 */
-	public void switchToBattleEndWindow(boolean victory, ActionEvent event) { //TODO refactor
-		int totalXP = 0;
-		if (normalModeBattleController != null) {
-			totalXP = normalModeBattleController.getTotalXP();
-		}
-		this.switchToBattleEndWindow(victory, totalXP, event);
-	}
-
-	public void switchToBattleEndWindow(boolean victory, int totalXP, ActionEvent event) {
-		this.pendingVictory = victory;
-		this.pendingTotalXP = totalXP;
-		viewManager.handleMessage(new SwitchWindowMessage(WindowPath.BATTLE_END));
-	}
 
 	/**
 	 * Sets up and switches to the LevelUpWindow if there are Bugemons who leveled up
@@ -161,7 +143,7 @@ public class GameController {
 		if (returnToNextRoom) {
 			viewManager.handleMessage(new SwitchWindowMessage(WindowPath.NEXT_ROOM));
 		} else {
-			switchToBattleEndWindow(true, totalXP, event);
+			handleBattleEnd(true, totalXP);
 		}
 	}
 
@@ -173,6 +155,13 @@ public class GameController {
 		pendingRewardBattleController = null;
 		rewardSequenceReturnsToNextRoom = false;
 		pendingBattleXP = 0;
+	}
+
+	// Stores the battle result and switches to BattleEndWindow
+	private void handleBattleEnd(boolean victory, int totalXP) {
+		pendingVictory = victory;
+		pendingTotalXP = totalXP;
+		viewManager.handleMessage(new SwitchWindowMessage(WindowPath.BATTLE_END));
 	}
 
 	// Handles fleeing from a tower battle: restores HP and resets the room
@@ -213,7 +202,7 @@ public class GameController {
 			}
 			roomManager.setRoomCompleted(true);
 		} else {
-			switchToBattleEndWindow(true, event);
+			handleBattleEnd(true, 0);
 		}
 	}
 
@@ -413,13 +402,15 @@ public class GameController {
 			boolean isTower = gameMode == GameMode.TOWER;
 			if (!startLevelUpSequenceIfNeeded(battleController, isTower, event)) {
 				if (!isTower) {
-					switchToBattleEndWindow(true, event);
+					int xp = normalModeBattleController != null ? normalModeBattleController.getTotalXP() : 0;
+					handleBattleEnd(true, xp);
 				} else {
 					viewManager.handleMessage(new SwitchWindowMessage(WindowPath.NEXT_ROOM));
 				}
 			}
 		} else if (state == BattleState.LOST) {
-			switchToBattleEndWindow(false, event);
+			int xp = normalModeBattleController != null ? normalModeBattleController.getTotalXP() : 0;
+			handleBattleEnd(false, xp);
 		}
 	}
 }

@@ -11,10 +11,10 @@ import ulb.model.team.Team;
  * The controller sends all the needed information for the display to the view
  */
 public class SetupGameModeMessage implements Message {
-    GameMode gameMode;
-    Team teamA;
-    Inventory inventory;
-    BattleController BattleController;
+    private GameMode gameMode;
+    private Team teamA;
+    private Inventory inventory;
+    private BattleController BattleController;
 
     /**
      * Used by the view to send the chosen game mode to the controller

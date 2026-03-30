@@ -123,7 +123,6 @@ public class GameController {
 			BattleController towerBattle = towerModeTowerManager.getCurrentRoomManager().getRoomBattleController();
 			controller.setBattleController(towerBattle);
 			this.towerActiveBattleController = towerBattle;
-			// always manual battle in tower mode
 			controller.initializeBattle(teamA, player.getInventory(), GameMode.TOWER);
 
 		} catch (IOException e) {
@@ -202,7 +201,6 @@ public class GameController {
 
 			ulb.view.windows.NextRoomWindow controller = loader.getController();
 			controller.setViewManager(viewManager);
-			// updates the button to say "Prochain étage" (instead of "Prochaine salle") if the floor is completed
 			controller.updateButtonText(isNextFloor);
 		} catch (IOException e) {
 			System.err.println("Failed to load next_room_window: " + e.getMessage());
@@ -306,7 +304,6 @@ public class GameController {
 				switch (type) {
 					case BATTLE:
 						switchToTowerBattleWindow(teamA,event);
-						// battle already initialized in RoomManager constructor; avoid replacing roomBattleController
 						roomManager.setRoomCompleted(true);
 						break;
 
@@ -384,6 +381,8 @@ public class GameController {
 			setupTeam(((SetupTeamMessage) m).getSelectedBugemons());
 		} else if (m instanceof SetupGameModeMessage) {
 			handleSetupGameModeMessage((SetupGameModeMessage) m);
+		} else if (m instanceof TowerNextRoomMessage) {
+			handleTower(getTeam(), ((TowerNextRoomMessage) m).getEvent());
 		} else if (m instanceof GetInfoMessage) {
 			if (gameMode == GameMode.TOWER) {
 				m = new SetupGameModeMessage(gameMode, getTeam(), player.getInventory(), towerBattleControllerForMessages());

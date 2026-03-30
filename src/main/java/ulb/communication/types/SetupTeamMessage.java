@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class SetupTeamMessage implements Message {
 
-    List<String> selectedBugemons;
+    private List<String> selectedBugemons;
 
     public SetupTeamMessage(List<String> selectedBugemons) {
         this.selectedBugemons = selectedBugemons;

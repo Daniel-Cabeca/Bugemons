@@ -36,7 +36,7 @@ public class RoomManager {
 				break;
 
 			case BOSS:
-				initializeBosslBattleRoom();
+				initializeBossBattleRoom();
 				break;
 
 			case REWARD:
@@ -65,7 +65,7 @@ public class RoomManager {
 	}
 
 
-	public void initializeBosslBattleRoom(){
+	public void initializeBossBattleRoom(){
 		Team playerTeam = player.getTeam();
 		Team opponentTeam = new Team();
 		try{

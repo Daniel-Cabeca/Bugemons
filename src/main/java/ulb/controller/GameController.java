@@ -49,6 +49,10 @@ public class GameController {
 	private BattleController pendingRewardBattleController;
 	private boolean rewardSequenceReturnsToNextRoom;
 	private int pendingBattleXP;
+	private boolean fledBattle = false;
+
+	public boolean hasFledBattle() { return fledBattle; }
+	public void resetFledBattle() { fledBattle = false; }
 
 	public GameController() {}
 
@@ -187,9 +191,17 @@ public class GameController {
 		pendingBattleXP = 0;
 	}
 
+	// Handles fleeing from a tower battle: restores HP and resets the room
+	private void handleTowerFlee() {
+		for (Bugemon b : player.getTeam().getMembers()) {
+			b.getFightStats().setHp(b.getBaseStats().getHp());
+		}
+		towerModeTowerManager.getCurrentFloorManager().rewindRoom();
+		fledBattle = true;
+	}
+
 	/**
 	 * Handles each room when in tower mode: switches to the right window and initializes its content
-	 *
 	 */
 	public void handleTower(ActionEvent event)  {
 
@@ -263,6 +275,10 @@ public class GameController {
 				break;
 			case SETUP_GAME_MODE:
 				handleSetupGameModeMessage((SetupGameModeMessage) m);
+				break;
+			case TOWER_FLEE:
+				handleTowerFlee();
+				response = new SwitchWindowMessage(WindowPath.NEXT_ROOM);
 				break;
 			case TOWER_NEXT_ROOM:
 				handleTower(((TowerNextRoomMessage) m).getEvent());

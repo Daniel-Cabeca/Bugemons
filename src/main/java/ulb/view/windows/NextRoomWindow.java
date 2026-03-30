@@ -16,6 +16,18 @@ public class NextRoomWindow extends Window {
 	@FXML
 	public Button nextButton;
 
+	// Sets the message depending on whether the player won or fled
+	@Override
+	public void onLoad() {
+		if (viewManager.getGameController().hasFledBattle()) {
+			messageLabel.setText("Vous avez fui le combat.");
+			nextButton.setText("Réessayer");
+			viewManager.getGameController().resetFledBattle();
+		} else {
+			messageLabel.setText("Vous avez mis tous les Bugémons ennemis KO!");
+		}
+	}
+
 	/**
 	 * Goes to the next room in tower mode
 	 *
@@ -23,7 +35,6 @@ public class NextRoomWindow extends Window {
 	 */
 	@FXML
 	public void handleContinue(ActionEvent event) {
-		messageLabel.setText("Vous avez mis tous les Bugémons ennemis KO!");
 		viewManager.handleMessage(new TowerNextRoomMessage(event));
 	}
 

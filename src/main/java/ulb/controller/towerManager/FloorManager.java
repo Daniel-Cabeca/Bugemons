@@ -28,6 +28,13 @@ public class FloorManager {
 		}
 	}
 
+	// Resets the current room so the player can retry it
+	public void rewindRoom() {
+		Room room = floor.getRooms().get(currentRoomIndex);
+		room.setRoomCompleted(false);
+		currentRoomManager = new RoomManager(room, floor.getId(), this.player);
+	}
+
 	public boolean isFloorCompleted() {
 		for (Room room : this.floor.getRooms()){
 			if (!room.isRoomCompleted()){

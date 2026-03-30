@@ -142,6 +142,13 @@ public class EffectJsonParser {
 		return this.parseStatType(node.asText());
 	}
 
+	/**
+	 * Parses one heal effect from a json node.
+	 *
+	 * @param node The json node
+	 * @return The parsed effect
+	 * @throws LoadException If parsing failed
+	 */
 	private Effect parseOneHeal(JsonNode node) throws LoadException {
 		EffectTarget target = this.parseTarget(node.get("cible"));
 
@@ -150,6 +157,13 @@ public class EffectJsonParser {
 		return new EffectHeal(target, value);
 	}
 
+	/**
+	 * Parses one stat modifier effect from a json node.
+	 *
+	 * @param node The json node
+	 * @return The parsed effect
+	 * @throws LoadException If parsing failed
+	 */
 	private Effect parseOneStatModifier(JsonNode node) throws LoadException {
 		EffectTarget target = this.parseTarget(node.get("cible"));
 		EffectDuration duration = this.parseDuration(node.get("duree"));
@@ -161,6 +175,13 @@ public class EffectJsonParser {
 		return new EffectStatModifier(target, duration, modifiers);
 	}
 
+	/**
+	 * Parses one stat modifier effect that affects multiple stats from a json node.
+	 *
+	 * @param node The json node
+	 * @return The parsed effect
+	 * @throws LoadException If parsing failed
+	 */
 	private Effect parseOneStatModifierMultiple(JsonNode node) throws LoadException {
 		EffectTarget target = this.parseTarget(node.get("cible"));
 		EffectDuration duration = this.parseDuration(node.get("duree"));
@@ -175,12 +196,26 @@ public class EffectJsonParser {
 		return new EffectStatModifier(target, duration, modifiers);
 	}
 
+	/**
+	 * Parses one reset malus effect from a json node.
+	 *
+	 * @param node The json node
+	 * @return The parsed effect
+	 * @throws LoadException If parsing failed
+	 */
 	private Effect parseOneResetMalus(JsonNode node) throws LoadException {
 		EffectTarget target = this.parseTarget(node.get("cible"));
 
 		return new EffectResetMalus(target);
 	}
 
+	/**
+	 * Parses one switch effect from a json node.
+	 *
+	 * @param node The json node
+	 * @return The parsed effect
+	 * @throws LoadException If parsing failed
+	 */
 	private Effect parseOneSwitch(JsonNode node) throws LoadException {
 		EffectTarget target = this.parseTarget(node.get("cible"));
 

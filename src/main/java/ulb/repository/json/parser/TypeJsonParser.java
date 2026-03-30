@@ -5,7 +5,17 @@ import com.fasterxml.jackson.databind.JsonNode;
 import ulb.model.type.Type;
 import ulb.repository.LoadException;
 
+/**
+ * Object that parses types from json nodes.
+ */
 public class TypeJsonParser {
+	/**
+	 * Returns one Type enum value from a json node.
+	 *
+	 * @param node The json node
+	 * @return The Type enum value
+	 * @throws LoadException If the type is not recognized
+	 */
 	public Type parseOne(JsonNode node) throws LoadException {
 		String str = node.asText();
 		str = str.toLowerCase();

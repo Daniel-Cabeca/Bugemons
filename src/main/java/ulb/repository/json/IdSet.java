@@ -31,6 +31,9 @@ public class IdSet<T extends HasId> implements Iterable<T> {
 		 return entry;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Iterator<T> iterator() {
 		return this.entries.values().iterator();

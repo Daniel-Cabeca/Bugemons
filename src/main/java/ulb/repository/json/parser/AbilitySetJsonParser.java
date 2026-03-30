@@ -9,6 +9,9 @@ import ulb.model.ability.AbilitySet;
 import ulb.repository.AbilityRepository;
 import ulb.repository.LoadException;
 
+/**
+ * Object that parses ability sets from json nodes.
+ */
 public class AbilitySetJsonParser {
 	private AbilityRepository abilityRepository;
 
@@ -16,6 +19,13 @@ public class AbilitySetJsonParser {
 		this.abilityRepository = abilityRepository;
 	}
 
+	/**
+	 * Parses one ability set from a json node.
+	 *
+	 * @param node The json node
+	 * @return The parsed ability set
+	 * @throws LoadException If parsing failed
+	 */
 	public AbilitySet parseOne(JsonNode node) throws LoadException {
 		if (node.size() != AbilitySet.SIZE) {
 			throw new LoadException("Ability sets must have exactly "+ AbilitySet.SIZE +" abilities.");

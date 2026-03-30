@@ -14,6 +14,12 @@ public abstract class JsonResources {
 	public static final String PATH_ABILITIES		= "/json/attaques.json";
 	public static final String PATH_ITEMS			= "/json/objets.json";
 
+	/**
+	 * Gets a URL instance for a class.
+	 *
+	 * @param path The path of the class resource
+	 * @return A URL instance for the class resource
+	 */
 	public static URL getUrl(String path) throws LoadException {
 		URL url = JsonResources.class.getResource(path);
 
@@ -24,6 +30,12 @@ public abstract class JsonResources {
 		return url;
 	}
 
+	/**
+	 * Gets an input stream for a class resource.
+	 *
+	 * @param path The path of the class resource
+	 * @return An input stream of the class resource
+	 */
 	public static InputStream getStream(String path) throws LoadException {
 		try {
 			URL url = JsonResources.getUrl(path);

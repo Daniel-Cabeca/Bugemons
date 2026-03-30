@@ -58,11 +58,17 @@ public class BugemonSpeciesJsonRepository implements BugemonSpeciesRepository {
 		this(new AbilityJsonRepository());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public BugemonSpecies findById(String id) throws NoSuchElementException {
 		return this.entries.get(id);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Iterable<BugemonSpecies> findAll() {
 		return this.entries;

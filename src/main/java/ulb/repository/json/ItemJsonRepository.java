@@ -48,11 +48,17 @@ public class ItemJsonRepository implements ItemRepository {
 		this.startingInventory = inventoryParser.parseOne(startingInventoryNode);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Item findById(String id) throws NoSuchElementException {
 		return this.items.get(id);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Iterable<Item> findAll() {
 		return this.items;

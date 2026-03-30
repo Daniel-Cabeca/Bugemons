@@ -42,6 +42,9 @@ public class AbilityJsonRepository implements AbilityRepository {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Ability findById(String id) throws NoSuchElementException {
 		return this.abilities.get(id);

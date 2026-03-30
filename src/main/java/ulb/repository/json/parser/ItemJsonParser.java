@@ -10,6 +10,9 @@ import ulb.model.effect.Effect;
 
 import ulb.repository.LoadException;
 
+/**
+ * Object that parses items from json nodes.
+ */
 public class ItemJsonParser {
 	private final EffectJsonParser effectParser = new EffectJsonParser();
 

@@ -10,6 +10,9 @@ public class InventoryJsonRepository implements InventoryRepository {
 		this.itemRepository = itemRepository;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Inventory findStartingInventory() {
 		return new Inventory(this.itemRepository.getStartingInventory());

@@ -53,6 +53,11 @@ public class ItemService {
 		return this.inventoryRepository.findStartingInventory();
 	}
 
+	/**
+	 * Returns a random item.
+	 *
+	 * @return A random item
+	 */
 	public Item getRandomItem() {
 		List<Item> items = new ArrayList<>();
 		for (Item item : this.itemRepository.findAll()) {
@@ -62,6 +67,12 @@ public class ItemService {
 		return items.get(random.nextInt(items.size()));
 	}
 
+	/**
+	 * Returns a list of all items in a given category.
+	 *
+	 * @param category The category to fetch items from
+	 * @return The items of the given category
+	 */
 	public List<Item> getItemsByCategory(String category) {
 		List<Item> result = new ArrayList<>();
 		for (Item item : this.itemRepository.findAll()) {

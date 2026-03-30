@@ -742,7 +742,7 @@ public class BattleWindow extends Window {
 	public void displayNextMessage() {
 		List<String> logs = battleController.getLogMsg();
 		if (logs != null && !logs.isEmpty()) {
-			String allMessages = String.join("\n", logs.stream().filter(m -> m != null).collect(java.util.stream.Collectors.toList()));
+			String allMessages = logs.stream().filter(m -> m != null).map(m -> wrapText(m, 35)).collect(java.util.stream.Collectors.joining("\n"));
 			battleLog.setText(allMessages);
 			messageBox.setVisible(true);
 			messageBox.setManaged(true);
@@ -802,7 +802,7 @@ public class BattleWindow extends Window {
 		}
 
 		Runnable closeAndComplete = () -> {
-			battleLog.setText("Quelle sera votre prochaine action ?");
+			battleLog.setText(wrapText("Quelle sera votre prochaine action ?", 35));
 			onComplete.run();
 		};
 
@@ -823,6 +823,29 @@ public class BattleWindow extends Window {
 		}
 	}
 
+	// Breaks text into lines so no line exceeds maxChars, splitting only at spaces
+	private String wrapText(String text, int maxChars) {
+		StringBuilder result = new StringBuilder();
+		for (String line : text.split("\n")) {
+			if (result.length() > 0) result.append("\n");
+			String[] words = line.split(" ");
+			int lineLen = 0;
+			for (String word : words) {
+				if (lineLen == 0) {
+					result.append(word);
+					lineLen = word.length();
+				} else if (lineLen + 1 + word.length() <= maxChars) {
+					result.append(" ").append(word);
+					lineLen += 1 + word.length();
+				} else {
+					result.append("\n").append(word);
+					lineLen = word.length();
+				}
+			}
+		}
+		return result.toString();
+	}
+
 	/**
 	 * Displays messages from a list one by one, advancing automatically with a 1-second delay.
 	 */
@@ -831,7 +854,7 @@ public class BattleWindow extends Window {
 			onComplete.run();
 			return;
 		}
-		battleLog.setText(messages.get(index));
+		battleLog.setText(wrapText(messages.get(index), 35));
 		PauseTransition pause = new PauseTransition(javafx.util.Duration.seconds(1));
 		pause.setOnFinished(e -> displayPhase(messages, index + 1, onComplete));
 		pause.play();

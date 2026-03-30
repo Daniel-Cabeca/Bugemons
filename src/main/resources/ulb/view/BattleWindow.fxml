@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Separator?>
 
 <GridPane
           alignment="BOTTOM_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ulb.view.windows.BattleWindow">
@@ -61,7 +62,7 @@
             </HBox>
             <HBox alignment="CENTER_RIGHT" spacing="13">
                 <Label text="HP" styleClass="hp-label"/>
-                <ProgressBar fx:id="PlayerBugemonHPBar" prefWidth="468" maxWidth="468" maxHeight="68" progress="1.0"/>
+                <ProgressBar fx:id="PlayerBugemonHPBar" prefWidth="468" maxWidth="468" maxHeight="24" progress="1.0"/>
             </HBox>
             <Label fx:id="PlayerBugemonHPNumber" styleClass="hp-number" maxWidth="Infinity"/>
         </VBox>
@@ -79,7 +80,7 @@
             </HBox>
             <HBox alignment="CENTER_RIGHT" spacing="13">
                 <Label text="HP" styleClass="hp-label"/>
-                <ProgressBar fx:id="OpponentHPBar" prefWidth="468" maxWidth="468" maxHeight="68" progress="1.0"/>
+                <ProgressBar fx:id="OpponentHPBar" prefWidth="468" maxWidth="468" maxHeight="24" progress="1.0"/>
             </HBox>
             <Label fx:id="OpponentHPNumber" styleClass="hp-number" maxWidth="Infinity"/>
         </VBox>
@@ -98,31 +99,33 @@
             </columnConstraints>
             <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
+                <RowConstraints minHeight="3.0" prefHeight="3.0" vgrow="NEVER" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
             </rowConstraints>
             <children>
                 <Button fx:id="attackButton" maxHeight="Infinity" maxWidth="Infinity" mnemonicParsing="false" text="Attaquer" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" onAction="#handleAttack"/>
                 <Button fx:id="itemButton" maxHeight="Infinity" maxWidth="Infinity" mnemonicParsing="false" text="Objet" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" onAction="#handleItemMenu"/>
-                <Button fx:id="runButton" maxHeight="Infinity" maxWidth="Infinity" mnemonicParsing="false" text="Fuir" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" onAction="#handleReturn"/>
-                <Button fx:id="switchButton" maxHeight="Infinity" maxWidth="Infinity" mnemonicParsing="false" text="Échanger" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" onAction="#handleBugemonsMenu"/>
+                <Separator GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="1" style="-fx-background-color: #888888; -fx-padding: 0;"/>
+                <Button fx:id="runButton" maxHeight="Infinity" maxWidth="Infinity" mnemonicParsing="false" text="Fuir" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" onAction="#handleReturn"/>
+                <Button fx:id="switchButton" maxHeight="Infinity" maxWidth="Infinity" mnemonicParsing="false" text="Échanger" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" onAction="#handleBugemonsMenu"/>
             </children>
         </GridPane>
-        <VBox fx:id="inventoryView" visible="false" managed="false" spacing="10.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" GridPane.fillHeight="false" maxHeight="220.0" maxWidth="Infinity">
+        <VBox fx:id="inventoryView" visible="false" managed="false" spacing="10.0" prefHeight="250.0" maxHeight="250.0" maxWidth="Infinity" scaleX="1.3" translateX="-40" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" GridPane.fillHeight="false">
             <children>
-                <ListView fx:id="inventoryList" prefHeight="170.0" prefWidth="200.0" />
-                <Button fx:id="backToMenuButton" text="Retour" onAction="#handleBackToMenu" maxHeight="Infinity" maxWidth="Infinity" VBox.vgrow="ALWAYS"/>
+                <ListView fx:id="inventoryList" prefHeight="195.0" maxWidth="Infinity" VBox.vgrow="ALWAYS"/>
+                <Button fx:id="backToMenuButton" text="Retour" onAction="#handleBackToMenu" maxHeight="Infinity" maxWidth="Infinity" VBox.vgrow="NEVER"/>
             </children>
         </VBox>
-        <VBox fx:id="bugemonsView" visible="false" managed="false" spacing="10.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" GridPane.fillHeight="false" maxHeight="220.0" maxWidth="Infinity">
+        <VBox fx:id="bugemonsView" visible="false" managed="false" spacing="10.0" prefHeight="250.0" maxHeight="250.0" maxWidth="Infinity" scaleX="1.3" translateX="-40" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" GridPane.fillHeight="false">
             <children>
-                <ListView fx:id="bugemonsList" prefHeight="170.0" prefWidth="200.0"/>
-                <Button text="Retour" onAction="#handleBackToMenu" maxHeight="Infinity" maxWidth="Infinity" VBox.vgrow="ALWAYS"/>
+                <ListView fx:id="bugemonsList" prefHeight="195.0" maxWidth="Infinity" VBox.vgrow="ALWAYS"/>
+                <Button text="Retour" onAction="#handleBackToMenu" maxHeight="Infinity" maxWidth="Infinity" VBox.vgrow="NEVER"/>
             </children>
         </VBox>
-        <VBox fx:id="abilitiesView" visible="false" managed="false" spacing="10.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" GridPane.fillHeight="false" maxHeight="220.0" maxWidth="Infinity">
+        <VBox fx:id="abilitiesView" visible="false" managed="false" spacing="10.0" prefHeight="250.0" maxHeight="250.0" maxWidth="Infinity" scaleX="1.3" translateX="-40" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="BOTTOM" GridPane.fillHeight="false">
             <children>
-                <ListView fx:id="abilitiesList" prefHeight="170.0" prefWidth="200.0" />
-                <Button text="Retour" onAction="#handleBackToMenu" maxHeight="Infinity" maxWidth="Infinity" VBox.vgrow="ALWAYS"/>
+                <ListView fx:id="abilitiesList" prefHeight="195.0" maxWidth="Infinity" VBox.vgrow="ALWAYS"/>
+                <Button text="Retour" onAction="#handleBackToMenu" maxHeight="Infinity" maxWidth="Infinity" VBox.vgrow="NEVER"/>
             </children>
         </VBox>
     </children>

@@ -27,7 +27,11 @@
 }
 
 ProgressBar{
-	-fx-pref-height: 50px;
+	-fx-pref-height: 18px;
+	-fx-border-color: black, white;
+	-fx-border-width: 2, 2;
+	-fx-border-insets: 0, 2;
+	-fx-border-radius: 4, 2;
 }
 Label{
 	-fx-font-size: 20px;
@@ -55,18 +59,18 @@ Label{
 
 
 .stat-box {
-    -fx-background-color: #f0ead0;
-    -fx-background-radius: 10;
+    -fx-background-color: #f8f8d8;
+    -fx-background-radius: 10 0 10 0;
     -fx-border-color: #000000;
     -fx-border-width: 4;
-    -fx-border-radius: 10;
+    -fx-border-radius: 10 0 10 0;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.50), 8, 0, 3, 4);
     -fx-padding: 8 14 8 14;
 }
 
 .bugemon-name {
     -fx-font-weight: bold;
-    -fx-font-size: 30px;
+    -fx-font-size: 45px;
     -fx-text-fill: #000000;
 }
 
@@ -124,7 +128,7 @@ Label{
     -fx-border-color: transparent;
     -fx-border-width: 0;
     -fx-background-radius: 0;
-    -fx-font-size: 24px;
+    -fx-font-size: 41px;
 }
 
 .battle-menu .button:hover {
@@ -132,8 +136,8 @@ Label{
 }
 
 .battle-message-box {
-    -fx-background-color: #27AE60;
-    -fx-border-color: #000000, #C0392B;
+    -fx-background-color: #68a0a0;
+    -fx-border-color: #000000, #d04838;
     -fx-border-width: 4, 5 20 5 20;
     -fx-border-insets: 0, 4;
     -fx-border-radius: 8, 6;
@@ -145,6 +149,6 @@ Label{
 
 .battle-message-box .label {
     -fx-text-fill: white;
-    -fx-font-size: 39px;
+    -fx-font-size: 59px;
     -fx-wrap-text: true;
 }

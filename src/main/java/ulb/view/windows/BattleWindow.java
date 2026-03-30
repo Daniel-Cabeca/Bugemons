@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javafx.application.Platform;
 import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -12,11 +11,13 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
 import ulb.communication.Message;
-import ulb.communication.types.GameMode;
-import ulb.communication.types.GetInfoMessage;
-import ulb.communication.types.SetupGameModeMessage;
-import ulb.communication.types.SwitchWindowMessage;
-import ulb.controller.GameController;
+import ulb.communication.types.AutoTurnRequestMessage;
+import ulb.communication.types.AutoTurnResponseMessage;
+import ulb.communication.types.BattleEndCheckMessage;
+import ulb.communication.types.SwapRequestMessage;
+import ulb.communication.types.UseAbilityRequestMessage;
+import ulb.communication.types.UseItemRequestMessage;
+import ulb.communication.types.*;
 import ulb.controller.towerManager.TowerManager;
 import ulb.model.battle.BattleState;
 import ulb.model.bugemon.Bugemon;
@@ -25,24 +26,17 @@ import ulb.model.item.Inventory;
 import ulb.model.item.Item;
 import ulb.model.team.Team;
 import ulb.model.ability.Ability;
-import ulb.controller.action.UseItem;
-import ulb.controller.strategy.StrategyRandom;
-import ulb.controller.action.UseAbility;
-import ulb.controller.action.Swap;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.util.Callback;
+import ulb.model.type.Type;
 import ulb.view.WindowPath;
 
 public class BattleWindow extends Window {
 
-	@FXML
-	private GridPane playerTeamGrid;
-	@FXML
-	private GridPane opponentTeamGrid;
 	@FXML
 	private ListView<Item> inventoryList;
 	@FXML
@@ -71,8 +65,6 @@ public class BattleWindow extends Window {
 	@FXML
 	private Label OpponentHPNumber;
 	@FXML
-	private Button backButton;
-	@FXML
 	private Button autoButton;
 	@FXML
 	private GridPane buttonsGrid;
@@ -91,8 +83,6 @@ public class BattleWindow extends Window {
 	@FXML
 	private Button switchButton;
 	@FXML
-	private Button backToMenuButton;
-	@FXML
 	private Label battleLog;
 
 	private Team playerTeam;
@@ -100,16 +90,12 @@ public class BattleWindow extends Window {
 	private BattleController battleController;
 	private TowerManager towerManager;
 	private GameMode gameMode;
-	private boolean waitingForOpponentAction = false;
-
-
-	public void setBattleController(BattleController battleController) { this.battleController = battleController; }
 
 	public void setTowerManager(TowerManager towerManager) {this.towerManager = towerManager;}
 
 	@Override
 	public void onLoad() {
-		Message m = viewManager.handleMessage(new GetInfoMessage());
+		Message m = viewManager.handleMessage(new GetInfoMessage(InfoType.SETUP_GAME));
 		if (m instanceof SetupGameModeMessage setup) {
 			this.battleController = setup.getBattleController();
 			initializeBattle(setup.getTeamA(), setup.getInventory(), setup.getGameMode());
@@ -127,7 +113,7 @@ public class BattleWindow extends Window {
 		this.playerInventory = playerInventory;
 		this.gameMode = gameMode;
 
-		// disables action buttons for the automatic mode
+        // disables action buttons for the automatic mode
 		if (gameMode == GameMode.AUTO) {
 			attackButton.setDisable(true);
 			itemButton.setDisable(true);
@@ -158,23 +144,7 @@ public class BattleWindow extends Window {
 			System.err.println("Failed to load player bugemon sprite: " + e.getMessage());
 		}
 
-		String playerColor;
-		switch (playerBugemon.getType()) {
-			case PYRO:
-				playerColor = "#ED2424";
-				break;
-			case FLORA:
-				playerColor = "#50A346";
-				break;
-			case AQUA:
-				playerColor = "#51B0F0";
-				break;
-			case LITHO:
-				playerColor = "#807979";
-				break;
-			default:
-				playerColor = "#ced4da";
-		}
+		String playerColor = getColor(playerBugemon.getType());
 
 		PlayerBugemonLabel.setText(playerBugemon.getName() + "  Lv." + playerBugemon.getLevel());
 		PlayerBugemonLabel.setStyle("-fx-text-fill: " + playerColor + ";");
@@ -191,23 +161,7 @@ public class BattleWindow extends Window {
 			System.err.println("Failed to load opponent bugemon sprite: " + e.getMessage());
 		}
 
-		String opponentColor;
-		switch (opponentBugemon.getType()) {
-			case PYRO:
-				opponentColor = "#ED2424";
-				break;
-			case FLORA:
-				opponentColor = "#50A346";
-				break;
-			case AQUA:
-				opponentColor = "#51B0F0";
-				break;
-			case LITHO:
-				opponentColor = "#807979";
-				break;
-			default:
-				opponentColor = "#ced4da";
-		}
+		String opponentColor = getColor(opponentBugemon.getType());
 
 		OpponentBugemonLabel.setText(opponentBugemon.getName() + "  Lv." + opponentBugemon.getLevel());
 		OpponentBugemonLabel.setStyle("-fx-text-fill: " + opponentColor + ";");
@@ -217,14 +171,31 @@ public class BattleWindow extends Window {
 		OpponentHPNumber.setText(opponentBugemon.getHp() + " / " + opponentBugemon.getBaseStats().hp);
 	}
 
-	public void initializebattleMessage(){
-
+	private static String getColor(Type type) {
+		String color;
+		switch (type) {
+			case PYRO:
+				color = "#ED2424";
+				break;
+			case FLORA:
+				color = "#50A346";
+				break;
+			case AQUA:
+				color = "#51B0F0";
+				break;
+			case LITHO:
+				color = "#807979";
+				break;
+			default:
+				color = "#ced4da";
+		}
+		return color;
 	}
 
 	/**
 	 * Handles the Item button click - shows inventory view
 	 */
-	public void handleItemMenu(ActionEvent event) {
+	public void handleItemMenu() {
 		if (buttonsGrid != null && inventoryView != null) {
 			buttonsGrid.setVisible(false);
 			buttonsGrid.setManaged(false);
@@ -238,7 +209,7 @@ public class BattleWindow extends Window {
 	/**
 	 * Handles the Switch button click - shows team view
 	 */
-	public void handleBugemonsMenu(ActionEvent event) {
+	public void handleBugemonsMenu() {
 		if (buttonsGrid != null && bugemonsView != null) {
 			buttonsGrid.setVisible(false);
 			buttonsGrid.setManaged(false);
@@ -253,27 +224,31 @@ public class BattleWindow extends Window {
 	 * Handles the Auto button click - equivalent to a turn in the automatic battle
 	 *
 	 * @param event the action triggered by clicking the return button
-	 * @throws IOException if the main menu FXML file cannot be loaded when going back to main menu
 	 */
-	public void handleAuto(ActionEvent event) throws IOException {
+	public void handleAuto(ActionEvent event) {
 		autoButton.setVisible(false);
 		autoButton.setManaged(false);
 
-		StrategyRandom strategyRandom = new StrategyRandom(battleController);
-		BattleState state = strategyRandom.playAutoTurn();
+		Message response = viewManager.handleMessage(new AutoTurnRequestMessage());
+		BattleState state = null;
+		if (response instanceof AutoTurnResponseMessage autoTurnResponse) {
+			state = autoTurnResponse.getBattleState();
+		}
 
 		displayNextMessage();
 
 		autoButton.setVisible(true);
 		autoButton.setManaged(true);
 
-		this.checkBattleEnd(state, event);
+		if (state != null) {
+			viewManager.handleMessage(new BattleEndCheckMessage(state, event));
+		}
 	}
 
 	/**
 	 * Handles the Attack button click - shows abilities view
 	 */
-	public void handleAttack(ActionEvent event) {
+	public void handleAttack() {
 		if (buttonsGrid != null && abilitiesView != null) {
 			buttonsGrid.setVisible(false);
 			buttonsGrid.setManaged(false);
@@ -287,7 +262,7 @@ public class BattleWindow extends Window {
 	/**
 	 * Handles the Back button click from inventory - returns to battle menu
 	 */
-	public void handleBackToMenu(ActionEvent event) {
+	public void handleBackToMenu() {
 		if (isForcedSwitch()) {
 			updateBackButtonsState();
 		}
@@ -307,13 +282,8 @@ public class BattleWindow extends Window {
 	}
 
 	/**
-	 * Indicates whether the player is currently in a forced switch state.
-	 *
-	 * Typical case:
-	 * - the player's active Bugémon has just been knocked out
-	 * - the game therefore forces the player to choose another one
-	 * - in this situation, the player must not be allowed to return
-	 *   to the main battle menu
+	 * Indicates whether the player is currently in a forced switch state. This happens when the Bugemon is KO
+	 * and the player has to choose a new one.
 	 *
 	 * @return true if the current battle state is SWAPPING, false otherwise
 	 */
@@ -323,7 +293,6 @@ public class BattleWindow extends Window {
 
 	/**
 	 * Updates the state of the "Back" buttons in the relevant views.
-	 *
 	 * If the player is in a forced switch, the "Back" button must be
 	 * disabled so they cannot leave the switch menu without choosing
 	 * a valid replacement Bugémon.
@@ -335,28 +304,42 @@ public class BattleWindow extends Window {
 
 	/**
 	* Enables or disables all buttons contained in the given view.
-	*
-	* Here, this method is used to disable the "Back" button
-	* in the Bugémons view when switching is mandatory.
+	* This method is used to disable the "Back" button in the Bugémons view during forced switch.
 	*
 	* @param view the view containing the buttons to update
 	* @param disabled true to disable the buttons, false to enable them again
 	*/
 	private void setBackButtonDisabled(VBox view, boolean disabled) {
-		// Safety check: if the view does not exist, do nothing
 		if (view == null) {
 			return;
 		}
 
-		// Iterate through all children of the view
 		for (Node child : view.getChildren()) {
-			// If the child is a button, update its disabled state
 			if (child instanceof Button button) {
 				button.setDisable(disabled);
 			}
 		}
 	}
 
+	/**
+	 * Applies a manual battle action by sending a message to GameController through ViewManager
+	 * and returns the resulting BattleState.
+	 *
+	 * @param request the message sent to ViewManager
+	 * @return state after the action, or null if no controller state is available
+	 */
+	private BattleState battleStateAfterManualMessage(Message request) {
+		Message response = viewManager.handleMessage(request);
+		if (response instanceof AutoTurnResponseMessage r) {
+			return r.getBattleState();
+		}
+		return battleController != null ? battleController.getState() : null;
+	}
+
+	/**
+	 * Sets up the inventory list by displaying all available items in the inventory.
+	 * Sends a message to ViewManager when an item is clicked.
+	 */
 	private void setupInventoryList() {
 		inventoryList.setCellFactory(new Callback<ListView<Item>, ListCell<Item>>() {
 			@Override
@@ -374,18 +357,15 @@ public class BattleWindow extends Window {
 						button.setOnAction(event -> {
 							Item item = getItem();
 							if (item != null) {
-								UseItem useItem = new UseItem(item);
-								battleController.useAction(useItem);
-								BattleState stateAfter = battleController.getState();
+								BattleState stateAfter = battleStateAfterManualMessage(new UseItemRequestMessage(item));
 								displayMessagesSequentially(() -> {
 									checkBattleState(stateAfter, event);
 									if (stateAfter == BattleState.WAITING || stateAfter == BattleState.INGAME) {
-										handleBackToMenu(event);
+										handleBackToMenu();
 									} else {
 										displayInventory();
 									}
 								});
-							// refreshAfterAction(event);
 							}
 						});
 					}
@@ -412,6 +392,10 @@ public class BattleWindow extends Window {
 		});
 	}
 
+	/**
+	 * Sets up the team's bugemons list by indicating which ones are KO
+	 * Sends a Swap request message to ViewManager when a Bugemon is clicked
+	 */
 	private void setupBugemonsList() {
 		bugemonsList.setCellFactory(new Callback<ListView<Bugemon>, ListCell<Bugemon>>() {
 			@Override
@@ -429,18 +413,15 @@ public class BattleWindow extends Window {
 						button.setOnAction(event -> {
 							Bugemon bugemon = getItem();
 							if (bugemon != null) {
-								Swap swap = new Swap(bugemon);
-								battleController.useAction(swap);
-								BattleState stateAfter = battleController.getState();
+								BattleState stateAfter = battleStateAfterManualMessage(new SwapRequestMessage(bugemon));
 								displayMessagesSequentially(() -> {
 									checkBattleState(stateAfter, event);
 									if (stateAfter == BattleState.WAITING || stateAfter == BattleState.INGAME) {
-										handleBackToMenu(event);
+										handleBackToMenu();
 									} else {
 										displayTeam();
 									}
 								});
-							// refreshAfterAction(event);
 							}
 						});
 					}
@@ -469,6 +450,10 @@ public class BattleWindow extends Window {
 	}
 
 
+	/**
+	 * Sets up the abilities list
+	 * Sends a Use Ability Request message to the ViewManager when an ability is selected
+	 */
 	private void setupAbilitiesList() {
 		abilitiesList.setCellFactory(new Callback<ListView<Ability>, ListCell<Ability>>() {
 			@Override
@@ -483,13 +468,11 @@ public class BattleWindow extends Window {
 						button.setOnAction(event -> {
 							Ability ability = getItem();
 							if (ability != null) {
-								UseAbility useAbility = new UseAbility(ability);
-								battleController.useAction(useAbility);
-								BattleState stateAfter = battleController.getState();
+								BattleState stateAfter = battleStateAfterManualMessage(new UseAbilityRequestMessage(ability));
 								displayMessagesSequentially(() -> {
 									checkBattleState(stateAfter, event);
 									if (stateAfter == BattleState.WAITING || stateAfter == BattleState.INGAME) {
-										handleBackToMenu(event);
+										handleBackToMenu();
 									}
 								});
 							// refreshAfterAction(event);
@@ -505,23 +488,8 @@ public class BattleWindow extends Window {
 						} else {
 							label.setText(ability.getName());
 
-							String color;
-							switch (ability.getType()) {
-								case PYRO:
-									color = "#ED2424";
-									break;
-								case FLORA:
-									color = "#50A346";
-									break;
-								case AQUA:
-									color = "#51B0F0";
-									break;
-								case LITHO:
-									color = "#807979";
-									break;
-								default:
-									color = "#ced4da";
-							}
+							String color = getColor(ability.getType());
+
 							hbox.setStyle(
 									"-fx-background-color: " + color + ";" +
 											"-fx-padding: 6;" +
@@ -546,120 +514,8 @@ public class BattleWindow extends Window {
 	}
 
 	/**
-	 * Handles everything that must happen after a player action
-	 * (attack, item use, switch, etc.), i.e. refreshes everything.
-	 *
-	 * Steps:
-	 * 1. retrieve the current battle state
-	 * 2. return to the main menu unless the player is in a forced switch
-	 * 3. check whether the battle state requires a specific transition
-	 * 4. display the next battle message
-	 * 5. if waiting for the opponent's action, start the waiting logic
-	 *
-	 * @param event the JavaFX event that triggered the action
+	 * Displays the available abilities when the "Attaque" button is clicked
 	 */
-	private void refreshAfterAction(ActionEvent event) {
-		BattleState state = battleController.getState();
-
-		// Return to the main menu only if the player is not forced
-    	// to select a new Bugémon
-		if (state != BattleState.SWAPPING) {
-			handleBackToMenu(event);
-		}
-		// Check whether the current state requires a specific action
-    	// (end of game, forced switch, etc.)
-		checkBattleState(state, event);
-
-		// Display the next message in the battle message queue
-		displayNextMessage();
-
-		// If it is now the opponent's turn, wait for their action
-		if (state == BattleState.WAITING) {
-			waitingForOpponentAction(event);
-		}
-	}
-
-	/**
-	 * Waits until the opponent has finished their action (the opponent may play in a separate thread).
-	 * During that time:
-	 * - player interactions are disabled
-	 * - the code waits until the state is no longer WAITING
-	 * - the interface is then refreshed on the JavaFX thread
-	 *
-	 * @param event the original JavaFX event
-	 */
-	private void waitingForOpponentAction(ActionEvent event) {
-		// Prevent starting multiple waiting threads at the same time
-		if (waitingForOpponentAction) {
-			return;
-		}
-
-		waitingForOpponentAction = true;
-
-		// Disable battle controls while the opponent is playing
-		setBattleInputsDisabled(true);
-		
-		Thread waitingThread = new Thread(() -> {
-			try {
-				// Active waiting loop:
-				// as long as the opponent has not finished their turn
-				// and the game is not over, wait in short intervals
-				while (battleController.getState() == BattleState.WAITING && !battleController.isGameFinished()) {
-					Thread.sleep(100);
-				}
-			} catch (InterruptedException e) {
-				// Restore the interrupted status if the thread is interrupted	
-				Thread.currentThread().interrupt();
-				}
-			// Any JavaFX UI update must be executed on the UI thread	
-			Platform.runLater(() -> {
-				waitingForOpponentAction = false;
-
-				// Re-enable player interactions
-				setBattleInputsDisabled(false);
-
-				// Display any new messages generated by the opponent's action
-				displayNextMessage();
-
-				// Re-check the battle state after the opponent has acted
-				checkBattleState(battleController.getState(), event);
-			});
-		});
-		
-		// Mark the thread as daemon so it does not prevent the application from closing
-		waitingThread.setDaemon(true);
-		waitingThread.start();
-	}
-
-	/**
-	 * Enables or disables the main battle controls.
-	 *
-	 * When the opponent is playing or the interface is waiting for an update,
-	 * the player must not be able to interact with the battle buttons.
-	 *
-	 * The logic also takes automatic mode into account:
-	 * - in automatic mode, some buttons must remain disabled
-	 * - the auto button is enabled only when automatic mode is active
-	 *
-	 * @param disabled true to block interactions, false to allow them again
-	 */
-	private void setBattleInputsDisabled(boolean disabled) {
-		// Main battle buttons
-		attackButton.setDisable(disabled || gameMode == GameMode.AUTO);
-		itemButton.setDisable(disabled || gameMode == GameMode.AUTO);
-		runButton.setDisable(disabled || gameMode == GameMode.AUTO);
-		switchButton.setDisable(disabled || gameMode == GameMode.AUTO);
-
-		// The auto button is disabled if the interface is blocked
-    	// or if automatic mode is not enabled
-		autoButton.setDisable(disabled || gameMode != GameMode.AUTO);
-
-		// Also disable subviews to prevent any interaction while waiting
-		inventoryView.setDisable(disabled);
-		bugemonsView.setDisable(disabled);
-		abilitiesView.setDisable(disabled);
-	}
-
 	private void displayAbilities() {
 		List<Ability> abilities = new ArrayList<>();
 		for (Ability ability : battleController.getActiveBugemonSelf().getAbilities()) {
@@ -671,52 +527,57 @@ public class BattleWindow extends Window {
 		setupAbilitiesList();
 	}
 
+	/**
+	 * Displays the inventory when the "Objet" button is clicked
+	 */
 	private void displayInventory() {
 		inventoryList.getItems().setAll(playerInventory.getItems().keySet());
 		setupInventoryList();
 	}
 
+	/**
+	 * Displays the team's Bugemons when the "Echanger" button is clicked
+	 */
 	private void displayTeam() {
 		bugemonsList.getItems().setAll(playerTeam.getMembers());
 		setupBugemonsList();
 	}
 
+	/**
+	 * Sends a message to ViewManager to check if the battle is over
+	 *
+	 * @param state the current battle state
+	 */
 	private void checkBattleState(BattleState state, ActionEvent event){
-		checkBattleEnd(state, event);
-		switchBugemon(state, event);
+		viewManager.handleMessage(new BattleEndCheckMessage(state, event));
+		switchBugemon(state);
 	}
 
-	public void checkBattleEnd(BattleState state, ActionEvent event){
-		GameController controller = viewManager.getGameController();
-		if (state == BattleState.WON) {
-			boolean isTower = gameMode == GameMode.TOWER;
-			if (!controller.startLevelUpSequenceIfNeeded(battleController, isTower, event)) {
-				if (!isTower) {
-					controller.switchToBattleEndWindow(true, event);
-				} else {
-					controller.switchToNextRoomWindow(event);
-				}
-			}
-		} else if (state == BattleState.LOST) {
-			controller.switchToBattleEndWindow(false, event);
-		}
-	}
 
-	private void switchBugemon(BattleState state, ActionEvent event){
+	/**
+	 * Opens the Bugemon menu when the battle state is SWAPPING
+	 *
+	 * @param state the current battle state
+	 */
+	private void switchBugemon(BattleState state){
 		if (state == BattleState.SWAPPING){
-			handleBackToMenu(event);
-			handleBugemonsMenu(event);
+			handleBackToMenu();
+			handleBugemonsMenu();
 		}
 	}
 
 	/**
 	* Returns to the main menu
 	* @param event the action triggered by clicking the return button
-	* @throws IOException if the main menu FuXML file cannot be loaded
+	* @throws IOException if the main menu FXML file cannot be loaded
 	*/
+	// In tower mode, fleeing goes back to the next room screen — otherwise returns to main menu
 	public void handleReturn(ActionEvent event) throws IOException {
-		Message switchToModeMenu = new SwitchWindowMessage(WindowPath.MODE);
-		viewManager.handleMessage(switchToModeMenu);
+		if (gameMode == GameMode.TOWER) {
+			viewManager.handleMessage(new TowerFleeMessage());
+		} else {
+			viewManager.handleMessage(new SwitchWindowMessage(WindowPath.MODE));
+		}
 	}
 
 
@@ -727,7 +588,8 @@ public class BattleWindow extends Window {
 	public void displayNextMessage() {
 		List<String> logs = battleController.getLogMsg();
 		if (logs != null && !logs.isEmpty()) {
-			String allMessages = String.join("\n", logs.stream().filter(m -> m != null).collect(java.util.stream.Collectors.toList()));
+			String allMessages = String.join("\n", logs.stream().filter(
+					m -> m != null).collect(java.util.stream.Collectors.toList()));
 			battleLog.setText(allMessages);
 			battleController.clearLogMsg();
 		} else {
@@ -749,11 +611,17 @@ public class BattleWindow extends Window {
 		abilitiesView.setManaged(false);
 	}
 
+	/**
+	 * Displays the log messages step by step
+	 *
+	 * @param onComplete true if the turn is complete and both action messages have been displayed, false otherwise 
+	 */
 	private void displayMessagesSequentially(Runnable onComplete) {
 		hideAllMenus();
 		List<String> logs = new java.util.ArrayList<>(battleController.getLogMsg());
 		battleController.clearLogMsg();
 
+		// skip if there are no messages to display
 		if (logs.isEmpty()) {
 			initializeGraphicalBattle();
 			onComplete.run();
@@ -771,15 +639,14 @@ public class BattleWindow extends Window {
 
 		battleLog.setText(String.join("\n", logs.subList(0, sep)));
 
-		// Only force a full refresh during the first phase when that phase actually
-		// contains a switch message. This makes the newly entered Bugémon visible
-		// before the counter-attack, while avoiding KO side effects where the next
-		// Bugémon would temporarily inherit the previous one's displayed HP state.
+		// refreshes the sprites only when a Bugemon switch happens
 		if (containsSwitchMessage(logs.subList(0, sep))) {
 			initializeGraphicalBattle();
 		}
+		// always updates the HP
 		updateHPDisplay(battleController.getHpAfterFirstActionSelf(), battleController.getHpAfterFirstActionOpponent());
 
+		// 1s delay between one turn's action messages
 		PauseTransition pause = new PauseTransition(javafx.util.Duration.seconds(1));
 		pause.setOnFinished(e -> {
 			List<String> second = new java.util.ArrayList<>();
@@ -834,6 +701,5 @@ public class BattleWindow extends Window {
 			bar.getStyleClass().add("hp-bar-red");
 		}
 	}
-
 
 }

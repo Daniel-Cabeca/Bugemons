@@ -12,4 +12,9 @@ public class ConnectMessage implements Message{
     public String getConnectMessage() {
         return this.connectMessage;
     }
+
+    @Override
+    public MessageType getMessageType() {
+        return MessageType.CONNECT;
+    }
 }

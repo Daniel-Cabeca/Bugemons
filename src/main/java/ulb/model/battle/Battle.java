@@ -10,8 +10,10 @@ import ulb.controller.action.*;
 import ulb.model.reward.Reward;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
+import ulb.model.reward.RewardType;
 
 
 public class Battle {
@@ -442,10 +444,12 @@ public class Battle {
 	 * @return the rewards computed
 	 */
 	public Vector<Reward> computeRewards(Bugemon bugemonTarget){
+		List<RewardType> types = new ArrayList<>(List.of(RewardType.values()));
+		Collections.shuffle(types);
 		Vector<Reward> rewards = new Vector<>();
-		for (int i=0; i < 3; i++){
+		for (int i = 0; i < 3; i++) {
 			Reward r = new Reward(bugemonTarget);
-			r.configureReward(r.generateRandomReward());
+			r.configureReward(types.get(i));
 			rewards.add(r);
 		}
 		return rewards;

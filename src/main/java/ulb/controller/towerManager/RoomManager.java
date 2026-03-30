@@ -32,15 +32,11 @@ public class RoomManager {
 	public void initializeRoomContent(RoomType type) {
 		switch (type) {
 			case BATTLE:
-				initializeNormalBattleRoom();
+				initializeBattleRoom(false);
 				break;
 
 			case BOSS:
-				initializeBosslBattleRoom();
-				break;
-
-			case REWARD:
-				initializeRewardRoom();
+				initializeBattleRoom(true);
 				break;
 
 			default:
@@ -48,7 +44,7 @@ public class RoomManager {
 		}
 	}
 
-	public void initializeNormalBattleRoom(){
+	public void initializeBattleRoom(boolean isBossBattle){
 		Team playerTeam = player.getTeam();
 		Team opponentTeam = new Team();
 		try{
@@ -58,32 +54,14 @@ public class RoomManager {
 		}
 		Battle battle = new Battle(playerTeam, opponentTeam, player);
 		battle.setFloorNumber(floorNumber);
-		this.roomBattleController = new BattleController(player, battle, ParticipantLabel.TEAM_A);
-		StrategyRandom strategyRandom = new StrategyRandom(battle);
-		Thread thread = new Thread(strategyRandom);
-		thread.start();
-	}
-
-
-	public void initializeBosslBattleRoom(){
-		Team playerTeam = player.getTeam();
-		Team opponentTeam = new Team();
-		try{
-			opponentTeam = OpponentTeamGenerator.generateRandomOpponentTeam(playerTeam);
-		}catch(Exception e){
-			System.err.println(e);
+		if (isBossBattle) {
+			battle.enableBossBattle();
 		}
-		Battle battle = new Battle(playerTeam, opponentTeam, player);
-		battle.setFloorNumber(floorNumber);
-		battle.enableBossBattle();
 		this.roomBattleController = new BattleController(player, battle, ParticipantLabel.TEAM_A);
 		StrategyRandom strategyRandom = new StrategyRandom(battle);
 		Thread thread = new Thread(strategyRandom);
+		thread.setDaemon(true);
 		thread.start();
-	}
-
-	public void initializeRewardRoom(){
-		// TODO connecter avec le systeme de rewards
 	}
 
 	public Room getRoom() {return room;}
@@ -97,10 +75,6 @@ public class RoomManager {
 	public Battle getBattle() {return battle;}
 
 	public void setBattle(Battle battle) {this.battle = battle;}
-
-	public boolean isTeamA() {return isTeamA;}
-
-	public void setTeamA(boolean teamA) {isTeamA = teamA;}
 
 	public BattleController getRoomBattleController() {return this.roomBattleController;}
 

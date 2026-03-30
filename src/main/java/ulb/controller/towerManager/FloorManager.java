@@ -19,17 +19,20 @@ public class FloorManager {
 
 	public Floor getFloor() {return this.floor;}
 
-	public void setFloor(Floor newFloor) {this.floor = newFloor;}
-
 	public RoomManager getCurrentRoomManager() {return this.currentRoomManager;}
-
-	public void setCurrentRoomManager(RoomManager newRoomManager) {this.currentRoomManager = newRoomManager;}
 
 	public void nextRoom(){
 		if (currentRoomManager.isRoomCompleted() && !isFloorCompleted()) {
 			currentRoomIndex++;
 			currentRoomManager = new RoomManager(floor.getRooms().get(this.currentRoomIndex), floor.getId(), this.player);
 		}
+	}
+
+	// Resets the current room so the player can retry it
+	public void rewindRoom() {
+		Room room = floor.getRooms().get(currentRoomIndex);
+		room.setRoomCompleted(false);
+		currentRoomManager = new RoomManager(room, floor.getId(), this.player);
 	}
 
 	public boolean isFloorCompleted() {
@@ -48,10 +51,5 @@ public class FloorManager {
 	public void setPlayer(Player player) {this.player = player;}
 
 	public int getCurrentRoomIndex() {return currentRoomIndex;}
-
-	public void setCurrentRoomIndex(int currentRoomIndex) {this.currentRoomIndex = currentRoomIndex;}
-
-
-
 
 }

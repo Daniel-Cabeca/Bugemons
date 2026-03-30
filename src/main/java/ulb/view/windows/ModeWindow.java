@@ -3,10 +3,7 @@ package ulb.view.windows;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
-import ulb.communication.Message;
-import ulb.communication.types.SwitchWindowMessage;
 import ulb.utils.Scaling;
-import ulb.view.ViewManager;
 import ulb.view.WindowPath;
 
 public final class ModeWindow extends Window {

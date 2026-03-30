@@ -7,11 +7,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import ulb.communication.Message;
 import ulb.communication.types.GameMode;
 import ulb.communication.types.SetupGameModeMessage;
-import ulb.communication.types.SwitchWindowMessage;
-import ulb.controller.GameController;
+import ulb.communication.types.TowerNextRoomMessage;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.team.Team;
 import ulb.utils.Scaling;
@@ -52,10 +50,10 @@ public class BattleModeWindow extends Window {
         sendSwitchWindowMessage(WindowPath.BATTLE);
     }
 
-	public void handleTowerBattle() {
+	public void handleTowerBattle(ActionEvent event) {
         SetupGameModeMessage setupMessage = new SetupGameModeMessage(GameMode.TOWER);
         viewManager.handleMessage(setupMessage);
-        sendSwitchWindowMessage(WindowPath.BATTLE);
+        viewManager.handleMessage(new TowerNextRoomMessage(event));
 	}
 
 	@FXML

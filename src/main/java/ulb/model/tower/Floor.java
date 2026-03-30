@@ -13,7 +13,7 @@ public class Floor {
     public Floor(int id, boolean isFinalBoss) {
         this.id = id;
         rooms = new ArrayList<>();
-        if (isFinalBoss) { // only one room in the final boss floor
+        if (isFinalBoss) {
             Room room = new Room(1, RoomType.BOSS);
             rooms.add(room);
         } else {

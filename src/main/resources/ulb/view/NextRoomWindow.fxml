@@ -14,7 +14,7 @@
 
     <Label fx:id="messageLabel" style="-fx-font-size: 14px;"/>
     <Button style="-fx-background-color: #97B35F; -fx-border-color: black; -fx-font-size: 30px;"
-            fx:id="nextButton" onAction="#handleContinue" prefHeight="50" prefWidth="300" text="Prochaine Salle" />
+            fx:id="nextButton" onAction="#handleContinue" prefHeight="50" prefWidth="300" text="Avancer" />
     <Button style="-fx-background-color: #97B35F; -fx-border-color: black; -fx-font-size: 30px;"
             onAction="#handleReturn" prefHeight="50" prefWidth="300" text="Abandonner" />
 

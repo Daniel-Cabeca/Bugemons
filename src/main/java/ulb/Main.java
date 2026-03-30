@@ -1,15 +1,11 @@
 package ulb;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import ulb.controller.GameController;
 import ulb.model.Player;
 import ulb.view.ViewManager;
 import ulb.view.WindowPath;
-import ulb.view.windows.ModeWindow;
 
 import ulb.communication.Message;
 import ulb.communication.types.ConnectMessage;
@@ -56,11 +52,12 @@ public class Main extends Application {
 		ViewManager viewManager = new ViewManager() {};
 		viewManager.setGameController(gameController);
 		viewManager.setStage(primaryStage);
-		gameController.setViewManager(viewManager); // possible change
+		gameController.setViewManager(viewManager);
 
 		Font.loadFont(getClass().getResourceAsStream("/fonts/pokemon-emerald-pro.otf"), 14);
 		primaryStage.setTitle("INFO-F307 Groupe 10");
 		primaryStage.setFullScreen(true);
+		primaryStage.setFullScreenExitHint("");
 
 		viewManager.switchWindow(WindowPath.MODE);
 

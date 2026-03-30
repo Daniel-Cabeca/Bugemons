@@ -1,4 +1,4 @@
-package ulb.communication.Messenger;
+package ulb.communication.types;
 
 import ulb.communication.Message;
 import ulb.model.ability.Ability;

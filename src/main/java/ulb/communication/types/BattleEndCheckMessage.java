@@ -1,4 +1,4 @@
-package ulb.communication.Messenger;
+package ulb.communication.types;
 
 import javafx.event.ActionEvent;
 import ulb.communication.Message;

@@ -12,16 +12,13 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
 import ulb.communication.Message;
-import ulb.communication.Messenger.AutoTurnRequestMessage;
-import ulb.communication.Messenger.AutoTurnResponseMessage;
-import ulb.communication.Messenger.BattleEndCheckMessage;
-import ulb.communication.Messenger.SwapRequestMessage;
-import ulb.communication.Messenger.UseAbilityRequestMessage;
-import ulb.communication.Messenger.UseItemRequestMessage;
-import ulb.communication.types.GameMode;
-import ulb.communication.types.GetInfoMessage;
-import ulb.communication.types.SetupGameModeMessage;
-import ulb.communication.types.SwitchWindowMessage;
+import ulb.communication.types.AutoTurnRequestMessage;
+import ulb.communication.types.AutoTurnResponseMessage;
+import ulb.communication.types.BattleEndCheckMessage;
+import ulb.communication.types.SwapRequestMessage;
+import ulb.communication.types.UseAbilityRequestMessage;
+import ulb.communication.types.UseItemRequestMessage;
+import ulb.communication.types.*;
 import ulb.controller.towerManager.TowerManager;
 import ulb.model.battle.BattleState;
 import ulb.model.bugemon.Bugemon;
@@ -110,7 +107,7 @@ public class BattleWindow extends Window {
 
 	@Override
 	public void onLoad() {
-		Message m = viewManager.handleMessage(new GetInfoMessage());
+		Message m = viewManager.handleMessage(new GetInfoMessage(InfoType.SETUP_GAME));
 		if (m instanceof SetupGameModeMessage setup) {
 			this.battleController = setup.getBattleController();
 			initializeBattle(setup.getTeamA(), setup.getInventory(), setup.getGameMode());
@@ -368,7 +365,7 @@ public class BattleWindow extends Window {
 	 * and returns the resulting {@link BattleState}. If the controller does not answer with
 	 * {@link AutoTurnResponseMessage}, falls back to this window's {@link #battleController} state.
 	 *
-	 * @param request a message such as {@link ulb.communication.Messenger.UseItemRequestMessage}
+	 * @param request a message such as {@link UseItemRequestMessage}
 	 * @return state after the action, or {@code null} if no controller state is available
 	 */
 	private BattleState battleStateAfterManualMessage(Message request) {

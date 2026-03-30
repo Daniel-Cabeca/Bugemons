@@ -5,11 +5,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import ulb.communication.Message;
-import ulb.communication.Messenger.AutoTurnResponseMessage;
+import ulb.communication.types.AutoTurnResponseMessage;
+import ulb.communication.types.RewardPlaceMessage;
 import ulb.communication.types.SetupGameModeMessage;
-import ulb.communication.types.SetupTeamMessage;
 import ulb.communication.types.SwitchWindowMessage;
-import ulb.controller.BattleController;
 import ulb.controller.GameController;
 import ulb.view.windows.BattleWindow;
 import ulb.view.windows.Window;
@@ -70,6 +69,9 @@ public abstract class ViewManager {
         }  else if (controllerResponse instanceof SetupGameModeMessage) {
             return controllerResponse;
         } else if (controllerResponse instanceof AutoTurnResponseMessage) {
+            return controllerResponse;
+        }
+        else if (controllerResponse instanceof RewardPlaceMessage) {
             return controllerResponse;
         }
         return null;

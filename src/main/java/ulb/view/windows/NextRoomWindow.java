@@ -28,21 +28,8 @@ public class NextRoomWindow extends Window {
 		viewManager.handleMessage(new TowerNextRoomMessage(event));
 	}
 
-	/**
-	 * Updates the text on the button to indicate if it is new room or floor
-	 *
-	 * @param isFloorCompleted true if it is a new floor, false if it is a new room (not floor)
-	 */
-	public void updateButtonText(boolean isFloorCompleted) {
-		if (isFloorCompleted) {
-			nextButton.setText("Prochain étage");
-		} else {
-			nextButton.setText("Prochaine salle");
-		}
-	}
-
 	@FXML
-	public void handleReturn(ActionEvent actionEvent) {
+	public void handleReturn(ActionEvent event) {
 		sendSwitchWindowMessage(WindowPath.MODE);
 	}
 }

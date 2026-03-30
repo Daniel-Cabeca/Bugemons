@@ -4,13 +4,15 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import ulb.communication.Message;
+import ulb.communication.types.GetInfoMessage;
+import ulb.communication.types.InfoType;
+import ulb.communication.types.RewardPlaceMessage;
 import ulb.controller.towerManager.TowerManager;
-import ulb.view.ViewManager;
+import ulb.view.WindowPath;
 
 public class FloorRewardWindow extends Window {
 	//TODO: implement functions + add popup window to newAttackReward and StatReward to select bugemon
-
-	private TowerManager towerManager;
 
 	@FXML
 	private Button objectReward;
@@ -23,24 +25,30 @@ public class FloorRewardWindow extends Window {
 	@FXML
 	private Label roomLabel;
 
-	private void switchToNextRoomWindow(ActionEvent event){viewManager.getGameController().switchToNextRoomWindow(event);}
-	public void setTowerManager(TowerManager towerManager){ this.towerManager = towerManager;}
-
-	public void initializeLabels() {
-		floorLabel.setText("Etage: NO" + towerManager.getFloorNumber());
-		roomLabel.setText("Salle: " + towerManager.getCurrentRoomIndex());
+	public void initializeLabels(int floorNumber, int roomNumber) {
+		floorLabel.setText("Etage: NO" + floorNumber);
+		roomLabel.setText("Salle: " + roomNumber);
 	}
 
-	// for now simply switches to next room window (no reward gained)
+	@Override
+	public void onLoad() {
+		Message m = viewManager.handleMessage(new GetInfoMessage(InfoType.REWARD_PLACE));
+		if (m instanceof RewardPlaceMessage placeMessage) {
+			initializeLabels(placeMessage.getFloorNumber(), placeMessage.getRoomNumber());
+		}
+	}
+
 	@FXML
-	private void objectReward(ActionEvent event){ switchToNextRoomWindow(event); }
+	private void objectReward(ActionEvent event){
+		sendSwitchWindowMessage(WindowPath.NEXT_ROOM);
+	}
 	@FXML
 	private void newAttackReward(ActionEvent event){
-		switchToNextRoomWindow(event);
+		sendSwitchWindowMessage(WindowPath.NEXT_ROOM);
 	}
 	@FXML
 	private void statReward(ActionEvent event){
-		switchToNextRoomWindow(event);
+		sendSwitchWindowMessage(WindowPath.NEXT_ROOM);
 	}
 
 }

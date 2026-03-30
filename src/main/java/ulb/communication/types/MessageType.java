@@ -2,6 +2,7 @@ package ulb.communication.types;
 
 public enum MessageType {
     AUTO_TURN_REQUEST,
+    BATTLE_END_INFO,
     AUTO_TURN_RESPONSE,
     BATTLE_END_CHECK,
     CONNECT,

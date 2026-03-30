@@ -1,10 +1,6 @@
 package ulb.controller;
 
 import javafx.event.ActionEvent;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.stage.Stage;
 import ulb.communication.Message;
 import ulb.communication.types.*;
 import ulb.controller.action.Swap;
@@ -29,10 +25,7 @@ import ulb.model.tower.RoomType;
 import ulb.model.reward.Reward;
 import ulb.view.ViewManager;
 import ulb.view.WindowPath;
-import ulb.view.windows.BattleEndWindow;
-import ulb.view.windows.LevelUpWindow;
 
-import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
@@ -50,6 +43,8 @@ public class GameController {
 	private boolean rewardSequenceReturnsToNextRoom;
 	private int pendingBattleXP;
 	private boolean fledBattle = false;
+	private boolean pendingVictory;
+	private int pendingTotalXP;
 
 	public boolean hasFledBattle() { return fledBattle; }
 	public void resetFledBattle() { fledBattle = false; }
@@ -102,21 +97,10 @@ public class GameController {
 		this.switchToBattleEndWindow(victory, totalXP, event);
 	}
 
-	public void switchToBattleEndWindow(boolean victory, int totalXP, ActionEvent event) { // TODO: refactor
-		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/BattleEndWindow.fxml"));
-			Parent battleEndWindow = loader.load();
-
-			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-			stage.getScene().setRoot(battleEndWindow);
-
-			BattleEndWindow controller = loader.getController();
-			controller.setViewManager(viewManager);
-			controller.setResult(victory, totalXP);
-
-		} catch (IOException e) {
-			System.err.println("Failed to load battle_end_window: " + e.getMessage());
-		}
+	public void switchToBattleEndWindow(boolean victory, int totalXP, ActionEvent event) {
+		this.pendingVictory = victory;
+		this.pendingTotalXP = totalXP;
+		viewManager.handleMessage(new SwitchWindowMessage(WindowPath.BATTLE_END));
 	}
 
 	/**
@@ -349,6 +333,9 @@ public class GameController {
 				if (currentBugemon != null && pendingRewardBattleController != null) {
 					answer = new LevelUpMessage(pendingLevelUpBugemons.peekFirst(), pendingRewardBattleController.getRewards(currentBugemon));
 				}
+				break;
+			case BATTLE_END:
+				answer = new BattleEndInfoMessage(pendingVictory, pendingTotalXP);
 				break;
 		}
 		return answer;

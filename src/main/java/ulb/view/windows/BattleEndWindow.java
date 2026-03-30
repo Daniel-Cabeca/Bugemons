@@ -4,6 +4,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import ulb.communication.Message;
+import ulb.communication.types.BattleEndInfoMessage;
+import ulb.communication.types.GetInfoMessage;
+import ulb.communication.types.InfoType;
 import ulb.communication.types.SwitchWindowMessage;
 import ulb.utils.Scaling;
 import ulb.view.WindowPath;
@@ -22,6 +25,14 @@ public class BattleEndWindow extends Window {
 	@FXML
 	public void initialize() {
 		Scaling.applyScaling(content);
+	}
+
+	@Override
+	public void onLoad() {
+		Message response = viewManager.handleMessage(new GetInfoMessage(InfoType.BATTLE_END));
+		if (response instanceof BattleEndInfoMessage info) {
+			setResult(info.isVictory(), info.getTotalXP());
+		}
 	}
 
 	/**

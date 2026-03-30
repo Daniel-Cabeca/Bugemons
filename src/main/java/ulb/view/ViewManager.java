@@ -69,7 +69,7 @@ public abstract class ViewManager {
             case SWITCH_WINDOW:
                 this.switchWindow(((SwitchWindowMessage) controllerResponse).getSwitchWindow());
                 return null;
-            case SETUP_GAME_MODE, AUTO_TURN_RESPONSE, REWARD_PLACE, LEVEL_UP:
+            case SETUP_GAME_MODE, AUTO_TURN_RESPONSE, REWARD_PLACE, LEVEL_UP, BATTLE_END_INFO:
                 return controllerResponse;
             default:
                 return null;

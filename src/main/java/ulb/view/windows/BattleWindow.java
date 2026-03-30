@@ -89,6 +89,7 @@ public class BattleWindow extends Window {
 	private Inventory playerInventory;
 	private BattleController battleController;
 	private TowerManager towerManager;
+	private GameMode gameMode;
 
 	public void setTowerManager(TowerManager towerManager) {this.towerManager = towerManager;}
 
@@ -110,6 +111,7 @@ public class BattleWindow extends Window {
 	public void initializeBattle(Team playerTeam, Inventory playerInventory, GameMode gameMode) {
 		this.playerTeam = playerTeam;
 		this.playerInventory = playerInventory;
+		this.gameMode = gameMode;
 
         // disables action buttons for the automatic mode
 		if (gameMode == GameMode.AUTO) {

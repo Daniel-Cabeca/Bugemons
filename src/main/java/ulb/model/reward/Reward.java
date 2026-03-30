@@ -93,8 +93,7 @@ public class Reward {
      * @return the randomly generated reward type
      */
     public RewardType generateRandomReward() {
-        Random rand = new Random();
-        int i = rand.nextInt(RewardType.values().length);
+        int i = (int) (Math.random() * RewardType.values().length);
         return RewardType.values()[i];
     }
 

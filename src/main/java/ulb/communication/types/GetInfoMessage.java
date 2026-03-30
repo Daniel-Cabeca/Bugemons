@@ -11,4 +11,9 @@ public class GetInfoMessage implements Message {
     public GetInfoMessage(InfoType type) { this.type = type; }
 
     public InfoType getType() { return this.type; }
+
+    @Override
+    public MessageType getMessageType() {
+        return MessageType.GET_INFO;
+    }
 }

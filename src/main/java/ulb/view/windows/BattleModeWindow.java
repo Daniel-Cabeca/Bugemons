@@ -54,8 +54,6 @@ public class BattleModeWindow extends Window {
         SetupGameModeMessage setupMessage = new SetupGameModeMessage(GameMode.TOWER);
         viewManager.handleMessage(setupMessage);
         viewManager.handleMessage(new TowerNextRoomMessage(event));
-
-
 	}
 
 	@FXML

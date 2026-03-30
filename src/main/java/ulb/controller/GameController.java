@@ -6,7 +6,6 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
 import ulb.communication.Message;
-import ulb.communication.types.AutoTurnRequestMessage;
 import ulb.communication.types.AutoTurnResponseMessage;
 import ulb.communication.types.BattleEndCheckMessage;
 import ulb.communication.types.SwapRequestMessage;
@@ -48,14 +47,8 @@ public class GameController {
 	private Player player;
 	private TowerManager towerModeTowerManager;
 	private BattleController normalModeBattleController;
-	/**
-	 * The battle currently shown in tower mode. After {@link FloorManager#nextRoom()}, {@link TowerManager#getCurrentBattleController()}
-	 * points at the next room, so message handlers must use this until the player leaves the fight screen.
-	 */
-	private BattleController towerActiveBattleController;
 	private ViewManager viewManager;
 
-	private boolean isNextFloor;
 	private GameMode gameMode;
 	private final Deque<Bugemon> pendingLevelUpBugemons = new ArrayDeque<>();
 	private BattleController pendingRewardBattleController;
@@ -63,10 +56,6 @@ public class GameController {
 	private int pendingBattleXP;
 
 	public GameController() {}
-
-	public GameController(TowerManager towerManager){
-		this.towerModeTowerManager = towerManager;
-	}
 
 	public void setPlayer(Player player) {this.player = player;}
 
@@ -98,14 +87,12 @@ public class GameController {
 	 */
 	public void setupTowerMode(){
 		towerModeTowerManager = new TowerManager(this.getPlayer());
-		towerActiveBattleController = null;
 	}
-
 
 	/**
 	 * Switches from the current battle view to the battle end window and displays the result.
 	 *
-	 * @param victory {@code true} if the player won the battle, {@code false} if the player lost
+	 * @param victory true if the player won the battle, false if the player lost
 	 */
 	public void switchToBattleEndWindow(boolean victory, ActionEvent event) { //TODO refactor
 		int totalXP = 0;
@@ -115,10 +102,7 @@ public class GameController {
 		this.switchToBattleEndWindow(victory, totalXP, event);
 	}
 
-	public void switchToBattleEndWindow(boolean victory, int totalXP, ActionEvent event) { //TODO refactor
-		if (gameMode == GameMode.TOWER) {
-			towerActiveBattleController = null;
-		}
+	public void switchToBattleEndWindow(boolean victory, int totalXP, ActionEvent event) { // TODO: refactor
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/BattleEndWindow.fxml"));
 			Parent battleEndWindow = loader.load();
@@ -135,6 +119,13 @@ public class GameController {
 		}
 	}
 
+	/**
+	 * Sets up and switches to the LevelUpWindow if there are Bugemons who leveled up
+	 *
+	 * @param battleController the battle controller that holds reward information
+	 * @param returnToNextRoom if true, returns to the next tower room after the sequence, otherwise shows the battle end screen
+	 * @return true if the sequence was started, false if no rewards are pending
+	 */
 	public boolean startLevelUpSequenceIfNeeded(BattleController battleController, boolean returnToNextRoom, ActionEvent event) {
 		pendingLevelUpBugemons.clear();
 
@@ -151,10 +142,15 @@ public class GameController {
 		this.pendingRewardBattleController = battleController;
 		this.rewardSequenceReturnsToNextRoom = returnToNextRoom;
 		this.pendingBattleXP = battleController.getTotalXP();
-		switchToLevelUpWindow(event);
+		viewManager.handleMessage(new SwitchWindowMessage(WindowPath.LEVEL_UP));
 		return true;
 	}
 
+	/**
+	 * Applies the chosen reward to the current pending Bugémon and advances the level-up sequence
+	 *
+	 * @param reward the reward chosen by the player
+	 */
 	public void handleLevelUpRewardChoice(Reward reward, ActionEvent event) {
 		Bugemon currentBugemon = pendingLevelUpBugemons.peekFirst();
 		if (currentBugemon == null || pendingRewardBattleController == null) {
@@ -171,7 +167,7 @@ public class GameController {
 		}
 
 		if (!pendingLevelUpBugemons.isEmpty()) {
-			switchToLevelUpWindow(event);
+			viewManager.handleMessage(new SwitchWindowMessage(WindowPath.LEVEL_UP));
 			return;
 		}
 
@@ -185,27 +181,9 @@ public class GameController {
 		}
 	}
 
-	private void switchToLevelUpWindow(ActionEvent event) { //TODO refactor
-		Bugemon currentBugemon = pendingLevelUpBugemons.peekFirst();
-		if (currentBugemon == null || pendingRewardBattleController == null) {
-			return;
-		}
-
-		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/ulb/view/LevelUpWindow.fxml"));
-			Parent levelUpWindow = loader.load();
-
-			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-			stage.getScene().setRoot(levelUpWindow);
-
-			LevelUpWindow controller = loader.getController();
-			controller.setViewManager(viewManager);
-			controller.initializeRewardSelection(currentBugemon, pendingRewardBattleController.getRewards(currentBugemon));
-		} catch (IOException e) {
-			System.err.println("Failed to load level_up_window: " + e.getMessage());
-		}
-	}
-
+	/**
+	 * Resets all state related to a pending level-up sequence
+	 */
 	private void clearPendingLevelUpState() {
 		pendingLevelUpBugemons.clear();
 		pendingRewardBattleController = null;
@@ -216,76 +194,45 @@ public class GameController {
 	/**
 	 * Handles each room when in tower mode: switches to the right window and initializes its content
 	 *
-	 * @param teamA the team that the player chose for the tower mode
 	 */
-	public void handleTower(Team teamA, ActionEvent event)  {
+	public void handleTower(ActionEvent event)  {
+
+		towerModeTowerManager.getCurrentFloorManager().nextRoom();
+		towerModeTowerManager.nextFloor();
 
 		if (!towerModeTowerManager.isTowerCompleted()) {
-			isNextFloor = false;
 			FloorManager floorManager = towerModeTowerManager.getCurrentFloorManager();
 
-			if (!floorManager.isFloorCompleted()) {
-				RoomManager roomManager = floorManager.getCurrentRoomManager();
-				Room currentRoom = roomManager.getRoom();
-				RoomType type = currentRoom.getRoomType();
+			RoomManager roomManager = floorManager.getCurrentRoomManager();
+			Room currentRoom = roomManager.getRoom();
+			RoomType type = currentRoom.getRoomType();
 
-				if (type == RoomType.BATTLE || type == RoomType.BOSS) {
-					this.towerActiveBattleController = towerModeTowerManager.getCurrentBattleController();
-				}
+			switch (type) {
+				case BATTLE, BOSS:
+					viewManager.handleMessage(new SwitchWindowMessage(WindowPath.BATTLE));
+					break;
 
-				switch (type) {
-					case BATTLE:
-						viewManager.handleMessage(new SwitchWindowMessage(WindowPath.BATTLE));
-						roomManager.setRoomCompleted(true);
-						break;
+				case REWARD:
+					viewManager.handleMessage(new SwitchWindowMessage(WindowPath.FLOOR_REWARD));
+					break;
 
-					case BOSS:
-						viewManager.handleMessage(new SwitchWindowMessage(WindowPath.BATTLE));
-						roomManager.setRoomCompleted(true);
-						isNextFloor = true;
-						break;
-
-					case REWARD:
-						viewManager.handleMessage(new SwitchWindowMessage(WindowPath.FLOOR_REWARD));
-						roomManager.setRoomCompleted(true);
-						break;
-
-					default:
-						roomManager.setRoomCompleted(true);
-						break;
-				}
-				floorManager.nextRoom();
+				default:
+					break;
 			}
-			towerModeTowerManager.nextFloor();
-		}
-		else {
+			roomManager.setRoomCompleted(true);
+		} else {
 			switchToBattleEndWindow(true, event);
 		}
 	}
 
 	/**
-	 * Resolves the {@link BattleController} that tower-mode messages must target.
-	 * After {@code FloorManager.nextRoom()} the tower “current” room may point ahead of the fight
-	 * still on screen; in that case {@link #towerActiveBattleController} is used.
+	 * Battle controller for executing one player action (item, swap, or ability).
 	 *
-	 * @return the battle controller wired for tower messaging, or {@code null} if none applies
-	 */
-	private BattleController towerBattleControllerForMessages() {
-		if (towerActiveBattleController != null) {
-			return towerActiveBattleController;
-		}
-		return towerModeTowerManager != null ? towerModeTowerManager.getCurrentBattleController() : null;
-	}
-
-	/**
-	 * Battle controller for executing one manual player action (item, swap, or ability).
-	 *
-	 * @return tower battle from {@link #towerBattleControllerForMessages()} when in tower mode,
-	 *         otherwise {@link #normalModeBattleController}
+	 * @return tower battle from towerBattleControllerForMessages when in tower mode, otherwise normalModeBattleController
 	 */
 	private BattleController battleControllerForManualTurn() {
 		if (gameMode == GameMode.TOWER && towerModeTowerManager != null) {
-			return towerBattleControllerForMessages();
+			return towerModeTowerManager.getCurrentBattleController();
 		}
 		return normalModeBattleController;
 	}
@@ -306,76 +253,46 @@ public class GameController {
 	/**
 	 * Handles a message received from ViewManager
 	 * @param m the message received from ViewManager
-	 * @return m the answer message to transfer to ViewManager
+	 * @return the response message to transfer to ViewManager
 	 */
 	public Message handleMessage(Message m) {
-		Message answer = null;
-		if (m instanceof SwitchWindowMessage) { // pour l'instant, on n'a pas de vérification à faire pour ce type d'action,
-			// mais c'est ici qu'on doit faire les vérif
-			answer = m;
-		} else if (m instanceof SetupTeamMessage) {
-			setupTeam(((SetupTeamMessage) m).getSelectedBugemons());
-		} else if (m instanceof SetupGameModeMessage) {
-			handleSetupGameModeMessage((SetupGameModeMessage) m);
-		} else if (m instanceof TowerNextRoomMessage) {
-			handleTower(getTeam(), ((TowerNextRoomMessage) m).getEvent());
-		} else if (m instanceof GetInfoMessage) {
-			answer = handleGetInfoMessage((GetInfoMessage) m);
-
-		} else if (m instanceof AutoTurnRequestMessage) {
-			StrategyRandom strategyRandom = new StrategyRandom(normalModeBattleController);
-			BattleState state = strategyRandom.playAutoTurn();
-			answer = new AutoTurnResponseMessage(state);
-
-		} else if (m instanceof UseItemRequestMessage) {
-			Item item = ((UseItemRequestMessage) m).getItem();
-			BattleController bc = battleControllerForManualTurn();
-			if (bc != null && item != null) {
-				bc.useAction(new UseItem(item));
-				answer = new AutoTurnResponseMessage(bc.getState());
-			}
-		} else if (m instanceof SwapRequestMessage) {
-			Bugemon bugemon = ((SwapRequestMessage) m).getBugemon();
-			BattleController bc = battleControllerForManualTurn();
-			if (bc != null && bugemon != null) {
-				bc.useAction(new Swap(bugemon));
-				answer = new AutoTurnResponseMessage(bc.getState());
-			}
-		} else if (m instanceof UseAbilityRequestMessage) {
-			Ability ability = ((UseAbilityRequestMessage) m).getAbility();
-			BattleController bc = battleControllerForManualTurn();
-			if (bc != null && ability != null) {
-				bc.useAction(new UseAbility(ability));
-				answer = new AutoTurnResponseMessage(bc.getState());
-			}
-		} else if (m instanceof BattleEndCheckMessage) {
-			BattleEndCheckMessage endMsg = (BattleEndCheckMessage) m;
-			BattleState state = endMsg.getBattleState();
-			ActionEvent event = endMsg.getActionEvent();
-			if (event != null) {
-				BattleController bc = null;
-				if (gameMode == GameMode.TOWER && towerModeTowerManager != null) {
-					bc = towerBattleControllerForMessages();
-				} else {
-					bc = normalModeBattleController;
-				}
-				if (bc != null) {
-					if (state == BattleState.WON) {
-						boolean isTower = gameMode == GameMode.TOWER;
-						if (!startLevelUpSequenceIfNeeded(bc, isTower, event)) {
-							if (!isTower) {
-								switchToBattleEndWindow(true, event);
-							} else {
-								viewManager.handleMessage(new SwitchWindowMessage(WindowPath.NEXT_ROOM));
-							}
-						}
-					} else if (state == BattleState.LOST) {
-						switchToBattleEndWindow(false, event);
-					}
-				}
-			}
+		Message response = null; // not all received messages need a response
+		MessageType messageType = m.getMessageType();
+		switch (messageType) {
+			case SWITCH_WINDOW:
+				response = m; // returns the same message so that ViewManager can switch to the right window
+				break;
+			case SETUP_TEAM:
+				setupTeam(((SetupTeamMessage) m).getSelectedBugemons());
+				break;
+			case SETUP_GAME_MODE:
+				handleSetupGameModeMessage((SetupGameModeMessage) m);
+				break;
+			case TOWER_NEXT_ROOM:
+				handleTower(((TowerNextRoomMessage) m).getEvent());
+				break;
+			case GET_INFO:
+				response = handleGetInfoMessage((GetInfoMessage) m);
+				break;
+			case AUTO_TURN_REQUEST:
+				StrategyRandom strategyRandom = new StrategyRandom(normalModeBattleController);
+				BattleState state = strategyRandom.playAutoTurn();
+				response = new AutoTurnResponseMessage(state);
+				break;
+			case USE_ITEM_REQUEST:
+				response = handleUseItemMessage((UseItemRequestMessage) m);
+				break;
+			case SWAP_REQUEST:
+				response = handleSwapMessage((SwapRequestMessage) m);
+				break;
+			case USE_ABILITY_REQUEST:
+				response = handleUseAbilityMessage((UseAbilityRequestMessage) m);
+				break;
+			case BATTLE_END_CHECK:
+				handleBattleEndCheckMessage((BattleEndCheckMessage) m);
+				break;
 		}
-        return answer;
+        return response;
     }
 
 	/**
@@ -394,12 +311,17 @@ public class GameController {
 		}
 	}
 
+	/**
+	 * Checks what information was requested by the view
+	 * @param m the information request message received from ViewManager
+	 * @return the response containing the requested information to send to ViewManager
+	 */
 	private Message handleGetInfoMessage(GetInfoMessage m) {
 		Message answer = null;
 		switch (m.getType()){
 			case SETUP_GAME:
 				if (gameMode == GameMode.TOWER) {
-					answer = new SetupGameModeMessage(gameMode, getTeam(), player.getInventory(), towerBattleControllerForMessages());
+					answer = new SetupGameModeMessage(gameMode, getTeam(), player.getInventory(), towerModeTowerManager.getCurrentBattleController());
 				} else {
 					answer = new SetupGameModeMessage(gameMode, getTeam(), player.getInventory(), normalModeBattleController);
 				}
@@ -407,8 +329,95 @@ public class GameController {
 			case REWARD_PLACE:
 				 answer = new RewardPlaceMessage(towerModeTowerManager.getFloorNumber(), towerModeTowerManager.getCurrentRoomIndex());
 				 break;
+			case LEVEL_UP:
+				Bugemon currentBugemon = pendingLevelUpBugemons.peekFirst();
+				if (currentBugemon != null || pendingRewardBattleController != null) {
+					answer = new LevelUpMessage(pendingLevelUpBugemons.peekFirst(), pendingRewardBattleController.getRewards(currentBugemon));
+				}
+				break;
 		}
 		return answer;
 	}
 
+	/**
+	 * Uses the item as requested by the message
+	 * @param m the message containing the item to use received from ViewManager
+	 * @return the response containing the current battle state to send to ViewManager
+	 */
+	private Message handleUseItemMessage(UseItemRequestMessage m) {
+		Message response = null;
+		Item item = m.getItem();
+		BattleController battleController = battleControllerForManualTurn();
+		if (battleController != null && item != null) {
+			battleController.useAction(new UseItem(item));
+			response = new AutoTurnResponseMessage(battleController.getState());
+		}
+		return response;
+	}
+
+	/**
+	 * Swaps the active Bugemon to a new one
+	 * @param m the message containing the bugemon to switch to received from ViewManager
+	 * @return the response containing the current battle state to send to ViewManager
+	 */
+	private Message handleSwapMessage(SwapRequestMessage m) {
+		Message response = null;
+		Bugemon bugemon = m.getBugemon();
+		BattleController battleController = battleControllerForManualTurn();
+		if (battleController != null && bugemon != null) {
+			battleController.useAction(new Swap(bugemon));
+			response = new AutoTurnResponseMessage(battleController.getState());
+		}
+		return response;
+	}
+
+	/**
+	 * Uses the ability as requested by the message
+	 * @param m the message containing the ability to use received from ViewManager
+	 * @return the response containing the current battle state to send to ViewManager
+	 */
+	private Message handleUseAbilityMessage(UseAbilityRequestMessage m) {
+		Message response = null;
+		Ability ability = m.getAbility();
+		BattleController battleController = battleControllerForManualTurn();
+		if (battleController != null && ability != null) {
+			battleController.useAction(new UseAbility(ability));
+			response = new AutoTurnResponseMessage(battleController.getState());
+		}
+		return response;
+	}
+
+	/**
+	 * Handles the BattleEndCheckMessage by switching to the right window based on if the player one and the game mode
+	 *
+	 * @param m the received BattleEndCheckMessage from ViewManager
+	 */
+	private void handleBattleEndCheckMessage(BattleEndCheckMessage m) {
+        BattleState state = m.getBattleState();
+		ActionEvent event = m.getActionEvent();
+
+		if (event == null) return;
+
+		BattleController battleController;
+		if (gameMode == GameMode.TOWER && towerModeTowerManager != null) {
+			battleController = towerModeTowerManager.getCurrentBattleController();
+		} else {
+			battleController = normalModeBattleController;
+		}
+
+		if (battleController == null) return;
+
+		if (state == BattleState.WON) {
+			boolean isTower = gameMode == GameMode.TOWER;
+			if (!startLevelUpSequenceIfNeeded(battleController, isTower, event)) {
+				if (!isTower) {
+					switchToBattleEndWindow(true, event);
+				} else {
+					viewManager.handleMessage(new SwitchWindowMessage(WindowPath.NEXT_ROOM));
+				}
+			}
+		} else if (state == BattleState.LOST) {
+			switchToBattleEndWindow(false, event);
+		}
+	}
 }

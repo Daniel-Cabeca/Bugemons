@@ -4,20 +4,22 @@ import ulb.communication.Message;
 import ulb.model.ability.Ability;
 
 /**
- * Player chose to use an ability in manual battle. {@link Ability} is not serialized (transient).
+ * Player chose to use an ability in manual battle
  */
 public class UseAbilityRequestMessage implements Message {
-	private final transient Ability ability;
+	private final Ability ability;
 
 	/**
-	 * @param ability the attack to perform (transient reference)
+	 * @param ability the attack to perform
 	 */
 	public UseAbilityRequestMessage(Ability ability) {
 		this.ability = ability;
 	}
 
-	/** @return the selected ability, or {@code null} */
-	public Ability getAbility() {
-		return ability;
+	public Ability getAbility() { return ability; }
+
+	@Override
+	public MessageType getMessageType() {
+		return MessageType.USE_ABILITY_REQUEST;
 	}
 }

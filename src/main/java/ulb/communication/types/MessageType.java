@@ -1,0 +1,20 @@
+package ulb.communication.types;
+
+public enum MessageType {
+    AUTO_TURN_REQUEST,
+    AUTO_TURN_RESPONSE,
+    BATTLE_END_CHECK,
+    CONNECT,
+    ERROR,
+    GET_INFO,
+    LEVEL_UP,
+    REWARD_PLACE,
+    SETUP_TEAM,
+    SETUP_GAME_MODE,
+    SWAP_REQUEST,
+    SWITCH_WINDOW,
+    TOWER_NEXT_ROOM,
+    USE_ABILITY_REQUEST,
+    USE_ITEM_REQUEST,
+    WAITING
+}

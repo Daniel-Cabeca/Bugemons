@@ -40,4 +40,9 @@ public class SetupGameModeMessage implements Message {
     public Team getTeamA() { return teamA; }
 
     public BattleController getBattleController() { return BattleController; }
+
+    @Override
+    public MessageType getMessageType() {
+        return MessageType.SETUP_GAME_MODE;
+    }
 }

@@ -10,8 +10,6 @@ import javafx.scene.layout.VBox;
 import java.util.ArrayList;
 import java.util.List;
 
-import ulb.communication.Message;
-import ulb.communication.types.SwitchWindowMessage;
 import ulb.communication.types.SetupTeamMessage;
 import ulb.model.bugemon.BugemonSpecies;
 import ulb.utils.Scaling;
@@ -150,7 +148,6 @@ public class CreateTeamWindow extends Window {
 			vbox.setDisable(false);
 		}
 	}
-
 
 	/**
 	 * Adds the selected bugemon to the selectedBugemons list when clicking the checkbox

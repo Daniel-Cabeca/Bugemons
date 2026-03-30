@@ -51,6 +51,13 @@ public class BattleController {
 		return vector;
 	}
 
+	/**
+	 * Applies the chosen level up reward to the bugemon
+	 *
+	 * @param bugemonTarget the bugemon who receives the reward
+	 * @param reward the chosen reward
+	 * @return true if the reward was applied, false otherwise
+	 */
 	public boolean applyReward(Bugemon bugemonTarget, Reward reward){
 		for (Reward r : this.rewards) {
 			if (r.getStats().equals(reward.getStats()) && r.getBugemon().equals(bugemonTarget)){

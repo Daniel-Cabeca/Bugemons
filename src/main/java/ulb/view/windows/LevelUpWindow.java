@@ -1,7 +1,10 @@
 package ulb.view.windows;
 
 import javafx.fxml.FXML;
-import ulb.controller.GameController;
+import ulb.communication.Message;
+import ulb.communication.types.GetInfoMessage;
+import ulb.communication.types.InfoType;
+import ulb.communication.types.LevelUpMessage;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.Stats;
 import ulb.model.reward.Reward;
@@ -9,7 +12,6 @@ import javafx.event.ActionEvent;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import ulb.view.ViewManager;
 
 import java.util.Vector;
 
@@ -28,6 +30,14 @@ public class LevelUpWindow extends Window {
 	private Reward rA;
 	private Reward rB;
 	private Reward rC;
+
+	@Override
+	public void onLoad() {
+		Message m = viewManager.handleMessage(new GetInfoMessage(InfoType.LEVEL_UP));
+		if (m instanceof LevelUpMessage levelUpMessage) {
+			initializeRewardSelection(levelUpMessage.getBugemon(), levelUpMessage.getRewards());
+		}
+	}
 
 	private String createRewardsText(Reward r) {
 		Stats addedStats = r.getStats();
@@ -60,9 +70,17 @@ public class LevelUpWindow extends Window {
 	}
 
 	@FXML
-	private void chooseRewardA(ActionEvent event) { viewManager.getGameController().handleLevelUpRewardChoice(rA, event); }
+	private void chooseRewardA(ActionEvent event) {
+		viewManager.getGameController().handleLevelUpRewardChoice(rA, event);
+	}
+
 	@FXML
-	private void chooseRewardB(ActionEvent event) { viewManager.getGameController().handleLevelUpRewardChoice(rB, event); }
+	private void chooseRewardB(ActionEvent event) {
+		viewManager.getGameController().handleLevelUpRewardChoice(rB, event);
+	}
+
 	@FXML
-	private void chooseRewardC(ActionEvent event) { viewManager.getGameController().handleLevelUpRewardChoice(rC, event); }
+	private void chooseRewardC(ActionEvent event) {
+		viewManager.getGameController().handleLevelUpRewardChoice(rC, event);
+	}
 }

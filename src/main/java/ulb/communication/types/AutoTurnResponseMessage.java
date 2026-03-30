@@ -4,8 +4,7 @@ import ulb.communication.Message;
 import ulb.model.battle.BattleState;
 
 /**
- * Answer from the controller after a battle step that yields an updated {@link BattleState},
- * e.g. auto-turn or manual actions ({@code UseItemRequestMessage}, swap, ability).
+ * Answer from the controller after a battle turn
  */
 public class AutoTurnResponseMessage implements Message {
 	private final BattleState battleState;
@@ -17,8 +16,12 @@ public class AutoTurnResponseMessage implements Message {
 		this.battleState = battleState;
 	}
 
-	/** @return the battle state returned by the controller */
 	public BattleState getBattleState() {
 		return battleState;
+	}
+
+	@Override
+	public MessageType getMessageType() {
+		return MessageType.AUTO_TURN_RESPONSE;
 	}
 }

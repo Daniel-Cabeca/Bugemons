@@ -12,4 +12,9 @@ public class ErrorMessage implements Message {
     public String getError() {
         return this.error;
     }
+
+    @Override
+    public MessageType getMessageType() {
+        return MessageType.ERROR;
+    }
 }

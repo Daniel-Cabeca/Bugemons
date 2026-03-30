@@ -5,10 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import ulb.communication.Message;
-import ulb.communication.types.AutoTurnResponseMessage;
-import ulb.communication.types.RewardPlaceMessage;
-import ulb.communication.types.SetupGameModeMessage;
-import ulb.communication.types.SwitchWindowMessage;
+import ulb.communication.types.*;
 import ulb.controller.GameController;
 import ulb.view.windows.BattleWindow;
 import ulb.view.windows.Window;
@@ -59,22 +56,23 @@ public abstract class ViewManager {
     }
 
     /**
-     * Handles all messages received from a window
+     * Handles all messages received from a window by sending to the controller and getting its response when needed
      * @param message the message received from a window
      */
     public Message handleMessage(Message message) {
         Message controllerResponse = this.controller.handleMessage(message);
-        if (controllerResponse instanceof SwitchWindowMessage) {
-            this.switchWindow(((SwitchWindowMessage) controllerResponse).getSwitchWindow());
-        }  else if (controllerResponse instanceof SetupGameModeMessage) {
-            return controllerResponse;
-        } else if (controllerResponse instanceof AutoTurnResponseMessage) {
-            return controllerResponse;
-        }
-        else if (controllerResponse instanceof RewardPlaceMessage) {
-            return controllerResponse;
-        }
-        return null;
-    }
 
+        if (controllerResponse == null) return null;
+
+        MessageType messageType = controllerResponse.getMessageType();
+        switch (messageType) {
+            case SWITCH_WINDOW:
+                this.switchWindow(((SwitchWindowMessage) controllerResponse).getSwitchWindow());
+                return null;
+            case SETUP_GAME_MODE, AUTO_TURN_RESPONSE, REWARD_PLACE, LEVEL_UP:
+                return controllerResponse;
+            default:
+                return null;
+        }
+    }
 }

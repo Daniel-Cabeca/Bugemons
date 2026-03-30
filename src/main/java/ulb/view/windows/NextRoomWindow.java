@@ -20,16 +20,15 @@ public class NextRoomWindow extends Window {
 	 * Goes to the next room in tower mode
 	 *
 	 * @param event the action triggered by clicking the continue button
-	 * @throws IOException if the next room transition fails
 	 */
 	@FXML
-	public void handleContinue(ActionEvent event) throws IOException {
+	public void handleContinue(ActionEvent event) {
 		messageLabel.setText("Vous avez mis tous les Bugémons ennemis KO!");
 		viewManager.handleMessage(new TowerNextRoomMessage(event));
 	}
 
 	@FXML
-	public void handleReturn(ActionEvent event) {
+	public void handleReturn() {
 		sendSwitchWindowMessage(WindowPath.MODE);
 	}
 }

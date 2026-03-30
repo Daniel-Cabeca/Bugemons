@@ -4,20 +4,24 @@ import ulb.communication.Message;
 import ulb.model.item.Item;
 
 /**
- * Player chose to use an item in manual battle. {@link Item} is not serialized (transient).
+ * Player chose to use an item in controlled battle
  */
 public class UseItemRequestMessage implements Message {
-	private final transient Item item;
+	private final Item item;
 
 	/**
-	 * @param item the inventory item the player selected (transient reference)
+	 * @param item the inventory item the player selected
 	 */
 	public UseItemRequestMessage(Item item) {
 		this.item = item;
 	}
 
-	/** @return the item to use, or {@code null} */
 	public Item getItem() {
 		return item;
+	}
+
+	@Override
+	public MessageType getMessageType() {
+		return MessageType.USE_ITEM_REQUEST;
 	}
 }

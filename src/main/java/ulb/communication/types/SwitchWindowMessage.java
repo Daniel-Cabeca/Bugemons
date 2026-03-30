@@ -7,6 +7,7 @@ import ulb.communication.Message;
  * Message used by the view to indicate that the window should be switched
  */
 public class SwitchWindowMessage implements Message {
+
     private String switchWindow;
 
     public SwitchWindowMessage(String switchWindow) {
@@ -14,5 +15,10 @@ public class SwitchWindowMessage implements Message {
     }
     public String getSwitchWindow() {
         return this.switchWindow;
+    }
+
+    @Override
+    public MessageType getMessageType() {
+        return MessageType.SWITCH_WINDOW;
     }
 }

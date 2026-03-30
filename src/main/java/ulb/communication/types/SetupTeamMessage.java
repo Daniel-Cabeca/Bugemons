@@ -17,4 +17,8 @@ public class SetupTeamMessage implements Message {
 
     public List<String> getSelectedBugemons() { return selectedBugemons; }
 
+    @Override
+    public MessageType getMessageType() {
+        return MessageType.SETUP_TEAM;
+    }
 }

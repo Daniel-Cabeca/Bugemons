@@ -49,11 +49,7 @@ public class TowerManager {
 		return floorNumber+2;
 	}
 
-	public void setFloorNumber(int floorNumber) {this.floorNumber = floorNumber;}
-
 	public FloorManager getCurrentFloorManager() {return currentFloorManager;}
-
-	public void setCurrentFloorManager(FloorManager currentFloorManager) {this.currentFloorManager = currentFloorManager;}
 
 	public int getCurrentRoomIndex() {
 		// + 1 so the rooms start at 1 and not 0

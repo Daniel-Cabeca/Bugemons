@@ -18,4 +18,9 @@ public class RewardPlaceMessage implements Message {
     public int getRoomNumber() {
         return roomNumber;
     }
+
+    @Override
+    public MessageType getMessageType() {
+        return MessageType.REWARD_PLACE;
+    }
 }

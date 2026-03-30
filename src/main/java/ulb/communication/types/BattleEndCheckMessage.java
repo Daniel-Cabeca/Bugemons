@@ -30,4 +30,9 @@ public class BattleEndCheckMessage implements Message {
 	public ActionEvent getActionEvent() {
 		return actionEvent;
 	}
+
+	@Override
+	public MessageType getMessageType() {
+		return MessageType.BATTLE_END_CHECK;
+	}
 }

@@ -285,9 +285,7 @@ public class BattleWindow extends Window {
 		}
 	}
 
-	/**
-	 * Handles the Back button click from inventory - returns to battle menu
-	 */
+	
 	public void handleBackToMenu() {
 		if (isForcedSwitch()) {
 			updateBackButtonsState();

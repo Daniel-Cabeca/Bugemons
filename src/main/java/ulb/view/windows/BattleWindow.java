@@ -141,7 +141,7 @@ public class BattleWindow extends Window {
 
 	private void playBattleMusic() {
 		try {
-			java.net.URL resource = getClass().getResource("/audio/2-29. Battle! (Elite Four).mp3");
+			java.net.URL resource = getClass().getResource("/audio/BattleSoundTrack.mp3");
 			if (resource != null) {
 				mediaPlayer = new MediaPlayer(new Media(resource.toExternalForm()));
 				mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
@@ -248,25 +248,6 @@ public class BattleWindow extends Window {
 	 *
 	 * @param event the action triggered by clicking the return button
 	 */
-	// public void handleAuto(ActionEvent event) {
-	// 	autoButton.setVisible(false);
-	// 	autoButton.setManaged(false);
-
-	// 	Message response = viewManager.handleMessage(new AutoTurnRequestMessage());
-	// 	BattleState state = null;
-	// 	if (response instanceof AutoTurnResponseMessage autoTurnResponse) {
-	// 		state = autoTurnResponse.getBattleState();
-	// 	}
-
-	// 	displayNextMessage();
-
-	// 	autoButton.setVisible(true);
-	// 	autoButton.setManaged(true);
-
-	// 	if (state != null) {
-	// 		viewManager.handleMessage(new BattleEndCheckMessage(state, event));
-	// 	}
-	// }
 	public void handleAuto(ActionEvent event) {
 		autoButton.setVisible(false);
 		autoButton.setManaged(false);
@@ -285,9 +266,9 @@ public class BattleWindow extends Window {
 			autoButton.setManaged(true);
 		});
 
-		if (state != null) {
-			viewManager.handleMessage(new BattleEndCheckMessage(state, event));
-		}
+		// if (state != null) {
+		// 	viewManager.handleMessage(new BattleEndCheckMessage(state, event));
+		// }
 	}
 
 	/**
@@ -712,20 +693,6 @@ public class BattleWindow extends Window {
 		viewManager.handleMessage(new BattleEndCheckMessage(state, event));
 		switchBugemon(state);
 	}
-
-	// public void checkBattleEnd(BattleState state, ActionEvent event){
-	// 	if (state == BattleState.WON) {
-	// 		stopBattleMusic();
-	// 		if (!this.tower) {
-	// 			gameController.switchToBattleEndWindow(true, event);
-	// 		} else {
-	// 			gameController.switchToNextRoomWindow(event);
-	// 		}
-	// 	} else if (state == BattleState.LOST) {
-	// 		stopBattleMusic();
-	// 		gameController.switchToBattleEndWindow(false, event);
-	// 	}
-	// }
 
 	private void stopBattleMusic() {
 		if (mediaPlayer != null) {

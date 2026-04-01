@@ -1,12 +1,13 @@
 package ulb.view.windows;
 
 import java.io.IOException;
-import java.lang.classfile.Label;
+// import java.lang.classfile.Label;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.text.html.ListView;
+// import javax.swing.text.html.ListView;
 
+import javafx.application.Platform;
 import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -16,11 +17,6 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.layout.GridPane;
 
 import ulb.communication.Message;
-import ulb.communication.types.AutoTurnResponseMessage;
-import ulb.communication.types.BattleEndCheckMessage;
-import ulb.communication.types.SwapRequestMessage;
-import ulb.communication.types.UseAbilityRequestMessage;
-import ulb.communication.types.UseItemRequestMessage;
 import ulb.communication.types.*;
 import ulb.controller.towerManager.TowerManager;
 import ulb.model.battle.BattleState;
@@ -101,6 +97,7 @@ public class BattleWindow extends Window {
 	private TowerManager towerManager;
 	private GameMode gameMode;
 	private MediaPlayer mediaPlayer;
+	private boolean waitingForOpponentAction = false;
 	public void setTowerManager(TowerManager towerManager) {this.towerManager = towerManager;}
 
 	@Override
@@ -129,6 +126,8 @@ public class BattleWindow extends Window {
 			itemButton.setDisable(true);
 			runButton.setDisable(true);
 			switchButton.setDisable(true);
+		} else {
+			autoButton.setDisable(true);
 		}
 
 		initializeGraphicalBattle();
@@ -170,6 +169,7 @@ public class BattleWindow extends Window {
 
 		PlayerBugemonLabel.setText(playerBugemon.getName());
 		PlayerLevelLabel.setText("Lv." + playerBugemon.getLevel());
+		PlayerBugemonLabel.setStyle("-fx-text-fill: " + playerColor + ";");
 		double playerRatio = (double) playerBugemon.getFightStats().getHp() / playerBugemon.getBaseStats().getHp();
 		PlayerBugemonHPBar.setProgress(playerRatio);
 		updateHPBarColor(PlayerBugemonHPBar, playerRatio);
@@ -183,26 +183,11 @@ public class BattleWindow extends Window {
 			System.err.println("Failed to load opponent bugemon sprite: " + e.getMessage());
 		}
 
-		String opponentColor;
-		switch (opponentBugemon.getType()) {
-			case PYRO:
-				opponentColor = "#ED2424";
-				break;
-			case FLORA:
-				opponentColor = "#50A346";
-				break;
-			case AQUA:
-				opponentColor = "#51B0F0";
-				break;
-			case LITHO:
-				opponentColor = "#807979";
-				break;
-			default:
-				opponentColor = "#ced4da";
-		}
+		String opponentColor = getColor(opponentBugemon.getType());
 
 		OpponentBugemonLabel.setText(opponentBugemon.getName());
 		OpponentLevelLabel.setText("Lv." + opponentBugemon.getLevel());
+		OpponentBugemonLabel.setStyle("-fx-text-fill: " + opponentColor + ";");
 		double opponentRatio = (double) opponentBugemon.getFightStats().getHp() / opponentBugemon.getBaseStats().getHp();
 		OpponentHPBar.setProgress(opponentRatio);
 		updateHPBarColor(OpponentHPBar, opponentRatio);
@@ -263,6 +248,25 @@ public class BattleWindow extends Window {
 	 *
 	 * @param event the action triggered by clicking the return button
 	 */
+	// public void handleAuto(ActionEvent event) {
+	// 	autoButton.setVisible(false);
+	// 	autoButton.setManaged(false);
+
+	// 	Message response = viewManager.handleMessage(new AutoTurnRequestMessage());
+	// 	BattleState state = null;
+	// 	if (response instanceof AutoTurnResponseMessage autoTurnResponse) {
+	// 		state = autoTurnResponse.getBattleState();
+	// 	}
+
+	// 	displayNextMessage();
+
+	// 	autoButton.setVisible(true);
+	// 	autoButton.setManaged(true);
+
+	// 	if (state != null) {
+	// 		viewManager.handleMessage(new BattleEndCheckMessage(state, event));
+	// 	}
+	// }
 	public void handleAuto(ActionEvent event) {
 		autoButton.setVisible(false);
 		autoButton.setManaged(false);
@@ -273,10 +277,13 @@ public class BattleWindow extends Window {
 			state = autoTurnResponse.getBattleState();
 		}
 
-		displayNextMessage();
+		displayMessagesSequentially(() -> {
+			// refreshAfterAction gère la suite du combat
+			refreshAfterAction(event);
 
-		autoButton.setVisible(true);
-		autoButton.setManaged(true);
+			autoButton.setVisible(true);
+			autoButton.setManaged(true);
+		});
 
 		if (state != null) {
 			viewManager.handleMessage(new BattleEndCheckMessage(state, event));
@@ -570,7 +577,7 @@ public class BattleWindow extends Window {
 		// Return to the main menu only if the player is not forced
     	// to select a new Bugémon
 		if (state != BattleState.SWAPPING) {
-			handleBackToMenu(event);
+			handleBackToMenu();
 		}
 		// Check whether the current state requires a specific action
     	// (end of game, forced switch, etc.)
@@ -651,10 +658,10 @@ public class BattleWindow extends Window {
 	 */
 	private void setBattleInputsDisabled(boolean disabled) {
 		// Main battle buttons
-		attackButton.setDisable(disabled || automaticMode);
-		itemButton.setDisable(disabled || automaticMode);
-		runButton.setDisable(disabled || automaticMode);
-		switchButton.setDisable(disabled || automaticMode);
+		attackButton.setDisable(disabled || gameMode == GameMode.AUTO);
+		itemButton.setDisable(disabled || gameMode == GameMode.AUTO);
+		runButton.setDisable(disabled || gameMode == GameMode.AUTO);
+		switchButton.setDisable(disabled || gameMode == GameMode.AUTO);
 
 
 
@@ -699,23 +706,26 @@ public class BattleWindow extends Window {
 	 * @param state the current battle state
 	 */
 	private void checkBattleState(BattleState state, ActionEvent event){
+		if (state == BattleState.WON || state == BattleState.LOST){
+			stopBattleMusic();
+		}
 		viewManager.handleMessage(new BattleEndCheckMessage(state, event));
 		switchBugemon(state);
 	}
 
-	public void checkBattleEnd(BattleState state, ActionEvent event){
-		if (state == BattleState.WON) {
-			stopBattleMusic();
-			if (!this.tower) {
-				gameController.switchToBattleEndWindow(true, event);
-			} else {
-				gameController.switchToNextRoomWindow(event);
-			}
-		} else if (state == BattleState.LOST) {
-			stopBattleMusic();
-			gameController.switchToBattleEndWindow(false, event);
-		}
-	}
+	// public void checkBattleEnd(BattleState state, ActionEvent event){
+	// 	if (state == BattleState.WON) {
+	// 		stopBattleMusic();
+	// 		if (!this.tower) {
+	// 			gameController.switchToBattleEndWindow(true, event);
+	// 		} else {
+	// 			gameController.switchToNextRoomWindow(event);
+	// 		}
+	// 	} else if (state == BattleState.LOST) {
+	// 		stopBattleMusic();
+	// 		gameController.switchToBattleEndWindow(false, event);
+	// 	}
+	// }
 
 	private void stopBattleMusic() {
 		if (mediaPlayer != null) {
@@ -824,8 +834,14 @@ public class BattleWindow extends Window {
 			initializeGraphicalBattle();
 		}
 
+		// Runnable closeAndComplete = () -> {
+		// 	battleLog.setText(wrapText("Quelle sera votre prochaine action ?", 35));
+		// 	onComplete.run();
+		// };
 		Runnable closeAndComplete = () -> {
-			battleLog.setText(wrapText("Quelle sera votre prochaine action ?", 35));
+			battleLog.setText("");
+			messageBox.setVisible(false);
+			messageBox.setManaged(false);
 			onComplete.run();
 		};
 
@@ -880,7 +896,7 @@ public class BattleWindow extends Window {
 		battleLog.setText(wrapText(messages.get(index), 35));
 
 		// refreshes the sprites only when a Bugemon switch happens
-		if (containsSwitchMessage(logs.subList(0, sep))) {
+		if (containsSwitchMessage(messages)) {
 			initializeGraphicalBattle();
 		}
 		// always updates the HP

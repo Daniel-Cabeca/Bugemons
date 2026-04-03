@@ -10,7 +10,7 @@ public class MultiplayerWindow extends Window{
 		sendSwitchWindowMessage(WindowPath.FRIENDS);
 	}
 
-	@FXML
+	@FXML // TODO: for iteration 4
 	private void goLeaderboardWindow() {
 
 	}

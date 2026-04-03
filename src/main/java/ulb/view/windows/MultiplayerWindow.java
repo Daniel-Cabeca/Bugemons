@@ -1,12 +1,13 @@
 package ulb.view.windows;
 
 import javafx.fxml.FXML;
+import ulb.view.WindowPath;
 
-public class MultiplayerWindow {
+public class MultiplayerWindow extends Window{
 
 	@FXML
 	private void goFriendsWindow() {
-
+		sendSwitchWindowMessage(WindowPath.FRIENDS);
 	}
 
 	@FXML
@@ -16,6 +17,6 @@ public class MultiplayerWindow {
 
 	@FXML
 	private void goModeWindow () {
-
+		sendSwitchWindowMessage(WindowPath.MODE);
 	}
 }

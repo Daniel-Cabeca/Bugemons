@@ -12,5 +12,5 @@ public final class WindowPath {
     public static final String FLOOR_REWARD = FXML_WINDOWS_PATH + "FloorRewardWindow.fxml";
     public static final String LEVEL_UP = FXML_WINDOWS_PATH + "LevelUpWindow.fxml";
     public static final String NEXT_ROOM = FXML_WINDOWS_PATH + "NextRoomWindow.fxml";
-    public static final String MULTIPLAYER = FXML_WINDOWS_PATH + "FriendsWindow.fxml";
+    public static final String MULTIPLAYER = FXML_WINDOWS_PATH + "MultiplayerWindow.fxml";
 }

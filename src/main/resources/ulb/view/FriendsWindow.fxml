@@ -4,13 +4,12 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.VBox?>
 
-
-<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ulb.view.windows.FriendsWindow">
    <children>
       <Label text="Amis" />
       <ScrollPane prefHeight="200.0" prefWidth="200.0">
          <content>
-            <VBox fx:id="FriendsList" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" />
+            <VBox fx:id="friendsList" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" />
          </content>
       </ScrollPane>
    </children>

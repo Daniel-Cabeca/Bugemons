@@ -22,6 +22,11 @@ public final class ModeWindow extends Window {
 	}
 
 	@FXML
+	private void goMultiplayerMode() {
+		sendSwitchWindowMessage(WindowPath.MULTIPLAYER);
+	}
+
+	@FXML
 	private void quit() {
 		Platform.exit();
 		System.exit(0);

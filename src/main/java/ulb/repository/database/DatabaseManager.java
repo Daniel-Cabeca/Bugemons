@@ -20,7 +20,7 @@ public class DatabaseManager {
 
 	public DatabaseManager(String url) throws LoadException {
 		this.connection = establishConnection(url);
-		this.createTables();
+		createTables(this.connection);
 	}
 
 	/**
@@ -30,7 +30,7 @@ public class DatabaseManager {
 	 * @return The database connection
 	 * @throws SQLException If failed to establish connection
 	 */
-	private static Connection establishConnection(String url) throws LoadException {
+	public static Connection establishConnection(String url) throws LoadException {
 		try {
 			Connection connection = DriverManager.getConnection(url);
 			System.out.println("SQLite connection established.");
@@ -45,13 +45,11 @@ public class DatabaseManager {
 	 *
 	 * @throws LoadException If failed to create the tables
 	 */
-	private void createTables() throws LoadException {
+	public void createTables(Connection connection) throws LoadException {
 		SqlScript script = new SqlScript(INIT_SCRIPT_PATH);
-		String sql = script.getQuery();
 
 		try {
-			Statement statement = this.getConnection().createStatement();
-			statement.execute(sql);
+			script.execute(this.connection);
 		} catch (SQLException e) {
 			throw new LoadException("SQL error when initializing the database: "+ e.getMessage());
 		}

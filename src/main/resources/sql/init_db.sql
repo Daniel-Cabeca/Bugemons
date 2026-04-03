@@ -1,4 +1,3 @@
-
 CREATE TABLE IF NOT EXISTS abilities (
                                          id TEXT PRIMARY KEY,
                                          name TEXT NOT NULL,
@@ -24,8 +23,8 @@ CREATE TABLE IF NOT EXISTS effects (
 
                                        target TEXT NOT NULL,
                                        value INTEGER,
-                                       stat_name TEXT,
-                                       multiplier REAL,
+
+
 
                                        FOREIGN KEY (ability_id) REFERENCES abilities(id) ON DELETE CASCADE,
                                        FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE CASCADE
@@ -73,4 +72,15 @@ CREATE TABLE IF NOT EXISTS bugemons (
                                         initiative INTEGER NOT NULL,
 
                                         FOREIGN KEY (species_id) REFERENCES bugemon_species(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS effect_stats_modifier (
+                                                     id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                                     effect_id INTEGER NOT NULL, -- LIEN VERS L'EFFET
+                                                     hp INTEGER DEFAULT 0,
+                                                     attack INTEGER DEFAULT 0,
+                                                     defense INTEGER DEFAULT 0,
+                                                     initiative INTEGER DEFAULT 0,
+                                                     duration TEXT,
+                                                     FOREIGN KEY (effect_id) REFERENCES effects(id) ON DELETE CASCADE
 );

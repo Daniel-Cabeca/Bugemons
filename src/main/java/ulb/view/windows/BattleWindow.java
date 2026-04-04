@@ -849,7 +849,7 @@ public class BattleWindow extends Window {
 	}
 
 	/**
-	 * Displays messages from a list one by one, advancing automatically with a 1-second delay.
+	 * Displays messages from a list one by one, advancing automatically with a 2-second delay.
 	 */
 	private void displayPhase(List<String> messages, int index, Runnable onComplete) {
 		if (index >= messages.size()) {
@@ -865,8 +865,8 @@ public class BattleWindow extends Window {
 		// always updates the HP
 		updateHPDisplay(battleController.getHpAfterFirstActionSelf(), battleController.getHpAfterFirstActionOpponent());
 
-		// 1s delay between one turn's action messages
-		PauseTransition pause = new PauseTransition(javafx.util.Duration.seconds(1));
+		// 2s delay between one turn's action messages
+		PauseTransition pause = new PauseTransition(javafx.util.Duration.seconds(2));
 		pause.setOnFinished(e -> displayPhase(messages, index + 1, onComplete));
 		pause.play();
 	}

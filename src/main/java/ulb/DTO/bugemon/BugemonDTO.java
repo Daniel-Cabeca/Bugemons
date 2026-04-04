@@ -1,4 +1,6 @@
-package ulb.DTO;
+package ulb.DTO.bugemon;
+
+import ulb.DTO.stats.StatsDTO;
 
 public class BugemonDTO {
     private BugemonSpeciesDTO species;

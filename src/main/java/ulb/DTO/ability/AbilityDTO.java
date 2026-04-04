@@ -12,4 +12,20 @@ public class AbilityDTO {
 	private String description;
 	private int power;
 	private List<EffectDTO> effects;
+
+	public String getId(){return this.id;}
+	public String getName(){return this.name;}
+	public Type getType(){return this.type;}
+	public String getDescription(){return this.description;}
+	public int getPower(){return this.power;}
+	public List<EffectDTO> getEffects(){return this.effects;}
+	public EffectDTO getEffect(int index){return this.effects.get(index);}
+
+	public void setId(String id){this.id = id;}
+	public void setName(String name){this.name = name;}
+	public void setType(Type type){this.type = type;}
+	public void setDescription(String description){this.description = description;}
+	public void setPower(int power){this.power = power;}
+	public void setEffects(List<EffectDTO> effects){this.effects = effects;}
+	public void addEffect(EffectDTO effect){this.effects.add(effect);}
 }

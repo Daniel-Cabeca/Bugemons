@@ -6,6 +6,13 @@ public class StatsDTO {
 	private int defense;
 	private int initiative;
 
+    public StatsDTO(int hp, int attack, int defense, int initiative){
+        this.hp = hp;
+        this.attack = attack;
+        this.defense = defense;
+        this.initiative = initiative;
+    }
+
     public int getHP(){return this.hp;}
     public int getAttack(){return this.attack;}
     public int getDefense(){return this.defense;}

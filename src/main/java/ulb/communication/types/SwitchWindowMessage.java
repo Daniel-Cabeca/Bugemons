@@ -1,6 +1,7 @@
 package ulb.communication.types;
 
 import ulb.communication.Message;
+import ulb.controller.GameController;
 
 
 /**
@@ -17,8 +18,12 @@ public class SwitchWindowMessage implements Message {
         return this.switchWindow;
     }
 
-    @Override
     public MessageType getMessageType() {
         return MessageType.SWITCH_WINDOW;
+    }
+
+    @Override
+    public Message handle(GameController controller) {
+        return controller.applyOn(this);
     }
 }

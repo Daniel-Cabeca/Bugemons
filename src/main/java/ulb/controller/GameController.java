@@ -318,7 +318,6 @@ public class GameController extends Application {
 		return towerModeTowerManager;
 	}
 
-
 	/**
 	 * Handles a message received from a JavaFX window.
 	 *
@@ -326,51 +325,72 @@ public class GameController extends Application {
 	 * @return the response message to send back to the screen when needed
 	 */
 	public Message handleMessage(Message m) {
-		Message response = null; // not all received messages need a response
-		MessageType messageType = m.getMessageType();
-		switch (messageType) {
-			case SWITCH_WINDOW:
-				switchWindow(((SwitchWindowMessage) m).getSwitchWindow());
-				break;
-			case SETUP_TEAM:
-				setupTeam(((SetupTeamMessage) m).getSelectedBugemons());
-				break;
-			case SETUP_GAME_MODE:
-				handleSetupGameModeMessage((SetupGameModeMessage) m);
-				break;
-			case TOWER_FLEE:
-				handleTowerFlee();
-				switchWindow(WindowPath.NEXT_ROOM);
-				break;
-			case TOWER_NEXT_ROOM:
-				handleTower(((TowerNextRoomMessage) m).getEvent());
-				break;
-			case GET_INFO:
-				response = handleGetInfoMessage((GetInfoMessage) m);
-				break;
-			case AUTO_TURN_REQUEST:
-				StrategyRandom strategyRandom = new StrategyRandom(normalModeBattleController);
-				BattleState state = strategyRandom.playAutoTurn();
-				response = new AutoTurnResponseMessage(state);
-				break;
-			case USE_ITEM_REQUEST:
-				response = handleUseItemMessage((UseItemRequestMessage) m);
-				break;
-			case SWAP_REQUEST:
-				response = handleSwapMessage((SwapRequestMessage) m);
-				break;
-			case USE_ABILITY_REQUEST:
-				response = handleUseAbilityMessage((UseAbilityRequestMessage) m);
-				break;
-			case BATTLE_END_CHECK:
-				handleBattleEndCheckMessage((BattleEndCheckMessage) m);
-				break;
-			case LEVEL_UP:
-				LevelUpMessage levelUpMessage = (LevelUpMessage) m;
-				handleLevelUpRewardChoice(levelUpMessage.getReward(), levelUpMessage.getEvent());
-		}
-        return response;
+		return m.handle(this);
     }
+
+	public Message applyOn(AutoTurnRequestMessage m){
+		StrategyRandom strategyRandom = new StrategyRandom(normalModeBattleController);
+		BattleState state = strategyRandom.playAutoTurn();
+		return new AutoTurnResponseMessage(state);
+	}
+
+	public Message applyOn(SwitchWindowMessage m){
+		switchWindow(m.getSwitchWindow());
+		return null;
+	}
+
+	public Message applyOn(SetupTeamMessage m){
+		setupTeam(m.getSelectedBugemons());
+		return null;
+	}
+
+	public Message applyOn(SetupGameModeMessage m){
+		handleSetupGameModeMessage(m);
+		return null;
+	}
+
+	public Message applyOn(TowerFleeMessage m){
+		handleTowerFlee();
+		switchWindow(WindowPath.NEXT_ROOM);
+		return null;
+	}
+
+	public Message applyOn(TowerNextRoomMessage m){
+		handleTower(m.getEvent());
+		return null;
+	}
+
+	public Message applyOn(GetInfoMessage m){
+		return handleGetInfoMessage(m);
+	}
+
+	public Message applyOn(UseItemRequestMessage m){
+		return handleUseItemMessage(m);
+	}
+
+	public Message applyOn(SwapRequestMessage m){
+		return handleSwapMessage(m);
+	}
+
+	public Message applyOn(UseAbilityRequestMessage m){
+		return handleUseAbilityMessage(m);
+	}
+
+	public Message applyOn(BattleEndCheckMessage m){
+		handleBattleEndCheckMessage(m);
+		return null;
+	}
+
+	public Message applyOn(LevelUpMessage m){
+		LevelUpMessage levelUpMessage = (LevelUpMessage) m;
+		handleLevelUpRewardChoice(levelUpMessage.getReward(), levelUpMessage.getEvent());
+		return null;
+	}
+
+	public Message applyOn(Message m){
+		return null;
+	}
+
 
 	/**
 	 * Sets up the game based on the chosen game mode

@@ -1,6 +1,7 @@
 package ulb.communication.types;
 
 import ulb.communication.Message;
+import ulb.controller.GameController;
 
 // Carries the battle result info needed by BattleEndWindow
 public class BattleEndInfoMessage implements Message {
@@ -15,8 +16,14 @@ public class BattleEndInfoMessage implements Message {
     public boolean isVictory() { return victory; }
     public int getTotalXP() { return totalXP; }
 
-    @Override
+    
     public MessageType getMessageType() {
         return MessageType.BATTLE_END_INFO;
     }
+
+    @Override
+    public Message handle(GameController controller) {
+        return controller.applyOn(this);
+    }
+    
 }

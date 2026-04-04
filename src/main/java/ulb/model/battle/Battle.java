@@ -46,13 +46,6 @@ public class Battle {
 		this(teamA, teamB, playerA, new Player());
 	}
 
-	public Battle(Team teamA, Team teamB, Bugemon activeBugemonA, Bugemon activeBugemonB) {
-		this.participantA = new BattleParticipant(null, teamA, activeBugemonA);
-		this.participantA = new BattleParticipant(null, teamB, activeBugemonB);
-		this.activeEffects = new ArrayList<>();
-		this.logMsg = new ArrayList<>();
-	}
-
 	public BattleParticipant getParticipant(ParticipantLabel team) {
 		if (team == ParticipantLabel.TEAM_A) {
 			return this.participantA;

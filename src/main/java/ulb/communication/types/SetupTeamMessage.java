@@ -1,6 +1,7 @@
 package ulb.communication.types;
 
 import ulb.communication.Message;
+import ulb.controller.GameController;
 
 import java.util.List;
 
@@ -20,5 +21,10 @@ public class SetupTeamMessage implements Message {
     @Override
     public MessageType getMessageType() {
         return MessageType.SETUP_TEAM;
+    }
+
+    @Override
+    public Message handle(GameController controller) {
+        return controller.applyOn(this);
     }
 }

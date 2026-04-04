@@ -1,6 +1,7 @@
 package ulb.communication.types;
 
 import ulb.communication.Message;
+import ulb.controller.GameController;
 
 public class ErrorMessage implements Message {
     private String error;
@@ -16,5 +17,10 @@ public class ErrorMessage implements Message {
     @Override
     public MessageType getMessageType() {
         return MessageType.ERROR;
+    }
+
+    @Override
+    public Message handle(GameController controller) {
+        return controller.applyOn(this);
     }
 }

@@ -1,6 +1,7 @@
 package ulb.communication.types;
 
 import ulb.communication.Message;
+import ulb.controller.GameController;
 import ulb.model.ability.Ability;
 
 /**
@@ -22,4 +23,9 @@ public class UseAbilityRequestMessage implements Message {
 	public MessageType getMessageType() {
 		return MessageType.USE_ABILITY_REQUEST;
 	}
+
+	@Override
+    public Message handle(GameController controller) {
+        return controller.applyOn(this);
+    }
 }

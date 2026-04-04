@@ -1,6 +1,7 @@
 package ulb.communication.types;
 
 import ulb.communication.Message;
+import ulb.controller.GameController;
 
 public class RewardPlaceMessage implements Message {
     private int floorNumber;
@@ -22,5 +23,10 @@ public class RewardPlaceMessage implements Message {
     @Override
     public MessageType getMessageType() {
         return MessageType.REWARD_PLACE;
+    }
+
+    @Override
+    public Message handle(GameController controller) {
+        return controller.applyOn(this);
     }
 }

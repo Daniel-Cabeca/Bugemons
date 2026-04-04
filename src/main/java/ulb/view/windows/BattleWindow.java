@@ -1,6 +1,5 @@
 package ulb.view.windows;
 
-import java.io.IOException;
 // import java.lang.classfile.Label;
 import java.util.ArrayList;
 import java.util.List;
@@ -98,11 +97,11 @@ public class BattleWindow extends Window {
 	private GameMode gameMode;
 	private MediaPlayer mediaPlayer;
 	private boolean waitingForOpponentAction = false;
-	public void setTowerManager(TowerManager towerManager) {this.towerManager = towerManager;}
-
+	
 	@Override
 	public void onLoad() {
-		Message m = viewManager.handleMessage(new GetInfoMessage(InfoType.SETUP_GAME));
+		this.towerManager = gameController.getTowerManager();
+		Message m = sendMessage(new GetInfoMessage(InfoType.SETUP_GAME));
 		if (m instanceof SetupGameModeMessage setup) {
 			this.battleController = setup.getBattleController();
 			initializeBattle(setup.getTeamA(), setup.getInventory(), setup.getGameMode());
@@ -252,7 +251,7 @@ public class BattleWindow extends Window {
 		autoButton.setVisible(false);
 		autoButton.setManaged(false);
 
-		Message response = viewManager.handleMessage(new AutoTurnRequestMessage());
+		Message response = sendMessage(new AutoTurnRequestMessage());
 		BattleState state = null;
 		if (response instanceof AutoTurnResponseMessage autoTurnResponse) {
 			state = autoTurnResponse.getBattleState();
@@ -267,7 +266,7 @@ public class BattleWindow extends Window {
 		});
 
 		// if (state != null) {
-		// 	viewManager.handleMessage(new BattleEndCheckMessage(state, event));
+		// 	sendMessage(new BattleEndCheckMessage(state, event));
 		// }
 	}
 
@@ -346,14 +345,14 @@ public class BattleWindow extends Window {
 	}
 
 	/**
-	 * Applies a manual battle action by sending a message to GameController through ViewManager
+	 * Applies a manual battle action by sending a typed message directly to GameController
 	 * and returns the resulting BattleState.
 	 *
-	 * @param request the message sent to ViewManager
+	 * @param request the message sent to GameController
 	 * @return state after the action, or null if no controller state is available
 	 */
 	private BattleState battleStateAfterManualMessage(Message request) {
-		Message response = viewManager.handleMessage(request);
+		Message response = sendMessage(request);
 		if (response instanceof AutoTurnResponseMessage r) {
 			return r.getBattleState();
 		}
@@ -362,7 +361,7 @@ public class BattleWindow extends Window {
 
 	/**
 	 * Sets up the inventory list by displaying all available items in the inventory.
-	 * Sends a message to ViewManager when an item is clicked.
+	 * Sends a message to GameController when an item is clicked.
 	 */
 	private void setupInventoryList() {
 		inventoryList.setCellFactory(new Callback<ListView<Item>, ListCell<Item>>() {
@@ -418,7 +417,7 @@ public class BattleWindow extends Window {
 
 	/**
 	 * Sets up the team's bugemons list by indicating which ones are KO
-	 * Sends a Swap request message to ViewManager when a Bugemon is clicked
+	 * Sends a swap request message to GameController when a Bugemon is clicked
 	 */
 	private void setupBugemonsList() {
 		bugemonsList.setCellFactory(new Callback<ListView<Bugemon>, ListCell<Bugemon>>() {
@@ -476,7 +475,7 @@ public class BattleWindow extends Window {
 
 	/**
 	 * Sets up the abilities list
-	 * Sends a Use Ability Request message to the ViewManager when an ability is selected
+	 * Sends a Use Ability Request message to GameController when an ability is selected
 	 */
 	private void setupAbilitiesList() {
 		abilitiesList.setCellFactory(new Callback<ListView<Ability>, ListCell<Ability>>() {
@@ -680,7 +679,7 @@ public class BattleWindow extends Window {
 	}
 
 	/**
-	 * Sends a message to ViewManager to check if the battle is over
+	 * Sends a message to GameController to check if the battle is over
 	 *
 	 * @param state the current battle state
 	 */
@@ -688,7 +687,7 @@ public class BattleWindow extends Window {
 		if (state == BattleState.WON || state == BattleState.LOST){
 			stopBattleMusic();
 		}
-		viewManager.handleMessage(new BattleEndCheckMessage(state, event));
+		sendMessage(new BattleEndCheckMessage(state, event));
 		switchBugemon(state);
 	}
 
@@ -715,15 +714,14 @@ public class BattleWindow extends Window {
 	/**
 	* Returns to the main menu
 	* @param event the action triggered by clicking the return button
-	* @throws IOException if the main menu FXML file cannot be loaded
-	*/
+		*/
 	// In tower mode, fleeing goes back to the next room screen — otherwise returns to main menu
-	public void handleReturn(ActionEvent event) throws IOException {
+	public void handleReturn(ActionEvent event) {
 		stopBattleMusic();
 		if (gameMode == GameMode.TOWER) {
-			viewManager.handleMessage(new TowerFleeMessage());
+			sendMessage(new TowerFleeMessage());
 		} else {
-			viewManager.handleMessage(new SwitchWindowMessage(WindowPath.MODE));
+			switchWindow(WindowPath.MODE);
 		}
 	}
 

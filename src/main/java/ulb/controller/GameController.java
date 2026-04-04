@@ -2,6 +2,9 @@ package ulb.controller;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import ulb.communication.Client;
@@ -28,9 +31,9 @@ import ulb.model.team.Team;
 import ulb.model.tower.Room;
 import ulb.model.tower.RoomType;
 import ulb.model.reward.Reward;
-import ulb.view.ViewManager;
 import ulb.view.WindowPath;
 
+import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
@@ -40,7 +43,7 @@ public class GameController extends Application {
 	private Player player;
 	private TowerManager towerModeTowerManager;
 	private BattleController normalModeBattleController;
-	private ViewManager viewManager;
+	private Stage stage;
 
 	private GameMode gameMode;
 	private final Deque<Bugemon> pendingLevelUpBugemons = new ArrayDeque<>();
@@ -84,22 +87,54 @@ public class GameController extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		setPlayer(new Player("Player"));
-
-		ViewManager bootstrapViewManager = new ViewManager() {};
-		bootstrapViewManager.setGameController(this);
-		bootstrapViewManager.setStage(primaryStage);
-		setViewManager(bootstrapViewManager);
+		this.stage = primaryStage;
 
 		Font.loadFont(getClass().getResourceAsStream("/fonts/pokemon-emerald-pro.otf"), 14);
 		primaryStage.setTitle("INFO-F307 Groupe 10");
 		primaryStage.setFullScreen(true);
 		primaryStage.setFullScreenExitHint("");
 
-		bootstrapViewManager.switchWindow(WindowPath.MODE);
+		switchWindow(WindowPath.MODE);
 
-		primaryStage.getScene().getStylesheets().add(getClass().getResource("/styles/global.css").toExternalForm());
+		if (primaryStage.getScene() != null) {
+			String stylesheet = getClass().getResource("/styles/global.css").toExternalForm();
+			if (!primaryStage.getScene().getStylesheets().contains(stylesheet)) {
+				primaryStage.getScene().getStylesheets().add(stylesheet);
+			}
+		}
 
 		primaryStage.show();
+	}
+
+	/**
+	 * Loads the requested FXML view and installs it in the primary stage.
+	 * GameController now owns the application routing instead of delegating it to ViewManager.
+	 *
+	 * @param windowFxmlPath the path of the FXML file to display
+	 */
+	public void switchWindow(String windowFxmlPath) {
+		if (stage == null) {
+			return;
+		}
+
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(windowFxmlPath));
+			Parent root = loader.load();
+
+			if (loader.getController() instanceof ulb.view.windows.Window window) {
+				window.setGameController(this);
+				window.onLoad();
+			}
+
+			if (stage.getScene() == null) {
+				stage.setScene(new Scene(root));
+			} else {
+				stage.getScene().setRoot(root);
+			}
+		} catch (IOException e) {
+			System.err.println("Error: Could not load window " + windowFxmlPath);
+			e.printStackTrace();
+		}
 	}
 
 	public boolean hasFledBattle() { return fledBattle; }
@@ -164,7 +199,7 @@ public class GameController extends Application {
 		this.pendingRewardBattleController = battleController;
 		this.rewardSequenceReturnsToNextRoom = returnToNextRoom;
 		this.pendingBattleXP = battleController.getTotalXP();
-		viewManager.handleMessage(new SwitchWindowMessage(WindowPath.LEVEL_UP));
+		switchWindow(WindowPath.LEVEL_UP);
 		return true;
 	}
 
@@ -189,7 +224,7 @@ public class GameController extends Application {
 		}
 
 		if (!pendingLevelUpBugemons.isEmpty()) {
-			viewManager.handleMessage(new SwitchWindowMessage(WindowPath.LEVEL_UP));
+			switchWindow(WindowPath.LEVEL_UP);
 			return;
 		}
 
@@ -197,7 +232,7 @@ public class GameController extends Application {
 		int totalXP = pendingBattleXP;
 		clearPendingLevelUpState();
 		if (returnToNextRoom) {
-			viewManager.handleMessage(new SwitchWindowMessage(WindowPath.NEXT_ROOM));
+			switchWindow(WindowPath.NEXT_ROOM);
 		} else {
 			handleBattleEnd(true, totalXP);
 		}
@@ -217,7 +252,7 @@ public class GameController extends Application {
 	private void handleBattleEnd(boolean victory, int totalXP) {
 		pendingVictory = victory;
 		pendingTotalXP = totalXP;
-		viewManager.handleMessage(new SwitchWindowMessage(WindowPath.BATTLE_END));
+		switchWindow(WindowPath.BATTLE_END);
 	}
 
 	// Handles fleeing from a tower battle: restores HP and resets the room
@@ -246,11 +281,11 @@ public class GameController extends Application {
 
 			switch (type) {
 				case BATTLE, BOSS:
-					viewManager.handleMessage(new SwitchWindowMessage(WindowPath.BATTLE));
+					switchWindow(WindowPath.BATTLE);
 					break;
 
 				case REWARD:
-					viewManager.handleMessage(new SwitchWindowMessage(WindowPath.FLOOR_REWARD));
+					switchWindow(WindowPath.FLOOR_REWARD);
 					break;
 
 				default:
@@ -283,21 +318,19 @@ public class GameController extends Application {
 		return towerModeTowerManager;
 	}
 
-	public void setViewManager(ViewManager vManager) {
-		this.viewManager = vManager;
-	}
 
 	/**
-	 * Handles a message received from ViewManager
-	 * @param m the message received from ViewManager
-	 * @return the response message to transfer to ViewManager
+	 * Handles a message received from a JavaFX window.
+	 *
+	 * @param m the message emitted by the current screen
+	 * @return the response message to send back to the screen when needed
 	 */
 	public Message handleMessage(Message m) {
 		Message response = null; // not all received messages need a response
 		MessageType messageType = m.getMessageType();
 		switch (messageType) {
 			case SWITCH_WINDOW:
-				response = m; // returns the same message so that ViewManager can switch to the right window
+				switchWindow(((SwitchWindowMessage) m).getSwitchWindow());
 				break;
 			case SETUP_TEAM:
 				setupTeam(((SetupTeamMessage) m).getSelectedBugemons());
@@ -307,7 +340,7 @@ public class GameController extends Application {
 				break;
 			case TOWER_FLEE:
 				handleTowerFlee();
-				response = new SwitchWindowMessage(WindowPath.NEXT_ROOM);
+				switchWindow(WindowPath.NEXT_ROOM);
 				break;
 			case TOWER_NEXT_ROOM:
 				handleTower(((TowerNextRoomMessage) m).getEvent());
@@ -356,9 +389,10 @@ public class GameController extends Application {
 	}
 
 	/**
-	 * Checks what information was requested by the view
-	 * @param m the information request message received from ViewManager
-	 * @return the response containing the requested information to send to ViewManager
+	 * Checks what information was requested by the active window.
+	 *
+	 * @param m the information request message emitted by the view
+	 * @return the response containing the requested information for the view
 	 */
 	private Message handleGetInfoMessage(GetInfoMessage m) {
 		Message answer = null;
@@ -387,9 +421,10 @@ public class GameController extends Application {
 	}
 
 	/**
-	 * Uses the item as requested by the message
-	 * @param m the message containing the item to use received from ViewManager
-	 * @return the response containing the current battle state to send to ViewManager
+	 * Uses the item as requested by the message.
+	 *
+	 * @param m the message containing the item to use
+	 * @return the response containing the current battle state
 	 */
 	private Message handleUseItemMessage(UseItemRequestMessage m) {
 		Message response = null;
@@ -403,9 +438,10 @@ public class GameController extends Application {
 	}
 
 	/**
-	 * Swaps the active Bugemon to a new one
-	 * @param m the message containing the bugemon to switch to received from ViewManager
-	 * @return the response containing the current battle state to send to ViewManager
+	 * Swaps the active Bugemon to a new one.
+	 *
+	 * @param m the message containing the bugemon to switch to
+	 * @return the response containing the current battle state
 	 */
 	private Message handleSwapMessage(SwapRequestMessage m) {
 		Message response = null;
@@ -419,9 +455,10 @@ public class GameController extends Application {
 	}
 
 	/**
-	 * Uses the ability as requested by the message
-	 * @param m the message containing the ability to use received from ViewManager
-	 * @return the response containing the current battle state to send to ViewManager
+	 * Uses the ability as requested by the message.
+	 *
+	 * @param m the message containing the ability to use
+	 * @return the response containing the current battle state
 	 */
 	private Message handleUseAbilityMessage(UseAbilityRequestMessage m) {
 		Message response = null;
@@ -435,9 +472,9 @@ public class GameController extends Application {
 	}
 
 	/**
-	 * Handles the BattleEndCheckMessage by switching to the right window based on if the player one and the game mode
+	 * Handles the BattleEndCheckMessage by switching to the right window based on the battle result and the game mode.
 	 *
-	 * @param m the received BattleEndCheckMessage from ViewManager
+	 * @param m the received BattleEndCheckMessage
 	 */
 	private void handleBattleEndCheckMessage(BattleEndCheckMessage m) {
         BattleState state = m.getBattleState();
@@ -461,7 +498,7 @@ public class GameController extends Application {
 					int xp = normalModeBattleController != null ? normalModeBattleController.getTotalXP() : 0;
 					handleBattleEnd(true, xp);
 				} else {
-					viewManager.handleMessage(new SwitchWindowMessage(WindowPath.NEXT_ROOM));
+					switchWindow(WindowPath.NEXT_ROOM);
 				}
 			}
 		} else if (state == BattleState.LOST) {

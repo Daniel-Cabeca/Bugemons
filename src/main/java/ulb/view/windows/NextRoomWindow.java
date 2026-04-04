@@ -7,8 +7,6 @@ import javafx.scene.control.Label;
 import ulb.communication.types.TowerNextRoomMessage;
 import ulb.view.WindowPath;
 
-import java.io.IOException;
-
 public class NextRoomWindow extends Window {
 	@FXML
 	public Label messageLabel;
@@ -19,10 +17,10 @@ public class NextRoomWindow extends Window {
 	// Sets the message depending on whether the player won or fled
 	@Override
 	public void onLoad() {
-		if (viewManager.getGameController().hasFledBattle()) {
+		if (gameController.hasFledBattle()) {
 			messageLabel.setText("Vous avez fui le combat.");
 			nextButton.setText("Réessayer");
-			viewManager.getGameController().resetFledBattle();
+			gameController.resetFledBattle();
 		} else {
 			messageLabel.setText("Vous avez mis tous les Bugémons ennemis KO!");
 		}
@@ -35,11 +33,11 @@ public class NextRoomWindow extends Window {
 	 */
 	@FXML
 	public void handleContinue(ActionEvent event) {
-		viewManager.handleMessage(new TowerNextRoomMessage(event));
+		sendMessage(new TowerNextRoomMessage(event));
 	}
 
 	@FXML
 	public void handleReturn() {
-		sendSwitchWindowMessage(WindowPath.MODE);
+		switchWindow(WindowPath.MODE);
 	}
 }

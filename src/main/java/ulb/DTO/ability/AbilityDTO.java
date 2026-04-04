@@ -13,6 +13,15 @@ public class AbilityDTO {
 	private int power;
 	private List<EffectDTO> effects;
 
+	public AbilityDTO(String id, String name, Type type, String description, int power, List<EffectDTO> effects){
+		this.id = id;
+		this.name = name;
+		this.type = type;
+		this.description = description;
+		this.power = power;
+		this.effects = effects;
+	}
+
 	public String getId(){return this.id;}
 	public String getName(){return this.name;}
 	public Type getType(){return this.type;}

@@ -4,11 +4,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.nio.file.Path;
-import java.io.IOException;
-
-import java.sql.DriverManager;
-import java.sql.Connection;
-import java.sql.SQLException;
 
 class DatabaseTest {
 	@Test
@@ -21,5 +16,12 @@ class DatabaseTest {
 	public void verifyGetFilePath() {
 		Database db = new Database("name");
 		assertEquals(Path.of("name.db"), db.getFilePath());
+	}
+
+	@Test
+	public void deleteThrowsIfConnected() {
+		Database db = new Database("mock");
+		db.connect();
+		assertThrows(IllegalStateException.class, () -> { db.delete(); });
 	}
 }

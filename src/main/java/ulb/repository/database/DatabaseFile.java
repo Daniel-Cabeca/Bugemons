@@ -7,7 +7,7 @@ import java.io.IOException;
 /**
  * An SQLite database file.
  */
-class DatabaseFile {
+public class DatabaseFile {
 	private final Path path;
 
 	public DatabaseFile(Path path) {
@@ -32,7 +32,11 @@ class DatabaseFile {
 	/**
 	 * Deletes the database file.
 	 */
-	public void delete() throws IOException {
-		Files.delete(this.getPath());
+	public void delete() {
+		try {
+			Files.delete(this.getPath());
+		} catch(IOException e) {
+			throw new RuntimeException("Failed to delete database file '"+ this.getPath() +"': "+ e.getMessage());
+		}
 	}
 }

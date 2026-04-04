@@ -179,8 +179,8 @@ public class CreateTeamWindow extends Window {
 	public void handleConfirmTeam() {
 		if (!selectedBugemons.isEmpty() && selectedBugemons.size() <= MAX_BUGEMONS) {
 			SetupTeamMessage message = new SetupTeamMessage(selectedBugemons);
-			viewManager.handleMessage(message);
-			sendSwitchWindowMessage(WindowPath.BATTLE_MODE);
+			sendMessage(message);
+			switchWindow(WindowPath.BATTLE_MODE);
 		} else {
 			throw new IllegalStateException("Tu dois sélectionner entre 1 et 6 Bugémons pour confirmer ton équipe.");
 		}
@@ -190,7 +190,7 @@ public class CreateTeamWindow extends Window {
 	 * Returns to the main menu
 	 */
 	public void handleReturn() {
-		sendSwitchWindowMessage(WindowPath.MODE);
+		switchWindow(WindowPath.MODE);
 	}
 
 }

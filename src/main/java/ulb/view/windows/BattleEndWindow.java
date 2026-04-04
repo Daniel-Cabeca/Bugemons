@@ -7,7 +7,6 @@ import ulb.communication.Message;
 import ulb.communication.types.BattleEndInfoMessage;
 import ulb.communication.types.GetInfoMessage;
 import ulb.communication.types.InfoType;
-import ulb.communication.types.SwitchWindowMessage;
 import ulb.utils.Scaling;
 import ulb.view.WindowPath;
 
@@ -29,7 +28,7 @@ public class BattleEndWindow extends Window {
 
 	@Override
 	public void onLoad() {
-		Message response = viewManager.handleMessage(new GetInfoMessage(InfoType.BATTLE_END));
+		Message response = sendMessage(new GetInfoMessage(InfoType.BATTLE_END));
 		if (response instanceof BattleEndInfoMessage info) {
 			setResult(info.isVictory(), info.getTotalXP());
 		}
@@ -55,7 +54,6 @@ public class BattleEndWindow extends Window {
 	 * Returns to the main menu
 	 */
 	public void handleReturn() {
-		Message switchToModeMenu = new SwitchWindowMessage(WindowPath.MODE);
-		viewManager.handleMessage(switchToModeMenu);
+		switchWindow(WindowPath.MODE);
 	}
 }

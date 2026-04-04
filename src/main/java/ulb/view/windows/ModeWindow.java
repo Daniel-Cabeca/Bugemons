@@ -18,7 +18,7 @@ public final class ModeWindow extends Window {
 
 	@FXML
 	private void goSoloMode() {
-		sendSwitchWindowMessage(WindowPath.CREATE_TEAM);
+		switchWindow(WindowPath.CREATE_TEAM);
 	}
 
 	@FXML

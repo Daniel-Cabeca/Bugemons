@@ -40,29 +40,29 @@ public class BattleModeWindow extends Window {
 
     public void handleAutomaticBattle() {
         SetupGameModeMessage setupMessage = new SetupGameModeMessage(GameMode.AUTO);
-        viewManager.handleMessage(setupMessage);
-        sendSwitchWindowMessage(WindowPath.BATTLE);
+        sendMessage(setupMessage);
+        switchWindow(WindowPath.BATTLE);
     }
 
     public void handleControlledBattle() {
         SetupGameModeMessage setupMessage = new SetupGameModeMessage(GameMode.CONTROLLED);
-        viewManager.handleMessage(setupMessage);
-        sendSwitchWindowMessage(WindowPath.BATTLE);
+        sendMessage(setupMessage);
+        switchWindow(WindowPath.BATTLE);
     }
 
 	public void handleTowerBattle(ActionEvent event) {
         SetupGameModeMessage setupMessage = new SetupGameModeMessage(GameMode.TOWER);
-        viewManager.handleMessage(setupMessage);
-        viewManager.handleMessage(new TowerNextRoomMessage(event));
+        sendMessage(setupMessage);
+        sendMessage(new TowerNextRoomMessage(event));
 	}
 
 	@FXML
 	private void handleReturn(){
-        sendSwitchWindowMessage(WindowPath.CREATE_TEAM);
+        switchWindow(WindowPath.CREATE_TEAM);
 	}
 
     public void displayTeam() {
-        displayTeamWithStats(viewManager.getGameController().getTeam(), playerTeamGrid);
+        displayTeamWithStats(gameController.getTeam(), playerTeamGrid);
     }
 
     /**

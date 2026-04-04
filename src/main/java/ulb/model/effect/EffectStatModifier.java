@@ -27,10 +27,10 @@ public class EffectStatModifier extends Effect {
 	private EffectDuration duration;
 
 	public EffectStatModifier(EffectTarget targetType, EffectDuration duration, Map<StatType, Integer> modifiers){
-		super(EffectType.STAT_MODIFIER, targetType);
+		super(targetType);
 		this.modifiers = modifiers;
 		this.duration = duration;
-
+		
 	}
 
 	/**

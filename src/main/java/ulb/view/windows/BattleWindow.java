@@ -172,7 +172,7 @@ public class BattleWindow extends Window {
 		double playerRatio = (double) playerBugemon.getFightStats().getHp() / playerBugemon.getBaseStats().getHp();
 		PlayerBugemonHPBar.setProgress(playerRatio);
 		updateHPBarColor(PlayerBugemonHPBar, playerRatio);
-		PlayerBugemonHPNumber.setText(playerBugemon.getHp() + " / " + playerBugemon.getBaseStats().hp);
+		PlayerBugemonHPNumber.setText(playerBugemon.getHp() + " / " + playerBugemon.getBaseStats().getHp());
 
 		// Set opponent Bugemon sprite and stats
 		try {
@@ -190,7 +190,7 @@ public class BattleWindow extends Window {
 		double opponentRatio = (double) opponentBugemon.getFightStats().getHp() / opponentBugemon.getBaseStats().getHp();
 		OpponentHPBar.setProgress(opponentRatio);
 		updateHPBarColor(OpponentHPBar, opponentRatio);
-		OpponentHPNumber.setText(opponentBugemon.getHp() + " / " + opponentBugemon.getBaseStats().hp);
+		OpponentHPNumber.setText(opponentBugemon.getHp() + " / " + opponentBugemon.getBaseStats().getHp());
 	}
 
 	private static String getColor(Type type) {
@@ -893,10 +893,10 @@ public class BattleWindow extends Window {
 		double selfRatio = (double) selfHp / self.getBaseStats().getHp();
 		double oppRatio = (double) opponentHp / opponent.getBaseStats().getHp();
 		PlayerBugemonHPBar.setProgress(selfRatio);
-		PlayerBugemonHPNumber.setText(selfHp + " / " + self.getBaseStats().hp);
+		PlayerBugemonHPNumber.setText(selfHp + " / " + self.getBaseStats().getHp());
 		updateHPBarColor(PlayerBugemonHPBar, selfRatio);
 		OpponentHPBar.setProgress(oppRatio);
-		OpponentHPNumber.setText(opponentHp + " / " + opponent.getBaseStats().hp);
+		OpponentHPNumber.setText(opponentHp + " / " + opponent.getBaseStats().getHp());
 		updateHPBarColor(OpponentHPBar, oppRatio);
 	}
 

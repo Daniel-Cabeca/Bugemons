@@ -45,17 +45,17 @@ public class BugemonTest {
 
 		B.changeFightStats(s);
 
-		assertEquals(90, B.getFightStats().hp);
-		assertEquals(11, B.getFightStats().attack);
-		assertEquals(5, B.getFightStats().defense);
-		assertEquals(4, B.getFightStats().initiative);
+		assertEquals(90, B.getFightStats().getHp());
+		assertEquals(11, B.getFightStats().getAttack());
+		assertEquals(5, B.getFightStats().getDefense());
+		assertEquals(4, B.getFightStats().getInitiative());
 
 		B.removeStatsDebuffs();
 
-		assertEquals(B.getBaseStats().hp, B.getFightStats().hp);
-		assertEquals(B.getBaseStats().attack, B.getFightStats().attack);
-		assertEquals(B.getBaseStats().defense, B.getFightStats().defense);
-		assertEquals(B.getBaseStats().initiative, B.getFightStats().initiative);
+		assertEquals(B.getBaseStats().getHp(), B.getFightStats().getHp());
+		assertEquals(B.getBaseStats().getAttack(), B.getFightStats().getAttack());
+		assertEquals(B.getBaseStats().getDefense(), B.getFightStats().getDefense());
+		assertEquals(B.getBaseStats().getInitiative(), B.getFightStats().getInitiative());
 	}
 
 	@Test

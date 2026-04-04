@@ -42,10 +42,10 @@ public class Bugemon {
 	public int getAttack() { return this.getFightStats().getAttack(); }
 	public int getDefense() { return this.getFightStats().getDefense(); }
 	public int getInitiative() { return this.getFightStats().getInitiative(); }
-	public boolean isKO() {return this.fightStats.hp <= 0;}
+	public boolean isKO() {return this.fightStats.getHp() <= 0;}
 
 	public boolean hasHPDecreased(){
-		return this.baseStats.hp > this.fightStats.hp;
+		return this.baseStats.getHp() > this.fightStats.getHp();
 	}
 
 	public void changeBaseStats(Stats delta) {

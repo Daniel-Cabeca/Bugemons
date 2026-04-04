@@ -340,7 +340,7 @@ public class Battle {
 		for (ActiveEffect ae : activeEffects) {
 			ae.ttl--;
 			if (ae.ttl <= 0) {
-				Stats revert = new Stats(-ae.delta.hp, -ae.delta.attack, -ae.delta.defense, -ae.delta.initiative);
+				Stats revert = new Stats(-ae.delta.getHp(), -ae.delta.getAttack(), -ae.delta.getDefense(), -ae.delta.getInitiative());
 				ae.target.changeFightStats(revert);
 				logMsg.add("L'effet de " + ae.itemName + " sur " + ae.target.getName() + " s'est dissipé!");
 				expired.add(ae);

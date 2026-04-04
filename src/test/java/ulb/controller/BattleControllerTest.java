@@ -39,9 +39,9 @@ public class BattleControllerTest {
 
 	private static int getGainedPoint(Stats previous, Stats actual){
 		Stats difference = new Stats(actual);
-		Stats opposite = new Stats(-previous.hp, -previous.attack, -previous.defense, -previous.initiative);
+		Stats opposite = new Stats(-previous.getHp(), -previous.getAttack(), -previous.getDefense(), -previous.getInitiative());
 		difference.change(opposite);
-		return difference.hp / 2 + difference.initiative / 2 + difference.attack + difference.defense;
+		return difference.getHp() / 2 + difference.getInitiative() / 2 + difference.getAttack() + difference.getDefense();
 	}
 
 	private static BattleController makeBattleController1v1(String bugemonIdA, String bugemonIdB) {

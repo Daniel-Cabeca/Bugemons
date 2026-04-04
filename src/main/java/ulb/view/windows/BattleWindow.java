@@ -123,31 +123,15 @@ public class BattleWindow extends Window {
 		if (gameMode == GameMode.AUTO) {
 			attackButton.setDisable(true);
 			itemButton.setDisable(true);
-			runButton.setDisable(true);
 			switchButton.setDisable(true);
 		} else {
 			autoButton.setDisable(true);
 		}
 
 		initializeGraphicalBattle();
-		playBattleMusic();
 		if (gameMode == GameMode.TOWER) {
 			floorLabel.setText("Etage: NO" + towerManager.getFloorNumber());
 			roomLabel.setText("Salle: " + towerManager.getCurrentRoomIndex());
-		}
-	}
-
-
-	private void playBattleMusic() {
-		try {
-			java.net.URL resource = getClass().getResource("/audio/BattleSoundTrack.mp3");
-			if (resource != null) {
-				mediaPlayer = new MediaPlayer(new Media(resource.toExternalForm()));
-				mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-				mediaPlayer.play();
-			}
-		} catch (Exception e) {
-			System.err.println("Failed to load battle music: " + e.getMessage());
 		}
 	}
 
@@ -638,7 +622,7 @@ public class BattleWindow extends Window {
 		// Main battle buttons
 		attackButton.setDisable(disabled || gameMode == GameMode.AUTO);
 		itemButton.setDisable(disabled || gameMode == GameMode.AUTO);
-		runButton.setDisable(disabled || gameMode == GameMode.AUTO);
+		runButton.setDisable(disabled);
 		switchButton.setDisable(disabled || gameMode == GameMode.AUTO);
 
 

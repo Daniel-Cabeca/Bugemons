@@ -12,7 +12,6 @@ import ulb.communication.Message;
 import ulb.communication.Server;
 import ulb.communication.types.*;
 import ulb.controller.action.Swap;
-import ulb.controller.action.TeamController;
 import ulb.controller.action.UseAbility;
 import ulb.controller.action.UseItem;
 import ulb.controller.strategy.StrategyRandom;
@@ -30,17 +29,21 @@ import ulb.model.team.OpponentTeamGenerator;
 import ulb.model.team.Team;
 import ulb.model.tower.Room;
 import ulb.model.tower.RoomType;
-import ulb.service.ServiceLoader;
 import ulb.model.reward.Reward;
+import ulb.service.ServiceLoader;
 import ulb.view.WindowPath;
+import ulb.view.windows.ModeWindow;
+import ulb.view.windows.NextRoomWindow;
+import ulb.view.windows.Window;
 
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.List;
 
 
-public class GameController extends Application {
+public class GameController extends Application implements TeamController.Listener, ModeController.Listener,
+BattleModeController.Listener, NextRoomController.Listener {
+
 	private Player player;
 	private TowerManager towerModeTowerManager;
 	private BattleController normalModeBattleController;
@@ -57,6 +60,11 @@ public class GameController extends Application {
 
 	private static final String SERVER_IP = "127.0.0.1";
 	private static final int SERVER_PORT = 8080;
+
+	private TeamController teamController;
+	private ModeController modeController;
+	private BattleModeController battleModeController;
+	private NextRoomController nextRoomController;
 
 	public static void main(String[] args) {
 		try {
@@ -95,7 +103,8 @@ public class GameController extends Application {
 		primaryStage.setFullScreen(true);
 		primaryStage.setFullScreenExitHint("");
 
-		switchWindow(WindowPath.MODE);
+		modeController = new ModeController(stage, this);
+		modeController.show();
 
 		if (primaryStage.getScene() != null) {
 			String stylesheet = getClass().getResource("/styles/global.css").toExternalForm();
@@ -122,9 +131,18 @@ public class GameController extends Application {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(windowFxmlPath));
 			Parent root = loader.load();
 
-			if (loader.getController() instanceof ulb.view.windows.Window window) {
+			Object controller = loader.getController();
+			if (controller instanceof Window window) {
 				window.setGameController(this);
 				window.onLoad();
+			}
+
+			// temporary fix until all windows/controllers are mvc
+			if (controller instanceof ModeWindow modeWindow) {
+				modeWindow.setListener(modeController);
+			}
+			if (controller instanceof NextRoomWindow nextRoomWindow) {
+				nextRoomWindow.setViewListener(nextRoomController);
 			}
 
 			if (stage.getScene() == null) {
@@ -233,7 +251,7 @@ public class GameController extends Application {
 		int totalXP = pendingBattleXP;
 		clearPendingLevelUpState();
 		if (returnToNextRoom) {
-			switchWindow(WindowPath.NEXT_ROOM);
+			switchToNextRoomWindow();
 		} else {
 			handleBattleEnd(true, totalXP);
 		}
@@ -268,7 +286,7 @@ public class GameController extends Application {
 	/**
 	 * Handles each room when in tower mode: switches to the right window and initializes its content
 	 */
-	public void handleTower(ActionEvent event)  {
+	public void handleTower()  {
 
 		towerModeTowerManager.getCurrentFloorManager().nextRoom();
 		towerModeTowerManager.nextFloor();
@@ -310,11 +328,6 @@ public class GameController extends Application {
 		return normalModeBattleController;
 	}
 
-	public void setupTeam(List<String> selectedBugemons){
-		TeamController teamController = new TeamController(this.player);
-		teamController.setTeam(selectedBugemons);
-	}
-
 	public TowerManager getTowerManager() {
 		return towerModeTowerManager;
 	}
@@ -340,11 +353,6 @@ public class GameController extends Application {
 		return null;
 	}
 
-	public Message applyOn(SetupTeamMessage m){
-		setupTeam(m.getSelectedBugemons());
-		return null;
-	}
-
 	public Message applyOn(SetupGameModeMessage m){
 		handleSetupGameModeMessage(m);
 		return null;
@@ -352,12 +360,12 @@ public class GameController extends Application {
 
 	public Message applyOn(TowerFleeMessage m){
 		handleTowerFlee();
-		switchWindow(WindowPath.NEXT_ROOM);
+		switchToNextRoomWindow();
 		return null;
 	}
 
 	public Message applyOn(TowerNextRoomMessage m){
-		handleTower(m.getEvent());
+		handleTower();
 		return null;
 	}
 
@@ -390,7 +398,7 @@ public class GameController extends Application {
 
 	public Message applyOn(ReceiveObjectRewardMessage m){
 		player.getInventory().addItem(ServiceLoader.getItemService().getRandomItem(), 1);
-		switchWindow(WindowPath.NEXT_ROOM);
+		switchToNextRoomWindow();
 		return null;
 	}
 
@@ -525,12 +533,89 @@ public class GameController extends Application {
 					int xp = normalModeBattleController != null ? normalModeBattleController.getTotalXP() : 0;
 					handleBattleEnd(true, xp);
 				} else {
-					switchWindow(WindowPath.NEXT_ROOM);
+					switchToNextRoomWindow();
 				}
 			}
 		} else if (state == BattleState.LOST) {
 			int xp = normalModeBattleController != null ? normalModeBattleController.getTotalXP() : 0;
 			handleBattleEnd(false, xp);
+		}
+	}
+
+	@Override
+	public void onTeamConfirmed() {
+		battleModeController = new BattleModeController(stage, this, getTeam());
+		try {
+			battleModeController.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void onReturn() {
+		try {
+			modeController.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void onSolo() {
+		teamController = new TeamController(stage, this, player);
+		try {
+			teamController.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void onAutoBattle() {
+		gameMode = GameMode.AUTO;
+		setupNormalMode();
+		switchWindow(WindowPath.BATTLE);
+	}
+
+	@Override
+	public void onControlledBattle() {
+		gameMode = GameMode.CONTROLLED;
+		setupNormalMode();
+		switchWindow(WindowPath.BATTLE);
+	}
+
+	@Override
+	public void onTowerMode() {
+		gameMode = GameMode.TOWER;
+		setupTowerMode();
+		handleTower();
+	}
+
+	@Override
+	public void onReturnToCreateTeamWindow() {
+		try {
+			teamController.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void onContinue() {
+		handleTower();
+	}
+
+	private void switchToNextRoomWindow() {
+		if (nextRoomController == null) {
+			nextRoomController = new NextRoomController(stage, this);
+		}
+
+		try {
+			nextRoomController.show(hasFledBattle());
+			resetFledBattle();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 }

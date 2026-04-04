@@ -7,8 +7,8 @@ import ulb.model.bugemon.Bugemon;
 public class EffectSwitch extends Effect {
 
     public EffectSwitch(EffectTarget targetType){
-        super(EffectType.SWITCH, targetType);
-    }
+        super(targetType);
+    } 
 
     /**
      * {@inheritDoc}

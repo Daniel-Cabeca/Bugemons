@@ -12,6 +12,7 @@ import ulb.repository.json.InventoryJsonRepository;
 public abstract class ServiceLoader {
     private static ItemService itemService;
 	private static BugemonService bugemonService;
+	private static AbilityService abilityService;
 
 	static {
 		// loads the services
@@ -31,5 +32,9 @@ public abstract class ServiceLoader {
 
 	public static ItemService getItemService() {
 		return itemService;
+	}
+
+	public static AbilityService getAbilityService(){
+		return abilityService;
 	}
 }

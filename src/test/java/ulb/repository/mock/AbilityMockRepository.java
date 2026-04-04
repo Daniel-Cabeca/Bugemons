@@ -37,4 +37,9 @@ public class AbilityMockRepository implements AbilityRepository {
 			return mockData.findById(id);
 		}
 	}
+
+	@Override
+	public Iterable<Ability> findAll() {
+		return abilityRepository.findAll();
+	}
 }

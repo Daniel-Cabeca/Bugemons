@@ -30,6 +30,7 @@ import ulb.model.team.OpponentTeamGenerator;
 import ulb.model.team.Team;
 import ulb.model.tower.Room;
 import ulb.model.tower.RoomType;
+import ulb.service.ServiceLoader;
 import ulb.model.reward.Reward;
 import ulb.view.WindowPath;
 
@@ -384,6 +385,12 @@ public class GameController extends Application {
 	public Message applyOn(LevelUpMessage m){
 		LevelUpMessage levelUpMessage = (LevelUpMessage) m;
 		handleLevelUpRewardChoice(levelUpMessage.getReward(), levelUpMessage.getEvent());
+		return null;
+	}
+
+	public Message applyOn(ReceiveObjectRewardMessage m){
+		player.getInventory().addItem(ServiceLoader.getItemService().getRandomItem(), 1);
+		switchWindow(WindowPath.NEXT_ROOM);
 		return null;
 	}
 

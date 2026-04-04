@@ -5,6 +5,7 @@ import javafx.scene.control.Label;
 import ulb.communication.Message;
 import ulb.communication.types.GetInfoMessage;
 import ulb.communication.types.InfoType;
+import ulb.communication.types.ReceiveObjectRewardMessage;
 import ulb.communication.types.RewardPlaceMessage;
 import ulb.view.WindowPath;
 
@@ -31,7 +32,7 @@ public class FloorRewardWindow extends Window {
 
 	@FXML
 	private void objectReward(){
-		switchWindow(WindowPath.NEXT_ROOM);
+		sendMessage(new ReceiveObjectRewardMessage());
 	}
 
 	@FXML

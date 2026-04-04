@@ -1,3 +1,21 @@
+CREATE TABLE IF NOT EXISTS users (
+                                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                    username TEXT NOT NULL UNIQUE,
+                                    password_hash TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS inventory (
+                                        user_id INTEGER,
+                                        item_id TEXT,
+                                        quantity INTEGER DEFAULT 1,
+
+                                        PRIMARY KEY (user_id, item_id),
+
+                                        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                                        FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE CASCADE
+);
+
+
 CREATE TABLE IF NOT EXISTS abilities (
                                          id TEXT PRIMARY KEY,
                                          name TEXT NOT NULL,
@@ -60,6 +78,8 @@ CREATE TABLE IF NOT EXISTS bugemons (
                                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                                         species_id TEXT NOT NULL,
 
+                                        user_id INTEGER NOT NULL,
+
 
                                         level INTEGER DEFAULT 1,
                                         xp INTEGER DEFAULT 0,
@@ -72,6 +92,7 @@ CREATE TABLE IF NOT EXISTS bugemons (
                                         initiative INTEGER NOT NULL,
 
                                         FOREIGN KEY (species_id) REFERENCES bugemon_species(id) ON DELETE CASCADE
+                                        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS effect_stats_modifier (

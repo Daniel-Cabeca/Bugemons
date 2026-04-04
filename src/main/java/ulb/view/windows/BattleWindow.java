@@ -153,7 +153,7 @@ public class BattleWindow extends Window {
 		PlayerBugemonLabel.setText(playerBugemon.getName());
 		PlayerLevelLabel.setText("Lv." + playerBugemon.getLevel());
 		PlayerBugemonLabel.setStyle("-fx-text-fill: " + playerColor + ";");
-		double playerRatio = (double) playerBugemon.getFightStats().getHp() / playerBugemon.getBaseStats().getHp();
+		double playerRatio = (double) playerBugemon.getHp() / playerBugemon.getBaseStats().getHp();
 		PlayerBugemonHPBar.setProgress(playerRatio);
 		updateHPBarColor(PlayerBugemonHPBar, playerRatio);
 		PlayerBugemonHPNumber.setText(playerBugemon.getHp() + " / " + playerBugemon.getBaseStats().getHp());
@@ -171,7 +171,7 @@ public class BattleWindow extends Window {
 		OpponentBugemonLabel.setText(opponentBugemon.getName());
 		OpponentLevelLabel.setText("Lv." + opponentBugemon.getLevel());
 		OpponentBugemonLabel.setStyle("-fx-text-fill: " + opponentColor + ";");
-		double opponentRatio = (double) opponentBugemon.getFightStats().getHp() / opponentBugemon.getBaseStats().getHp();
+		double opponentRatio = (double) opponentBugemon.getHp() / opponentBugemon.getBaseStats().getHp();
 		OpponentHPBar.setProgress(opponentRatio);
 		updateHPBarColor(OpponentHPBar, opponentRatio);
 		OpponentHPNumber.setText(opponentBugemon.getHp() + " / " + opponentBugemon.getBaseStats().getHp());
@@ -248,10 +248,6 @@ public class BattleWindow extends Window {
 			autoButton.setVisible(true);
 			autoButton.setManaged(true);
 		});
-
-		// if (state != null) {
-		// 	sendMessage(new BattleEndCheckMessage(state, event));
-		// }
 	}
 
 	/**
@@ -482,7 +478,6 @@ public class BattleWindow extends Window {
 										handleBackToMenu();
 									}
 								});
-							// refreshAfterAction(event);
 							}
 						});
 					}
@@ -781,10 +776,6 @@ public class BattleWindow extends Window {
 			initializeGraphicalBattle();
 		}
 
-		// Runnable closeAndComplete = () -> {
-		// 	battleLog.setText(wrapText("Quelle sera votre prochaine action ?", 35));
-		// 	onComplete.run();
-		// };
 		Runnable closeAndComplete = () -> {
 			battleLog.setText("");
 			messageBox.setVisible(false);
@@ -833,7 +824,7 @@ public class BattleWindow extends Window {
 	}
 
 	/**
-	 * Displays messages from a list one by one, advancing automatically with a 1-second delay.
+	 * Displays messages from a list one by one, advancing automatically with a 2-second delay.
 	 */
 	private void displayPhase(List<String> messages, int index, Runnable onComplete) {
 		if (index >= messages.size()) {
@@ -847,10 +838,10 @@ public class BattleWindow extends Window {
 			initializeGraphicalBattle();
 		}
 		// always updates the HP
-		updateHPDisplay(battleController.getHpAfterFirstActionSelf(), battleController.getHpAfterFirstActionOpponent());
+		updateHPDisplay(battleController.getActiveBugemonSelf().getHp(), battleController.getActiveBugemonOpponent().getHp());
 
-		// 1s delay between one turn's action messages
-		PauseTransition pause = new PauseTransition(javafx.util.Duration.seconds(1));
+		// 2s delay between one turn's action messages
+		PauseTransition pause = new PauseTransition(javafx.util.Duration.seconds(2));
 		pause.setOnFinished(e -> displayPhase(messages, index + 1, onComplete));
 		pause.play();
 	}

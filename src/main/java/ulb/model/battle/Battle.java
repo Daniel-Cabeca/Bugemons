@@ -6,6 +6,7 @@ import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.Stats;
 import ulb.model.item.Item;
 import ulb.model.effect.Effect;
+import ulb.model.effect.EffectType;
 import ulb.controller.action.*; 
 import ulb.model.reward.Reward;
 
@@ -121,7 +122,7 @@ public class Battle {
 	 * @return if the item can be used or not (boolean)
 	 */
 	public boolean checkItem(Item item, ParticipantLabel team) {
-		if (item.getEffect().getType().equals(Effect.EffectType.HEAL)) {
+		if (item.getEffect().getType().equals(EffectType.HEAL)) {
 			return this.getActiveBugemon(team).hasHPDecreased();
 		}
 
@@ -255,7 +256,7 @@ public class Battle {
 		switch (ownState) {
 			case INGAME:
 				if (action instanceof UseItem useItemAction
-						&& useItemAction.getItem().getEffect().getType() == Effect.EffectType.SWITCH) {
+						&& useItemAction.getItem().getEffect().getType() == EffectType.SWITCH) {
 					applyAction(action, ownTeam);
 				} else {
 					setAction(action, ownTeam);

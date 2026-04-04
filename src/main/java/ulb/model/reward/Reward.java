@@ -97,6 +97,8 @@ public class Reward {
         return RewardType.values()[i];
     }
 
+    public void setStats(Stats stats) {this.stats = stats;}
+
     /**
      * @return a copy of the stats reward
      */

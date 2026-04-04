@@ -15,7 +15,7 @@ import ulb.model.battle.Battle.ParticipantLabel;
 import ulb.model.team.Team;
 import ulb.model.Player;
 
-import ulb.model.effect.Effect.EffectTarget;
+import ulb.model.effect.EffectTarget;
 import ulb.model.effect.EffectStatModifier.EffectDuration;
 
 public class EffectTest {
@@ -39,7 +39,7 @@ public class EffectTest {
 	}
 
 	@Test
-	public void getTargetsIsOwnBugemmonWhenTargetIsOwnBugemon() {
+	public void getTargetsIsOwnBugemonWhenTargetIsOwnBugemon() {
 		Battle battle = getTestBattle();
 		Effect effect = new EffectStatModifier(EffectTarget.OWN_BUGEMON, EffectDuration.PERMANENT, Map.of());
 

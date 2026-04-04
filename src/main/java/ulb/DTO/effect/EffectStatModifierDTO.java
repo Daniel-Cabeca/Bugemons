@@ -3,6 +3,8 @@ package ulb.DTO.effect;
 import java.util.Map;
 
 import ulb.model.effect.EffectStatModifier;
+import ulb.model.effect.EffectType;
+import ulb.model.effect.EffectTarget;
 
 public class EffectStatModifierDTO extends EffectDTO {
 

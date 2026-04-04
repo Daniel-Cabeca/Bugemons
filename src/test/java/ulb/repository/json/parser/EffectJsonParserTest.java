@@ -12,8 +12,8 @@ import ulb.model.effect.EffectHeal;
 import ulb.model.effect.EffectResetMalus;
 import ulb.model.effect.EffectStatModifier;
 import ulb.model.effect.EffectSwitch;
-import ulb.model.effect.Effect.EffectType;
-import ulb.model.effect.Effect.EffectTarget;
+import ulb.model.effect.EffectType;
+import ulb.model.effect.EffectTarget;
 import ulb.model.effect.EffectStatModifier.EffectDuration;
 import ulb.model.effect.EffectStatModifier.StatType;
 

@@ -24,6 +24,12 @@ public class Bugemon {
 		this.level = 1;
 	}
 
+	public void setXp(int xp) {this.xp = xp;}
+	public void setLevel(int level) {this.level = level;}
+	public void setRemainingRewards(int remainingRewards) {this.remainingRewards = remainingRewards;}
+	public void setBaseStats(Stats baseStats) {this.baseStats = baseStats;}
+	public void setFightStats(Stats fightStats) {this.fightStats = fightStats;}
+
 	public BugemonSpecies getSpecies() { return this.species; }
 	public Stats getBaseStats() { return this.baseStats; }
 	public Stats getFightStats() { return this.fightStats; }

@@ -54,8 +54,8 @@ public class ItemDatabaseRepository implements ItemRepository {
 
 			statement.executeUpdate();
 
-			EffectLoader effectloader = new EffectLoader(this.database);
-			effectloader.insert(item.getEffect(), item.getId());
+			EffectDatabaseRepository effectRepository = new EffectDatabaseRepository(this.database);
+			effectRepository.insert(item.getEffect(), item.getId());
 		} catch (SQLException e) {
 			throw new DuplicateElementException("Failed to insert item: "+ item.getId() +" ("+ e.getMessage() +")");
 		}

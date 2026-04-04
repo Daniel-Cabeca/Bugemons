@@ -9,9 +9,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Handles loading and saving effects in the database.
+ * Repository for saving and loading effects in the database.
  */
-public class EffectLoader {
+public class EffectDatabaseRepository {
 	public final static String TYPESTR_HEAL = "HEAL";
 	public final static String TYPESTR_STAT_MODIFIER = "STAT_MODIFIER";
 	public final static String TYPESTR_RESET_MALUS = "RESET_MALUS";
@@ -19,7 +19,7 @@ public class EffectLoader {
 
 	private final Database database;
 
-	public EffectLoader(Database database) {
+	public EffectDatabaseRepository(Database database) {
 		this.database = database;
 	}
 

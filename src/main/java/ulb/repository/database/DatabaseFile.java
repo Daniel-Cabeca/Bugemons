@@ -7,7 +7,7 @@ import java.io.IOException;
 /**
  * An SQLite database file.
  */
-public class DatabaseFile {
+class DatabaseFile {
 	private final Path path;
 
 	public DatabaseFile(Path path) {

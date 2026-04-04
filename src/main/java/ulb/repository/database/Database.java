@@ -2,6 +2,9 @@ package ulb.repository.database;
 
 import java.nio.file.Path;
 
+import java.sql.Connection;
+import java.sql.Statement;
+
 /**
  * Represents an SQLite database stored as a file and holds its connection.
  */
@@ -85,5 +88,15 @@ public class Database {
 	 */
 	public void close() {
 		this.getConnection().close();
+	}
+
+	/**
+	 * Creates an SQL statement.
+	 *
+	 * @return The SQL statement
+	 * @throws IllegalStateException If the database is not connected.
+	 */
+	public Statement createStatement() {
+		return this.getConnection().createStatement();
 	}
 }

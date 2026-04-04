@@ -2,6 +2,7 @@ package ulb.repository.database;
 
 import java.sql.DriverManager;
 import java.sql.Connection;
+import java.sql.Statement;
 import java.sql.SQLException;
 
 import ulb.repository.LoadException;
@@ -9,7 +10,7 @@ import ulb.repository.LoadException;
 /**
  * Connection with an SQL database.
  */
-public class DatabaseConnection {
+class DatabaseConnection {
 	private final String url;
 	private Connection sqlConnection = null;
 
@@ -57,6 +58,24 @@ public class DatabaseConnection {
 			} catch (SQLException e) {
 				throw new RuntimeException("Failed to close the database '"+ this.getUrl() +"': "+ e.getMessage());
 			}
+		}
+	}
+
+	/**
+	 * Creates an SQL statement.
+	 *
+	 * @return The SQL statament
+	 * @throws IllegalStateException If the connection is closed
+	 */
+	public Statement createStatement() {
+		if (!this.isOpen()) {
+			throw new IllegalStateException("Cannot create an SQL statement with a closed connection.");
+		}
+
+		try {
+			return this.getSqlConnection().createStatement();
+		} catch (SQLException e) {
+			throw new RuntimeException("Failed to create SQL statement: "+ e.getMessage());
 		}
 	}
 }

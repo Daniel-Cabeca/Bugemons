@@ -1,8 +1,5 @@
 package ulb.repository.database;
 
-import ulb.repository.LoadException;
-import ulb.repository.json.JsonResources;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -10,40 +7,90 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import java.util.List;
+import java.util.ArrayList;
+
+import ulb.repository.LoadException;
+
 /**
- * Class for SQL scripts in the class resources.
+ * SQL script that may contain multiple statements.
  */
-public class SqlScript {
-	private final String sql;
+class SqlScript {
+	private static final String QUERY_SEPARATOR = ";";
 
-	public SqlScript(String path) throws LoadException {
+	private final URL url;
+
+	public SqlScript(URL url) {
+		this.url = url;
+	}
+
+	public SqlScript(String path) {
+		this(SqlScript.class.getResource(path));
+	}
+
+	public URL getUrl() { return this.url; }
+
+	/**
+	 * Reads the script file's content.
+	 *
+	 * @return The script's content
+	 */
+	public String getSql() {
 		try {
-			URL url = JsonResources.class.getResource(path);
-			InputStream stream = url.openStream();
-
-			if (stream == null) {
-				throw new LoadException("SQL script not found: "+ path);
-			}
-
-			this.sql = new String(stream.readAllBytes());
+			InputStream stream = this.getUrl().openStream();
+			byte[] bytes = stream.readAllBytes();
+			return new String(bytes);
 		} catch (IOException e) {
-			throw new LoadException("Failed to read SQL script "+ path +": "+ e.getMessage());
+			throw new LoadException("Failed to read SQL script '"+ this.getUrl() +"': "+ e.getMessage());
 		}
 	}
 
-	public String getSql() { return this.sql; }
+	/**
+	 * Gets the list of statements in the string.
+	 *
+	 * @return The list of statements
+	 */
+	public Iterable<String> getStatements() {
+		String[] statements = this.getSql().split(QUERY_SEPARATOR);
+		List<String> res = new ArrayList();
+
+		for (String statement: statements) {
+			statement = statement.trim();
+
+			if (!statement.isEmpty()) {
+				res.add(statement);
+			}
+		}
+
+		return res;
+	}
+
+	/**
+	 * Executes the script.
+	 *
+	 * @param database The database to run the script on
+	 */
+	public void execute(Database database) throws SQLException {
+		Statement statement = database.createStatement();
+
+		for (String statementStr: this.getStatements()) {
+			statement.execute(statementStr);
+		}
+	}
 
 	/**
 	 * Executes the script.
 	 *
 	 * @param connection The SQL connection
 	 * @throws SQLException If an SQL error occurs
+	 * @deprecated Should call with a Database instance instead
 	 */
+	@Deprecated
 	public void execute(Connection connection) throws SQLException {
 		Statement statement = connection.createStatement();
 
-		for(String query: this.getSql().split(";")) {
-			String trimmedQuery = query.trim();
+		for(String statementStr: this.getSql().split(";")) {
+			String trimmedQuery = statementStr.trim();
 			if (!trimmedQuery.isEmpty()) {
 				statement.execute(trimmedQuery);
 			}

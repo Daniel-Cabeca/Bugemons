@@ -3,6 +3,7 @@ package ulb.repository.database;
 import java.sql.DriverManager;
 import java.sql.Connection;
 import java.sql.Statement;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import ulb.repository.LoadException;
@@ -75,7 +76,26 @@ class DatabaseConnection {
 		try {
 			return this.getSqlConnection().createStatement();
 		} catch (SQLException e) {
-			throw new RuntimeException("Failed to create SQL statement: "+ e.getMessage());
+			throw new RuntimeException("Failed to create an SQL statement: "+ e.getMessage());
+		}
+	}
+
+	/**
+	 * Creates a prepared SQL statement.
+	 *
+	 * @param sql The statement as text
+	 * @return The prepared SQL statament
+	 * @throws IllegalStateException If the connection is closed
+	 */
+	public PreparedStatement prepareStatement(String sql) {
+		if (!this.isOpen()) {
+			throw new IllegalStateException("Cannot create a prepared SQL statement with a closed connection.");
+		}
+
+		try {
+			return this.getSqlConnection().prepareStatement(sql);
+		} catch (SQLException e) {
+			throw new RuntimeException("Failed to create a prepared SQL statement: "+ e.getMessage());
 		}
 	}
 }

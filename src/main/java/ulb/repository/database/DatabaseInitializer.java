@@ -1,0 +1,96 @@
+package ulb.repository.database;
+
+import java.sql.SQLException;
+import ulb.utils.DuplicateElementException;
+
+import ulb.model.item.Item;
+import ulb.repository.ItemRepository;
+import ulb.repository.json.ItemJsonRepository;
+
+/**
+ * Creates and populates the tables of a database for the game.
+ */
+public class DatabaseInitializer {
+	private static final String SCRIPT_CREATE_TABLES = "/sql/init_db.sql";
+
+	private final Database database;
+
+	public DatabaseInitializer(Database database) {
+		this.database = database;
+	}
+
+	public DatabaseInitializer(String databaseName) {
+		this(Database.get(databaseName));
+	}
+
+	public Database getDatabase() { return this.database; }
+
+	/**
+	 * Creates the tables for the database.
+	 */
+	void createTables() {
+		SqlScript script = new SqlScript(SCRIPT_CREATE_TABLES);
+
+		try {
+			script.execute(this.getDatabase());
+		} catch (SQLException e) {
+			throw new RuntimeException("Failed to create tables for the database '"+ this.getDatabase().getName() +"': "+ e.getMessage());
+		}
+	}
+
+	/**
+	 * Populates the database with game data.
+	 *
+	 * @param items The list of items
+	 */
+	void populate(Iterable<Item> items) {
+		ItemDatabaseRepository itemRepository = new ItemDatabaseRepository(this.getDatabase());
+
+		try {
+			itemRepository.insertItems(items);
+		} catch(DuplicateElementException e) {
+			throw new RuntimeException("The game data the database is populated with contains duplicate elements.");
+		}
+	}
+
+	/**
+	 * Populates the database with the default game data.
+	 */
+	void populate() {
+		ItemRepository itemRepository = new ItemJsonRepository();
+
+		this.populate(itemRepository.findAll());
+	}
+
+	/**
+	 * Creates the database, its tables and populates it with the default game data if it does not exist.
+	 * The database's connection will be open after this call.
+	 *
+	 * @throws IllegalStateException If the database's connection is already open.
+	 */
+	public void initialize() {
+		if (this.database.isConnected()) {
+			throw new IllegalStateException("Cannot initialize a database if its connection is already established.");
+		}
+
+		if (this.database.exists()) {
+			this.database.connect();
+		}
+		else {
+			this.database.connect();
+			this.createTables();
+			this.populate();
+		}
+	}
+
+	/**
+	 * Prepares the default database.
+	 *
+	 * @return The default database, initialized and connected.
+	 */
+	public static Database prepareDefaultDatabase() {
+		DatabaseInitializer initializer = new DatabaseInitializer(Database.NAME_DEFAULT);
+		initializer.initialize();
+		return initializer.database;
+	}
+}

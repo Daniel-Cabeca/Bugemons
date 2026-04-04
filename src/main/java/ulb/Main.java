@@ -2,7 +2,6 @@ package ulb;
 import javafx.application.Application;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import ulb.repository.database.DatabaseManager;
 import ulb.controller.GameController;
 import ulb.model.Player;
 import ulb.view.ViewManager;

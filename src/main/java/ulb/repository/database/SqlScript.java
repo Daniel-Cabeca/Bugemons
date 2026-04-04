@@ -25,7 +25,11 @@ class SqlScript {
 	}
 
 	public SqlScript(String path) {
-		this(SqlScript.class.getResource(path));
+		this.url = SqlScript.class.getResource(path);
+
+		if (this.url == null) {
+			throw new RuntimeException("SQL script not found: "+ path);
+		}
 	}
 
 	public URL getUrl() { return this.url; }

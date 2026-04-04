@@ -17,10 +17,10 @@ public class EffectLoader {
 	public final static String TYPESTR_RESET_MALUS = "RESET_MALUS";
 	public final static String TYPESTR_SWITCH = "SWITCH";
 
-	private final Connection connection;
+	private final Database database;
 
-	public EffectLoader(Connection connection) {
-		this.connection = connection;
+	public EffectLoader(Database database) {
+		this.database = database;
 	}
 
 	/**
@@ -33,7 +33,7 @@ public class EffectLoader {
 		String sql = "INSERT INTO effects (item_id, type, target, value) VALUES (?, ?, ?, ?)";
 
 		try {
-			PreparedStatement statement = this.connection.prepareStatement(sql);
+			PreparedStatement statement = this.database.prepareStatement(sql);
 
 			statement.setString(1, itemId);
 			statement.setString(2, this.getTypeStr(effect));
@@ -81,7 +81,7 @@ public class EffectLoader {
 
 	private void insertStats(Stats stats, long effectId, EffectStatModifier.EffectDuration duration) throws SQLException {
 		String sql = "INSERT INTO effect_stats_modifier (effect_id, hp,attack,defense,initiative,duration) VALUES (?, ?, ?, ?,?,?)";
-		PreparedStatement statement = this.connection.prepareStatement(sql);
+		PreparedStatement statement = this.database.prepareStatement(sql);
 
 		statement.setLong(1, effectId);
 		statement.setInt(2,stats.getHp());

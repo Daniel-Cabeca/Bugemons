@@ -20,29 +20,10 @@ import java.util.NoSuchElementException;
  * Items repository connected to the SLQ database.
  */
 public class ItemDatabaseRepository implements ItemRepository {
-	private final Connection connection;
+	private final Database database;
 
-	public ItemDatabaseRepository(Connection connection) throws LoadException {
-		this.connection = connection;
-
-		if (SQLUtils.isTableEmpty(this.connection, "items")) {
-			this.populateWithJson();
-		}
-	}
-
-	/**
-	 * Populate items table with JSON files.
-	 *
-	 * @throws LoadException If failed to load json data, or some unlikely sql error occurred
-	 */
-	private void populateWithJson() throws LoadException {
-		ItemRepository jsonRepository = new ItemJsonRepository();
-
-		try {
-			this.insertItems(jsonRepository.findAll());
-		} catch (DuplicateElementException e) {
-			throw new LoadException("Failed to populate empty items table: "+ e.getMessage());
-		}
+	public ItemDatabaseRepository(Database database) throws LoadException {
+		this.database = database;
 	}
 
 	/**
@@ -62,25 +43,23 @@ public class ItemDatabaseRepository implements ItemRepository {
 	 * @param item The item to insert
 	 */
 	public void insertItem(Item item) throws DuplicateElementException {
-		String sqlItem = "INSERT INTO items (id, name, description, category, sprite) VALUES (?, ?, ?, ?, ?)";
-		String sqlEffect = "INSERT INTO effects (item_id, type, target, value) VALUES (?, ?, ?, ?)";
-		try (PreparedStatement pstmt = this.connection.prepareStatement(sqlItem)) {
-			pstmt.setString(1, item.getId());
-			pstmt.setString(2, item.getName());
-			pstmt.setString(3, item.getDescription());
-			pstmt.setString(4, item.getCategory());
-			pstmt.setString(5, item.getSprite());
+		String sql = "INSERT INTO items (id, name, description, category, sprite) VALUES (?, ?, ?, ?, ?)";
 
-			pstmt.executeUpdate();
+		try (PreparedStatement statement = this.database.prepareStatement(sql)) {
+			statement.setString(1, item.getId());
+			statement.setString(2, item.getName());
+			statement.setString(3, item.getDescription());
+			statement.setString(4, item.getCategory());
+			statement.setString(5, item.getSprite());
 
-			EffectLoader effectloader = new EffectLoader(this.connection);
+			statement.executeUpdate();
+
+			EffectLoader effectloader = new EffectLoader(this.database);
 			effectloader.insert(item.getEffect(), item.getId());
 		} catch (SQLException e) {
 			throw new DuplicateElementException("Failed to insert item: "+ item.getId() +" ("+ e.getMessage() +")");
 		}
 	}
-
-
 
 	/**
 	 * {@inheritDoc}

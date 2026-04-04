@@ -35,4 +35,12 @@ class DatabaseFileTest {
 		dbFile.delete();
 		assertFalse(Files.exists(path));
 	}
+
+	@Test
+	public void testDeleteOnInexistant() throws IOException {
+		DatabaseFile dbFile = new DatabaseFile("doesnotexist.db");
+		Path path = dbFile.getPath();
+
+		assertDoesNotThrow(() -> { dbFile.delete(); });
+	}
 }

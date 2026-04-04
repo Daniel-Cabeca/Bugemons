@@ -34,7 +34,7 @@ class DatabaseFile {
 	 */
 	public void delete() {
 		try {
-			Files.delete(this.getPath());
+			Files.deleteIfExists(this.getPath());
 		} catch(IOException e) {
 			throw new RuntimeException("Failed to delete database file '"+ this.getPath() +"': "+ e.getMessage());
 		}

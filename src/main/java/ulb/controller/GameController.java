@@ -1,7 +1,12 @@
 package ulb.controller;
 
+import javafx.application.Application;
 import javafx.event.ActionEvent;
+import javafx.scene.text.Font;
+import javafx.stage.Stage;
+import ulb.communication.Client;
 import ulb.communication.Message;
+import ulb.communication.Server;
 import ulb.communication.types.*;
 import ulb.controller.action.Swap;
 import ulb.controller.action.TeamController;
@@ -31,7 +36,7 @@ import java.util.Deque;
 import java.util.List;
 
 
-public class GameController {
+public class GameController extends Application {
 	private Player player;
 	private TowerManager towerModeTowerManager;
 	private BattleController normalModeBattleController;
@@ -45,6 +50,57 @@ public class GameController {
 	private boolean fledBattle = false;
 	private boolean pendingVictory;
 	private int pendingTotalXP;
+
+	private static final String SERVER_IP = "127.0.0.1";
+	private static final int SERVER_PORT = 8080;
+
+	public static void main(String[] args) {
+		try {
+			if (args.length == 0) {
+				launch(args);
+			} else if ("--client".equals(args[0])) {
+				Client client = new Client(SERVER_IP, SERVER_PORT);
+
+				client.sendMessage(new ConnectMessage("Bonjour server !"));
+
+				Message message = client.receiveMessage();
+				if (message instanceof ConnectMessage connectMessage) {
+					System.out.println("message reçu du serveur : " + connectMessage.getConnectMessage());
+				}
+
+				client.closeSocket();
+			} else if ("--server".equals(args[0])) {
+				Server server = new Server(SERVER_PORT);
+				server.start();
+			} else {
+				System.err.println("Unknown arguments.");
+			}
+		} catch (Exception e) {
+			System.err.println("Uncaught error.");
+			System.err.println(e.getMessage());
+		}
+	}
+
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+		setPlayer(new Player("Player"));
+
+		ViewManager bootstrapViewManager = new ViewManager() {};
+		bootstrapViewManager.setGameController(this);
+		bootstrapViewManager.setStage(primaryStage);
+		setViewManager(bootstrapViewManager);
+
+		Font.loadFont(getClass().getResourceAsStream("/fonts/pokemon-emerald-pro.otf"), 14);
+		primaryStage.setTitle("INFO-F307 Groupe 10");
+		primaryStage.setFullScreen(true);
+		primaryStage.setFullScreenExitHint("");
+
+		bootstrapViewManager.switchWindow(WindowPath.MODE);
+
+		primaryStage.getScene().getStylesheets().add(getClass().getResource("/styles/global.css").toExternalForm());
+
+		primaryStage.show();
+	}
 
 	public boolean hasFledBattle() { return fledBattle; }
 	public void resetFledBattle() { fledBattle = false; }

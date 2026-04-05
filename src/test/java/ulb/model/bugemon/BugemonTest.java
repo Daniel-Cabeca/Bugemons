@@ -1,15 +1,29 @@
 package ulb.model.bugemon;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import ulb.model.ability.Ability;
 import ulb.model.type.Type;
 import ulb.repository.BugemonSpeciesRepository;
 import ulb.repository.mock.BugemonSpeciesMockRepository;
 import ulb.service.BugemonService;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class BugemonTest {
+
+	@Test
+	public void swapWrongTypeAbility() {
+		Bugemon B = new Bugemon(Type.AQUA, 10, 29, 35, 16);
+		Ability A = new Ability("test", "Test", Type.PYRO, "Test Description", 10);
+		B.swapAbility(A, null);
+
+		boolean contains = false;
+		for (Ability ab: B.getAbilities()) {
+			contains |= A.equals(ab);
+		}
+		assertFalse(contains);
+	}
 
 	@Test
 	public void xpGainsDoesNotAllowALevelUp() {

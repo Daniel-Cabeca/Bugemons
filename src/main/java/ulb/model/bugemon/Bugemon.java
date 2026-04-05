@@ -142,9 +142,8 @@ public class Bugemon {
 
 	public Bugemon(int hp, int attack, int defense, int initiative) {
 		Stats stats = new Stats(hp, attack, defense, initiative);
-		BugemonSpecies species = new BugemonSpecies(stats);
-
-		this.species = species;
+		this.species = new BugemonSpecies(stats);
+		this.abilities = new AbilitySet();
 		this.baseStats = new Stats(this.species.getBaseStats());
 		this.fightStats = new Stats(this.species.getBaseStats());
 		this.xp = 0;
@@ -153,9 +152,8 @@ public class Bugemon {
 
 	public Bugemon(Type type, int hp, int attack, int defense, int initiative) {
 		Stats stats = new Stats(hp, attack, defense, initiative);
-		BugemonSpecies species = new BugemonSpecies(type, stats);
-
-		this.species = species;
+		this.species = new BugemonSpecies(type, stats);
+		this.abilities = new AbilitySet();
 		this.baseStats = new Stats(this.species.getBaseStats());
 		this.fightStats = new Stats(this.species.getBaseStats());
 		this.xp = 0;
@@ -164,9 +162,8 @@ public class Bugemon {
 
 	public Bugemon(String name, Type type, int hp, int attack, int defense, int initiative) {
 		Stats stats = new Stats(hp, attack, defense, initiative);
-		BugemonSpecies species = new BugemonSpecies(name, type, stats);
-
-		this.species = species;
+		this.species = new BugemonSpecies(name, type, stats);
+		this.abilities = new AbilitySet();
 		this.baseStats = new Stats(this.species.getBaseStats());
 		this.fightStats = new Stats(this.species.getBaseStats());
 		this.xp = 0;

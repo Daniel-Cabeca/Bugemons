@@ -43,7 +43,8 @@ import java.util.Deque;
 
 
 public class GameController extends Application implements TeamController.Listener, ModeController.Listener,
-BattleModeController.Listener, NextRoomController.Listener, ChooseBugemonController.Listener{
+BattleModeController.Listener, NextRoomController.Listener, ChooseBugemonController.Listener,
+BattleWindowController.Listener{
 
 	private Player player;
 	private TowerManager towerModeTowerManager;
@@ -67,6 +68,7 @@ BattleModeController.Listener, NextRoomController.Listener, ChooseBugemonControl
 	private BattleModeController battleModeController;
 	private NextRoomController nextRoomController;
 	private ChooseBugemonController chooseBugemonController;
+	private BattleWindowController battleWindowController;
 
 	public static void main(String[] args) {
 		try {
@@ -301,7 +303,7 @@ BattleModeController.Listener, NextRoomController.Listener, ChooseBugemonControl
 
 			switch (type) {
 				case BATTLE, BOSS:
-					switchWindow(WindowPath.BATTLE);
+					switchToBattleWindow();
 					break;
 
 				case REWARD:
@@ -576,14 +578,14 @@ BattleModeController.Listener, NextRoomController.Listener, ChooseBugemonControl
 	public void onAutoBattle() {
 		gameMode = GameMode.AUTO;
 		setupNormalMode();
-		switchWindow(WindowPath.BATTLE);
+		switchToBattleWindow();
 	}
 
 	@Override
 	public void onControlledBattle() {
 		gameMode = GameMode.CONTROLLED;
 		setupNormalMode();
-		switchWindow(WindowPath.BATTLE);
+		switchToBattleWindow();
 	}
 
 	@Override
@@ -603,8 +605,109 @@ BattleModeController.Listener, NextRoomController.Listener, ChooseBugemonControl
 	}
 
 	@Override
+	public Team getPlayerTeam() {
+		return getTeam();
+	}
+
+	@Override
+	public ulb.model.item.Inventory getPlayerInventory() {
+		return player.getInventory();
+	}
+
+	@Override
+	public BattleController getBattleController() {
+		if (gameMode == GameMode.TOWER && towerModeTowerManager != null) {
+			return towerModeTowerManager.getCurrentBattleController();
+		}
+		return normalModeBattleController;
+	}
+
+	@Override
+	public GameMode getGameMode() {
+		return gameMode;
+	}
+
+	@Override
+	public int getTowerFloorNumber() {
+		return towerModeTowerManager != null ? towerModeTowerManager.getFloorNumber() : 0;
+	}
+
+	@Override
+	public int getCurrentRoomIndex() {
+		return towerModeTowerManager != null ? towerModeTowerManager.getCurrentRoomIndex() : 0;
+	}
+
+	@Override
+	public BattleState onAutoTurn() {
+		StrategyRandom strategyRandom = new StrategyRandom(normalModeBattleController);
+		return strategyRandom.playAutoTurn();
+	}
+
+	@Override
+	public BattleState onUseItem(Item item) {
+		BattleController battleController = battleControllerForManualTurn();
+		if (battleController != null && item != null) {
+			battleController.useAction(new UseItem(item));
+			return battleController.getState();
+		}
+		return null;
+	}
+
+	@Override
+	public BattleState onSwapBugemon(Bugemon bugemon) {
+		BattleController battleController = battleControllerForManualTurn();
+		if (battleController != null && bugemon != null) {
+			battleController.useAction(new Swap(bugemon));
+			return battleController.getState();
+		}
+		return null;
+	}
+
+	@Override
+	public BattleState onUseAbility(Ability ability) {
+		BattleController battleController = battleControllerForManualTurn();
+		if (battleController != null && ability != null) {
+			battleController.useAction(new UseAbility(ability));
+			return battleController.getState();
+		}
+		return null;
+	}
+
+	@Override
+	public void onBattleStateChecked(BattleState state, ActionEvent event) {
+		handleBattleEndCheckMessage(new BattleEndCheckMessage(state, event));
+	}
+
+	@Override
+	public void onTowerFlee() {
+		handleTowerFlee();
+		switchToNextRoomWindow();
+	}
+
+	@Override
+	public void onReturnToMode() {
+		try {
+			modeController.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
 	public void onContinue() {
 		handleTower();
+	}
+
+	private void switchToBattleWindow() {
+		if (battleWindowController == null) {
+			battleWindowController = new BattleWindowController(stage, this);
+		}
+
+		try {
+			battleWindowController.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void switchToNextRoomWindow() {

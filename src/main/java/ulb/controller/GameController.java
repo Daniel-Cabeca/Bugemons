@@ -32,6 +32,7 @@ import ulb.model.tower.RoomType;
 import ulb.model.reward.Reward;
 import ulb.service.ServiceLoader;
 import ulb.view.WindowPath;
+import ulb.view.windows.ChooseBugemonWindow;
 import ulb.view.windows.ModeWindow;
 import ulb.view.windows.NextRoomWindow;
 import ulb.view.windows.Window;
@@ -42,7 +43,7 @@ import java.util.Deque;
 
 
 public class GameController extends Application implements TeamController.Listener, ModeController.Listener,
-BattleModeController.Listener, NextRoomController.Listener {
+BattleModeController.Listener, NextRoomController.Listener, ChooseBugemonController.Listener{
 
 	private Player player;
 	private TowerManager towerModeTowerManager;
@@ -65,6 +66,7 @@ BattleModeController.Listener, NextRoomController.Listener {
 	private ModeController modeController;
 	private BattleModeController battleModeController;
 	private NextRoomController nextRoomController;
+	private ChooseBugemonController chooseBugemonController;
 
 	public static void main(String[] args) {
 		try {
@@ -144,7 +146,6 @@ BattleModeController.Listener, NextRoomController.Listener {
 			if (controller instanceof NextRoomWindow nextRoomWindow) {
 				nextRoomWindow.setViewListener(nextRoomController);
 			}
-
 			if (stage.getScene() == null) {
 				stage.setScene(new Scene(root));
 			} else {
@@ -618,4 +619,15 @@ BattleModeController.Listener, NextRoomController.Listener {
 			e.printStackTrace();
 		}
 	}
+
+	// ChooseBugemonController methods override
+	@Override
+	public void onReturnFloorRewardWindow(){
+		try {
+			modeController.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 }

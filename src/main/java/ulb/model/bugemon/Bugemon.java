@@ -3,6 +3,7 @@ package ulb.model.bugemon;
 import java.util.NoSuchElementException;
 import java.util.Random;
 
+import ulb.model.ability.Ability;
 import ulb.model.type.Type;
 import ulb.model.ability.AbilitySet;
 
@@ -10,14 +11,16 @@ import ulb.service.ServiceLoader;
 
 public class Bugemon {
 	private BugemonSpecies species;
+	private AbilitySet abilities;
 	private Stats baseStats;
 	private Stats fightStats;
-	private int xp = 0;
-	private int level = 1;
+	private int xp;
+	private int level;
 	private int remainingRewards = 0;
 
 	public Bugemon(BugemonSpecies species) {
 		this.species = species;
+		this.abilities = species.getAbilities();
 		this.baseStats = new Stats(this.species.getBaseStats());
 		this.fightStats = new Stats(this.species.getBaseStats());
 		this.xp = 0;
@@ -25,6 +28,7 @@ public class Bugemon {
 	}
 
 	public BugemonSpecies getSpecies() { return this.species; }
+	public AbilitySet getAbilities() { return this.abilities; }
 	public Stats getBaseStats() { return this.baseStats; }
 	public Stats getFightStats() { return this.fightStats; }
 	public int getXp() { return this.xp; }
@@ -35,7 +39,6 @@ public class Bugemon {
 	public String getId() { return this.getSpecies().getId(); }
 	public String getName() { return this.getSpecies().getName(); }
 	public Type getType() { return this.getSpecies().getType(); }
-	public AbilitySet getAbilities() { return this.getSpecies().getAbilities(); }
 	public String getSprite() { return this.getSpecies().getSprite(); }
 
 	public int getHp() { return this.getFightStats().getHp(); }
@@ -43,6 +46,12 @@ public class Bugemon {
 	public int getDefense() { return this.getFightStats().getDefense(); }
 	public int getInitiative() { return this.getFightStats().getInitiative(); }
 	public boolean isKO() {return this.fightStats.getHp() <= 0;}
+
+	public void swapAbility(Ability newAbility, Ability oldAbility) {
+		if (newAbility.getType() == this.getType()) {
+			abilities.swapAbility(newAbility, oldAbility);
+		}
+	}
 
 	public boolean hasHPDecreased(){
 		return this.baseStats.getHp() > this.fightStats.getHp();

@@ -37,12 +37,12 @@ public class FloorRewardWindow extends Window {
 
 	@FXML
 	private void newAttackReward(){
-		switchWindow(WindowPath.NEXT_ROOM);
+		switchWindow(WindowPath.CHOOSE_BUGEMON);
 	}
 
 	@FXML
 	private void statReward(){
-		switchWindow(WindowPath.NEXT_ROOM);
+		switchWindow(WindowPath.CHOOSE_BUGEMON);
 	}
 
 }

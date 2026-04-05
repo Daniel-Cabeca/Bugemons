@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" spacing="5.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ulb.view.windows.ChooseBugemonWindow">
+   <children>
+      <Label text="Choisis ton Bugemon:" />
+      <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="ALWAYS" prefHeight="200.0" prefWidth="200.0" vbarPolicy="ALWAYS" VBox.vgrow="ALWAYS">
+         <content>
+            <VBox fx:id="bugemonList">
+               <children>
+                  <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                     <children>
+                        <ImageView>
+                           <image>
+                              <Image url="@../../png/inferlin.png" />
+                           </image>
+                        </ImageView>
+                        <Label text="Stats:" />
+                        <CheckBox mnemonicParsing="false" text="CheckBox" />
+                     </children>
+                  </HBox>
+                  <HBox layoutX="10.0" layoutY="10.0" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                     <children>
+                        <ImageView>
+                           <image>
+                              <Image url="@../../png/inferlin.png" />
+                           </image>
+                        </ImageView>
+                        <Label text="Stats:" />
+                        <CheckBox mnemonicParsing="false" text="CheckBox" />
+                     </children>
+                  </HBox>
+               </children></VBox>
+         </content>
+      </ScrollPane>
+      <Button mnemonicParsing="false" onAction="#apply" text="Applique" />
+      <Button layoutX="280.0" layoutY="384.0" mnemonicParsing="false" onAction="#returnFloorRewardWindow" text="Retour" />
+   </children>
+</VBox>

@@ -16,4 +16,6 @@ public interface AbilityRepository {
 	 * @throws NoSuchElementException If no match was found for the id
 	 */
 	public Ability findById(String id) throws NoSuchElementException;
+
+	Iterable<Ability> findAll();
 }

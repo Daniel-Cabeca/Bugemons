@@ -1,8 +1,13 @@
 package ulb.repository.database.sql;
 
 import java.sql.SQLException;
+import java.util.NoSuchElementException;
 
+import ulb.model.ability.Ability;
+import ulb.repository.AbilityRepository;
 import ulb.repository.database.ItemDatabaseRepository;
+import ulb.repository.database.abilityDatabaseRepository;
+import ulb.repository.json.AbilityJsonRepository;
 import ulb.utils.DuplicateElementException;
 
 import ulb.model.item.Item;
@@ -41,11 +46,12 @@ public class DatabaseInitializer {
 	 *
 	 * @param items The list of items
 	 */
-	void populate(Iterable<Item> items) {
+	void populate(Iterable<Item> items, Iterable<Ability> abilities) {
 		ItemDatabaseRepository itemRepository = new ItemDatabaseRepository(this.getDatabase());
-
+		abilityDatabaseRepository abilityRepository = new abilityDatabaseRepository(this.getDatabase());
 		try {
 			itemRepository.insertItems(items);
+			abilityRepository.insertAbilities(abilities);
 		} catch(DuplicateElementException e) {
 			throw new RuntimeException("The game data the database is populated with contains duplicate elements.");
 		}
@@ -56,8 +62,9 @@ public class DatabaseInitializer {
 	 */
 	void populate() {
 		ItemRepository itemRepository = new ItemJsonRepository();
+		AbilityRepository abilityRepository = new AbilityJsonRepository();
 
-		this.populate(itemRepository.findAll());
+		this.populate(itemRepository.findAll(),abilityRepository.findAll());
 	}
 
 	/**

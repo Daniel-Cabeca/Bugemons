@@ -28,15 +28,16 @@ public class EffectDatabaseRepository {
 	 * Inserts an effect in the database.
 	 *
 	 * @param effect The effect to insert
-	 * @param itemId
+	 * @param Id
 	 */
-	public void insert(Effect effect, String itemId) {
-		String sql = "INSERT INTO effects (item_id, type, target, value) VALUES (?, ?, ?, ?)";
+	public void insert(Effect effect, String Id,boolean isItem) {
+		String column = isItem ? "item_id" : "ability_id";
+		String sql = "INSERT INTO effects (" + column +", type, target, value) VALUES (?, ?, ?, ?)";
 
 		try {
 			PreparedStatement statement = this.database.prepareStatement(sql);
 
-			statement.setString(1, itemId);
+			statement.setString(1, Id);
 			statement.setString(2, this.getTypeStr(effect));
 			statement.setString(3, effect.getTarget().name());
 

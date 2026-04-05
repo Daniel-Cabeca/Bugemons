@@ -3,6 +3,7 @@ package ulb.model.bugemon;
 import org.junit.jupiter.api.Test;
 
 import ulb.model.ability.Ability;
+import ulb.model.ability.AbilitySet;
 import ulb.model.type.Type;
 import ulb.repository.BugemonSpeciesRepository;
 import ulb.repository.mock.BugemonSpeciesMockRepository;
@@ -12,9 +13,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class BugemonTest {
 
+	private Bugemon createBugemon(String name, Type type, int hp, int attack, int defense, int initiative){
+		BugemonSpecies species = new BugemonSpecies(name, name, type, new Stats(hp, attack, defense, initiative), new AbilitySet(), "", false);
+		return new Bugemon(species);
+	}
+
 	@Test
 	public void swapWrongTypeAbility() {
-		Bugemon B = new Bugemon(Type.AQUA, 10, 29, 35, 16);
+		Bugemon B = createBugemon("A", Type.AQUA, 10, 29, 35, 16);
 		Ability A = new Ability("test", "Test", Type.PYRO, "Test Description", 10);
 		B.swapAbility(A, null);
 
@@ -27,7 +33,7 @@ public class BugemonTest {
 
 	@Test
 	public void xpGainsDoesNotAllowALevelUp() {
-		Bugemon B = new Bugemon(Type.AQUA, 10, 29, 35, 16);
+		Bugemon B = createBugemon("A", Type.AQUA, 10, 29, 35, 16);
 		int levelGained = B.gainXp(49);
 		assertEquals(1, B.getLevel());
 		assertEquals(49, B.getXp());
@@ -36,7 +42,7 @@ public class BugemonTest {
 
 	@Test
 	public void xpGainsAllowALevelUp() {
-		Bugemon B = new Bugemon(Type.AQUA, 10, 29, 35, 16);
+		Bugemon B = createBugemon("A", Type.AQUA, 10, 29, 35, 16);
 		int levelGained = B.gainXp(51);
 		assertEquals(2, B.getLevel());
 		assertEquals(1, B.getXp());
@@ -45,7 +51,7 @@ public class BugemonTest {
 
 	@Test
 	public void xpGainsAllowMultipleLevelUps() {
-		Bugemon B = new Bugemon(Type.AQUA, 10, 29, 35, 16);
+		Bugemon B = createBugemon("A", Type.AQUA, 10, 29, 35, 16);
 		int levelGained = B.gainXp(300);
 		assertEquals(4, B.getLevel());
 		assertEquals(0, B.getXp());
@@ -55,7 +61,7 @@ public class BugemonTest {
 	@Test
 	public void resetFightStatsToBaseStats(){
 		Stats s = new Stats(-10,-9, -5, -6); // debuff stats
-		Bugemon B = new Bugemon(Type.AQUA, 100, 20, 10, 10);
+		Bugemon B = createBugemon("A", Type.AQUA, 100, 20, 10, 10);
 
 		B.changeFightStats(s);
 

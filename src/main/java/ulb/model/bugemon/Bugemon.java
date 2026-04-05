@@ -137,39 +137,6 @@ public class Bugemon {
 		return rand.nextInt(2) == 0;
 	}
 
-	// Deprecated constructors
-	// Should be replaced by the use of services
-
-	public Bugemon(int hp, int attack, int defense, int initiative) {
-		Stats stats = new Stats(hp, attack, defense, initiative);
-		this.species = new BugemonSpecies(stats);
-		this.abilities = new AbilitySet();
-		this.baseStats = new Stats(this.species.getBaseStats());
-		this.fightStats = new Stats(this.species.getBaseStats());
-		this.xp = 0;
-		this.level = 1;
-	}
-
-	public Bugemon(Type type, int hp, int attack, int defense, int initiative) {
-		Stats stats = new Stats(hp, attack, defense, initiative);
-		this.species = new BugemonSpecies(type, stats);
-		this.abilities = new AbilitySet();
-		this.baseStats = new Stats(this.species.getBaseStats());
-		this.fightStats = new Stats(this.species.getBaseStats());
-		this.xp = 0;
-		this.level = 1;
-	}
-
-	public Bugemon(String name, Type type, int hp, int attack, int defense, int initiative) {
-		Stats stats = new Stats(hp, attack, defense, initiative);
-		this.species = new BugemonSpecies(name, type, stats);
-		this.abilities = new AbilitySet();
-		this.baseStats = new Stats(this.species.getBaseStats());
-		this.fightStats = new Stats(this.species.getBaseStats());
-		this.xp = 0;
-		this.level = 1;
-	}
-
 	public Bugemon(String id) throws NoSuchElementException {
 		this(ServiceLoader.getBugemonService().getBugemonSpecies(id));
 	}

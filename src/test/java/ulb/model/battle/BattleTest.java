@@ -6,17 +6,26 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import ulb.model.bugemon.Bugemon;
+import ulb.model.bugemon.BugemonSpecies;
+import ulb.model.bugemon.Stats;
 import ulb.model.team.Team;
 import ulb.model.type.Type;
 import java.util.List;
 import ulb.model.Player;
+import ulb.model.ability.AbilitySet;
 import ulb.model.battle.Battle.ParticipantLabel;
 
 public class BattleTest {
+
+	private Bugemon createBugemon(String name, Type type, int hp, int attack, int defense, int initiative){
+		BugemonSpecies species = new BugemonSpecies(name, name, type, new Stats(hp, attack, defense, initiative), new AbilitySet(), "", false);
+		return new Bugemon(species);
+	}
+
 	@Test
 	public void initiaveReturnsAWhenAHasHigherInitiative() {
-		Bugemon fast = new Bugemon("fast", Type.PYRO, 100, 10, 10, 20);
-		Bugemon slow = new Bugemon("slow", Type.AQUA, 100, 10, 10, 5);
+		Bugemon fast = createBugemon("fast", Type.PYRO, 100, 10, 10, 20);
+		Bugemon slow = createBugemon("slow", Type.AQUA, 100, 10, 10, 5);
 
 		Team teamA = new Team(List.of(fast));
 		Team teamB = new Team(List.of(slow));
@@ -28,8 +37,8 @@ public class BattleTest {
 
 	@Test
 	public void initiaveReturnsBWhenBHasHigherInitiative() {
-		Bugemon slow = new Bugemon("slow", Type.PYRO, 100, 10, 10, 5);
-		Bugemon fast = new Bugemon("fast", Type.AQUA, 100, 10, 10, 20);
+		Bugemon slow = createBugemon("slow", Type.PYRO, 100, 10, 10, 5);
+		Bugemon fast = createBugemon("fast", Type.AQUA, 100, 10, 10, 20);
 
 		Team teamA = new Team(List.of(slow));
 		Team teamB = new Team(List.of(fast));
@@ -42,8 +51,8 @@ public class BattleTest {
 
 	@Test
 	public void initiaveIsRandomWhenInitiativesAreEqual() {
-		Bugemon sameA = new Bugemon("sameA", Type.PYRO, 100, 10, 10, 10);
-		Bugemon sameB = new Bugemon("sameB", Type.AQUA, 100, 10, 10, 10);
+		Bugemon sameA = createBugemon("sameA", Type.PYRO, 100, 10, 10, 10);
+		Bugemon sameB = createBugemon("sameB", Type.AQUA, 100, 10, 10, 10);
 
 		Team teamA = new Team(List.of(sameA));
 		Team teamB = new Team(List.of(sameB));

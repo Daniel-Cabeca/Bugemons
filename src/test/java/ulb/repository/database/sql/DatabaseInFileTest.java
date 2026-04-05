@@ -1,0 +1,33 @@
+package ulb.repository.database.sql;
+
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.AfterEach;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+public class DatabaseInFileTest {
+	private static final String TEST_DB_NAME = "test";
+	private static final Path TEST_DB_PATH = DatabaseInFile.getPath(TEST_DB_NAME);
+
+	@AfterEach
+	void deleteFile() throws IOException {
+		Files.deleteIfExists(TEST_DB_PATH);
+	}
+
+	@Test
+	public void verifyIsNewFalse() throws IOException {
+		Files.createFile(TEST_DB_PATH);
+		DatabaseInFile db = new DatabaseInFile(TEST_DB_NAME);
+		assertFalse(db.isNew());
+	}
+
+	@Test
+	public void verifyIsNewTrue() throws IOException {
+		Files.deleteIfExists(TEST_DB_PATH);
+		DatabaseInFile db = new DatabaseInFile(TEST_DB_NAME);
+		assertTrue(db.isNew());
+	}
+}

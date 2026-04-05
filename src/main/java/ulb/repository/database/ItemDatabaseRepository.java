@@ -7,13 +7,13 @@ import ulb.model.effect.EffectStatModifier;
 import ulb.model.item.Item;
 import ulb.repository.ItemRepository;
 import ulb.repository.LoadException;
+import ulb.repository.database.sql.Database;
 import ulb.repository.json.ItemJsonRepository;
 import ulb.utils.DuplicateElementException;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 /**
@@ -65,7 +65,64 @@ public class ItemDatabaseRepository implements ItemRepository {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Item findById(String id) throws NoSuchElementException {
+	public Item findById(String id) {
+		// La grosse requête qui rassemble tout (Outer Join pour ne rien perdre)
+		String sql = """
+        SELECT i.*, e.id AS effect_id, e.type AS effect_type, e.target, e.value, 
+               esm.hp, esm.attack, esm.defense, esm.initiative, esm.duration
+        FROM items i
+        LEFT JOIN effects e ON i.id = e.item_id
+        LEFT JOIN effect_stats_modifier esm ON e.id = esm.effect_id
+        WHERE i.id = ?
+    """;
+
+		try (PreparedStatement pstmt = this.database.prepareStatement(sql)) {
+			pstmt.setString(1, id);
+
+			ResultSet rs = pstmt.executeQuery();
+
+			if (rs.next()) {
+				// 1. On crée l'effet selon son type
+				Effect effect = null;
+				String typeStr = rs.getString("effect_type");
+
+				if (typeStr != null) {
+					Effect.EffectType type = Effect.EffectType.valueOf(typeStr);
+					System.out.println("type:" + type );
+					Effect.EffectTarget target = Effect.EffectTarget.valueOf(rs.getString("target"));
+					System.out.println("target:" + target );
+					if (type == Effect.EffectType.HEAL) {
+						effect = new EffectHeal(target, rs.getInt("value"));
+						System.out.println("heal:" + effect );
+					}
+					else if (type == Effect.EffectType.STAT_MODIFIER) {
+						// On reconstruit l'objet Stats du modificateur
+						Map<EffectStatModifier.StatType, Integer> statsChanges = new EnumMap<>(EffectStatModifier.StatType.class);
+						statsChanges.put(EffectStatModifier.StatType.HP, rs.getInt("hp"));
+						statsChanges.put(EffectStatModifier.StatType.ATTACK, rs.getInt("attack"));
+						statsChanges.put(EffectStatModifier.StatType.DEFENSE, rs.getInt("defense"));
+						statsChanges.put(EffectStatModifier.StatType.INITIATIVE, rs.getInt("initiative"));
+
+						String durationStr = rs.getString("duration");
+						EffectStatModifier.EffectDuration duration = EffectStatModifier.EffectDuration.valueOf(durationStr);
+						effect = new EffectStatModifier(target,duration,statsChanges);
+						System.out.println("Stat:" + effect );
+					}
+				}
+
+				// 2. On retourne l'Item complet
+				return new Item(
+						rs.getString("id"),
+						rs.getString("name"),
+						rs.getString("description"),
+						rs.getString("category"),
+						effect,
+						rs.getString("sprite")
+				);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 

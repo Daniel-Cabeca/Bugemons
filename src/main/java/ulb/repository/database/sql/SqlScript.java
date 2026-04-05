@@ -1,4 +1,4 @@
-package ulb.repository.database;
+package ulb.repository.database.sql;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,7 +15,7 @@ import ulb.repository.LoadException;
 /**
  * SQL script that may contain multiple statements.
  */
-class SqlScript {
+public class SqlScript {
 	private static final String QUERY_SEPARATOR = ";";
 
 	private final URL url;

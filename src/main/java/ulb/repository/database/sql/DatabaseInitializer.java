@@ -1,6 +1,8 @@
-package ulb.repository.database;
+package ulb.repository.database.sql;
 
 import java.sql.SQLException;
+
+import ulb.repository.database.ItemDatabaseRepository;
 import ulb.utils.DuplicateElementException;
 
 import ulb.model.item.Item;
@@ -19,10 +21,6 @@ public class DatabaseInitializer {
 		this.database = database;
 	}
 
-	public DatabaseInitializer(String databaseName) {
-		this(Database.get(databaseName));
-	}
-
 	public Database getDatabase() { return this.database; }
 
 	/**
@@ -34,7 +32,7 @@ public class DatabaseInitializer {
 		try {
 			script.execute(this.getDatabase());
 		} catch (SQLException e) {
-			throw new RuntimeException("Failed to create tables for the database '"+ this.getDatabase().getName() +"': "+ e.getMessage());
+			throw new RuntimeException("Failed to create tables for the database '"+ this.getDatabase().getUrl() +"': "+ e.getMessage());
 		}
 	}
 
@@ -69,18 +67,8 @@ public class DatabaseInitializer {
 	 * @throws IllegalStateException If the database's connection is already open.
 	 */
 	public void initialize() {
-		if (this.database.isConnected()) {
-			throw new IllegalStateException("Cannot initialize a database if its connection is already established.");
-		}
-
-		if (this.database.exists()) {
-			this.database.connect();
-		}
-		else {
-			this.database.connect();
-			this.createTables();
-			this.populate();
-		}
+		this.createTables();
+		this.populate();
 	}
 
 	/**
@@ -89,8 +77,12 @@ public class DatabaseInitializer {
 	 * @return The default database, initialized and connected.
 	 */
 	public static Database prepareDefaultDatabase() {
-		DatabaseInitializer initializer = new DatabaseInitializer(Database.NAME_DEFAULT);
-		initializer.initialize();
-		return initializer.database;
+		Database database = DatabaseInFile.get(DatabaseInFile.NAME_DEFAULT);
+		DatabaseInitializer initializer = new DatabaseInitializer(database);
+
+		if (database.isNew()) {
+			initializer.initialize();
+		}
+		return database;
 	}
 }

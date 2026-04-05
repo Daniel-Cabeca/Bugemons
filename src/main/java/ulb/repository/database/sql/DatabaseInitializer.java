@@ -3,10 +3,13 @@ package ulb.repository.database.sql;
 import java.sql.SQLException;
 
 import ulb.model.ability.Ability;
+import ulb.model.bugemon.BugemonSpecies;
 import ulb.repository.AbilityRepository;
+import ulb.repository.database.BugemonSpeciesDatabaseRepository;
 import ulb.repository.database.ItemDatabaseRepository;
 import ulb.repository.database.AbilityDatabaseRepository;
 import ulb.repository.json.AbilityJsonRepository;
+import ulb.repository.json.BugemonSpeciesJsonRepository;
 import ulb.utils.DuplicateElementException;
 
 import ulb.model.item.Item;
@@ -45,12 +48,14 @@ public class DatabaseInitializer {
 	 *
 	 * @param items The list of items
 	 */
-	void populate(Iterable<Item> items, Iterable<Ability> abilities) {
+	void populate(Iterable<Item> items, Iterable<Ability> abilities, Iterable<BugemonSpecies> species) {
 		ItemDatabaseRepository itemRepository = new ItemDatabaseRepository(this.getDatabase());
 		AbilityDatabaseRepository abilityRepository = new AbilityDatabaseRepository(this.getDatabase());
+		BugemonSpeciesDatabaseRepository bugemonSpeciesDatabaseRepository = new BugemonSpeciesDatabaseRepository(this.database);
 		try {
 			itemRepository.insertItems(items);
 			abilityRepository.insertAbilities(abilities);
+			bugemonSpeciesDatabaseRepository.insertSpecies(species);
 		} catch(DuplicateElementException e) {
 			throw new RuntimeException("The game data the database is populated with contains duplicate elements.");
 		}
@@ -62,8 +67,8 @@ public class DatabaseInitializer {
 	void populate() {
 		ItemRepository itemRepository = new ItemJsonRepository();
 		AbilityRepository abilityRepository = new AbilityJsonRepository();
-
-		this.populate(itemRepository.findAll(),abilityRepository.findAll());
+		BugemonSpeciesJsonRepository bugemonSpeciesJsonRepository = new BugemonSpeciesJsonRepository();
+		this.populate(itemRepository.findAll(),abilityRepository.findAll(),bugemonSpeciesJsonRepository.findAll());
 	}
 
 	/**

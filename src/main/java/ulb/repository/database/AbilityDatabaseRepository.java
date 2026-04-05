@@ -2,7 +2,6 @@ package ulb.repository.database;
 
 import ulb.model.ability.Ability;
 import ulb.model.effect.Effect;
-import ulb.model.item.Item;
 import ulb.repository.AbilityRepository;
 import ulb.repository.LoadException;
 import ulb.repository.database.sql.Database;
@@ -12,10 +11,10 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.NoSuchElementException;
 
-public class abilityDatabaseRepository implements AbilityRepository {
+public class AbilityDatabaseRepository implements AbilityRepository {
 	private final Database database;
 
-	public abilityDatabaseRepository(Database database) throws LoadException {
+	public AbilityDatabaseRepository(Database database) throws LoadException {
 		this.database = database;
 	}
 

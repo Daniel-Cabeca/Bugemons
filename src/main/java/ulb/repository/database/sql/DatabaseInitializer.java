@@ -1,12 +1,11 @@
 package ulb.repository.database.sql;
 
 import java.sql.SQLException;
-import java.util.NoSuchElementException;
 
 import ulb.model.ability.Ability;
 import ulb.repository.AbilityRepository;
 import ulb.repository.database.ItemDatabaseRepository;
-import ulb.repository.database.abilityDatabaseRepository;
+import ulb.repository.database.AbilityDatabaseRepository;
 import ulb.repository.json.AbilityJsonRepository;
 import ulb.utils.DuplicateElementException;
 
@@ -48,7 +47,7 @@ public class DatabaseInitializer {
 	 */
 	void populate(Iterable<Item> items, Iterable<Ability> abilities) {
 		ItemDatabaseRepository itemRepository = new ItemDatabaseRepository(this.getDatabase());
-		abilityDatabaseRepository abilityRepository = new abilityDatabaseRepository(this.getDatabase());
+		AbilityDatabaseRepository abilityRepository = new AbilityDatabaseRepository(this.getDatabase());
 		try {
 			itemRepository.insertItems(items);
 			abilityRepository.insertAbilities(abilities);

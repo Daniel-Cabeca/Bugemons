@@ -2,14 +2,19 @@ package ulb.repository.database;
 
 import ulb.model.ability.Ability;
 import ulb.model.effect.Effect;
+import ulb.model.effect.EffectHeal;
+import ulb.model.effect.EffectList;
+import ulb.model.effect.EffectStatModifier;
+import ulb.model.type.Type;
 import ulb.repository.AbilityRepository;
 import ulb.repository.LoadException;
 import ulb.repository.database.sql.Database;
 import ulb.utils.DuplicateElementException;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 public class AbilityDatabaseRepository implements AbilityRepository {
 	private final Database database;
@@ -46,7 +51,73 @@ public class AbilityDatabaseRepository implements AbilityRepository {
 	}
 	@Override
 	public Ability findById(String id) throws NoSuchElementException {
-		return null;
+		String sql = """
+       SELECT a.*, e.id AS effect_id, e.type AS effect_type, e.target, e.value, 
+              esm.hp, esm.attack, esm.defense, esm.initiative, esm.duration
+       FROM abilities a
+       LEFT JOIN effects e ON a.id = e.ability_id
+       LEFT JOIN effect_stats_modifier esm ON e.id = esm.effect_id
+       WHERE a.id = ?
+    """;
+
+		try (PreparedStatement pstmt = this.database.prepareStatement(sql)) {
+			pstmt.setString(1, id);
+			ResultSet rs = pstmt.executeQuery();
+
+			Ability ability = null;
+			EffectList effects = new EffectList();
+
+			while (rs.next()) {
+				if (ability == null) {
+					// On récupère le type via l'Enum Type
+					Type abilityType = Type.valueOf(rs.getString("type"));
+
+					ability = new Ability(
+							rs.getString("id"),
+							rs.getString("name"),
+							abilityType,
+							rs.getString("description"),
+							rs.getInt("power"),
+							effects // On passe la référence de l'EffectList ici
+					);
+				}
+
+				// Gestion des effets (identique à ton exemple précédent)
+				String effectId = rs.getString("effect_id");
+				if (effectId != null) {
+					Effect effect = null;
+					Effect.EffectType type = Effect.EffectType.valueOf(rs.getString("effect_type"));
+					Effect.EffectTarget target = Effect.EffectTarget.valueOf(rs.getString("target"));
+
+					if (type == Effect.EffectType.HEAL) {
+						effect = new EffectHeal(target, rs.getInt("value"));
+					}
+					else if (type == Effect.EffectType.STAT_MODIFIER) {
+						Map<EffectStatModifier.StatType, Integer> statsChanges = new EnumMap<>(EffectStatModifier.StatType.class);
+						statsChanges.put(EffectStatModifier.StatType.HP, rs.getInt("hp"));
+						statsChanges.put(EffectStatModifier.StatType.ATTACK, rs.getInt("attack"));
+						statsChanges.put(EffectStatModifier.StatType.DEFENSE, rs.getInt("defense"));
+						statsChanges.put(EffectStatModifier.StatType.INITIATIVE, rs.getInt("initiative"));
+
+						EffectStatModifier.EffectDuration duration = EffectStatModifier.EffectDuration.valueOf(rs.getString("duration"));
+						effect = new EffectStatModifier(target, duration, statsChanges);
+					}
+
+					if (effect != null) {
+						effects.add(effect);
+					}
+				}
+			}
+
+			if (ability == null) {
+				throw new NoSuchElementException("Ability non trouvée : " + id);
+			}
+
+			return ability;
+
+		} catch (SQLException e) {
+			throw new RuntimeException("Erreur SQL lors de la recherche de l'ability", e);
+		}
 	}
 
 	@Override

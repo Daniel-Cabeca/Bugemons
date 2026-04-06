@@ -79,7 +79,6 @@ public class Battle {
 	public void setAction(Action action, ParticipantLabel team) { this.getParticipant(team).setAction(action); }
 
 	public void setActiveBugemon(Bugemon bugemon, ParticipantLabel team) { this.getParticipant(team).setActiveBugemon(bugemon); 
-		System.out.println("SET ACTIVE BUGEMON: " + bugemon.getName() + ", HP = " + bugemon.getHp());
 	}
 
 	private void setState(BattleState state, ParticipantLabel team) { this.getParticipant(team).setState(state); }
@@ -414,7 +413,6 @@ public class Battle {
 			b.gainXp(gainedXP / winners.size());
 		}
 
-		// this.resetAllFightStats();
 	}
 
 	/**

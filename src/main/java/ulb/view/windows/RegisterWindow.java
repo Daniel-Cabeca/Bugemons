@@ -8,7 +8,7 @@ import javafx.scene.layout.VBox;
 import ulb.repository.LoadException;
 import ulb.utils.Scaling;
 import ulb.view.WindowPath;
-
+/*
 public class RegisterWindow extends Window {
 
     @FXML private VBox content;
@@ -56,3 +56,4 @@ public class RegisterWindow extends Window {
         sendSwitchWindowMessage(WindowPath.LOGIN);
     }
 }
+*/

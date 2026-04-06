@@ -1,10 +1,7 @@
 package ulb.repository.database;
 
 import ulb.model.ability.Ability;
-import ulb.model.effect.Effect;
-import ulb.model.effect.EffectHeal;
-import ulb.model.effect.EffectList;
-import ulb.model.effect.EffectStatModifier;
+import ulb.model.effect.*;
 import ulb.model.item.Item;
 import ulb.model.type.Type;
 import ulb.repository.AbilityRepository;
@@ -88,12 +85,12 @@ public class AbilityDatabaseRepository implements AbilityRepository {
 				String effectId = rs.getString("effect_id");
 				if (effectId != null) {
 					Effect effect = null;
-					Effect.EffectType type = Effect.EffectType.valueOf(rs.getString("effect_type"));
-					Effect.EffectTarget target = Effect.EffectTarget.valueOf(rs.getString("target"));
+					EffectType type = EffectType.valueOf(rs.getString("effect_type"));
+					EffectTarget target = EffectTarget.valueOf(rs.getString("target"));
 
-					if (type == Effect.EffectType.HEAL) {
+					if (type == EffectType.HEAL) {
 						effect = new EffectHeal(target, rs.getInt("value"));
-					} else if (type == Effect.EffectType.STAT_MODIFIER) {
+					} else if (type == EffectType.STAT_MODIFIER) {
 						Map<EffectStatModifier.StatType, Integer> statsChanges = new EnumMap<>(EffectStatModifier.StatType.class);
 						statsChanges.put(EffectStatModifier.StatType.HP, rs.getInt("hp"));
 						statsChanges.put(EffectStatModifier.StatType.ATTACK, rs.getInt("attack"));

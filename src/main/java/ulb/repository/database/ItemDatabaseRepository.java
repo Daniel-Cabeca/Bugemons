@@ -1,9 +1,7 @@
 package ulb.repository.database;
 
 import ulb.model.bugemon.Stats;
-import ulb.model.effect.Effect;
-import ulb.model.effect.EffectHeal;
-import ulb.model.effect.EffectStatModifier;
+import ulb.model.effect.*;
 import ulb.model.item.Item;
 import ulb.repository.ItemRepository;
 import ulb.repository.LoadException;
@@ -85,12 +83,12 @@ public class ItemDatabaseRepository implements ItemRepository {
 				String typeStr = rs.getString("effect_type");
 
 				if (typeStr != null) {
-					Effect.EffectType type = Effect.EffectType.valueOf(typeStr);
-					Effect.EffectTarget target = Effect.EffectTarget.valueOf(rs.getString("target"));
-					if (type == Effect.EffectType.HEAL) {
+					EffectType type = EffectType.valueOf(typeStr);
+					EffectTarget target = EffectTarget.valueOf(rs.getString("target"));
+					if (type == EffectType.HEAL) {
 						effect = new EffectHeal(target, rs.getInt("value"));
 					}
-					else if (type == Effect.EffectType.STAT_MODIFIER) {
+					else if (type == EffectType.STAT_MODIFIER) {
 						// On reconstruit l'objet Stats du modificateur
 						Map<EffectStatModifier.StatType, Integer> statsChanges = new EnumMap<>(EffectStatModifier.StatType.class);
 						statsChanges.put(EffectStatModifier.StatType.HP, rs.getInt("hp"));

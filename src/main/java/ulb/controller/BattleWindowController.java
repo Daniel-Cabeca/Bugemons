@@ -138,9 +138,6 @@ public class BattleWindowController implements BattleWindow.ViewListener {
                 view.showMainMenu();
             }
         });
-        if (stateAfter == BattleState.WON || stateAfter == BattleState.LOST) {
-            battleController.resetFighter();
-        }
     }
 
     private void refreshView() {

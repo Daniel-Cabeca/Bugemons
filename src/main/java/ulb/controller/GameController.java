@@ -530,6 +530,7 @@ BattleWindowController.Listener{
 		if (battleController == null) return;
 
 		if (state == BattleState.WON) {
+			battleController.resetFighter();
 			boolean isTower = gameMode == GameMode.TOWER;
 			if (!startLevelUpSequenceIfNeeded(battleController, isTower, event)) {
 				if (!isTower) {
@@ -540,6 +541,7 @@ BattleWindowController.Listener{
 				}
 			}
 		} else if (state == BattleState.LOST) {
+			battleController.resetFighter();
 			int xp = normalModeBattleController != null ? normalModeBattleController.getTotalXP() : 0;
 			handleBattleEnd(false, xp);
 		}

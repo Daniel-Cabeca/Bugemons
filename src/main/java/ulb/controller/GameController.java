@@ -9,6 +9,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import ulb.Main;
 import ulb.DTO.bugemon.BugemonDTO;
+import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.communication.Client;
 import ulb.communication.Message;
 import ulb.communication.Server;
@@ -26,12 +27,14 @@ import ulb.model.battle.Battle;
 import ulb.model.battle.Battle.ParticipantLabel;
 import ulb.model.ability.Ability;
 import ulb.model.bugemon.Bugemon;
+import ulb.model.bugemon.BugemonSpecies;
 import ulb.model.item.Item;
 import ulb.model.team.OpponentTeamGenerator;
 import ulb.model.team.Team;
 import ulb.model.tower.Room;
 import ulb.model.tower.RoomType;
 import ulb.model.reward.Reward;
+import ulb.service.BugemonService;
 import ulb.service.ServiceLoader;
 import ulb.view.WindowPath;
 import ulb.view.windows.ChooseBugemonWindow;
@@ -40,6 +43,7 @@ import ulb.view.windows.NextRoomWindow;
 import ulb.view.windows.Window;
 
 import ulb.mapper.bugemon.BugemonMapper;
+import ulb.mapper.bugemon.BugemonSpeciesMapper;
 
 import java.io.IOException;
 import java.util.ArrayDeque;
@@ -603,9 +607,21 @@ BattleWindowController.Listener{
 	}
 
 	@Override
+	public List<BugemonSpeciesDTO> getAllSpecies() {
+		BugemonService bugemonService = ServiceLoader.getBugemonService();
+		List<BugemonSpeciesDTO> DTOSpeciesList = new ArrayList<BugemonSpeciesDTO>();
+
+		for (BugemonSpecies species : bugemonService.getAllSpecies()){
+			DTOSpeciesList.add(BugemonSpeciesMapper.toDTO(species));
+		}
+
+		return DTOSpeciesList;
+	}
+
+	@Override
 	public void onSolo() {
 		// CLIENT
-		teamController = new TeamController(stage, this, player);
+		//teamController = new TeamController(stage, this, player);
 		try {
 			teamController.show();
 		} catch (Exception e) {

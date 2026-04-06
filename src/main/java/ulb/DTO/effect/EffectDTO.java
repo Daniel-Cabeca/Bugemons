@@ -1,9 +1,12 @@
 package ulb.DTO.effect;
 
 import ulb.model.effect.EffectType;
+
+import java.io.Serializable;
+
 import ulb.model.effect.EffectTarget;
 
-public class EffectDTO {
+public class EffectDTO implements Serializable{
 	private EffectType type;
 	private EffectTarget target;
 

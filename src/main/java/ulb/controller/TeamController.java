@@ -4,6 +4,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import ulb.DTO.bugemon.BugemonDTO;
+import ulb.DTO.bugemon.BugemonSpeciesDTO;
+import ulb.DTO.player.PlayerDTO;
 import ulb.model.Player;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.team.Team;
@@ -14,13 +17,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TeamController implements CreateTeamWindow.ViewListener {
-	private Player player;
+	private PlayerDTO player;
 
 	private final Listener listener;
 	private CreateTeamWindow view;
 	private Stage stage;
 
-	public TeamController(Stage stage, Listener listener, Player player) {
+	public TeamController(Stage stage, Listener listener, PlayerDTO player) {
 		this.stage = stage;
 		this.listener = listener;
 		this.player = player;
@@ -38,16 +41,21 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 		} else {
 			stage.getScene().setRoot(root);
 		}
+		view.populateAvailableBugemons();
 		this.stage.show();
 	}
 
 	public void setTeam(List<String> selectedBugemons){
-		List<Bugemon> teamABugemons = new ArrayList<Bugemon>();
-		for (String bugemon : selectedBugemons) {
-			teamABugemons.add(new Bugemon(bugemon.toLowerCase()));
+		List<BugemonDTO> teamABugemons = new ArrayList<BugemonDTO>();
+		List<BugemonSpeciesDTO> allSpecies = this.getAllSpecies();
+		for (String bugemonName : selectedBugemons) {
+			for (BugemonSpeciesDTO species : allSpecies){
+				if (bugemonName == species.getName()){
+					teamABugemons.add(new BugemonDTO(species));
+				}
+			}
 		}
-		Team playerTeam = new Team(teamABugemons);
-		player.setTeam(playerTeam);
+		player.setTeam(teamABugemons);
 	}
 
 	@Override
@@ -61,8 +69,14 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 		listener.onReturn();
 	}
 
+	@Override
+	public List<BugemonSpeciesDTO> getAllSpecies(){
+		return listener.getAllSpecies();
+	}
+
 	public interface Listener {
 		void onTeamConfirmed();
 		void onReturn();
+		List<BugemonSpeciesDTO> getAllSpecies();
 	}
 }

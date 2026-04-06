@@ -1,6 +1,8 @@
 package ulb.DTO.stats;
 
-public class StatsDTO {
+import java.io.Serializable;
+
+public class StatsDTO implements Serializable{
     private int hp;
 	private int attack;
 	private int defense;

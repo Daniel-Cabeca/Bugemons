@@ -1,8 +1,10 @@
 package ulb.DTO.bugemon;
 
+import java.io.Serializable;
+
 import ulb.DTO.stats.StatsDTO;
 
-public class BugemonDTO {
+public class BugemonDTO implements Serializable{
     private BugemonSpeciesDTO species;
 	private StatsDTO baseStats;
 	private StatsDTO fightStats;
@@ -17,6 +19,15 @@ public class BugemonDTO {
 		this.xp = xp;
 		this.level = level;
 		this.remainingRewards = remainingRewards;
+	}
+
+	public BugemonDTO(BugemonSpeciesDTO species){
+		this.species = species;
+		this.baseStats = species.getBaseStats();
+		this.fightStats = species.getBaseStats();
+		this.xp = 0;
+		this.level = 0;
+		this.remainingRewards = 0;
 	}
 
 	public BugemonSpeciesDTO getSpecies() {return species;}

@@ -1,11 +1,12 @@
 package ulb.DTO.ability;
 
+import java.io.Serializable;
 import java.util.List;
 
 import ulb.DTO.effect.EffectDTO;
 import ulb.model.type.Type;
 
-public class AbilityDTO {
+public class AbilityDTO implements Serializable{
     private String id;
 	private String name;
 	private Type type;

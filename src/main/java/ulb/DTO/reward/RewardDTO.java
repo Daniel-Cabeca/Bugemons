@@ -1,9 +1,11 @@
 package ulb.DTO.reward;
 
+import java.io.Serializable;
+
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.stats.StatsDTO;
 
-public class RewardDTO {
+public class RewardDTO implements Serializable {
     private BugemonDTO bugemon;
     private StatsDTO stats;
 

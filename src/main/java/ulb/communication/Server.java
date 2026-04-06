@@ -5,6 +5,7 @@ import java.net.Socket;
 
 import ulb.communication.Messenger.SocketMessenger;
 import ulb.communication.types.ConnectMessage;
+import ulb.controller.ServerController;
 
 public class Server {
     ServerSocket serverSocket;
@@ -41,15 +42,18 @@ public class Server {
                 System.out.println("CLIENT ACCEPTED");
                 SocketMessenger clientMessenger = new SocketMessenger(clientSocket);
 
-                Message message = clientMessenger.receiveMessage();
-                if (message instanceof ConnectMessage connectMessage){
-                    System.out.println("message reçu de client : " + connectMessage.getConnectMessage());
-                }
+                ServerController controller = new ServerController(clientMessenger);
+                controller.start();
 
-                clientMessenger.SendMessage(new ConnectMessage("Bonjour client !"));
+                // Message message = clientMessenger.receiveMessage();
+                // if (message instanceof ConnectMessage connectMessage){
+                //     System.out.println("message reçu de client : " + connectMessage.getConnectMessage());
+                // }
+
+                // clientMessenger.SendMessage(new ConnectMessage("Bonjour client !"));
                 
-                clientMessenger.close();
-                this.close();
+                // clientMessenger.close();
+                // this.close();
 
                 return;
             }

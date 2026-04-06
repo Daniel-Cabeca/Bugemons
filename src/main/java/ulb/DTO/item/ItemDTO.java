@@ -1,8 +1,10 @@
 package ulb.DTO.item;
 
+import java.io.Serializable;
+
 import ulb.DTO.effect.EffectDTO;
 
-public class ItemDTO {
+public class ItemDTO implements Serializable{
     private String id;
 	private String name;
 	private String description;

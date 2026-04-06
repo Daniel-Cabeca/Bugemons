@@ -7,6 +7,7 @@ import javafx.stage.Stage;
 import ulb.communication.Message;
 import ulb.communication.types.*;
 import ulb.controller.GameController;
+import ulb.service.AccountService;
 import ulb.view.windows.BattleWindow;
 import ulb.view.windows.Window;
 
@@ -15,8 +16,16 @@ import java.io.IOException;
 public abstract class ViewManager {
     private Stage stage;
     private GameController controller;
+    private AccountService accountService;
+    private String loggedInUsername;
 
     public void setGameController(GameController gameController) { this.controller = gameController; }
+
+    public void setAccountService(AccountService accountService) { this.accountService = accountService; }
+    public AccountService getAccountService() { return accountService; }
+
+    public void setLoggedInUsername(String username) { this.loggedInUsername = username; }
+    public String getLoggedInUsername() { return loggedInUsername; }
 
     public void setStage(Stage stageNew){this.stage = stageNew;}
 

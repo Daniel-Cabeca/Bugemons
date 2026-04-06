@@ -2,8 +2,11 @@ package ulb;
 import javafx.application.Application;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import ulb.repository.database.AccountDatabaseRepository;
+import ulb.repository.database.DatabaseManager;
 import ulb.controller.GameController;
 import ulb.model.Player;
+import ulb.service.AccountService;
 import ulb.view.ViewManager;
 import ulb.view.WindowPath;
 
@@ -47,12 +50,17 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 
+		DatabaseManager dbManager = new DatabaseManager();
+		AccountDatabaseRepository accountRepo = new AccountDatabaseRepository(dbManager.getConnection());
+		AccountService accountService = new AccountService(accountRepo);
+
 		GameController gameController = new GameController();
 		Player player = new Player("Player");
 		gameController.setPlayer(player);
 
 		ViewManager viewManager = new ViewManager() {};
 		viewManager.setGameController(gameController);
+		viewManager.setAccountService(accountService);
 		viewManager.setStage(primaryStage);
 		gameController.setViewManager(viewManager);
 
@@ -61,7 +69,7 @@ public class Main extends Application {
 		primaryStage.setFullScreen(true);
 		primaryStage.setFullScreenExitHint("");
 
-		viewManager.switchWindow(WindowPath.MODE);
+		viewManager.switchWindow(WindowPath.LOGIN);
 
 		primaryStage.getScene().getStylesheets().add(getClass().getResource("/styles/global.css").toExternalForm());
 

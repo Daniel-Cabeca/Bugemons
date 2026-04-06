@@ -81,7 +81,10 @@ public class BattleWindowController implements BattleWindow.ViewListener {
 
         view.setAutoButtonVisible(false);
         BattleState stateAfter = stateOrCurrent(listener.onAutoTurn());
-        displayActionSequence(stateAfter, event, () -> view.setAutoButtonVisible(true));
+        displayActionSequence(stateAfter, event, () -> {
+            view.showMainMenu();
+            view.setAutoButtonVisible(true);
+        });
     }
 
     @Override
@@ -123,6 +126,10 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         displayActionSequence(stateAfter, event, () -> {
             if (stateAfter == BattleState.WAITING || stateAfter == BattleState.INGAME) {
                 view.showMainMenu();
+                // reset the auto button after forced swap
+                if (gameMode == GameMode.AUTO) {
+                    view.setAutoButtonVisible(true);
+                }
             } else {
                 view.showBugemonsMenu(buildBugemonEntries());
             }

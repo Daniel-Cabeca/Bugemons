@@ -5,6 +5,7 @@ import ulb.model.effect.Effect;
 import ulb.model.effect.EffectHeal;
 import ulb.model.effect.EffectList;
 import ulb.model.effect.EffectStatModifier;
+import ulb.model.item.Item;
 import ulb.model.type.Type;
 import ulb.repository.AbilityRepository;
 import ulb.repository.LoadException;
@@ -24,7 +25,7 @@ public class AbilityDatabaseRepository implements AbilityRepository {
 	}
 
 	public void insertAbilities(Iterable<Ability> abilities) throws DuplicateElementException {
-		for (Ability ability: abilities) {
+		for (Ability ability : abilities) {
 			this.insertAbility(ability);
 		}
 	}
@@ -41,24 +42,25 @@ public class AbilityDatabaseRepository implements AbilityRepository {
 			statement.executeUpdate();
 
 			EffectDatabaseRepository effectRepository = new EffectDatabaseRepository(this.database);
-			for (Effect effect : ability.getEffects().getEffects()){
-				effectRepository.insert(effect, ability.getId(),false);
+			for (Effect effect : ability.getEffects().getEffects()) {
+				effectRepository.insert(effect, ability.getId(), false);
 			}
 
 		} catch (SQLException e) {
-			throw new DuplicateElementException("Failed to insert item: "+ ability.getId()+" ("+ e.getMessage() +")");
+			throw new DuplicateElementException("Failed to insert item: " + ability.getId() + " (" + e.getMessage() + ")");
 		}
 	}
+
 	@Override
 	public Ability findById(String id) throws NoSuchElementException {
 		String sql = """
-       SELECT a.*, e.id AS effect_id, e.type AS effect_type, e.target, e.value, 
-              esm.hp, esm.attack, esm.defense, esm.initiative, esm.duration
-       FROM abilities a
-       LEFT JOIN effects e ON a.id = e.ability_id
-       LEFT JOIN effect_stats_modifier esm ON e.id = esm.effect_id
-       WHERE a.id = ?
-    """;
+				   SELECT a.*, e.id AS effect_id, e.type AS effect_type, e.target, e.value, 
+				          esm.hp, esm.attack, esm.defense, esm.initiative, esm.duration
+				   FROM abilities a
+				   LEFT JOIN effects e ON a.id = e.ability_id
+				   LEFT JOIN effect_stats_modifier esm ON e.id = esm.effect_id
+				   WHERE a.id = ?
+				""";
 
 		try (PreparedStatement pstmt = this.database.prepareStatement(sql)) {
 			pstmt.setString(1, id);
@@ -91,8 +93,7 @@ public class AbilityDatabaseRepository implements AbilityRepository {
 
 					if (type == Effect.EffectType.HEAL) {
 						effect = new EffectHeal(target, rs.getInt("value"));
-					}
-					else if (type == Effect.EffectType.STAT_MODIFIER) {
+					} else if (type == Effect.EffectType.STAT_MODIFIER) {
 						Map<EffectStatModifier.StatType, Integer> statsChanges = new EnumMap<>(EffectStatModifier.StatType.class);
 						statsChanges.put(EffectStatModifier.StatType.HP, rs.getInt("hp"));
 						statsChanges.put(EffectStatModifier.StatType.ATTACK, rs.getInt("attack"));
@@ -122,7 +123,31 @@ public class AbilityDatabaseRepository implements AbilityRepository {
 
 	@Override
 	public Iterable<Ability> findAll() {
-		return null;
+		List<Ability> abilities = new ArrayList<>();
+		String sql = "SELECT id FROM abilities";
+
+		// On récupère d'abord tous les IDs
+		try (PreparedStatement pstmt = this.database.prepareStatement(sql)) {
+			ResultSet rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				String AbilityId = rs.getString("id");
+				try {
+					// On réutilise ta méthode findById pour charger l'objet complet
+					Ability ability = findById(AbilityId);
+					if (ability != null) {
+						abilities.add(ability);
+					}
+				} catch (NoSuchElementException e) {
+					// Si un ID existe mais que findById échoue (peu probable mais possible)
+					System.err.println("Erreur : ID trouvé mais item non chargeable : " + AbilityId);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return abilities;
 	}
 }
 

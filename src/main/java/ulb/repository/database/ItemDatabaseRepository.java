@@ -12,9 +12,7 @@ import ulb.repository.json.ItemJsonRepository;
 import ulb.utils.DuplicateElementException;
 
 import java.sql.*;
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 /**
  * Items repository connected to the SLQ database.
@@ -131,6 +129,30 @@ public class ItemDatabaseRepository implements ItemRepository {
 	 */
 	@Override
 	public Iterable<Item> findAll() {
-		return null;
+		List<Item> items = new ArrayList<>();
+		String sql = "SELECT id FROM items";
+
+		// On récupère d'abord tous les IDs
+		try (PreparedStatement pstmt = this.database.prepareStatement(sql)) {
+			ResultSet rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				String itemId = rs.getString("id");
+				try {
+					// On réutilise ta méthode findById pour charger l'objet complet
+					Item item = findById(itemId);
+					if (item != null) {
+						items.add(item);
+					}
+				} catch (NoSuchElementException e) {
+					// Si un ID existe mais que findById échoue (peu probable mais possible)
+					System.err.println("Erreur : ID trouvé mais item non chargeable : " + itemId);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return items;
 	}
 }

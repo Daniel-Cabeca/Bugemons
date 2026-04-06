@@ -15,6 +15,8 @@ import ulb.utils.DuplicateElementException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 public class BugemonSpeciesDatabaseRepository implements BugemonSpeciesRepository {
@@ -136,6 +138,30 @@ public class BugemonSpeciesDatabaseRepository implements BugemonSpeciesRepositor
 
 	@Override
 	public Iterable<BugemonSpecies> findAll() {
-		return null;
+		List<BugemonSpecies> abilities = new ArrayList<>();
+		String sql = "SELECT id FROM bugemon_species";
+
+		// On récupère d'abord tous les IDs
+		try (PreparedStatement pstmt = this.database.prepareStatement(sql)) {
+			ResultSet rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				String BugemonId = rs.getString("id");
+				try {
+					// On réutilise ta méthode findById pour charger l'objet complet
+					BugemonSpecies bugemonSpecies = findById(BugemonId);
+					if (bugemonSpecies != null) {
+						abilities.add(bugemonSpecies);
+					}
+				} catch (NoSuchElementException e) {
+					// Si un ID existe mais que findById échoue (peu probable mais possible)
+					System.err.println("Erreur : ID trouvé mais item non chargeable : " + BugemonId);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return abilities;
 	}
 }

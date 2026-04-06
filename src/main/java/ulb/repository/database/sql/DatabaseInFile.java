@@ -48,11 +48,4 @@ public class DatabaseInFile extends Database {
 	public String getName() { return this.name; }
 	public Path getPath() { return getPath(this.getName()); }
 	static Path getPath(String name) { return Path.of(name +".db"); }
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean isNew() {
-		return this.isNew;
-	}
 }

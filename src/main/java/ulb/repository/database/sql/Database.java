@@ -78,5 +78,17 @@ public abstract class Database {
 	 *
 	 * @return True if it is a new databas,e false otherwise
 	 */
-	abstract public boolean isNew();
+	public boolean isNew() {
+		Statement statement = this.createStatement();
+
+		try {
+			ResultSet res = statement.executeQuery(
+				"SELECT name FROM sqlite_master WHERE type='table' AND name='items';"
+			);
+
+			return !res.next();
+		} catch (SQLException e) {
+			throw new RuntimeException("Failed to test if the database is new: "+ e.getMessage());
+		}
+	}
 }

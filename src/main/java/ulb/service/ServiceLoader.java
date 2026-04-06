@@ -1,6 +1,6 @@
 package ulb.service;
 
-import ulb.repository.json.AbilityJsonRepository;
+import ulb.repository.AbilityRepository;import ulb.repository.BugemonSpeciesRepository;import ulb.repository.InventoryRepository;import ulb.repository.ItemRepository;import ulb.repository.database.AbilityDatabaseRepository;import ulb.repository.database.BugemonSpeciesDatabaseRepository;import ulb.repository.database.ItemDatabaseRepository;import ulb.repository.database.sql.Database;import ulb.repository.database.sql.DatabaseInitializer;import ulb.repository.json.AbilityJsonRepository;
 import ulb.repository.json.BugemonSpeciesJsonRepository;
 import ulb.repository.json.ItemJsonRepository;
 import ulb.repository.json.InventoryJsonRepository;
@@ -16,10 +16,13 @@ public abstract class ServiceLoader {
 	static {
 		// loads the services
 
-		AbilityJsonRepository abilityRepository = new AbilityJsonRepository();
-		BugemonSpeciesJsonRepository bugemonSpeciesRepository = new BugemonSpeciesJsonRepository(abilityRepository);
-		ItemJsonRepository itemRepository = new ItemJsonRepository();
-		InventoryJsonRepository inventoryRepository = new InventoryJsonRepository(itemRepository);
+		Database database = DatabaseInitializer.prepareDefaultDatabase();
+
+		AbilityRepository abilityRepository = new AbilityDatabaseRepository(database);
+		BugemonSpeciesRepository bugemonSpeciesRepository = new BugemonSpeciesDatabaseRepository(database);
+		ItemRepository itemRepository = new ItemDatabaseRepository(database);
+
+		InventoryRepository inventoryRepository = new InventoryJsonRepository(new ItemJsonRepository());
 
 		ServiceLoader.bugemonService = new BugemonService(bugemonSpeciesRepository);
 		ServiceLoader.itemService = new ItemService(itemRepository, inventoryRepository);

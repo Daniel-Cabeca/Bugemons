@@ -16,18 +16,4 @@ public class DatabaseInFileTest {
 	void deleteFile() throws IOException {
 		Files.deleteIfExists(TEST_DB_PATH);
 	}
-
-	@Test
-	public void verifyIsNewFalse() throws IOException {
-		Files.createFile(TEST_DB_PATH);
-		DatabaseInFile db = new DatabaseInFile(TEST_DB_NAME);
-		assertFalse(db.isNew());
-	}
-
-	@Test
-	public void verifyIsNewTrue() throws IOException {
-		Files.deleteIfExists(TEST_DB_PATH);
-		DatabaseInFile db = new DatabaseInFile(TEST_DB_NAME);
-		assertTrue(db.isNew());
-	}
 }

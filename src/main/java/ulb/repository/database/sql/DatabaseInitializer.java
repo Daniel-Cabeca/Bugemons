@@ -33,7 +33,7 @@ public class DatabaseInitializer {
 	/**
 	 * Creates the tables for the database.
 	 */
-	void createTables() {
+	public void createTables() {
 		SqlScript script = new SqlScript(SCRIPT_CREATE_TABLES);
 
 		try {

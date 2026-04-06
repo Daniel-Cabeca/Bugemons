@@ -86,12 +86,9 @@ public class ItemDatabaseRepository implements ItemRepository {
 
 				if (typeStr != null) {
 					Effect.EffectType type = Effect.EffectType.valueOf(typeStr);
-					System.out.println("type:" + type );
 					Effect.EffectTarget target = Effect.EffectTarget.valueOf(rs.getString("target"));
-					System.out.println("target:" + target );
 					if (type == Effect.EffectType.HEAL) {
 						effect = new EffectHeal(target, rs.getInt("value"));
-						System.out.println("heal:" + effect );
 					}
 					else if (type == Effect.EffectType.STAT_MODIFIER) {
 						// On reconstruit l'objet Stats du modificateur
@@ -104,7 +101,6 @@ public class ItemDatabaseRepository implements ItemRepository {
 						String durationStr = rs.getString("duration");
 						EffectStatModifier.EffectDuration duration = EffectStatModifier.EffectDuration.valueOf(durationStr);
 						effect = new EffectStatModifier(target,duration,statsChanges);
-						System.out.println("Stat:" + effect );
 					}
 				}
 

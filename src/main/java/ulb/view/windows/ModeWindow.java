@@ -1,15 +1,15 @@
 package ulb.view.windows;
 
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
 import ulb.utils.Scaling;
-import ulb.view.WindowPath;
 
 public final class ModeWindow extends Window {
 
 	@FXML
 	private VBox content;
+
+	private ViewListener viewListener;
 
 	@FXML
 	public void initialize() {
@@ -18,12 +18,20 @@ public final class ModeWindow extends Window {
 
 	@FXML
 	private void goSoloMode() {
-		sendSwitchWindowMessage(WindowPath.CREATE_TEAM);
+		viewListener.onSolo();
 	}
 
 	@FXML
 	private void quit() {
-		Platform.exit();
-		System.exit(0);
+		viewListener.quit();
+	}
+
+	public void setListener(ViewListener viewListener) {
+		this.viewListener = viewListener;
+	}
+
+	public interface ViewListener {
+		void onSolo();
+		void quit();
 	}
 }

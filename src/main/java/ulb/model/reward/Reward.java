@@ -3,8 +3,6 @@ package ulb.model.reward;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.Stats;
 
-import java.util.Random;
-
 public class Reward {
 
     private Bugemon bugemon;
@@ -31,19 +29,16 @@ public class Reward {
 
             switch (chosenStat) {
                 case 0:
-                    reward.hp += 2;
+                    reward.setHp(reward.getHp()+2);
                     break;
-
                 case 1:
-                    reward.initiative += 2;
+                    reward.setInitiative(reward.getInitiative()+2);
                     break;
-
                 case 2:
-                    reward.attack += 1;
+                    reward.setAttack(reward.getAttack()+1);
                     break;
-
                 case 3:
-                    reward.defense += 1;
+                    reward.setDefense(reward.getDefense()+1);
                     break;
 
                 default:
@@ -65,19 +60,19 @@ public class Reward {
     public void configureReward(RewardType chosenReward) {
         switch (chosenReward) {
             case HP:
-                this.stats.hp = 20;
+                this.stats.setHp(20);
                 break;
 
             case ATTACK:
-                this.stats.attack = 10;
+                this.stats.setAttack(10);
                 break;
 
             case DEFENSE:
-                this.stats.defense = 10;
+                this.stats.setDefense(10);
                 break;
 
             case INITIATIVE:
-                this.stats.initiative = 20;
+                this.stats.setInitiative(20);
                 break;
             
             case COMBINATION:

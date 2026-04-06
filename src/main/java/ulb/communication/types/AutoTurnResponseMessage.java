@@ -1,6 +1,7 @@
 package ulb.communication.types;
 
 import ulb.communication.Message;
+import ulb.controller.GameController;
 import ulb.model.battle.BattleState;
 
 /**
@@ -23,5 +24,10 @@ public class AutoTurnResponseMessage implements Message {
 	@Override
 	public MessageType getMessageType() {
 		return MessageType.AUTO_TURN_RESPONSE;
+	}
+
+	@Override
+	public Message handle(GameController controller) {
+		return controller.applyOn(this);
 	}
 }

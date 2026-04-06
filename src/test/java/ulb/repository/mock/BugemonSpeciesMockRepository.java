@@ -1,7 +1,6 @@
 package ulb.repository.mock;
 
 import java.util.NoSuchElementException;
-import java.io.InputStream;
 
 import ulb.model.bugemon.BugemonSpecies;
 import ulb.repository.BugemonSpeciesRepository;

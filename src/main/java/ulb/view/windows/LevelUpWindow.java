@@ -33,7 +33,7 @@ public class LevelUpWindow extends Window {
 
 	@Override
 	public void onLoad() {
-		Message m = viewManager.handleMessage(new GetInfoMessage(InfoType.LEVEL_UP));
+		Message m = sendMessage(new GetInfoMessage(InfoType.LEVEL_UP));
 		if (m instanceof LevelUpMessage levelUpMessage) {
 			initializeRewardSelection(levelUpMessage.getBugemon(), levelUpMessage.getRewards());
 		}
@@ -72,18 +72,18 @@ public class LevelUpWindow extends Window {
 	@FXML
 	private void chooseRewardA(ActionEvent event) {
 		LevelUpMessage levelUpMessage = new LevelUpMessage(rewardA, event);
-		viewManager.handleMessage(levelUpMessage);
+		sendMessage(levelUpMessage);
 	}
 
 	@FXML
 	private void chooseRewardB(ActionEvent event) {
 		LevelUpMessage levelUpMessage = new LevelUpMessage(rewardB, event);
-		viewManager.handleMessage(levelUpMessage);
+		sendMessage(levelUpMessage);
 	}
 
 	@FXML
 	private void chooseRewardC(ActionEvent event) {
 		LevelUpMessage levelUpMessage = new LevelUpMessage(rewardC, event);
-		viewManager.handleMessage(levelUpMessage);
+		sendMessage(levelUpMessage);
 	}
 }

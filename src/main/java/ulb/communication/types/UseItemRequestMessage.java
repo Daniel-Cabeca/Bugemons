@@ -1,6 +1,7 @@
 package ulb.communication.types;
 
 import ulb.communication.Message;
+import ulb.controller.GameController;
 import ulb.model.item.Item;
 
 /**
@@ -24,4 +25,9 @@ public class UseItemRequestMessage implements Message {
 	public MessageType getMessageType() {
 		return MessageType.USE_ITEM_REQUEST;
 	}
+
+	@Override
+    public Message handle(GameController controller) {
+        return controller.applyOn(this);
+    }
 }

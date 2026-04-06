@@ -11,26 +11,14 @@ import ulb.model.bugemon.Stats;
 
 public class EffectStatModifier extends Effect {
 
-	public enum StatType {
-		HP,
-		ATTACK,
-		DEFENSE,
-		INITIATIVE
-	}
+	public Map<EffectStatType, Integer> modifiers;
+	private EffectStatDuration duration;
 
-	public enum EffectDuration {
-		PERMANENT,
-		ROUND
-	}
-
-	public Map<EffectStatModifier.StatType, Integer> modifiers;
-	private EffectDuration duration;
-
-	public EffectStatModifier(EffectTarget targetType, EffectDuration duration, Map<StatType, Integer> modifiers){
-		super(EffectType.STAT_MODIFIER, targetType);
+	public EffectStatModifier(EffectTarget targetType, EffectStatDuration duration, Map<EffectStatType, Integer> modifiers){
+		super(targetType);
 		this.modifiers = modifiers;
 		this.duration = duration;
-
+		
 	}
 
 	/**
@@ -44,7 +32,7 @@ public class EffectStatModifier extends Effect {
 			target.changeFightStats(buildStatsChange());
 		}
 
-		if (this.getDuration() == EffectDuration.ROUND) {
+		if (this.getDuration() == EffectStatDuration.ROUND) {
 			Stats delta = this.buildStatsChange();
 			for (Bugemon target : targets) {
 				battle.getActiveEffects().add(new ActiveEffect(target, delta, 1, ""));
@@ -60,7 +48,7 @@ public class EffectStatModifier extends Effect {
 	*/
 	public Stats buildStatsChange() {
 		Stats statsChange = new Stats();
-		for (Map.Entry<StatType, Integer> entry : this.modifiers.entrySet()) {
+		for (Map.Entry<EffectStatType, Integer> entry : this.modifiers.entrySet()) {
 			switch (entry.getKey()) {
 				case HP:
 					statsChange.plus(new Stats(entry.getValue(), 0, 0, 0));
@@ -79,8 +67,8 @@ public class EffectStatModifier extends Effect {
 		return statsChange;
 	}
 
-	public Map<EffectStatModifier.StatType, Integer> getModifiers() { return this.modifiers; }
-	public EffectDuration getDuration() { return this.duration;}
+	public Map<EffectStatType, Integer> getModifiers() { return this.modifiers; }
+	public EffectStatDuration getDuration() { return this.duration;}
 
 
 }

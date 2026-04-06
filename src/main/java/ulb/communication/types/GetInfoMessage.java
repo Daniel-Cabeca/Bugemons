@@ -1,6 +1,7 @@
 package ulb.communication.types;
 
 import ulb.communication.Message;
+import ulb.controller.GameController;
 
 /**
  * Message used by the view to request information/data needed for the display from the controller
@@ -15,5 +16,10 @@ public class GetInfoMessage implements Message {
     @Override
     public MessageType getMessageType() {
         return MessageType.GET_INFO;
+    }
+
+    @Override
+    public Message handle(GameController controller) {
+        return controller.applyOn(this);
     }
 }

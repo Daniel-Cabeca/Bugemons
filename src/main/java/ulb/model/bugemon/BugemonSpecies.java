@@ -48,38 +48,6 @@ public class BugemonSpecies implements HasId {
 		return new Bugemon(this);
 	}
 
-	// Test constructors
-
-	public BugemonSpecies(Stats baseStats) {
-		this.id = null;
-		this.name = null;
-		this.type = Type.PYRO;
-		this.baseStats = baseStats;
-		this.abilities = new AbilitySet();
-		this.sprite = null;
-		this.starter = false;
-	}
-
-	public BugemonSpecies(Type type, Stats baseStats) {
-		this.id = null;
-		this.name = null;
-		this.type = type;
-		this.baseStats = baseStats;
-		this.abilities = new AbilitySet();
-		this.sprite = null;
-		this.starter = false;
-	}
-
-	public BugemonSpecies(String name, Type type, Stats baseStats) {
-		this.id = null;
-		this.name = name;
-		this.type = type;
-		this.baseStats = baseStats;
-		this.abilities = new AbilitySet();
-		this.sprite = null;
-		this.starter = false;
-	}
-
 	public boolean equals(BugemonSpecies other){
 		return this.id.equals(other.id);
 	}

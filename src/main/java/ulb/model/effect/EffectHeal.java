@@ -12,9 +12,11 @@ public class EffectHeal extends Effect {
     private int value; 
 
     public EffectHeal(EffectTarget targetType, int value){
-        super(EffectType.HEAL, targetType);
+        super(targetType);
         this.value = value;
     }
+
+    public int getValue(){return this.value;}
 
     /**
      * {@inheritDoc}

@@ -10,8 +10,8 @@ import ulb.model.effect.EffectResetMalus;
 import ulb.model.effect.EffectStatModifier;
 import ulb.model.effect.EffectHeal;
 import ulb.model.effect.EffectTarget;
-import ulb.model.effect.EffectStatModifier.EffectDuration;
-import ulb.model.effect.EffectStatModifier.StatType;
+import ulb.model.effect.EffectStatDuration;
+import ulb.model.effect.EffectStatType;
 import ulb.model.effect.EffectSwitch;
 import ulb.repository.LoadException;
 
@@ -92,14 +92,14 @@ public class EffectJsonParser {
 	 * @return The corresponding duration enum value
 	 * @throws LoadException If the duration is unrecognized
 	 */
-	public EffectDuration parseDuration(JsonNode node) throws LoadException {
+	public EffectStatDuration parseDuration(JsonNode node) throws LoadException {
 		String durationStr = node.asText();
 
 		switch(durationStr) {
 			case "permanent":
-				return EffectDuration.PERMANENT;
+				return EffectStatDuration.PERMANENT;
 			case "tour", "1_tour":
-				return EffectDuration.ROUND;
+				return EffectStatDuration.ROUND;
 			default:
 				throw new LoadException("Unrecognized effect duration: "+ durationStr);
 		}
@@ -112,19 +112,19 @@ public class EffectJsonParser {
 	 * @return The corresponding stat type enum value
 	 * @throws LoadException If the stat type is unrecognized
 	*/
-	public StatType parseStatType(String statStr) throws LoadException {
+	public EffectStatType parseEffectStatType(String statStr) throws LoadException {
 		switch(statStr) {
 			case "pv":
-				return StatType.HP;
+				return EffectStatType.HP;
 
 			case "attaque":
-				return StatType.ATTACK;
+				return EffectStatType.ATTACK;
 
 			case "defense":
-				return StatType.DEFENSE;
+				return EffectStatType.DEFENSE;
 
 			case "initiative":
-				return StatType.INITIATIVE;
+				return EffectStatType.INITIATIVE;
 
 			default:
 				throw new LoadException("Unrecognized effect target"+ statStr);
@@ -138,8 +138,8 @@ public class EffectJsonParser {
 	 * @return The corresponding stat type enum value
 	 * @throws LoadException If the stat type is unrecognized
 	*/
-	public StatType parseStatType(JsonNode node) throws LoadException {
-		return this.parseStatType(node.asText());
+	public EffectStatType parseEffectStatType(JsonNode node) throws LoadException {
+		return this.parseEffectStatType(node.asText());
 	}
 
 	/**
@@ -166,11 +166,11 @@ public class EffectJsonParser {
 	 */
 	private Effect parseOneStatModifier(JsonNode node) throws LoadException {
 		EffectTarget target = this.parseTarget(node.get("cible"));
-		EffectDuration duration = this.parseDuration(node.get("duree"));
+		EffectStatDuration duration = this.parseDuration(node.get("duree"));
 
-		StatType statType = this.parseStatType(node.get("stat"));
+		EffectStatType EffectStatType = this.parseEffectStatType(node.get("stat"));
 		int modifierValue = node.get("modificateur").asInt();
-		Map<StatType, Integer> modifiers = Map.of(statType, modifierValue);
+		Map<EffectStatType, Integer> modifiers = Map.of(EffectStatType, modifierValue);
 
 		return new EffectStatModifier(target, duration, modifiers);
 	}
@@ -184,12 +184,12 @@ public class EffectJsonParser {
 	 */
 	private Effect parseOneStatModifierMultiple(JsonNode node) throws LoadException {
 		EffectTarget target = this.parseTarget(node.get("cible"));
-		EffectDuration duration = this.parseDuration(node.get("duree"));
+		EffectStatDuration duration = this.parseDuration(node.get("duree"));
 
 		JsonNode modifiersNode = node.get("modificateurs");
-		Map<StatType, Integer> modifiers = new HashMap<>();
+		Map<EffectStatType, Integer> modifiers = new HashMap<>();
 		modifiersNode.fields().forEachRemaining(entry -> modifiers.put(
-				this.parseStatType(entry.getKey()),
+				this.parseEffectStatType(entry.getKey()),
 				entry.getValue().asInt()
 			));
 

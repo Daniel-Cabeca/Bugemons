@@ -15,9 +15,6 @@ import ulb.model.battle.Battle.ParticipantLabel;
 import ulb.model.team.Team;
 import ulb.model.Player;
 
-import ulb.model.effect.EffectTarget;
-import ulb.model.effect.EffectStatModifier.EffectDuration;
-
 public class EffectTest {
 	private static Battle getTestBattle() {
 		BugemonSpeciesMockRepository repository = new BugemonSpeciesMockRepository();
@@ -41,7 +38,7 @@ public class EffectTest {
 	@Test
 	public void getTargetsIsOwnBugemonWhenTargetIsOwnBugemon() {
 		Battle battle = getTestBattle();
-		Effect effect = new EffectStatModifier(EffectTarget.OWN_BUGEMON, EffectDuration.PERMANENT, Map.of());
+		Effect effect = new EffectStatModifier(EffectTarget.OWN_BUGEMON, EffectStatDuration.PERMANENT, Map.of());
 
 		ParticipantLabel team = ParticipantLabel.TEAM_A;
 		List<Bugemon> targets = effect.getTargets(battle, team);
@@ -53,7 +50,7 @@ public class EffectTest {
 	@Test
 	public void getTargetsIsActiveOpposingBugemonWhenTargetIsOpposingBugemon() {
 		Battle battle = getTestBattle();
-		Effect effect = new EffectStatModifier(EffectTarget.OPPOSITE_BUGEMON, EffectDuration.PERMANENT, Map.of());
+		Effect effect = new EffectStatModifier(EffectTarget.OPPOSITE_BUGEMON, EffectStatDuration.PERMANENT, Map.of());
 
 		ParticipantLabel team = ParticipantLabel.TEAM_A;
 		List<Bugemon> targets = effect.getTargets(battle, team);
@@ -65,7 +62,7 @@ public class EffectTest {
 	@Test
 	public void getTargetsIsOwnTeamWhenTargetIsOwnTeam() {
 		Battle battle = getTestBattle();
-		Effect effect = new EffectStatModifier(EffectTarget.OWN_TEAM, EffectDuration.PERMANENT, Map.of());
+		Effect effect = new EffectStatModifier(EffectTarget.OWN_TEAM, EffectStatDuration.PERMANENT, Map.of());
 
 		ParticipantLabel team = ParticipantLabel.TEAM_A;
 		List<Bugemon> targets = effect.getTargets(battle, team);

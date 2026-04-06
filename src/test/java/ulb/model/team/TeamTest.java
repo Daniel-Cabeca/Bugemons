@@ -9,7 +9,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
+import ulb.model.ability.AbilitySet;
 import ulb.model.bugemon.Bugemon;
+import ulb.model.bugemon.BugemonSpecies;
 import ulb.model.bugemon.Stats;
 import ulb.model.type.Type;
 
@@ -17,21 +19,15 @@ import ulb.model.type.Type;
 
 public class TeamTest {
     // Fonction auxiliaire qui crée des nouveaux Pokémons arbitraires
-    private Bugemon makeBugemon(String name) {
-        return new Bugemon(
-            name,
-            Type.AQUA, 
-            100, 
-            100, 
-            100, 
-            100
-        );
+    private Bugemon createBugemon(String name) {
+        BugemonSpecies species = new BugemonSpecies(name, name, Type.AQUA, new Stats(100, 100, 100, 100), new AbilitySet(), "", false);
+		return new Bugemon(species);
     }
     
     @Test
     public void addOneBugemonIncreasesSize() {
         Team team = new Team();
-        boolean added = team.add(makeBugemon("Florachu"));
+        boolean added = team.add(createBugemon("Florachu"));
         assertTrue(added);
         assertEquals(1, team.size());
         assertTrue(team.containsName("Florachu"));
@@ -51,11 +47,11 @@ public class TeamTest {
         Team team = new Team();
 
         for (int i = 1; i <= 6; i++) {
-            assertTrue(team.add(makeBugemon("Bugemon" + i)));
+            assertTrue(team.add(createBugemon("Bugemon" + i)));
         }
 
         assertEquals(6, team.size());
-        assertFalse(team.add(makeBugemon("Bugemon7")));
+        assertFalse(team.add(createBugemon("Bugemon7")));
         assertEquals(6, team.size());
         assertTrue(team.isValid());
     }
@@ -63,8 +59,8 @@ public class TeamTest {
     @Test
     public void addingDuplicateNameBugemonGetsRefused() {
         Team team = new Team();
-        Bugemon first = makeBugemon("Florachu");
-        Bugemon duplicatedPokemon = makeBugemon("Florachu");
+        Bugemon first = createBugemon("Florachu");
+        Bugemon duplicatedPokemon = createBugemon("Florachu");
 
         assertTrue(team.add(first));
         assertFalse(team.add(duplicatedPokemon));
@@ -73,12 +69,12 @@ public class TeamTest {
 
 	@Test
 	public void checkTeamKOReturnsFalseWhenAtLeastOneMemberAlive() {
-		Bugemon alive = makeBugemon("Alive");
-		Bugemon ko1 = makeBugemon("KO1");
-		Bugemon ko2 = makeBugemon("KO2");
-		Bugemon ko3 = makeBugemon("KO3");
-		Bugemon ko4 = makeBugemon("KO4");
-		Bugemon ko5 = makeBugemon("KO5");
+		Bugemon alive = createBugemon("Alive");
+		Bugemon ko1 = createBugemon("KO1");
+		Bugemon ko2 = createBugemon("KO2");
+		Bugemon ko3 = createBugemon("KO3");
+		Bugemon ko4 = createBugemon("KO4");
+		Bugemon ko5 = createBugemon("KO5");
 
 		ko1.changeFightStats(new Stats(-100, 0, 0, 0));
 		ko2.changeFightStats(new Stats(-100, 0, 0, 0));
@@ -93,12 +89,12 @@ public class TeamTest {
 
 	@Test
 	public void checkTeamKOReturnsTrueWhenAllMembersKO() {
-		Bugemon ko1 = makeBugemon("KO1");
-		Bugemon ko2 = makeBugemon("KO2");
-		Bugemon ko3 = makeBugemon("KO3");
-		Bugemon ko4 = makeBugemon("KO4");
-		Bugemon ko5 = makeBugemon("KO5");
-		Bugemon ko6 = makeBugemon("KO6");
+		Bugemon ko1 = createBugemon("KO1");
+		Bugemon ko2 = createBugemon("KO2");
+		Bugemon ko3 = createBugemon("KO3");
+		Bugemon ko4 = createBugemon("KO4");
+		Bugemon ko5 = createBugemon("KO5");
+		Bugemon ko6 = createBugemon("KO6");
 
 		for (Bugemon b : List.of(ko1, ko2, ko3, ko4, ko5, ko6)) {
 			b.changeFightStats(new Stats(-100, 0, 0, 0));
@@ -112,9 +108,9 @@ public class TeamTest {
 
     @Test
     public void bugemonNotPassedToTeamByCopy(){
-        Bugemon b1 = makeBugemon("B1");
-        Bugemon b2 = makeBugemon("B2");
-        Bugemon b3 = makeBugemon("B3");
+        Bugemon b1 = createBugemon("B1");
+        Bugemon b2 = createBugemon("B2");
+        Bugemon b3 = createBugemon("B3");
         Team team = new Team(List.of(b1, b2, b3));
 
         b1.changeFightStats(new Stats(-100, 0, 0, 0));
@@ -124,9 +120,9 @@ public class TeamTest {
 
     @Test
     public void getNextBugemon(){
-        Bugemon b1 = makeBugemon("B1");
-        Bugemon b2 = makeBugemon("B2");
-        Bugemon b3 = makeBugemon("B3");
+        Bugemon b1 = createBugemon("B1");
+        Bugemon b2 = createBugemon("B2");
+        Bugemon b3 = createBugemon("B3");
         Team team = new Team(List.of(b1, b2, b3));
 
         assertEquals(b3, team.getNextBugemon(b2));
@@ -134,9 +130,9 @@ public class TeamTest {
 
     @Test 
     public void getNextNonKOBugemon(){
-        Bugemon b1 = makeBugemon("B1");
-        Bugemon b2 = makeBugemon("B2");
-        Bugemon b3 = makeBugemon("B3");
+        Bugemon b1 = createBugemon("B1");
+        Bugemon b2 = createBugemon("B2");
+        Bugemon b3 = createBugemon("B3");
         Team team = new Team(List.of(b1, b2, b3));
         b2.changeFightStats(new Stats(-1000, 0, 0, 0));
 
@@ -145,9 +141,9 @@ public class TeamTest {
 
     @Test 
     public void getPreviousNonKOBugemon(){
-        Bugemon b1 = makeBugemon("B1");
-        Bugemon b2 = makeBugemon("B2");
-        Bugemon b3 = makeBugemon("B3");
+        Bugemon b1 = createBugemon("B1");
+        Bugemon b2 = createBugemon("B2");
+        Bugemon b3 = createBugemon("B3");
         Team team = new Team(List.of(b1, b2, b3));
         b3.changeFightStats(new Stats(-1000, 0, 0, 0));
 
@@ -156,9 +152,9 @@ public class TeamTest {
 
     @Test
     public void getAllBugemonsAlive(){
-        Bugemon b1 = makeBugemon("B1");
-        Bugemon b2 = makeBugemon("B2");
-        Bugemon b3 = makeBugemon("B3");
+        Bugemon b1 = createBugemon("B1");
+        Bugemon b2 = createBugemon("B2");
+        Bugemon b3 = createBugemon("B3");
         Team team = new Team(List.of(b1, b2, b3));
 
         assertEquals(new ArrayList<>(List.of(b1, b2, b3)), team.getBugemonsAlive());
@@ -166,9 +162,9 @@ public class TeamTest {
 
     @Test
     public void getSomeBugemonsAlive(){
-        Bugemon b1 = makeBugemon("B1");
-        Bugemon b2 = makeBugemon("B2");
-        Bugemon b3 = makeBugemon("B3");
+        Bugemon b1 = createBugemon("B1");
+        Bugemon b2 = createBugemon("B2");
+        Bugemon b3 = createBugemon("B3");
         Team team = new Team(List.of(b1, b2, b3));
         b3.changeFightStats(new Stats(-1000, 0, 0, 0));
 

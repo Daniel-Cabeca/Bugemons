@@ -16,47 +16,47 @@ import ulb.model.ability.Ability;
 import ulb.model.ability.AbilitySet;
 
 public class AbilityTest {
-	private Ability makeAbilityA() {
+	private Ability createAbilityA() {
 		return new Ability("a", "A", Type.FLORA, "Ability a", 10);
 	}
 
-	private Ability makeAbilityB() {
+	private Ability createAbilityB() {
 		return new Ability("b", "B", Type.FLORA, "Ability b", 10);
 	}
 
-	private Ability makeAbilityC() {
+	private Ability createAbilityC() {
 		return new Ability("c", "C", Type.FLORA, "Ability c", 10);
 	}
 
 	@Test
 	public void abilitiesAreEqual() {
-		Ability a = makeAbilityA();
-		Ability abis = makeAbilityA();
+		Ability a = createAbilityA();
+		Ability abis = createAbilityA();
 		assertTrue(a.equals(abis));
 	}
 
 	@Test
 	public void abilitiesAreNotEqual() {
-		Ability a = makeAbilityA();
-		Ability b = makeAbilityB();
+		Ability a = createAbilityA();
+		Ability b = createAbilityB();
 		assertFalse(a.equals(b));
 	}
 
 	@Test
 	public void abilityAndObjectAreNotEqual() {
-		Ability a = makeAbilityA();
+		Ability a = createAbilityA();
 		assertFalse(a.equals(3));
 	}
 
 	@Test
 	public void sameInstancesAreEqual() {
-		Ability a = makeAbilityA();
+		Ability a = createAbilityA();
 		assertTrue(a.equals(a));
 	}
 
 	@Test
 	public void abilityAndStringAreNotEqual() {
-		Ability a = makeAbilityA();
+		Ability a = createAbilityA();
 		String b = new String("fouet_liane");
 		assertFalse(a.equals(b));
 	}

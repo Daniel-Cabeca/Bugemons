@@ -8,15 +8,15 @@ import ulb.model.battle.Battle;
 import ulb.model.battle.Battle.ParticipantLabel;
 
 public abstract class Effect {
-	private final EffectType type;
 	private final EffectTarget target;
 
-	public Effect(EffectType type, EffectTarget target) {
-		this.type = type;
-		this.target = target;
+
+	public Effect(EffectTarget targetType) {
+		this.target = targetType;
 	}
 
-	public EffectType getType() { return this.type; }
+	// Getters
+
 	public EffectTarget getTarget() { return this.target; }
 
 	public abstract void apply(Battle battle, ParticipantLabel team);

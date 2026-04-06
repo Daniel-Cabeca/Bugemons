@@ -16,4 +16,11 @@ public interface AbilityRepository {
 	 * @throws NoSuchElementException If no match was found for the id
 	 */
 	public Ability findById(String id) throws NoSuchElementException;
+
+	/**
+	 * Gives an iterable list of the abilities in the repository.
+	 *
+	 * @return An object iterable over the existing abilities
+	 */
+	public Iterable<Ability> findAll();
 }

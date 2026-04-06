@@ -4,6 +4,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import ulb.repository.database.sql.Database;
 import ulb.repository.database.sql.DatabaseInitializer;
+import ulb.repository.AccountRepository;
 import ulb.repository.database.AccountDatabaseRepository;
 import ulb.controller.GameController;
 import ulb.model.Player;
@@ -52,7 +53,7 @@ public class Main extends Application {
 	public void start(Stage primaryStage) throws Exception {
 
 		Database database = DatabaseInitializer.prepareDefaultDatabase();
-		AccountDatabaseRepository accountRepo = new AccountDatabaseRepository(database);
+		AccountRepository accountRepo = new AccountDatabaseRepository(database);
 		AccountService accountService = new AccountService(accountRepo);
 
 		GameController gameController = new GameController();

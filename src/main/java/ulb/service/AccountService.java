@@ -1,12 +1,12 @@
 package ulb.service;
 
 import ulb.repository.LoadException;
-import ulb.repository.database.AccountDatabaseRepository;
+import ulb.repository.AccountRepository;
 
 public class AccountService {
-    private final AccountDatabaseRepository repository;
+    private final AccountRepository repository;
 
-    public AccountService(AccountDatabaseRepository repository) {
+    public AccountService(AccountRepository repository) {
         this.repository = repository;
     }
 

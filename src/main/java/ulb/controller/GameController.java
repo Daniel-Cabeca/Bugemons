@@ -33,6 +33,7 @@ import ulb.model.reward.Reward;
 import ulb.service.ServiceLoader;
 import ulb.view.WindowPath;
 import ulb.view.windows.ChooseBugemonWindow;
+import ulb.view.windows.LevelUpWindow;
 import ulb.view.windows.ModeWindow;
 import ulb.view.windows.NextRoomWindow;
 import ulb.view.windows.Window;
@@ -40,11 +41,12 @@ import ulb.view.windows.Window;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.List;
 
 
 public class GameController extends Application implements TeamController.Listener, ModeController.Listener,
 BattleModeController.Listener, NextRoomController.Listener, ChooseBugemonController.Listener,
-BattleWindowController.Listener{
+BattleWindowController.Listener, LevelUpController.Listener{
 
 	private Player player;
 	private TowerManager towerModeTowerManager;
@@ -69,6 +71,7 @@ BattleWindowController.Listener{
 	private NextRoomController nextRoomController;
 	private ChooseBugemonController chooseBugemonController;
 	private BattleWindowController battleWindowController;
+	private LevelUpController levelUpController;
 
 	public static void main(String[] args) {
 		try {
@@ -148,6 +151,9 @@ BattleWindowController.Listener{
 			if (controller instanceof NextRoomWindow nextRoomWindow) {
 				nextRoomWindow.setViewListener(nextRoomController);
 			}
+			if (controller instanceof LevelUpWindow levelUpWindow){
+				levelUpWindow.setViewListener(levelUpController);
+			}
 			if (stage.getScene() == null) {
 				stage.setScene(new Scene(root));
 			} else {
@@ -221,7 +227,13 @@ BattleWindowController.Listener{
 		this.pendingRewardBattleController = battleController;
 		this.rewardSequenceReturnsToNextRoom = returnToNextRoom;
 		this.pendingBattleXP = battleController.getTotalXP();
-		switchWindow(WindowPath.LEVEL_UP);
+		levelUpController = new LevelUpController(stage, this);
+		try {
+			levelUpController.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		// switchWindow(WindowPath.LEVEL_UP);
 		return true;
 	}
 
@@ -698,6 +710,25 @@ BattleWindowController.Listener{
 	@Override
 	public void onContinue() {
 		handleTower();
+	}
+
+	@Override
+	public void onRewardChosen(Reward reward, ActionEvent event){
+		handleLevelUpRewardChoice(reward, event);
+	}
+
+	@Override
+	public Bugemon getLevelUpBugemon() {
+		return pendingLevelUpBugemons.peekFirst();
+	}
+
+	@Override
+	public List<Reward> getLevelUpRewards() {
+		Bugemon current = pendingLevelUpBugemons.peekFirst();
+		if (current != null && pendingRewardBattleController != null) {
+			return pendingRewardBattleController.getRewards(current);
+		}
+		return List.of(); // vide si rien
 	}
 
 	private void switchToBattleWindow() {

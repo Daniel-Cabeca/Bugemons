@@ -7,9 +7,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import ulb.model.bugemon.Bugemon;
-import ulb.model.team.Team;
+import java.util.List;
 import ulb.utils.Scaling;
+
+import ulb.DTO.bugemon.BugemonDTO;
 
 
 public class BattleModeWindow extends Window {
@@ -48,7 +49,7 @@ public class BattleModeWindow extends Window {
         viewListener.onReturn();
 	}
 
-    public void displayTeam(Team team) {
+    public void displayTeam(List<BugemonDTO> team) {
         displayTeamWithStats(team, playerTeamGrid);
     }
 
@@ -58,13 +59,13 @@ public class BattleModeWindow extends Window {
      * @param team the team to display
      * @param grid the grid in which the bugemons are displayed
      */
-    public void displayTeamWithStats(Team team, GridPane grid) {
+    public void displayTeamWithStats(List<BugemonDTO> team, GridPane grid) {
         grid.getChildren().clear();
         int row = 0;
         int col = 0;
         int count =0;
 
-        for (Bugemon bugemon : team.getMembers()) {
+        for (BugemonDTO bugemon : team) {
             VBox cell = new VBox();
 
             Image image = new Image(bugemon.getSprite());

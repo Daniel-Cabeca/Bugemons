@@ -9,6 +9,7 @@ import ulb.model.effect.EffectResetMalus;
 import ulb.model.effect.EffectStatModifier;
 import ulb.model.effect.EffectSwitch;
 import ulb.model.effect.EffectType;
+import ulb.model.battle.Battle;
 
 public class EffectMapper {
 
@@ -21,14 +22,14 @@ public class EffectMapper {
             case SWITCH:
                 effect = new EffectSwitch(dto.getTarget()) {
                     @Override
-                    public void apply(ulb.model.battle.Battle battle, ulb.model.battle.Battle.ParticipantLabel team){}
+                    public void apply(Battle battle, Battle.ParticipantLabel team){}
                 };
                 break;
             
             case RESET_MALUS:
                 effect = new EffectResetMalus(dto.getTarget()) {
                     @Override
-                    public void apply(ulb.model.battle.Battle battle, ulb.model.battle.Battle.ParticipantLabel team){}
+                    public void apply(Battle battle, Battle.ParticipantLabel team){}
                 };
             default:
                 return null;
@@ -42,7 +43,7 @@ public class EffectMapper {
 
         return new EffectHeal(dto.getTarget(), dto.getValue()) {
             @Override
-            public void apply(ulb.model.battle.Battle battle, ulb.model.battle.Battle.ParticipantLabel team){}
+            public void apply(Battle battle, Battle.ParticipantLabel team){}
         };
     }
 
@@ -51,7 +52,7 @@ public class EffectMapper {
 
         return new EffectStatModifier(dto.getTarget(), dto.getDuration(), dto.getModifiers()) {
             @Override
-            public void apply(ulb.model.battle.Battle battle, ulb.model.battle.Battle.ParticipantLabel team){}
+            public void apply(Battle battle, Battle.ParticipantLabel team){}
         };
     }
 

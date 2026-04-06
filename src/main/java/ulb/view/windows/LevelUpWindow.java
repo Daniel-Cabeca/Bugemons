@@ -13,6 +13,10 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import ulb.DTO.bugemon.BugemonDTO;
+import ulb.DTO.stats.StatsDTO;
+import ulb.DTO.reward.RewardDTO;
+
 import java.util.Vector;
 
 public class LevelUpWindow extends Window {

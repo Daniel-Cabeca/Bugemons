@@ -13,7 +13,7 @@ public class StatsDTO {
         this.initiative = initiative;
     }
 
-    public int getHP(){return this.hp;}
+    public int getHp(){return this.hp;}
     public int getAttack(){return this.attack;}
     public int getDefense(){return this.defense;}
     public int getInitiative(){return this.initiative;}

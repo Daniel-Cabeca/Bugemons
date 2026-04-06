@@ -7,6 +7,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import ulb.DTO.bugemon.BugemonDTO;
 import ulb.communication.Client;
 import ulb.communication.Message;
 import ulb.communication.Server;
@@ -37,9 +38,13 @@ import ulb.view.windows.ModeWindow;
 import ulb.view.windows.NextRoomWindow;
 import ulb.view.windows.Window;
 
+import ulb.mapper.bugemon.BugemonMapper;
+
 import java.io.IOException;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
+import java.util.List;
 
 
 public class GameController extends Application implements TeamController.Listener, ModeController.Listener,
@@ -71,6 +76,7 @@ BattleWindowController.Listener{
 	private BattleWindowController battleWindowController;
 
 	public static void main(String[] args) {
+		// CLIENT & SERVER
 		try {
 			if (args.length == 0) {
 				launch(args);
@@ -99,6 +105,7 @@ BattleWindowController.Listener{
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+		// CLIENT
 		setPlayer(new Player("Player"));
 		this.stage = primaryStage;
 
@@ -127,6 +134,7 @@ BattleWindowController.Listener{
 	 * @param windowFxmlPath the path of the FXML file to display
 	 */
 	public void switchWindow(String windowFxmlPath) {
+		// CLIENT
 		if (stage == null) {
 			return;
 		}
@@ -175,6 +183,7 @@ BattleWindowController.Listener{
 	 * Setups the right settings for the normal mode
 	 */
 	public void setupNormalMode(){
+		// SERVER
 		Team playerTeam = player.getTeam();
 		Team opponentTeam = new Team();
 		try{
@@ -194,6 +203,7 @@ BattleWindowController.Listener{
 	 * Setups the right settings for the tower mode
 	 */
 	public void setupTowerMode(){
+		// SERVER
 		towerModeTowerManager = new TowerManager(this.getPlayer());
 	}
 
@@ -206,6 +216,7 @@ BattleWindowController.Listener{
 	 * @return true if the sequence was started, false if no rewards are pending
 	 */
 	public boolean startLevelUpSequenceIfNeeded(BattleController battleController, boolean returnToNextRoom, ActionEvent event) {
+		// CLIENT + SERVER
 		pendingLevelUpBugemons.clear();
 
 		for (Bugemon bugemon : player.getTeam().getMembers()) {
@@ -231,6 +242,7 @@ BattleWindowController.Listener{
 	 * @param reward the reward chosen by the player
 	 */
 	public void handleLevelUpRewardChoice(Reward reward, ActionEvent event) {
+		// CLIENT + SERVER
 		Bugemon currentBugemon = pendingLevelUpBugemons.peekFirst();
 		if (currentBugemon == null || pendingRewardBattleController == null) {
 			return;
@@ -264,6 +276,7 @@ BattleWindowController.Listener{
 	 * Resets all state related to a pending level-up sequence
 	 */
 	private void clearPendingLevelUpState() {
+		// SERVER
 		pendingLevelUpBugemons.clear();
 		pendingRewardBattleController = null;
 		rewardSequenceReturnsToNextRoom = false;
@@ -272,6 +285,7 @@ BattleWindowController.Listener{
 
 	// Stores the battle result and switches to BattleEndWindow
 	private void handleBattleEnd(boolean victory, int totalXP) {
+		// CLIENT + SERVER
 		pendingVictory = victory;
 		pendingTotalXP = totalXP;
 		switchWindow(WindowPath.BATTLE_END);
@@ -279,6 +293,7 @@ BattleWindowController.Listener{
 
 	// Handles fleeing from a tower battle: restores HP and resets the room
 	private void handleTowerFlee() {
+		// Server
 		for (Bugemon b : player.getTeam().getMembers()) {
 			b.getFightStats().setHp(b.getBaseStats().getHp());
 		}
@@ -290,7 +305,7 @@ BattleWindowController.Listener{
 	 * Handles each room when in tower mode: switches to the right window and initializes its content
 	 */
 	public void handleTower()  {
-
+		// CLIENT + SERVER
 		towerModeTowerManager.getCurrentFloorManager().nextRoom();
 		towerModeTowerManager.nextFloor();
 
@@ -325,6 +340,7 @@ BattleWindowController.Listener{
 	 * @return tower battle from towerBattleControllerForMessages when in tower mode, otherwise normalModeBattleController
 	 */
 	private BattleController battleControllerForManualTurn() {
+		// SERVER
 		if (gameMode == GameMode.TOWER && towerModeTowerManager != null) {
 			return towerModeTowerManager.getCurrentBattleController();
 		}
@@ -332,6 +348,7 @@ BattleWindowController.Listener{
 	}
 
 	public TowerManager getTowerManager() {
+		// SERVER
 		return towerModeTowerManager;
 	}
 
@@ -346,12 +363,14 @@ BattleWindowController.Listener{
     }
 
 	public Message applyOn(AutoTurnRequestMessage m){
+		// SERVER
 		StrategyRandom strategyRandom = new StrategyRandom(normalModeBattleController);
 		BattleState state = strategyRandom.playAutoTurn();
 		return new AutoTurnResponseMessage(state);
 	}
 
 	public Message applyOn(SwitchWindowMessage m){
+		// CLIENT
 		switchWindow(m.getSwitchWindow());
 		return null;
 	}
@@ -416,6 +435,7 @@ BattleWindowController.Listener{
 	 * @param m the message containing the chosen game mode
 	 */
 	private void handleSetupGameModeMessage(SetupGameModeMessage m) {
+		// SERVER
 		gameMode = m.getGameMode();
 		switch (gameMode) {
 			case AUTO, CONTROLLED:
@@ -433,6 +453,7 @@ BattleWindowController.Listener{
 	 * @return the response containing the requested information for the view
 	 */
 	private Message handleGetInfoMessage(GetInfoMessage m) {
+		// CLIENT + SERVER
 		Message answer = null;
 		switch (m.getType()){
 			case SETUP_GAME:
@@ -465,6 +486,7 @@ BattleWindowController.Listener{
 	 * @return the response containing the current battle state
 	 */
 	private Message handleUseItemMessage(UseItemRequestMessage m) {
+		// CLIENT + SERVER
 		Message response = null;
 		Item item = m.getItem();
 		BattleController battleController = battleControllerForManualTurn();
@@ -482,6 +504,7 @@ BattleWindowController.Listener{
 	 * @return the response containing the current battle state
 	 */
 	private Message handleSwapMessage(SwapRequestMessage m) {
+		// CLIENT + SERVER
 		Message response = null;
 		Bugemon bugemon = m.getBugemon();
 		BattleController battleController = battleControllerForManualTurn();
@@ -499,6 +522,7 @@ BattleWindowController.Listener{
 	 * @return the response containing the current battle state
 	 */
 	private Message handleUseAbilityMessage(UseAbilityRequestMessage m) {
+		// CLIENT + SERVER
 		Message response = null;
 		Ability ability = m.getAbility();
 		BattleController battleController = battleControllerForManualTurn();
@@ -515,6 +539,7 @@ BattleWindowController.Listener{
 	 * @param m the received BattleEndCheckMessage
 	 */
 	private void handleBattleEndCheckMessage(BattleEndCheckMessage m) {
+		// CLIENT + SERVER
         BattleState state = m.getBattleState();
 		ActionEvent event = m.getActionEvent();
 
@@ -547,7 +572,12 @@ BattleWindowController.Listener{
 
 	@Override
 	public void onTeamConfirmed() {
-		battleModeController = new BattleModeController(stage, this, getTeam());
+		// CLIENT + SERVER
+		List<BugemonDTO> team = new ArrayList<BugemonDTO>();
+		for (Bugemon bugemon : getTeam().getMembers()){
+			team.add(BugemonMapper.toDTO(bugemon));
+		}
+		battleModeController = new BattleModeController(stage, this, team);
 		try {
 			battleModeController.show();
 		} catch (Exception e) {
@@ -557,6 +587,7 @@ BattleWindowController.Listener{
 
 	@Override
 	public void onReturn() {
+		// CLIENT
 		try {
 			modeController.show();
 		} catch (Exception e) {
@@ -566,6 +597,7 @@ BattleWindowController.Listener{
 
 	@Override
 	public void onSolo() {
+		// CLIENT
 		teamController = new TeamController(stage, this, player);
 		try {
 			teamController.show();
@@ -576,6 +608,7 @@ BattleWindowController.Listener{
 
 	@Override
 	public void onAutoBattle() {
+		// CLIENT & SERVER
 		gameMode = GameMode.AUTO;
 		setupNormalMode();
 		switchToBattleWindow();
@@ -583,6 +616,7 @@ BattleWindowController.Listener{
 
 	@Override
 	public void onControlledBattle() {
+		// CLIENT & SERVER
 		gameMode = GameMode.CONTROLLED;
 		setupNormalMode();
 		switchToBattleWindow();
@@ -590,6 +624,7 @@ BattleWindowController.Listener{
 
 	@Override
 	public void onTowerMode() {
+		// CLIENT & SERVER
 		gameMode = GameMode.TOWER;
 		setupTowerMode();
 		handleTower();
@@ -597,6 +632,7 @@ BattleWindowController.Listener{
 
 	@Override
 	public void onReturnToCreateTeamWindow() {
+		// CLIENT
 		try {
 			teamController.show();
 		} catch (Exception e) {
@@ -606,16 +642,19 @@ BattleWindowController.Listener{
 
 	@Override
 	public Team getPlayerTeam() {
+		// CLIENT
 		return getTeam();
 	}
 
 	@Override
 	public ulb.model.item.Inventory getPlayerInventory() {
+		// CLIENT
 		return player.getInventory();
 	}
 
 	@Override
 	public BattleController getBattleController() {
+		// SERVER
 		if (gameMode == GameMode.TOWER && towerModeTowerManager != null) {
 			return towerModeTowerManager.getCurrentBattleController();
 		}
@@ -624,27 +663,32 @@ BattleWindowController.Listener{
 
 	@Override
 	public GameMode getGameMode() {
+		// CLIENT & SERVER
 		return gameMode;
 	}
 
 	@Override
 	public int getTowerFloorNumber() {
+		// CLIENT
 		return towerModeTowerManager != null ? towerModeTowerManager.getFloorNumber() : 0;
 	}
 
 	@Override
 	public int getCurrentRoomIndex() {
+		// CLIENT
 		return towerModeTowerManager != null ? towerModeTowerManager.getCurrentRoomIndex() : 0;
 	}
 
 	@Override
 	public BattleState onAutoTurn() {
+		// SERVER
 		StrategyRandom strategyRandom = new StrategyRandom(normalModeBattleController);
 		return strategyRandom.playAutoTurn();
 	}
 
 	@Override
 	public BattleState onUseItem(Item item) {
+		// CLIENT + SERVER
 		BattleController battleController = battleControllerForManualTurn();
 		if (battleController != null && item != null) {
 			battleController.useAction(new UseItem(item));
@@ -655,6 +699,7 @@ BattleWindowController.Listener{
 
 	@Override
 	public BattleState onSwapBugemon(Bugemon bugemon) {
+		// CLIENT + SERVER
 		BattleController battleController = battleControllerForManualTurn();
 		if (battleController != null && bugemon != null) {
 			battleController.useAction(new Swap(bugemon));
@@ -665,6 +710,7 @@ BattleWindowController.Listener{
 
 	@Override
 	public BattleState onUseAbility(Ability ability) {
+		// CLIENT + SERVER
 		BattleController battleController = battleControllerForManualTurn();
 		if (battleController != null && ability != null) {
 			battleController.useAction(new UseAbility(ability));
@@ -675,17 +721,20 @@ BattleWindowController.Listener{
 
 	@Override
 	public void onBattleStateChecked(BattleState state, ActionEvent event) {
+		// CLIENT 
 		handleBattleEndCheckMessage(new BattleEndCheckMessage(state, event));
 	}
 
 	@Override
 	public void onTowerFlee() {
+		// CLIENT + SERVER
 		handleTowerFlee();
 		switchToNextRoomWindow();
 	}
 
 	@Override
 	public void onReturnToMode() {
+		// CLIENT
 		try {
 			modeController.show();
 		} catch (Exception e) {
@@ -695,10 +744,12 @@ BattleWindowController.Listener{
 
 	@Override
 	public void onContinue() {
+		// SERVER
 		handleTower();
 	}
 
 	private void switchToBattleWindow() {
+		// CLIENT + SERVER
 		battleWindowController = new BattleWindowController(stage, this);
 
 		try {
@@ -709,6 +760,7 @@ BattleWindowController.Listener{
 	}
 
 	private void switchToNextRoomWindow() {
+		// CLIENT
 		if (nextRoomController == null) {
 			nextRoomController = new NextRoomController(stage, this);
 		}
@@ -724,6 +776,7 @@ BattleWindowController.Listener{
 	// ChooseBugemonController methods override
 	@Override
 	public void onReturnFloorRewardWindow(){
+		// CLIENT
 		try {
 			modeController.show();
 		} catch (Exception e) {

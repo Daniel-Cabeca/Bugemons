@@ -26,10 +26,14 @@ public class BugemonDTO {
 	public int getLevel() {return level;}
 	public int getRemainingRewards() {return remainingRewards;}
 
+	public String getName(){return this.getSpecies().getName();}
+	public String getSprite(){return this.getSpecies().getSprite();}
+
 	public void setSpecies(BugemonSpeciesDTO species) {this.species = species;}
 	public void setBaseStats(StatsDTO baseStats) {this.baseStats = baseStats;}
 	public void setFightStats(StatsDTO fightStats) {this.fightStats = fightStats;}
 	public void setXp(int xp) {this.xp = xp;}
 	public void setLevel(int level) {this.level = level;}
 	public void setRemainingRewards(int remainingRewards) {this.remainingRewards = remainingRewards;}
+
 }

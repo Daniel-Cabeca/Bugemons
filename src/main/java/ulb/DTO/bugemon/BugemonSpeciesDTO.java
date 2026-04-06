@@ -1,6 +1,7 @@
 package ulb.DTO.bugemon;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.stats.StatsDTO;
@@ -29,7 +30,12 @@ public class BugemonSpeciesDTO {
 	public void setType(Type type) {this.type = type;}
 	public void setBaseStats(StatsDTO baseStats) {this.baseStats = baseStats;}
 	public void setAbilities(List<AbilityDTO> abilities) {this.abilities = abilities;}
-	public void addAbility(AbilityDTO ability){this.abilities.add(ability);}
 	public void setSprite(String sprite) {this.sprite = sprite;}
 	public void setStarter(boolean starter) {this.starter = starter;}
+
+	public void addAbility(AbilityDTO ability){
+		if (this.abilities == null){
+			this.abilities = new ArrayList<AbilityDTO>();
+		}
+		this.abilities.add(ability);}
 }

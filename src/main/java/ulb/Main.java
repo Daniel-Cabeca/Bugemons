@@ -2,8 +2,9 @@ package ulb;
 import javafx.application.Application;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import ulb.repository.database.sql.Database;
+import ulb.repository.database.sql.DatabaseInitializer;
 import ulb.repository.database.AccountDatabaseRepository;
-import ulb.repository.database.DatabaseManager;
 import ulb.controller.GameController;
 import ulb.model.Player;
 import ulb.service.AccountService;
@@ -50,8 +51,8 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 
-		DatabaseManager dbManager = new DatabaseManager();
-		AccountDatabaseRepository accountRepo = new AccountDatabaseRepository(dbManager.getConnection());
+		Database database = DatabaseInitializer.prepareDefaultDatabase();
+		AccountDatabaseRepository accountRepo = new AccountDatabaseRepository(database);
 		AccountService accountService = new AccountService(accountRepo);
 
 		GameController gameController = new GameController();

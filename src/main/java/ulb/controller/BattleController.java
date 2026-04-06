@@ -89,6 +89,8 @@ public class BattleController {
 
 	public void useAction(Action action) { this.battle.chooseAction(action, this.participantLabel); }
 
+	public void resetFighter() {this.battle.resetFightStats();}
+
 	public Vector<Action> getAvailableAction() { return this.battle.getAvailableActions(this.participantLabel); }
 
 	public List<Bugemon> getAvailableBugemons() { return this.battle.getAvailableBugemons(this.participantLabel); }

@@ -133,11 +133,17 @@ public class BattleWindowController implements BattleWindow.ViewListener {
     public void onUseAbility(String abilityId, ActionEvent event) {
         Ability ability = findActiveAbilityById(abilityId);
         BattleState stateAfter = stateOrCurrent(listener.onUseAbility(ability));
+        System.out.println("=== AFTER ACTION ===");
+        System.out.println("State: " + stateAfter);
+        System.out.println("Player HP: " + battleController.getActiveBugemonSelf().getHp());
         displayActionSequence(stateAfter, event, () -> {
             if (stateAfter == BattleState.WAITING || stateAfter == BattleState.INGAME) {
                 view.showMainMenu();
             }
         });
+        if (stateAfter == BattleState.WON || stateAfter == BattleState.LOST) {
+            battleController.resetFighter();
+        }
     }
 
     private void refreshView() {
@@ -249,6 +255,9 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         if (playerBugemon == null || opponentBugemon == null) {
             return null;
         }
+        System.out.println("=== SNAPSHOT ===");
+        System.out.println("Player HP: " + playerBugemon.getHp());
+        System.out.println("Opponent HP: " + opponentBugemon.getHp());
 
         return new BattleSnapshot(toBugemonDisplay(playerBugemon), toBugemonDisplay(opponentBugemon));
     }

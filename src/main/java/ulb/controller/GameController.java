@@ -272,9 +272,11 @@ BattleWindowController.Listener{
 
 	// Stores the battle result and switches to BattleEndWindow
 	private void handleBattleEnd(boolean victory, int totalXP) {
+		System.out.println("HANDLE END START: Player HP = " + normalModeBattleController.getActiveBugemonSelf().getHp());
 		pendingVictory = victory;
 		pendingTotalXP = totalXP;
 		switchWindow(WindowPath.BATTLE_END);
+		System.out.println("HANDLE END END: Player HP = " + normalModeBattleController.getActiveBugemonSelf().getHp());
 	}
 
 	// Handles fleeing from a tower battle: restores HP and resets the room
@@ -543,6 +545,9 @@ BattleWindowController.Listener{
 			int xp = normalModeBattleController != null ? normalModeBattleController.getTotalXP() : 0;
 			handleBattleEnd(false, xp);
 		}
+		System.out.println("=== HANDLE END ===");
+		System.out.println("State: " + state);
+		System.out.println("Player HP: " + battleController.getActiveBugemonSelf().getHp());
 	}
 
 	@Override

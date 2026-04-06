@@ -78,7 +78,9 @@ public class Battle {
 
 	public void setAction(Action action, ParticipantLabel team) { this.getParticipant(team).setAction(action); }
 
-	public void setActiveBugemon(Bugemon bugemon, ParticipantLabel team) { this.getParticipant(team).setActiveBugemon(bugemon); }
+	public void setActiveBugemon(Bugemon bugemon, ParticipantLabel team) { this.getParticipant(team).setActiveBugemon(bugemon); 
+		System.out.println("SET ACTIVE BUGEMON: " + bugemon.getName() + ", HP = " + bugemon.getHp());
+	}
 
 	private void setState(BattleState state, ParticipantLabel team) { this.getParticipant(team).setState(state); }
 
@@ -285,6 +287,10 @@ public class Battle {
 		registerAction(action, team, getOpponentTeamLabel(team), getState(team));
 	}
 
+	public void resetFightStats() {
+		this.resetAllFightStats();
+	}
+
 	/**
 	 * handle the round of one of the two players
 	 * @param playerTeam the player who plays now
@@ -408,7 +414,7 @@ public class Battle {
 			b.gainXp(gainedXP / winners.size());
 		}
 
-		this.resetAllFightStats();
+		// this.resetAllFightStats();
 	}
 
 	/**

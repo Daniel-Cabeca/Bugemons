@@ -11,9 +11,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.reward.Reward;
-import ulb.model.team.Team;
 import ulb.view.WindowPath;
-import ulb.view.windows.BattleModeWindow;
 
 public class LevelUpController implements LevelUpWindow.ViewListener{
 

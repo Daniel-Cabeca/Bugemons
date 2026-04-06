@@ -15,18 +15,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.media.MediaPlayer;
 import javafx.util.Callback;
-import ulb.controller.BattleController;
-import ulb.communication.types.GameMode;
-import ulb.model.ability.Ability;
-import ulb.model.battle.BattleState;
-import ulb.model.bugemon.Bugemon;
-import ulb.model.item.Inventory;
-import ulb.model.item.Item;
-import ulb.model.team.Team;
-import ulb.model.type.Type;
-import ulb.controller.towerManager.TowerManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,11 +24,11 @@ import java.util.stream.Collectors;
 public class BattleWindow extends Window {
 
     @FXML
-    private ListView<Item> inventoryList;
+    private ListView<InventoryEntry> inventoryList;
     @FXML
-    private ListView<Bugemon> bugemonsList;
+    private ListView<BugemonEntry> bugemonsList;
     @FXML
-    private ListView<Ability> abilitiesList;
+    private ListView<AbilityEntry> abilitiesList;
     @FXML
     private Label floorLabel;
     @FXML
@@ -87,132 +76,136 @@ public class BattleWindow extends Window {
     @FXML
     private Label battleLog;
 
-    private Team playerTeam;
-    private Inventory playerInventory;
-    private BattleController battleController;
-    private TowerManager towerManager;
-    private GameMode gameMode;
-    private MediaPlayer mediaPlayer;
-
     private ViewListener viewListener;
+    private boolean autoMode;
+    private boolean forcedSwitch;
+    private BattleSnapshot currentSnapshot;
+
+    @FXML
+    private void initialize() {
+        setupInventoryList();
+        setupBugemonsList();
+        setupAbilitiesList();
+    }
 
     public void setViewListener(ViewListener viewListener) {
         this.viewListener = viewListener;
     }
 
-    public void initializeBattle(Team playerTeam, Inventory playerInventory, GameMode gameMode,
-                                 TowerManager towerManager, BattleController battleController) {
-        this.playerTeam = playerTeam;
-        this.playerInventory = playerInventory;
-        this.gameMode = gameMode;
-        this.towerManager = towerManager;
-        this.battleController = battleController;
-
-        if (gameMode == GameMode.AUTO) {
-            attackButton.setDisable(true);
-            itemButton.setDisable(true);
-            switchButton.setDisable(true);
-        } else {
-            autoButton.setDisable(true);
-        }
-
-        initializeGraphicalBattle();
-        if (gameMode == GameMode.TOWER && towerManager != null) {
-            floorLabel.setText("Etage: NO" + towerManager.getFloorNumber());
-            roomLabel.setText("Salle: " + towerManager.getCurrentRoomIndex());
-        } else {
-            floorLabel.setText("");
-            roomLabel.setText("");
-        }
+    public void initializeView(boolean autoMode) {
+        this.autoMode = autoMode;
+        attackButton.setDisable(autoMode);
+        itemButton.setDisable(autoMode);
+        switchButton.setDisable(autoMode);
+        autoButton.setDisable(!autoMode);
+        showMainMenu();
+        clearMessages();
     }
 
-    public BattleController getBattleController() {
-        return battleController;
+    public void setForcedSwitch(boolean forcedSwitch) {
+        this.forcedSwitch = forcedSwitch;
+        updateBackButtonsState();
     }
 
-    public GameMode getGameMode() {
-        return gameMode;
+    public void renderBattle(BattleSnapshot snapshot) {
+        if (snapshot == null || snapshot.playerBugemon() == null || snapshot.opponentBugemon() == null) {
+            return;
+        }
+
+        currentSnapshot = snapshot;
+        updateBattleGraphics(snapshot);
     }
 
     @FXML
     public void handleItemMenu() {
-        viewListener.onItemMenu();
+        if (viewListener != null) {
+            viewListener.onItemMenu();
+        }
     }
 
     @FXML
     public void handleBugemonsMenu() {
-        viewListener.onBugemonsMenu();
+        if (viewListener != null) {
+            viewListener.onBugemonsMenu();
+        }
     }
 
     @FXML
     public void handleAuto(ActionEvent event) {
-        viewListener.onAuto(event);
+        if (viewListener != null) {
+            viewListener.onAuto(event);
+        }
     }
 
     @FXML
     public void handleAttack() {
-        viewListener.onAttack();
+        if (viewListener != null) {
+            viewListener.onAttack();
+        }
     }
 
     @FXML
     public void handleBackToMenu() {
-        viewListener.onBackToMenu();
+        if (viewListener != null) {
+            viewListener.onBackToMenu();
+        }
     }
 
     @FXML
     public void handleReturn(ActionEvent event) {
-        viewListener.onReturn(event);
-    }
-
-    public void showInventoryMenu() {
-        if (buttonsGrid != null && inventoryView != null) {
-            buttonsGrid.setVisible(false);
-            buttonsGrid.setManaged(false);
-            inventoryView.setVisible(true);
-            inventoryView.setManaged(true);
-            displayInventory();
-            updateBackButtonsState();
+        if (viewListener != null) {
+            viewListener.onReturn(event);
         }
     }
 
-    public void showBugemonsMenu() {
-        if (buttonsGrid != null && bugemonsView != null) {
-            buttonsGrid.setVisible(false);
-            buttonsGrid.setManaged(false);
-            bugemonsView.setVisible(true);
-            bugemonsView.setManaged(true);
-            displayTeam();
-            updateBackButtonsState();
-        }
+    public void showInventoryMenu(List<InventoryEntry> inventoryEntries) {
+        buttonsGrid.setVisible(false);
+        buttonsGrid.setManaged(false);
+        bugemonsView.setVisible(false);
+        bugemonsView.setManaged(false);
+        abilitiesView.setVisible(false);
+        abilitiesView.setManaged(false);
+        inventoryView.setVisible(true);
+        inventoryView.setManaged(true);
+        inventoryList.getItems().setAll(inventoryEntries);
+        updateBackButtonsState();
     }
 
-    public void showAbilitiesMenu() {
-        if (buttonsGrid != null && abilitiesView != null) {
-            buttonsGrid.setVisible(false);
-            buttonsGrid.setManaged(false);
-            abilitiesView.setVisible(true);
-            abilitiesView.setManaged(true);
-            displayAbilities();
-            updateBackButtonsState();
-        }
+    public void showBugemonsMenu(List<BugemonEntry> bugemonEntries) {
+        buttonsGrid.setVisible(false);
+        buttonsGrid.setManaged(false);
+        inventoryView.setVisible(false);
+        inventoryView.setManaged(false);
+        abilitiesView.setVisible(false);
+        abilitiesView.setManaged(false);
+        bugemonsView.setVisible(true);
+        bugemonsView.setManaged(true);
+        bugemonsList.getItems().setAll(bugemonEntries);
+        updateBackButtonsState();
+    }
+
+    public void showAbilitiesMenu(List<AbilityEntry> abilityEntries) {
+        buttonsGrid.setVisible(false);
+        buttonsGrid.setManaged(false);
+        inventoryView.setVisible(false);
+        inventoryView.setManaged(false);
+        bugemonsView.setVisible(false);
+        bugemonsView.setManaged(false);
+        abilitiesView.setVisible(true);
+        abilitiesView.setManaged(true);
+        abilitiesList.getItems().setAll(abilityEntries);
+        updateBackButtonsState();
     }
 
     public void showMainMenu() {
-        if (isForcedSwitch()) {
-            updateBackButtonsState();
-        }
-
-        if (buttonsGrid != null && inventoryView != null) {
-            inventoryView.setVisible(false);
-            inventoryView.setManaged(false);
-            bugemonsView.setVisible(false);
-            bugemonsView.setManaged(false);
-            abilitiesView.setVisible(false);
-            abilitiesView.setManaged(false);
-            buttonsGrid.setVisible(true);
-            buttonsGrid.setManaged(true);
-        }
-
+        inventoryView.setVisible(false);
+        inventoryView.setManaged(false);
+        bugemonsView.setVisible(false);
+        bugemonsView.setManaged(false);
+        abilitiesView.setVisible(false);
+        abilitiesView.setManaged(false);
+        buttonsGrid.setVisible(true);
+        buttonsGrid.setManaged(true);
         updateBackButtonsState();
     }
 
@@ -222,96 +215,60 @@ public class BattleWindow extends Window {
     }
 
     public void setBattleInputsDisabled(boolean disabled) {
-        attackButton.setDisable(disabled || gameMode == GameMode.AUTO);
-        itemButton.setDisable(disabled || gameMode == GameMode.AUTO);
+        attackButton.setDisable(disabled || autoMode);
+        itemButton.setDisable(disabled || autoMode);
         runButton.setDisable(disabled);
-        switchButton.setDisable(disabled || gameMode == GameMode.AUTO);
+        switchButton.setDisable(disabled || autoMode);
 
         inventoryView.setDisable(disabled);
         bugemonsView.setDisable(disabled);
         abilitiesView.setDisable(disabled);
     }
 
-    public void displayAbilities() {
-        if (battleController == null) {
-            abilitiesList.getItems().clear();
+    public void showLogMessages(List<String> logs) {
+        List<String> visibleLogs = logs == null
+                ? List.of()
+                : logs.stream().filter(message -> message != null && !message.isBlank()).toList();
+
+        if (visibleLogs.isEmpty()) {
+            clearMessages();
             return;
         }
 
-        List<Ability> abilities = new ArrayList<>();
-        for (Ability ability : battleController.getActiveBugemonSelf().getAbilities()) {
-            if (ability != null) {
-                abilities.add(ability);
-            }
-        }
-        abilitiesList.getItems().setAll(abilities);
-        setupAbilitiesList();
+        String allMessages = visibleLogs.stream()
+                .map(message -> wrapText(message, 35))
+                .collect(Collectors.joining("\n"));
+
+        battleLog.setText(allMessages);
+        messageBox.setVisible(true);
+        messageBox.setManaged(true);
     }
 
-    public void displayInventory() {
-        if (playerInventory == null) {
-            inventoryList.getItems().clear();
-            return;
-        }
-        inventoryList.getItems().setAll(playerInventory.getItems().keySet());
-        setupInventoryList();
-    }
-
-    public void displayTeam() {
-        if (playerTeam == null) {
-            bugemonsList.getItems().clear();
-            return;
-        }
-        bugemonsList.getItems().setAll(playerTeam.getMembers());
-        setupBugemonsList();
-    }
-
-    public void displayNextMessage() {
-        if (battleController == null) {
-            return;
-        }
-
-        List<String> logs = battleController.getLogMsg();
-        if (logs != null && !logs.isEmpty()) {
-            String allMessages = logs.stream()
-                    .filter(message -> message != null)
-                    .map(message -> wrapText(message, 35))
-                    .collect(Collectors.joining("\n"));
-            battleLog.setText(allMessages);
-            messageBox.setVisible(true);
-            messageBox.setManaged(true);
-            battleController.clearLogMsg();
-        } else {
-            battleLog.setText("");
-            messageBox.setVisible(false);
-            messageBox.setManaged(false);
-        }
-        initializeGraphicalBattle();
-    }
-
-    public void displayMessagesSequentially(Runnable onComplete) {
-        if (battleController == null) {
-            onComplete.run();
-            return;
-        }
-
+    public void displayMessagesSequentially(List<String> rawLogs,
+                                            Integer hpAfterFirstActionSelf,
+                                            Integer hpAfterFirstActionOpponent,
+                                            BattleSnapshot finalSnapshot,
+                                            Runnable onComplete) {
         hideAllMenus();
-        List<String> rawLogs = new ArrayList<>(battleController.getLogMsg());
-        battleController.clearLogMsg();
 
-        int separatorIndex = rawLogs.indexOf(null);
+        List<String> logs = rawLogs == null ? List.of() : new ArrayList<>(rawLogs);
+        int separatorIndex = logs.indexOf(null);
+
         List<String> phase1;
         List<String> phase2;
         if (separatorIndex < 0) {
-            phase1 = rawLogs.stream().filter(message -> message != null).collect(Collectors.toList());
-            phase2 = new ArrayList<>();
+            phase1 = logs.stream().filter(message -> message != null).collect(Collectors.toList());
+            phase2 = List.of();
         } else {
-            phase1 = rawLogs.subList(0, separatorIndex).stream().filter(message -> message != null).collect(Collectors.toList());
-            phase2 = rawLogs.subList(separatorIndex + 1, rawLogs.size()).stream().filter(message -> message != null).collect(Collectors.toList());
+            phase1 = logs.subList(0, separatorIndex).stream().filter(message -> message != null).collect(Collectors.toList());
+            phase2 = logs.subList(separatorIndex + 1, logs.size()).stream().filter(message -> message != null).collect(Collectors.toList());
         }
 
         if (phase1.isEmpty() && phase2.isEmpty()) {
-            initializeGraphicalBattle();
+            if (finalSnapshot != null) {
+                renderBattle(finalSnapshot);
+            }
+            clearMessages();
             onComplete.run();
             return;
         }
@@ -319,16 +276,16 @@ public class BattleWindow extends Window {
         messageBox.setVisible(true);
         messageBox.setManaged(true);
 
+        BattlePhaseVisual phase1Visual;
+        BattlePhaseVisual phase2Visual = new BattlePhaseVisual(finalSnapshot, null, null);
         if (separatorIndex >= 0) {
-            updateHPDisplay(battleController.getHpAfterFirstActionSelf(), battleController.getHpAfterFirstActionOpponent());
+            phase1Visual = new BattlePhaseVisual(currentSnapshot, hpAfterFirstActionSelf, hpAfterFirstActionOpponent);
         } else {
-            initializeGraphicalBattle();
+            phase1Visual = phase2Visual;
         }
 
         Runnable closeAndComplete = () -> {
-            battleLog.setText("");
-            messageBox.setVisible(false);
-            messageBox.setManaged(false);
+            clearMessages();
             onComplete.run();
         };
 
@@ -336,87 +293,60 @@ public class BattleWindow extends Window {
             if (phase2.isEmpty()) {
                 closeAndComplete.run();
             } else {
-                initializeGraphicalBattle();
-                displayPhase(phase2, 0, closeAndComplete);
+                displayPhase(phase2, 0, phase2Visual, closeAndComplete);
             }
         };
 
         if (phase1.isEmpty()) {
             afterPhase1.run();
         } else {
-            displayPhase(phase1, 0, afterPhase1);
+            displayPhase(phase1, 0, phase1Visual, afterPhase1);
         }
     }
 
-    public void stopBattleMusic() {
-        if (mediaPlayer != null) {
-            mediaPlayer.stop();
-            mediaPlayer.dispose();
-            mediaPlayer = null;
-        }
+    private void clearMessages() {
+        battleLog.setText("");
+        messageBox.setVisible(false);
+        messageBox.setManaged(false);
     }
 
-    private void initializeGraphicalBattle() {
-        if (battleController == null) {
-            return;
-        }
-
-        Bugemon playerBugemon = battleController.getActiveBugemonSelf();
-        Bugemon opponentBugemon = battleController.getActiveBugemonOpponent();
-        if (playerBugemon == null || opponentBugemon == null) {
-            return;
-        }
+    private void updateBattleGraphics(BattleSnapshot snapshot) {
+        BugemonDisplay playerBugemon = snapshot.playerBugemon();
+        BugemonDisplay opponentBugemon = snapshot.opponentBugemon();
 
         try {
-            Image playerImage = new Image(getClass().getResourceAsStream(playerBugemon.getSprite()));
+            Image playerImage = new Image(getClass().getResourceAsStream(playerBugemon.spritePath()));
             PlayerBugemon.setImage(playerImage);
         } catch (Exception e) {
             System.err.println("Failed to load player bugemon sprite: " + e.getMessage());
         }
 
-        String playerColor = getColor(playerBugemon.getType());
-        PlayerBugemonLabel.setText(playerBugemon.getName());
-        PlayerLevelLabel.setText("Lv." + playerBugemon.getLevel());
-        PlayerBugemonLabel.setStyle("-fx-text-fill: " + playerColor + ";");
-        double playerRatio = (double) playerBugemon.getHp() / playerBugemon.getBaseStats().getHp();
+        PlayerBugemonLabel.setText(playerBugemon.name());
+        PlayerLevelLabel.setText("Lv." + playerBugemon.level());
+        PlayerBugemonLabel.setStyle("-fx-text-fill: " + playerBugemon.color() + ";");
+        double playerRatio = (double) playerBugemon.hp() / playerBugemon.maxHp();
         PlayerBugemonHPBar.setProgress(playerRatio);
         updateHPBarColor(PlayerBugemonHPBar, playerRatio);
-        PlayerBugemonHPNumber.setText(playerBugemon.getHp() + " / " + playerBugemon.getBaseStats().getHp());
+        PlayerBugemonHPNumber.setText(playerBugemon.hp() + " / " + playerBugemon.maxHp());
 
         try {
-            Image opponentImage = new Image(getClass().getResourceAsStream(opponentBugemon.getSprite()));
+            Image opponentImage = new Image(getClass().getResourceAsStream(opponentBugemon.spritePath()));
             OpponentBugemon.setImage(opponentImage);
         } catch (Exception e) {
             System.err.println("Failed to load opponent bugemon sprite: " + e.getMessage());
         }
 
-        String opponentColor = getColor(opponentBugemon.getType());
-        OpponentBugemonLabel.setText(opponentBugemon.getName());
-        OpponentLevelLabel.setText("Lv." + opponentBugemon.getLevel());
-        OpponentBugemonLabel.setStyle("-fx-text-fill: " + opponentColor + ";");
-        double opponentRatio = (double) opponentBugemon.getHp() / opponentBugemon.getBaseStats().getHp();
+        OpponentBugemonLabel.setText(opponentBugemon.name());
+        OpponentLevelLabel.setText("Lv." + opponentBugemon.level());
+        OpponentBugemonLabel.setStyle("-fx-text-fill: " + opponentBugemon.color() + ";");
+        double opponentRatio = (double) opponentBugemon.hp() / opponentBugemon.maxHp();
         OpponentHPBar.setProgress(opponentRatio);
         updateHPBarColor(OpponentHPBar, opponentRatio);
-        OpponentHPNumber.setText(opponentBugemon.getHp() + " / " + opponentBugemon.getBaseStats().getHp());
-    }
-
-    private static String getColor(Type type) {
-        return switch (type) {
-            case PYRO -> "#ED2424";
-            case FLORA -> "#50A346";
-            case AQUA -> "#51B0F0";
-            case LITHO -> "#807979";
-            default -> "#ced4da";
-        };
-    }
-
-    private boolean isForcedSwitch() {
-        return battleController != null && battleController.getState() == BattleState.SWAPPING;
+        OpponentHPNumber.setText(opponentBugemon.hp() + " / " + opponentBugemon.maxHp());
     }
 
     private void updateBackButtonsState() {
-        boolean disableBack = isForcedSwitch();
-        setBackButtonDisabled(bugemonsView, disableBack);
+        setBackButtonDisabled(bugemonsView, forcedSwitch);
     }
 
     private void setBackButtonDisabled(VBox view, boolean disabled) {
@@ -434,7 +364,7 @@ public class BattleWindow extends Window {
     private void setupInventoryList() {
         inventoryList.setCellFactory(new Callback<>() {
             @Override
-            public ListCell<Item> call(ListView<Item> listView) {
+            public ListCell<InventoryEntry> call(ListView<InventoryEntry> listView) {
                 return new ListCell<>() {
                     private final HBox hbox = new HBox(10);
                     private final ImageView imageView = new ImageView();
@@ -446,27 +376,28 @@ public class BattleWindow extends Window {
                         imageView.setFitWidth(30);
                         hbox.getChildren().addAll(imageView, label, button);
                         button.setOnAction(event -> {
-                            Item item = getItem();
-                            if (item != null) {
-                                viewListener.onUseItem(item, event);
+                            InventoryEntry entry = getItem();
+                            if (entry != null && viewListener != null) {
+                                viewListener.onUseItem(entry.itemId(), event);
                             }
                         });
                     }
 
                     @Override
-                    protected void updateItem(Item item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (empty || item == null) {
+                    protected void updateItem(InventoryEntry entry, boolean empty) {
+                        super.updateItem(entry, empty);
+                        if (empty || entry == null) {
+                            setText(null);
                             setGraphic(null);
                         } else {
                             try {
-                                Image image = new Image(getClass().getResourceAsStream(item.getSprite()));
+                                Image image = new Image(getClass().getResourceAsStream(entry.itemSpritePath()));
                                 imageView.setImage(image);
                             } catch (Exception e) {
                                 System.err.println("Failed to load item image: " + e.getMessage());
                             }
-                            label.setText(item.getName() + " x" + playerInventory.getItems().get(item));
-                            button.setDisable(battleController == null || !battleController.checkItem(item));
+                            label.setText(entry.itemName() + " x" + entry.quantity());
+                            button.setDisable(!entry.usable());
                             setGraphic(hbox);
                         }
                     }
@@ -478,7 +409,7 @@ public class BattleWindow extends Window {
     private void setupBugemonsList() {
         bugemonsList.setCellFactory(new Callback<>() {
             @Override
-            public ListCell<Bugemon> call(ListView<Bugemon> listView) {
+            public ListCell<BugemonEntry> call(ListView<BugemonEntry> listView) {
                 return new ListCell<>() {
                     private final HBox hbox = new HBox(10);
                     private final ImageView imageView = new ImageView();
@@ -490,28 +421,28 @@ public class BattleWindow extends Window {
                         imageView.setFitWidth(30);
                         hbox.getChildren().addAll(imageView, label, button);
                         button.setOnAction(event -> {
-                            Bugemon bugemon = getItem();
-                            if (bugemon != null) {
-                                viewListener.onSwapBugemon(bugemon, event);
+                            BugemonEntry entry = getItem();
+                            if (entry != null && viewListener != null) {
+                                viewListener.onSwapBugemon(entry.bugemonId(), event);
                             }
                         });
                     }
 
                     @Override
-                    protected void updateItem(Bugemon bugemon, boolean empty) {
-                        super.updateItem(bugemon, empty);
-                        if (empty || bugemon == null || (battleController != null && bugemon.equals(battleController.getActiveBugemonSelf()))) {
+                    protected void updateItem(BugemonEntry entry, boolean empty) {
+                        super.updateItem(entry, empty);
+                        if (empty || entry == null || entry.active()) {
                             setText(null);
                             setGraphic(null);
                         } else {
                             try {
-                                Image image = new Image(getClass().getResourceAsStream(bugemon.getSprite()));
+                                Image image = new Image(getClass().getResourceAsStream(entry.bugemonSpritePath()));
                                 imageView.setImage(image);
                             } catch (Exception e) {
                                 System.err.println("Failed to load bugemon image: " + e.getMessage());
                             }
-                            label.setText(bugemon.isKO() ? bugemon.getName() + " (KO)" : bugemon.getName());
-                            button.setDisable(bugemon.isKO());
+                            label.setText(entry.ko() ? entry.bugemonName() + " (KO)" : entry.bugemonName());
+                            button.setDisable(!entry.selectable());
                             setGraphic(hbox);
                         }
                     }
@@ -523,7 +454,7 @@ public class BattleWindow extends Window {
     private void setupAbilitiesList() {
         abilitiesList.setCellFactory(new Callback<>() {
             @Override
-            public ListCell<Ability> call(ListView<Ability> listView) {
+            public ListCell<AbilityEntry> call(ListView<AbilityEntry> listView) {
                 return new ListCell<>() {
                     private final HBox hbox = new HBox(10);
                     private final Label label = new Label();
@@ -532,33 +463,31 @@ public class BattleWindow extends Window {
                     {
                         hbox.getChildren().addAll(label, button);
                         button.setOnAction(event -> {
-                            Ability ability = getItem();
-                            if (ability != null) {
-                                viewListener.onUseAbility(ability, event);
+                            AbilityEntry entry = getItem();
+                            if (entry != null && viewListener != null) {
+                                viewListener.onUseAbility(entry.abilityId(), event);
                             }
                         });
                     }
 
                     @Override
-                    protected void updateItem(Ability ability, boolean empty) {
-                        super.updateItem(ability, empty);
-                        if (empty || ability == null) {
+                    protected void updateItem(AbilityEntry entry, boolean empty) {
+                        super.updateItem(entry, empty);
+                        if (empty || entry == null) {
                             setText(null);
                             setGraphic(null);
                             setTooltip(null);
                         } else {
-                            label.setText(ability.getName());
-                            String color = getColor(ability.getType());
+                            label.setText(entry.abilityName());
 
                             hbox.setStyle(
-                                    "-fx-background-color: " + color + ";" +
+                                    "-fx-background-color: " + entry.color() + ";" +
                                             "-fx-padding: 6;" +
                                             "-fx-background-radius: 6;"
                             );
 
-                            String effectiveness = battleController != null ? battleController.getEffectiveness(ability) : null;
-                            if (effectiveness != null) {
-                                Tooltip tooltip = new Tooltip(effectiveness);
+                            if (entry.effectiveness() != null) {
+                                Tooltip tooltip = new Tooltip(entry.effectiveness());
                                 tooltip.setShowDelay(javafx.util.Duration.millis(100));
                                 setTooltip(tooltip);
                             } else {
@@ -608,50 +537,46 @@ public class BattleWindow extends Window {
         return result.toString();
     }
 
-    private void displayPhase(List<String> messages, int index, Runnable onComplete) {
+    private void displayPhase(List<String> messages, int index, BattlePhaseVisual visual, Runnable onComplete) {
         if (index >= messages.size()) {
             onComplete.run();
             return;
         }
-        battleLog.setText(wrapText(messages.get(index), 35));
 
-        if (containsSwitchMessage(messages)) {
-            initializeGraphicalBattle();
-        }
-        if (battleController != null) {
-            updateHPDisplay(battleController.getActiveBugemonSelf().getHp(), battleController.getActiveBugemonOpponent().getHp());
-        }
+        battleLog.setText(wrapText(messages.get(index), 35));
+        applyPhaseVisual(visual);
 
         PauseTransition pause = new PauseTransition(javafx.util.Duration.seconds(2));
-        pause.setOnFinished(event -> displayPhase(messages, index + 1, onComplete));
+        pause.setOnFinished(event -> displayPhase(messages, index + 1, visual, onComplete));
         pause.play();
     }
 
-    private boolean containsSwitchMessage(List<String> messages) {
-        for (String message : messages) {
-            if (message != null && message.contains("envoyé")) {
-                return true;
-            }
+    private void applyPhaseVisual(BattlePhaseVisual visual) {
+        if (visual.snapshot() != null) {
+            renderBattle(visual.snapshot());
         }
-        return false;
+
+        if (visual.playerHp() != null && visual.opponentHp() != null) {
+            updateHPDisplay(visual.playerHp(), visual.opponentHp());
+        }
     }
 
     private void updateHPDisplay(int selfHp, int opponentHp) {
-        if (battleController == null) {
+        if (currentSnapshot == null || currentSnapshot.playerBugemon() == null || currentSnapshot.opponentBugemon() == null) {
             return;
         }
 
-        Bugemon self = battleController.getActiveBugemonSelf();
-        Bugemon opponent = battleController.getActiveBugemonOpponent();
-        double selfRatio = (double) selfHp / self.getBaseStats().getHp();
-        double opponentRatio = (double) opponentHp / opponent.getBaseStats().getHp();
+        BugemonDisplay self = currentSnapshot.playerBugemon();
+        BugemonDisplay opponent = currentSnapshot.opponentBugemon();
+        double selfRatio = (double) selfHp / self.maxHp();
+        double opponentRatio = (double) opponentHp / opponent.maxHp();
 
         PlayerBugemonHPBar.setProgress(selfRatio);
-        PlayerBugemonHPNumber.setText(selfHp + " / " + self.getBaseStats().getHp());
+        PlayerBugemonHPNumber.setText(selfHp + " / " + self.maxHp());
         updateHPBarColor(PlayerBugemonHPBar, selfRatio);
 
         OpponentHPBar.setProgress(opponentRatio);
-        OpponentHPNumber.setText(opponentHp + " / " + opponent.getBaseStats().getHp());
+        OpponentHPNumber.setText(opponentHp + " / " + opponent.maxHp());
         updateHPBarColor(OpponentHPBar, opponentRatio);
     }
 
@@ -676,6 +601,25 @@ public class BattleWindow extends Window {
         roomLabel.setText("");
     }
 
+    public record BattleSnapshot(BugemonDisplay playerBugemon, BugemonDisplay opponentBugemon) {
+    }
+
+    public record BugemonDisplay(String name, String spritePath, String color, int level, int hp, int maxHp) {
+    }
+
+    public record InventoryEntry(String itemId, String itemName, String itemSpritePath, int quantity, boolean usable) {
+    }
+
+    public record BugemonEntry(String bugemonId, String bugemonName, String bugemonSpritePath,
+                               boolean ko, boolean active, boolean selectable) {
+    }
+
+    public record AbilityEntry(String abilityId, String abilityName, String color, String effectiveness) {
+    }
+
+    private record BattlePhaseVisual(BattleSnapshot snapshot, Integer playerHp, Integer opponentHp) {
+    }
+
     public interface ViewListener {
         void onItemMenu();
         void onBugemonsMenu();
@@ -683,8 +627,8 @@ public class BattleWindow extends Window {
         void onAttack();
         void onBackToMenu();
         void onReturn(ActionEvent event);
-        void onUseItem(Item item, ActionEvent event);
-        void onSwapBugemon(Bugemon bugemon, ActionEvent event);
-        void onUseAbility(Ability ability, ActionEvent event);
+        void onUseItem(String itemId, ActionEvent event);
+        void onSwapBugemon(String bugemonId, ActionEvent event);
+        void onUseAbility(String abilityId, ActionEvent event);
     }
 }

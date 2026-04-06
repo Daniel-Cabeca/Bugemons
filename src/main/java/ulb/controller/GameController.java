@@ -699,9 +699,7 @@ BattleWindowController.Listener{
 	}
 
 	private void switchToBattleWindow() {
-		if (battleWindowController == null) {
-			battleWindowController = new BattleWindowController(stage, this);
-		}
+		battleWindowController = new BattleWindowController(stage, this);
 
 		try {
 			battleWindowController.show();

@@ -17,12 +17,10 @@ public class FloorRewardWindow extends Window {
 	@FXML
 	private Label roomLabel;
 
-	@Override
-	public void onLoad() {
-		Message m = sendMessage(new GetInfoMessage(InfoType.REWARD_PLACE));
-		if (m instanceof RewardPlaceMessage placeMessage) {
-			initializeLabels(placeMessage.getFloorNumber(), placeMessage.getRoomNumber());
-		}
+	private ViewListener viewListener;
+
+	public void setViewListener(ViewListener viewListener) {
+		this.viewListener = viewListener;
 	}
 
 	public void initializeLabels(int floorNumber, int roomNumber) {
@@ -32,17 +30,23 @@ public class FloorRewardWindow extends Window {
 
 	@FXML
 	private void objectReward(){
-		sendMessage(new ReceiveObjectRewardMessage());
+		viewListener.onObjectReward();
 	}
 
 	@FXML
 	private void newAttackReward(){
-		switchWindow(WindowPath.CHOOSE_BUGEMON);
+		viewListener.onAttackReward();
 	}
 
 	@FXML
 	private void statReward(){
-		switchWindow(WindowPath.CHOOSE_BUGEMON);
+		viewListener.onStatReward();
+	}
+
+	public interface ViewListener {
+		void onObjectReward();
+		void onAttackReward();
+		void onStatReward();
 	}
 
 }

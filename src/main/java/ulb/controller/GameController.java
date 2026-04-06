@@ -46,7 +46,7 @@ import java.util.List;
 
 public class GameController extends Application implements TeamController.Listener, ModeController.Listener,
 BattleModeController.Listener, NextRoomController.Listener, ChooseBugemonController.Listener,
-BattleWindowController.Listener, LevelUpController.Listener{
+BattleWindowController.Listener, LevelUpController.Listener, FloorRewardController.Listener {
 
 	private Player player;
 	private TowerManager towerModeTowerManager;
@@ -72,6 +72,7 @@ BattleWindowController.Listener, LevelUpController.Listener{
 	private ChooseBugemonController chooseBugemonController;
 	private BattleWindowController battleWindowController;
 	private LevelUpController levelUpController;
+	private FloorRewardController floorRewardController;
 
 	public static void main(String[] args) {
 		try {
@@ -319,7 +320,7 @@ BattleWindowController.Listener, LevelUpController.Listener{
 					break;
 
 				case REWARD:
-					switchWindow(WindowPath.FLOOR_REWARD);
+					switchToFloorRewardWindow();
 					break;
 
 				default:
@@ -728,7 +729,7 @@ BattleWindowController.Listener, LevelUpController.Listener{
 		if (current != null && pendingRewardBattleController != null) {
 			return pendingRewardBattleController.getRewards(current);
 		}
-		return List.of(); // vide si rien
+		return List.of();
 	}
 
 	private void switchToBattleWindow() {
@@ -736,6 +737,18 @@ BattleWindowController.Listener, LevelUpController.Listener{
 
 		try {
 			battleWindowController.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * initialises a new floorRewardController and switches to the window
+	 */
+	private void switchToFloorRewardWindow() {
+		floorRewardController = new FloorRewardController(stage, this, getTowerFloorNumber(), getCurrentRoomIndex());
+		try {
+			floorRewardController.show();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -754,7 +767,6 @@ BattleWindowController.Listener, LevelUpController.Listener{
 		}
 	}
 
-	// ChooseBugemonController methods override
 	@Override
 	public void onReturnFloorRewardWindow(){
 		try {
@@ -764,4 +776,19 @@ BattleWindowController.Listener, LevelUpController.Listener{
 		}
 	}
 
+	@Override
+	public void onObjectReward() {
+		player.getInventory().addItem(ServiceLoader.getItemService().getRandomItem(), 1);
+		switchToNextRoomWindow();
+	}
+
+	@Override
+	public void onAttackReward() {
+		switchWindow(WindowPath.CHOOSE_BUGEMON);
+	}
+
+	@Override
+	public void onStatReward() {
+		switchWindow(WindowPath.CHOOSE_BUGEMON);
+	}
 }

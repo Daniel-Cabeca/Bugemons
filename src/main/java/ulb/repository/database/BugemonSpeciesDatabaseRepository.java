@@ -40,12 +40,12 @@ public class BugemonSpeciesDatabaseRepository implements BugemonSpeciesRepositor
 		try {
 
 
-			// 1. Infos de base
+			String sprite = specie.getSprite().substring(5);
 			try (PreparedStatement statement = this.database.prepareStatement(sqlSpecies)) {
 				statement.setString(1, specie.getId());
 				statement.setString(2, specie.getName());
 				statement.setString(3, specie.getType().name());
-				statement.setString(4, specie.getSprite());
+				statement.setString(4, sprite);
 				statement.setInt(5, specie.isStarter() ? 1 : 0);
 				statement.setInt(6, specie.getBaseStats().getHp());
 				statement.setInt(7, specie.getBaseStats().getAttack());
@@ -115,10 +115,11 @@ public class BugemonSpeciesDatabaseRepository implements BugemonSpeciesRepositor
 
 				// 3. Ajout des capacités à l'AbilitySet
 				String abilityId = rs.getString("ability_id");
-				if (abilityId != null) {
+				if (abilityId != null && index < 3) {
 					try {
 						// On récupère l'objet Ability complet via son propre repo
 						abilities.setAbility(index,abilityRepo.findById(abilityId));
+						index++;
 					} catch (NoSuchElementException e) {
 						System.err.println("Warning: Ability " + abilityId + " not found for species " + id);
 					}

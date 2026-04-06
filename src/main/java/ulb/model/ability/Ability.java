@@ -154,8 +154,8 @@ public class Ability implements HasId {
 	 * @return The damage dealt
 	 */
 	public int getDamage(Bugemon ownBugemon, Bugemon oppositeBugemon, Random random) {
-		float attackValue = ownBugemon.getFightStats().attack;
-		float defenseValue = oppositeBugemon.getFightStats().defense;
+		float attackValue = ownBugemon.getFightStats().getAttack();
+		float defenseValue = oppositeBugemon.getFightStats().getDefense();
 
 		float attackFactor = (100 + attackValue) / 100f;
 		float defenseFactor = 100f / (100 + defenseValue);

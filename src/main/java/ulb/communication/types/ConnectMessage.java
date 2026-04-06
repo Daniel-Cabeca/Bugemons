@@ -1,6 +1,7 @@
 package ulb.communication.types;
 
 import ulb.communication.Message;
+import ulb.controller.GameController;
 
 public class ConnectMessage implements Message{
     private String connectMessage;
@@ -16,5 +17,10 @@ public class ConnectMessage implements Message{
     @Override
     public MessageType getMessageType() {
         return MessageType.CONNECT;
+    }
+
+    @Override
+    public Message handle(GameController controller) {
+        return controller.applyOn(this);
     }
 }

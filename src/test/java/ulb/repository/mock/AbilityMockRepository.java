@@ -40,6 +40,6 @@ public class AbilityMockRepository implements AbilityRepository {
 
 	@Override
 	public Iterable<Ability> findAll() {
-		return null;
+		return abilityRepository.findAll();
 	}
 }

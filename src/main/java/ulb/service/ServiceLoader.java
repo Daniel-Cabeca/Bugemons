@@ -1,6 +1,16 @@
 package ulb.service;
 
-import ulb.model.bugemon.BugemonSpecies;import ulb.repository.AbilityRepository;import ulb.repository.BugemonSpeciesRepository;import ulb.repository.InventoryRepository;import ulb.repository.ItemRepository;import ulb.repository.database.AbilityDatabaseRepository;import ulb.repository.database.BugemonSpeciesDatabaseRepository;import ulb.repository.database.ItemDatabaseRepository;import ulb.repository.database.sql.Database;import ulb.repository.database.sql.DatabaseInitializer;import ulb.repository.json.AbilityJsonRepository;
+import ulb.model.bugemon.BugemonSpecies;
+import ulb.repository.AbilityRepository;
+import ulb.repository.BugemonSpeciesRepository;
+import ulb.repository.InventoryRepository;
+import ulb.repository.ItemRepository;
+import ulb.repository.database.AbilityDatabaseRepository;
+import ulb.repository.database.BugemonSpeciesDatabaseRepository;
+import ulb.repository.database.ItemDatabaseRepository;
+import ulb.repository.database.sql.Database;
+import ulb.repository.database.sql.DatabaseInitializer;
+import ulb.repository.json.AbilityJsonRepository;
 import ulb.repository.json.BugemonSpeciesJsonRepository;
 import ulb.repository.json.ItemJsonRepository;
 import ulb.repository.json.InventoryJsonRepository;
@@ -12,6 +22,7 @@ import ulb.repository.json.InventoryJsonRepository;
 public abstract class ServiceLoader {
     private static ItemService itemService;
 	private static BugemonService bugemonService;
+	private static AbilityService abilityService;
 
 	static {
 		// at class initialization
@@ -24,6 +35,10 @@ public abstract class ServiceLoader {
 
 	public static ItemService getItemService() {
 		return itemService;
+	}
+
+	public static AbilityService getAbilityService() {
+		return abilityService;
 	}
 
 	/**

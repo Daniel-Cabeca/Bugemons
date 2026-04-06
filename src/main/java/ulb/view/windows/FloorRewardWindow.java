@@ -5,6 +5,7 @@ import javafx.scene.control.Label;
 import ulb.communication.Message;
 import ulb.communication.types.GetInfoMessage;
 import ulb.communication.types.InfoType;
+import ulb.communication.types.ReceiveObjectRewardMessage;
 import ulb.communication.types.RewardPlaceMessage;
 import ulb.view.WindowPath;
 
@@ -18,7 +19,7 @@ public class FloorRewardWindow extends Window {
 
 	@Override
 	public void onLoad() {
-		Message m = viewManager.handleMessage(new GetInfoMessage(InfoType.REWARD_PLACE));
+		Message m = sendMessage(new GetInfoMessage(InfoType.REWARD_PLACE));
 		if (m instanceof RewardPlaceMessage placeMessage) {
 			initializeLabels(placeMessage.getFloorNumber(), placeMessage.getRoomNumber());
 		}
@@ -31,17 +32,17 @@ public class FloorRewardWindow extends Window {
 
 	@FXML
 	private void objectReward(){
-		sendSwitchWindowMessage(WindowPath.NEXT_ROOM);
+		sendMessage(new ReceiveObjectRewardMessage());
 	}
 
 	@FXML
 	private void newAttackReward(){
-		sendSwitchWindowMessage(WindowPath.NEXT_ROOM);
+		switchWindow(WindowPath.CHOOSE_BUGEMON);
 	}
 
 	@FXML
 	private void statReward(){
-		sendSwitchWindowMessage(WindowPath.NEXT_ROOM);
+		switchWindow(WindowPath.CHOOSE_BUGEMON);
 	}
 
 }

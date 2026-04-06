@@ -3,6 +3,7 @@ package ulb.model.bugemon;
 import java.util.NoSuchElementException;
 import java.util.Random;
 
+import ulb.model.ability.Ability;
 import ulb.model.type.Type;
 import ulb.model.ability.AbilitySet;
 
@@ -10,14 +11,16 @@ import ulb.service.ServiceLoader;
 
 public class Bugemon {
 	private BugemonSpecies species;
+	private AbilitySet abilities;
 	private Stats baseStats;
 	private Stats fightStats;
-	private int xp = 0;
-	private int level = 1;
+	private int xp;
+	private int level;
 	private int remainingRewards = 0;
 
 	public Bugemon(BugemonSpecies species) {
 		this.species = species;
+		this.abilities = species.getAbilities();
 		this.baseStats = new Stats(this.species.getBaseStats());
 		this.fightStats = new Stats(this.species.getBaseStats());
 		this.xp = 0;
@@ -25,6 +28,7 @@ public class Bugemon {
 	}
 
 	public BugemonSpecies getSpecies() { return this.species; }
+	public AbilitySet getAbilities() { return this.abilities; }
 	public Stats getBaseStats() { return this.baseStats; }
 	public Stats getFightStats() { return this.fightStats; }
 	public int getXp() { return this.xp; }
@@ -35,17 +39,22 @@ public class Bugemon {
 	public String getId() { return this.getSpecies().getId(); }
 	public String getName() { return this.getSpecies().getName(); }
 	public Type getType() { return this.getSpecies().getType(); }
-	public AbilitySet getAbilities() { return this.getSpecies().getAbilities(); }
 	public String getSprite() { return this.getSpecies().getSprite(); }
 
 	public int getHp() { return this.getFightStats().getHp(); }
 	public int getAttack() { return this.getFightStats().getAttack(); }
 	public int getDefense() { return this.getFightStats().getDefense(); }
 	public int getInitiative() { return this.getFightStats().getInitiative(); }
-	public boolean isKO() {return this.fightStats.hp <= 0;}
+	public boolean isKO() {return this.fightStats.getHp() <= 0;}
+
+	public void swapAbility(Ability newAbility, Ability oldAbility) {
+		if (newAbility.getType() == this.getType()) {
+			abilities.swapAbility(newAbility, oldAbility);
+		}
+	}
 
 	public boolean hasHPDecreased(){
-		return this.baseStats.hp > this.fightStats.hp;
+		return this.baseStats.getHp() > this.fightStats.getHp();
 	}
 
 	public void changeBaseStats(Stats delta) {
@@ -126,42 +135,6 @@ public class Bugemon {
 		} 
 		Random rand = new Random();
 		return rand.nextInt(2) == 0;
-	}
-
-	// Deprecated constructors
-	// Should be replaced by the use of services
-
-	public Bugemon(int hp, int attack, int defense, int initiative) {
-		Stats stats = new Stats(hp, attack, defense, initiative);
-		BugemonSpecies species = new BugemonSpecies(stats);
-
-		this.species = species;
-		this.baseStats = new Stats(this.species.getBaseStats());
-		this.fightStats = new Stats(this.species.getBaseStats());
-		this.xp = 0;
-		this.level = 1;
-	}
-
-	public Bugemon(Type type, int hp, int attack, int defense, int initiative) {
-		Stats stats = new Stats(hp, attack, defense, initiative);
-		BugemonSpecies species = new BugemonSpecies(type, stats);
-
-		this.species = species;
-		this.baseStats = new Stats(this.species.getBaseStats());
-		this.fightStats = new Stats(this.species.getBaseStats());
-		this.xp = 0;
-		this.level = 1;
-	}
-
-	public Bugemon(String name, Type type, int hp, int attack, int defense, int initiative) {
-		Stats stats = new Stats(hp, attack, defense, initiative);
-		BugemonSpecies species = new BugemonSpecies(name, type, stats);
-
-		this.species = species;
-		this.baseStats = new Stats(this.species.getBaseStats());
-		this.fightStats = new Stats(this.species.getBaseStats());
-		this.xp = 0;
-		this.level = 1;
 	}
 
 	public Bugemon(String id) throws NoSuchElementException {

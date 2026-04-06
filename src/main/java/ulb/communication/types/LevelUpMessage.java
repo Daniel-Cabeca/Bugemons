@@ -2,6 +2,7 @@ package ulb.communication.types;
 
 import javafx.event.ActionEvent;
 import ulb.communication.Message;
+import ulb.controller.GameController;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.reward.Reward;
 
@@ -35,5 +36,10 @@ public class LevelUpMessage implements Message {
     @Override
     public MessageType getMessageType() {
         return MessageType.LEVEL_UP;
+    }
+
+    @Override
+    public Message handle(GameController controller) {
+        return controller.applyOn(this);
     }
 }

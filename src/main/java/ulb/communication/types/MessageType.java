@@ -9,6 +9,7 @@ public enum MessageType {
     ERROR,
     GET_INFO,
     LEVEL_UP,
+    RECEIVE_OBJECT_REWARD,
     REWARD_PLACE,
     SETUP_TEAM,
     SETUP_GAME_MODE,

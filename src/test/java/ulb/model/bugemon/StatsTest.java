@@ -12,10 +12,10 @@ public class StatsTest {
 		Stats stat1 = new Stats(10, 10, 10, 10);
 		Stats stat2 = new Stats(10, 1, 5, 7);
 		stat1.change(stat2);
-		assertEquals(20, stat1.hp);
-		assertEquals(15, stat1.defense);
-		assertEquals(11, stat1.attack);
-		assertEquals(17, stat1.initiative);
+		assertEquals(20, stat1.getHp());
+		assertEquals(15, stat1.getDefense());
+		assertEquals(11, stat1.getAttack());
+		assertEquals(17, stat1.getInitiative());
 	}
 
 	@Test
@@ -23,10 +23,10 @@ public class StatsTest {
 		Stats stat1 = new Stats(10, 10, 10, 10);
 		Stats stat2 = new Stats(-11, -20, -8, -20);
 		stat1.change(stat2);
-		assertEquals(0, stat1.hp);
-		assertEquals(2, stat1.defense);
-		assertEquals(0, stat1.attack);
-		assertEquals(0, stat1.initiative);
+		assertEquals(0, stat1.getHp());
+		assertEquals(2, stat1.getDefense());
+		assertEquals(0, stat1.getAttack());
+		assertEquals(0, stat1.getInitiative());
 	}
 
 	@Test

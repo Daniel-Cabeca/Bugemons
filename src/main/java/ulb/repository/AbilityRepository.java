@@ -17,5 +17,10 @@ public interface AbilityRepository {
 	 */
 	public Ability findById(String id) throws NoSuchElementException;
 
-	Iterable<Ability> findAll();
+	/**
+	 * Gives an iterable list of the abilities in the repository.
+	 *
+	 * @return An object iterable over the existing abilities
+	 */
+	public Iterable<Ability> findAll();
 }

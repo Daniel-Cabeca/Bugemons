@@ -52,6 +52,9 @@ public class AbilityJsonRepository implements AbilityRepository {
 		return this.abilities.get(id);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Iterable<Ability> findAll() {
 		return this.abilities;

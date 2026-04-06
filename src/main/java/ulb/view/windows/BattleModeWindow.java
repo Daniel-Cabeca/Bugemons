@@ -7,62 +7,49 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import ulb.communication.types.GameMode;
-import ulb.communication.types.SetupGameModeMessage;
-import ulb.communication.types.TowerNextRoomMessage;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.team.Team;
 import ulb.utils.Scaling;
-import ulb.view.WindowPath;
 
 
 public class BattleModeWindow extends Window {
 
     @FXML
     private GridPane playerTeamGrid;
-
     @FXML
     private VBox content;
+
+    private ViewListener viewListener;
 
     @FXML
     public void initialize() {
         Scaling.applyScaling(content);
     }
 
-    /**
-     * Called after the window is created and the controller is set
-     */
-    @Override
-    public void onLoad() {
-        displayTeam();
+    public void setViewListener(ViewListener viewListener) {
+        this.viewListener = viewListener;
     }
 
 
     public void handleAutomaticBattle() {
-        SetupGameModeMessage setupMessage = new SetupGameModeMessage(GameMode.AUTO);
-        viewManager.handleMessage(setupMessage);
-        sendSwitchWindowMessage(WindowPath.BATTLE);
+        viewListener.onAutoBattle();
     }
 
     public void handleControlledBattle() {
-        SetupGameModeMessage setupMessage = new SetupGameModeMessage(GameMode.CONTROLLED);
-        viewManager.handleMessage(setupMessage);
-        sendSwitchWindowMessage(WindowPath.BATTLE);
+        viewListener.onControlledBattle();
     }
 
 	public void handleTowerBattle(ActionEvent event) {
-        SetupGameModeMessage setupMessage = new SetupGameModeMessage(GameMode.TOWER);
-        viewManager.handleMessage(setupMessage);
-        viewManager.handleMessage(new TowerNextRoomMessage(event));
+        viewListener.onTowerMode();
 	}
 
 	@FXML
 	private void handleReturn(){
-        sendSwitchWindowMessage(WindowPath.CREATE_TEAM);
+        viewListener.onReturn();
 	}
 
-    public void displayTeam() {
-        displayTeamWithStats(viewManager.getGameController().getTeam(), playerTeamGrid);
+    public void displayTeam(Team team) {
+        displayTeamWithStats(team, playerTeamGrid);
     }
 
     /**
@@ -103,6 +90,12 @@ public class BattleModeWindow extends Window {
             }
 
         }
+    }
 
+    public interface ViewListener {
+        void onAutoBattle();
+        void onControlledBattle();
+        void onTowerMode();
+        void onReturn();
     }
 }

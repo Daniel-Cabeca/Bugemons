@@ -15,7 +15,6 @@ import ulb.model.type.Type;
 
 import ulb.repository.BugemonSpeciesRepository;
 import ulb.repository.mock.BugemonSpeciesMockRepository;
-import ulb.service.AbilityService;
 import ulb.service.BugemonService;
 
 public class OpponentTeamGeneratorTest {

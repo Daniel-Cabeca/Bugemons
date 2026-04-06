@@ -18,11 +18,11 @@ import ulb.controller.strategy.StrategyRandom;
 import ulb.controller.towerManager.FloorManager;
 import ulb.controller.towerManager.RoomManager;
 import ulb.controller.towerManager.TowerManager;
+import ulb.model.ability.Ability;
 import ulb.model.battle.BattleState;
 import ulb.model.Player;
 import ulb.model.battle.Battle;
 import ulb.model.battle.Battle.ParticipantLabel;
-import ulb.model.ability.Ability;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.item.Item;
 import ulb.model.team.OpponentTeamGenerator;
@@ -30,9 +30,9 @@ import ulb.model.team.Team;
 import ulb.model.tower.Room;
 import ulb.model.tower.RoomType;
 import ulb.model.reward.Reward;
+import ulb.model.reward.RewardType;
 import ulb.service.ServiceLoader;
 import ulb.view.WindowPath;
-import ulb.view.windows.ChooseBugemonWindow;
 import ulb.view.windows.ModeWindow;
 import ulb.view.windows.NextRoomWindow;
 import ulb.view.windows.Window;
@@ -43,7 +43,7 @@ import java.util.Deque;
 
 
 public class GameController extends Application implements TeamController.Listener, ModeController.Listener,
-BattleModeController.Listener, NextRoomController.Listener, ChooseBugemonController.Listener{
+BattleModeController.Listener, NextRoomController.Listener, FloorRewardController.Listener, AttackReplacementController.Listener {
 
 	private Player player;
 	private TowerManager towerModeTowerManager;
@@ -66,7 +66,9 @@ BattleModeController.Listener, NextRoomController.Listener, ChooseBugemonControl
 	private ModeController modeController;
 	private BattleModeController battleModeController;
 	private NextRoomController nextRoomController;
+	private FloorRewardController floorRewardController;
 	private ChooseBugemonController chooseBugemonController;
+	private AttackReplacementController attackReplacementController;
 
 	public static void main(String[] args) {
 		try {
@@ -305,7 +307,14 @@ BattleModeController.Listener, NextRoomController.Listener, ChooseBugemonControl
 					break;
 
 				case REWARD:
-					switchWindow(WindowPath.FLOOR_REWARD);
+					if (floorRewardController == null) {
+						floorRewardController = new FloorRewardController(stage, this, this);
+					}
+					try {
+						floorRewardController.show();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 					break;
 
 				default:
@@ -606,8 +615,83 @@ BattleModeController.Listener, NextRoomController.Listener, ChooseBugemonControl
 	public void onContinue() {
 		handleTower();
 	}
+	
+	@Override
+	public void onReturnFloorRewardWindow() {
+		if (floorRewardController == null) {
+			floorRewardController = new FloorRewardController(stage, this, this);
+		}
+		try {
+			floorRewardController.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-	private void switchToNextRoomWindow() {
+	@Override
+	public void onChooseBugemonReward(){
+		if (chooseBugemonController == null) {
+			chooseBugemonController = new ChooseBugemonController(stage, floorRewardController, player);
+		}
+		try {
+			chooseBugemonController.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void onBugemonChosen(Bugemon bugemon, FloorRewardController.RewardChoice choice) {
+		if (choice == FloorRewardController.RewardChoice.STAT) {
+			Reward reward = new Reward(bugemon);
+			reward.configureReward(RewardType.COMBINATION);
+			bugemon.changeBaseStats(reward.getStats());
+			bugemon.changeFightStats(reward.getStats());
+			switchToNextRoomWindow();
+			return;
+		}
+
+		Ability newAbility = ServiceLoader.getAbilityService().getRandomAbility(bugemon.getType(), bugemon.getAbilities());
+		if (newAbility == null) {
+			switchToNextRoomWindow();
+			return;
+		}
+
+		if (attackReplacementController == null) {
+			attackReplacementController = new AttackReplacementController(stage, this);
+		}
+		try {
+			attackReplacementController.show(bugemon, newAbility);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void onAttackReplaced(Bugemon bugemon, Ability newAbility, Ability oldAbility) {
+		bugemon.swapAbility(newAbility, oldAbility);
+		switchToNextRoomWindow();
+	}
+
+	@Override
+	public void onReturnToChooseBugemon() {
+		if (chooseBugemonController == null) {
+			return;
+		}
+		try {
+			chooseBugemonController.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void onObjectReward() {
+		player.getInventory().addItem(ServiceLoader.getItemService().getRandomItem(), 1);
+		switchToNextRoomWindow();
+	}
+
+	public void switchToNextRoomWindow() {
 		if (nextRoomController == null) {
 			nextRoomController = new NextRoomController(stage, this);
 		}
@@ -615,16 +699,6 @@ BattleModeController.Listener, NextRoomController.Listener, ChooseBugemonControl
 		try {
 			nextRoomController.show(hasFledBattle());
 			resetFledBattle();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	// ChooseBugemonController methods override
-	@Override
-	public void onReturnFloorRewardWindow(){
-		try {
-			modeController.show();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

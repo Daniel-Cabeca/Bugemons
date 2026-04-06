@@ -41,7 +41,7 @@
                </children></VBox>
          </content>
       </ScrollPane>
-      <Button mnemonicParsing="false" onAction="#apply" text="Applique" />
+      <Button mnemonicParsing="false" onAction="#apply" text="Appliquer" />
       <Button layoutX="280.0" layoutY="384.0" mnemonicParsing="false" onAction="#returnFloorRewardWindow" text="Retour" />
    </children>
 </VBox>

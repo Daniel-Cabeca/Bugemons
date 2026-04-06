@@ -2,27 +2,18 @@ package ulb.view.windows;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import ulb.communication.Message;
-import ulb.communication.types.GetInfoMessage;
-import ulb.communication.types.InfoType;
-import ulb.communication.types.ReceiveObjectRewardMessage;
-import ulb.communication.types.RewardPlaceMessage;
-import ulb.view.WindowPath;
 
 public class FloorRewardWindow extends Window {
-	//TODO: implement functions + add popup window to newAttackReward and StatReward to select bugemon
+
+	private ViewListener viewListener;
 
 	@FXML
 	private Label floorLabel;
 	@FXML
 	private Label roomLabel;
 
-	@Override
-	public void onLoad() {
-		Message m = sendMessage(new GetInfoMessage(InfoType.REWARD_PLACE));
-		if (m instanceof RewardPlaceMessage placeMessage) {
-			initializeLabels(placeMessage.getFloorNumber(), placeMessage.getRoomNumber());
-		}
+	public void setViewListener(ViewListener viewListener) {
+		this.viewListener = viewListener;
 	}
 
 	public void initializeLabels(int floorNumber, int roomNumber) {
@@ -32,17 +23,29 @@ public class FloorRewardWindow extends Window {
 
 	@FXML
 	private void objectReward(){
-		sendMessage(new ReceiveObjectRewardMessage());
+		if (viewListener != null) {
+			viewListener.onObjectReward();
+		}
 	}
 
 	@FXML
 	private void newAttackReward(){
-		switchWindow(WindowPath.CHOOSE_BUGEMON);
+		if (viewListener != null) {
+			viewListener.onChooseAttackReward();
+		}
 	}
 
 	@FXML
 	private void statReward(){
-		switchWindow(WindowPath.CHOOSE_BUGEMON);
+		if (viewListener != null) {
+			viewListener.onChooseStatReward();
+		}
+	}
+
+	public interface ViewListener {
+		void onObjectReward();
+		void onChooseAttackReward();
+		void onChooseStatReward();
 	}
 
 }

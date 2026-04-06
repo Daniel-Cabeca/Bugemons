@@ -12,6 +12,7 @@ public class Server {
     public Server(int port){
         try{
             serverSocket = new ServerSocket(port);
+            System.out.println("SERVER ON !");
         } catch (Exception e){
             System.err.println(e);
         }

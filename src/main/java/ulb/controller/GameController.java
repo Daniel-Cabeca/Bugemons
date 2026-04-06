@@ -7,6 +7,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import ulb.Main;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.communication.Client;
 import ulb.communication.Message;
@@ -76,31 +77,37 @@ BattleWindowController.Listener{
 	private BattleWindowController battleWindowController;
 
 	public static void main(String[] args) {
-		// CLIENT & SERVER
-		try {
-			if (args.length == 0) {
-				launch(args);
-			} else if ("--client".equals(args[0])) {
-				Client client = new Client(SERVER_IP, SERVER_PORT);
+		boolean launchClient = true;
+		if (launchClient){
+			Main.main(args);
+		}else {
+			// CLIENT & SERVER
+			try {
+				if (args.length == 0) {
+					launch(args);
+				} else if ("--client".equals(args[0])) {
+					Client client = new Client(SERVER_IP, SERVER_PORT);
 
-				client.sendMessage(new ConnectMessage("Bonjour server !"));
+					client.sendMessage(new ConnectMessage("Bonjour server !"));
 
-				Message message = client.receiveMessage();
-				if (message instanceof ConnectMessage connectMessage) {
-					System.out.println("message reçu du serveur : " + connectMessage.getConnectMessage());
+					Message message = client.receiveMessage();
+					if (message instanceof ConnectMessage connectMessage) {
+						System.out.println("message reçu du serveur : " + connectMessage.getConnectMessage());
+					}
+
+					client.closeSocket();
+				} else if ("--server".equals(args[0])) {
+					Server server = new Server(SERVER_PORT);
+					server.start();
+				} else {
+					System.err.println("Unknown arguments.");
 				}
-
-				client.closeSocket();
-			} else if ("--server".equals(args[0])) {
-				Server server = new Server(SERVER_PORT);
-				server.start();
-			} else {
-				System.err.println("Unknown arguments.");
+			} catch (Exception e) {
+				System.err.println("Uncaught error.");
+				System.err.println(e.getMessage());
 			}
-		} catch (Exception e) {
-			System.err.println("Uncaught error.");
-			System.err.println(e.getMessage());
 		}
+		
 	}
 
 	@Override

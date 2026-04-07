@@ -619,36 +619,18 @@ BattleWindowController.Listener, LevelUpController.Listener, FloorRewardControll
 		}
 	}
 
-	@Override
-	public Team getPlayerTeam() {
-		return getTeam();
-	}
-
-	@Override
-	public ulb.model.item.Inventory getPlayerInventory() {
-		return player.getInventory();
-	}
-
-	@Override
-	public BattleController getBattleController() {
+	private BattleController getCurrentBattleController() {
 		if (gameMode == GameMode.TOWER && towerModeTowerManager != null) {
 			return towerModeTowerManager.getCurrentBattleController();
 		}
 		return normalModeBattleController;
 	}
 
-	@Override
-	public GameMode getGameMode() {
-		return gameMode;
-	}
-
-	@Override
-	public int getTowerFloorNumber() {
+	private int getTowerFloorNumber() {
 		return towerModeTowerManager != null ? towerModeTowerManager.getFloorNumber() : 0;
 	}
 
-	@Override
-	public int getCurrentRoomIndex() {
+	private int getCurrentRoomIndex() {
 		return towerModeTowerManager != null ? towerModeTowerManager.getCurrentRoomIndex() : 0;
 	}
 
@@ -733,7 +715,18 @@ BattleWindowController.Listener, LevelUpController.Listener, FloorRewardControll
 	}
 
 	private void switchToBattleWindow() {
-		battleWindowController = new BattleWindowController(stage, this);
+		BattleController battleController = getCurrentBattleController();
+		int towerFloorNumber = gameMode == GameMode.TOWER ? getTowerFloorNumber() : 0;
+		int currentRoomIndex = gameMode == GameMode.TOWER ? getCurrentRoomIndex() : 0;
+		battleWindowController = new BattleWindowController(
+				stage,
+				this,
+				player,
+				battleController,
+				gameMode,
+				towerFloorNumber,
+				currentRoomIndex
+		);
 
 		try {
 			battleWindowController.show();

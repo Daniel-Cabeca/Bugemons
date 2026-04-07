@@ -24,29 +24,29 @@ public class SocketMessenger implements Messenger {
         }
     }
 
-    public void SendMessage(Message message){
+    public void sendMessage(Message message) throws Exception{
         try{
             this.writer.writeObject(message);
             this.writer.reset();
         } catch (Exception e){
             this.close();
-            System.err.println(e);
+            throw e;
         }
     }
 
-    public Message receiveMessage(){
+    public Message receiveMessage() throws Exception{
         Message message = null;
         try{
             message = (Message) reader.readObject();
         } catch (Exception e){
             this.close();
-            System.err.println(e);
+            throw e;
         }
         return message;
     }
 
     public void close(){
-        if (socket != null){
+        if (!socket.isClosed()){
             try{
                 this.socket.close();
                 this.reader.close();

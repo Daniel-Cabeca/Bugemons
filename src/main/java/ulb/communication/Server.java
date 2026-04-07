@@ -2,21 +2,38 @@ package ulb.communication;
 
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 import ulb.communication.Messenger.SocketMessenger;
 import ulb.communication.types.ConnectMessage;
 import ulb.controller.ServerController;
 
 public class Server {
-    ServerSocket serverSocket;
+    private ServerSocket serverSocket;
+    private boolean stopServer;
+    private List<Thread> clients;
     
     public Server(int port){
         try{
             serverSocket = new ServerSocket(port);
+            this.stopServer = false;
+            clients = new ArrayList<Thread>();
             System.out.println("SERVER ON !");
         } catch (Exception e){
             System.err.println(e);
         }
+    }
+
+    public void waitAllThreads(){
+        for (Thread thread : this.clients){
+            try{
+                thread.join();
+            } catch (Exception e){
+                System.err.println(e);
+            }
+        }
+        return;
     }
 
     private Socket listenConnection(){
@@ -36,28 +53,21 @@ public class Server {
     }
 
     public void start(){
-        while (true) {
+        while (!stopServer) {
             Socket clientSocket;
             if ((clientSocket = listenConnection()) != null){
                 System.out.println("CLIENT ACCEPTED");
                 SocketMessenger clientMessenger = new SocketMessenger(clientSocket);
 
                 ServerController controller = new ServerController(clientMessenger);
+                clients.add(controller);
                 controller.start();
 
-                // Message message = clientMessenger.receiveMessage();
-                // if (message instanceof ConnectMessage connectMessage){
-                //     System.out.println("message reçu de client : " + connectMessage.getConnectMessage());
-                // }
-
-                // clientMessenger.SendMessage(new ConnectMessage("Bonjour client !"));
-                
-                // clientMessenger.close();
-                // this.close();
-
-                return;
+                this.stopServer = true;
             }
         }
+        waitAllThreads();
+        System.out.println("SERVER CLOSED !");
     }
 
     public void close(){

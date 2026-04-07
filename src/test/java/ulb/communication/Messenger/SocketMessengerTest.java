@@ -1,6 +1,7 @@
 package ulb.communication.Messenger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.ServerSocket;
@@ -45,11 +46,21 @@ public class SocketMessengerTest {
         }
 
         public void sendMessage(Message message){
-            this.messenger.SendMessage(message);
+            try{
+                this.messenger.sendMessage(message);
+            } catch (Exception e){
+                System.err.println(e);
+            }
         }
 
         public Message receiveMessage(){
-            return this.messenger.receiveMessage();
+            try{
+                return this.messenger.receiveMessage();
+            } catch (Exception e){
+                System.err.println(e);
+                return null;
+            }
+            
         }
     }
 
@@ -85,7 +96,8 @@ public class SocketMessengerTest {
 
         this.client.sendMessage(sendingMessage);
         ErrorMessage receivingMessage = (ErrorMessage) this.server.receiveMessage();
-        
+
+        assertNotNull(receivingMessage);
         assertEquals(sendingMessage.getError(), receivingMessage.getError());
     }
 
@@ -97,6 +109,7 @@ public class SocketMessengerTest {
         this.client.sendMessage(sendingMessage1);
         ErrorMessage receivingMessage1 = (ErrorMessage) this.server.receiveMessage();
         
+        assertNotNull(receivingMessage1);
         assertEquals(sendingMessage1.getError(), receivingMessage1.getError());
 
         ErrorMessage sendingMessage2 = new ErrorMessage("Test de la communication 2");
@@ -104,6 +117,7 @@ public class SocketMessengerTest {
         this.server.sendMessage(sendingMessage2);
         ErrorMessage receivingMessage2 = (ErrorMessage) this.client.receiveMessage();
         
+        assertNotNull(receivingMessage2);
         assertEquals(sendingMessage2.getError(), receivingMessage2.getError());
     }
 }

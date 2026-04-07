@@ -21,11 +21,20 @@ public class Client {
     }
 
     public void sendMessage(Message message){
-        messenger.SendMessage(message);
+        try{
+            messenger.sendMessage(message);
+        } catch (Exception e){
+            System.err.println(e);
+        }
     }
 
     public Message receiveMessage(){
-        return messenger.receiveMessage();
+        try{
+            return messenger.receiveMessage();
+        } catch (Exception e){
+            System.err.println(e);
+        }
+        return null;
     }
 
     public void closeSocket(){

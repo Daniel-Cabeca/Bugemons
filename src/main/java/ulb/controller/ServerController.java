@@ -32,24 +32,48 @@ public class ServerController extends Thread{
         end();
     }
 
+    public void stopProcess(){
+        this.stop = true;
+    }
+
+    public Message receiveMessage(){
+        try{
+            return this.socketMessenger.receiveMessage();
+        } catch (Exception e){
+            stopProcess();
+        }
+        return null;
+    }
+
+    public void sendMessage(Message message){
+        try{
+            this.socketMessenger.sendMessage(message);
+        } catch (Exception e){
+            stopProcess();
+        }
+    }
+
     public void end(){
         this.socketMessenger.close();
     }
 
     private void handleMessage(){
-        Message message = this.socketMessenger.receiveMessage();
+        Message message = receiveMessage();
         
-        if (message instanceof SetUpPlayerMessage playerMessage){
-            System.out.println("Nouveau Player Reçu !");
-        } else if (message instanceof GetAllBugemonSpeciesMessage){
+        if (message == null){
+            return;
 
+        } else if (message instanceof SetUpPlayerMessage playerMessage){
+            System.out.println("Nouveau Player Reçu !");
+
+        } else if (message instanceof GetAllBugemonSpeciesMessage){
             BugemonService bugemonService = ServiceLoader.getBugemonService();
             List<BugemonSpeciesDTO> DTOSpeciesList = new ArrayList<BugemonSpeciesDTO>();
 
             for (BugemonSpecies species : bugemonService.getAllSpecies()){
                 DTOSpeciesList.add(BugemonSpeciesMapper.toDTO(species));
             }
-            socketMessenger.SendMessage(new BugemonSpeciesMessage(DTOSpeciesList));
+            this.sendMessage(new BugemonSpeciesMessage(DTOSpeciesList));
         }
     }
 }

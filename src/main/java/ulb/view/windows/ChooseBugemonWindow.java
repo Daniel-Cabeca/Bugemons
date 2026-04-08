@@ -30,7 +30,6 @@ public class ChooseBugemonWindow extends Window{
      * Displays the player's team with corresponding stats
      *
      * @param team the team to display
-     * @param grid the grid in which the bugemons are displayed
      */
     public void populatePlayerBugemons(Team team) {
         bugemonList.getChildren().clear();

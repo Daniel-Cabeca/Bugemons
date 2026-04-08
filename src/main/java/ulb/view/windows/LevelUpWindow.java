@@ -1,10 +1,8 @@
 package ulb.view.windows;
 
+
+import java.util.List;
 import javafx.fxml.FXML;
-import ulb.communication.Message;
-import ulb.communication.types.GetInfoMessage;
-import ulb.communication.types.InfoType;
-import ulb.communication.types.LevelUpMessage;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.Stats;
 import ulb.model.reward.Reward;
@@ -31,17 +29,14 @@ public class LevelUpWindow extends Window {
 	@FXML
 	private Label rewardCLabel;
 
+	private ViewListener viewListener;
 	private Reward rewardA;
 	private Reward rewardB;
 	private Reward rewardC;
 
-	@Override
-	public void onLoad() {
-		Message m = sendMessage(new GetInfoMessage(InfoType.LEVEL_UP));
-		if (m instanceof LevelUpMessage levelUpMessage) {
-			initializeRewardSelection(levelUpMessage.getBugemon(), levelUpMessage.getRewards());
-		}
-	}
+	public void setViewListener(ViewListener viewListener) {
+        this.viewListener = viewListener;
+    }
 
 	private String createRewardsText(Reward r) {
 		Stats addedStats = r.getStats();
@@ -49,13 +44,21 @@ public class LevelUpWindow extends Window {
 				+ "\nInitiative: +" + addedStats.getInitiative();
 	}
 
-	public void initializeRewardSelection(Bugemon bugemon, Vector<Reward> rewards) {
+	public void initializeView(Bugemon bugemon, List<Reward> rewards) {
+		if (bugemon == null || rewards == null) {
+			System.err.println("Invalid arguments");
+			return;
+		}
 		setRewards(rewards);
 		setBugemonLevel(bugemon);
 		setBugemonSprite(bugemon);
 	}
 
-	public void setRewards(Vector<Reward> rewards) {
+	public void setRewards(List<Reward> rewards) {
+		if (rewards == null || rewards.size() < 3) {
+			System.err.println("Invalid reward list");
+			return;
+		}
 		rewardA = rewards.get(0);
 		rewardB = rewards.get(1);
 		rewardC = rewards.get(2);
@@ -75,19 +78,20 @@ public class LevelUpWindow extends Window {
 
 	@FXML
 	private void chooseRewardA(ActionEvent event) {
-		LevelUpMessage levelUpMessage = new LevelUpMessage(rewardA, event);
-		sendMessage(levelUpMessage);
+		viewListener.onRewardChosen(rewardA, event);
 	}
 
 	@FXML
 	private void chooseRewardB(ActionEvent event) {
-		LevelUpMessage levelUpMessage = new LevelUpMessage(rewardB, event);
-		sendMessage(levelUpMessage);
+		viewListener.onRewardChosen(rewardB, event);
 	}
 
 	@FXML
 	private void chooseRewardC(ActionEvent event) {
-		LevelUpMessage levelUpMessage = new LevelUpMessage(rewardC, event);
-		sendMessage(levelUpMessage);
+		viewListener.onRewardChosen(rewardC, event);
 	}
+
+	public interface ViewListener {
+        void onRewardChosen(Reward reward, ActionEvent event);
+    }
 }

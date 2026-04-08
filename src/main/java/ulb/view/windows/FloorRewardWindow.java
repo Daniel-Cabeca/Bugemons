@@ -2,47 +2,49 @@ package ulb.view.windows;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import ulb.communication.Message;
-import ulb.communication.types.GetInfoMessage;
-import ulb.communication.types.InfoType;
-import ulb.communication.types.ReceiveObjectRewardMessage;
-import ulb.communication.types.RewardPlaceMessage;
-import ulb.view.WindowPath;
 
 public class FloorRewardWindow extends Window {
-	//TODO: implement functions + add popup window to newAttackReward and StatReward to select bugemon
 
-	@FXML
-	private Label floorLabel;
-	@FXML
-	private Label roomLabel;
+    @FXML
+    private Label floorLabel;
+    @FXML
+    private Label roomLabel;
 
-	@Override
-	public void onLoad() {
-		Message m = sendMessage(new GetInfoMessage(InfoType.REWARD_PLACE));
-		if (m instanceof RewardPlaceMessage placeMessage) {
-			initializeLabels(placeMessage.getFloorNumber(), placeMessage.getRoomNumber());
-		}
-	}
+    private ViewListener viewListener;
 
-	public void initializeLabels(int floorNumber, int roomNumber) {
-		floorLabel.setText("Etage: NO" + floorNumber);
-		roomLabel.setText("Salle: " + roomNumber);
-	}
+    public void setViewListener(ViewListener viewListener) {
+        this.viewListener = viewListener;
+    }
 
-	@FXML
-	private void objectReward(){
-		sendMessage(new ReceiveObjectRewardMessage());
-	}
+    public void initializeLabels(int floorNumber, int roomNumber) {
+        floorLabel.setText("Etage: NO" + floorNumber);
+        roomLabel.setText("Salle: " + roomNumber);
+    }
 
-	@FXML
-	private void newAttackReward(){
-		switchWindow(WindowPath.CHOOSE_BUGEMON);
-	}
+    @FXML
+    private void objectReward(){
+        if (viewListener != null) {
+            viewListener.onObjectReward();
+        }
+    }
 
-	@FXML
-	private void statReward(){
-		switchWindow(WindowPath.CHOOSE_BUGEMON);
-	}
+    @FXML
+    private void newAttackReward(){
+        if (viewListener != null) {
+            viewListener.onAttackReward();
+        }
+    }
 
+    @FXML
+    private void statReward(){
+        if (viewListener != null) {
+            viewListener.onStatReward();
+        }
+    }
+
+    public interface ViewListener {
+        void onObjectReward();
+        void onAttackReward();
+        void onStatReward();
+    }
 }

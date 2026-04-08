@@ -34,10 +34,11 @@ import ulb.model.team.Team;
 import ulb.model.tower.Room;
 import ulb.model.tower.RoomType;
 import ulb.model.reward.Reward;
+import ulb.model.reward.RewardType;
 import ulb.service.BugemonService;
 import ulb.service.ServiceLoader;
 import ulb.view.WindowPath;
-import ulb.view.windows.ChooseBugemonWindow;
+import ulb.view.windows.LevelUpWindow;
 import ulb.view.windows.ModeWindow;
 import ulb.view.windows.NextRoomWindow;
 import ulb.view.windows.Window;
@@ -54,7 +55,8 @@ import java.util.List;
 
 public class GameController extends Application implements TeamController.Listener, ModeController.Listener,
 BattleModeController.Listener, NextRoomController.Listener, ChooseBugemonController.Listener,
-BattleWindowController.Listener{
+BattleWindowController.Listener, LevelUpController.Listener, FloorRewardController.Listener,
+AttackReplacementController.Listener {
 
 	private Player player;
 	private TowerManager towerModeTowerManager;
@@ -79,6 +81,10 @@ BattleWindowController.Listener{
 	private NextRoomController nextRoomController;
 	private ChooseBugemonController chooseBugemonController;
 	private BattleWindowController battleWindowController;
+	private LevelUpController levelUpController;
+	private FloorRewardController floorRewardController;
+	private AttackReplacementController attackReplacementController;
+	private FloorRewardController.RewardChoice pendingFloorRewardChoice;
 
 	public static void main(String[] args) {
 		boolean launchClient = true;
@@ -167,6 +173,9 @@ BattleWindowController.Listener{
 			if (controller instanceof NextRoomWindow nextRoomWindow) {
 				nextRoomWindow.setViewListener(nextRoomController);
 			}
+			if (controller instanceof LevelUpWindow levelUpWindow){
+				levelUpWindow.setViewListener(levelUpController);
+			}
 			if (stage.getScene() == null) {
 				stage.setScene(new Scene(root));
 			} else {
@@ -243,7 +252,13 @@ BattleWindowController.Listener{
 		this.pendingRewardBattleController = battleController;
 		this.rewardSequenceReturnsToNextRoom = returnToNextRoom;
 		this.pendingBattleXP = battleController.getTotalXP();
-		switchWindow(WindowPath.LEVEL_UP);
+		levelUpController = new LevelUpController(stage, this);
+		try {
+			levelUpController.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		// switchWindow(WindowPath.LEVEL_UP);
 		return true;
 	}
 
@@ -333,7 +348,7 @@ BattleWindowController.Listener{
 					break;
 
 				case REWARD:
-					switchWindow(WindowPath.FLOOR_REWARD);
+					switchToFloorRewardWindow();
 					break;
 
 				default:
@@ -566,6 +581,7 @@ BattleWindowController.Listener{
 		if (battleController == null) return;
 
 		if (state == BattleState.WON) {
+			battleController.resetFighter();
 			boolean isTower = gameMode == GameMode.TOWER;
 			if (!startLevelUpSequenceIfNeeded(battleController, isTower, event)) {
 				if (!isTower) {
@@ -576,6 +592,7 @@ BattleWindowController.Listener{
 				}
 			}
 		} else if (state == BattleState.LOST) {
+			battleController.resetFighter();
 			int xp = normalModeBattleController != null ? normalModeBattleController.getTotalXP() : 0;
 			handleBattleEnd(false, xp);
 		}
@@ -663,42 +680,18 @@ BattleWindowController.Listener{
 		}
 	}
 
-	@Override
-	public Team getPlayerTeam() {
-		// CLIENT
-		return getTeam();
-	}
-
-	@Override
-	public ulb.model.item.Inventory getPlayerInventory() {
-		// CLIENT
-		return player.getInventory();
-	}
-
-	@Override
-	public BattleController getBattleController() {
-		// SERVER
+	private BattleController getCurrentBattleController() {
 		if (gameMode == GameMode.TOWER && towerModeTowerManager != null) {
 			return towerModeTowerManager.getCurrentBattleController();
 		}
 		return normalModeBattleController;
 	}
 
-	@Override
-	public GameMode getGameMode() {
-		// CLIENT & SERVER
-		return gameMode;
-	}
-
-	@Override
-	public int getTowerFloorNumber() {
-		// CLIENT
+	private int getTowerFloorNumber() {
 		return towerModeTowerManager != null ? towerModeTowerManager.getFloorNumber() : 0;
 	}
 
-	@Override
-	public int getCurrentRoomIndex() {
-		// CLIENT
+	private int getCurrentRoomIndex() {
 		return towerModeTowerManager != null ? towerModeTowerManager.getCurrentRoomIndex() : 0;
 	}
 
@@ -771,12 +764,53 @@ BattleWindowController.Listener{
 		handleTower();
 	}
 
+	@Override
+	public void onRewardChosen(Reward reward, ActionEvent event){
+		handleLevelUpRewardChoice(reward, event);
+	}
+
+	@Override
+	public Bugemon getLevelUpBugemon() {
+		return pendingLevelUpBugemons.peekFirst();
+	}
+
+	@Override
+	public List<Reward> getLevelUpRewards() {
+		Bugemon current = pendingLevelUpBugemons.peekFirst();
+		if (current != null && pendingRewardBattleController != null) {
+			return pendingRewardBattleController.getRewards(current);
+		}
+		return List.of();
+	}
+
 	private void switchToBattleWindow() {
-		// CLIENT + SERVER
-		battleWindowController = new BattleWindowController(stage, this);
+		BattleController battleController = getCurrentBattleController();
+		int towerFloorNumber = gameMode == GameMode.TOWER ? getTowerFloorNumber() : 0;
+		int currentRoomIndex = gameMode == GameMode.TOWER ? getCurrentRoomIndex() : 0;
+		battleWindowController = new BattleWindowController(
+				stage,
+				this,
+				player,
+				battleController,
+				gameMode,
+				towerFloorNumber,
+				currentRoomIndex
+		);
 
 		try {
 			battleWindowController.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * initialises a new floorRewardController and switches to the window
+	 */
+	private void switchToFloorRewardWindow() {
+		floorRewardController = new FloorRewardController(stage, this, getTowerFloorNumber(), getCurrentRoomIndex());
+		try {
+			floorRewardController.show();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -796,15 +830,83 @@ BattleWindowController.Listener{
 		}
 	}
 
-	// ChooseBugemonController methods override
 	@Override
-	public void onReturnFloorRewardWindow(){
-		// CLIENT
+	public void onReturnFloorRewardWindow() {
+		switchToFloorRewardWindow();
+	}
+
+	@Override
+	public void onObjectReward() {
+		pendingFloorRewardChoice = null;
+		player.getInventory().addItem(ServiceLoader.getItemService().getRandomItem(), 1);
+		switchToNextRoomWindow();
+	}
+
+	@Override
+	public void onChooseBugemonReward(FloorRewardController.RewardChoice choice) {
+		pendingFloorRewardChoice = choice;
+		if (chooseBugemonController == null) {
+			chooseBugemonController = new ChooseBugemonController(stage, this, player);
+		}
 		try {
-			modeController.show();
+			chooseBugemonController.show();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
+	@Override
+	public void onBugemonChosen(Bugemon bugemon) {
+		if (bugemon == null || pendingFloorRewardChoice == null) {
+			return;
+		}
+
+		if (pendingFloorRewardChoice == FloorRewardController.RewardChoice.STAT) {
+			Reward reward = new Reward(bugemon);
+			reward.configureReward(RewardType.COMBINATION);
+			bugemon.changeBaseStats(reward.getStats());
+			bugemon.changeFightStats(reward.getStats());
+			pendingFloorRewardChoice = null;
+			switchToNextRoomWindow();
+			return;
+		}
+
+		Ability newAbility = ServiceLoader.getAbilityService().getRandomAbility(bugemon.getType(), bugemon.getAbilities());
+		if (newAbility == null) {
+			pendingFloorRewardChoice = null;
+			switchToNextRoomWindow();
+			return;
+		}
+
+		if (attackReplacementController == null) {
+			attackReplacementController = new AttackReplacementController(stage, this);
+		}
+
+		try {
+			attackReplacementController.show(bugemon, newAbility);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void onAttackReplaced(Bugemon bugemon, Ability newAbility, Ability oldAbility) {
+		if (bugemon != null && newAbility != null && oldAbility != null) {
+			bugemon.swapAbility(newAbility, oldAbility);
+		}
+		pendingFloorRewardChoice = null;
+		switchToNextRoomWindow();
+	}
+
+	@Override
+	public void onReturnToChooseBugemon() {
+		if (chooseBugemonController == null) {
+			chooseBugemonController = new ChooseBugemonController(stage, this, player);
+		}
+		try {
+			chooseBugemonController.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

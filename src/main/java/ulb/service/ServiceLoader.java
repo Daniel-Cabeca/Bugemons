@@ -11,30 +11,31 @@ import ulb.repository.json.InventoryJsonRepository;
  */
 public abstract class ServiceLoader {
     private static ItemService itemService;
-	private static BugemonService bugemonService;
-	private static AbilityService abilityService;
+    private static BugemonService bugemonService;
+    private static AbilityService abilityService;
 
-	static {
-		// loads the services
+    static {
+        // loads the services
 
-		AbilityJsonRepository abilityRepository = new AbilityJsonRepository();
-		BugemonSpeciesJsonRepository bugemonSpeciesRepository = new BugemonSpeciesJsonRepository(abilityRepository);
-		ItemJsonRepository itemRepository = new ItemJsonRepository();
-		InventoryJsonRepository inventoryRepository = new InventoryJsonRepository(itemRepository);
+        AbilityJsonRepository abilityRepository = new AbilityJsonRepository();
+        BugemonSpeciesJsonRepository bugemonSpeciesRepository = new BugemonSpeciesJsonRepository(abilityRepository);
+        ItemJsonRepository itemRepository = new ItemJsonRepository();
+        InventoryJsonRepository inventoryRepository = new InventoryJsonRepository(itemRepository);
 
-		ServiceLoader.bugemonService = new BugemonService(bugemonSpeciesRepository);
-		ServiceLoader.itemService = new ItemService(itemRepository, inventoryRepository);
-	}
+        ServiceLoader.abilityService = new AbilityService(abilityRepository);
+        ServiceLoader.bugemonService = new BugemonService(bugemonSpeciesRepository);
+        ServiceLoader.itemService = new ItemService(itemRepository, inventoryRepository);
+    }
 
-	public static BugemonService getBugemonService() {
-		return bugemonService;
-	}
+    public static BugemonService getBugemonService() {
+        return bugemonService;
+    }
 
-	public static ItemService getItemService() {
-		return itemService;
-	}
+    public static ItemService getItemService() {
+        return itemService;
+    }
 
-	public static AbilityService getAbilityService(){
-		return abilityService;
-	}
+    public static AbilityService getAbilityService(){
+        return abilityService;
+    }
 }

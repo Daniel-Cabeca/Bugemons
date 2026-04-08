@@ -7,6 +7,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import ulb.communication.types.GameMode;
+import ulb.model.Player;
 import ulb.model.ability.Ability;
 import ulb.model.battle.BattleState;
 import ulb.model.bugemon.Bugemon;
@@ -30,15 +31,24 @@ public class BattleWindowController implements BattleWindow.ViewListener {
 
     private final Stage stage;
     private final Listener listener;
+    private final Player player;
+    private final BattleController battleController;
+    private final GameMode gameMode;
+    private final int towerFloorNumber;
+    private final int currentRoomIndex;
 
     private BattleWindow view;
-    private BattleController battleController;
-    private GameMode gameMode;
     private boolean waitingForOpponentAction = false;
 
-    public BattleWindowController(Stage stage, Listener listener) {
+    public BattleWindowController(Stage stage, Listener listener, Player player, BattleController battleController,
+                                  GameMode gameMode, int towerFloorNumber, int currentRoomIndex) {
         this.stage = stage;
         this.listener = listener;
+        this.player = player;
+        this.battleController = battleController;
+        this.gameMode = gameMode;
+        this.towerFloorNumber = towerFloorNumber;
+        this.currentRoomIndex = currentRoomIndex;
     }
 
     public void show() throws Exception {
@@ -46,9 +56,6 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         loader.load();
         view = loader.getController();
         view.setViewListener(this);
-
-        battleController = listener.getBattleController();
-        gameMode = listener.getGameMode();
 
         view.initializeView(gameMode == GameMode.AUTO);
         refreshView();
@@ -81,7 +88,10 @@ public class BattleWindowController implements BattleWindow.ViewListener {
 
         view.setAutoButtonVisible(false);
         BattleState stateAfter = stateOrCurrent(listener.onAutoTurn());
-        displayActionSequence(stateAfter, event, () -> view.setAutoButtonVisible(true));
+        displayActionSequence(stateAfter, event, () -> {
+            view.showMainMenu();
+            view.setAutoButtonVisible(true);
+        });
     }
 
     @Override
@@ -123,6 +133,10 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         displayActionSequence(stateAfter, event, () -> {
             if (stateAfter == BattleState.WAITING || stateAfter == BattleState.INGAME) {
                 view.showMainMenu();
+                // reset the auto button after forced swap
+                if (gameMode == GameMode.AUTO) {
+                    view.setAutoButtonVisible(true);
+                }
             } else {
                 view.showBugemonsMenu(buildBugemonEntries());
             }
@@ -155,7 +169,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
 
     private void updateTowerInfo() {
         if (gameMode == GameMode.TOWER) {
-            view.setTowerInfo(listener.getTowerFloorNumber(), listener.getCurrentRoomIndex());
+            view.setTowerInfo(towerFloorNumber, currentRoomIndex);
         } else {
             view.clearTowerInfo();
         }
@@ -275,7 +289,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
     }
 
     private List<InventoryEntry> buildInventoryEntries() {
-        Inventory inventory = listener.getPlayerInventory();
+        Inventory inventory = getPlayerInventory();
         if (inventory == null) {
             return List.of();
         }
@@ -296,7 +310,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
     }
 
     private List<BugemonEntry> buildBugemonEntries() {
-        Team playerTeam = listener.getPlayerTeam();
+        Team playerTeam = getPlayerTeam();
         if (playerTeam == null) {
             return List.of();
         }
@@ -342,7 +356,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
             return null;
         }
 
-        Inventory inventory = listener.getPlayerInventory();
+        Inventory inventory = getPlayerInventory();
         if (inventory == null) {
             return null;
         }
@@ -360,7 +374,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
             return null;
         }
 
-        Team team = listener.getPlayerTeam();
+        Team team = getPlayerTeam();
         if (team == null) {
             return null;
         }
@@ -386,6 +400,14 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         return null;
     }
 
+    private Team getPlayerTeam() {
+        return player != null ? player.getTeam() : null;
+    }
+
+    private Inventory getPlayerInventory() {
+        return player != null ? player.getInventory() : null;
+    }
+
     private String getTypeColor(Type type) {
         return switch (type) {
             case PYRO -> "#ED2424";
@@ -397,12 +419,6 @@ public class BattleWindowController implements BattleWindow.ViewListener {
     }
 
     public interface Listener {
-        Team getPlayerTeam();
-        Inventory getPlayerInventory();
-        BattleController getBattleController();
-        GameMode getGameMode();
-        int getTowerFloorNumber();
-        int getCurrentRoomIndex();
         BattleState onAutoTurn();
         BattleState onUseItem(Item item);
         BattleState onSwapBugemon(Bugemon bugemon);

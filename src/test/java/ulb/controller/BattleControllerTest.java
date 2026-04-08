@@ -242,6 +242,10 @@ public class BattleControllerTest {
 		a.changeFightStats(new Stats(1, -10, 0, 0));
 
 		playTurn(controllerA, controllerB);
+		BattleState state = battle.getState(ParticipantLabel.TEAM_A);
+		if (state == BattleState.WON || state == BattleState.LOST){
+			battle.resetFightStats();
+		}
 
 		assertTrue(a.getFightStats().getAttack() >= a.getBaseStats().getAttack());
 	}
@@ -260,7 +264,11 @@ public class BattleControllerTest {
 		battle.enableBossBattle();
 
 		playTurn(controllerA, controllerB);
-
+		BattleState state = battle.getState(ParticipantLabel.TEAM_A);
+		if (state == BattleState.WON || state == BattleState.LOST){
+			battle.resetFightStats();
+		}
+		
 		if (a.getLevel() > 1)
 			assertEquals(a.getBaseStats().getHp(), a.getFightStats().getHp());
 	}

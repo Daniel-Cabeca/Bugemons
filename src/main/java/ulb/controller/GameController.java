@@ -30,9 +30,9 @@ import ulb.model.team.Team;
 import ulb.model.tower.Room;
 import ulb.model.tower.RoomType;
 import ulb.model.reward.Reward;
+import ulb.model.reward.RewardType;
 import ulb.service.ServiceLoader;
 import ulb.view.WindowPath;
-import ulb.view.windows.ChooseBugemonWindow;
 import ulb.view.windows.LevelUpWindow;
 import ulb.view.windows.ModeWindow;
 import ulb.view.windows.NextRoomWindow;
@@ -46,7 +46,8 @@ import java.util.List;
 
 public class GameController extends Application implements TeamController.Listener, ModeController.Listener,
 BattleModeController.Listener, NextRoomController.Listener, ChooseBugemonController.Listener,
-BattleWindowController.Listener, LevelUpController.Listener, FloorRewardController.Listener {
+BattleWindowController.Listener, LevelUpController.Listener, FloorRewardController.Listener,
+AttackReplacementController.Listener {
 
 	private Player player;
 	private TowerManager towerModeTowerManager;
@@ -73,6 +74,8 @@ BattleWindowController.Listener, LevelUpController.Listener, FloorRewardControll
 	private BattleWindowController battleWindowController;
 	private LevelUpController levelUpController;
 	private FloorRewardController floorRewardController;
+	private AttackReplacementController attackReplacementController;
+	private FloorRewardController.RewardChoice pendingFloorRewardChoice;
 
 	public static void main(String[] args) {
 		try {
@@ -761,27 +764,82 @@ BattleWindowController.Listener, LevelUpController.Listener, FloorRewardControll
 	}
 
 	@Override
-	public void onReturnFloorRewardWindow(){
+	public void onReturnFloorRewardWindow() {
+		switchToFloorRewardWindow();
+	}
+
+	@Override
+	public void onObjectReward() {
+		pendingFloorRewardChoice = null;
+		player.getInventory().addItem(ServiceLoader.getItemService().getRandomItem(), 1);
+		switchToNextRoomWindow();
+	}
+
+	@Override
+	public void onChooseBugemonReward(FloorRewardController.RewardChoice choice) {
+		pendingFloorRewardChoice = choice;
+		if (chooseBugemonController == null) {
+			chooseBugemonController = new ChooseBugemonController(stage, this, player);
+		}
 		try {
-			modeController.show();
+			chooseBugemonController.show();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	@Override
-	public void onObjectReward() {
-		player.getInventory().addItem(ServiceLoader.getItemService().getRandomItem(), 1);
+	public void onBugemonChosen(Bugemon bugemon) {
+		if (bugemon == null || pendingFloorRewardChoice == null) {
+			return;
+		}
+
+		if (pendingFloorRewardChoice == FloorRewardController.RewardChoice.STAT) {
+			Reward reward = new Reward(bugemon);
+			reward.configureReward(RewardType.COMBINATION);
+			bugemon.changeBaseStats(reward.getStats());
+			bugemon.changeFightStats(reward.getStats());
+			pendingFloorRewardChoice = null;
+			switchToNextRoomWindow();
+			return;
+		}
+
+		Ability newAbility = ServiceLoader.getAbilityService().getRandomAbility(bugemon.getType(), bugemon.getAbilities());
+		if (newAbility == null) {
+			pendingFloorRewardChoice = null;
+			switchToNextRoomWindow();
+			return;
+		}
+
+		if (attackReplacementController == null) {
+			attackReplacementController = new AttackReplacementController(stage, this);
+		}
+
+		try {
+			attackReplacementController.show(bugemon, newAbility);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void onAttackReplaced(Bugemon bugemon, Ability newAbility, Ability oldAbility) {
+		if (bugemon != null && newAbility != null && oldAbility != null) {
+			bugemon.swapAbility(newAbility, oldAbility);
+		}
+		pendingFloorRewardChoice = null;
 		switchToNextRoomWindow();
 	}
 
 	@Override
-	public void onAttackReward() {
-		switchWindow(WindowPath.CHOOSE_BUGEMON);
-	}
-
-	@Override
-	public void onStatReward() {
-		switchWindow(WindowPath.CHOOSE_BUGEMON);
+	public void onReturnToChooseBugemon() {
+		if (chooseBugemonController == null) {
+			chooseBugemonController = new ChooseBugemonController(stage, this, player);
+		}
+		try {
+			chooseBugemonController.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

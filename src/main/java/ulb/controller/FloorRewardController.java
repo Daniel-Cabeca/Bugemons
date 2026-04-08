@@ -7,15 +7,19 @@ import javafx.stage.Stage;
 import ulb.view.WindowPath;
 import ulb.view.windows.FloorRewardWindow;
 
-
 public class FloorRewardController implements FloorRewardWindow.ViewListener {
 
-    private FloorRewardWindow view;
-    private Stage stage;
-    private final Listener listener;
+    public enum RewardChoice {
+        STAT,
+        ATTACK
+    }
 
+    private final Stage stage;
+    private final Listener listener;
     private final int floor;
     private final int room;
+
+    private FloorRewardWindow view;
 
     public FloorRewardController(Stage stage, Listener listener, int floor, int room) {
         this.stage = stage;
@@ -38,7 +42,7 @@ public class FloorRewardController implements FloorRewardWindow.ViewListener {
         } else {
             stage.getScene().setRoot(root);
         }
-        this.stage.show();
+        stage.show();
     }
 
     @Override
@@ -48,17 +52,16 @@ public class FloorRewardController implements FloorRewardWindow.ViewListener {
 
     @Override
     public void onAttackReward() {
-        listener.onAttackReward();
+        listener.onChooseBugemonReward(RewardChoice.ATTACK);
     }
 
     @Override
     public void onStatReward() {
-        listener.onStatReward();
+        listener.onChooseBugemonReward(RewardChoice.STAT);
     }
 
     public interface Listener {
         void onObjectReward();
-        void onAttackReward();
-        void onStatReward();
+        void onChooseBugemonReward(RewardChoice choice);
     }
 }

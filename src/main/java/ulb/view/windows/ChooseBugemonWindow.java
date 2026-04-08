@@ -1,85 +1,90 @@
 package ulb.view.windows;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import ulb.controller.GameController;
-import ulb.controller.towerManager.TowerManager;
-import ulb.model.Player;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.team.Team;
-import ulb.view.WindowPath;
 
+public class ChooseBugemonWindow extends Window {
 
+    private ViewListener viewListener;
+    private CheckBox selectedCheckBox;
+    private Bugemon selectedBugemon;
 
-public class ChooseBugemonWindow extends Window{
-	//TODO: Add Listener !
+    @FXML
+    private VBox bugemonList;
 
-	private ViewListener viewListener;
+    public void setViewListener(ViewListener viewListener) {
+        this.viewListener = viewListener;
+    }
 
+    /**
+     * Displays the player's team with corresponding stats.
+     *
+     * @param team the team to display
+     */
+    public void populatePlayerBugemons(Team team) {
+        bugemonList.getChildren().clear();
+        selectedCheckBox = null;
+        selectedBugemon = null;
 
-	@FXML
-	private VBox bugemonList;
+        for (Bugemon bugemon : team.getMembers()) {
+            HBox cell = new HBox(10);
 
+            ImageView sprite = new ImageView(new Image(getClass().getResourceAsStream(bugemon.getSprite())));
+            sprite.setFitWidth(50);
+            sprite.setFitHeight(50);
+            sprite.setPreserveRatio(true);
 
-	public void setViewListener(ViewListener viewListener) {
-		this.viewListener = viewListener;
-	}
+            Label name = new Label(bugemon.getName() + " (Niveau: " + bugemon.getLevel() + ")");
+            name.setStyle("-fx-font-weight: bold;");
 
-	// @FXML
-	// public void initialize() {
-	// 	populatePlayerBugemons(gameController.getTeam());
-	// }
+            Label stats = new Label(
+                    "PV: " + bugemon.getFightStats().getHp()
+                            + " ATK: " + bugemon.getFightStats().getAttack()
+                            + " DEF: " + bugemon.getFightStats().getDefense()
+                            + " INIT: " + bugemon.getFightStats().getInitiative());
 
-	// /**
- //     * Displays the player's team with corresponding stats
- //     *
- //     * @param team the team to display
- //     * @param grid the grid in which the bugemons are displayed
- //     */
- //    public void populatePlayerBugemons(Team team) {
- //        bugemonList.getChildren().clear();
+            CheckBox selectBox = new CheckBox();
+            selectBox.setOnAction(event -> {
+                if (selectBox.isSelected()) {
+                    if (selectedCheckBox != null && selectedCheckBox != selectBox) {
+                        selectedCheckBox.setSelected(false);
+                    }
+                    selectedCheckBox = selectBox;
+                    selectedBugemon = bugemon;
+                } else if (selectedCheckBox == selectBox) {
+                    selectedCheckBox = null;
+                    selectedBugemon = null;
+                }
+            });
 
- //        for (Bugemon bugemon : team.getMembers()) {
- //            HBox cell = new HBox();
+            cell.getChildren().addAll(name, sprite, stats, selectBox);
+            bugemonList.getChildren().add(cell);
+        }
+    }
 
- //            Image image = new Image(bugemon.getSprite());
- //            ImageView sprite = new ImageView(image);
- //            sprite.setFitWidth(50);
- //            sprite.setFitHeight(50);
- //            sprite.setPreserveRatio(true);
+    @FXML
+    private void apply() {
+        if (viewListener != null && selectedBugemon != null) {
+            viewListener.onBugemonChosen(selectedBugemon);
+        }
+    }
 
- //            Label name = new Label(bugemon.getName() + " (Niveau: " + bugemon.getLevel() + ")");
- //            name.setStyle("-fx-font-weight: bold;");
+    @FXML
+    private void returnFloorRewardWindow() {
+        if (viewListener != null) {
+            viewListener.onReturnFloorRewardWindow();
+        }
+    }
 
- //            Label stats = new Label("PV: " + bugemon.getFightStats().getHp() +
- //                    " ATK: " + bugemon.getFightStats().getAttack() + " DEF: " +
- //                    bugemon.getFightStats().getDefense() + " INIT: " + bugemon.getFightStats().getInitiative());
-
- //            cell.getChildren().addAll(name, sprite, stats);
- //            bugemonList.getChildren().add(cell);
- //        }
- //    }
-
-
-	@FXML
-	private void apply() {
-		// Add the status to Bugemon
-		// Or add ability to Bugemon
-		switchWindow(WindowPath.NEXT_ROOM); // REMOVE: after adding listener
-	}
-
-	@FXML
-	private void returnFloorRewardWindow() {
-		//viewListener.onReturnFloorRewardWindow();
-		switchWindow(WindowPath.FLOOR_REWARD); // REMOVE: after adding listener
-	}
-
-	public interface ViewListener {
-		void onReturnFloorRewardWindow();
-	}
-
+    public interface ViewListener {
+        void onBugemonChosen(Bugemon bugemon);
+        void onReturnFloorRewardWindow();
+    }
 }

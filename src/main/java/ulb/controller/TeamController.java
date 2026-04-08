@@ -50,7 +50,7 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 		List<BugemonSpeciesDTO> allSpecies = this.getAllSpecies();
 		for (String bugemonName : selectedBugemons) {
 			for (BugemonSpeciesDTO species : allSpecies){
-				if (bugemonName == species.getName()){
+				if (bugemonName.equals(species.getName())){
 					teamABugemons.add(new BugemonDTO(species));
 				}
 			}

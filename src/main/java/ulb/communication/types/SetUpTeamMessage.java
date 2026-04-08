@@ -1,19 +1,21 @@
 package ulb.communication.types;
 
-import ulb.DTO.player.PlayerDTO;
+import java.util.List;
+
+import ulb.DTO.bugemon.BugemonDTO;
 import ulb.communication.Message;
 import ulb.controller.GameController;
 
-public class SetUpPlayerMessage implements Message {
-    private PlayerDTO player;
+public class SetUpTeamMessage implements Message {
+    private List<BugemonDTO> team;
 
-    public SetUpPlayerMessage(PlayerDTO player){
-        this.player = player;
+    public SetUpTeamMessage(List<BugemonDTO> team){
+        this.team = team;
     }
 
     @Override
     public MessageType getMessageType() {
-        return MessageType.SETUP_PLAYER;
+        return MessageType.SETUP_TEAM;
     }
 
     @Override
@@ -22,5 +24,5 @@ public class SetUpPlayerMessage implements Message {
         return null;
     }
 
-    public PlayerDTO getPlayer(){return this.player;}
+    public List<BugemonDTO> getTeam(){return this.team;}
 }

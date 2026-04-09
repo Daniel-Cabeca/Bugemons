@@ -277,7 +277,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
     private BugemonDisplay toBugemonDisplay(BugemonDTO bugemon) {
         return new BugemonDisplay(
                 bugemon.getName(),
-                "/png/" + bugemon.getSprite(),
+                bugemon.getSpritePath(),
                 getTypeColor(bugemon.getType()),
                 bugemon.getLevel(),
                 bugemon.getHp(),
@@ -324,7 +324,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
             entries.add(new BugemonEntry(
                     bugemon.getId(),
                     bugemon.getName(),
-                    bugemon.getSprite(),
+                    bugemon.getSpritePath(),
                     bugemon.getHp() <= 0,
                     active,
                     selectable

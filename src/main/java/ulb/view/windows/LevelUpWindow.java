@@ -73,7 +73,7 @@ public class LevelUpWindow extends Window {
 	}
 
 	public void setBugemonSprite(Bugemon bugemon) {
-		bugemonSprite.setImage(new Image(getClass().getResourceAsStream(bugemon.getSprite())));
+		bugemonSprite.setImage(new Image(getClass().getResourceAsStream(bugemon.getSpritePath())));
 	}
 
 	@FXML

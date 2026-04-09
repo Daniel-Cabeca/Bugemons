@@ -52,7 +52,8 @@ public class BugemonSpeciesJsonParserTest {
 		assertEquals(55, species.getAttack());
 		assertEquals(40, species.getDefense());
 		assertEquals(50, species.getInitiative());
-		assertEquals("/png/florachu.png", species.getSprite());
+		assertEquals("florachu.png", species.getSprite());
+		assertEquals("/png/florachu.png", species.getSpritePath());
 		assertEquals(true, species.isStarter());
 	}
 }

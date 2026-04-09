@@ -31,7 +31,8 @@ public class BugemonSpecies implements HasId {
 	public Type getType() { return this.type; }
 	public Stats getBaseStats() { return this.baseStats; }
 	public AbilitySet getAbilities() { return this.abilities; }
-	public String getSprite() { return "/png/"+ this.sprite; }
+	public String getSprite() { return this.sprite; }
+	public String getSpritePath() {return "/png/" + this.sprite;}
 	public boolean isStarter() { return this.starter; }
 
 	public int getHp() { return this.getBaseStats().getHp(); }

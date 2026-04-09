@@ -34,7 +34,7 @@ public class AttackReplacementWindow extends Window {
 
         bugemonLabel.setText(bugemon.getName() + " apprend une nouvelle attaque");
         newAbilityLabel.setText(createAbilityText(newAbility));
-        bugemonSprite.setImage(new Image(getClass().getResourceAsStream(bugemon.getSprite())));
+        bugemonSprite.setImage(new Image(getClass().getResourceAsStream(bugemon.getSpritePath())));
         populateAbilities();
     }
 

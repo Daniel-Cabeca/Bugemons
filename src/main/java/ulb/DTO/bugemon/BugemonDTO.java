@@ -43,6 +43,7 @@ public class BugemonDTO implements Serializable{
 	public String getId(){return this.getSpecies().getId();}
 	public String getName(){return this.getSpecies().getName();}
 	public String getSprite(){return this.getSpecies().getSprite();}
+	public String getSpritePath() {return this.getSpecies().getSpritePath();}
 	public Type getType(){return this.getSpecies().getType();}
 	public List<AbilityDTO> getAbilities(){return this.getSpecies().getAbilities();}
 

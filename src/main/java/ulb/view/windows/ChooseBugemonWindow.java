@@ -36,7 +36,7 @@ public class ChooseBugemonWindow extends Window {
         for (Bugemon bugemon : team.getMembers()) {
             HBox cell = new HBox(10);
 
-            ImageView sprite = new ImageView(new Image(getClass().getResourceAsStream(bugemon.getSprite())));
+            ImageView sprite = new ImageView(new Image(getClass().getResourceAsStream(bugemon.getSpritePath())));
             sprite.setFitWidth(50);
             sprite.setFitHeight(50);
             sprite.setPreserveRatio(true);

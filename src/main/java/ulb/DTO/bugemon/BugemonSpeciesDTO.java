@@ -24,6 +24,7 @@ public class BugemonSpeciesDTO implements Serializable{
 	public List<AbilityDTO> getAbilities() {return abilities;}
 	public AbilityDTO getAbility(int index){return this.abilities.get(index);}
 	public String getSprite() {return sprite;}
+	public String getSpritePath() {return "/png/" + sprite;}
 	public boolean isStarter() {return starter;}
 
 	public void setId(String id) {this.id = id;}

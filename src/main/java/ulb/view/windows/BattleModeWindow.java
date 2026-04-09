@@ -68,7 +68,7 @@ public class BattleModeWindow extends Window {
         for (BugemonDTO bugemon : team) {
             VBox cell = new VBox();
 
-            Image image = new Image(bugemon.getSprite());
+            Image image = new Image(bugemon.getSpritePath());
             ImageView sprite = new ImageView(image);
             sprite.setFitWidth(50);
             sprite.setFitHeight(50);

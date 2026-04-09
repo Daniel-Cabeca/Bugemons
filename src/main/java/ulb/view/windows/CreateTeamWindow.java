@@ -57,7 +57,7 @@ public class CreateTeamWindow extends Window {
 
 			Label name = new Label(bugemon.getName());
 
-			Image image = new Image(bugemon.getSprite());
+			Image image = new Image(bugemon.getSpritePath());
 			ImageView sprite = new ImageView(image);
 			sprite.setFitWidth(90);
 			sprite.setFitHeight(90);

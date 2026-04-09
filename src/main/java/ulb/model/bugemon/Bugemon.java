@@ -46,6 +46,7 @@ public class Bugemon {
 	public String getName() { return this.getSpecies().getName(); }
 	public Type getType() { return this.getSpecies().getType(); }
 	public String getSprite() { return this.getSpecies().getSprite(); }
+	public String getSpritePath() {return this.getSpecies().getSpritePath();}
 
 	public int getHp() { return this.getFightStats().getHp(); }
 	public int getAttack() { return this.getFightStats().getAttack(); }

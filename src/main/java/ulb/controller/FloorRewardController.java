@@ -9,6 +9,8 @@ import ulb.communication.Message;
 import ulb.communication.types.GetInfoMessage;
 import ulb.communication.types.InfoType;
 import ulb.communication.types.RewardPlaceMessage;
+import ulb.model.item.Item;
+import ulb.service.ServiceLoader;
 import ulb.view.WindowPath;
 import ulb.view.windows.FloorRewardWindow;
 
@@ -24,6 +26,7 @@ public class FloorRewardController implements FloorRewardWindow.ViewListener, Ch
 	private final Stage stage;
 	private FloorRewardWindow view;
 	private RewardChoice pendingChoice;
+    private Item rewardItem;
 
 	public FloorRewardController(Stage stage, GameController gameController, Listener listener) {
 		this.stage = stage;
@@ -37,10 +40,13 @@ public class FloorRewardController implements FloorRewardWindow.ViewListener, Ch
 		view = loader.getController();
 		view.setViewListener(this);
 
+        rewardItem = ServiceLoader.getItemService().getRandomItem();
+
 		Message m = gameController.handleMessage(new GetInfoMessage(InfoType.REWARD_PLACE));
 		if (m instanceof RewardPlaceMessage placeMessage) {
-			view.initializeLabels(placeMessage.getFloorNumber(), placeMessage.getRoomNumber());
+			view.initializeLabels(placeMessage.getFloorNumber(), placeMessage.getRoomNumber(), rewardItem.getName());
 		}
+
 
 		Parent root = loader.getRoot();
 		if (stage.getScene() == null) {
@@ -53,7 +59,7 @@ public class FloorRewardController implements FloorRewardWindow.ViewListener, Ch
 
 	@Override
 	public void onObjectReward() {
-		listener.onObjectReward();
+		listener.onObjectReward(rewardItem);
 	}
 
 	@Override
@@ -83,7 +89,7 @@ public class FloorRewardController implements FloorRewardWindow.ViewListener, Ch
 	}
 
 	public interface Listener {
-		void onObjectReward();
+		void onObjectReward(Item rewardItem);
 		void onChooseBugemonReward();
 		void onBugemonChosen(Bugemon bugemon, RewardChoice choice);
 		void onReturnFloorRewardWindow();

@@ -686,8 +686,8 @@ BattleModeController.Listener, NextRoomController.Listener, FloorRewardControlle
 	}
 
 	@Override
-	public void onObjectReward() {
-		player.getInventory().addItem(ServiceLoader.getItemService().getRandomItem(), 1);
+	public void onObjectReward(Item rewardItem) {
+		player.getInventory().addItem(rewardItem, 1);
 		switchToNextRoomWindow();
 	}
 

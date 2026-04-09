@@ -14,14 +14,24 @@ import ulb.view.windows.BattleWindow.BattleSnapshot;
 import ulb.view.windows.BattleWindow.BugemonDisplay;
 
 public class BattleWindowGraphicsHelper {
+	private BattleUIComponents ui;
 
-	public void showLogMessages(List<String> logs, Label battleLog, VBox messageBox) {
+	public void linkUI(ProgressBar PlayerBugemonHPBar, ProgressBar OpponentHPBar, 
+		Label PlayerBugemonHPNumber, Label OpponentHPNumber, ImageView PlayerBugemon, ImageView OpponentBugemon,
+		Label PlayerBugemonLabel, Label OpponentBugemonLabel, Label PlayerLevelLabel, Label OpponentLevelLabel, 
+		VBox messageBox, Label battleLog){
+			this.ui = new BattleUIComponents(PlayerBugemonHPBar, OpponentHPBar, 
+				PlayerBugemonHPNumber, OpponentHPNumber, PlayerBugemon, OpponentBugemon, PlayerBugemonLabel, OpponentBugemonLabel,
+				PlayerLevelLabel, OpponentLevelLabel, messageBox, battleLog);
+	}
+
+	public void showLogMessages(List<String> logs) {
         List<String> visibleLogs = logs == null
                 ? List.of()
                 : logs.stream().filter(message -> message != null && !message.isBlank()).toList();
 
         if (visibleLogs.isEmpty()) {
-            clearMessages(battleLog, messageBox);
+            clearMessages();
             return;
         }
 
@@ -29,15 +39,14 @@ public class BattleWindowGraphicsHelper {
                 .map(message -> wrapText(message, 35))
                 .collect(Collectors.joining("\n"));
 
-        battleLog.setText(allMessages);
-        messageBox.setVisible(true);
-        messageBox.setManaged(true);
+        ui.battleLog().setText(allMessages);
+        ui.messageBox().setVisible(true);
+        ui.messageBox().setManaged(true);
     }
 
 	public void displayMessagesSequentially(List<String> rawLogs, Integer hpAfterFirstActionSelf,
-    	Integer hpAfterFirstActionOpponent, BattleSnapshot finalSnapshot, BattleSnapshot currentSnapshot,
-		Runnable onComplete, ProgressBar PlayerBugemonHPBar, Label PlayerBugemonHPNumber, 
-		ProgressBar OpponentHPBar, Label OpponentHPNumber, VBox messageBox, Label battleLog) {
+    	Integer hpAfterFirstActionOpponent,BattleSnapshot finalSnapshot, 
+		BattleSnapshot currentSnapshot, Runnable onComplete) {
         
         List<String> logs = rawLogs == null ? List.of() : new ArrayList<>(rawLogs);
         int separatorIndex = logs.indexOf(null);
@@ -56,16 +65,16 @@ public class BattleWindowGraphicsHelper {
             if (finalSnapshot != null) {
                 renderBattle(finalSnapshot);
             }
-            clearMessages(battleLog, messageBox);
+            clearMessages();
             onComplete.run();
             return;
         }
 
-        messageBox.setVisible(true);
-        messageBox.setManaged(true);
+        ui.messageBox().setVisible(true);
+        ui.messageBox().setManaged(true);
 
         BattlePhaseVisual phase1Visual;
-        BattlePhaseVisual phase2Visual = new BattlePhaseVisual(finalSnapshot, null, null);
+        BattlePhaseVisual phase2Visual = new BattlePhaseVisual(finalSnapshot, hpAfterFirstActionSelf, hpAfterFirstActionOpponent);
         if (separatorIndex >= 0) {
             phase1Visual = new BattlePhaseVisual(currentSnapshot, hpAfterFirstActionSelf, hpAfterFirstActionOpponent);
         } else {
@@ -73,7 +82,7 @@ public class BattleWindowGraphicsHelper {
         }
 
         Runnable closeAndComplete = () -> {
-            clearMessages(battleLog, messageBox);
+            clearMessages();
             onComplete.run();
         };
 
@@ -81,88 +90,78 @@ public class BattleWindowGraphicsHelper {
             if (phase2.isEmpty()) {
                 closeAndComplete.run();
             } else {
-                displayPhase(phase2, 0, phase2Visual, currentSnapshot, closeAndComplete, 
-					PlayerBugemonHPBar, PlayerBugemonHPNumber, OpponentHPBar, OpponentHPNumber, battleLog);
+                displayPhase(phase2, 0, phase2Visual, currentSnapshot, closeAndComplete);
             }
         };
 
         if (phase1.isEmpty()) {
             afterPhase1.run();
         } else {
-            displayPhase(phase1, 0, phase1Visual, currentSnapshot, afterPhase1, PlayerBugemonHPBar, 
-				PlayerBugemonHPNumber, OpponentHPBar, OpponentHPNumber, battleLog);
+            displayPhase(phase1, 0, phase1Visual, currentSnapshot, afterPhase1);
         }
     }
 
-	public void updateBattleGraphics(BattleSnapshot snapshot, ImageView PlayerBugemon, Label PlayerBugemonLabel,
-		Label PlayerLevelLabel, ProgressBar PlayerBugemonHPBar, Label PlayerBugemonHPNumber, ImageView OpponentBugemon,
-		Label OpponentBugemonLabel, Label OpponentLevelLabel, ProgressBar OpponentHPBar, 
-		Label OpponentHPNumber) {
+	public void updateBattleGraphics(BattleSnapshot snapshot) {
         BugemonDisplay playerBugemon = snapshot.playerBugemon();
         BugemonDisplay opponentBugemon = snapshot.opponentBugemon();
 
         try {
             Image playerImage = new Image(getClass().getResourceAsStream(playerBugemon.spritePath()));
-            PlayerBugemon.setImage(playerImage);
+            ui.PlayerBugemon().setImage(playerImage);
         } catch (Exception e) {
             System.err.println("Failed to load player bugemon sprite: " + e.getMessage());
         }
 
-        PlayerBugemonLabel.setText(playerBugemon.name());
-        PlayerLevelLabel.setText("Lv." + playerBugemon.level());
-        PlayerBugemonLabel.setStyle("-fx-text-fill: " + playerBugemon.color() + ";");
+        ui.PlayerBugemonLabel().setText(playerBugemon.name());
+        ui.PlayerLevelLabel().setText("Lv." + playerBugemon.level());
+        ui.PlayerBugemonLabel().setStyle("-fx-text-fill: " + playerBugemon.color() + ";");
         double playerRatio = (double) playerBugemon.hp() / playerBugemon.maxHp();
-        PlayerBugemonHPBar.setProgress(playerRatio);
-        updateHPBarColor(PlayerBugemonHPBar, playerRatio);
-        PlayerBugemonHPNumber.setText(playerBugemon.hp() + " / " + playerBugemon.maxHp());
+        ui.PlayerBugemonHPBar().setProgress(playerRatio);
+        updateHPBarColor(ui.PlayerBugemonHPBar(), playerRatio);
+        ui.PlayerBugemonHPNumber().setText(playerBugemon.hp() + " / " + playerBugemon.maxHp());
 
         try {
             Image opponentImage = new Image(getClass().getResourceAsStream(opponentBugemon.spritePath()));
-            OpponentBugemon.setImage(opponentImage);
+            ui.OpponentBugemon().setImage(opponentImage);
         } catch (Exception e) {
             System.err.println("Failed to load opponent bugemon sprite: " + e.getMessage());
         }
 
-        OpponentBugemonLabel.setText(opponentBugemon.name());
-        OpponentLevelLabel.setText("Lv." + opponentBugemon.level());
-        OpponentBugemonLabel.setStyle("-fx-text-fill: " + opponentBugemon.color() + ";");
+        ui.OpponentBugemonLabel().setText(opponentBugemon.name());
+        ui.OpponentLevelLabel().setText("Lv." + opponentBugemon.level());
+        ui.OpponentBugemonLabel().setStyle("-fx-text-fill: " + opponentBugemon.color() + ";");
         double opponentRatio = (double) opponentBugemon.hp() / opponentBugemon.maxHp();
-        OpponentHPBar.setProgress(opponentRatio);
-        updateHPBarColor(OpponentHPBar, opponentRatio);
-        OpponentHPNumber.setText(opponentBugemon.hp() + " / " + opponentBugemon.maxHp());
+        ui.OpponentHPBar().setProgress(opponentRatio);
+        updateHPBarColor(ui.OpponentHPBar(), opponentRatio);
+        ui.OpponentHPNumber().setText(opponentBugemon.hp() + " / " + opponentBugemon.maxHp());
     }
 
 	private void displayPhase(List<String> messages, int index, BattlePhaseVisual visual, BattleSnapshot currentSnapshot,
-		Runnable onComplete, ProgressBar PlayerBugemonHPBar, Label PlayerBugemonHPNumber, 
-		ProgressBar OpponentHPBar, Label OpponentHPNumber, Label battleLog) {
+		Runnable onComplete) {
         if (index >= messages.size()) {
             onComplete.run();
             return;
         }
 
-        battleLog.setText(wrapText(messages.get(index), 35));
-        applyPhaseVisual(visual, currentSnapshot, PlayerBugemonHPBar, PlayerBugemonHPNumber, OpponentHPBar, OpponentHPNumber);
+        ui.battleLog().setText(wrapText(messages.get(index), 35));
+        applyPhaseVisual(visual, currentSnapshot);
 
         PauseTransition pause = new PauseTransition(javafx.util.Duration.seconds(2));
-        pause.setOnFinished(event -> displayPhase(messages, index + 1, visual, currentSnapshot, onComplete, 
-			PlayerBugemonHPBar, PlayerBugemonHPNumber, OpponentHPBar, OpponentHPNumber, battleLog));
+        pause.setOnFinished(event -> displayPhase(messages, index + 1, visual, currentSnapshot, onComplete));
         pause.play();
     }
 
-    private void applyPhaseVisual(BattlePhaseVisual visual, BattleSnapshot currentSnapshot, ProgressBar PlayerBugemonHPBar,
-		Label PlayerBugemonHPNumber, ProgressBar OpponentHPBar, Label OpponentHPNumber) {
+    private void applyPhaseVisual(BattlePhaseVisual visual, BattleSnapshot currentSnapshot) {
         if (visual.snapshot() != null) {
             renderBattle(visual.snapshot());
         }
 
         if (visual.playerHp() != null && visual.opponentHp() != null) {
-            updateHPDisplay(visual.playerHp(), visual.opponentHp(), currentSnapshot, PlayerBugemonHPBar, PlayerBugemonHPNumber,
-			OpponentHPBar, OpponentHPNumber);
+            updateHPDisplay(visual.playerHp(), visual.opponentHp(), currentSnapshot);
         }
     }
 
-	private void updateHPDisplay(int selfHp, int opponentHp, BattleSnapshot currentSnapshot, ProgressBar PlayerBugemonHPBar,
-		Label PlayerBugemonHPNumber, ProgressBar OpponentHPBar, Label OpponentHPNumber) {
+	private void updateHPDisplay(int selfHp, int opponentHp, BattleSnapshot currentSnapshot) {
         if (currentSnapshot == null || currentSnapshot.playerBugemon() == null || currentSnapshot.opponentBugemon() == null) {
             return;
         }
@@ -172,13 +171,13 @@ public class BattleWindowGraphicsHelper {
         double selfRatio = (double) selfHp / self.maxHp();
         double opponentRatio = (double) opponentHp / opponent.maxHp();
 
-        PlayerBugemonHPBar.setProgress(selfRatio);
-        PlayerBugemonHPNumber.setText(selfHp + " / " + self.maxHp());
-        updateHPBarColor(PlayerBugemonHPBar, selfRatio);
+        ui.PlayerBugemonHPBar().setProgress(selfRatio);
+        ui.PlayerBugemonHPNumber().setText(selfHp + " / " + self.maxHp());
+        updateHPBarColor(ui.PlayerBugemonHPBar(), selfRatio);
 
-        OpponentHPBar.setProgress(opponentRatio);
-        OpponentHPNumber.setText(opponentHp + " / " + opponent.maxHp());
-        updateHPBarColor(OpponentHPBar, opponentRatio);
+        ui.OpponentHPBar().setProgress(opponentRatio);
+        ui.OpponentHPNumber().setText(opponentHp + " / " + opponent.maxHp());
+        updateHPBarColor(ui.OpponentHPBar(), opponentRatio);
     }
 
 	private void updateHPBarColor(ProgressBar bar, double ratio) {
@@ -217,10 +216,10 @@ public class BattleWindowGraphicsHelper {
     }
 
 
-	public void clearMessages(Label battleLog, VBox messageBox) {
-        battleLog.setText("");
-        messageBox.setVisible(false);
-        messageBox.setManaged(false);
+	public void clearMessages() {
+        ui.battleLog().setText("");
+        ui.messageBox().setVisible(false);
+        ui.messageBox().setManaged(false);
     }
 
 	public void renderBattle(BattleSnapshot snapshot) {
@@ -229,6 +228,10 @@ public class BattleWindowGraphicsHelper {
         }
     }
 
-	private record BattlePhaseVisual(BattleSnapshot snapshot, Integer playerHp, Integer opponentHp) {
-    }
+	private record BattlePhaseVisual(BattleSnapshot snapshot, Integer playerHp, Integer opponentHp) {}
+
+	private record BattleUIComponents(ProgressBar PlayerBugemonHPBar, ProgressBar OpponentHPBar, 
+		Label PlayerBugemonHPNumber, Label OpponentHPNumber, ImageView PlayerBugemon, ImageView OpponentBugemon,
+		Label PlayerBugemonLabel, Label OpponentBugemonLabel, Label PlayerLevelLabel, Label OpponentLevelLabel, 
+		VBox messageBox, Label battleLog){}
 }

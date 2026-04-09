@@ -86,7 +86,10 @@ public class BattleWindow extends Window {
         switchButton.setDisable(autoMode);
         autoButton.setDisable(!autoMode);
         showMainMenu();
-        graphicsHelper.clearMessages(battleLog, messageBox);
+		graphicsHelper.linkUI(PlayerBugemonHPBar, OpponentHPBar, PlayerBugemonHPNumber, OpponentHPNumber, 
+			PlayerBugemon, OpponentBugemon, PlayerBugemonLabel, OpponentBugemonLabel, PlayerLevelLabel, OpponentLevelLabel, 
+			messageBox, battleLog);
+        graphicsHelper.clearMessages();
     }
 
 	public void initializeContent() {
@@ -145,10 +148,7 @@ public class BattleWindow extends Window {
 	public void renderBattle(BattleSnapshot snapshot) {
         graphicsHelper.renderBattle(snapshot);
         currentSnapshot = snapshot;
-        graphicsHelper.updateBattleGraphics(snapshot, PlayerBugemon, PlayerBugemonLabel, PlayerLevelLabel,
-			PlayerBugemonHPBar, PlayerBugemonHPNumber, OpponentBugemon, OpponentBugemonLabel, OpponentLevelLabel, OpponentHPBar,
-			OpponentHPNumber
-		);
+        graphicsHelper.updateBattleGraphics(snapshot);
     }
 
     public void showInventoryMenu(List<InventoryEntry> inventoryEntries) {
@@ -219,18 +219,17 @@ public class BattleWindow extends Window {
     }
 
     public void showLogMessages(List<String> logs) {
-		graphicsHelper.showLogMessages(logs, battleLog, messageBox);
+		graphicsHelper.showLogMessages(logs);
     }
 
     public void displayMessagesSequentially(List<String> rawLogs, Integer hpAfterFirstActionSelf,
     	Integer hpAfterFirstActionOpponent, BattleSnapshot finalSnapshot, Runnable onComplete) {
         
 		hideAllMenus();
-		graphicsHelper.displayMessagesSequentially(rawLogs, hpAfterFirstActionSelf, hpAfterFirstActionOpponent, 
-			finalSnapshot, currentSnapshot, onComplete, PlayerBugemonHPBar, PlayerBugemonHPNumber, OpponentHPBar, OpponentHPNumber,
-			messageBox, battleLog);
-
-    }
+		graphicsHelper.displayMessagesSequentially(rawLogs, hpAfterFirstActionSelf,
+    		hpAfterFirstActionOpponent, finalSnapshot, currentSnapshot, 
+			onComplete);
+	}
 
     private void updateBackButtonsState() {
         setBackButtonDisabled(bugemonsView, forcedSwitch);
@@ -281,21 +280,16 @@ public class BattleWindow extends Window {
         roomLabel.setText("");
     }
 
-    public record BattleSnapshot(BugemonDisplay playerBugemon, BugemonDisplay opponentBugemon) {
-    }
+    public record BattleSnapshot(BugemonDisplay playerBugemon, BugemonDisplay opponentBugemon) {}
 
-    public record BugemonDisplay(String name, String spritePath, String color, int level, int hp, int maxHp) {
-    }
+    public record BugemonDisplay(String name, String spritePath, String color, int level, int hp, int maxHp) {}
 
-    public record InventoryEntry(String itemId, String itemName, String itemSpritePath, int quantity, boolean usable) {
-    }
+    public record InventoryEntry(String itemId, String itemName, String itemSpritePath, int quantity, boolean usable) {}
 
     public record BugemonEntry(String bugemonId, String bugemonName, String bugemonSpritePath,
-                               boolean ko, boolean active, boolean selectable) {
-    }
+                               boolean ko, boolean active, boolean selectable) {}
 
-    public record AbilityEntry(String abilityId, String abilityName, String color, String effectiveness) {
-    }
+    public record AbilityEntry(String abilityId, String abilityName, String color, String effectiveness) {}
 
     public interface ViewListener {
         void onItemMenu();

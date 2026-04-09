@@ -3,6 +3,7 @@ package ulb.view.windows;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import ulb.view.WindowPath;
 
 public class FloorRewardWindow extends Window {
 
@@ -42,20 +43,12 @@ public class FloorRewardWindow extends Window {
 
 	@FXML
 	private void statReward(){
-		if (viewListener != null) {
-			viewListener.onChooseStatReward();
-		}
-	}
-
-	public interface ViewListener {
-		void onObjectReward();
-		void onChooseAttackReward();
-		void onChooseStatReward();
+		switchWindow(WindowPath.CHOOSE_BUGEMON);
 	}
 
     public interface ViewListener {
         void onObjectReward();
-        void onAttackReward();
+        void onChooseAttackReward();
         void onStatReward();
     }
 }

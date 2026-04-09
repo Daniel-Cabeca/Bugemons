@@ -737,14 +737,12 @@ AttackReplacementController.Listener {
 				towerFloorNumber,
 				currentRoomIndex
 		);
+		try {
+			battleWindowController.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
-
-	// 	try {
-	// 		battleWindowController.show();
-	// 	} catch (Exception e) {
-	// 		e.printStackTrace();
-	// 	}
-	// }
 
 	// /**
 	//  * initialises a new floorRewardController and switches to the window

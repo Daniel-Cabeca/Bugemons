@@ -295,9 +295,10 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         }
 
         List<InventoryEntry> entries = new ArrayList<>();
+        Map<ItemDTO, Boolean> itemMap = listener.checkItems(new ArrayList<ItemDTO>(inventory.keySet()));
         for (Map.Entry<ItemDTO, Integer> entry : inventory.entrySet()) {
             ItemDTO item = entry.getKey();
-            boolean usable = listener.checkItem(item);
+            boolean usable = itemMap.get(item);
             entries.add(new InventoryEntry(
                     item.getId(),
                     item.getName(),
@@ -341,13 +342,15 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         }
 
         List<AbilityEntry> entries = new ArrayList<>();
+        Map<AbilityDTO, String> abilitiesEffectiveness = listener.getAbilityEffectiveness(ownActiveBugemon.getAbilities(), opponentActiveBugemon);
+        
         for (AbilityDTO ability : ownActiveBugemon.getAbilities()) {
             if (ability != null) {
                 entries.add(new AbilityEntry(
                         ability.getId(),
                         ability.getName(),
                         getTypeColor(ability.getType()),
-                        this.listener.getAbilityEffectiveness(ability, opponentActiveBugemon)
+                        abilitiesEffectiveness.get(ability)
                 ));
             }
         }
@@ -424,11 +427,11 @@ public class BattleWindowController implements BattleWindow.ViewListener {
 
     public interface Listener {
         List<BugemonDTO> getActiveBugemons();
-        String getAbilityEffectiveness(AbilityDTO ability, BugemonDTO bugemon);
+        Map<AbilityDTO, String> getAbilityEffectiveness(List<AbilityDTO> ability, BugemonDTO bugemon);
         List<Integer> getHpAfterFirstAction();
         BattleState getState();
         List<String> getLogs();
-        boolean checkItem(ItemDTO item);
+        Map<ItemDTO, Boolean> checkItems(List<ItemDTO> items);
         boolean isGameFinished();
         BattleState onAutoTurn();
         BattleState onUseItem(ItemDTO item);

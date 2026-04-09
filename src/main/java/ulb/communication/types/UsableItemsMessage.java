@@ -1,19 +1,22 @@
 package ulb.communication.types;
 
+import java.util.Map;
+
+import ulb.DTO.item.ItemDTO;
 import ulb.communication.Message;
 import ulb.communication.MessageType;
 import ulb.controller.GameController;
 
-public class GetLogsMessage implements Message {
-    private boolean clearLogs;
+public class UsableItemsMessage implements Message{
+    private Map<ItemDTO, Boolean> itemMap;
 
-    public GetLogsMessage(boolean clearLogs){
-        this.clearLogs = clearLogs;
+    public UsableItemsMessage(Map<ItemDTO, Boolean> itemMap){
+        this.itemMap = itemMap;
     }
 
     @Override
     public MessageType getMessageType() {
-        return MessageType.GET_LOGS;
+        return MessageType.USABLE_ITEMS;
     }
 
     @Override
@@ -22,5 +25,6 @@ public class GetLogsMessage implements Message {
         return null;
     }
 
-    public boolean clearLogs(){return this.clearLogs;}
+    public Map<ItemDTO, Boolean> getItemMap(){return this.itemMap;}
+    
 }

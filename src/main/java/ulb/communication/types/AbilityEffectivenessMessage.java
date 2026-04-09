@@ -1,14 +1,16 @@
 package ulb.communication.types;
 
+import java.util.Map;
+
+import ulb.DTO.ability.AbilityDTO;
 import ulb.communication.Message;
 import ulb.communication.MessageType;
 import ulb.controller.GameController;
-import ulb.model.type.Effectiveness;
 
 public class AbilityEffectivenessMessage implements Message {
-    private Effectiveness effectiveness;
+    private Map<AbilityDTO, String> effectiveness;
 
-    public AbilityEffectivenessMessage(Effectiveness effectiveness){
+    public AbilityEffectivenessMessage(Map<AbilityDTO, String> effectiveness){
         this.effectiveness = effectiveness;
     }
 
@@ -23,5 +25,5 @@ public class AbilityEffectivenessMessage implements Message {
         return null;
     }
 
-    public Effectiveness getEffectiveness(){return this.effectiveness;}
+    public Map<AbilityDTO, String> getEffectiveness(){return this.effectiveness;}
 }

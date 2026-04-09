@@ -7,9 +7,10 @@ import ulb.communication.MessageType;
 import ulb.controller.GameController;
 
 public class LogsMessage implements Message {
+    private List<Integer> HpsAfterFirstAction;
     private List<String> logs;
 
-    public LogsMessage(List<String> logs){
+    public LogsMessage(List<Integer> HpsAfterFirstAction, List<String> logs){
         this.logs = logs;
     } 
 
@@ -24,5 +25,6 @@ public class LogsMessage implements Message {
         return null;
     }
 
+    public List<Integer> getHpsAfterFirstAction(){return this.HpsAfterFirstAction;}
     public List<String> getLogs(){return this.logs;}
 }

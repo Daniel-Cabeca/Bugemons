@@ -1,20 +1,20 @@
 package ulb.communication.types;
 
-import ulb.DTO.ability.AbilityDTO;
+import ulb.DTO.bugemon.BugemonDTO;
 import ulb.communication.Message;
 import ulb.communication.MessageType;
 import ulb.controller.GameController;
 
-public class UseAbility implements Message{
-    private AbilityDTO ability;
+public class SwapBugemonMessage implements Message{
+    private BugemonDTO bugemonToSwap;
 
-    public UseAbility(AbilityDTO ability){
-        this.ability = ability;
+    public SwapBugemonMessage(BugemonDTO bugemonToSwap){
+        this.bugemonToSwap = bugemonToSwap;
     }
 
     @Override
     public MessageType getMessageType() {
-        return MessageType.USE_ABILITY;
+        return MessageType.SWAP_BUGEMON;
     }
 
     @Override
@@ -23,5 +23,5 @@ public class UseAbility implements Message{
         return null;
     }
 
-    public AbilityDTO getAbility(){return this.ability;}
+    public BugemonDTO getBugemonToSwap(){return this.bugemonToSwap;}
 }

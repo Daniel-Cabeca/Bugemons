@@ -16,7 +16,6 @@ import ulb.communication.Client;
 import ulb.communication.Message;
 import ulb.communication.Server;
 import ulb.communication.old_types.AutoTurnRequestMessage;
-import ulb.communication.old_types.AutoTurnResponseMessage;
 import ulb.communication.old_types.BattleEndCheckMessage;
 import ulb.communication.old_types.BattleEndInfoMessage;
 import ulb.communication.old_types.GetInfoMessage;
@@ -68,6 +67,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
+import java.util.Map;
 
 
 public class GameController extends Application implements TeamController.Listener, ModeController.Listener,
@@ -407,9 +407,10 @@ AttackReplacementController.Listener {
 
 	public Message applyOn(AutoTurnRequestMessage m){
 		// SERVER
-		StrategyRandom strategyRandom = new StrategyRandom(normalModeBattleController);
-		BattleState state = strategyRandom.playAutoTurn();
-		return new AutoTurnResponseMessage(state);
+		// StrategyRandom strategyRandom = new StrategyRandom(normalModeBattleController);
+		// BattleState state = strategyRandom.playAutoTurn();
+		// return new AutoTurnResponseMessage(state);
+		return null;
 	}
 
 	public Message applyOn(SwitchWindowMessage m){
@@ -535,9 +536,10 @@ AttackReplacementController.Listener {
 		BattleController battleController = battleControllerForManualTurn();
 		if (battleController != null && item != null) {
 			battleController.useAction(new UseItem(item));
-			response = new AutoTurnResponseMessage(battleController.getState());
+			// response = new AutoTurnResponseMessage(battleController.getState());
 		}
-		return response;
+		// return response;
+		return null;
 	}
 
 	/**
@@ -553,9 +555,10 @@ AttackReplacementController.Listener {
 		BattleController battleController = battleControllerForManualTurn();
 		if (battleController != null && bugemon != null) {
 			battleController.useAction(new Swap(bugemon));
-			response = new AutoTurnResponseMessage(battleController.getState());
+			// response = new AutoTurnResponseMessage(battleController.getState());
 		}
-		return response;
+		// return response;
+		return null;
 	}
 
 	/**
@@ -571,9 +574,10 @@ AttackReplacementController.Listener {
 		BattleController battleController = battleControllerForManualTurn();
 		if (battleController != null && ability != null) {
 			battleController.useAction(new UseAbility(ability));
-			response = new AutoTurnResponseMessage(battleController.getState());
+			// response = new AutoTurnResponseMessage(battleController.getState());
 		}
-		return response;
+		// return response;
+		return null;
 	}
 
 	/**
@@ -666,7 +670,7 @@ AttackReplacementController.Listener {
 	@Override
 	public List<BugemonDTO> getActiveBugemons(){return null;}
 	@Override
-	public String getAbilityEffectiveness(AbilityDTO ability, BugemonDTO bugemon){return null;}
+	public Map<AbilityDTO, String> getAbilityEffectiveness(List<AbilityDTO> abilities, BugemonDTO bugemonTarget){return null;}
 	@Override
 	public List<Integer> getHpAfterFirstAction(){return null;}
 	@Override
@@ -674,7 +678,7 @@ AttackReplacementController.Listener {
 	@Override
 	public List<String> getLogs(){return null;}
 	@Override
-	public boolean checkItem(ItemDTO item){return false;}
+	public Map<ItemDTO, Boolean> checkItems(List<ItemDTO> items){return null;}
 	@Override
 	public boolean isGameFinished(){return false;}
 

@@ -13,17 +13,30 @@ import ulb.communication.Client;
 import ulb.communication.Message;
 import ulb.communication.old_types.BattleEndCheckMessage;
 import ulb.communication.old_types.TowerInfoMessage;
+import ulb.communication.types.AbilityEffectivenessMessage;
 import ulb.communication.types.ActiveBugemonsMessage;
+import ulb.communication.types.BattleStateMessage;
 import ulb.communication.types.BugemonSpeciesMessage;
+import ulb.communication.types.CheckGameFinishedMessage;
+import ulb.communication.types.CheckUsableItemMessage;
 import ulb.communication.types.ErrorMessage;
+import ulb.communication.types.GameFinishedMessage;
 import ulb.communication.types.GameMode;
+import ulb.communication.types.GetAbilityEffectivenessMessage;
 import ulb.communication.types.GetActiveBugemonsMessage;
 import ulb.communication.types.GetAllBugemonSpeciesMessage;
+import ulb.communication.types.GetBattleStateMessage;
+import ulb.communication.types.GetLogsMessage;
 import ulb.communication.types.GetTowerInfoMessage;
+import ulb.communication.types.LogsMessage;
 import ulb.communication.types.SetUpNormalModeMessage;
 import ulb.communication.types.SetUpPlayerMessage;
 import ulb.communication.types.SetUpTeamMessage;
 import ulb.communication.types.SetUpTowerModeMessage;
+import ulb.communication.types.SwapBugemonMessage;
+import ulb.communication.types.UsableItemsMessage;
+import ulb.communication.types.UseAbilityMessage;
+import ulb.communication.types.UseItemMessage;
 import ulb.controller.action.Swap;
 import ulb.controller.action.UseAbility;
 import ulb.controller.action.UseItem;
@@ -238,17 +251,78 @@ BattleModeController.Listener, BattleWindowController.Listener {
 	}
 
 	@Override
-	public String getAbilityEffectiveness(AbilityDTO ability, BugemonDTO bugemon){return null;}
+	public Map<AbilityDTO, String> getAbilityEffectiveness(List<AbilityDTO> abilities, BugemonDTO bugemonTarget){
+		Message message = getData(new GetAbilityEffectivenessMessage(abilities, bugemonTarget));
+
+		if (message instanceof AbilityEffectivenessMessage effectivenessMessage){
+			return effectivenessMessage.getEffectiveness();
+		} else if (message instanceof ErrorMessage errorMessage){
+			System.err.println(errorMessage.getError());
+		}
+		return null;
+	}
+
 	@Override
-	public List<Integer> getHpAfterFirstAction(){return null;}
+	public List<Integer> getHpAfterFirstAction(){
+		Message message = getData(new GetLogsMessage(false));
+
+		if (message instanceof LogsMessage logs){
+			return logs.getHpsAfterFirstAction();
+		} else if (message instanceof ErrorMessage errorMessage){
+			System.err.println(errorMessage.getError());
+		}
+		return null;
+	}
+
 	@Override
-	public BattleState getState(){return null;}
+	public BattleState getState(){
+		Message message = getData(new GetBattleStateMessage());
+
+		if (message instanceof BattleStateMessage battleState){
+			System.out.println("State  = " + battleState.getBattleState());
+			return battleState.getBattleState();
+		} else if (message instanceof ErrorMessage errorMessage){
+			System.err.println(errorMessage.getError());
+		}
+		return null;
+
+	}
+
 	@Override
-	public List<String> getLogs(){return null;}
+	public List<String> getLogs(){
+		Message message = getData(new GetLogsMessage(true));
+
+		if (message instanceof LogsMessage logs){
+			return logs.getLogs();
+		} else if (message instanceof ErrorMessage errorMessage){
+			System.err.println(errorMessage.getError());
+		}
+		return null;
+	}
+
 	@Override
-	public boolean checkItem(ItemDTO item){return false;}
+	public Map<ItemDTO, Boolean> checkItems(List<ItemDTO> items){
+		Message message = getData(new CheckUsableItemMessage(items));
+
+		if (message instanceof UsableItemsMessage usableItems){
+			return usableItems.getItemMap();
+		} else if (message instanceof ErrorMessage errorMessage){
+			System.err.println(errorMessage.getError());
+		}
+		return null;
+	}
+
 	@Override
-	public boolean isGameFinished(){return false;}
+	public boolean isGameFinished(){
+		Message message = getData(new CheckGameFinishedMessage());
+
+		if (message instanceof GameFinishedMessage gameFinished){
+			return gameFinished.isGameFinished();
+		} else if (message instanceof ErrorMessage errorMessage){
+			System.err.println(errorMessage.getError());
+		}
+		return true;
+	}
 
 	@Override
 	public BattleState onAutoTurn() {
@@ -260,34 +334,26 @@ BattleModeController.Listener, BattleWindowController.Listener {
 
 	@Override
 	public BattleState onUseItem(ItemDTO item) {
-		// CLIENT + SERVER
-		// BattleController battleController = battleControllerForManualTurn();
-		// if (battleController != null && item != null) {
-		// 	battleController.useAction(new UseItem(item));
-		// 	return battleController.getState();
-		// }
-		return null;
+		if (!postData(new UseItemMessage(item))){
+			return null;
+		}
+		return getState();
 	}
 
 	@Override
 	public BattleState onSwapBugemon(BugemonDTO bugemon) {
-		// CLIENT + SERVER
-		// BattleController battleController = battleControllerForManualTurn();
-		// if (battleController != null && bugemon != null) {
-		// 	battleController.useAction(new Swap(bugemon));
-		// 	return battleController.getState();
-		// }
-		return null;
+		if (!postData(new SwapBugemonMessage(bugemon))){
+			return null;
+		}
+		return getState();
 	}
 
 	@Override
 	public BattleState onUseAbility(AbilityDTO ability) {
-		// BattleController battleController = battleControllerForManualTurn();
-		// if (battleController != null && ability != null) {
-		// 	battleController.useAction(new UseAbility(ability));
-		// 	return battleController.getState();
-		// }
-		return null;
+		if (!postData(new UseAbilityMessage(ability))){
+			return null;
+		}
+		return getState();
 	}
 
 	@Override

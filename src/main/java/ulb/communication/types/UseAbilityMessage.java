@@ -1,22 +1,20 @@
 package ulb.communication.types;
 
-import java.util.Map;
-
-import ulb.DTO.item.ItemDTO;
+import ulb.DTO.ability.AbilityDTO;
 import ulb.communication.Message;
 import ulb.communication.MessageType;
 import ulb.controller.GameController;
 
-public class UsableItems implements Message{
-    private Map<ItemDTO, Boolean> itemMap;
+public class UseAbilityMessage implements Message{
+    private AbilityDTO ability;
 
-    public UsableItems(Map<ItemDTO, Boolean> itemMap){
-        this.itemMap = itemMap;
+    public UseAbilityMessage(AbilityDTO ability){
+        this.ability = ability;
     }
 
     @Override
     public MessageType getMessageType() {
-        return MessageType.USABLE_ITEMS;
+        return MessageType.USE_ABILITY;
     }
 
     @Override
@@ -25,6 +23,5 @@ public class UsableItems implements Message{
         return null;
     }
 
-    public Map<ItemDTO, Boolean> getItemMap(){return this.itemMap;}
-    
+    public AbilityDTO getAbility(){return this.ability;}
 }

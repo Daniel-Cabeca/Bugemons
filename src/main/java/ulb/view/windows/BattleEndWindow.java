@@ -21,6 +21,13 @@ public class BattleEndWindow extends Window {
 	@FXML
 	private VBox content;
 
+	public ViewListener listener;
+
+	public void setListener(ViewListener listener) {
+		this.listener = listener;
+	}
+
+
 	@FXML
 	public void initialize() {
 		Scaling.applyScaling(content);
@@ -54,6 +61,10 @@ public class BattleEndWindow extends Window {
 	 * Returns to the main menu
 	 */
 	public void handleReturn() {
-		switchWindow(WindowPath.MODE);
+		this.listener.onHandleReturn();
+	}
+
+	public interface ViewListener {
+		public void onHandleReturn();
 	}
 }

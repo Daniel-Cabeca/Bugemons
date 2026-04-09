@@ -8,7 +8,7 @@ import ulb.model.Player;
 import ulb.view.WindowPath;
 import ulb.view.windows.ModeWindow;
 
-public class ModeController extends WindowController implements ModeWindow.ViewListener {
+public class ModeController extends WindowController<ModeWindow> implements ModeWindow.ViewListener {
 
     private TeamController teamController;
     private Player player;
@@ -23,8 +23,7 @@ public class ModeController extends WindowController implements ModeWindow.ViewL
             System.err.println("Couldn't load the FXML file");
         }
 
-        ((ModeWindow)this.getView()).setListener(this);
-
+        this.getView().setListener(this);
     }
 
     public void setPlayer(Player player) { // TO REMOVE

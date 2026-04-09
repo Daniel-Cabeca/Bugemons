@@ -18,6 +18,7 @@ import ulb.controller.strategy.StrategyRandom;
 import ulb.controller.towerManager.FloorManager;
 import ulb.controller.towerManager.RoomManager;
 import ulb.controller.towerManager.TowerManager;
+import ulb.controller.windows.BattleEndController;
 import ulb.controller.windows.ModeController;
 import ulb.model.battle.BattleState;
 import ulb.model.Player;
@@ -76,6 +77,7 @@ AttackReplacementController.Listener {
 	private LevelUpController levelUpController;
 	private FloorRewardController floorRewardController;
 	private AttackReplacementController attackReplacementController;
+	private BattleEndController battleEndController;
 	private FloorRewardController.RewardChoice pendingFloorRewardChoice;
 
 	public static void main(String[] args) {
@@ -120,6 +122,9 @@ AttackReplacementController.Listener {
 		this.modeController.setPlayer(this.player); // TO REMOVE
 		this.modeController.setStage(this.stage);
 		this.modeController.show();
+
+
+
 
 		if (primaryStage.getScene() != null) {
 			String stylesheet = getClass().getResource("/styles/global.css").toExternalForm();
@@ -291,7 +296,15 @@ AttackReplacementController.Listener {
 	private void handleBattleEnd(boolean victory, int totalXP) {
 		pendingVictory = victory;
 		pendingTotalXP = totalXP;
-		switchWindow(WindowPath.BATTLE_END);
+
+		//TO CHANGE
+		if (this.battleEndController == null) {
+			this.battleEndController = new BattleEndController();
+
+			this.battleEndController.setModeController(this.modeController);
+			this.battleEndController.setStage(this.stage);
+		}
+		this.battleEndController.show();
 	}
 
 	// Handles fleeing from a tower battle: restores HP and resets the room

@@ -4,6 +4,7 @@ import java.util.List;
 
 import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.communication.Message;
+import ulb.communication.MessageType;
 import ulb.controller.GameController;
 
 public class BugemonSpeciesMessage implements Message {

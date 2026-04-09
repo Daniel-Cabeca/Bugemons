@@ -1,6 +1,8 @@
-package ulb.communication.types;
+package ulb.communication.old_types;
 
 import ulb.communication.Message;
+import ulb.communication.MessageType;
+import ulb.communication.types.GameMode;
 import ulb.controller.BattleController;
 import ulb.controller.GameController;
 import ulb.model.item.Inventory;

@@ -1,22 +1,22 @@
 package ulb.communication.types;
 
-import java.util.List;
+import java.util.Map;
 
-import ulb.DTO.bugemon.BugemonDTO;
+import ulb.DTO.item.ItemDTO;
 import ulb.communication.Message;
 import ulb.communication.MessageType;
 import ulb.controller.GameController;
 
-public class SetUpTeamMessage implements Message {
-    private List<BugemonDTO> team;
+public class UsableItems implements Message{
+    private Map<ItemDTO, Boolean> itemMap;
 
-    public SetUpTeamMessage(List<BugemonDTO> team){
-        this.team = team;
+    public UsableItems(Map<ItemDTO, Boolean> itemMap){
+        this.itemMap = itemMap;
     }
 
     @Override
     public MessageType getMessageType() {
-        return MessageType.SETUP_TEAM;
+        return MessageType.USABLE_ITEMS;
     }
 
     @Override
@@ -25,5 +25,6 @@ public class SetUpTeamMessage implements Message {
         return null;
     }
 
-    public List<BugemonDTO> getTeam(){return this.team;}
+    public Map<ItemDTO, Boolean> getItemMap(){return this.itemMap;}
+    
 }

@@ -1,18 +1,18 @@
 package ulb.communication.types;
 
 import ulb.communication.Message;
+import ulb.communication.MessageType;
 import ulb.controller.GameController;
 
-// Sent when the player flees a tower battle
-public class TowerFleeMessage implements Message {
-
+public class CheckGameFinishedMessage implements Message{
     @Override
     public MessageType getMessageType() {
-        return MessageType.TOWER_FLEE;
+        return MessageType.CHECK_GAME_FINISHED;
     }
 
     @Override
     public Message handle(GameController controller) {
-        return controller.applyOn(this);
+        // TODO Auto-generated method stub
+        return null;
     }
 }

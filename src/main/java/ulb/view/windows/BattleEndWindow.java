@@ -4,9 +4,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import ulb.communication.Message;
-import ulb.communication.types.BattleEndInfoMessage;
-import ulb.communication.types.GetInfoMessage;
-import ulb.communication.types.InfoType;
+import ulb.communication.old_types.BattleEndInfoMessage;
+import ulb.communication.old_types.GetInfoMessage;
+import ulb.communication.old_types.InfoType;
 import ulb.utils.Scaling;
 import ulb.view.WindowPath;
 

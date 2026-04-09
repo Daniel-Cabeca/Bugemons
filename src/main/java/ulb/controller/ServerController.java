@@ -119,8 +119,6 @@ public class ServerController extends Thread{
             }
 
             this.player.setTeam(team);
-            System.out.println("Bugemon choisit : " + player.getTeam().getMembers().get(0).getName());
-            System.out.println("taille de la team : " + player.getTeam().getMembers().size());
             sendSuccessMessage();
 
         } else if (message instanceof SetUpNormalModeMessage){
@@ -147,9 +145,6 @@ public class ServerController extends Thread{
                 return;
             }
             Bugemon selfActive = this.battle.getActiveBugemon(teamLabel);
-            System.out.println("bugemon actif : " + selfActive.getName());
-            System.out.println("Bugemon choisit : " + player.getTeam().getMembers().get(0).getName());
-            System.out.println("taille de la team : " + player.getTeam().getMembers().size());
             Bugemon opponentActive = this.battle.getActiveBugemon(this.battle.getOpponentTeamLabel(teamLabel)); 
             sendMessage(new ActiveBugemonsMessage(BugemonMapper.toDTO(selfActive), BugemonMapper.toDTO(opponentActive)));
         } else if (message instanceof GetTowerInfoMessage){

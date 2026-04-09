@@ -169,7 +169,6 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         BattleSnapshot snapshot = buildBattleSnapshot();
         if (snapshot != null) {
             view.renderBattle(snapshot);
-            System.out.println(snapshot.playerBugemon().name());
         }
         view.showLogMessages(consumeLogMessages());
     }

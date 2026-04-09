@@ -11,8 +11,9 @@ import java.util.Map;
 
 import ulb.communication.Client;
 import ulb.communication.Message;
+import ulb.communication.old_types.BattleEndCheckMessage;
+import ulb.communication.old_types.TowerInfoMessage;
 import ulb.communication.types.ActiveBugemonsMessage;
-import ulb.communication.types.BattleEndCheckMessage;
 import ulb.communication.types.BugemonSpeciesMessage;
 import ulb.communication.types.ErrorMessage;
 import ulb.communication.types.GameMode;
@@ -23,7 +24,6 @@ import ulb.communication.types.SetUpNormalModeMessage;
 import ulb.communication.types.SetUpPlayerMessage;
 import ulb.communication.types.SetUpTeamMessage;
 import ulb.communication.types.SetUpTowerModeMessage;
-import ulb.communication.types.TowerInfoMessage;
 import ulb.controller.action.Swap;
 import ulb.controller.action.UseAbility;
 import ulb.controller.action.UseItem;

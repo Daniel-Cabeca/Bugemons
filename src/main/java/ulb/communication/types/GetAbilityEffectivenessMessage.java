@@ -4,10 +4,10 @@ import ulb.communication.Message;
 import ulb.communication.MessageType;
 import ulb.controller.GameController;
 
-public class SetUpNormalModeMessage implements Message {
+public class GetAbilityEffectivenessMessage implements Message {
     @Override
     public MessageType getMessageType() {
-        return MessageType.SETUP_NORMAL_MODE;
+        return MessageType.GET_ABILITY_EFFECTIVENESS;
     }
 
     @Override

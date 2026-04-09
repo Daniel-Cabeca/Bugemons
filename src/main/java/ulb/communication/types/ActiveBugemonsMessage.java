@@ -2,6 +2,7 @@ package ulb.communication.types;
 
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.communication.Message;
+import ulb.communication.MessageType;
 import ulb.controller.GameController;
 
 public class ActiveBugemonsMessage implements Message {

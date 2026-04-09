@@ -1,13 +1,20 @@
 package ulb.communication.types;
 
+import ulb.DTO.ability.AbilityDTO;
 import ulb.communication.Message;
 import ulb.communication.MessageType;
 import ulb.controller.GameController;
 
-public class SetUpNormalModeMessage implements Message {
+public class UseAbility implements Message{
+    private AbilityDTO ability;
+
+    public UseAbility(AbilityDTO ability){
+        this.ability = ability;
+    }
+
     @Override
     public MessageType getMessageType() {
-        return MessageType.SETUP_NORMAL_MODE;
+        return MessageType.USE_ABILITY;
     }
 
     @Override
@@ -15,4 +22,6 @@ public class SetUpNormalModeMessage implements Message {
         // TODO Auto-generated method stub
         return null;
     }
+
+    public AbilityDTO getAbility(){return this.ability;}
 }

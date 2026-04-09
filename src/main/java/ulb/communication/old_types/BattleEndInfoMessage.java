@@ -1,6 +1,7 @@
-package ulb.communication.types;
+package ulb.communication.old_types;
 
 import ulb.communication.Message;
+import ulb.communication.MessageType;
 import ulb.controller.GameController;
 
 // Carries the battle result info needed by BattleEndWindow

@@ -1,4 +1,4 @@
-package ulb.communication.types;
+package ulb.communication.old_types;
 
 public enum InfoType {
     SETUP_GAME,

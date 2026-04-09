@@ -1,18 +1,19 @@
-package ulb.communication.types;
+package ulb.communication.old_types;
 
 import ulb.communication.Message;
 import ulb.communication.MessageType;
 import ulb.controller.GameController;
 
-public class SetUpNormalModeMessage implements Message {
+// Sent when the player flees a tower battle
+public class TowerFleeMessage implements Message {
+
     @Override
     public MessageType getMessageType() {
-        return MessageType.SETUP_NORMAL_MODE;
+        return MessageType.TOWER_FLEE;
     }
 
     @Override
     public Message handle(GameController controller) {
-        // TODO Auto-generated method stub
-        return null;
+        return controller.applyOn(this);
     }
 }

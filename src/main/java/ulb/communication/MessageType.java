@@ -1,4 +1,4 @@
-package ulb.communication.types;
+package ulb.communication;
 
 public enum MessageType {
     AUTO_TURN_REQUEST,
@@ -31,4 +31,18 @@ public enum MessageType {
     TOWER_INFO,
     GET_ACTIVE_BUGEMONS,
     ACTIVE_BUGEMONS,
+    GET_ABILITY_EFFECTIVENESS,
+    ABILITY_EFFECTIVENESS,
+    GET_LOGS,
+    LOGS,
+    GET_BATTLE_STATE,
+    BATTLE_STATE,
+    CHECK_USABLE_ITEMS,
+    USABLE_ITEMS,
+    CHECK_GAME_FINISHED,
+    GAME_FINISHED,
+    USE_ITEM,
+    SWAP_BUGEMON,
+    USE_ABILITY,
+    RUN,
 }

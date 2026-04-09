@@ -1,7 +1,8 @@
-package ulb.communication.types;
+package ulb.communication.old_types;
 
 import javafx.event.ActionEvent;
 import ulb.communication.Message;
+import ulb.communication.MessageType;
 import ulb.controller.GameController;
 import ulb.model.battle.BattleState;
 

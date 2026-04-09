@@ -28,7 +28,11 @@ public class ChooseBugemonController implements ChooseBugemonWindow.ViewListener
         loader.load();
         view = loader.getController();
         view.setViewListener(this);
+<<<<<<< HEAD
         view.populatePlayerBugemons(player.getTeam());
+=======
+		view.populatePlayerBugemons(player.getTeam());
+>>>>>>> TowerNO
 
         Parent root = loader.getRoot();
         if (stage.getScene() == null) {
@@ -45,12 +49,23 @@ public class ChooseBugemonController implements ChooseBugemonWindow.ViewListener
     }
 
     @Override
+        public void onBugemonChosen(Bugemon bugemon) {
+                listener.onBugemonChosen(bugemon);
+        }
+
+        @Override
     public void onReturnFloorRewardWindow() {
         listener.onReturnFloorRewardWindow();
     }
 
+<<<<<<< HEAD
     public interface Listener {
         void onBugemonChosen(Bugemon bugemon);
         void onReturnFloorRewardWindow();
+=======
+	public interface Listener {
+		void onBugemonChosen(Bugemon bugemon);
+		void onReturnFloorRewardWindow();
+>>>>>>> TowerNO
     }
 }

@@ -22,10 +22,10 @@ public abstract class ServiceLoader {
         ItemJsonRepository itemRepository = new ItemJsonRepository();
         InventoryJsonRepository inventoryRepository = new InventoryJsonRepository(itemRepository);
 
-        ServiceLoader.abilityService = new AbilityService(abilityRepository);
-        ServiceLoader.bugemonService = new BugemonService(bugemonSpeciesRepository);
-        ServiceLoader.itemService = new ItemService(itemRepository, inventoryRepository);
-    }
+		ServiceLoader.abilityService = new AbilityService(abilityRepository);
+		ServiceLoader.bugemonService = new BugemonService(bugemonSpeciesRepository);
+		ServiceLoader.itemService = new ItemService(itemRepository, inventoryRepository);
+	}
 
     public static BugemonService getBugemonService() {
         return bugemonService;

@@ -46,7 +46,7 @@ import java.util.List;
 
 public class GameController extends Application implements TeamController.Listener, ModeController.Listener,
 BattleModeController.Listener, NextRoomController.Listener, ChooseBugemonController.Listener,
-BattleWindowController.Listener, LevelUpController.Listener, FloorRewardController.Listener,
+BattleWindowController.Listener, RegisterController.Listener , LevelUpController.Listener, FloorRewardController.Listener,
 AttackReplacementController.Listener {
 
 	private Player player;
@@ -73,6 +73,7 @@ AttackReplacementController.Listener {
 	private FloorRewardController floorRewardController;
 	private ChooseBugemonController chooseBugemonController;
 	private BattleWindowController battleWindowController;
+	private RegisterController registerController;
 	private LevelUpController levelUpController;
 	private AttackReplacementController attackReplacementController;
 	private FloorRewardController.RewardChoice pendingFloorRewardChoice;
@@ -114,8 +115,8 @@ AttackReplacementController.Listener {
 		primaryStage.setFullScreen(true);
 		primaryStage.setFullScreenExitHint("");
 
-		modeController = new ModeController(stage, this);
-		modeController.show();
+		registerController = new RegisterController(stage, this);
+		registerController.show();
 
 		if (primaryStage.getScene() != null) {
 			String stylesheet = getClass().getResource("/styles/global.css").toExternalForm();
@@ -844,4 +845,15 @@ AttackReplacementController.Listener {
 		}
 	}
 
+	@Override
+	public void onRegister() {
+		if (modeController == null) {
+			modeController = new ModeController(stage, this);
+		}
+		try {
+			modeController.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

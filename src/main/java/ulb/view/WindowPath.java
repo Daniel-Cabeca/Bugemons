@@ -4,6 +4,8 @@ public final class WindowPath {
     private WindowPath(){}
     public static final String FXML_WINDOWS_PATH = "/ulb/view/";
 
+    public static final String LOGIN = FXML_WINDOWS_PATH + "LoginWindow.fxml";
+    public static final String REGISTER = FXML_WINDOWS_PATH + "RegisterWindow.fxml";
     public static final String MODE = FXML_WINDOWS_PATH + "ModeWindow.fxml";
     public static final String CREATE_TEAM = FXML_WINDOWS_PATH + "CreateTeamWindow.fxml";
     public static final String BATTLE_MODE = FXML_WINDOWS_PATH + "BattleModeWindow.fxml";

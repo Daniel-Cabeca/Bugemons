@@ -8,14 +8,23 @@ import javafx.scene.layout.VBox;
 import ulb.repository.LoadException;
 import ulb.utils.Scaling;
 import ulb.view.WindowPath;
-/*
+
 public class RegisterWindow extends Window {
 
-    @FXML private VBox content;
-    @FXML private TextField usernameField;
-    @FXML private PasswordField passwordField;
-    @FXML private PasswordField confirmPasswordField;
-    @FXML private Label errorLabel;
+    @FXML
+    private VBox content;
+    @FXML
+    private TextField usernameField;
+    @FXML
+    private PasswordField passwordField;
+    @FXML
+    private PasswordField confirmPasswordField;
+    @FXML
+    private Label errorLabel;
+
+    private ViewListener viewListener;
+
+    public void setListener(ViewListener viewListener) { this.viewListener = viewListener; }
 
     @FXML
     public void initialize() {
@@ -23,37 +32,38 @@ public class RegisterWindow extends Window {
     }
 
     @FXML
-    private void handleRegister() {
+    private void onSignUp() {
         String username = usernameField.getText().trim();
         String password = passwordField.getText();
-        String confirm = confirmPasswordField.getText();
 
-        if (username.isEmpty() || password.isEmpty() || confirm.isEmpty()) {
-            errorLabel.setText("Remplis tous les champs.");
+        if (username.isEmpty() || password.isEmpty()) {
+            setErrorLabel("Remplis tous les champs.");
             return;
         }
 
-        if (!password.equals(confirm)) {
-            errorLabel.setText("Les mots de passe ne correspondent pas.");
-            return;
-        }
-
-        try {
-            boolean success = viewManager.getAccountService().register(username, password);
-            if (success) {
-                viewManager.setLoggedInUsername(username);
-                sendSwitchWindowMessage(WindowPath.MODE);
-            } else {
-                errorLabel.setText("Ce nom d'utilisateur est déjà pris.");
-            }
-        } catch (LoadException e) {
-            errorLabel.setText("Erreur de connexion à la base de données.");
-        }
+        viewListener.onSignUp(username, password);
     }
+
+    public void setErrorLabel(String error) {
+        errorLabel.setText(error);
+    }
+
 
     @FXML
-    private void goToLogin() {
-        sendSwitchWindowMessage(WindowPath.LOGIN);
+    private void onLogin() {
+        String username = usernameField.getText().trim();
+        String password = passwordField.getText();
+
+        if (username.isEmpty() || password.isEmpty()) {
+            setErrorLabel("Remplis tous les champs.");
+            return;
+        }
+
+        viewListener.onLogin(username, password);
+    }
+
+    public interface ViewListener {
+        void onLogin(String username, String password);
+        void onSignUp(String username, String password);
     }
 }
-*/

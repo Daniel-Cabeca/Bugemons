@@ -13,16 +13,15 @@
            fx:controller="ulb.view.windows.RegisterWindow">
 
     <VBox fx:id="content" alignment="CENTER" maxWidth="400" spacing="16">
-        <Label text="CRÉER UN COMPTE" style="-fx-text-fill: #e6ffff; -fx-font-size: 36; -fx-font-weight: bold;" />
+        <Label text="Bugémon" style="-fx-text-fill: #e6ffff; -fx-font-size: 36; -fx-font-weight: bold;" />
 
         <TextField fx:id="usernameField" promptText="Nom d'utilisateur" maxWidth="300" />
         <PasswordField fx:id="passwordField" promptText="Mot de passe" maxWidth="300" />
-        <PasswordField fx:id="confirmPasswordField" promptText="Confirmer le mot de passe" maxWidth="300" />
 
         <Label fx:id="errorLabel" style="-fx-text-fill: #ff4444;" />
 
-        <Button text="S'INSCRIRE" onAction="#handleRegister" prefWidth="200" prefHeight="50" />
+        <Button text="S'inscrire" onAction="#onSignUp" prefWidth="250" prefHeight="50" />
 
-        <Button text="Déjà un compte ? Se connecter" onAction="#goToLogin" prefWidth="250" prefHeight="40" />
+        <Button text="Se connecter" onAction="#onLogin" prefWidth="250" prefHeight="50" />
     </VBox>
 </StackPane>

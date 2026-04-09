@@ -44,7 +44,7 @@ import java.util.Deque;
 
 public class GameController extends Application implements TeamController.Listener, ModeController.Listener,
 BattleModeController.Listener, NextRoomController.Listener, ChooseBugemonController.Listener,
-BattleWindowController.Listener{
+BattleWindowController.Listener, RegisterController.Listener {
 
 	private Player player;
 	private TowerManager towerModeTowerManager;
@@ -69,6 +69,7 @@ BattleWindowController.Listener{
 	private NextRoomController nextRoomController;
 	private ChooseBugemonController chooseBugemonController;
 	private BattleWindowController battleWindowController;
+	private RegisterController registerController;
 
 	public static void main(String[] args) {
 		try {
@@ -107,8 +108,8 @@ BattleWindowController.Listener{
 		primaryStage.setFullScreen(true);
 		primaryStage.setFullScreenExitHint("");
 
-		modeController = new ModeController(stage, this);
-		modeController.show();
+		registerController = new RegisterController(stage, this);
+		registerController.show();
 
 		if (primaryStage.getScene() != null) {
 			String stylesheet = getClass().getResource("/styles/global.css").toExternalForm();
@@ -731,4 +732,15 @@ BattleWindowController.Listener{
 		}
 	}
 
+	@Override
+	public void onRegister() {
+		if (modeController == null) {
+			modeController = new ModeController(stage, this);
+		}
+		try {
+			modeController.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }

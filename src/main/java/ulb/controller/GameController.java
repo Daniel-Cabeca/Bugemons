@@ -18,6 +18,7 @@ import ulb.controller.strategy.StrategyRandom;
 import ulb.controller.towerManager.FloorManager;
 import ulb.controller.towerManager.RoomManager;
 import ulb.controller.towerManager.TowerManager;
+import ulb.controller.windows.ModeController;
 import ulb.model.battle.BattleState;
 import ulb.model.Player;
 import ulb.model.battle.Battle;
@@ -44,7 +45,7 @@ import java.util.Deque;
 import java.util.List;
 
 
-public class GameController extends Application implements TeamController.Listener, ModeController.Listener,
+public class GameController extends Application implements TeamController.Listener,
 BattleModeController.Listener, NextRoomController.Listener, ChooseBugemonController.Listener,
 BattleWindowController.Listener, LevelUpController.Listener, FloorRewardController.Listener,
 AttackReplacementController.Listener {
@@ -114,8 +115,11 @@ AttackReplacementController.Listener {
 		primaryStage.setFullScreen(true);
 		primaryStage.setFullScreenExitHint("");
 
-		modeController = new ModeController(stage, this);
-		modeController.show();
+		this.modeController = new ModeController();
+		this.modeController.setGameController(this); // TO REMOVE
+		this.modeController.setPlayer(this.player); // TO REMOVE
+		this.modeController.setStage(this.stage);
+		this.modeController.show();
 
 		if (primaryStage.getScene() != null) {
 			String stylesheet = getClass().getResource("/styles/global.css").toExternalForm();
@@ -149,9 +153,6 @@ AttackReplacementController.Listener {
 			}
 
 			// temporary fix until all windows/controllers are mvc
-			if (controller instanceof ModeWindow modeWindow) {
-				modeWindow.setListener(modeController);
-			}
 			if (controller instanceof NextRoomWindow nextRoomWindow) {
 				nextRoomWindow.setViewListener(nextRoomController);
 			}
@@ -576,21 +577,12 @@ AttackReplacementController.Listener {
 	@Override
 	public void onReturn() {
 		try {
-			modeController.show();
+			this.modeController.show();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	@Override
-	public void onSolo() {
-		teamController = new TeamController(stage, this, player);
-		try {
-			teamController.show();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 
 	@Override
 	public void onAutoBattle() {

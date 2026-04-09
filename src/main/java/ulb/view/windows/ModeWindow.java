@@ -4,7 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
 import ulb.utils.Scaling;
 
-public final class ModeWindow extends Window {
+public final class ModeWindow{
 
 	@FXML
 	private VBox content;

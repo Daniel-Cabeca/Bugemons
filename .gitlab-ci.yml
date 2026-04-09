@@ -20,7 +20,6 @@ build:
   script:
     - mvn clean package
   artifacts:
-    expire_in: 1 week
     paths:
       - target/*.jar
 

@@ -1,9 +1,12 @@
 package ulb.controller;
 
 import ulb.communication.Messenger.SocketMessenger;
+import ulb.communication.types.ActiveBugemonsMessage;
 import ulb.communication.types.BugemonSpeciesMessage;
 import ulb.communication.types.ErrorMessage;
+import ulb.communication.types.GetActiveBugemonsMessage;
 import ulb.communication.types.GetAllBugemonSpeciesMessage;
+import ulb.communication.types.GetTowerInfoMessage;
 import ulb.communication.types.SetUpNormalModeMessage;
 import ulb.communication.types.SetUpPlayerMessage;
 import ulb.communication.types.SetUpTeamMessage;
@@ -14,8 +17,11 @@ import ulb.mapper.bugemon.BugemonMapper;
 import ulb.mapper.bugemon.BugemonSpeciesMapper;
 import ulb.mapper.player.PlayerMapper;
 import ulb.model.Player;
+import ulb.model.battle.Battle;
+import ulb.model.battle.BattleParticipant;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.BugemonSpecies;
+import ulb.model.team.OpponentTeamGenerator;
 import ulb.model.team.Team;
 import ulb.service.BugemonService;
 import ulb.service.ServiceLoader;
@@ -34,6 +40,8 @@ public class ServerController extends Thread{
     private Player player;
 
     private TowerManager towerManager;
+    private Battle battle;
+    private Battle.ParticipantLabel teamLabel;
 
     public ServerController(SocketMessenger messenger){
         this.socketMessenger = messenger;
@@ -67,6 +75,14 @@ public class ServerController extends Thread{
         } catch (Exception e){
             stopProcess();
         }
+    }
+
+    public void sendErrorMessage(String errorMessage){
+        sendMessage(new ErrorMessage(errorMessage));
+    }
+
+    public void sendSuccessMessage(){
+        sendMessage(new SuccessMessage());
     }
 
     public void end(){
@@ -103,12 +119,40 @@ public class ServerController extends Thread{
             }
 
             this.player.setTeam(team);
-            sendMessage(new SuccessMessage());
+            System.out.println("Bugemon choisit : " + player.getTeam().getMembers().get(0).getName());
+            System.out.println("taille de la team : " + player.getTeam().getMembers().size());
+            sendSuccessMessage();
 
         } else if (message instanceof SetUpNormalModeMessage){
-            // TODO
+            if (player == null){
+                sendErrorMessage("Player not initialized !");
+                return;
+            }
+            Team teamB;
+            try {
+                teamB = OpponentTeamGenerator.generateRandomOpponentTeam(player.getTeam());
+            } catch (Exception e){
+                sendErrorMessage(e.getMessage());
+                return;
+            }
+            this.battle = new Battle(player.getTeam(), teamB, player);
+            this.teamLabel = Battle.ParticipantLabel.TEAM_A;
+            sendSuccessMessage();
 
         } else if (message instanceof SetUpTowerModeMessage){
+            // TODO
+        } else if (message instanceof GetActiveBugemonsMessage){
+            if (battle == null){
+                sendErrorMessage("The battle has not been created");
+                return;
+            }
+            Bugemon selfActive = this.battle.getActiveBugemon(teamLabel);
+            System.out.println("bugemon actif : " + selfActive.getName());
+            System.out.println("Bugemon choisit : " + player.getTeam().getMembers().get(0).getName());
+            System.out.println("taille de la team : " + player.getTeam().getMembers().size());
+            Bugemon opponentActive = this.battle.getActiveBugemon(this.battle.getOpponentTeamLabel(teamLabel)); 
+            sendMessage(new ActiveBugemonsMessage(BugemonMapper.toDTO(selfActive), BugemonMapper.toDTO(opponentActive)));
+        } else if (message instanceof GetTowerInfoMessage){
             // TODO
         }
     }

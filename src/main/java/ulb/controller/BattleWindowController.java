@@ -6,14 +6,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import ulb.DTO.ability.AbilityDTO;
+import ulb.DTO.bugemon.BugemonDTO;
+import ulb.DTO.item.ItemDTO;
+import ulb.DTO.player.PlayerDTO;
 import ulb.communication.types.GameMode;
-import ulb.model.Player;
-import ulb.model.ability.Ability;
 import ulb.model.battle.BattleState;
-import ulb.model.bugemon.Bugemon;
-import ulb.model.item.Inventory;
-import ulb.model.item.Item;
-import ulb.model.team.Team;
 import ulb.model.type.Type;
 import ulb.view.WindowPath;
 import ulb.view.windows.BattleWindow;
@@ -31,25 +29,33 @@ public class BattleWindowController implements BattleWindow.ViewListener {
 
     private final Stage stage;
     private final Listener listener;
-    private final Player player;
-    private final BattleController battleController;
+    private final PlayerDTO player;
     private final GameMode gameMode;
     private final int towerFloorNumber;
-    private final int currentRoomIndex;
+    private final int towerRoomNumber;
 
     private BattleWindow view;
     private boolean waitingForOpponentAction = false;
 
-    public BattleWindowController(Stage stage, Listener listener, Player player, BattleController battleController,
-                                  GameMode gameMode, int towerFloorNumber, int currentRoomIndex) {
+    public BattleWindowController(Stage stage, Listener listener, PlayerDTO player, GameMode gameMode, int towerFloorNumber, int towerRoomNumber){
         this.stage = stage;
         this.listener = listener;
         this.player = player;
-        this.battleController = battleController;
         this.gameMode = gameMode;
         this.towerFloorNumber = towerFloorNumber;
-        this.currentRoomIndex = currentRoomIndex;
+        this.towerRoomNumber = towerRoomNumber;
     }
+
+    // public BattleWindowController(Stage stage, Listener listener, Player player, BattleController battleController,
+                                //   GameMode gameMode, int towerFloorNumber, int towerRoomNumber) {
+        // this.stage = stage;
+        // this.listener = listener;
+        // this.player = player;
+        // this.battleController = battleController;
+        // this.gameMode = gameMode;
+        // this.towerFloorNumber = towerFloorNumber;
+        // this.towerRoomNumber = towerRoomNumber;
+    // }
 
     public void show() throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(WindowPath.BATTLE));
@@ -115,7 +121,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
 
     @Override
     public void onUseItem(String itemId, ActionEvent event) {
-        Item item = findInventoryItemById(itemId);
+        ItemDTO item = findInventoryItemById(itemId);
         BattleState stateAfter = stateOrCurrent(listener.onUseItem(item));
         displayActionSequence(stateAfter, event, () -> {
             if (stateAfter == BattleState.WAITING || stateAfter == BattleState.INGAME) {
@@ -128,7 +134,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
 
     @Override
     public void onSwapBugemon(String bugemonId, ActionEvent event) {
-        Bugemon bugemon = findTeamBugemonById(bugemonId);
+        BugemonDTO bugemon = findTeamBugemonById(bugemonId);
         BattleState stateAfter = stateOrCurrent(listener.onSwapBugemon(bugemon));
         displayActionSequence(stateAfter, event, () -> {
             if (stateAfter == BattleState.WAITING || stateAfter == BattleState.INGAME) {
@@ -145,7 +151,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
 
     @Override
     public void onUseAbility(String abilityId, ActionEvent event) {
-        Ability ability = findActiveAbilityById(abilityId);
+        AbilityDTO ability = findActiveAbilityById(abilityId);
         BattleState stateAfter = stateOrCurrent(listener.onUseAbility(ability));
         displayActionSequence(stateAfter, event, () -> {
             if (stateAfter == BattleState.WAITING || stateAfter == BattleState.INGAME) {
@@ -163,13 +169,14 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         BattleSnapshot snapshot = buildBattleSnapshot();
         if (snapshot != null) {
             view.renderBattle(snapshot);
+            System.out.println(snapshot.playerBugemon().name());
         }
         view.showLogMessages(consumeLogMessages());
     }
 
     private void updateTowerInfo() {
         if (gameMode == GameMode.TOWER) {
-            view.setTowerInfo(towerFloorNumber, currentRoomIndex);
+            view.setTowerInfo(towerFloorNumber, towerRoomNumber);
         } else {
             view.clearTowerInfo();
         }
@@ -177,12 +184,15 @@ public class BattleWindowController implements BattleWindow.ViewListener {
 
     private void displayActionSequence(BattleState stateAfter, ActionEvent event, Runnable afterDisplay) {
         List<String> logs = consumeLogMessages();
-        Integer firstActionSelfHp = logs.contains(null) && battleController != null
-                ? battleController.getHpAfterFirstActionSelf()
-                : null;
-        Integer firstActionOpponentHp = logs.contains(null) && battleController != null
-                ? battleController.getHpAfterFirstActionOpponent()
-                : null;
+
+        List<Integer> hpAfterFirstAction = listener.getHpAfterFirstAction();
+        Integer firstActionSelfHp = null, firstActionOpponentHp = null;
+
+        if (logs.contains(null) && hpAfterFirstAction.get(0) != null && hpAfterFirstAction.get(1) != null){
+            firstActionSelfHp = hpAfterFirstAction.get(0);
+            firstActionOpponentHp = hpAfterFirstAction.get(1);
+        }
+
         BattleSnapshot finalSnapshot = buildBattleSnapshot();
 
         view.displayMessagesSequentially(logs, firstActionSelfHp, firstActionOpponentHp, finalSnapshot, () -> {
@@ -201,11 +211,11 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         if (state != null) {
             return state;
         }
-        return battleController != null ? battleController.getState() : null;
+        return listener.getState();
     }
 
     private void waitingForOpponentAction(ActionEvent event) {
-        if (waitingForOpponentAction || battleController == null) {
+        if (waitingForOpponentAction) {
             return;
         }
 
@@ -214,7 +224,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
 
         Thread waitingThread = new Thread(() -> {
             try {
-                while (battleController.getState() == BattleState.WAITING && !battleController.isGameFinished()) {
+                while (listener.getState() == BattleState.WAITING && !listener.isGameFinished()) {
                     Thread.sleep(100);
                 }
             } catch (InterruptedException e) {
@@ -226,7 +236,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
                 view.setBattleInputsDisabled(false);
                 refreshView();
 
-                BattleState currentState = battleController.getState();
+                BattleState currentState = listener.getState();
                 boolean stateHandled = handleBattleState(currentState, event);
                 if (!stateHandled && currentState == BattleState.INGAME) {
                     view.showMainMenu();
@@ -250,16 +260,13 @@ public class BattleWindowController implements BattleWindow.ViewListener {
     }
 
     private boolean isForcedSwitch() {
-        return battleController != null && battleController.getState() == BattleState.SWAPPING;
+        return listener.getState() == BattleState.SWAPPING;
     }
 
     private BattleSnapshot buildBattleSnapshot() {
-        if (battleController == null) {
-            return null;
-        }
-
-        Bugemon playerBugemon = battleController.getActiveBugemonSelf();
-        Bugemon opponentBugemon = battleController.getActiveBugemonOpponent();
+        List<BugemonDTO> activeBugemons = this.listener.getActiveBugemons();
+        BugemonDTO playerBugemon = activeBugemons.get(0);
+        BugemonDTO opponentBugemon = activeBugemons.get(1);
         if (playerBugemon == null || opponentBugemon == null) {
             return null;
         }
@@ -267,10 +274,10 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         return new BattleSnapshot(toBugemonDisplay(playerBugemon), toBugemonDisplay(opponentBugemon));
     }
 
-    private BugemonDisplay toBugemonDisplay(Bugemon bugemon) {
+    private BugemonDisplay toBugemonDisplay(BugemonDTO bugemon) {
         return new BugemonDisplay(
                 bugemon.getName(),
-                bugemon.getSprite(),
+                "/png/" + bugemon.getSprite(),
                 getTypeColor(bugemon.getType()),
                 bugemon.getLevel(),
                 bugemon.getHp(),
@@ -279,25 +286,19 @@ public class BattleWindowController implements BattleWindow.ViewListener {
     }
 
     private List<String> consumeLogMessages() {
-        if (battleController == null) {
-            return List.of();
-        }
-
-        List<String> logs = new ArrayList<>(battleController.getLogMsg());
-        battleController.clearLogMsg();
-        return logs;
+        return listener.getLogs();
     }
 
     private List<InventoryEntry> buildInventoryEntries() {
-        Inventory inventory = getPlayerInventory();
+        Map<ItemDTO, Integer> inventory = getPlayerInventory();
         if (inventory == null) {
             return List.of();
         }
 
         List<InventoryEntry> entries = new ArrayList<>();
-        for (Map.Entry<Item, Integer> entry : inventory.getItems().entrySet()) {
-            Item item = entry.getKey();
-            boolean usable = battleController != null && battleController.checkItem(item);
+        for (Map.Entry<ItemDTO, Integer> entry : inventory.entrySet()) {
+            ItemDTO item = entry.getKey();
+            boolean usable = listener.checkItem(item);
             entries.add(new InventoryEntry(
                     item.getId(),
                     item.getName(),
@@ -310,21 +311,21 @@ public class BattleWindowController implements BattleWindow.ViewListener {
     }
 
     private List<BugemonEntry> buildBugemonEntries() {
-        Team playerTeam = getPlayerTeam();
+        List<BugemonDTO> playerTeam = getPlayerTeam();
         if (playerTeam == null) {
             return List.of();
         }
 
-        Bugemon activeBugemon = battleController != null ? battleController.getActiveBugemonSelf() : null;
+        BugemonDTO activeBugemon = listener.getActiveBugemons().get(0);
         List<BugemonEntry> entries = new ArrayList<>();
-        for (Bugemon bugemon : playerTeam.getMembers()) {
+        for (BugemonDTO bugemon : playerTeam) {
             boolean active = bugemon.equals(activeBugemon);
-            boolean selectable = !active && !bugemon.isKO();
+            boolean selectable = !active && bugemon.getHp() > 0;
             entries.add(new BugemonEntry(
                     bugemon.getId(),
                     bugemon.getName(),
                     bugemon.getSprite(),
-                    bugemon.isKO(),
+                    bugemon.getHp() <= 0,
                     active,
                     selectable
             ));
@@ -333,35 +334,38 @@ public class BattleWindowController implements BattleWindow.ViewListener {
     }
 
     private List<AbilityEntry> buildAbilityEntries() {
-        if (battleController == null || battleController.getActiveBugemonSelf() == null) {
+        List<BugemonDTO> activeBugemons = listener.getActiveBugemons();
+        BugemonDTO ownActiveBugemon = activeBugemons.get(0);
+        BugemonDTO opponentActiveBugemon = activeBugemons.get(1);
+        if (ownActiveBugemon == null){
             return List.of();
         }
 
         List<AbilityEntry> entries = new ArrayList<>();
-        for (Ability ability : battleController.getActiveBugemonSelf().getAbilities()) {
+        for (AbilityDTO ability : ownActiveBugemon.getAbilities()) {
             if (ability != null) {
                 entries.add(new AbilityEntry(
                         ability.getId(),
                         ability.getName(),
                         getTypeColor(ability.getType()),
-                        battleController.getEffectiveness(ability)
+                        this.listener.getAbilityEffectiveness(ability, opponentActiveBugemon)
                 ));
             }
         }
         return entries;
     }
 
-    private Item findInventoryItemById(String itemId) {
+    private ItemDTO findInventoryItemById(String itemId) {
         if (itemId == null) {
             return null;
         }
 
-        Inventory inventory = getPlayerInventory();
+        Map<ItemDTO, Integer> inventory = getPlayerInventory();
         if (inventory == null) {
             return null;
         }
 
-        for (Item item : inventory.getItems().keySet()) {
+        for (ItemDTO item : inventory.keySet()) {
             if (itemId.equals(item.getId())) {
                 return item;
             }
@@ -369,17 +373,17 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         return null;
     }
 
-    private Bugemon findTeamBugemonById(String bugemonId) {
+    private BugemonDTO findTeamBugemonById(String bugemonId) {
         if (bugemonId == null) {
             return null;
         }
 
-        Team team = getPlayerTeam();
+        List<BugemonDTO> team = getPlayerTeam();
         if (team == null) {
             return null;
         }
 
-        for (Bugemon bugemon : team.getMembers()) {
+        for (BugemonDTO bugemon : team) {
             if (bugemonId.equals(bugemon.getId())) {
                 return bugemon;
             }
@@ -387,12 +391,13 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         return null;
     }
 
-    private Ability findActiveAbilityById(String abilityId) {
-        if (abilityId == null || battleController == null || battleController.getActiveBugemonSelf() == null) {
+    private AbilityDTO findActiveAbilityById(String abilityId) {
+        BugemonDTO activeBugemon = listener.getActiveBugemons().get(0);
+        if (activeBugemon == null){
             return null;
         }
 
-        for (Ability ability : battleController.getActiveBugemonSelf().getAbilities()) {
+        for (AbilityDTO ability : activeBugemon.getAbilities()) {
             if (ability != null && abilityId.equals(ability.getId())) {
                 return ability;
             }
@@ -400,11 +405,11 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         return null;
     }
 
-    private Team getPlayerTeam() {
+    private List<BugemonDTO> getPlayerTeam() {
         return player != null ? player.getTeam() : null;
     }
 
-    private Inventory getPlayerInventory() {
+    private Map<ItemDTO, Integer> getPlayerInventory() {
         return player != null ? player.getInventory() : null;
     }
 
@@ -419,10 +424,17 @@ public class BattleWindowController implements BattleWindow.ViewListener {
     }
 
     public interface Listener {
+        List<BugemonDTO> getActiveBugemons();
+        String getAbilityEffectiveness(AbilityDTO ability, BugemonDTO bugemon);
+        List<Integer> getHpAfterFirstAction();
+        BattleState getState();
+        List<String> getLogs();
+        boolean checkItem(ItemDTO item);
+        boolean isGameFinished();
         BattleState onAutoTurn();
-        BattleState onUseItem(Item item);
-        BattleState onSwapBugemon(Bugemon bugemon);
-        BattleState onUseAbility(Ability ability);
+        BattleState onUseItem(ItemDTO item);
+        BattleState onSwapBugemon(BugemonDTO bugemon);
+        BattleState onUseAbility(AbilityDTO ability);
         void onBattleStateChecked(BattleState state, ActionEvent event);
         void onTowerFlee();
         void onReturnToMode();

@@ -8,8 +8,10 @@ import javafx.scene.Scene;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import ulb.Main;
+import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.bugemon.BugemonSpeciesDTO;
+import ulb.DTO.item.ItemDTO;
 import ulb.communication.Client;
 import ulb.communication.Message;
 import ulb.communication.Server;
@@ -647,6 +649,21 @@ AttackReplacementController.Listener {
 	}
 
 	@Override
+	public List<BugemonDTO> getActiveBugemons(){return null;}
+	@Override
+	public String getAbilityEffectiveness(AbilityDTO ability, BugemonDTO bugemon){return null;}
+	@Override
+	public List<Integer> getHpAfterFirstAction(){return null;}
+	@Override
+	public BattleState getState(){return null;}
+	@Override
+	public List<String> getLogs(){return null;}
+	@Override
+	public boolean checkItem(ItemDTO item){return false;}
+	@Override
+	public boolean isGameFinished(){return false;}
+
+	@Override
 	public void onAutoBattle() {
 		// CLIENT & SERVER
 		gameMode = GameMode.AUTO;
@@ -703,35 +720,35 @@ AttackReplacementController.Listener {
 	}
 
 	@Override
-	public BattleState onUseItem(Item item) {
+	public BattleState onUseItem(ItemDTO item) {
 		// CLIENT + SERVER
-		BattleController battleController = battleControllerForManualTurn();
-		if (battleController != null && item != null) {
-			battleController.useAction(new UseItem(item));
-			return battleController.getState();
-		}
+		// BattleController battleController = battleControllerForManualTurn();
+		// if (battleController != null && item != null) {
+		// 	battleController.useAction(new UseItem(item));
+		// 	return battleController.getState();
+		// }
 		return null;
 	}
 
 	@Override
-	public BattleState onSwapBugemon(Bugemon bugemon) {
+	public BattleState onSwapBugemon(BugemonDTO bugemon) {
 		// CLIENT + SERVER
-		BattleController battleController = battleControllerForManualTurn();
-		if (battleController != null && bugemon != null) {
-			battleController.useAction(new Swap(bugemon));
-			return battleController.getState();
-		}
+		// BattleController battleController = battleControllerForManualTurn();
+		// if (battleController != null && bugemon != null) {
+		// 	battleController.useAction(new Swap(bugemon));
+		// 	return battleController.getState();
+		// }
 		return null;
 	}
 
 	@Override
-	public BattleState onUseAbility(Ability ability) {
+	public BattleState onUseAbility(AbilityDTO ability) {
 		// CLIENT + SERVER
-		BattleController battleController = battleControllerForManualTurn();
-		if (battleController != null && ability != null) {
-			battleController.useAction(new UseAbility(ability));
-			return battleController.getState();
-		}
+		// BattleController battleController = battleControllerForManualTurn();
+		// if (battleController != null && ability != null) {
+		// 	battleController.useAction(new UseAbility(ability));
+		// 	return battleController.getState();
+		// }
 		return null;
 	}
 
@@ -784,24 +801,24 @@ AttackReplacementController.Listener {
 	}
 
 	private void switchToBattleWindow() {
-		BattleController battleController = getCurrentBattleController();
-		int towerFloorNumber = gameMode == GameMode.TOWER ? getTowerFloorNumber() : 0;
-		int currentRoomIndex = gameMode == GameMode.TOWER ? getCurrentRoomIndex() : 0;
-		battleWindowController = new BattleWindowController(
-				stage,
-				this,
-				player,
-				battleController,
-				gameMode,
-				towerFloorNumber,
-				currentRoomIndex
-		);
+		// BattleController battleController = getCurrentBattleController();
+		// int towerFloorNumber = gameMode == GameMode.TOWER ? getTowerFloorNumber() : 0;
+		// int currentRoomIndex = gameMode == GameMode.TOWER ? getCurrentRoomIndex() : 0;
+		// battleWindowController = new BattleWindowController(
+		// 		stage,
+		// 		this,
+		// 		player,
+		// 		battleController,
+		// 		gameMode,
+		// 		towerFloorNumber,
+		// 		currentRoomIndex
+		// );
 
-		try {
-			battleWindowController.show();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		// try {
+		// 	battleWindowController.show();
+		// } catch (Exception e) {
+		// 	e.printStackTrace();
+		// }
 	}
 
 	/**

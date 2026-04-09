@@ -1,6 +1,7 @@
 package ulb.controller;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import java.util.ArrayList;
@@ -10,23 +11,34 @@ import java.util.Map;
 
 import ulb.communication.Client;
 import ulb.communication.Message;
+import ulb.communication.types.ActiveBugemonsMessage;
+import ulb.communication.types.BattleEndCheckMessage;
 import ulb.communication.types.BugemonSpeciesMessage;
 import ulb.communication.types.ErrorMessage;
 import ulb.communication.types.GameMode;
+import ulb.communication.types.GetActiveBugemonsMessage;
 import ulb.communication.types.GetAllBugemonSpeciesMessage;
+import ulb.communication.types.GetTowerInfoMessage;
 import ulb.communication.types.SetUpNormalModeMessage;
 import ulb.communication.types.SetUpPlayerMessage;
 import ulb.communication.types.SetUpTeamMessage;
 import ulb.communication.types.SetUpTowerModeMessage;
+import ulb.communication.types.TowerInfoMessage;
+import ulb.controller.action.Swap;
+import ulb.controller.action.UseAbility;
+import ulb.controller.action.UseItem;
+import ulb.controller.strategy.StrategyRandom;
 import ulb.mapper.bugemon.BugemonMapper;
-import ulb.model.bugemon.Bugemon;
+import ulb.model.battle.BattleState;
+
+import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.DTO.item.ItemDTO;
 
 public class ClientController extends Application implements ModeController.Listener, TeamController.Listener, 
-BattleModeController.Listener {
+BattleModeController.Listener, BattleWindowController.Listener {
     Client client;
     Stage stage;
 
@@ -149,24 +161,27 @@ BattleModeController.Listener {
 	// }
 
 	private void switchToBattleWindow() {
-		// BattleController battleController = getCurrentBattleController();
-		// int towerFloorNumber = gameMode == GameMode.TOWER ? getTowerFloorNumber() : 0;
-		// int currentRoomIndex = gameMode == GameMode.TOWER ? getCurrentRoomIndex() : 0;
-		// battleWindowController = new BattleWindowController(
-		// 		this.stage,
-		// 		this,
-		// 		player,
-		// 		battleController,
-		// 		gameMode,
-		// 		towerFloorNumber,
-		// 		currentRoomIndex
-		// );
+		int towerFloorNumber = 0, towerRoomNumber = 0;
+		if (this.gameMode == GameMode.TOWER){
+			if (this.getData(new GetTowerInfoMessage()) instanceof TowerInfoMessage towerInfo){
+				towerFloorNumber = towerInfo.getFloorNumber();
+				towerRoomNumber = towerInfo.getRoomNumber();
+			}
+		}
+		battleWindowController = new BattleWindowController(
+				this.stage,
+				this,
+				player,
+				gameMode,
+				towerFloorNumber,
+				towerRoomNumber
+		);
 
-		// try {
-		// 	battleWindowController.show();
-		// } catch (Exception e) {
-		// 	e.printStackTrace();
-		// }
+		try {
+			battleWindowController.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -197,6 +212,96 @@ BattleModeController.Listener {
 	public void onReturnToCreateTeamWindow() {
 		try {
 			teamController.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	// Battle Window Controller Listener : 
+
+	@Override
+	public void onBattleStateChecked(BattleState state, ActionEvent event) {
+		// CLIENT 
+		//handleBattleEndCheckMessage(new BattleEndCheckMessage(state, event));
+	}
+	
+	@Override
+	public List<BugemonDTO> getActiveBugemons(){
+		Message message = getData(new GetActiveBugemonsMessage());
+		if (message instanceof ActiveBugemonsMessage activeBugemons){
+			return List.of(activeBugemons.getSelfActiveBugemon(), activeBugemons.getOpponentActiveBugemon());
+			
+		} else if (message instanceof ErrorMessage errorMessage){
+			System.err.println(errorMessage.getError());
+		}
+		return null;
+	}
+
+	@Override
+	public String getAbilityEffectiveness(AbilityDTO ability, BugemonDTO bugemon){return null;}
+	@Override
+	public List<Integer> getHpAfterFirstAction(){return null;}
+	@Override
+	public BattleState getState(){return null;}
+	@Override
+	public List<String> getLogs(){return null;}
+	@Override
+	public boolean checkItem(ItemDTO item){return false;}
+	@Override
+	public boolean isGameFinished(){return false;}
+
+	@Override
+	public BattleState onAutoTurn() {
+		// SERVER
+		// StrategyRandom strategyRandom = new StrategyRandom(normalModeBattleController);
+		// return strategyRandom.playAutoTurn();
+		return null;
+	}
+
+	@Override
+	public BattleState onUseItem(ItemDTO item) {
+		// CLIENT + SERVER
+		// BattleController battleController = battleControllerForManualTurn();
+		// if (battleController != null && item != null) {
+		// 	battleController.useAction(new UseItem(item));
+		// 	return battleController.getState();
+		// }
+		return null;
+	}
+
+	@Override
+	public BattleState onSwapBugemon(BugemonDTO bugemon) {
+		// CLIENT + SERVER
+		// BattleController battleController = battleControllerForManualTurn();
+		// if (battleController != null && bugemon != null) {
+		// 	battleController.useAction(new Swap(bugemon));
+		// 	return battleController.getState();
+		// }
+		return null;
+	}
+
+	@Override
+	public BattleState onUseAbility(AbilityDTO ability) {
+		// BattleController battleController = battleControllerForManualTurn();
+		// if (battleController != null && ability != null) {
+		// 	battleController.useAction(new UseAbility(ability));
+		// 	return battleController.getState();
+		// }
+		return null;
+	}
+
+	@Override
+	public void onTowerFlee() {
+		// CLIENT + SERVER
+		// handleTowerFlee();
+		// switchToNextRoomWindow();
+	}
+
+	@Override
+	public void onReturnToMode() {
+		// CLIENT
+		try {
+			modeController.show();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

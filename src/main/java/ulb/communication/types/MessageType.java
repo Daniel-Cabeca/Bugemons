@@ -27,4 +27,8 @@ public enum MessageType {
     SETUP_TEAM,
     SETUP_NORMAL_MODE,
     SETUP_TOWER_MODE,
+    GET_TOWER_INFO,
+    TOWER_INFO,
+    GET_ACTIVE_BUGEMONS,
+    ACTIVE_BUGEMONS,
 }

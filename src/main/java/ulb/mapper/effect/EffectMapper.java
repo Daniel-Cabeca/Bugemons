@@ -17,7 +17,7 @@ public class EffectMapper {
 
     public static Effect toEntity(EffectDTO dto){
         if(dto == null) return null;
-        Effect effect;
+        Effect effect = null;
         switch (dto.getType()) {
             case SWITCH:
                 effect = new EffectSwitch(dto.getTarget()) {
@@ -31,8 +31,17 @@ public class EffectMapper {
                     @Override
                     public void apply(Battle battle, Battle.ParticipantLabel team){}
                 };
+            case STAT_MODIFIER:
+                if (dto instanceof EffectStatModifierDTO effectStat){
+                    effect = toEntity(effectStat);
+                }
+                break;
+            case HEAL:
+                if (dto instanceof EffectHealDTO effectHeal){
+                    effect = toEntity(effectHeal);
+                }
             default:
-                return null;
+                throw new RuntimeException("Effect Type not known !");
         }
 
         return effect;
@@ -48,8 +57,9 @@ public class EffectMapper {
     }
 
     public static EffectStatModifier toEntity(EffectStatModifierDTO dto){
-        if(dto == null) return null;
-
+        if(dto == null) {
+            return null;
+        }
         return new EffectStatModifier(dto.getTarget(), dto.getDuration(), dto.getModifiers()) {
             @Override
             public void apply(Battle battle, Battle.ParticipantLabel team){}

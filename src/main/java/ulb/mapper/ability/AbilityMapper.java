@@ -21,8 +21,9 @@ public class AbilityMapper {
         EffectList effectList = new EffectList();
 
         if (dto.getEffects() != null) {
-            dto.getEffects().forEach(effectDTO ->
-                    effectList.add(EffectMapper.toEntity(effectDTO))
+            dto.getEffects().forEach(effectDTO -> {
+                    effectList.add(EffectMapper.toEntity(effectDTO));
+                }
             );
         }
 

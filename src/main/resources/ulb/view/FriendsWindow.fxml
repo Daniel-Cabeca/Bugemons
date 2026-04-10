@@ -19,95 +19,9 @@
       <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="ALWAYS" vbarPolicy="ALWAYS">
          <content>
             <VBox fx:id="friendsList" alignment="TOP_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-               <children>
-                  <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="146.0" spacing="150.0" style="-fx-border-radius: 10; -fx-border-color: black;">
-                     <children>
-                        <Label prefHeight="51.0" prefWidth="72.0" style="-fx-font-size: 25;" text="Nom" />
-                        <Button mnemonicParsing="false" prefHeight="54.0" prefWidth="81.0" text="Défier" />
-                        <Button layoutX="82.0" layoutY="10.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="81.0" text="Chat" />
-                     </children>
-                  </HBox>
-                  <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" prefHeight="100.0" prefWidth="146.0" spacing="150.0" style="-fx-border-radius: 10; -fx-border-color: black;">
-                     <children>
-                        <Label prefHeight="51.0" prefWidth="72.0" style="-fx-font-size: 25;" text="Nom" />
-                        <Button mnemonicParsing="false" prefHeight="54.0" prefWidth="81.0" text="Défier" />
-                        <Button layoutX="82.0" layoutY="10.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="81.0" text="Chat" />
-                     </children>
-                  </HBox>
-                  <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="110.0" prefHeight="100.0" prefWidth="146.0" spacing="150.0" style="-fx-border-radius: 10; -fx-border-color: black;">
-                     <children>
-                        <Label prefHeight="51.0" prefWidth="72.0" style="-fx-font-size: 25;" text="Nom" />
-                        <Button mnemonicParsing="false" prefHeight="54.0" prefWidth="81.0" text="Défier" />
-                        <Button layoutX="82.0" layoutY="10.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="81.0" text="Chat" />
-                     </children>
-                  </HBox>
-                  <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" prefHeight="100.0" prefWidth="146.0" spacing="150.0" style="-fx-border-radius: 10; -fx-border-color: black;">
-                     <children>
-                        <Label prefHeight="51.0" prefWidth="72.0" style="-fx-font-size: 25;" text="Nom" />
-                        <Button mnemonicParsing="false" prefHeight="54.0" prefWidth="81.0" text="Défier" />
-                        <Button layoutX="82.0" layoutY="10.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="81.0" text="Chat" />
-                     </children>
-                  </HBox>
-                  <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="284.0" prefHeight="100.0" prefWidth="146.0" spacing="150.0" style="-fx-border-radius: 10; -fx-border-color: black;">
-                     <children>
-                        <Label prefHeight="51.0" prefWidth="72.0" style="-fx-font-size: 25;" text="Nom" />
-                        <Button mnemonicParsing="false" prefHeight="54.0" prefWidth="81.0" text="Défier" />
-                        <Button layoutX="82.0" layoutY="10.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="81.0" text="Chat" />
-                     </children>
-                  </HBox>
-                  <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="302.0" prefHeight="100.0" prefWidth="146.0" spacing="150.0" style="-fx-border-radius: 10; -fx-border-color: black;">
-                     <children>
-                        <Label prefHeight="51.0" prefWidth="72.0" style="-fx-font-size: 25;" text="Nom" />
-                        <Button mnemonicParsing="false" prefHeight="54.0" prefWidth="81.0" text="Défier" />
-                        <Button layoutX="82.0" layoutY="10.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="81.0" text="Chat" />
-                     </children>
-                  </HBox>
-                  <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="315.0" prefHeight="100.0" prefWidth="146.0" spacing="150.0" style="-fx-border-radius: 10; -fx-border-color: black;">
-                     <children>
-                        <Label prefHeight="51.0" prefWidth="72.0" style="-fx-font-size: 25;" text="Nom" />
-                        <Button mnemonicParsing="false" prefHeight="54.0" prefWidth="81.0" text="Défier" />
-                        <Button layoutX="82.0" layoutY="10.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="81.0" text="Chat" />
-                     </children>
-                  </HBox>
-                  <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="323.0" prefHeight="100.0" prefWidth="146.0" spacing="150.0" style="-fx-border-radius: 10; -fx-border-color: black;">
-                     <children>
-                        <Label prefHeight="51.0" prefWidth="72.0" style="-fx-font-size: 25;" text="Nom" />
-                        <Button mnemonicParsing="false" prefHeight="54.0" prefWidth="81.0" text="Défier" />
-                        <Button layoutX="82.0" layoutY="10.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="81.0" text="Chat" />
-                     </children>
-                  </HBox>
-                  <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="330.0" prefHeight="100.0" prefWidth="146.0" spacing="150.0" style="-fx-border-radius: 10; -fx-border-color: black;">
-                     <children>
-                        <Label prefHeight="51.0" prefWidth="72.0" style="-fx-font-size: 25;" text="Nom" />
-                        <Button mnemonicParsing="false" prefHeight="54.0" prefWidth="81.0" text="Défier" />
-                        <Button layoutX="82.0" layoutY="10.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="81.0" text="Chat" />
-                     </children>
-                  </HBox>
-                  <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="335.0" prefHeight="100.0" prefWidth="146.0" spacing="150.0" style="-fx-border-radius: 10; -fx-border-color: black;">
-                     <children>
-                        <Label prefHeight="51.0" prefWidth="72.0" style="-fx-font-size: 25;" text="Nom" />
-                        <Button mnemonicParsing="false" prefHeight="54.0" prefWidth="81.0" text="Défier" />
-                        <Button layoutX="82.0" layoutY="10.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="81.0" text="Chat" />
-                     </children>
-                  </HBox>
-                  <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="352.0" prefHeight="100.0" prefWidth="146.0" spacing="150.0" style="-fx-border-radius: 10; -fx-border-color: black;">
-                     <children>
-                        <Label prefHeight="51.0" prefWidth="72.0" style="-fx-font-size: 25;" text="Nom" />
-                        <Button mnemonicParsing="false" prefHeight="54.0" prefWidth="81.0" text="Défier" />
-                        <Button layoutX="82.0" layoutY="10.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="81.0" text="Chat" />
-                     </children>
-                  </HBox>
-                  <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="390.0" prefHeight="100.0" prefWidth="146.0" spacing="150.0" style="-fx-border-radius: 10; -fx-border-color: black;">
-                     <children>
-                        <Label prefHeight="51.0" prefWidth="72.0" style="-fx-font-size: 25;" text="Nom" />
-                        <Button mnemonicParsing="false" prefHeight="54.0" prefWidth="81.0" text="Défier" />
-                        <Button layoutX="82.0" layoutY="10.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="81.0" text="Chat" />
-                     </children>
-                  </HBox>
-               </children>
             </VBox>
          </content>
       </ScrollPane>
-      <Button mnemonicParsing="false" onAction="#goMultiplayerWindow" text="Retour" />
+      <Button mnemonicParsing="false" onAction="#returnToMultiplayerWindow" text="Retour" />
    </children>
 </VBox>

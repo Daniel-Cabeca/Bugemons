@@ -5,18 +5,24 @@ import ulb.view.WindowPath;
 
 public class MultiplayerWindow extends Window{
 
-	@FXML
-	private void goFriendsWindow() {
-		sendSwitchWindowMessage(WindowPath.FRIENDS);
+	private ViewListener listener;
+
+	public void setListener(ViewListener listener) {
+		this.listener = listener;
 	}
 
-	@FXML // TODO: for iteration 4
-	private void goLeaderboardWindow() {
-
+	@FXML
+	private void goFriendsWindow() {
+		this.listener.onGoFriendsWindow();
 	}
 
 	@FXML
 	private void goModeWindow () {
-		sendSwitchWindowMessage(WindowPath.MODE);
+		this.listener.onGoModeWindow();
+	}
+
+	public interface ViewListener {
+		void onGoFriendsWindow();
+		void onGoModeWindow();
 	}
 }

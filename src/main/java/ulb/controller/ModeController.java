@@ -34,6 +34,11 @@ public class ModeController implements ModeWindow.ViewListener {
         this.stage.show();
     }
 
+	@Override
+	public void goMultiplayerMode() {
+		this.listener.goMultiplayerMode();
+	}
+
     @Override
     public void onSolo() {
         listener.onSolo();
@@ -46,6 +51,7 @@ public class ModeController implements ModeWindow.ViewListener {
     }
 
     public interface Listener {
-        void onSolo();
-    }
+		void onSolo();
+		void goMultiplayerMode();
+	}
 }

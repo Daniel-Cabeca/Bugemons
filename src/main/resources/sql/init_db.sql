@@ -105,3 +105,13 @@ CREATE TABLE IF NOT EXISTS effect_stats_modifier (
                                                      duration TEXT,
                                                      FOREIGN KEY (effect_id) REFERENCES effects(id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS friends (
+                                       user_id INTEGER NOT NULL,
+                                       friend_id INTEGER NOT NULL,
+
+                                       PRIMARY KEY (user_id, friend_id),
+                                       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                                       FOREIGN KEY (friend_id) REFERENCES users(id) ON DELETE CASCADE,
+                                       CHECK (user_id <> friend_id) -- Empêche d'être ami avec soi-même
+);

@@ -40,7 +40,7 @@ public class RegisterController implements RegisterWindow.ViewListener {
         try {
             boolean success = ServiceLoader.getAccountService().login(username, password);
             if (success) {
-                listener.onRegister();
+                listener.onRegister(username);
             } else {
                 view.setErrorLabel("Nom d'utilisateur ou mot de passe incorrect.");
             }
@@ -53,8 +53,9 @@ public class RegisterController implements RegisterWindow.ViewListener {
     public void onSignUp(String username, String password) {
         try {
             boolean success = ServiceLoader.getAccountService().register(username, password);
+
             if (success) {
-                listener.onRegister();
+                listener.onRegister(username);
             } else {
                 view.setErrorLabel("Ce nom d'utilisateur est déjà pris.");
             }
@@ -64,7 +65,7 @@ public class RegisterController implements RegisterWindow.ViewListener {
     }
 
     public interface Listener {
-        void onRegister();
+        void onRegister(String username);
     }
 
 }

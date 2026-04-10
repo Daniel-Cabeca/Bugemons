@@ -43,7 +43,7 @@ public class Player {
 	public final String getName() {return this.name;}
 	public Team getTeam() {return this.team;}
 	public Inventory getInventory() {return this.inventory;}
-
+	public void setName(String name) {this.name = name;}
 	public void setTeam(Team team) {this.team = team;}
 
 	/**

@@ -23,7 +23,7 @@ public final class ModeWindow extends Window {
 
 	@FXML
 	private void goMultiplayerMode() {
-		sendSwitchWindowMessage(WindowPath.MULTIPLAYER);
+		this.viewListener.goMultiplayerMode();
 	}
 
 	@FXML
@@ -37,6 +37,7 @@ public final class ModeWindow extends Window {
 
 	public interface ViewListener {
 		void onSolo();
+		void goMultiplayerMode();
 		void quit();
 	}
 }

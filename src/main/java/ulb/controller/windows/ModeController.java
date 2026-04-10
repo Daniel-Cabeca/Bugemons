@@ -1,42 +1,48 @@
 package ulb.controller.windows;
 
+
 import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
+import ulb.controller.GameController;
+import ulb.controller.TeamController;
+import ulb.model.Player;
 import ulb.view.WindowPath;
 import ulb.view.windows.ModeWindow;
 
-public class ModeController implements ModeWindow.ViewListener {
+public class ModeController extends WindowController<ModeWindow> implements ModeWindow.ViewListener {
 
-    private Listener listener;
-    private Stage stage;
-    private ModeWindow view;
+    private TeamController teamController;
+    private Player player;
+    private GameController gameController;
 
-    public ModeController(Stage stage, Listener listener) {
-        this.stage = stage;
-        this.listener = listener;
-    }
 
-    public void show() throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(WindowPath.MODE));
-        loader.load();
-        view = loader.getController();
-        view.setListener(this);
-
-        Parent root = loader.getRoot();
-        if (stage.getScene() == null) {
-            stage.setScene(new Scene(root));
-        } else {
-            stage.getScene().setRoot(root);
+    public ModeController() {
+        setWindowPath(WindowPath.MODE);
+        try {
+            this.init();
+        } catch (Exception e) {
+            System.err.println("Couldn't load the FXML file");
         }
-        this.stage.show();
+
+        this.getView().setListener(this);
     }
+
+    public void setPlayer(Player player) { // TO REMOVE
+        this.player = player;
+    }
+    public void setTeamController(TeamController teamController) {
+        this.teamController = teamController;
+    }
+    public void setGameController(GameController gameController) {this.gameController = gameController;} // TO REMOVE
+
 
     @Override
     public void onSolo() {
-        listener.onSolo();
+        teamController = new TeamController(getStage(),this.gameController, player); // TO REMOVE
+        try {
+            teamController.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -45,7 +51,4 @@ public class ModeController implements ModeWindow.ViewListener {
         System.exit(0);
     }
 
-    public interface Listener {
-        void onSolo();
-    }
 }

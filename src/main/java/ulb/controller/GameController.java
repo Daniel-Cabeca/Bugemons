@@ -46,7 +46,7 @@ import java.util.Deque;
 import java.util.List;
 
 
-public class GameController extends Application implements TeamController.Listener, ModeController.Listener,
+public class GameController extends Application implements TeamController.Listener,
 BattleModeController.Listener, NextRoomController.Listener, ChooseBugemonController.Listener,
 BattleWindowController.Listener, RegisterController.Listener , LevelUpController.Listener, FloorRewardController.Listener,
 AttackReplacementController.Listener {
@@ -598,15 +598,6 @@ AttackReplacementController.Listener {
 		}
 	}
 
-	@Override
-	public void onSolo() {
-		teamController = new TeamController(stage, this, player);
-		try {
-			teamController.show();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 
 	@Override
 	public void onAutoBattle() {
@@ -856,14 +847,19 @@ AttackReplacementController.Listener {
 
 	@Override
 	public void onRegister() {
-		if (modeController == null) {
-			modeController = new ModeController(stage, this);
-		}
-		try {
-			modeController.show();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'onRegister'");
 	}
 
+	// @Override
+	// public void onRegister() {
+	// 	if (modeController == null) {
+	// 		modeController = new ModeController(stage, this);
+	// 	}
+	// 	try {
+	// 		modeController.show();
+	// 	} catch (Exception e) {
+	// 		e.printStackTrace();
+	// 	}
+	// }
 }

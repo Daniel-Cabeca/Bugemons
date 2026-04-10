@@ -40,7 +40,7 @@ public class ModeController implements ModeWindow.ViewListener {
     }
 
     @Override
-    public void quit() {
+    public void onQuit() {
         Platform.exit();
         System.exit(0);
     }

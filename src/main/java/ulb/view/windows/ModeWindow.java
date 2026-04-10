@@ -23,7 +23,7 @@ public final class ModeWindow extends Window {
 
 	@FXML
 	private void quit() {
-		viewListener.quit();
+		viewListener.onQuit();
 	}
 
 	public void setListener(ViewListener viewListener) {
@@ -32,6 +32,6 @@ public final class ModeWindow extends Window {
 
 	public interface ViewListener {
 		void onSolo();
-		void quit();
+		void onQuit();
 	}
 }

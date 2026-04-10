@@ -37,6 +37,7 @@ import ulb.communication.types.SwapBugemonMessage;
 import ulb.communication.types.UsableItemsMessage;
 import ulb.communication.types.UseAbilityMessage;
 import ulb.communication.types.UseItemMessage;
+import ulb.controller.windows.ModeController;
 import ulb.model.battle.BattleState;
 import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.bugemon.BugemonDTO;
@@ -44,7 +45,7 @@ import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.DTO.item.ItemDTO;
 
-public class ClientController extends Application implements ModeController.Listener, TeamController.Listener, 
+public class ClientController extends Application implements TeamController.Listener,
 BattleModeController.Listener, BattleWindowController.Listener {
     Client client;
     Stage stage;
@@ -80,7 +81,9 @@ BattleModeController.Listener, BattleWindowController.Listener {
 		primaryStage.setFullScreen(true);
 		primaryStage.setFullScreenExitHint("");
 
-		this.modeController = new ModeController(this.stage, this);
+		this.modeController = new ModeController(this.stage);
+		this.modeController.setClientController(this);
+		this.modeController.setPlayer(this.player);
 		this.modeController.show();
 
 		if (primaryStage.getScene() != null) {
@@ -109,16 +112,6 @@ BattleModeController.Listener, BattleWindowController.Listener {
 
 	// Mode Controller Listener : 
 
-    @Override
-	public void onSolo() {
-		this.teamController = new TeamController(this.stage, this, this.player);
-		try {
-			this.teamController.show();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-        return;
-	}
 
 	// Team Controller Listener : 
 

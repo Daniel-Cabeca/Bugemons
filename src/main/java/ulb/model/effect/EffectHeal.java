@@ -27,5 +27,4 @@ public class EffectHeal extends Effect {
             target.changeFightStats(new Stats(this.value, 0, 0, 0));
         }
     }
-	public int getValue(){return this.value;}
 }

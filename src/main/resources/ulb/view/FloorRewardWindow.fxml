@@ -35,14 +35,14 @@
       </VBox>
       <Label text="Choisis la récompense:" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="TOP"
              style="-fx-font-size: 60px"/>
-      <Button fx:id="objectReward" mnemonicParsing="false" onAction="#objectReward" text="Objet" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="TOP"
-              prefHeight="80" prefWidth="300"
+      <Button fx:id="objectReward" mnemonicParsing="false" onAction="#objectReward" text="Objet" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="TOP"
+              prefHeight="70" prefWidth="300"
               style="-fx-background-color: #8D89BA; -fx-border-color: black; -fx-font-size: 30px;"/>
       <Button fx:id="newAttackReward" mnemonicParsing="false" onAction="#newAttackReward" text="Nouvelle Attaque" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="TOP"
-              prefHeight="80" prefWidth="300"
+              prefHeight="70" prefWidth="300"
               style="-fx-background-color: #97B35F; -fx-border-color: black; -fx-font-size: 30px;"/>
       <Button fx:id="statReward" mnemonicParsing="false" onAction="#statReward" text="Bonus de Statistiques" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="TOP"
-              prefHeight="80" prefWidth="300"
+              prefHeight="70" prefWidth="300"
               style="-fx-background-color: #9B3E62; -fx-border-color: black; -fx-font-size: 30px;"/>
    </children>
 </GridPane>

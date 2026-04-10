@@ -2,7 +2,7 @@ package ulb.model.item;
 
 import ulb.model.HasId;
 import ulb.model.effect.Effect;
-import ulb.model.battle.Battle;import ulb.model.effect.EffectTarget;
+import ulb.model.battle.Battle;
 
 public class Item implements HasId {
 	private String id;
@@ -34,7 +34,7 @@ public class Item implements HasId {
 		this.effect.apply(battle, team);
 	}
 
-	public EffectTarget getTarget(){
+	public Effect.EffectTarget getTarget(){
 		return this.effect.getTarget();
 	}
 }

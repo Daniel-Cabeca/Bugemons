@@ -33,7 +33,6 @@ import ulb.communication.types.*;
 import ulb.controller.action.Swap;
 import ulb.controller.action.UseAbility;
 import ulb.controller.action.UseItem;
-import ulb.controller.strategy.StrategyRandom;
 import ulb.controller.towerManager.FloorManager;
 import ulb.controller.towerManager.RoomManager;
 import ulb.controller.towerManager.TowerManager;
@@ -53,6 +52,7 @@ import ulb.model.reward.Reward;
 import ulb.model.reward.RewardType;
 import ulb.service.BugemonService;
 import ulb.service.ServiceLoader;
+import ulb.service.strategy.StrategyRandom;
 import ulb.view.WindowPath;
 import ulb.view.windows.LevelUpWindow;
 import ulb.view.windows.ModeWindow;
@@ -231,10 +231,10 @@ AttackReplacementController.Listener {
 		}
 		Battle battle = new Battle(playerTeam, opponentTeam, player);
 		this.normalModeBattleController = new BattleController(player, battle, ParticipantLabel.TEAM_A);
-		StrategyRandom strategyRandom = new StrategyRandom(battle);
-		Thread thread = new Thread(strategyRandom);
-		thread.setDaemon(true);
-		thread.start();
+		// StrategyRandom strategyRandom = new StrategyRandom(battle);
+		// Thread thread = new Thread(strategyRandom);
+		// thread.setDaemon(true);
+		// thread.start();
 	}
 
 	/**
@@ -742,8 +742,9 @@ AttackReplacementController.Listener {
 	@Override
 	public BattleState onAutoTurn() {
 		// SERVER
-		StrategyRandom strategyRandom = new StrategyRandom(normalModeBattleController);
-		return strategyRandom.playAutoTurn();
+		// StrategyRandom strategyRandom = new StrategyRandom(normalModeBattleController);
+		// return strategyRandom.playAutoTurn();
+		return null;
 	}
 
 	@Override

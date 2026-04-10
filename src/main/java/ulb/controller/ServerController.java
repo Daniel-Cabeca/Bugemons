@@ -16,6 +16,7 @@ import ulb.communication.types.GetBattleStateMessage;
 import ulb.communication.types.GetLogsMessage;
 import ulb.communication.types.GetTowerInfoMessage;
 import ulb.communication.types.LogsMessage;
+import ulb.communication.types.PickRandomActionMessage;
 import ulb.communication.types.RunMessage;
 import ulb.communication.types.SetUpNormalModeMessage;
 import ulb.communication.types.SetUpPlayerMessage;
@@ -26,12 +27,11 @@ import ulb.communication.types.SwapBugemonMessage;
 import ulb.communication.types.UsableItemsMessage;
 import ulb.communication.types.UseAbilityMessage;
 import ulb.communication.types.UseItemMessage;
+import ulb.controller.action.Action;
 import ulb.controller.action.Run;
 import ulb.controller.action.Swap;
 import ulb.controller.action.UseAbility;
 import ulb.controller.action.UseItem;
-import ulb.controller.strategy.Strategy;
-import ulb.controller.strategy.StrategyRandom;
 import ulb.controller.towerManager.TowerManager;
 import ulb.mapper.ability.AbilityMapper;
 import ulb.mapper.bugemon.BugemonMapper;
@@ -48,6 +48,9 @@ import ulb.model.team.OpponentTeamGenerator;
 import ulb.model.team.Team;
 import ulb.service.BugemonService;
 import ulb.service.ServiceLoader;
+import ulb.service.strategy.AI;
+import ulb.service.strategy.Strategy;
+import ulb.service.strategy.StrategyRandom;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -69,8 +72,7 @@ public class ServerController extends Thread{
     private TowerManager towerManager;
     private Battle battle;
     private Battle.ParticipantLabel teamLabel;
-    private StrategyRandom opponentBot;
-    private Thread botThread;
+    private Thread opponentBot;
 
     public ServerController(SocketMessenger messenger){
         this.socketMessenger = messenger;
@@ -165,9 +167,8 @@ public class ServerController extends Thread{
             this.battle = new Battle(player.getTeam(), teamB, player);
             this.teamLabel = Battle.ParticipantLabel.TEAM_A;
 
-            this.opponentBot = new StrategyRandom(this.battle);
-            this.botThread = new Thread(this.opponentBot);
-            this.botThread.start();
+            this.opponentBot = new AI(battle, new StrategyRandom());
+            this.opponentBot.start();
 
             sendSuccessMessage();
 
@@ -242,6 +243,13 @@ public class ServerController extends Thread{
             sendSuccessMessage();
         } else if (message instanceof RunMessage){
             this.battle.chooseAction(new Run(), teamLabel);
+
+            sendSuccessMessage();
+
+        } else if (message instanceof PickRandomActionMessage){
+            StrategyRandom strategyRandom = new StrategyRandom();
+            Action randomAction = strategyRandom.pickAction(battle, teamLabel);
+            this.battle.chooseAction(randomAction, teamLabel);
 
             sendSuccessMessage();
         }

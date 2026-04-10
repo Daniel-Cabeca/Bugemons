@@ -31,15 +31,20 @@ public class EffectMapper {
                     @Override
                     public void apply(Battle battle, Battle.ParticipantLabel team){}
                 };
+                break;
+
             case STAT_MODIFIER:
                 if (dto instanceof EffectStatModifierDTO effectStat){
                     effect = toEntity(effectStat);
                 }
                 break;
+
             case HEAL:
                 if (dto instanceof EffectHealDTO effectHeal){
                     effect = toEntity(effectHeal);
                 }
+                break;
+                
             default:
                 throw new RuntimeException("Effect Type not known !");
         }

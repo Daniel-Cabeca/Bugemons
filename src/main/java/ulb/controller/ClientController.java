@@ -11,7 +11,6 @@ import java.util.Map;
 
 import ulb.communication.Client;
 import ulb.communication.Message;
-import ulb.communication.old_types.BattleEndCheckMessage;
 import ulb.communication.old_types.TowerInfoMessage;
 import ulb.communication.types.AbilityEffectivenessMessage;
 import ulb.communication.types.ActiveBugemonsMessage;
@@ -29,6 +28,7 @@ import ulb.communication.types.GetBattleStateMessage;
 import ulb.communication.types.GetLogsMessage;
 import ulb.communication.types.GetTowerInfoMessage;
 import ulb.communication.types.LogsMessage;
+import ulb.communication.types.PickRandomActionMessage;
 import ulb.communication.types.SetUpNormalModeMessage;
 import ulb.communication.types.SetUpPlayerMessage;
 import ulb.communication.types.SetUpTeamMessage;
@@ -37,13 +37,7 @@ import ulb.communication.types.SwapBugemonMessage;
 import ulb.communication.types.UsableItemsMessage;
 import ulb.communication.types.UseAbilityMessage;
 import ulb.communication.types.UseItemMessage;
-import ulb.controller.action.Swap;
-import ulb.controller.action.UseAbility;
-import ulb.controller.action.UseItem;
-import ulb.controller.strategy.StrategyRandom;
-import ulb.mapper.bugemon.BugemonMapper;
 import ulb.model.battle.BattleState;
-
 import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.bugemon.BugemonSpeciesDTO;
@@ -326,10 +320,11 @@ BattleModeController.Listener, BattleWindowController.Listener {
 
 	@Override
 	public BattleState onAutoTurn() {
-		// SERVER
-		// StrategyRandom strategyRandom = new StrategyRandom(normalModeBattleController);
-		// return strategyRandom.playAutoTurn();
-		return null;
+		// CLIENT
+		if (!postData(new PickRandomActionMessage())){
+			return null;
+		}
+		return getState();
 	}
 
 	@Override

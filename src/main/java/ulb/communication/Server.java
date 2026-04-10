@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ulb.communication.Messenger.SocketMessenger;
-import ulb.communication.types.ConnectMessage;
 import ulb.controller.ServerController;
 
 public class Server {

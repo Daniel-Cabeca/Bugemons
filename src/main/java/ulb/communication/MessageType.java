@@ -45,4 +45,5 @@ public enum MessageType {
     SWAP_BUGEMON,
     USE_ABILITY,
     RUN,
+    PICK_RANDOM_ACTION,
 }

@@ -1,6 +1,5 @@
 package ulb.controller.towerManager;
 import ulb.controller.BattleController;
-import ulb.controller.strategy.StrategyRandom;
 import ulb.model.Player;
 import ulb.model.battle.Battle;
 import ulb.model.battle.Battle.ParticipantLabel;
@@ -8,6 +7,8 @@ import ulb.model.team.OpponentTeamGenerator;
 import ulb.model.team.Team;
 import ulb.model.tower.Room;
 import ulb.model.tower.RoomType;
+import ulb.service.strategy.AI;
+import ulb.service.strategy.StrategyRandom;
 
 
 public class RoomManager {
@@ -58,10 +59,9 @@ public class RoomManager {
 			battle.enableBossBattle();
 		}
 		this.roomBattleController = new BattleController(player, battle, ParticipantLabel.TEAM_A);
-		StrategyRandom strategyRandom = new StrategyRandom(battle);
-		Thread thread = new Thread(strategyRandom);
-		thread.setDaemon(true);
-		thread.start();
+		Thread botPlayer = new AI(battle, new StrategyRandom());
+		botPlayer.setDaemon(true);
+		botPlayer.start();
 	}
 
 	public Room getRoom() {return room;}

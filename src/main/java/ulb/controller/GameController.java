@@ -18,6 +18,8 @@ import ulb.controller.strategy.StrategyRandom;
 import ulb.controller.towerManager.FloorManager;
 import ulb.controller.towerManager.RoomManager;
 import ulb.controller.towerManager.TowerManager;
+import ulb.controller.windows.BattleEndController;
+import ulb.controller.windows.ModeController;
 import ulb.model.ability.Ability;
 import ulb.model.battle.BattleState;
 import ulb.model.Player;
@@ -44,7 +46,7 @@ import java.util.Deque;
 import java.util.List;
 
 
-public class GameController extends Application implements TeamController.Listener, ModeController.Listener,
+public class GameController extends Application implements TeamController.Listener,
 BattleModeController.Listener, NextRoomController.Listener, ChooseBugemonController.Listener,
 BattleWindowController.Listener, RegisterController.Listener , LevelUpController.Listener, FloorRewardController.Listener,
 AttackReplacementController.Listener {
@@ -76,6 +78,7 @@ AttackReplacementController.Listener {
 	private RegisterController registerController;
 	private LevelUpController levelUpController;
 	private AttackReplacementController attackReplacementController;
+	private BattleEndController battleEndController;
 	private FloorRewardController.RewardChoice pendingFloorRewardChoice;
 
 	public static void main(String[] args) {
@@ -291,7 +294,10 @@ AttackReplacementController.Listener {
 	private void handleBattleEnd(boolean victory, int totalXP) {
 		pendingVictory = victory;
 		pendingTotalXP = totalXP;
-		switchWindow(WindowPath.BATTLE_END);
+		if (battleEndController == null) {
+			battleEndController = new BattleEndController(stage, modeController);
+		}
+		battleEndController.show(victory, totalXP);
 	}
 
 	// Handles fleeing from a tower battle: restores HP and resets the room
@@ -590,15 +596,6 @@ AttackReplacementController.Listener {
 		}
 	}
 
-	@Override
-	public void onSolo() {
-		teamController = new TeamController(stage, this, player);
-		try {
-			teamController.show();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 
 	@Override
 	public void onAutoBattle() {
@@ -849,12 +846,8 @@ AttackReplacementController.Listener {
 	@Override
 	public void onRegister() {
 		if (modeController == null) {
-			modeController = new ModeController(stage, this);
+			modeController = new ModeController(stage, this, player);
 		}
-		try {
-			modeController.show();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		modeController.show();
 	}
 }

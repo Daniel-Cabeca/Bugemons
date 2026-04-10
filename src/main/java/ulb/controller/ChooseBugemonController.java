@@ -44,13 +44,13 @@ public class ChooseBugemonController implements ChooseBugemonWindow.ViewListener
         listener.onBugemonChosen(bugemon);
     }
 
-    @Override
+        @Override
     public void onReturnFloorRewardWindow() {
         listener.onReturnFloorRewardWindow();
     }
 
-    public interface Listener {
-        void onBugemonChosen(Bugemon bugemon);
-        void onReturnFloorRewardWindow();
+	public interface Listener {
+		void onBugemonChosen(Bugemon bugemon);
+		void onReturnFloorRewardWindow();
     }
 }

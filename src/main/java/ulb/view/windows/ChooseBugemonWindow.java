@@ -2,6 +2,7 @@ package ulb.view.windows;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -12,7 +13,7 @@ import ulb.model.team.Team;
 
 public class ChooseBugemonWindow extends Window {
 
-    private ViewListener viewListener;
+	private ViewListener viewListener;
     private CheckBox selectedCheckBox;
     private Bugemon selectedBugemon;
 
@@ -23,20 +24,21 @@ public class ChooseBugemonWindow extends Window {
         this.viewListener = viewListener;
     }
 
-    /**
-     * Displays the player's team with corresponding stats.
+	/**
+     * Displays the player's team with corresponding stats
      *
      * @param team the team to display
      */
     public void populatePlayerBugemons(Team team) {
         bugemonList.getChildren().clear();
-        selectedCheckBox = null;
-        selectedBugemon = null;
+		selectedCheckBox = null;
+		selectedBugemon = null;
 
         for (Bugemon bugemon : team.getMembers()) {
             HBox cell = new HBox(10);
 
-            ImageView sprite = new ImageView(new Image(getClass().getResourceAsStream(bugemon.getSpritePath())));
+            Image image = new Image(bugemon.getSpritePath());
+            ImageView sprite = new ImageView(image);
             sprite.setFitWidth(50);
             sprite.setFitHeight(50);
             sprite.setPreserveRatio(true);
@@ -69,22 +71,24 @@ public class ChooseBugemonWindow extends Window {
         }
     }
 
-    @FXML
-    private void apply() {
+
+	@FXML
+	private void apply() {
         if (viewListener != null && selectedBugemon != null) {
             viewListener.onBugemonChosen(selectedBugemon);
         }
-    }
+	}
 
-    @FXML
-    private void returnFloorRewardWindow() {
-        if (viewListener != null) {
-            viewListener.onReturnFloorRewardWindow();
-        }
-    }
+	@FXML
+	private void returnFloorRewardWindow() {
+		if (viewListener != null) {
+			viewListener.onReturnFloorRewardWindow();
+		}
+	}
 
-    public interface ViewListener {
+	public interface ViewListener {
         void onBugemonChosen(Bugemon bugemon);
-        void onReturnFloorRewardWindow();
-    }
+		void onReturnFloorRewardWindow();
+	}
+
 }

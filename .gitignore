@@ -180,6 +180,7 @@ buildNumber.properties
 
 # End of https://www.toptal.com/developers/gitignore/api/java,intellij,visualstudiocode
 
-### Kate ###
+### custom ###
 *.kate-swp
 .idea
+*.db

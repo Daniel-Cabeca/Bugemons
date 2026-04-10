@@ -1,6 +1,7 @@
 package ulb.repository.json;
 
 import java.io.InputStream;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import ulb.repository.json.parser.AbilityJsonParser;
 
@@ -8,6 +9,7 @@ import ulb.repository.AbilityRepository;
 import ulb.model.ability.Ability;
 
 import java.util.NoSuchElementException;
+
 import ulb.repository.LoadException;
 
 /**
@@ -37,7 +39,7 @@ public class AbilityJsonRepository implements AbilityRepository {
 
 		AbilityJsonParser abilityParser = new AbilityJsonParser();
 
-		for (Ability ability: abilityParser.parseList(abilityArray)) {
+		for (Ability ability : abilityParser.parseList(abilityArray)) {
 			this.abilities.add(ability);
 		}
 	}
@@ -58,3 +60,6 @@ public class AbilityJsonRepository implements AbilityRepository {
 		return this.abilities;
 	}
 }
+
+
+

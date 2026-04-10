@@ -43,7 +43,9 @@ public class FloorRewardWindow extends Window {
 
 	@FXML
 	private void statReward(){
-		switchWindow(WindowPath.CHOOSE_BUGEMON);
+		if (viewListener != null) {
+			viewListener.onStatReward();
+		}
 	}
 
     public interface ViewListener {

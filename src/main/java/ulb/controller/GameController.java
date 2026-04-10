@@ -770,7 +770,8 @@ AttackReplacementController.Listener {
 	}
 
 	@Override
-	public void onChooseBugemonReward(){
+	public void onChooseBugemonReward(FloorRewardController.RewardChoice rewardChoice) {
+		pendingFloorRewardChoice = rewardChoice;
 		if (chooseBugemonController == null) {
 			chooseBugemonController = new ChooseBugemonController(stage, floorRewardController, player);
 		}

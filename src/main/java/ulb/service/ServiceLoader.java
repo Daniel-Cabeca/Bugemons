@@ -65,9 +65,11 @@ public abstract class ServiceLoader {
 		ItemRepository itemRepository = new ItemDatabaseRepository(database);
 		InventoryRepository inventoryRepository = new InventoryJsonRepository(new ItemJsonRepository());
 		AccountRepository accountRepository = new AccountDatabaseRepository(database);
+		AbilityRepository abilityRepository = new AbilityJsonRepository();
 
 		ServiceLoader.bugemonService = new BugemonService(bugemonSpeciesRepository);
 		ServiceLoader.itemService = new ItemService(itemRepository, inventoryRepository);
 		ServiceLoader.accountService = new AccountService(accountRepository);
+		ServiceLoader.abilityService = new AbilityService(abilityRepository);
 	}
 }

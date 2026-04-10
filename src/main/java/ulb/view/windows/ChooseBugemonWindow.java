@@ -39,18 +39,19 @@ public class ChooseBugemonWindow extends Window {
 
             Image image = new Image(bugemon.getSprite());
             ImageView sprite = new ImageView(image);
-            sprite.setFitWidth(50);
-            sprite.setFitHeight(50);
+            sprite.setFitWidth(60);
+            sprite.setFitHeight(60);
             sprite.setPreserveRatio(true);
 
             Label name = new Label(bugemon.getName() + " (Niveau: " + bugemon.getLevel() + ")");
-            name.setStyle("-fx-font-weight: bold;");
+            name.setStyle("-fx-font-weight: bold; -fx-font-size: 30px");
 
             Label stats = new Label(
                     "PV: " + bugemon.getFightStats().getHp()
                             + " ATK: " + bugemon.getFightStats().getAttack()
                             + " DEF: " + bugemon.getFightStats().getDefense()
                             + " INIT: " + bugemon.getFightStats().getInitiative());
+            stats.setStyle("-fx-font-size: 30px");
 
             CheckBox selectBox = new CheckBox();
             selectBox.setOnAction(event -> {
@@ -66,7 +67,7 @@ public class ChooseBugemonWindow extends Window {
                 }
             });
 
-            cell.getChildren().addAll(name, sprite, stats, selectBox);
+            cell.getChildren().addAll(sprite, name, stats, selectBox);
             bugemonList.getChildren().add(cell);
         }
     }

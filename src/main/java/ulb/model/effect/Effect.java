@@ -11,13 +11,6 @@ import ulb.model.battle.Battle.ParticipantLabel;
 public abstract class Effect {
 	private final EffectTarget target;
 
-
-	public enum EffectTarget {
-		OWN_BUGEMON,
-		OPPOSITE_BUGEMON,
-		OWN_TEAM
-	}
-
 	public Effect(EffectTarget targetType) {
 		this.target = targetType;
 	}

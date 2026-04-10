@@ -2,6 +2,7 @@ package ulb.view.windows;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -12,7 +13,7 @@ import ulb.model.team.Team;
 
 public class ChooseBugemonWindow extends Window {
 
-    private ViewListener viewListener;
+	private ViewListener viewListener;
     private CheckBox selectedCheckBox;
     private Bugemon selectedBugemon;
 
@@ -23,32 +24,34 @@ public class ChooseBugemonWindow extends Window {
         this.viewListener = viewListener;
     }
 
-    /**
-     * Displays the player's team with corresponding stats.
+	/**
+     * Displays the player's team with corresponding stats
      *
      * @param team the team to display
      */
     public void populatePlayerBugemons(Team team) {
         bugemonList.getChildren().clear();
-        selectedCheckBox = null;
-        selectedBugemon = null;
+		selectedCheckBox = null;
+		selectedBugemon = null;
 
         for (Bugemon bugemon : team.getMembers()) {
             HBox cell = new HBox(10);
 
-            ImageView sprite = new ImageView(new Image(getClass().getResourceAsStream(bugemon.getSprite())));
-            sprite.setFitWidth(50);
-            sprite.setFitHeight(50);
+            Image image = new Image(bugemon.getSprite());
+            ImageView sprite = new ImageView(image);
+            sprite.setFitWidth(60);
+            sprite.setFitHeight(60);
             sprite.setPreserveRatio(true);
 
             Label name = new Label(bugemon.getName() + " (Niveau: " + bugemon.getLevel() + ")");
-            name.setStyle("-fx-font-weight: bold;");
+            name.setStyle("-fx-font-weight: bold; -fx-font-size: 30px");
 
             Label stats = new Label(
                     "PV: " + bugemon.getFightStats().getHp()
                             + " ATK: " + bugemon.getFightStats().getAttack()
                             + " DEF: " + bugemon.getFightStats().getDefense()
                             + " INIT: " + bugemon.getFightStats().getInitiative());
+            stats.setStyle("-fx-font-size: 30px");
 
             CheckBox selectBox = new CheckBox();
             selectBox.setOnAction(event -> {
@@ -64,27 +67,29 @@ public class ChooseBugemonWindow extends Window {
                 }
             });
 
-            cell.getChildren().addAll(name, sprite, stats, selectBox);
+            cell.getChildren().addAll(sprite, name, stats, selectBox);
             bugemonList.getChildren().add(cell);
         }
     }
 
-    @FXML
-    private void apply() {
+
+	@FXML
+	private void apply() {
         if (viewListener != null && selectedBugemon != null) {
             viewListener.onBugemonChosen(selectedBugemon);
         }
-    }
+	}
 
-    @FXML
-    private void returnFloorRewardWindow() {
-        if (viewListener != null) {
-            viewListener.onReturnFloorRewardWindow();
-        }
-    }
+	@FXML
+	private void returnFloorRewardWindow() {
+		if (viewListener != null) {
+			viewListener.onReturnFloorRewardWindow();
+		}
+	}
 
-    public interface ViewListener {
+	public interface ViewListener {
         void onBugemonChosen(Bugemon bugemon);
-        void onReturnFloorRewardWindow();
-    }
+		void onReturnFloorRewardWindow();
+	}
+
 }

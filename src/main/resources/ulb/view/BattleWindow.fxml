@@ -35,8 +35,8 @@
                 <javafx.geometry.Insets top="10" left="10"/>
             </padding>
             <children>
-                <Label fx:id="floorLabel"/>
-                <Label fx:id="roomLabel"/>
+                <Label fx:id="floorLabel" style="-fx-font-size: 30px"/>
+                <Label fx:id="roomLabel" style="-fx-font-size: 30px"/>
             </children>
         </VBox>
         <ImageView fx:id="OpponentBugemon" fitHeight="300.0" fitWidth="300.0" preserveRatio="true" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" translateX="-40">

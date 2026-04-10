@@ -28,4 +28,5 @@ public class EffectList {
 			effect.apply(battle, team);
 		}
 	}
+	public List<Effect> getEffects() {return this.effects;}
 }

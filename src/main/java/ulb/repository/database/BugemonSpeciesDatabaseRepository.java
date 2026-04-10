@@ -40,7 +40,7 @@ public class BugemonSpeciesDatabaseRepository implements BugemonSpeciesRepositor
 		try {
 
 
-			String sprite = specie.getSprite().substring(5);
+			String sprite = specie.getSprite();
 			try (PreparedStatement statement = this.database.prepareStatement(sqlSpecies)) {
 				statement.setString(1, specie.getId());
 				statement.setString(2, specie.getName());

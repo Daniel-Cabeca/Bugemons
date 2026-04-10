@@ -6,6 +6,8 @@ import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.Stats;
 import ulb.model.item.Item;
 import ulb.model.effect.Effect;
+import ulb.model.effect.EffectHeal;
+import ulb.model.effect.EffectSwitch;
 import ulb.controller.action.*; 
 import ulb.model.reward.Reward;
 
@@ -46,13 +48,6 @@ public class Battle {
 		this(teamA, teamB, playerA, new Player());
 	}
 
-	public Battle(Team teamA, Team teamB, Bugemon activeBugemonA, Bugemon activeBugemonB) {
-		this.participantA = new BattleParticipant(null, teamA, activeBugemonA);
-		this.participantA = new BattleParticipant(null, teamB, activeBugemonB);
-		this.activeEffects = new ArrayList<>();
-		this.logMsg = new ArrayList<>();
-	}
-
 	public BattleParticipant getParticipant(ParticipantLabel team) {
 		if (team == ParticipantLabel.TEAM_A) {
 			return this.participantA;
@@ -83,7 +78,8 @@ public class Battle {
 
 	public void setAction(Action action, ParticipantLabel team) { this.getParticipant(team).setAction(action); }
 
-	public void setActiveBugemon(Bugemon bugemon, ParticipantLabel team) { this.getParticipant(team).setActiveBugemon(bugemon); }
+	public void setActiveBugemon(Bugemon bugemon, ParticipantLabel team) { this.getParticipant(team).setActiveBugemon(bugemon); 
+	}
 
 	private void setState(BattleState state, ParticipantLabel team) { this.getParticipant(team).setState(state); }
 
@@ -121,7 +117,7 @@ public class Battle {
 	 * @return if the item can be used or not (boolean)
 	 */
 	public boolean checkItem(Item item, ParticipantLabel team) {
-		if (item.getEffect().getType().equals(Effect.EffectType.HEAL)) {
+		if (item.getEffect() instanceof EffectHeal) {
 			return this.getActiveBugemon(team).hasHPDecreased();
 		}
 
@@ -255,7 +251,7 @@ public class Battle {
 		switch (ownState) {
 			case INGAME:
 				if (action instanceof UseItem useItemAction
-						&& useItemAction.getItem().getEffect().getType() == Effect.EffectType.SWITCH) {
+						&& useItemAction.getItem().getEffect() instanceof EffectSwitch) {
 					applyAction(action, ownTeam);
 				} else {
 					setAction(action, ownTeam);
@@ -288,6 +284,10 @@ public class Battle {
 	 */
 	public synchronized void chooseAction(Action action, ParticipantLabel team){
 		registerAction(action, team, getOpponentTeamLabel(team), getState(team));
+	}
+
+	public void resetFightStats() {
+		this.resetAllFightStats();
 	}
 
 	/**
@@ -347,7 +347,7 @@ public class Battle {
 		for (ActiveEffect ae : activeEffects) {
 			ae.ttl--;
 			if (ae.ttl <= 0) {
-				Stats revert = new Stats(-ae.delta.hp, -ae.delta.attack, -ae.delta.defense, -ae.delta.initiative);
+				Stats revert = new Stats(-ae.delta.getHp(), -ae.delta.getAttack(), -ae.delta.getDefense(), -ae.delta.getInitiative());
 				ae.target.changeFightStats(revert);
 				logMsg.add("L'effet de " + ae.itemName + " sur " + ae.target.getName() + " s'est dissipé!");
 				expired.add(ae);
@@ -413,7 +413,6 @@ public class Battle {
 			b.gainXp(gainedXP / winners.size());
 		}
 
-		this.resetAllFightStats();
 	}
 
 	/**

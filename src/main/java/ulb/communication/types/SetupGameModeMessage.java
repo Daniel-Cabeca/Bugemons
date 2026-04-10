@@ -2,6 +2,7 @@ package ulb.communication.types;
 
 import ulb.communication.Message;
 import ulb.controller.BattleController;
+import ulb.controller.GameController;
 import ulb.model.item.Inventory;
 import ulb.model.team.Team;
 
@@ -44,5 +45,10 @@ public class SetupGameModeMessage implements Message {
     @Override
     public MessageType getMessageType() {
         return MessageType.SETUP_GAME_MODE;
+    }
+
+    @Override
+    public Message handle(GameController controller) {
+        return controller.applyOn(this);
     }
 }

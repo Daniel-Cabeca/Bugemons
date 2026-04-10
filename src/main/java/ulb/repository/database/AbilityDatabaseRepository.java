@@ -1,0 +1,151 @@
+package ulb.repository.database;
+
+import ulb.model.ability.Ability;
+import ulb.model.effect.*;
+import ulb.model.item.Item;
+import ulb.model.type.Type;
+import ulb.repository.AbilityRepository;
+import ulb.repository.LoadException;
+import ulb.repository.database.sql.Database;
+import ulb.utils.DuplicateElementException;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
+
+public class AbilityDatabaseRepository implements AbilityRepository {
+	private final Database database;
+
+	public AbilityDatabaseRepository(Database database) throws LoadException {
+		this.database = database;
+	}
+
+	public void insertAbilities(Iterable<Ability> abilities) throws DuplicateElementException {
+		for (Ability ability : abilities) {
+			this.insertAbility(ability);
+		}
+	}
+
+	public void insertAbility(Ability ability) throws DuplicateElementException {
+		String sqlAbility = "INSERT INTO abilities (id, name, type, description, power) VALUES (?, ?, ?, ?, ?)";
+		try (PreparedStatement statement = this.database.prepareStatement(sqlAbility)) {
+			statement.setString(1, ability.getId());
+			statement.setString(2, ability.getName());
+			statement.setString(3, ability.getType().name()); // Enum Type (FEU, EAU...)
+			statement.setString(4, ability.getDescription());
+			statement.setInt(5, ability.getPower());
+
+			statement.executeUpdate();
+
+			EffectDatabaseRepository effectRepository = new EffectDatabaseRepository(this.database);
+			for (Effect effect : ability.getEffects().getEffects()) {
+				effectRepository.insert(effect, ability.getId(), false);
+			}
+
+		} catch (SQLException e) {
+			throw new DuplicateElementException("Failed to insert item: " + ability.getId() + " (" + e.getMessage() + ")");
+		}
+	}
+
+	@Override
+	public Ability findById(String id) throws NoSuchElementException {
+		String sql = """
+				   SELECT a.*, e.id AS effect_id, e.type AS effect_type, e.target, e.value, 
+				          esm.hp, esm.attack, esm.defense, esm.initiative, esm.duration
+				   FROM abilities a
+				   LEFT JOIN effects e ON a.id = e.ability_id
+				   LEFT JOIN effect_stats_modifier esm ON e.id = esm.effect_id
+				   WHERE a.id = ?
+				""";
+
+		try (PreparedStatement pstmt = this.database.prepareStatement(sql)) {
+			pstmt.setString(1, id);
+			ResultSet rs = pstmt.executeQuery();
+
+			Ability ability = null;
+			EffectList effects = new EffectList();
+
+			while (rs.next()) {
+				if (ability == null) {
+					// On récupère le type via l'Enum Type
+					Type abilityType = Type.valueOf(rs.getString("type"));
+
+					ability = new Ability(
+							rs.getString("id"),
+							rs.getString("name"),
+							abilityType,
+							rs.getString("description"),
+							rs.getInt("power"),
+							effects // On passe la référence de l'EffectList ici
+					);
+				}
+
+				// Gestion des effets (identique à ton exemple précédent)
+				String effectId = rs.getString("effect_id");
+				if (effectId != null) {
+					Effect effect = null;
+					EffectType type = EffectType.valueOf(rs.getString("effect_type"));
+					EffectTarget target = EffectTarget.valueOf(rs.getString("target"));
+
+					if (type == EffectType.HEAL) {
+						effect = new EffectHeal(target, rs.getInt("value"));
+					} else if (type == EffectType.STAT_MODIFIER) {
+						Map<EffectStatModifier.StatType, Integer> statsChanges = new EnumMap<>(EffectStatModifier.StatType.class);
+						statsChanges.put(EffectStatModifier.StatType.HP, rs.getInt("hp"));
+						statsChanges.put(EffectStatModifier.StatType.ATTACK, rs.getInt("attack"));
+						statsChanges.put(EffectStatModifier.StatType.DEFENSE, rs.getInt("defense"));
+						statsChanges.put(EffectStatModifier.StatType.INITIATIVE, rs.getInt("initiative"));
+
+						EffectStatModifier.EffectDuration duration = EffectStatModifier.EffectDuration.valueOf(rs.getString("duration"));
+						effect = new EffectStatModifier(target, duration, statsChanges);
+					}
+
+					if (effect != null) {
+						effects.add(effect);
+					}
+				}
+			}
+
+			if (ability == null) {
+				throw new NoSuchElementException("Ability non trouvée : " + id);
+			}
+
+			return ability;
+
+		} catch (SQLException e) {
+			throw new RuntimeException("Erreur SQL lors de la recherche de l'ability", e);
+		}
+	}
+
+	@Override
+	public Iterable<Ability> findAll() {
+		List<Ability> abilities = new ArrayList<>();
+		String sql = "SELECT id FROM abilities";
+
+		// On récupère d'abord tous les IDs
+		try (PreparedStatement pstmt = this.database.prepareStatement(sql)) {
+			ResultSet rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				String AbilityId = rs.getString("id");
+				try {
+					// On réutilise ta méthode findById pour charger l'objet complet
+					Ability ability = findById(AbilityId);
+					if (ability != null) {
+						abilities.add(ability);
+					}
+				} catch (NoSuchElementException e) {
+					// Si un ID existe mais que findById échoue (peu probable mais possible)
+					System.err.println("Erreur : ID trouvé mais item non chargeable : " + AbilityId);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return abilities;
+	}
+}
+
+

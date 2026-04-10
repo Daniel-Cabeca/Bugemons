@@ -1,6 +1,7 @@
 package ulb.communication.types;
 
 import ulb.communication.Message;
+import ulb.controller.GameController;
 import ulb.model.bugemon.Bugemon;
 
 /**
@@ -24,4 +25,9 @@ public class SwapRequestMessage implements Message {
 	public MessageType getMessageType() {
 		return MessageType.SWAP_REQUEST;
 	}
+
+	@Override
+    public Message handle(GameController controller) {
+        return controller.applyOn(this);
+    }
 }

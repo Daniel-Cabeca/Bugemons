@@ -39,9 +39,9 @@ public class BattleControllerTest {
 
 	private static int getGainedPoint(Stats previous, Stats actual){
 		Stats difference = new Stats(actual);
-		Stats opposite = new Stats(-previous.hp, -previous.attack, -previous.defense, -previous.initiative);
+		Stats opposite = new Stats(-previous.getHp(), -previous.getAttack(), -previous.getDefense(), -previous.getInitiative());
 		difference.change(opposite);
-		return difference.hp / 2 + difference.initiative / 2 + difference.attack + difference.defense;
+		return difference.getHp() / 2 + difference.getInitiative() / 2 + difference.getAttack() + difference.getDefense();
 	}
 
 	private static BattleController makeBattleController1v1(String bugemonIdA, String bugemonIdB) {
@@ -242,6 +242,10 @@ public class BattleControllerTest {
 		a.changeFightStats(new Stats(1, -10, 0, 0));
 
 		playTurn(controllerA, controllerB);
+		BattleState state = battle.getState(ParticipantLabel.TEAM_A);
+		if (state == BattleState.WON || state == BattleState.LOST){
+			battle.resetFightStats();
+		}
 
 		assertTrue(a.getFightStats().getAttack() >= a.getBaseStats().getAttack());
 	}
@@ -260,7 +264,11 @@ public class BattleControllerTest {
 		battle.enableBossBattle();
 
 		playTurn(controllerA, controllerB);
-
+		BattleState state = battle.getState(ParticipantLabel.TEAM_A);
+		if (state == BattleState.WON || state == BattleState.LOST){
+			battle.resetFightStats();
+		}
+		
 		if (a.getLevel() > 1)
 			assertEquals(a.getBaseStats().getHp(), a.getFightStats().getHp());
 	}

@@ -3,8 +3,6 @@ package ulb.repository.json;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.net.URL;
-
 import ulb.repository.LoadException;
 
 public class JsonResourcesTest {

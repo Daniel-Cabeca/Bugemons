@@ -1,47 +1,54 @@
 package ulb.view.windows;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import ulb.communication.Message;
-import ulb.communication.types.GetInfoMessage;
-import ulb.communication.types.InfoType;
-import ulb.communication.types.RewardPlaceMessage;
 import ulb.view.WindowPath;
 
 public class FloorRewardWindow extends Window {
-	//TODO: implement functions + add popup window to newAttackReward and StatReward to select bugemon
+
+	private ViewListener viewListener;
 
 	@FXML
 	private Label floorLabel;
 	@FXML
 	private Label roomLabel;
+	@FXML
+	private Button objectReward;
 
-	@Override
-	public void onLoad() {
-		Message m = viewManager.handleMessage(new GetInfoMessage(InfoType.REWARD_PLACE));
-		if (m instanceof RewardPlaceMessage placeMessage) {
-			initializeLabels(placeMessage.getFloorNumber(), placeMessage.getRoomNumber());
-		}
+	public void setViewListener(ViewListener viewListener) {
+		this.viewListener = viewListener;
 	}
 
-	public void initializeLabels(int floorNumber, int roomNumber) {
+	public void initializeLabels(int floorNumber, int roomNumber, String item) {
 		floorLabel.setText("Etage: NO" + floorNumber);
 		roomLabel.setText("Salle: " + roomNumber);
+		objectReward.setText("Objet\n" + item);
 	}
+
 
 	@FXML
 	private void objectReward(){
-		sendSwitchWindowMessage(WindowPath.NEXT_ROOM);
+		if (viewListener != null) {
+			viewListener.onObjectReward();
+		}
 	}
 
 	@FXML
 	private void newAttackReward(){
-		sendSwitchWindowMessage(WindowPath.NEXT_ROOM);
+		if (viewListener != null) {
+			viewListener.onChooseAttackReward();
+		}
 	}
 
 	@FXML
 	private void statReward(){
-		sendSwitchWindowMessage(WindowPath.NEXT_ROOM);
+		switchWindow(WindowPath.CHOOSE_BUGEMON);
 	}
 
+    public interface ViewListener {
+        void onObjectReward();
+        void onChooseAttackReward();
+        void onStatReward();
+    }
 }

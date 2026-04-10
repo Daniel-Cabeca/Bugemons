@@ -7,7 +7,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import ulb.model.ability.AbilitySet;
 import ulb.model.bugemon.Bugemon;
+import ulb.model.bugemon.BugemonSpecies;
+import ulb.model.bugemon.Stats;
 import ulb.model.type.Type;
 
 import ulb.repository.BugemonSpeciesRepository;
@@ -16,13 +19,9 @@ import ulb.service.BugemonService;
 
 public class OpponentTeamGeneratorTest {
 
-	private Bugemon makeBugemon() {
-		return new Bugemon(
-			100,
-			100,
-			100,
-			100
-		);
+	private Bugemon createBugemon() {
+		BugemonSpecies species = new BugemonSpecies("", "", Type.AQUA, new Stats(100, 100, 100, 100), new AbilitySet(), "", false);
+		return new Bugemon(species);
 	}
 
 	@Test
@@ -31,9 +30,9 @@ public class OpponentTeamGeneratorTest {
 		BugemonService service = new BugemonService(repository);
 
 		Team playerTeam = new Team();
-		playerTeam.add(makeBugemon());
-		playerTeam.add(makeBugemon());
-		playerTeam.add(makeBugemon());
+		playerTeam.add(createBugemon());
+		playerTeam.add(createBugemon());
+		playerTeam.add(createBugemon());
 
 		Team opponentTeam = OpponentTeamGenerator.generateRandomOpponentTeam(playerTeam, service);
 

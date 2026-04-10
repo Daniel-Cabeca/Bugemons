@@ -2,10 +2,10 @@ package ulb.model.bugemon;
 
 
 public class Stats {
-	public int hp;
-	public int attack;
-	public int defense;
-	public int initiative;
+	private int hp;
+	private int attack;
+	private int defense;
+	private int initiative;
 
 	public Stats() {
 		this.hp = 0;

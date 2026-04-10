@@ -9,7 +9,7 @@ import ulb.model.bugemon.Bugemon;
 public class EffectResetMalus extends Effect{
 
     public EffectResetMalus(EffectTarget targetType){
-        super(EffectType.RESET_MALUS, targetType);
+        super(targetType);
     }
 
      /**

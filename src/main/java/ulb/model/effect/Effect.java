@@ -9,29 +9,13 @@ import ulb.model.battle.Battle;
 import ulb.model.battle.Battle.ParticipantLabel;
 
 public abstract class Effect {
-	private final EffectType type;
 	private final EffectTarget target;
 
-	public enum EffectType {
-		HEAL,
-		STAT_MODIFIER,
-		RESET_MALUS,
-		SWITCH
-	}
-
-	public enum EffectTarget {
-		OWN_BUGEMON,
-		OPPOSITE_BUGEMON,
-		OWN_TEAM
-	}
-
-	public Effect(EffectType type, EffectTarget targetType) {
-		this.type = type;
+	public Effect(EffectTarget targetType) {
 		this.target = targetType;
 	}
 
 	// Getters
-	public EffectType getType() { return this.type; }
 
 	public EffectTarget getTarget() { return this.target; }
 

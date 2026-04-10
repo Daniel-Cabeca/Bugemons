@@ -2,6 +2,7 @@ package ulb.communication.types;
 
 import javafx.event.ActionEvent;
 import ulb.communication.Message;
+import ulb.controller.GameController;
 import ulb.model.battle.BattleState;
 
 /**
@@ -31,8 +32,12 @@ public class BattleEndCheckMessage implements Message {
 		return actionEvent;
 	}
 
-	@Override
 	public MessageType getMessageType() {
 		return MessageType.BATTLE_END_CHECK;
 	}
+
+	@Override
+    public Message handle(GameController controller) {
+        return controller.applyOn(this);
+    }
 }

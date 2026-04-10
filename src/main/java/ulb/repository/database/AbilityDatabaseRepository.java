@@ -91,13 +91,13 @@ public class AbilityDatabaseRepository implements AbilityRepository {
 					if (type == EffectType.HEAL) {
 						effect = new EffectHeal(target, rs.getInt("value"));
 					} else if (type == EffectType.STAT_MODIFIER) {
-						Map<EffectStatModifier.StatType, Integer> statsChanges = new EnumMap<>(EffectStatModifier.StatType.class);
-						statsChanges.put(EffectStatModifier.StatType.HP, rs.getInt("hp"));
-						statsChanges.put(EffectStatModifier.StatType.ATTACK, rs.getInt("attack"));
-						statsChanges.put(EffectStatModifier.StatType.DEFENSE, rs.getInt("defense"));
-						statsChanges.put(EffectStatModifier.StatType.INITIATIVE, rs.getInt("initiative"));
+						Map<EffectStatType, Integer> statsChanges = new EnumMap<>(EffectStatType.class);
+						statsChanges.put(EffectStatType.HP, rs.getInt("hp"));
+						statsChanges.put(EffectStatType.ATTACK, rs.getInt("attack"));
+						statsChanges.put(EffectStatType.DEFENSE, rs.getInt("defense"));
+						statsChanges.put(EffectStatType.INITIATIVE, rs.getInt("initiative"));
 
-						EffectStatModifier.EffectDuration duration = EffectStatModifier.EffectDuration.valueOf(rs.getString("duration"));
+						EffectStatDuration duration = EffectStatDuration.valueOf(rs.getString("duration"));
 						effect = new EffectStatModifier(target, duration, statsChanges);
 					}
 

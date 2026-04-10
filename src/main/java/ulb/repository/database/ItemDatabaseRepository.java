@@ -90,14 +90,14 @@ public class ItemDatabaseRepository implements ItemRepository {
 					}
 					else if (type == EffectType.STAT_MODIFIER) {
 						// On reconstruit l'objet Stats du modificateur
-						Map<EffectStatModifier.StatType, Integer> statsChanges = new EnumMap<>(EffectStatModifier.StatType.class);
-						statsChanges.put(EffectStatModifier.StatType.HP, rs.getInt("hp"));
-						statsChanges.put(EffectStatModifier.StatType.ATTACK, rs.getInt("attack"));
-						statsChanges.put(EffectStatModifier.StatType.DEFENSE, rs.getInt("defense"));
-						statsChanges.put(EffectStatModifier.StatType.INITIATIVE, rs.getInt("initiative"));
+						Map<EffectStatType, Integer> statsChanges = new EnumMap<>(EffectStatType.class);
+						statsChanges.put(EffectStatType.HP, rs.getInt("hp"));
+						statsChanges.put(EffectStatType.ATTACK, rs.getInt("attack"));
+						statsChanges.put(EffectStatType.DEFENSE, rs.getInt("defense"));
+						statsChanges.put(EffectStatType.INITIATIVE, rs.getInt("initiative"));
 
 						String durationStr = rs.getString("duration");
-						EffectStatModifier.EffectDuration duration = EffectStatModifier.EffectDuration.valueOf(durationStr);
+						EffectStatDuration duration = EffectStatDuration.valueOf(durationStr);
 						effect = new EffectStatModifier(target,duration,statsChanges);
 					}
 				}

@@ -81,7 +81,7 @@ public class EffectDatabaseRepository {
 		this.insertStats(effect.buildStatsChange(), effectId, effect.getDuration());
 	}
 
-	private void insertStats(Stats stats, long effectId, EffectStatModifier.EffectDuration duration) throws SQLException {
+	private void insertStats(Stats stats, long effectId, EffectStatDuration duration) throws SQLException {
 		String sql = "INSERT INTO effect_stats_modifier (effect_id, hp,attack,defense,initiative,duration) VALUES (?, ?, ?, ?,?,?)";
 		PreparedStatement statement = this.database.prepareStatement(sql);
 

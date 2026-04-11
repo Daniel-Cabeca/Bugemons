@@ -61,7 +61,7 @@ import java.util.Map;
 
 public class GameController extends Application implements TeamController.Listener,
 BattleModeController.Listener, NextRoomController.Listener, ChooseBugemonController.Listener,
-BattleWindowController.Listener, RegisterController.Listener , LevelUpController.Listener, FloorRewardController.Listener,
+BattleWindowController.Listener , LevelUpController.Listener, FloorRewardController.Listener,
 AttackReplacementController.Listener {
 
 	private Player player;
@@ -131,7 +131,7 @@ AttackReplacementController.Listener {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		// CLIENT
-		setPlayer(new Player("Player"));
+		setPlayer(new Player());
 		this.stage = primaryStage;
 
 		Font.loadFont(getClass().getResourceAsStream("/fonts/pokemon-emerald-pro.otf"), 14);
@@ -139,8 +139,8 @@ AttackReplacementController.Listener {
 		primaryStage.setFullScreen(true);
 		primaryStage.setFullScreenExitHint("");
 
-		registerController = new RegisterController(stage, this);
-		registerController.show();
+//		registerController = new RegisterController(stage, this);
+//		registerController.show();
 
 		if (primaryStage.getScene() != null) {
 			String stylesheet = getClass().getResource("/styles/global.css").toExternalForm();
@@ -933,13 +933,5 @@ AttackReplacementController.Listener {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	@Override
-	public void onRegister() {
-		if (modeController == null) {
-			modeController = new ModeController(stage);
-		}
-		modeController.show();
 	}
 }

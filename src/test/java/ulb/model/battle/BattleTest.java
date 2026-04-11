@@ -29,7 +29,7 @@ public class BattleTest {
 
 		Team teamA = new Team(List.of(fast));
 		Team teamB = new Team(List.of(slow));
-		Player p = new Player();
+		Player p = new Player("TestPlayer");
 		Battle battle = new Battle(teamA, teamB, p);
 
 		assertSame(ParticipantLabel.TEAM_A, battle.getFirstTeamToPlay());
@@ -43,7 +43,7 @@ public class BattleTest {
 		Team teamA = new Team(List.of(slow));
 		Team teamB = new Team(List.of(fast));
 
-		Player p = new Player();
+		Player p = new Player("TestPlayer");
 		Battle battle = new Battle(teamA, teamB, p);
 
 		assertSame(ParticipantLabel.TEAM_B, battle.getFirstTeamToPlay());
@@ -57,7 +57,7 @@ public class BattleTest {
 		Team teamA = new Team(List.of(sameA));
 		Team teamB = new Team(List.of(sameB));
 
-		Player p = new Player();
+		Player p = new Player("TestPlayer");
 		Battle battle = new Battle(teamA, teamB, p);
 
 		boolean sawA = false;

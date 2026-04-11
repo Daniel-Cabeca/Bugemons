@@ -29,7 +29,7 @@ public class EffectTest {
 			service.spawnBugemon("obsidian")
 		));
 
-		Player player = new Player();
+		Player player = new Player("TestPlayer");
 		Battle battle = new Battle(teamA, teamB, player);
 
 		return battle;

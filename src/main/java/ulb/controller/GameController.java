@@ -131,7 +131,7 @@ AttackReplacementController.Listener {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		// CLIENT
-		setPlayer(new Player());
+		setPlayer(new Player("Player"));
 		this.stage = primaryStage;
 
 		Font.loadFont(getClass().getResourceAsStream("/fonts/pokemon-emerald-pro.otf"), 14);

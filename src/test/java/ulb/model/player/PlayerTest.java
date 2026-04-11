@@ -12,7 +12,7 @@ import ulb.model.item.Inventory;
 public class PlayerTest {
 	@Test
 	public void addDefaultItemsToInventoryOnPlayerInitialisation() {
-		Player player = new Player();
+		Player player = new Player("TestPlayer");
 		Inventory inventory = player.getInventory();
 		Map<Item, Integer> items = inventory.getItems();
 

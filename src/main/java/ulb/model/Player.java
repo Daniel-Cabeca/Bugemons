@@ -19,14 +19,7 @@ public class Player {
 
 	private static final String ITEMS_PATH = "src/main/resources/json/objets.json";
 
-	public Player() {
-		this.userName = "Player";
-		this.password = "password";
-		this.team = new Team();
-		this.inventory = new Inventory();
 
-		addDefaultItems();
-	}
 
 	public Player(String name) {
 		this.userName = name;

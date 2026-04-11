@@ -45,7 +45,7 @@ public class Battle {
 	}
 
 	public Battle(Team teamA, Team teamB, Player playerA) {
-		this(teamA, teamB, playerA, new Player());
+		this(teamA, teamB, playerA, new Player("OpposingTeam"));
 	}
 
 	public BattleParticipant getParticipant(ParticipantLabel team) {

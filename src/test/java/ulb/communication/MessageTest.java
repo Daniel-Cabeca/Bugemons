@@ -7,7 +7,7 @@ import java.io.*;
 
 import org.junit.jupiter.api.Test;
 
-import ulb.communication.message.serverToClient.ErrorMessage;
+import ulb.communication.message.serverToClient.StatusMessage;
 import ulb.communication.old_types.ConnectMessage;
 
 public class MessageTest {
@@ -31,12 +31,12 @@ public class MessageTest {
 
     @Test
     void testErrorMessageSerialization() throws IOException, ClassNotFoundException {
-        ErrorMessage originalMessage = new ErrorMessage("test");
+        StatusMessage originalMessage = new StatusMessage(false,"test");
 
-        ErrorMessage deserializedMessage = (ErrorMessage) serializeNdeserialze(originalMessage);
+        StatusMessage deserializedMessage = (StatusMessage) serializeNdeserialze(originalMessage);
 
         assertNotNull(deserializedMessage);
-        assertEquals(originalMessage.getError(), deserializedMessage.getError());
+        assertEquals(originalMessage.getMessage(), deserializedMessage.getMessage());
 
     }
 

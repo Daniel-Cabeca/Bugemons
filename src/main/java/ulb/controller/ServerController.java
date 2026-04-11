@@ -7,7 +7,7 @@ import ulb.communication.message.serverToClient.BattleStateMessage;
 import ulb.communication.message.serverToClient.BugemonSpeciesMessage;
 import ulb.communication.message.clientToServer.CheckGameFinishedMessage;
 import ulb.communication.message.clientToServer.CheckUsableItemMessage;
-import ulb.communication.message.serverToClient.ErrorMessage;
+import ulb.communication.message.serverToClient.StatusMessage;
 import ulb.communication.message.serverToClient.GameFinishedMessage;
 import ulb.communication.message.clientToServer.GetAbilityEffectivenessMessage;
 import ulb.communication.message.clientToServer.GetActiveBugemonsMessage;
@@ -22,7 +22,6 @@ import ulb.communication.message.clientToServer.SetUpNormalModeMessage;
 import ulb.communication.message.clientToServer.SetUpPlayerMessage;
 import ulb.communication.message.clientToServer.SetUpTeamMessage;
 import ulb.communication.message.clientToServer.SetUpTowerModeMessage;
-import ulb.communication.message.serverToClient.SuccessMessage;
 import ulb.communication.message.clientToServer.SwapBugemonMessage;
 import ulb.communication.message.serverToClient.UsableItemsMessage;
 import ulb.communication.message.clientToServer.UseAbilityMessage;
@@ -115,11 +114,11 @@ public class ServerController extends Thread{
     }
 
     public void sendErrorMessage(String errorMessage){
-        sendMessage(new ErrorMessage(errorMessage));
+        sendMessage(new StatusMessage(false, errorMessage));
     }
 
     public void sendSuccessMessage(){
-        sendMessage(new SuccessMessage());
+        sendMessage(new StatusMessage(true));
     }
 
     public void end(){
@@ -151,7 +150,7 @@ public class ServerController extends Thread{
             
             for (BugemonDTO bugemonDTO : teamMessage.getTeam()){
                 if (!team.add(BugemonMapper.toEntity(bugemonDTO))){
-                    sendMessage(new ErrorMessage("Invalid Team"));
+                    sendErrorMessage("Invalid Team");
                 }
             }
 

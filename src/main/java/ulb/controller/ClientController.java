@@ -19,7 +19,7 @@ import ulb.communication.message.serverToClient.BattleStateMessage;
 import ulb.communication.message.serverToClient.BugemonSpeciesMessage;
 import ulb.communication.message.clientToServer.CheckGameFinishedMessage;
 import ulb.communication.message.clientToServer.CheckUsableItemMessage;
-import ulb.communication.message.serverToClient.ErrorMessage;
+import ulb.communication.message.serverToClient.StatusMessage;
 import ulb.communication.message.serverToClient.GameFinishedMessage;
 import ulb.communication.types.GameMode;
 import ulb.communication.message.clientToServer.GetAbilityEffectivenessMessage;
@@ -99,8 +99,8 @@ BattleModeController.Listener, BattleWindowController.Listener {
 
 	private boolean postData(Message message){
 		client.sendMessage(message);
-		if (client.receiveMessage() instanceof ErrorMessage errorMessage){
-			System.err.println(errorMessage.getError());
+		if (client.receiveMessage() instanceof StatusMessage errorMessage && errorMessage.isFailure()){
+			System.err.println(errorMessage.getMessage());
 			return false;
 		}
 		return true;
@@ -232,8 +232,8 @@ BattleModeController.Listener, BattleWindowController.Listener {
 		if (message instanceof ActiveBugemonsMessage activeBugemons){
 			return List.of(activeBugemons.getSelfActiveBugemon(), activeBugemons.getOpponentActiveBugemon());
 			
-		} else if (message instanceof ErrorMessage errorMessage){
-			System.err.println(errorMessage.getError());
+		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
+			System.err.println(errorMessage.getMessage());
 		}
 		return null;
 	}
@@ -244,8 +244,8 @@ BattleModeController.Listener, BattleWindowController.Listener {
 
 		if (message instanceof AbilityEffectivenessMessage effectivenessMessage){
 			return effectivenessMessage.getEffectiveness();
-		} else if (message instanceof ErrorMessage errorMessage){
-			System.err.println(errorMessage.getError());
+		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
+			System.err.println(errorMessage.getMessage());
 		}
 		return null;
 	}
@@ -256,8 +256,8 @@ BattleModeController.Listener, BattleWindowController.Listener {
 
 		if (message instanceof LogsMessage logs){
 			return logs.getHpsAfterFirstAction();
-		} else if (message instanceof ErrorMessage errorMessage){
-			System.err.println(errorMessage.getError());
+		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
+			System.err.println(errorMessage.getMessage());
 		}
 		return null;
 	}
@@ -269,8 +269,8 @@ BattleModeController.Listener, BattleWindowController.Listener {
 		if (message instanceof BattleStateMessage battleState){
 			System.out.println("State  = " + battleState.getBattleState());
 			return battleState.getBattleState();
-		} else if (message instanceof ErrorMessage errorMessage){
-			System.err.println(errorMessage.getError());
+		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
+			System.err.println(errorMessage.getMessage());
 		}
 		return null;
 
@@ -282,8 +282,8 @@ BattleModeController.Listener, BattleWindowController.Listener {
 
 		if (message instanceof LogsMessage logs){
 			return logs.getLogs();
-		} else if (message instanceof ErrorMessage errorMessage){
-			System.err.println(errorMessage.getError());
+		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
+			System.err.println(errorMessage.getMessage());
 		}
 		return null;
 	}
@@ -294,8 +294,8 @@ BattleModeController.Listener, BattleWindowController.Listener {
 
 		if (message instanceof UsableItemsMessage usableItems){
 			return usableItems.getItemMap();
-		} else if (message instanceof ErrorMessage errorMessage){
-			System.err.println(errorMessage.getError());
+		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
+			System.err.println(errorMessage.getMessage());
 		}
 		return null;
 	}
@@ -306,8 +306,8 @@ BattleModeController.Listener, BattleWindowController.Listener {
 
 		if (message instanceof GameFinishedMessage gameFinished){
 			return gameFinished.isGameFinished();
-		} else if (message instanceof ErrorMessage errorMessage){
-			System.err.println(errorMessage.getError());
+		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
+			System.err.println(errorMessage.getMessage());
 		}
 		return true;
 	}

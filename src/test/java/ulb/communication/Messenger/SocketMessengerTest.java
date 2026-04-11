@@ -10,7 +10,7 @@ import java.net.Socket;
 
 import org.junit.jupiter.api.Test;
 
-import ulb.communication.message.serverToClient.ErrorMessage;
+import ulb.communication.message.serverToClient.StatusMessage;
 
 public class SocketMessengerTest {
     private SocketActor server;
@@ -92,32 +92,32 @@ public class SocketMessengerTest {
     @Test
     public void testSendingMessage(){
         this.createActors();
-        ErrorMessage sendingMessage = new ErrorMessage("Test de la communication");
+        StatusMessage sendingMessage = new StatusMessage(false,"Test de la communication");
 
         this.client.sendMessage(sendingMessage);
-        ErrorMessage receivingMessage = (ErrorMessage) this.server.receiveMessage();
+        StatusMessage receivingMessage = (StatusMessage) this.server.receiveMessage();
 
         assertNotNull(receivingMessage);
-        assertEquals(sendingMessage.getError(), receivingMessage.getError());
+        assertEquals(sendingMessage.getMessage(), receivingMessage.getMessage());
     }
 
     @Test
     public void testTwoWaysSendingMessage(){
         this.createActors();
-        ErrorMessage sendingMessage1 = new ErrorMessage("Test de la communication 1");
+        StatusMessage sendingMessage1 = new StatusMessage(false,"Test de la communication 1");
 
         this.client.sendMessage(sendingMessage1);
-        ErrorMessage receivingMessage1 = (ErrorMessage) this.server.receiveMessage();
+        StatusMessage receivingMessage1 = (StatusMessage) this.server.receiveMessage();
         
         assertNotNull(receivingMessage1);
-        assertEquals(sendingMessage1.getError(), receivingMessage1.getError());
+        assertEquals(sendingMessage1.getMessage(), receivingMessage1.getMessage());
 
-        ErrorMessage sendingMessage2 = new ErrorMessage("Test de la communication 2");
+        StatusMessage sendingMessage2 = new StatusMessage(false,"Test de la communication 2");
 
         this.server.sendMessage(sendingMessage2);
-        ErrorMessage receivingMessage2 = (ErrorMessage) this.client.receiveMessage();
+        StatusMessage receivingMessage2 = (StatusMessage) this.client.receiveMessage();
         
         assertNotNull(receivingMessage2);
-        assertEquals(sendingMessage2.getError(), receivingMessage2.getError());
+        assertEquals(sendingMessage2.getMessage(), receivingMessage2.getMessage());
     }
 }

@@ -52,12 +52,12 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 		this.stage.show();
 	}
 
-	public void setTeam(List<String> selectedBugemons){
+	public void setTeam(List<String> selectedBugemonsId){
 		List<BugemonDTO> teamABugemons = new ArrayList<BugemonDTO>();
 		List<BugemonSpeciesDTO> allSpecies = this.getAllSpecies();
-		for (String bugemonName : selectedBugemons) {
+		for (String bugemonId : selectedBugemonsId) {
 			for (BugemonSpeciesDTO species : allSpecies){
-				if (bugemonName.equals(species.getName())){
+				if (bugemonId.equals(species.getId())){
 					teamABugemons.add(new BugemonDTO(species));
 				}
 			}

@@ -142,7 +142,7 @@ public class ServerController extends Thread{
 
         } else if (message instanceof SetUpTeamMessage teamMessage){
             Team team = new Team();
-
+            
             for (BugemonDTO bugemonDTO : teamMessage.getTeam()){
                 if (!team.add(BugemonMapper.toEntity(bugemonDTO))){
                     sendMessage(new ErrorMessage("Invalid Team"));

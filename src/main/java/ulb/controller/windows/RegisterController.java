@@ -1,4 +1,4 @@
-package ulb.controller;
+package ulb.controller.windows;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -7,11 +7,8 @@ import javafx.stage.Stage;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.DTO.player.PlayerDTO;
-import ulb.communication.SocketClient;
-import ulb.message.clientToServer.RegisterMessage;
-import ulb.controller.windows.ModeController;
+import ulb.controller.ClientController;
 import ulb.repository.LoadException;
-import ulb.service.ServiceLoader;
 import ulb.view.WindowPath;
 import ulb.view.windows.RegisterWindow;
 

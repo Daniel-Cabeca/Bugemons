@@ -18,9 +18,7 @@ public class Player {
 	private Inventory inventory;
 
 	private static final String ITEMS_PATH = "src/main/resources/json/objets.json";
-
-
-
+	
 	public Player(String name) {
 		this.userName = name;
 		this.password = "password";

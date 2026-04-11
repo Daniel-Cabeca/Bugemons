@@ -25,6 +25,7 @@ import ulb.controller.towerManager.RoomManager;
 import ulb.controller.towerManager.TowerManager;
 import ulb.controller.windows.BattleEndController;
 import ulb.controller.windows.ModeController;
+import ulb.controller.windows.RegisterController;
 import ulb.model.ability.Ability;
 import ulb.model.battle.BattleState;
 import ulb.model.Player;

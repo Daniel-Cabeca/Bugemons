@@ -1,7 +1,7 @@
 package ulb;
 
 import javafx.application.Application;
-import ulb.communication.Server;
+import ulb.communication.SocketServer;
 import ulb.controller.ClientController;
 
 public class Main{
@@ -16,7 +16,7 @@ public class Main{
                 Application.launch(ClientController.class, serverIp, serverPort.toString());
 
             } else if ("--server".equals(args[0])){
-                Server server = new Server(serverPort);
+                SocketServer server = new SocketServer(serverPort);
                 server.start();
             }
         } catch (Exception e){

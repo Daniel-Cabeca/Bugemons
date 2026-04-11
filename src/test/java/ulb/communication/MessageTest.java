@@ -7,7 +7,7 @@ import java.io.*;
 
 import org.junit.jupiter.api.Test;
 
-import ulb.communication.message.serverToClient.StatusMessage;
+import ulb.message.serverToClient.StatusMessage;
 import ulb.communication.old_types.ConnectMessage;
 
 public class MessageTest {

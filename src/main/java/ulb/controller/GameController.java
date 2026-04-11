@@ -12,9 +12,9 @@ import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.DTO.item.ItemDTO;
-import ulb.communication.Client;
+import ulb.communication.SocketClient;
 import ulb.communication.Message;
-import ulb.communication.Server;
+import ulb.communication.SocketServer;
 import ulb.communication.old_types.*;
 import ulb.communication.types.*;
 import ulb.controller.action.Swap;
@@ -61,7 +61,7 @@ import java.util.Map;
 
 public class GameController extends Application implements TeamController.Listener,
 BattleModeController.Listener, NextRoomController.Listener, ChooseBugemonController.Listener,
-BattleWindowController.Listener , LevelUpController.Listener, FloorRewardController.Listener,
+BattleWindowController.Listener, LevelUpController.Listener, FloorRewardController.Listener,
 AttackReplacementController.Listener {
 
 	private Player player;
@@ -104,9 +104,9 @@ AttackReplacementController.Listener {
 				if (args.length == 0) {
 					launch(args);
 				} else if ("--client".equals(args[0])) {
-					Client client = new Client(SERVER_IP, SERVER_PORT);
+					SocketClient client = new SocketClient(SERVER_IP, SERVER_PORT);
 
-					client.sendMessage(new ConnectMessage("Bonjour server !"));
+					//client.sendMessage(new ConnectMessage("Bonjour server !"));
 
 					Serializable message = client.receiveMessage();
 					if (message instanceof ConnectMessage connectMessage) {
@@ -115,7 +115,7 @@ AttackReplacementController.Listener {
 
 					client.closeSocket();
 				} else if ("--server".equals(args[0])) {
-					Server server = new Server(SERVER_PORT);
+					SocketServer server = new SocketServer(SERVER_PORT);
 					server.start();
 				} else {
 					System.err.println("Unknown arguments.");
@@ -139,8 +139,8 @@ AttackReplacementController.Listener {
 		primaryStage.setFullScreen(true);
 		primaryStage.setFullScreenExitHint("");
 
-//		registerController = new RegisterController(stage, this);
-//		registerController.show();
+		// registerController = new RegisterController(stage, this);
+		// registerController.show();
 
 		if (primaryStage.getScene() != null) {
 			String stylesheet = getClass().getResource("/styles/global.css").toExternalForm();

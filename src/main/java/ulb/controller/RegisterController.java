@@ -7,8 +7,8 @@ import javafx.stage.Stage;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.DTO.player.PlayerDTO;
-import ulb.communication.Client;
-import ulb.communication.message.clientToServer.RegisterMessage;
+import ulb.communication.SocketClient;
+import ulb.message.clientToServer.RegisterMessage;
 import ulb.controller.windows.ModeController;
 import ulb.repository.LoadException;
 import ulb.service.ServiceLoader;
@@ -59,7 +59,7 @@ public class RegisterController implements RegisterWindow.ViewListener {
     public void onLogin(String username, String password) {
         try {
             player = new PlayerDTO(username, password, new ArrayList<BugemonDTO>(), new HashMap<ItemDTO, Integer>());
-            boolean success = clientController.postData(new RegisterMessage(player, true));
+            boolean success = clientController.logIn(player);
             if (success) {
                 this.onRegister();
             } else {
@@ -74,7 +74,7 @@ public class RegisterController implements RegisterWindow.ViewListener {
     public void onSignUp(String username, String password) {
         try {
             player = new PlayerDTO(username, password, new ArrayList<BugemonDTO>(), new HashMap<ItemDTO, Integer>());
-            boolean success = clientController.postData(new RegisterMessage(player, false));
+            boolean success = clientController.signUp(player);
             if (success) {
                 this.onRegister();
             } else {

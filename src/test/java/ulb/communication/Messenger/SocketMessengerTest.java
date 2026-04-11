@@ -10,7 +10,7 @@ import java.net.Socket;
 
 import org.junit.jupiter.api.Test;
 
-import ulb.communication.message.serverToClient.StatusMessage;
+import ulb.message.serverToClient.StatusMessage;
 
 public class SocketMessengerTest {
     private SocketActor server;

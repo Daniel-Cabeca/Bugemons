@@ -46,5 +46,4 @@ public enum MessageType {
     USE_ABILITY,
     RUN,
     PICK_RANDOM_ACTION,
-    REGISTER,
 }

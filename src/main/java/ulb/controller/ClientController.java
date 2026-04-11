@@ -10,34 +10,14 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
-import ulb.communication.Client;
-import ulb.communication.Message;
+import ulb.communication.SocketClient;
 import ulb.communication.old_types.TowerInfoMessage;
-import ulb.communication.message.serverToClient.AbilityEffectivenessMessage;
-import ulb.communication.message.serverToClient.ActiveBugemonsMessage;
-import ulb.communication.message.serverToClient.BattleStateMessage;
-import ulb.communication.message.serverToClient.BugemonSpeciesMessage;
-import ulb.communication.message.clientToServer.CheckGameFinishedMessage;
-import ulb.communication.message.clientToServer.CheckUsableItemMessage;
-import ulb.communication.message.serverToClient.StatusMessage;
-import ulb.communication.message.serverToClient.GameFinishedMessage;
 import ulb.communication.types.GameMode;
-import ulb.communication.message.clientToServer.GetAbilityEffectivenessMessage;
-import ulb.communication.message.clientToServer.GetActiveBugemonsMessage;
-import ulb.communication.message.clientToServer.GetAllBugemonSpeciesMessage;
-import ulb.communication.message.clientToServer.GetBattleStateMessage;
-import ulb.communication.message.clientToServer.GetLogsMessage;
-import ulb.communication.message.clientToServer.GetTowerInfoMessage;
-import ulb.communication.message.serverToClient.LogsMessage;
-import ulb.communication.message.clientToServer.PickRandomActionMessage;
-import ulb.communication.message.clientToServer.SetUpNormalModeMessage;
-import ulb.communication.message.clientToServer.SetUpTeamMessage;
-import ulb.communication.message.clientToServer.SetUpTowerModeMessage;
-import ulb.communication.message.clientToServer.SwapBugemonMessage;
-import ulb.communication.message.serverToClient.UsableItemsMessage;
-import ulb.communication.message.clientToServer.UseAbilityMessage;
-import ulb.communication.message.clientToServer.UseItemMessage;
 import ulb.controller.windows.ModeController;
+import ulb.message.ClientToServerMessage;
+import ulb.message.clientToServer.*;
+import ulb.message.serverToClient.*;
+import ulb.model.Player;
 import ulb.model.battle.BattleState;
 import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.bugemon.BugemonDTO;
@@ -47,7 +27,7 @@ import ulb.DTO.item.ItemDTO;
 
 public class ClientController extends Application implements TeamController.Listener,
 BattleModeController.Listener, BattleWindowController.Listener {
-    Client client;
+    SocketClient client;
     Stage stage;
 
 	PlayerDTO player;
@@ -67,7 +47,7 @@ BattleModeController.Listener, BattleWindowController.Listener {
         String serverIp = params.get(0);
         Integer serverPort = Integer.parseInt(params.get(1));
         
-        this.client = new Client(serverIp, serverPort);
+        this.client = new SocketClient(serverIp, serverPort);
     }
 
     @Override
@@ -95,7 +75,7 @@ BattleModeController.Listener, BattleWindowController.Listener {
 		primaryStage.show();
     }
 
-	public boolean postData(Message message){
+	private boolean postData(ClientToServerMessage message){
 		client.sendMessage(message);
 		if (client.receiveMessage() instanceof StatusMessage errorMessage && errorMessage.isFailure()){
 			System.err.println(errorMessage.getMessage());
@@ -104,9 +84,19 @@ BattleModeController.Listener, BattleWindowController.Listener {
 		return true;
 	}
 
-	public Serializable getData(Message message){
+	private Serializable getData(ClientToServerMessage message){
 		client.sendMessage(message);
 		return client.receiveMessage();
+	}
+
+	// Register Controler
+
+	public boolean logIn(PlayerDTO player){
+		return postData(new RegisterMessage(player, true));
+	}
+
+	public boolean signUp(PlayerDTO player){
+		return postData(new RegisterMessage(player, false));
 	}
 
 	// Mode Controller Listener : 

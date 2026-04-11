@@ -1,4 +1,4 @@
-package ulb.repository.database;
+package ulb.repository.json;
 
 import ulb.model.chat.ChatMessage;
 import ulb.repository.LoadException;

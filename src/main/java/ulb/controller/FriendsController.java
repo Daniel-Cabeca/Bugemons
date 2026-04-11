@@ -44,8 +44,9 @@ public class FriendsController implements FriendsWindow.ViewListener{
 	public void onInviteFriend(String usernameField){
 		try {
 			int id = ServiceLoader.getAccountService().getUserId(usernameField);
-			if (id != 0) {
+			if (id > 0) {
 				listener.addFriend(id);
+				view.refreshFriendsList();
 			} else {
 
 			}

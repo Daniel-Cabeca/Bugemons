@@ -20,6 +20,8 @@ import ulb.controller.strategy.StrategyRandom;
 import ulb.controller.towerManager.FloorManager;
 import ulb.controller.towerManager.RoomManager;
 import ulb.controller.towerManager.TowerManager;
+import ulb.controller.windows.BattleEndController;
+import ulb.controller.windows.ModeController;
 import ulb.model.ability.Ability;
 import ulb.model.battle.BattleState;
 import ulb.model.Player;
@@ -47,7 +49,7 @@ import java.util.Deque;
 import java.util.List;
 
 
-public class GameController extends Application implements TeamController.Listener, ModeController.Listener,
+public class GameController extends Application implements TeamController.Listener,
 BattleModeController.Listener, NextRoomController.Listener, ChooseBugemonController.Listener,
 BattleWindowController.Listener, RegisterController.Listener , LevelUpController.Listener, FloorRewardController.Listener,
 AttackReplacementController.Listener , FriendsController.Listener, MultiplayerWindowController.Listener{
@@ -79,6 +81,7 @@ AttackReplacementController.Listener , FriendsController.Listener, MultiplayerWi
 	private RegisterController registerController;
 	private LevelUpController levelUpController;
 	private AttackReplacementController attackReplacementController;
+	private BattleEndController battleEndController;
 	private FloorRewardController.RewardChoice pendingFloorRewardChoice;
 	private MultiplayerWindowController multiplayerWindowController;
 	private FriendsController friendsController;
@@ -296,7 +299,10 @@ AttackReplacementController.Listener , FriendsController.Listener, MultiplayerWi
 	private void handleBattleEnd(boolean victory, int totalXP) {
 		pendingVictory = victory;
 		pendingTotalXP = totalXP;
-		switchWindow(WindowPath.BATTLE_END);
+		if (battleEndController == null) {
+			battleEndController = new BattleEndController(stage, modeController);
+		}
+		battleEndController.show(victory, totalXP);
 	}
 
 	// Handles fleeing from a tower battle: restores HP and resets the room
@@ -595,15 +601,6 @@ AttackReplacementController.Listener , FriendsController.Listener, MultiplayerWi
 		}
 	}
 
-	@Override
-	public void onSolo() {
-		teamController = new TeamController(stage, this, player);
-		try {
-			teamController.show();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 
 	@Override
 	public void onAutoBattle() {
@@ -775,7 +772,8 @@ AttackReplacementController.Listener , FriendsController.Listener, MultiplayerWi
 	}
 
 	@Override
-	public void onChooseBugemonReward(){
+	public void onChooseBugemonReward(FloorRewardController.RewardChoice rewardChoice) {
+		pendingFloorRewardChoice = rewardChoice;
 		if (chooseBugemonController == null) {
 			chooseBugemonController = new ChooseBugemonController(stage, floorRewardController, player);
 		}
@@ -854,7 +852,7 @@ AttackReplacementController.Listener , FriendsController.Listener, MultiplayerWi
 	public void onRegister(String username) {
 		if (modeController == null) {
 			player.setName(username);
-			modeController = new ModeController(stage, this);
+			modeController = new ModeController(stage, this,this, player);
 		}
 		try {
 			modeController.show();
@@ -862,17 +860,13 @@ AttackReplacementController.Listener , FriendsController.Listener, MultiplayerWi
 			e.printStackTrace();
 		}
 	}
-	@Override
-	public void goMultiplayerMode() {
-		multiplayerWindowController = new MultiplayerWindowController(this.stage, this);
-		try {
-			multiplayerWindowController.show();
-		}
-		catch (Exception e) {
-			System.err.println("Couldn't load multiplayer fxml");
-		}
-	}
 
+
+
+	@Override
+	public void registerMultiplayerWindow(MultiplayerWindowController controller) {
+		this.multiplayerWindowController = controller;
+	}
 
 	@Override
 	public void returnToMultiplayerWindow() {
@@ -900,7 +894,7 @@ AttackReplacementController.Listener , FriendsController.Listener, MultiplayerWi
 	@Override
 	public void goModeWindow() {
 		try {
-			this.modeController.show();
+			modeController.show();
 		}
 		catch (Exception e) {
 			System.err.println("Couldn't load mode window fxml ");
@@ -918,6 +912,7 @@ AttackReplacementController.Listener , FriendsController.Listener, MultiplayerWi
 
 	@Override
 	public void populateFriends(VBox friendsList) {
+		friendsList.getChildren().clear();
 		int user_id = ServiceLoader.getAccountService().getUserId(player.getName());
 		List<String> friends = ServiceLoader.getAccountService().getFriendsList(user_id);
 		if (!friends.isEmpty()){

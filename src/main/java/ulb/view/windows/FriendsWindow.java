@@ -12,11 +12,13 @@ public class FriendsWindow extends Window {
 
 	public void setListener(ViewListener listener) {
 		this.listener = listener;
+		this.listener.populateFriends(this.friendsList);
 	}
 
-	@FXML
-	public void initialize() {
-		this.listener.populateFriends(this.friendsList);
+	public void refreshFriendsList() {
+		if (listener != null && friendsList != null) {
+			listener.populateFriends(friendsList);
+		}
 	}
 
 	@FXML
@@ -32,7 +34,7 @@ public class FriendsWindow extends Window {
 
 	@FXML
 	private void inviteFriend() {
-		this.listener.onInviteFriend(this.usernameField.toString());
+		this.listener.onInviteFriend(this.usernameField.getText());
 	}
 
 	public interface ViewListener {

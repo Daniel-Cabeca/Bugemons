@@ -12,6 +12,7 @@ import ulb.model.battle.Battle.ParticipantLabel;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.Stats;
 import ulb.model.type.Effectiveness;
+import ulb.model.effect.*;
 
 /**
  * Represents a move that can be used by a Bugemon in battle.
@@ -50,7 +51,8 @@ public class Ability implements HasId {
 
 	public String getName() { return this.name; }
 	public Type getType() { return this.type; }
-	public String getDescription() { return this.description; }
+	public String getDescription() {return this.description;}
+	public String getAccurateDescription() {return this.description + "\n Puissance:  " + this.power;}
 	public int getPower() { return this.power; }
 	public EffectList getEffects() { return this.effects; }
 

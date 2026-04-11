@@ -56,6 +56,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         loader.load();
         view = loader.getController();
         view.setViewListener(this);
+        view.initializeContent();
 
         view.initializeView(gameMode == GameMode.AUTO);
         refreshView();
@@ -301,6 +302,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
             entries.add(new InventoryEntry(
                     item.getId(),
                     item.getName(),
+                    item.getDescription(),
                     item.getSprite(),
                     entry.getValue(),
                     usable
@@ -343,6 +345,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
                 entries.add(new AbilityEntry(
                         ability.getId(),
                         ability.getName(),
+                        ability.getAccurateDescription(),
                         getTypeColor(ability.getType()),
                         battleController.getEffectiveness(ability)
                 ));

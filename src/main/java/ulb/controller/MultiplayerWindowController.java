@@ -52,5 +52,6 @@ public class MultiplayerWindowController implements MultiplayerWindow.ViewListen
 	public interface Listener {
 		void onGoFriendsWindow();
 		void goModeWindow();
+		void registerMultiplayerWindow(MultiplayerWindowController controller);
 	}
 }

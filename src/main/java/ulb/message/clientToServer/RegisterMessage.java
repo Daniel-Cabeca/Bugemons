@@ -1,9 +1,8 @@
 package ulb.message.clientToServer;
 
 import ulb.DTO.player.PlayerDTO;
-
-import ulb.Server.ServerMessageHandler;
 import ulb.message.ClientToServerMessage;
+import ulb.server.ServerMessageHandler;
 
 public class RegisterMessage implements ClientToServerMessage {
     private PlayerDTO playerDTO;

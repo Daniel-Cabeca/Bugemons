@@ -1,4 +1,4 @@
-package ulb.Server;
+package ulb.server;
 
 import ulb.message.clientToServer.*;
 

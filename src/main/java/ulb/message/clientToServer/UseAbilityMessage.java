@@ -1,9 +1,8 @@
 package ulb.message.clientToServer;
 
 import ulb.DTO.ability.AbilityDTO;
-
-import ulb.Server.ServerMessageHandler;
 import ulb.message.ClientToServerMessage;
+import ulb.server.ServerMessageHandler;
 
 public class UseAbilityMessage implements ClientToServerMessage{
     private AbilityDTO ability;

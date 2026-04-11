@@ -19,9 +19,8 @@ Le projet utilise également `maven`. Pour l'installer :
 
 ## Démarrage
 - Pour compiler: `mvn compile`
-- Pour lancer l'application sans connection client-serveur : `mvn javafx:run`
-- Pour lancer l'application côté client : mvn javafx:run -Djavafx.args="--client"
-- Pour lancer l'application côté serveur : mvn javafx:run -Djavafx.args="--server"
+- Pour lancer l'application côté client : mvn clean javafx:run
+- Pour lancer l'application côté serveur : mvn clean javafx:run -Djavafx.args="--server"
 
 ## Auteurs
 - Abdalrahman El Hussein - @aelh0063

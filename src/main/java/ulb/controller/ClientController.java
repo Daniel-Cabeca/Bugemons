@@ -31,7 +31,6 @@ import ulb.communication.message.clientToServer.GetTowerInfoMessage;
 import ulb.communication.message.serverToClient.LogsMessage;
 import ulb.communication.message.clientToServer.PickRandomActionMessage;
 import ulb.communication.message.clientToServer.SetUpNormalModeMessage;
-import ulb.communication.message.clientToServer.SetUpPlayerMessage;
 import ulb.communication.message.clientToServer.SetUpTeamMessage;
 import ulb.communication.message.clientToServer.SetUpTowerModeMessage;
 import ulb.communication.message.clientToServer.SwapBugemonMessage;
@@ -55,6 +54,7 @@ BattleModeController.Listener, BattleWindowController.Listener {
 	GameMode gameMode;
 	BattleController battleController;
 
+	RegisterController registerController;
     ModeController modeController;
 	TeamController teamController;
 	BattleModeController battleModeController;
@@ -72,8 +72,6 @@ BattleModeController.Listener, BattleWindowController.Listener {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-		this.player = new PlayerDTO("player", new ArrayList<BugemonDTO>(), new HashMap<ItemDTO, Integer>());
-        client.sendMessage(new SetUpPlayerMessage(player));
 		
 		this.stage = primaryStage;
 
@@ -82,10 +80,10 @@ BattleModeController.Listener, BattleWindowController.Listener {
 		primaryStage.setFullScreen(true);
 		primaryStage.setFullScreenExitHint("");
 
-		this.modeController = new ModeController(this.stage);
-		this.modeController.setClientController(this);
-		this.modeController.setPlayer(this.player);
-		this.modeController.show();
+		this.registerController = new RegisterController(this.stage);
+		this.registerController.setClientController(this);
+		this.registerController.show();
+
 
 		if (primaryStage.getScene() != null) {
 			String stylesheet = getClass().getResource("/styles/global.css").toExternalForm();
@@ -97,7 +95,7 @@ BattleModeController.Listener, BattleWindowController.Listener {
 		primaryStage.show();
     }
 
-	private boolean postData(Message message){
+	public boolean postData(Message message){
 		client.sendMessage(message);
 		if (client.receiveMessage() instanceof StatusMessage errorMessage && errorMessage.isFailure()){
 			System.err.println(errorMessage.getMessage());
@@ -106,7 +104,7 @@ BattleModeController.Listener, BattleWindowController.Listener {
 		return true;
 	}
 
-	private Serializable getData(Message message){
+	public Serializable getData(Message message){
 		client.sendMessage(message);
 		return client.receiveMessage();
 	}
@@ -118,6 +116,7 @@ BattleModeController.Listener, BattleWindowController.Listener {
 
 	@Override
 	public void onReturn() {
+		this.player = this.registerController.getPlayer(); // TO REMOVE, temporaire pour que l'ancienne implémentation fonctionne encore
 		try {
 			modeController.show();
 		} catch (Exception e) {
@@ -137,6 +136,7 @@ BattleModeController.Listener, BattleWindowController.Listener {
 
 	@Override
 	public void onTeamConfirmed() {
+		this.player = this.registerController.getPlayer(); // TO REMOVE, temporaire pour que l'ancienne implémentation fonctionne encore
 		List<BugemonDTO> team = player.getTeam();
 
 		if (!this.postData(new SetUpTeamMessage(team))){

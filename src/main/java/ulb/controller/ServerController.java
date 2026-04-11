@@ -1,31 +1,15 @@
 package ulb.controller;
 
 import ulb.communication.Messenger.SocketMessenger;
+import ulb.communication.message.clientToServer.*;
 import ulb.communication.message.serverToClient.AbilityEffectivenessMessage;
 import ulb.communication.message.serverToClient.ActiveBugemonsMessage;
 import ulb.communication.message.serverToClient.BattleStateMessage;
 import ulb.communication.message.serverToClient.BugemonSpeciesMessage;
-import ulb.communication.message.clientToServer.CheckGameFinishedMessage;
-import ulb.communication.message.clientToServer.CheckUsableItemMessage;
 import ulb.communication.message.serverToClient.StatusMessage;
 import ulb.communication.message.serverToClient.GameFinishedMessage;
-import ulb.communication.message.clientToServer.GetAbilityEffectivenessMessage;
-import ulb.communication.message.clientToServer.GetActiveBugemonsMessage;
-import ulb.communication.message.clientToServer.GetAllBugemonSpeciesMessage;
-import ulb.communication.message.clientToServer.GetBattleStateMessage;
-import ulb.communication.message.clientToServer.GetLogsMessage;
-import ulb.communication.message.clientToServer.GetTowerInfoMessage;
 import ulb.communication.message.serverToClient.LogsMessage;
-import ulb.communication.message.clientToServer.PickRandomActionMessage;
-import ulb.communication.message.clientToServer.RunMessage;
-import ulb.communication.message.clientToServer.SetUpNormalModeMessage;
-import ulb.communication.message.clientToServer.SetUpPlayerMessage;
-import ulb.communication.message.clientToServer.SetUpTeamMessage;
-import ulb.communication.message.clientToServer.SetUpTowerModeMessage;
-import ulb.communication.message.clientToServer.SwapBugemonMessage;
 import ulb.communication.message.serverToClient.UsableItemsMessage;
-import ulb.communication.message.clientToServer.UseAbilityMessage;
-import ulb.communication.message.clientToServer.UseItemMessage;
 import ulb.controller.action.Action;
 import ulb.controller.action.Run;
 import ulb.controller.action.Swap;
@@ -131,10 +115,22 @@ public class ServerController extends Thread{
         if (message == null){
             return;
 
-        } else if (message instanceof SetUpPlayerMessage playerMessage){
+        } else if (message instanceof RegisterMessage playerMessage){
+            boolean success;
             System.out.println("Nouveau Player Reçu !");
             this.player = PlayerMapper.toEntity(playerMessage.getPlayer());
-            // SEND SUCCES TO CLIENT
+            if (playerMessage.isLogin()) {
+                success = ServiceLoader.getAccountService().login(this.player.getName(), this.player.getPassword());
+            }
+            else {
+                success = ServiceLoader.getAccountService().register(this.player.getName(), this.player.getPassword());
+            }
+            if (success) {
+                sendSuccessMessage();
+            }
+            else {
+                sendErrorMessage("Register failed");
+            }
 
         } else if (message instanceof GetAllBugemonSpeciesMessage){
             BugemonService bugemonService = ServiceLoader.getBugemonService();

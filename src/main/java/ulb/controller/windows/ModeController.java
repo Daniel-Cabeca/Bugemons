@@ -39,7 +39,7 @@ public class ModeController extends WindowController<ModeWindow> implements Mode
 
     @Override
     public void onSolo() {
-        teamController = new TeamController(this.stage,this.clientController, this.player);
+        teamController = new TeamController(this.stage, this.clientController, this.player);
         try {
             teamController.show();
         } catch (Exception e) {

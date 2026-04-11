@@ -12,35 +12,40 @@ import ulb.service.ServiceLoader;
 import ulb.service.ItemService;
 
 public class Player {
-	private String name;
+	private String userName;
+	private String password;
 	private Team team;
 	private Inventory inventory;
 
 	private static final String ITEMS_PATH = "src/main/resources/json/objets.json";
 
 	public Player() {
-		this.name = "Player";
+		this.userName = "Player";
+		this.password = "password";
 		this.team = new Team();
 		this.inventory = new Inventory();
 
 		addDefaultItems();
 	}
 
-	public Player(String name) {
-		this.name = name;
+	public Player(String name, String password) {
+		this.userName = name;
+		this.password = password;
 		this.team = new Team();
 		this.inventory = new Inventory();
 
 		addDefaultItems();
 	}
 
-	public Player(String name, Team team, Inventory inventory) {
-		this.name = name;
+	public Player(String name, String password, Team team, Inventory inventory) {
+		this.userName = name;
+		this.password = password;
 		this.team = team;
 		this.inventory = inventory;
 	}
 
-	public final String getName() {return this.name;}
+	public final String getName() {return this.userName;}
+	public final String getPassword() {return this.password;}
 	public Team getTeam() {return this.team;}
 	public Inventory getInventory() {return this.inventory;}
 

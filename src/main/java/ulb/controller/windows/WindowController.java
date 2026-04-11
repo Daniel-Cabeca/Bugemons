@@ -2,11 +2,14 @@
 package ulb.controller.windows;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import ulb.communication.Message;
+import ulb.communication.message.serverToClient.StatusMessage;
 
 
 /**

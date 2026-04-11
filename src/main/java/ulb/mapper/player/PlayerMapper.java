@@ -26,7 +26,7 @@ public class PlayerMapper {
         Map<ItemDTO, Integer> inventory = new HashMap<>();
         for (Map.Entry<Item, Integer> e : entity.getInventory().getItems().entrySet())
             inventory.put(ItemMapper.toDTO(e.getKey()), e.getValue());
-        return new PlayerDTO(entity.getName(), team, inventory);
+        return new PlayerDTO(entity.getName(), entity.getPassword(), team, inventory);
     }
 
     public static Player toEntity(PlayerDTO dto) {
@@ -37,6 +37,6 @@ public class PlayerMapper {
         Inventory inventory = new Inventory();
         for (Map.Entry<ItemDTO, Integer> e : dto.getInventory().entrySet())
             inventory.addItem(ItemMapper.toEntity(e.getKey()), e.getValue());
-        return new Player(dto.getName(), new Team(members), inventory);
+        return new Player(dto.getName(), dto.getPassword(), new Team(members), inventory);
     }
 }

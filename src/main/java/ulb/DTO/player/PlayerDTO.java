@@ -8,21 +8,24 @@ import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.item.ItemDTO;
 
 public class PlayerDTO implements Serializable{
-    private String name;
+    private String userName;
+	private String password;
 	private List<BugemonDTO> team;
 	private Map<ItemDTO, Integer> inventory;
 
-	public PlayerDTO(String name, List<BugemonDTO> team, Map<ItemDTO, Integer> inventory){
-		this.name = name;
+	public PlayerDTO(String userName, String password, List<BugemonDTO> team, Map<ItemDTO, Integer> inventory){
+		this.userName = userName;
+		this.password = password;
 		this.team = team;
 		this.inventory = inventory;
 	}
 
-	public String getName() {return name;}
+	public String getName() {return userName;}
+	public String getPassword() {return password;}
 	public List<BugemonDTO> getTeam() {return team;}
 	public Map<ItemDTO, Integer> getInventory() {return inventory;}
 
-	public void setName(String name) {this.name = name;}
+	public void setName(String name) {this.userName = name;}
 	public void setTeam(List<BugemonDTO> team) {this.team = team;}
 	public void setInventory(Map<ItemDTO, Integer> inventory) {this.inventory = inventory;}
 }

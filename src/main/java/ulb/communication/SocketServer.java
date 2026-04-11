@@ -5,8 +5,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-import ulb.Server.ClientHandler;
 import ulb.communication.Messenger.SocketMessenger;
+import ulb.server.ClientHandler;
 
 public class SocketServer {
     private ServerSocket serverSocket;

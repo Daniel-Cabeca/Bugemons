@@ -1,4 +1,4 @@
-package ulb.Server;
+package ulb.server;
 
 import ulb.communication.Messenger.SocketMessenger;
 import ulb.controller.action.Action;

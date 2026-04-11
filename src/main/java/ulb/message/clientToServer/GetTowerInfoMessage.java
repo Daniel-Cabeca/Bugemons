@@ -1,7 +1,7 @@
 package ulb.message.clientToServer;
 
-import ulb.Server.ServerMessageHandler;
 import ulb.message.ClientToServerMessage;
+import ulb.server.ServerMessageHandler;
 
 public class GetTowerInfoMessage implements ClientToServerMessage {
     @Override

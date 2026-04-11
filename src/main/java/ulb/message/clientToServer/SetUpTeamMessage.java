@@ -3,9 +3,8 @@ package ulb.message.clientToServer;
 import java.util.List;
 
 import ulb.DTO.bugemon.BugemonDTO;
-
-import ulb.Server.ServerMessageHandler;
 import ulb.message.ClientToServerMessage;
+import ulb.server.ServerMessageHandler;
 
 public class SetUpTeamMessage implements ClientToServerMessage {
     private List<BugemonDTO> team;

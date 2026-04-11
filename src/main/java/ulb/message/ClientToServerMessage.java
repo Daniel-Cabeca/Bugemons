@@ -2,7 +2,7 @@ package ulb.message;
 
 import java.io.Serializable;
 
-import ulb.Server.ServerMessageHandler;
+import ulb.server.ServerMessageHandler;
 
 /**
  * Serializable message send from the client to the server.

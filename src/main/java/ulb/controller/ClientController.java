@@ -97,8 +97,8 @@ BattleModeController.Listener, BattleWindowController.Listener {
 
 	public PlayerDTO getPlayer(){ return this.player; }
 	public void setPlayer(PlayerDTO player){this.player=player; }
-	public ModeController getModeController(){return this.modeController;}
-	public TeamController getTeamController(){return this.teamController;}
+	public void showModeController(){this.modeController.show();}
+	public void showTeamController(){this.teamController.show();}
 
 	public boolean logIn(PlayerDTO player){
 		return postData(new RegisterMessage(player, true));

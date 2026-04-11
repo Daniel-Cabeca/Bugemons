@@ -3,14 +3,16 @@ package ulb.controller.windows;
 import java.io.IOException;
 
 import javafx.stage.Stage;
+import ulb.controller.ClientController;
 import ulb.view.WindowPath;
 import ulb.view.windows.BattleEndWindow;
 
 public class BattleEndController extends WindowController<BattleEndWindow> implements BattleEndWindow.ViewListener {
 
-    private ModeController modeController;
 
-    public BattleEndController(Stage stage, ModeController modeController) {
+
+    public BattleEndController(Stage stage, ClientController clientController) {
+        super(stage, WindowPath.BATTLE_END, clientController);
         this.windowPath = WindowPath.BATTLE_END;
         this.stage = stage;
         try{
@@ -18,9 +20,6 @@ public class BattleEndController extends WindowController<BattleEndWindow> imple
         } catch (IOException e) {
             throw new IllegalStateException("Could not load FXML file: " + windowPath, e);
         }
-        
-        //super(stage, WindowPath.BATTLE_END);
-        this.modeController = modeController;
         this.view.setListener(this);
     }
 
@@ -31,6 +30,6 @@ public class BattleEndController extends WindowController<BattleEndWindow> imple
 
     @Override
     public void onHandleReturn() {
-        modeController.show();
+        clientController.showModeController();
     }
 }

@@ -10,19 +10,8 @@ import ulb.view.windows.ModeWindow;
 
 public class ModeController extends WindowController<ModeWindow> implements ModeWindow.ViewListener {
 
-    private ClientController clientController;
-
-
     public ModeController(Stage stage, ClientController clientController) {
-        this.stage = stage;
-        this.clientController = clientController;
-        this.windowPath = WindowPath.MODE;
-
-        try {
-            this.init();
-        } catch (Exception e) {
-            System.err.println("Couldn't load the FXML file : " + e);
-        }
+        super(stage, WindowPath.MODE, clientController);
         this.view.setListener(this);
     }
 
@@ -30,7 +19,7 @@ public class ModeController extends WindowController<ModeWindow> implements Mode
     @Override
     public void onSolo() {
         try {
-            this.clientController.getTeamController().show();
+            this.clientController.showTeamController();
         } catch (Exception e) {
             e.printStackTrace();
         }

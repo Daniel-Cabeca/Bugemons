@@ -12,18 +12,8 @@ import java.util.List;
 
 public class TeamController extends WindowController<CreateTeamWindow> implements CreateTeamWindow.ViewListener {
 
-	private final ClientController clientController;
-
 	public TeamController(Stage stage, ClientController clientController) {
-		this.stage = stage;
-		this.clientController = clientController;
-		this.windowPath = WindowPath.CREATE_TEAM;
-
-		try {
-			this.init();
-		} catch (Exception e) {
-			System.err.println("Couldn't load the FXML file : " + e);
-		}
+		super(stage,WindowPath.CREATE_TEAM ,clientController);
 		this.view.setViewListener(this);
 	}
 

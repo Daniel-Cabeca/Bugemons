@@ -17,18 +17,8 @@ import java.util.HashMap;
 
 public class RegisterController extends WindowController<RegisterWindow> implements RegisterWindow.ViewListener {
 
-    private ClientController clientController;
-
     public RegisterController(Stage stage, ClientController clientController) {
-        this.stage = stage;
-        this.windowPath = WindowPath.REGISTER;
-        this.clientController = clientController;
-
-        try {
-            this.init();
-        } catch (Exception e) {
-            System.err.println("Couldn't load the FXML file : " + e);
-        }
+        super(stage, WindowPath.REGISTER, clientController);
         this.view.setListener(this);
     }
 
@@ -63,6 +53,6 @@ public class RegisterController extends WindowController<RegisterWindow> impleme
     }
 
     public void onRegister() {
-        this.clientController.getModeController().show();
+        this.clientController.showModeController();
     }
 }

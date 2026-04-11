@@ -325,7 +325,7 @@ AttackReplacementController.Listener {
 		pendingVictory = victory;
 		pendingTotalXP = totalXP;
 		if (battleEndController == null) {
-			battleEndController = new BattleEndController(stage, modeController);
+			//battleEndController = new BattleEndController(stage, modeController);
 		}
 		battleEndController.show(victory, totalXP);
 	}

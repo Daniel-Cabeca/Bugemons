@@ -4,19 +4,16 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import ulb.DTO.bugemon.CreateTeamBugemonDTO;
+import ulb.utils.Scaling;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import ulb.model.bugemon.BugemonSpecies;
-import ulb.utils.Scaling;
-import ulb.service.BugemonService;
-import ulb.service.ServiceLoader;
-
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import java.util.NoSuchElementException;
 
 public class CreateTeamWindow extends Window {
 
@@ -27,17 +24,17 @@ public class CreateTeamWindow extends Window {
 	@FXML
 	private GridPane selectedBugemonsGrid;
 
-	private final List<String> selectedBugemons = new ArrayList<>();
-	private final int MAX_BUGEMONS =6;
+	private final int MAX_BUGEMONS = 6;
 
+	private final List<String> selectedBugemonIds = new ArrayList<>();
+	private List<CreateTeamBugemonDTO> availableBugemons = List.of();
 	private ViewListener viewListener;
 
 	/**
-	 * Initializes the create team menu
+	 * Initializes the create team menu.
 	 */
 	@FXML
 	public void initialize() {
-		populateAvailableBugemons();
 		Scaling.applyScaling(content);
 	}
 
@@ -46,17 +43,25 @@ public class CreateTeamWindow extends Window {
 	}
 
 	/**
-	 * Updates the available bugemons grid by adding a box for each bugemon in the list
+	 * Displays the available Bugémons in the selection grid.
+	 *
+	 * @param availableBugemons the Bugémons that can be selected
+	 */
+	public void displayAvailableBugemons(List<CreateTeamBugemonDTO> availableBugemons) {
+		this.availableBugemons = List.copyOf(availableBugemons);
+		populateAvailableBugemons();
+	}
+
+	/**
+	 * Updates the available Bugémons grid by adding a box for each Bugémon in the list.
 	 */
 	private void populateAvailableBugemons() {
 		availableBugemonsGrid.getChildren().clear();
 
-		// TO DO : remove
-		BugemonService bugemonService = ServiceLoader.getBugemonService();
-		int col = 0, row = 0;
+		int col = 0;
+		int row = 0;
 
-		for (BugemonSpecies bugemon : bugemonService.getAllSpecies()) {
-
+		for (CreateTeamBugemonDTO bugemon : availableBugemons) {
 			VBox cell = new VBox(8);
 			cell.getStyleClass().add("availableBugemons");
 
@@ -69,13 +74,13 @@ public class CreateTeamWindow extends Window {
 			sprite.setPreserveRatio(true);
 
 			CheckBox checkBox = new CheckBox();
-			checkBox.setSelected(selectedBugemons.contains(bugemon.getName()));
+			checkBox.setSelected(selectedBugemonIds.contains(bugemon.getId()));
 
 			checkBox.setOnAction(e -> {
 				if (checkBox.isSelected()) {
-					onSelectBugemon(bugemon.getName());
+					onSelectBugemon(bugemon.getId());
 				} else {
-					onDeselectBugemon(bugemon.getName());
+					onDeselectBugemon(bugemon.getId());
 				}
 			});
 
@@ -91,18 +96,19 @@ public class CreateTeamWindow extends Window {
 	}
 
 	/**
-	 * Updates the selectedBugemons bugemons grid by adding a box for each selectedBugemons bugemon
+	 * Updates the selected Bugémons grid by adding a box for each selected Bugémon.
 	 */
 	private void populateSelectedBugemons() {
 		selectedBugemonsGrid.getChildren().clear();
 
-		int col = 0, row = 0;
+		int col = 0;
+		int row = 0;
 
-		for (String bugemon : selectedBugemons) {
+		for (String bugemonId : selectedBugemonIds) {
 			VBox cell = new VBox();
 			cell.getStyleClass().add("selectedBugemonsGrid");
 
-			Label name = new Label(bugemon);
+			Label name = new Label(getBugemonName(bugemonId));
 			cell.getChildren().add(name);
 
 			selectedBugemonsGrid.add(cell, col, row);
@@ -116,86 +122,93 @@ public class CreateTeamWindow extends Window {
 		checkDisableBugemons();
 	}
 
+	private String getBugemonName(String bugemonId) {
+		for (CreateTeamBugemonDTO bugemon : availableBugemons) {
+			if (bugemon.getId().equals(bugemonId)) {
+				return bugemon.getName();
+			}
+		}
+		throw new NoSuchElementException("Unknown Bugémon id: " + bugemonId);
+	}
+
 	/**
-	 * Disable all bugemons after @MAX_BUGEMONS are selected so that no more can be selected
+	 * Disable all Bugémons after {@value #MAX_BUGEMONS} are selected so that no more can be selected.
 	 */
 	private void checkDisableBugemons() {
-		if (selectedBugemons.size() == MAX_BUGEMONS) {
+		if (selectedBugemonIds.size() == MAX_BUGEMONS) {
 			disableAllBugemons();
-		}
-		else {
+		} else {
 			enableAllBugemons();
 		}
 	}
 
 	/**
-	 * Disable all not selected bugemons
+	 * Disable all not selected Bugémons.
 	 */
-	private void disableAllBugemons(){
-		for (Node node: availableBugemonsGrid.getChildren()) {
+	private void disableAllBugemons() {
+		for (Node node : availableBugemonsGrid.getChildren()) {
 			VBox vbox = (VBox) node;
-			String bugemon_name = ((Label)(vbox.getChildren().get(0))).getText();
-			if (!selectedBugemons.contains(bugemon_name)) {  // contains name of the bugemon
+			CheckBox checkBox = (CheckBox) vbox.getChildren().get(2);
+			if (!checkBox.isSelected()) {
 				vbox.setDisable(true);
 			}
 		}
 	}
 
 	/**
-	 * Enables all bugemons if they were disabled
+	 * Enables all Bugémons if they were disabled.
 	 */
 	private void enableAllBugemons() {
-		for (Node node: availableBugemonsGrid.getChildren()) { // enable all bugemons els
+		for (Node node : availableBugemonsGrid.getChildren()) {
 			VBox vbox = (VBox) node;
 			vbox.setDisable(false);
 		}
 	}
 
 	/**
-	 * Adds the selected bugemon to the selectedBugemons list when clicking the checkbox
+	 * Adds the selected Bugémon to the selection list when clicking the checkbox.
 	 *
-	 * @param bugemon the name of the bugemon that was selected
+	 * @param bugemonId the id of the Bugémon that was selected
 	 */
-	private void onSelectBugemon(String bugemon) {
-		if (!selectedBugemons.contains(bugemon) && selectedBugemons.size() < MAX_BUGEMONS) {
-			selectedBugemons.add(bugemon);
+	private void onSelectBugemon(String bugemonId) {
+		if (!selectedBugemonIds.contains(bugemonId) && selectedBugemonIds.size() < MAX_BUGEMONS) {
+			selectedBugemonIds.add(bugemonId);
 			populateSelectedBugemons();
 		}
 	}
 
 	/**
-	 * Removes the selected bugemon from the selectedBugemons list when clicking the checkbox
+	 * Removes the selected Bugémon from the selection list when clicking the checkbox.
 	 *
-	 * @param bugemon the name of the bugemon that was deselected
+	 * @param bugemonId the id of the Bugémon that was deselected
 	 */
-	private void onDeselectBugemon(String bugemon) {
-		selectedBugemons.remove(bugemon);
+	private void onDeselectBugemon(String bugemonId) {
+		selectedBugemonIds.remove(bugemonId);
 		populateSelectedBugemons();
 	}
 
 	/**
-	 * Confirms the selectedBugemons team and asks the controller to switch to the battle window
-	 * then, closes the current window
-	 * @throws IllegalStateException if the team is empty or has more than 6 bugemons
+	 * Confirms the selected team and asks the controller to switch to the battle window.
+	 *
+	 * @throws IllegalStateException if the team is empty or has more than 6 Bugémons
 	 */
 	public void handleConfirmTeam() {
-		if (!selectedBugemons.isEmpty() && selectedBugemons.size() <= MAX_BUGEMONS) {
-			viewListener.onConfirmTeam(selectedBugemons);
+		if (!selectedBugemonIds.isEmpty() && selectedBugemonIds.size() <= MAX_BUGEMONS) {
+			viewListener.onConfirmTeam(selectedBugemonIds);
 		} else {
 			throw new IllegalStateException("Tu dois sélectionner entre 1 et 6 Bugémons pour confirmer ton équipe.");
 		}
 	}
 
 	/**
-	 * Returns to the main menu
+	 * Returns to the main menu.
 	 */
 	public void handleReturn() {
 		viewListener.onReturn();
 	}
 
 	public interface ViewListener {
-		void onConfirmTeam(List<String> selectedBugemons);
+		void onConfirmTeam(List<String> selectedBugemonIds);
 		void onReturn();
 	}
-
 }

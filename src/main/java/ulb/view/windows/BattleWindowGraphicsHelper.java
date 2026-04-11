@@ -19,32 +19,14 @@ public class BattleWindowGraphicsHelper {
 
     private BattleUIComponents ui;
 
-    public void linkUI(ProgressBar playerBugemonHPBar,
-                       ProgressBar opponentHPBar,
-                       Label playerBugemonHPNumber,
-                       Label opponentHPNumber,
-                       ImageView playerBugemon,
-                       ImageView opponentBugemon,
-                       Label playerBugemonLabel,
-                       Label opponentBugemonLabel,
-                       Label playerLevelLabel,
-                       Label opponentLevelLabel,
-                       VBox messageBox,
-                       Label battleLog) {
-        this.ui = new BattleUIComponents(
-                playerBugemonHPBar,
-                opponentHPBar,
-                playerBugemonHPNumber,
-                opponentHPNumber,
-                playerBugemon,
-                opponentBugemon,
-                playerBugemonLabel,
-                opponentBugemonLabel,
-                playerLevelLabel,
-                opponentLevelLabel,
-                messageBox,
-                battleLog
-        );
+    public void linkUI(ProgressBar playerBugemonHPBar, ProgressBar opponentHPBar, Label playerBugemonHPNumber,
+                       Label opponentHPNumber, ImageView playerBugemon, ImageView opponentBugemon,
+                       Label playerBugemonLabel, Label opponentBugemonLabel, Label playerLevelLabel,
+                       Label opponentLevelLabel, VBox messageBox, Label battleLog) {
+        this.ui = new BattleUIComponents(playerBugemonHPBar, opponentHPBar, playerBugemonHPNumber,
+                                         opponentHPNumber, playerBugemon, opponentBugemon,
+                                         playerBugemonLabel, opponentBugemonLabel, playerLevelLabel,
+                                         opponentLevelLabel, messageBox, battleLog);
     }
 
     public void showLogMessages(List<String> logs) {
@@ -66,27 +48,13 @@ public class BattleWindowGraphicsHelper {
         ui.messageBox().setManaged(true);
     }
 
-    public void displayMessagesSequentially(List<String> rawLogs,
-                                            Integer hpAfterFirstActionSelf,
-                                            Integer hpAfterFirstActionOpponent,
-                                            BattleSnapshot finalSnapshot,
-                                            Supplier<BattleSnapshot> currentSnapshotSupplier,
-                                            Consumer<BattleSnapshot> battleRenderer,
+    public void displayMessagesSequentially(List<String> rawLogs, Integer hpAfterFirstActionSelf, Integer hpAfterFirstActionOpponent,
+                                            BattleSnapshot finalSnapshot, Supplier<BattleSnapshot> currentSnapshotSupplier, Consumer<BattleSnapshot> battleRenderer,
                                             Runnable onComplete) {
         List<String> logs = rawLogs == null ? List.of() : new ArrayList<>(rawLogs);
-        int separatorIndex = logs.indexOf(null);
+        List<List<String>> phases = splitPhases(logs);
 
-        List<String> phase1;
-        List<String> phase2;
-        if (separatorIndex < 0) {
-            phase1 = logs.stream().filter(message -> message != null).collect(Collectors.toList());
-            phase2 = List.of();
-        } else {
-            phase1 = logs.subList(0, separatorIndex).stream().filter(message -> message != null).collect(Collectors.toList());
-            phase2 = logs.subList(separatorIndex + 1, logs.size()).stream().filter(message -> message != null).collect(Collectors.toList());
-        }
-
-        if (phase1.isEmpty() && phase2.isEmpty()) {
+        if (phases.stream().allMatch(List::isEmpty)) {
             if (finalSnapshot != null) {
                 battleRenderer.accept(finalSnapshot);
             }
@@ -98,46 +66,98 @@ public class BattleWindowGraphicsHelper {
         ui.messageBox().setVisible(true);
         ui.messageBox().setManaged(true);
 
-        BattlePhaseVisual phase1Visual;
-        BattlePhaseVisual phase2Visual = new BattlePhaseVisual(finalSnapshot, null, null);
-        if (separatorIndex >= 0) {
-            phase1Visual = new BattlePhaseVisual(currentSnapshotSupplier.get(), hpAfterFirstActionSelf, hpAfterFirstActionOpponent);
-        } else {
-            phase1Visual = phase2Visual;
-        }
+        BattleSnapshot currentSnapshot = currentSnapshotSupplier.get();
+        List<BattlePhaseStep> phaseSteps = buildPhaseSteps(phases, currentSnapshot, finalSnapshot, hpAfterFirstActionSelf, hpAfterFirstActionOpponent);
 
         Runnable closeAndComplete = () -> {
             clearMessages();
             onComplete.run();
         };
 
-        Runnable afterPhase1 = () -> {
-            if (phase2.isEmpty()) {
-                closeAndComplete.run();
-            } else {
-                displayPhase(
-                        phase2,
-                        0,
-                        phase2Visual,
-                        currentSnapshotSupplier,
-                        battleRenderer,
-                        closeAndComplete
-                );
-            }
-        };
+        displayPhaseSequence(phaseSteps, 0, currentSnapshotSupplier, battleRenderer, closeAndComplete);
+    }
 
-        if (phase1.isEmpty()) {
-            afterPhase1.run();
-        } else {
-            displayPhase(
-                    phase1,
-                    0,
-                    phase1Visual,
-                    currentSnapshotSupplier,
-                    battleRenderer,
-                    afterPhase1
-            );
+
+    private List<List<String>> splitPhases(List<String> logs) {
+        List<List<String>> phases = new ArrayList<>();
+        List<String> currentPhase = new ArrayList<>();
+
+        for (String message : logs) {
+            if (message == null) {
+                phases.add(currentPhase);
+                currentPhase = new ArrayList<>();
+            } else {
+                currentPhase.add(message);
+            }
         }
+        phases.add(currentPhase);
+
+        return phases;
+    }
+
+    private List<BattlePhaseStep> buildPhaseSteps(List<List<String>> phases, BattleSnapshot currentSnapshot, BattleSnapshot finalSnapshot,
+                                                  Integer hpAfterFirstActionSelf, Integer hpAfterFirstActionOpponent) {
+        List<BattlePhaseStep> steps = new ArrayList<>();
+        int phaseCount = phases.size();
+
+        for (int i = 0; i < phaseCount; i++) {
+            List<String> messages = phases.get(i);
+            if (messages.isEmpty()) {
+                continue;
+            }
+
+            BattlePhaseVisual visual;
+            if (phaseCount == 1) {
+                visual = new BattlePhaseVisual(finalSnapshot, null, null);
+            } else if (i == 0) {
+                visual = new BattlePhaseVisual(currentSnapshot, hpAfterFirstActionSelf, hpAfterFirstActionOpponent);
+            } else if (i == phaseCount - 1) {
+                visual = new BattlePhaseVisual(finalSnapshot, null, null);
+            } else {
+                visual = buildIntermediateVisual(currentSnapshot, finalSnapshot, hpAfterFirstActionSelf, hpAfterFirstActionOpponent);
+            }
+
+            steps.add(new BattlePhaseStep(messages, visual));
+        }
+
+        return steps;
+    }
+
+    private BattlePhaseVisual buildIntermediateVisual(BattleSnapshot currentSnapshot, BattleSnapshot finalSnapshot, Integer hpAfterFirstActionSelf,
+                                                      Integer hpAfterFirstActionOpponent) {
+        if (currentSnapshot == null) {
+            return new BattlePhaseVisual(finalSnapshot, null, null);
+        }
+
+        Integer playerHp = hpAfterFirstActionSelf;
+        Integer opponentHp = hpAfterFirstActionOpponent;
+
+        if (hasOpponentSwitched(currentSnapshot, finalSnapshot)) {
+            opponentHp = 0;
+        }
+
+        return new BattlePhaseVisual(currentSnapshot, playerHp, opponentHp);
+    }
+
+    private boolean hasOpponentSwitched(BattleSnapshot currentSnapshot, BattleSnapshot finalSnapshot) {
+        if (currentSnapshot == null || finalSnapshot == null || currentSnapshot.opponentBugemon() == null
+                || finalSnapshot.opponentBugemon() == null) {
+            return false;
+        }
+
+        return !currentSnapshot.opponentBugemon().name().equals(finalSnapshot.opponentBugemon().name());
+    }
+
+    private void displayPhaseSequence(List<BattlePhaseStep> phaseSteps, int phaseIndex, Supplier<BattleSnapshot> currentSnapshotSupplier,
+                                      Consumer<BattleSnapshot> battleRenderer, Runnable onComplete) {
+        if (phaseIndex >= phaseSteps.size()) {
+            onComplete.run();
+            return;
+        }
+
+        BattlePhaseStep currentStep = phaseSteps.get(phaseIndex);
+        displayPhase(currentStep.messages(), 0, currentStep.visual(), currentSnapshotSupplier, battleRenderer, () 
+                     -> displayPhaseSequence(phaseSteps, phaseIndex + 1, currentSnapshotSupplier, battleRenderer, onComplete));
     }
 
     public void renderBattle(BattleSnapshot snapshot) {
@@ -185,55 +205,32 @@ public class BattleWindowGraphicsHelper {
         ui.messageBox().setManaged(false);
     }
 
-    private void displayPhase(List<String> messages,
-                              int index,
-                              BattlePhaseVisual visual,
-                              Supplier<BattleSnapshot> currentSnapshotSupplier,
-                              Consumer<BattleSnapshot> battleRenderer,
-                              Runnable onComplete) {
+    private void displayPhase(List<String> messages, int index, BattlePhaseVisual visual, Supplier<BattleSnapshot> currentSnapshotSupplier,
+                              Consumer<BattleSnapshot> battleRenderer, Runnable onComplete) {
         if (index >= messages.size()) {
             onComplete.run();
             return;
         }
 
         ui.battleLog().setText(wrapText(messages.get(index), 35));
-        applyPhaseVisual(
-                visual,
-                currentSnapshotSupplier,
-                battleRenderer
-        );
+        applyPhaseVisual(visual, currentSnapshotSupplier, battleRenderer);
 
         PauseTransition pause = new PauseTransition(javafx.util.Duration.seconds(2));
-        pause.setOnFinished(event -> displayPhase(
-                messages,
-                index + 1,
-                visual,
-                currentSnapshotSupplier,
-                battleRenderer,
-                onComplete
-        ));
+        pause.setOnFinished(event -> displayPhase(messages, index + 1, visual, currentSnapshotSupplier, battleRenderer, onComplete));
         pause.play();
     }
 
-    private void applyPhaseVisual(BattlePhaseVisual visual,
-                                  Supplier<BattleSnapshot> currentSnapshotSupplier,
-                                  Consumer<BattleSnapshot> battleRenderer) {
+    private void applyPhaseVisual(BattlePhaseVisual visual, Supplier<BattleSnapshot> currentSnapshotSupplier, Consumer<BattleSnapshot> battleRenderer) {
         if (visual.snapshot() != null) {
             battleRenderer.accept(visual.snapshot());
         }
 
         if (visual.playerHp() != null && visual.opponentHp() != null) {
-            updateHPDisplay(
-                    visual.playerHp(),
-                    visual.opponentHp(),
-                    currentSnapshotSupplier.get()
-            );
+            updateHPDisplay(visual.playerHp(), visual.opponentHp(), currentSnapshotSupplier.get());
         }
     }
 
-    private void updateHPDisplay(int selfHp,
-                                 int opponentHp,
-                                 BattleSnapshot currentSnapshot) {
+    private void updateHPDisplay(int selfHp, int opponentHp, BattleSnapshot currentSnapshot) {
         if (currentSnapshot == null || currentSnapshot.playerBugemon() == null || currentSnapshot.opponentBugemon() == null) {
             return;
         }
@@ -290,17 +287,12 @@ public class BattleWindowGraphicsHelper {
     private record BattlePhaseVisual(BattleSnapshot snapshot, Integer playerHp, Integer opponentHp) {
     }
 
-    private record BattleUIComponents(ProgressBar playerBugemonHPBar,
-                                      ProgressBar opponentHPBar,
-                                      Label playerBugemonHPNumber,
-                                      Label opponentHPNumber,
-                                      ImageView playerBugemon,
-                                      ImageView opponentBugemon,
-                                      Label playerBugemonLabel,
-                                      Label opponentBugemonLabel,
-                                      Label playerLevelLabel,
-                                      Label opponentLevelLabel,
-                                      VBox messageBox,
-                                      Label battleLog) {
+    private record BattlePhaseStep(List<String> messages, BattlePhaseVisual visual) {
+    }
+
+    private record BattleUIComponents(ProgressBar playerBugemonHPBar, ProgressBar opponentHPBar, Label playerBugemonHPNumber,
+                                      Label opponentHPNumber, ImageView playerBugemon, ImageView opponentBugemon,
+                                      Label playerBugemonLabel, Label opponentBugemonLabel, Label playerLevelLabel,
+                                      Label opponentLevelLabel, VBox messageBox, Label battleLog) {
     }
 }

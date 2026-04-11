@@ -1,7 +1,6 @@
 package ulb.controller.strategy;
 
 import java.util.Random;
-import java.util.Vector;
 import java.util.List;
 import java.lang.Thread;
 
@@ -52,21 +51,17 @@ public class StrategyRandom implements Strategy, Runnable {
 	 * Plays a turn in the automatic battle mode
 	 */
 	public BattleState playAutoTurn() {
+		BattleState state = battleController.getState();
 
-        // the only available actions in auto mode are UseAbility and Swap
-        Vector<Action> actions = battleController.getAvailableAction();
-        Swap swap = new Swap();
-        if (actions.stream().anyMatch(a -> a instanceof UseAbility)){ // if the available action is UseAbility
-            useRandomAbility();
-        // if the Bugemon is KO, it needs to be swapped (the only available action is SWAP)
-        } else if (actions.stream().anyMatch(a -> a instanceof Swap)){
-            Bugemon chosenBugemon = pickRandomBugemon();
-            if (chosenBugemon != null){
-                swap.setToSwap(chosenBugemon);
-                battleController.useAction(swap);
-            }
-        } 
-        return this.battleController.getState();
+		if (state == BattleState.INGAME) {
+			useRandomAbility();
+		} else if (state == BattleState.SWAPPING) {
+			Bugemon chosenBugemon = pickRandomBugemon();
+			if (chosenBugemon != null) {
+				battleController.useAction(new Swap(chosenBugemon));
+			}
+		}
+		return this.battleController.getState();
 	}
 
     /**

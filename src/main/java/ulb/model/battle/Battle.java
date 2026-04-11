@@ -5,9 +5,7 @@ import ulb.model.Player;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.Stats;
 import ulb.model.item.Item;
-import ulb.model.effect.Effect;
 import ulb.model.effect.EffectHeal;
-import ulb.model.effect.EffectSwitch;
 import ulb.controller.action.*; 
 import ulb.model.reward.Reward;
 
@@ -96,13 +94,6 @@ public class Battle {
 	 * @return the TeamLabel of the first team to play
 	 */
 	public ParticipantLabel getFirstTeamToPlay(){
-
-		if (this.getAction(ParticipantLabel.TEAM_A) instanceof Swap && !(this.getAction(ParticipantLabel.TEAM_B) instanceof Swap)) {
-			return ParticipantLabel.TEAM_A;
-		} else if (this.getAction(ParticipantLabel.TEAM_B) instanceof Swap && !(this.getAction(ParticipantLabel.TEAM_A) instanceof Swap)) {
-			return ParticipantLabel.TEAM_B;
-		}
-
 		if (getActiveBugemon(ParticipantLabel.TEAM_A).checkInitiative(getActiveBugemon(ParticipantLabel.TEAM_B))){
 			return ParticipantLabel.TEAM_A;
 		}
@@ -138,10 +129,15 @@ public class Battle {
 	 * @param item the item which is used
 	 * @param team the team that uses the item
 	 */
-	private void useItem(Item item, ParticipantLabel team){
+	public boolean applyItem(Item item, ParticipantLabel team){
+		if (item == null) {
+			return false;
+		}
+
 		item.use(this, team);
 		removeUsedItemFromInventory(team, item);
 		logMsg.add("L'objet " + item.getName() + " a été utilisé.");
+		return true;
 	}
 
 	/**
@@ -149,15 +145,18 @@ public class Battle {
 	 * @param target the Bugemon which will replace the current active Bugemon
 	 * @param team the team on which the active Bugemon will be replaced
 	 */
-	private void swap(Bugemon target, ParticipantLabel team){
-		if (checkSwappableBugemon(target, team)){
-			setActiveBugemon(target, team);
-			if (team == ParticipantLabel.TEAM_A){
-				logMsg.add("Tu as envoyé " + target.getName() + "!");
-			} else {
-				logMsg.add("L'adversaire a envoyé " + target.getName() + "!");
-			}
+	public boolean performSwap(Bugemon target, ParticipantLabel team){
+		if (!checkSwappableBugemon(target, team)){
+			return false;
 		}
+
+		setActiveBugemon(target, team);
+		if (team == ParticipantLabel.TEAM_A){
+			logMsg.add("Tu as envoyé " + target.getName() + "!");
+		} else {
+			logMsg.add("L'adversaire a envoyé " + target.getName() + "!");
+		}
+		return true;
 	}
 
 	/**
@@ -215,29 +214,7 @@ public class Battle {
 	 * @return boolean indicating if the action succeeded
 	 */
 	private boolean applyAction(Action action, ParticipantLabel team){
-		if (action instanceof UseAbility useAbilityAction) {
-			Bugemon oppositeBugemon = this.getActiveBugemon(getOpponentTeamLabel(team));
-
-			if (!oppositeBugemon.isKO()) {
-				useAbilityAction.getAbility().use(this, team);
-			}
-
-		} else if (action instanceof Swap swapAction) {
-			if (checkSwappableBugemon(swapAction.getToSwap(), team)){
-				this.swap(swapAction.getToSwap(), team);
-			} else {
-				return false;
-			}
-
-		} else if (action instanceof Run) {
-
-			this.setState(BattleState.LOST, team);
-
-		} else if (action instanceof UseItem useItemAction) {
-			this.useItem(useItemAction.getItem(), team);
-		}
-
-		return true;
+		return action != null && action.executeAction(this, team);
 	}
 
 	/**
@@ -250,22 +227,15 @@ public class Battle {
 	private void registerAction(Action action, ParticipantLabel ownTeam, ParticipantLabel oppositeTeam, BattleState ownState) {
 		switch (ownState) {
 			case INGAME:
-				if (action instanceof UseItem useItemAction
-						&& useItemAction.getItem().getEffect() instanceof EffectSwitch) {
-					applyAction(action, ownTeam);
-				} else {
-					setAction(action, ownTeam);
-					setState(BattleState.WAITING, ownTeam);
-				}
+				setAction(action, ownTeam);
+				setState(BattleState.WAITING, ownTeam);
 				break;
 
 			case SWAPPING:
 				setAction(action, ownTeam);
-				if (action instanceof Swap){
-					if (applyAction(action, ownTeam)){
-						setState(BattleState.INGAME, ownTeam);
-						setState(BattleState.INGAME, oppositeTeam);
-					}
+				if (applyAction(action, ownTeam)){
+					setState(BattleState.INGAME, ownTeam);
+					setState(BattleState.INGAME, oppositeTeam);
 				}
 				break;
 
@@ -299,6 +269,11 @@ public class Battle {
 		Action currentAction = getAction(playerTeam);
 
 		this.applyAction(currentAction, playerTeam);
+
+		if (gameFinished) {
+			handleBattleEnd();
+			return false;
+		}
 
 		if (handleActionFinished(playerTeam)){
 			tickActiveEffects();
@@ -479,6 +454,14 @@ public class Battle {
 	 */
 	public boolean checkSwappableBugemon(Bugemon bugemon, ParticipantLabel team){
 		return this.getTeam(team).isBugemonOK(bugemon);
+	}
+
+
+	public void forfeit(ParticipantLabel team) {
+		ParticipantLabel opponentTeam = getOpponentTeamLabel(team);
+		setState(BattleState.LOST, team);
+		setState(BattleState.WON, opponentTeam);
+		this.gameFinished = true;
 	}
 
 	public int getHpAfterFirstActionA() { return this.participantA.getHpAfterFirstAction(); }

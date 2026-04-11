@@ -312,7 +312,7 @@ public class BattleWindow extends Window {
                                boolean ko, boolean active, boolean selectable) {
     }
 
-    public record AbilityEntry(String abilityId, String abilityName, String color, String effectiveness) {
+    public record AbilityEntry(String abilityId, String abilityName, String abilityDescription, String color, String effectiveness) {
     }
 
     public interface ViewListener {

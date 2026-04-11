@@ -344,6 +344,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
                 entries.add(new AbilityEntry(
                         ability.getId(),
                         ability.getName(),
+                        ability.getAccurateDescription(),
                         getTypeColor(ability.getType()),
                         battleController.getEffectiveness(ability)
                 ));

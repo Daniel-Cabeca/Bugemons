@@ -27,6 +27,7 @@ public class AbilityDTO implements Serializable{
 	public String getName(){return this.name;}
 	public Type getType(){return this.type;}
 	public String getDescription(){return this.description;}
+	public String getAccurateDescription() {return this.description + "\n Puissance:  " + this.power;}
 	public int getPower(){return this.power;}
 	public List<EffectDTO> getEffects(){return this.effects;}
 	public EffectDTO getEffect(int index){return this.effects.get(index);}

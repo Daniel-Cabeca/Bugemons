@@ -40,6 +40,11 @@ public class ModeController implements ModeWindow.ViewListener {
     }
 
     @Override
+    public void onMultiplayer() {
+        listener.onMultiplayer();
+    }
+
+    @Override
     public void onQuit() {
         Platform.exit();
         System.exit(0);
@@ -47,5 +52,6 @@ public class ModeController implements ModeWindow.ViewListener {
 
     public interface Listener {
         void onSolo();
+        void onMultiplayer();
     }
 }

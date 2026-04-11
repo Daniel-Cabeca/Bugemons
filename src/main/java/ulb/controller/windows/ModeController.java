@@ -48,6 +48,11 @@ public class ModeController extends WindowController<ModeWindow> implements Mode
     }
 
     @Override
+    public void onMultiplayer() {
+        //
+    }
+
+    @Override
     public void onQuit() {
         Platform.exit();
         System.exit(0);

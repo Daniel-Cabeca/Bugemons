@@ -79,7 +79,7 @@ BattleModeController.Listener, BattleWindowController.Listener {
 		primaryStage.show();
     }
 
-	private boolean postData(ClientToServerMessage message){
+	public boolean postData(ClientToServerMessage message){
 		client.sendMessage(message);
 		if (client.receiveMessage() instanceof StatusMessage errorMessage && errorMessage.isFailure()){
 			System.err.println(errorMessage.getMessage());
@@ -88,7 +88,7 @@ BattleModeController.Listener, BattleWindowController.Listener {
 		return true;
 	}
 
-	private Serializable getData(ClientToServerMessage message){
+	public Serializable getData(ClientToServerMessage message){
 		client.sendMessage(message);
 		return client.receiveMessage();
 	}
@@ -96,6 +96,8 @@ BattleModeController.Listener, BattleWindowController.Listener {
 	// Register Controler
 
 	public PlayerDTO getPlayer(){ return this.player; }
+	public List<BugemonDTO> getPlayerTeam(){ return this.player.getTeam(); }
+	public void setPlayerTeam(List<BugemonDTO> playerTeam){ this.player.setTeam(playerTeam);}
 	public void setPlayer(PlayerDTO player){this.player=player; }
 	public void showModeController(){this.modeController.show();}
 	public void showTeamController(){this.teamController.show();}
@@ -114,40 +116,6 @@ BattleModeController.Listener, BattleWindowController.Listener {
 	// Team Controller Listener : 
 
 
-	public void onReturn() {
-		try {
-			modeController.show();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-
-	public List<BugemonSpeciesDTO> getAllSpecies(){
-		Serializable message = this.getData(new GetAllBugemonSpeciesMessage());
-
-		if (message instanceof BugemonSpeciesMessage speciesMessage){
-			return speciesMessage.getSpecies();
-		}
-		return null;
-	}
-
-
-	public void onTeamConfirmed() {
-		List<BugemonDTO> team = player.getTeam();
-
-		if (!this.postData(new SetUpTeamMessage(team))){
-			return;
-		}
-
-		this.battleModeController = new BattleModeController(this.stage, this, player.getTeam());
-		try {
-			battleModeController.show();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return;
-	}
 
 	// Battle Mode Controller Listener : 
 

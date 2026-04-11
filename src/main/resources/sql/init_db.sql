@@ -105,3 +105,13 @@ CREATE TABLE IF NOT EXISTS effect_stats_modifier (
                                                      duration TEXT,
                                                      FOREIGN KEY (effect_id) REFERENCES effects(id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS chat_messages (
+                                        id                INTEGER PRIMARY KEY AUTOINCREMENT,
+                                        sender_username   TEXT NOT NULL,
+                                        receiver_username TEXT NOT NULL,
+                                        content           TEXT NOT NULL,
+                                        sent_at           TEXT NOT NULL,
+                                        FOREIGN KEY (sender_username)   REFERENCES users(username),
+                                        FOREIGN KEY (receiver_username) REFERENCES users(username)
+);

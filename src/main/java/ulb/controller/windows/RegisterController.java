@@ -15,48 +15,28 @@ import ulb.view.windows.RegisterWindow;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class RegisterController implements RegisterWindow.ViewListener {
+public class RegisterController extends WindowController<RegisterWindow> implements RegisterWindow.ViewListener {
 
-    private RegisterWindow view;
-    private Stage stage;
-    private ModeController modeController;
     private ClientController clientController;
-    private PlayerDTO player;
 
-    public RegisterController(Stage stage) {
+    public RegisterController(Stage stage, ClientController clientController) {
         this.stage = stage;
-    }
-
-    public void setClientController(ClientController clientController){
+        this.windowPath = WindowPath.REGISTER;
         this.clientController = clientController;
-    }
 
-    public PlayerDTO getPlayer() {
-        return this.player;
-    }
-
-
-
-    public void show() throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(WindowPath.REGISTER));
-        loader.load();
-        view = loader.getController();
-        view.setListener(this);
-
-        Parent root = loader.getRoot();
-        if (stage.getScene() == null) {
-            stage.setScene(new Scene(root));
-        } else {
-            stage.getScene().setRoot(root);
+        try {
+            this.init();
+        } catch (Exception e) {
+            System.err.println("Couldn't load the FXML file : " + e);
         }
-        this.stage.show();
+        this.view.setListener(this);
     }
 
     @Override
     public void onLogin(String username, String password) {
         try {
-            player = new PlayerDTO(username, password, new ArrayList<BugemonDTO>(), new HashMap<ItemDTO, Integer>());
-            boolean success = clientController.logIn(player);
+            this.clientController.setPlayer(new PlayerDTO(username, password, new ArrayList<>(), new HashMap<>()));
+            boolean success = clientController.logIn(this.clientController.getPlayer());
             if (success) {
                 this.onRegister();
             } else {
@@ -70,8 +50,8 @@ public class RegisterController implements RegisterWindow.ViewListener {
     @Override
     public void onSignUp(String username, String password) {
         try {
-            player = new PlayerDTO(username, password, new ArrayList<BugemonDTO>(), new HashMap<ItemDTO, Integer>());
-            boolean success = clientController.signUp(player);
+            this.clientController.setPlayer(new PlayerDTO(username, password, new ArrayList<>(), new HashMap<>()));
+            boolean success = clientController.signUp(this.clientController.getPlayer());
             if (success) {
                 this.onRegister();
             } else {
@@ -83,11 +63,6 @@ public class RegisterController implements RegisterWindow.ViewListener {
     }
 
     public void onRegister() {
-        modeController = new ModeController(stage);
-        this.modeController.setClientController(this.clientController);
-        this.modeController.setPlayer(this.player);
-        modeController.show();
+        this.clientController.getModeController().show();
     }
-
-
 }

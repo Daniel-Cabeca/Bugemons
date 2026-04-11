@@ -48,6 +48,12 @@ BattleModeController.Listener, BattleWindowController.Listener {
         this.client = new SocketClient(serverIp, serverPort);
     }
 
+	public void load(){
+		this.registerController = new RegisterController(this.stage, this);
+		this.modeController = new ModeController(this.stage,this);
+		this.teamController = new TeamController(this.stage, this, this.player, this);
+	}
+
     @Override
     public void start(Stage primaryStage) throws Exception {
 		
@@ -58,8 +64,7 @@ BattleModeController.Listener, BattleWindowController.Listener {
 		primaryStage.setFullScreen(true);
 		primaryStage.setFullScreenExitHint("");
 
-		this.registerController = new RegisterController(this.stage);
-		this.registerController.setClientController(this);
+		this.load();
 		this.registerController.show();
 
 
@@ -89,6 +94,11 @@ BattleModeController.Listener, BattleWindowController.Listener {
 
 	// Register Controler
 
+	public PlayerDTO getPlayer(){ return this.player; }
+	public void setPlayer(PlayerDTO player){this.player=player; }
+	public ModeController getModeController(){return this.modeController;}
+	public TeamController getTeamController(){return this.teamController;}
+
 	public boolean logIn(PlayerDTO player){
 		return postData(new RegisterMessage(player, true));
 	}
@@ -104,7 +114,6 @@ BattleModeController.Listener, BattleWindowController.Listener {
 
 	@Override
 	public void onReturn() {
-		this.player = this.registerController.getPlayer(); // TO REMOVE, temporaire pour que l'ancienne implémentation fonctionne encore
 		try {
 			modeController.show();
 		} catch (Exception e) {
@@ -124,7 +133,6 @@ BattleModeController.Listener, BattleWindowController.Listener {
 
 	@Override
 	public void onTeamConfirmed() {
-		this.player = this.registerController.getPlayer(); // TO REMOVE, temporaire pour que l'ancienne implémentation fonctionne encore
 		List<BugemonDTO> team = player.getTeam();
 
 		if (!this.postData(new SetUpTeamMessage(team))){

@@ -25,14 +25,16 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 	private final Listener listener;
 	private final Stage stage;
 	private final BugemonService bugemonService;
+	private ClientController clientController;
 
 	private CreateTeamWindow view;
 
-	public TeamController(Stage stage, Listener listener, PlayerDTO player) {
+	public TeamController(Stage stage, Listener listener, PlayerDTO player, ClientController clientController) {
 		this.stage = stage;
 		this.listener = listener;
 		this.player = player;
 		this.bugemonService = ServiceLoader.getBugemonService();
+		this.clientController = clientController;
 	}
 
 	public void show() throws Exception {
@@ -62,7 +64,7 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 				}
 			}
 		}
-		player.setTeam(teamABugemons);
+		this.clientController.getPlayer().setTeam(teamABugemons);
 	}
 
 	@Override

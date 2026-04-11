@@ -11,13 +11,12 @@ import ulb.view.windows.ModeWindow;
 
 public class ModeController extends WindowController<ModeWindow> implements ModeWindow.ViewListener {
 
-    private TeamController teamController;
-    private PlayerDTO player;
     private ClientController clientController;
 
 
-    public ModeController(Stage stage) {
+    public ModeController(Stage stage, ClientController clientController) {
         this.stage = stage;
+        this.clientController = clientController;
         this.windowPath = WindowPath.MODE;
 
         try {
@@ -28,20 +27,11 @@ public class ModeController extends WindowController<ModeWindow> implements Mode
         this.view.setListener(this);
     }
 
-    public void setPlayer(PlayerDTO player) { // TO REMOVE
-        this.player = player;
-    }
-    public void setTeamController(TeamController teamController) {
-        this.teamController = teamController;
-    }
-    public void setClientController(ClientController clientController) {this.clientController = clientController;} // TO REMOVE
-
 
     @Override
     public void onSolo() {
-        teamController = new TeamController(this.stage, this.clientController, this.player);
         try {
-            teamController.show();
+            this.clientController.getTeamController().show();
         } catch (Exception e) {
             e.printStackTrace();
         }

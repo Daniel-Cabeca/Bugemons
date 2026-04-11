@@ -1,13 +1,19 @@
-package ulb.communication.types;
+package ulb.communication.message.clientToServer;
 
 import ulb.communication.Message;
 import ulb.communication.MessageType;
 import ulb.controller.GameController;
 
-public class SetUpNormalModeMessage implements Message {
+public class GetLogsMessage implements Message {
+    private boolean clearLogs;
+
+    public GetLogsMessage(boolean clearLogs){
+        this.clearLogs = clearLogs;
+    }
+
     @Override
     public MessageType getMessageType() {
-        return MessageType.SETUP_NORMAL_MODE;
+        return MessageType.GET_LOGS;
     }
 
     @Override
@@ -15,4 +21,6 @@ public class SetUpNormalModeMessage implements Message {
         // TODO Auto-generated method stub
         return null;
     }
+
+    public boolean clearLogs(){return this.clearLogs;}
 }

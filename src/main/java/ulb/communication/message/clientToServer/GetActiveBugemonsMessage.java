@@ -1,13 +1,13 @@
-package ulb.communication.types;
+package ulb.communication.message.clientToServer;
 
 import ulb.communication.Message;
 import ulb.communication.MessageType;
 import ulb.controller.GameController;
 
-public class PickRandomActionMessage implements Message {
+public class GetActiveBugemonsMessage implements Message {
     @Override
     public MessageType getMessageType() {
-        return MessageType.PICK_RANDOM_ACTION;
+        return MessageType.GET_ACTIVE_BUGEMONS;
     }
 
     @Override

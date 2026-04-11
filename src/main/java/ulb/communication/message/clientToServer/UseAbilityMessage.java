@@ -1,4 +1,4 @@
-package ulb.communication.types;
+package ulb.communication.message.clientToServer;
 
 import ulb.DTO.ability.AbilityDTO;
 import ulb.communication.Message;

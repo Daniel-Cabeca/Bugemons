@@ -15,20 +15,7 @@ import ulb.DTO.item.ItemDTO;
 import ulb.communication.Client;
 import ulb.communication.Message;
 import ulb.communication.Server;
-import ulb.communication.old_types.AutoTurnRequestMessage;
-import ulb.communication.old_types.BattleEndCheckMessage;
-import ulb.communication.old_types.BattleEndInfoMessage;
-import ulb.communication.old_types.GetInfoMessage;
-import ulb.communication.old_types.LevelUpMessage;
-import ulb.communication.old_types.ReceiveObjectRewardMessage;
-import ulb.communication.old_types.RewardPlaceMessage;
-import ulb.communication.old_types.SetupGameModeMessage;
-import ulb.communication.old_types.SwapRequestMessage;
-import ulb.communication.old_types.SwitchWindowMessage;
-import ulb.communication.old_types.TowerFleeMessage;
-import ulb.communication.old_types.TowerNextRoomMessage;
-import ulb.communication.old_types.UseAbilityRequestMessage;
-import ulb.communication.old_types.UseItemRequestMessage;
+import ulb.communication.old_types.*;
 import ulb.communication.types.*;
 import ulb.controller.action.Swap;
 import ulb.controller.action.UseAbility;
@@ -54,7 +41,6 @@ import ulb.model.reward.Reward;
 import ulb.model.reward.RewardType;
 import ulb.service.BugemonService;
 import ulb.service.ServiceLoader;
-import ulb.service.strategy.StrategyRandom;
 import ulb.view.WindowPath;
 import ulb.view.windows.LevelUpWindow;
 import ulb.view.windows.ModeWindow;
@@ -65,6 +51,7 @@ import ulb.mapper.bugemon.BugemonMapper;
 import ulb.mapper.bugemon.BugemonSpeciesMapper;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -121,7 +108,7 @@ AttackReplacementController.Listener {
 
 					client.sendMessage(new ConnectMessage("Bonjour server !"));
 
-					Message message = client.receiveMessage();
+					Serializable message = client.receiveMessage();
 					if (message instanceof ConnectMessage connectMessage) {
 						System.out.println("message reçu du serveur : " + connectMessage.getConnectMessage());
 					}

@@ -1,5 +1,6 @@
 package ulb.communication;
 
+import java.io.Serializable;
 import java.net.Socket;
 
 import ulb.communication.Messenger.SocketMessenger;
@@ -28,7 +29,7 @@ public class Client {
         }
     }
 
-    public Message receiveMessage(){
+    public Serializable receiveMessage(){
         try{
             return messenger.receiveMessage();
         } catch (Exception e){

@@ -1,4 +1,4 @@
-package ulb.communication.types;
+package ulb.communication.old_types;
 
 import ulb.communication.Message;
 import ulb.communication.MessageType;

@@ -1,4 +1,4 @@
-package ulb.communication.types;
+package ulb.communication.message.clientToServer;
 
 import ulb.DTO.player.PlayerDTO;
 import ulb.communication.Message;

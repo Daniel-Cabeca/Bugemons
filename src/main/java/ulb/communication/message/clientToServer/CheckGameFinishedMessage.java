@@ -1,13 +1,13 @@
-package ulb.communication.types;
+package ulb.communication.message.clientToServer;
 
 import ulb.communication.Message;
 import ulb.communication.MessageType;
 import ulb.controller.GameController;
 
-public class SetUpTowerModeMessage implements Message {
+public class CheckGameFinishedMessage implements Message{
     @Override
     public MessageType getMessageType() {
-        return MessageType.SETUP_TOWER_MODE;
+        return MessageType.CHECK_GAME_FINISHED;
     }
 
     @Override
@@ -15,4 +15,4 @@ public class SetUpTowerModeMessage implements Message {
         // TODO Auto-generated method stub
         return null;
     }
-}  
+}

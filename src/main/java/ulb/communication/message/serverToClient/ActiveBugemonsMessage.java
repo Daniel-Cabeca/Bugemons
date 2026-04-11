@@ -1,28 +1,15 @@
-package ulb.communication.types;
+package ulb.communication.message.serverToClient;
 
 import ulb.DTO.bugemon.BugemonDTO;
-import ulb.communication.Message;
-import ulb.communication.MessageType;
-import ulb.controller.GameController;
+import java.io.Serializable;
 
-public class ActiveBugemonsMessage implements Message {
+public class ActiveBugemonsMessage implements Serializable {
     private BugemonDTO selfActiveBugemon;
     private BugemonDTO opponentActiveBugemon;
 
     public ActiveBugemonsMessage(BugemonDTO selfActiveBugemon, BugemonDTO opponentActiveBugemon){
         this.selfActiveBugemon = selfActiveBugemon;
         this.opponentActiveBugemon = opponentActiveBugemon;
-    }
-
-    @Override
-    public MessageType getMessageType() {
-        return MessageType.ACTIVE_BUGEMONS;
-    }
-
-    @Override
-    public Message handle(GameController controller) {
-        // TODO Auto-generated method stub
-        return null;
     }
 
     public BugemonDTO getSelfActiveBugemon(){return this.selfActiveBugemon;}

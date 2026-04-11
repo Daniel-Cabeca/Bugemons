@@ -1,32 +1,32 @@
 package ulb.controller;
 
 import ulb.communication.Messenger.SocketMessenger;
-import ulb.communication.types.AbilityEffectivenessMessage;
-import ulb.communication.types.ActiveBugemonsMessage;
-import ulb.communication.types.BattleStateMessage;
-import ulb.communication.types.BugemonSpeciesMessage;
-import ulb.communication.types.CheckGameFinishedMessage;
-import ulb.communication.types.CheckUsableItemMessage;
-import ulb.communication.types.ErrorMessage;
-import ulb.communication.types.GameFinishedMessage;
-import ulb.communication.types.GetAbilityEffectivenessMessage;
-import ulb.communication.types.GetActiveBugemonsMessage;
-import ulb.communication.types.GetAllBugemonSpeciesMessage;
-import ulb.communication.types.GetBattleStateMessage;
-import ulb.communication.types.GetLogsMessage;
-import ulb.communication.types.GetTowerInfoMessage;
-import ulb.communication.types.LogsMessage;
-import ulb.communication.types.PickRandomActionMessage;
-import ulb.communication.types.RunMessage;
-import ulb.communication.types.SetUpNormalModeMessage;
-import ulb.communication.types.SetUpPlayerMessage;
-import ulb.communication.types.SetUpTeamMessage;
-import ulb.communication.types.SetUpTowerModeMessage;
-import ulb.communication.types.SuccessMessage;
-import ulb.communication.types.SwapBugemonMessage;
-import ulb.communication.types.UsableItemsMessage;
-import ulb.communication.types.UseAbilityMessage;
-import ulb.communication.types.UseItemMessage;
+import ulb.communication.message.serverToClient.AbilityEffectivenessMessage;
+import ulb.communication.message.serverToClient.ActiveBugemonsMessage;
+import ulb.communication.message.serverToClient.BattleStateMessage;
+import ulb.communication.message.serverToClient.BugemonSpeciesMessage;
+import ulb.communication.message.clientToServer.CheckGameFinishedMessage;
+import ulb.communication.message.clientToServer.CheckUsableItemMessage;
+import ulb.communication.message.serverToClient.ErrorMessage;
+import ulb.communication.message.serverToClient.GameFinishedMessage;
+import ulb.communication.message.clientToServer.GetAbilityEffectivenessMessage;
+import ulb.communication.message.clientToServer.GetActiveBugemonsMessage;
+import ulb.communication.message.clientToServer.GetAllBugemonSpeciesMessage;
+import ulb.communication.message.clientToServer.GetBattleStateMessage;
+import ulb.communication.message.clientToServer.GetLogsMessage;
+import ulb.communication.message.clientToServer.GetTowerInfoMessage;
+import ulb.communication.message.serverToClient.LogsMessage;
+import ulb.communication.message.clientToServer.PickRandomActionMessage;
+import ulb.communication.message.clientToServer.RunMessage;
+import ulb.communication.message.clientToServer.SetUpNormalModeMessage;
+import ulb.communication.message.clientToServer.SetUpPlayerMessage;
+import ulb.communication.message.clientToServer.SetUpTeamMessage;
+import ulb.communication.message.clientToServer.SetUpTowerModeMessage;
+import ulb.communication.message.serverToClient.SuccessMessage;
+import ulb.communication.message.clientToServer.SwapBugemonMessage;
+import ulb.communication.message.serverToClient.UsableItemsMessage;
+import ulb.communication.message.clientToServer.UseAbilityMessage;
+import ulb.communication.message.clientToServer.UseItemMessage;
 import ulb.controller.action.Action;
 import ulb.controller.action.Run;
 import ulb.controller.action.Swap;
@@ -49,9 +49,9 @@ import ulb.model.team.Team;
 import ulb.service.BugemonService;
 import ulb.service.ServiceLoader;
 import ulb.service.strategy.AI;
-import ulb.service.strategy.Strategy;
 import ulb.service.strategy.StrategyRandom;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -93,14 +93,20 @@ public class ServerController extends Thread{
 
     public Message receiveMessage(){
         try{
-            return this.socketMessenger.receiveMessage();
+			Serializable received = this.socketMessenger.receiveMessage();
+
+			if (received instanceof Message message) {
+				return message;
+			}
+
+            return null;
         } catch (Exception e){
             stopProcess();
         }
         return null;
     }
 
-    public void sendMessage(Message message){
+    public void sendMessage(Serializable message){
         try{
             this.socketMessenger.sendMessage(message);
         } catch (Exception e){

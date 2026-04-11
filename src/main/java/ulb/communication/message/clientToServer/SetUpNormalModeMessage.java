@@ -1,13 +1,13 @@
-package ulb.communication.types;
+package ulb.communication.message.clientToServer;
 
 import ulb.communication.Message;
 import ulb.communication.MessageType;
 import ulb.controller.GameController;
 
-public class GetActiveBugemonsMessage implements Message {
+public class SetUpNormalModeMessage implements Message {
     @Override
     public MessageType getMessageType() {
-        return MessageType.GET_ACTIVE_BUGEMONS;
+        return MessageType.SETUP_NORMAL_MODE;
     }
 
     @Override

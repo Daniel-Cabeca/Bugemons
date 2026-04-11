@@ -1,14 +1,13 @@
-package ulb.communication.types;
+package ulb.communication.message.clientToServer;
 
 import ulb.communication.Message;
 import ulb.communication.MessageType;
 import ulb.controller.GameController;
 
-public class SuccessMessage implements Message {
-
+public class PickRandomActionMessage implements Message {
     @Override
     public MessageType getMessageType() {
-        return MessageType.SUCCESS;
+        return MessageType.PICK_RANDOM_ACTION;
     }
 
     @Override

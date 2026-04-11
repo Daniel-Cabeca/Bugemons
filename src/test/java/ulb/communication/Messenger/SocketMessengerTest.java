@@ -4,13 +4,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.Serializable;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 import org.junit.jupiter.api.Test;
 
-import ulb.communication.types.ErrorMessage;
-import ulb.communication.Message;
+import ulb.communication.message.serverToClient.ErrorMessage;
 
 public class SocketMessengerTest {
     private SocketActor server;
@@ -45,7 +45,7 @@ public class SocketMessengerTest {
             return this.socket;
         }
 
-        public void sendMessage(Message message){
+        public void sendMessage(Serializable message){
             try{
                 this.messenger.sendMessage(message);
             } catch (Exception e){
@@ -53,7 +53,7 @@ public class SocketMessengerTest {
             }
         }
 
-        public Message receiveMessage(){
+        public Serializable receiveMessage(){
             try{
                 return this.messenger.receiveMessage();
             } catch (Exception e){

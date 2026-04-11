@@ -1,13 +1,13 @@
-package ulb.communication.types;
-
+package ulb.communication.message.clientToServer;
 import ulb.communication.Message;
 import ulb.communication.MessageType;
 import ulb.controller.GameController;
 
-public class GetTowerInfoMessage implements Message {
+public class GetAllBugemonSpeciesMessage implements Message {
+
     @Override
     public MessageType getMessageType() {
-        return MessageType.GET_TOWER_INFO;
+        return MessageType.GET_ALL_BUGEMON_SPECIES;
     }
 
     @Override

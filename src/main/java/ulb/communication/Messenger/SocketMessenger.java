@@ -2,9 +2,8 @@ package ulb.communication.Messenger;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.Socket;
-
-import ulb.communication.Message;
 
 public class SocketMessenger implements Messenger {
     private Socket socket;
@@ -24,7 +23,7 @@ public class SocketMessenger implements Messenger {
         }
     }
 
-    public void sendMessage(Message message) throws Exception{
+    public void sendMessage(Serializable message) throws Exception{
         try{
             this.writer.writeObject(message);
             this.writer.reset();
@@ -34,10 +33,10 @@ public class SocketMessenger implements Messenger {
         }
     }
 
-    public Message receiveMessage() throws Exception{
-        Message message = null;
+    public Serializable receiveMessage() throws Exception{
+        Serializable message = null;
         try{
-            message = (Message) reader.readObject();
+            message = (Serializable) reader.readObject();
         } catch (Exception e){
             this.close();
             throw e;

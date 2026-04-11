@@ -1,20 +1,13 @@
-package ulb.communication.types;
+package ulb.communication.message.clientToServer;
 
-import ulb.DTO.item.ItemDTO;
 import ulb.communication.Message;
 import ulb.communication.MessageType;
 import ulb.controller.GameController;
 
-public class UseItemMessage implements Message{
-    private ItemDTO item;
-
-    public UseItemMessage(ItemDTO item){
-        this.item = item;
-    }
-
+public class GetBattleStateMessage implements Message {
     @Override
     public MessageType getMessageType() {
-        return MessageType.USE_ITEM;
+        return MessageType.GET_BATTLE_STATE;
     }
 
     @Override
@@ -22,6 +15,4 @@ public class UseItemMessage implements Message{
         // TODO Auto-generated method stub
         return null;
     }
-
-    public ItemDTO getItem(){return this.item;}
 }

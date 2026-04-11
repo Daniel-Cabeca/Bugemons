@@ -1,13 +1,13 @@
-package ulb.communication.types;
+package ulb.communication.message.clientToServer;
 
 import ulb.communication.Message;
 import ulb.communication.MessageType;
 import ulb.controller.GameController;
 
-public class CheckGameFinishedMessage implements Message{
+public class RunMessage implements Message{
     @Override
     public MessageType getMessageType() {
-        return MessageType.CHECK_GAME_FINISHED;
+        return MessageType.RUN;
     }
 
     @Override

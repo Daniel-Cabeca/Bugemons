@@ -3,25 +3,16 @@ package ulb.communication;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.databind.ser.std.ByteArraySerializer;
-
-import ulb.communication.types.*;
-import ulb.controller.action.*;
-import ulb.repository.ItemRepository;
-import ulb.repository.mock.ItemMockRepository;
-import ulb.model.item.Item;
+import ulb.communication.message.serverToClient.ErrorMessage;
+import ulb.communication.old_types.ConnectMessage;
 
 public class MessageTest {
 
-    public Message serializeNdeserialze(Message message) throws IOException, ClassNotFoundException {
+    public Serializable serializeNdeserialze(Serializable message) throws IOException, ClassNotFoundException {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream serialised = new ObjectOutputStream(baos);
@@ -30,7 +21,7 @@ public class MessageTest {
             ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
             ObjectInputStream deserialized = new ObjectInputStream(bais);
 
-            return (Message) deserialized.readObject();
+            return (Serializable) deserialized.readObject();
         }
         catch (IOException | ClassNotFoundException e) {
             return null;

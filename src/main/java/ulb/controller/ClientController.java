@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
@@ -12,31 +13,31 @@ import java.util.Map;
 import ulb.communication.Client;
 import ulb.communication.Message;
 import ulb.communication.old_types.TowerInfoMessage;
-import ulb.communication.types.AbilityEffectivenessMessage;
-import ulb.communication.types.ActiveBugemonsMessage;
-import ulb.communication.types.BattleStateMessage;
-import ulb.communication.types.BugemonSpeciesMessage;
-import ulb.communication.types.CheckGameFinishedMessage;
-import ulb.communication.types.CheckUsableItemMessage;
-import ulb.communication.types.ErrorMessage;
-import ulb.communication.types.GameFinishedMessage;
+import ulb.communication.message.serverToClient.AbilityEffectivenessMessage;
+import ulb.communication.message.serverToClient.ActiveBugemonsMessage;
+import ulb.communication.message.serverToClient.BattleStateMessage;
+import ulb.communication.message.serverToClient.BugemonSpeciesMessage;
+import ulb.communication.message.clientToServer.CheckGameFinishedMessage;
+import ulb.communication.message.clientToServer.CheckUsableItemMessage;
+import ulb.communication.message.serverToClient.ErrorMessage;
+import ulb.communication.message.serverToClient.GameFinishedMessage;
 import ulb.communication.types.GameMode;
-import ulb.communication.types.GetAbilityEffectivenessMessage;
-import ulb.communication.types.GetActiveBugemonsMessage;
-import ulb.communication.types.GetAllBugemonSpeciesMessage;
-import ulb.communication.types.GetBattleStateMessage;
-import ulb.communication.types.GetLogsMessage;
-import ulb.communication.types.GetTowerInfoMessage;
-import ulb.communication.types.LogsMessage;
-import ulb.communication.types.PickRandomActionMessage;
-import ulb.communication.types.SetUpNormalModeMessage;
-import ulb.communication.types.SetUpPlayerMessage;
-import ulb.communication.types.SetUpTeamMessage;
-import ulb.communication.types.SetUpTowerModeMessage;
-import ulb.communication.types.SwapBugemonMessage;
-import ulb.communication.types.UsableItemsMessage;
-import ulb.communication.types.UseAbilityMessage;
-import ulb.communication.types.UseItemMessage;
+import ulb.communication.message.clientToServer.GetAbilityEffectivenessMessage;
+import ulb.communication.message.clientToServer.GetActiveBugemonsMessage;
+import ulb.communication.message.clientToServer.GetAllBugemonSpeciesMessage;
+import ulb.communication.message.clientToServer.GetBattleStateMessage;
+import ulb.communication.message.clientToServer.GetLogsMessage;
+import ulb.communication.message.clientToServer.GetTowerInfoMessage;
+import ulb.communication.message.serverToClient.LogsMessage;
+import ulb.communication.message.clientToServer.PickRandomActionMessage;
+import ulb.communication.message.clientToServer.SetUpNormalModeMessage;
+import ulb.communication.message.clientToServer.SetUpPlayerMessage;
+import ulb.communication.message.clientToServer.SetUpTeamMessage;
+import ulb.communication.message.clientToServer.SetUpTowerModeMessage;
+import ulb.communication.message.clientToServer.SwapBugemonMessage;
+import ulb.communication.message.serverToClient.UsableItemsMessage;
+import ulb.communication.message.clientToServer.UseAbilityMessage;
+import ulb.communication.message.clientToServer.UseItemMessage;
 import ulb.controller.windows.ModeController;
 import ulb.model.battle.BattleState;
 import ulb.DTO.ability.AbilityDTO;
@@ -105,7 +106,7 @@ BattleModeController.Listener, BattleWindowController.Listener {
 		return true;
 	}
 
-	private Message getData(Message message){
+	private Serializable getData(Message message){
 		client.sendMessage(message);
 		return client.receiveMessage();
 	}
@@ -126,7 +127,7 @@ BattleModeController.Listener, BattleWindowController.Listener {
 
 	@Override
 	public List<BugemonSpeciesDTO> getAllSpecies(){
-		Message message = this.getData(new GetAllBugemonSpeciesMessage());
+		Serializable message = this.getData(new GetAllBugemonSpeciesMessage());
 
 		if (message instanceof BugemonSpeciesMessage speciesMessage){
 			return speciesMessage.getSpecies();
@@ -227,7 +228,7 @@ BattleModeController.Listener, BattleWindowController.Listener {
 	
 	@Override
 	public List<BugemonDTO> getActiveBugemons(){
-		Message message = getData(new GetActiveBugemonsMessage());
+		Serializable message = getData(new GetActiveBugemonsMessage());
 		if (message instanceof ActiveBugemonsMessage activeBugemons){
 			return List.of(activeBugemons.getSelfActiveBugemon(), activeBugemons.getOpponentActiveBugemon());
 			
@@ -239,7 +240,7 @@ BattleModeController.Listener, BattleWindowController.Listener {
 
 	@Override
 	public Map<AbilityDTO, String> getAbilityEffectiveness(List<AbilityDTO> abilities, BugemonDTO bugemonTarget){
-		Message message = getData(new GetAbilityEffectivenessMessage(abilities, bugemonTarget));
+		Serializable message = getData(new GetAbilityEffectivenessMessage(abilities, bugemonTarget));
 
 		if (message instanceof AbilityEffectivenessMessage effectivenessMessage){
 			return effectivenessMessage.getEffectiveness();
@@ -251,7 +252,7 @@ BattleModeController.Listener, BattleWindowController.Listener {
 
 	@Override
 	public List<Integer> getHpAfterFirstAction(){
-		Message message = getData(new GetLogsMessage(false));
+		Serializable message = getData(new GetLogsMessage(false));
 
 		if (message instanceof LogsMessage logs){
 			return logs.getHpsAfterFirstAction();
@@ -263,7 +264,7 @@ BattleModeController.Listener, BattleWindowController.Listener {
 
 	@Override
 	public BattleState getState(){
-		Message message = getData(new GetBattleStateMessage());
+		Serializable message = getData(new GetBattleStateMessage());
 
 		if (message instanceof BattleStateMessage battleState){
 			System.out.println("State  = " + battleState.getBattleState());
@@ -277,7 +278,7 @@ BattleModeController.Listener, BattleWindowController.Listener {
 
 	@Override
 	public List<String> getLogs(){
-		Message message = getData(new GetLogsMessage(true));
+		Serializable message = getData(new GetLogsMessage(true));
 
 		if (message instanceof LogsMessage logs){
 			return logs.getLogs();
@@ -289,7 +290,7 @@ BattleModeController.Listener, BattleWindowController.Listener {
 
 	@Override
 	public Map<ItemDTO, Boolean> checkItems(List<ItemDTO> items){
-		Message message = getData(new CheckUsableItemMessage(items));
+		Serializable message = getData(new CheckUsableItemMessage(items));
 
 		if (message instanceof UsableItemsMessage usableItems){
 			return usableItems.getItemMap();
@@ -301,7 +302,7 @@ BattleModeController.Listener, BattleWindowController.Listener {
 
 	@Override
 	public boolean isGameFinished(){
-		Message message = getData(new CheckGameFinishedMessage());
+		Serializable message = getData(new CheckGameFinishedMessage());
 
 		if (message instanceof GameFinishedMessage gameFinished){
 			return gameFinished.isGameFinished();

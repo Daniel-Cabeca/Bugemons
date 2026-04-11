@@ -26,6 +26,7 @@ import ulb.controller.towerManager.TowerManager;
 import ulb.controller.windows.BattleEndController;
 import ulb.controller.windows.ModeController;
 import ulb.controller.windows.RegisterController;
+import ulb.controller.windows.TeamController;
 import ulb.model.ability.Ability;
 import ulb.model.battle.BattleState;
 import ulb.model.Player;
@@ -60,7 +61,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class GameController extends Application implements TeamController.Listener,
+public class GameController extends Application implements
 BattleModeController.Listener, NextRoomController.Listener, ChooseBugemonController.Listener,
 BattleWindowController.Listener, LevelUpController.Listener, FloorRewardController.Listener,
 AttackReplacementController.Listener {
@@ -621,20 +622,7 @@ AttackReplacementController.Listener {
 		}
 	}
 
-	@Override
-	public void onTeamConfirmed() {
-		// CLIENT + SERVER
-		List<BugemonDTO> team = new ArrayList<BugemonDTO>();
-		for (Bugemon bugemon : getTeam().getMembers()){
-			team.add(BugemonMapper.toDTO(bugemon));
-		}
-		battleModeController = new BattleModeController(stage, this, team);
-		try {
-			battleModeController.show();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+
 
 	@Override
 	public void onReturn() {
@@ -646,17 +634,6 @@ AttackReplacementController.Listener {
 		}
 	}
 
-	@Override
-	public List<BugemonSpeciesDTO> getAllSpecies() {
-		BugemonService bugemonService = ServiceLoader.getBugemonService();
-		List<BugemonSpeciesDTO> DTOSpeciesList = new ArrayList<BugemonSpeciesDTO>();
-
-		for (BugemonSpecies species : bugemonService.getAllSpecies()){
-			DTOSpeciesList.add(BugemonSpeciesMapper.toDTO(species));
-		}
-
-		return DTOSpeciesList;
-	}
 
 	// @Override
 	// public void onSolo() {

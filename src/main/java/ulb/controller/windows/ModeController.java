@@ -5,7 +5,6 @@ import javafx.application.Platform;
 import javafx.stage.Stage;
 import ulb.DTO.player.PlayerDTO;
 import ulb.controller.ClientController;
-import ulb.controller.TeamController;
 import ulb.view.WindowPath;
 import ulb.view.windows.ModeWindow;
 

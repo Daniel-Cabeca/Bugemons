@@ -13,6 +13,7 @@ import ulb.communication.old_types.TowerInfoMessage;
 import ulb.communication.types.GameMode;
 import ulb.controller.windows.ModeController;
 import ulb.controller.windows.RegisterController;
+import ulb.controller.windows.TeamController;
 import ulb.message.ClientToServerMessage;
 import ulb.message.clientToServer.*;
 import ulb.message.serverToClient.*;
@@ -23,7 +24,7 @@ import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.DTO.item.ItemDTO;
 
-public class ClientController extends Application implements TeamController.Listener,
+public class ClientController extends Application implements
 BattleModeController.Listener, BattleWindowController.Listener {
     SocketClient client;
     Stage stage;
@@ -51,7 +52,7 @@ BattleModeController.Listener, BattleWindowController.Listener {
 	public void load(){
 		this.registerController = new RegisterController(this.stage, this);
 		this.modeController = new ModeController(this.stage,this);
-		this.teamController = new TeamController(this.stage, this, this.player, this);
+		this.teamController = new TeamController(this.stage, this);
 	}
 
     @Override
@@ -112,7 +113,7 @@ BattleModeController.Listener, BattleWindowController.Listener {
 
 	// Team Controller Listener : 
 
-	@Override
+
 	public void onReturn() {
 		try {
 			modeController.show();
@@ -121,7 +122,7 @@ BattleModeController.Listener, BattleWindowController.Listener {
 		}
 	}
 
-	@Override
+
 	public List<BugemonSpeciesDTO> getAllSpecies(){
 		Serializable message = this.getData(new GetAllBugemonSpeciesMessage());
 
@@ -131,7 +132,7 @@ BattleModeController.Listener, BattleWindowController.Listener {
 		return null;
 	}
 
-	@Override
+
 	public void onTeamConfirmed() {
 		List<BugemonDTO> team = player.getTeam();
 

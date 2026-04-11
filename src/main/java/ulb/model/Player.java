@@ -28,6 +28,15 @@ public class Player {
 		addDefaultItems();
 	}
 
+	public Player(String name) {
+		this.userName = name;
+		this.password = "password";
+		this.team = new Team();
+		this.inventory = new Inventory();
+
+		addDefaultItems();
+	}
+
 	public Player(String name, String password) {
 		this.userName = name;
 		this.password = password;
@@ -40,6 +49,13 @@ public class Player {
 	public Player(String name, String password, Team team, Inventory inventory) {
 		this.userName = name;
 		this.password = password;
+		this.team = team;
+		this.inventory = inventory;
+	}
+
+	public Player(String name, Team team, Inventory inventory) {
+		this.userName = name;
+		this.password = "password";
 		this.team = team;
 		this.inventory = inventory;
 	}

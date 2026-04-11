@@ -305,7 +305,7 @@ public class BattleWindow extends Window {
     public record BugemonDisplay(String name, String spritePath, String color, int level, int hp, int maxHp) {
     }
 
-    public record InventoryEntry(String itemId, String itemName, String itemSpritePath, int quantity, boolean usable) {
+    public record InventoryEntry(String itemId, String itemName, String itemDescription, String itemSpritePath, int quantity, boolean usable) {
     }
 
     public record BugemonEntry(String bugemonId, String bugemonName, String bugemonSpritePath,

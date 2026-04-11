@@ -68,6 +68,7 @@ public class BattleWindowSetupHelper {
                 if (empty || entry == null) {
                     setText(null);
                     setGraphic(null);
+                    setTooltip(null);
                 } else {
                     try {
                         Image image = new Image(getClass().getResourceAsStream(entry.itemSpritePath()));
@@ -77,6 +78,9 @@ public class BattleWindowSetupHelper {
                     }
                     label.setText(entry.itemName() + " x" + entry.quantity());
                     button.setDisable(!entry.usable());
+                    Tooltip tooltip = new Tooltip(entry.itemDescription());
+                    tooltip.setShowDelay(javafx.util.Duration.millis(100));
+                    setTooltip(tooltip);
                     setGraphic(hbox);
                 }
             }

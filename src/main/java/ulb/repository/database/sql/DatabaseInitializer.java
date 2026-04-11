@@ -93,7 +93,24 @@ public class DatabaseInitializer {
 
 		if (database.isNew()) {
 			initializer.initialize();
+		} else {
+			initializer.migrate();
 		}
 		return database;
+	}
+
+	void migrate() {
+		createTables();
+		String[] migrations = {
+			"ALTER TABLE users ADD COLUMN first_login INTEGER DEFAULT 1",
+			"ALTER TABLE users ADD COLUMN player_name TEXT",
+			"ALTER TABLE users ADD COLUMN gender TEXT",
+			"CREATE TABLE IF NOT EXISTS friends (user_id INTEGER, friend_id INTEGER, PRIMARY KEY (user_id, friend_id), FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE, FOREIGN KEY (friend_id) REFERENCES users(id) ON DELETE CASCADE)"
+		};
+		for (String sql : migrations) {
+			try {
+				database.createStatement().execute(sql);
+			} catch (SQLException ignored) {}
+		}
 	}
 }

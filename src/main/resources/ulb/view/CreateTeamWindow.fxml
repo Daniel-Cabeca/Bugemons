@@ -37,6 +37,12 @@
 
         </ScrollPane>
 
+        <Label fx:id="errorLabel" style="-fx-text-fill: red; -fx-font-size: 16px;" />
+
+        <Button onAction="#handleLoadTeam"
+                prefHeight="50" prefWidth="250"
+                text="Charger mon équipe sauvegardée" />
+
         <Button onAction="#handleConfirmTeam"
                 prefHeight="50" prefWidth="250"
                 text="Confirmer l'Équipe" />

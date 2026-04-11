@@ -14,7 +14,7 @@
 <?import javafx.scene.control.Separator?>
 
 <GridPane style= "-fx-background-image: url(backgrounds/BattleBackground.png); -fx-background-size: stretch"
-          alignment="BOTTOM_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ulb.view.windows.BattleWindow">
+          alignment="BOTTOM_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ulb.view.windows.BattleWindow">
     <columnConstraints>
         <ColumnConstraints hgrow="ALWAYS" minWidth="200.0" prefWidth="300.0" />
         <ColumnConstraints hgrow="ALWAYS" minWidth="200.0" prefWidth="300.0" />

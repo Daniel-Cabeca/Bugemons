@@ -24,4 +24,16 @@ public class AccountService {
     public int getUserId(String username) throws LoadException {
         return repository.getUserId(username);
     }
+
+    public boolean isFirstLogin(String username) throws LoadException {
+        return repository.isFirstLogin(username);
+    }
+
+    public String[] getPlayerProfile(String username) throws LoadException {
+        return repository.getPlayerProfile(username);
+    }
+
+    public void savePlayerProfile(String username, String playerName, String gender) throws LoadException {
+        repository.savePlayerProfile(username, playerName, gender);
+    }
 }

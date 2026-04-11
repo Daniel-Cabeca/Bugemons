@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<StackPane xmlns="http://javafx.com/javafx/23.0.1"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="ulb.view.windows.IntroWindow"
+           style="-fx-background-image: url('backgrounds/IntroBackground.png'); -fx-background-size: stretch; -fx-background-repeat: no-repeat; -fx-background-position: center;"
+           onMouseClicked="#handleNext">
+
+    <VBox alignment="BOTTOM_CENTER">
+        <VBox styleClass="intro-message-box" maxWidth="900">
+            <Label fx:id="messageLabel" wrapText="true"/>
+        </VBox>
+        <padding>
+            <Insets bottom="40"/>
+        </padding>
+    </VBox>
+
+</StackPane>

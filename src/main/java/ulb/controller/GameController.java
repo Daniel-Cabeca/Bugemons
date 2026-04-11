@@ -51,6 +51,11 @@ BattleWindowController.Listener, RegisterController.Listener {
 	private BattleController normalModeBattleController;
 	private Stage stage;
 
+	private String loggedInUsername;
+	private int introPhase = 0;
+	private String pendingPlayerName;
+	private String pendingGender;
+
 	private GameMode gameMode;
 	private final Deque<Bugemon> pendingLevelUpBugemons = new ArrayDeque<>();
 	private BattleController pendingRewardBattleController;
@@ -144,6 +149,9 @@ BattleWindowController.Listener, RegisterController.Listener {
 
 			// temporary fix until all windows/controllers are mvc
 			if (controller instanceof ModeWindow modeWindow) {
+				if (modeController == null) {
+					modeController = new ModeController(stage, this);
+				}
 				modeWindow.setListener(modeController);
 			}
 			if (controller instanceof NextRoomWindow nextRoomWindow) {
@@ -170,6 +178,19 @@ BattleWindowController.Listener, RegisterController.Listener {
 	public Player getPlayer() {return this.player;}
 
 	public Team getTeam() {return this.player.getTeam();}
+
+	public String getLoggedInUsername() { return loggedInUsername; }
+	public void setLoggedInUsername(String username) { this.loggedInUsername = username; }
+
+	public int getIntroPhase() { return introPhase; }
+	public void nextIntroPhase() { introPhase++; }
+	public void resetIntroPhase() { introPhase = 0; }
+
+	public String getPendingPlayerName() { return pendingPlayerName; }
+	public void setPendingPlayerName(String name) { this.pendingPlayerName = name; }
+
+	public String getPendingGender() { return pendingGender; }
+	public void setPendingGender(String gender) { this.pendingGender = gender; }
 
 
 	/**
@@ -567,7 +588,7 @@ BattleWindowController.Listener, RegisterController.Listener {
 
 	@Override
 	public void onSolo() {
-		teamController = new TeamController(stage, this, player);
+		teamController = new TeamController(stage, this, player, this);
 		try {
 			teamController.show();
 		} catch (Exception e) {
@@ -733,7 +754,15 @@ BattleWindowController.Listener, RegisterController.Listener {
 	}
 
 	@Override
-	public void onRegister() {
+	public void onFirstLogin(String username) {
+		this.loggedInUsername = username;
+		resetIntroPhase();
+		switchWindow(WindowPath.INTRO);
+	}
+
+	@Override
+	public void onReturningUser(String username) {
+		this.loggedInUsername = username;
 		if (modeController == null) {
 			modeController = new ModeController(stage, this);
 		}

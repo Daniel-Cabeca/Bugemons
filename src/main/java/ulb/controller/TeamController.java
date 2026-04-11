@@ -9,6 +9,7 @@ import ulb.model.bugemon.Bugemon;
 import ulb.model.team.Team;
 import ulb.view.WindowPath;
 import ulb.view.windows.CreateTeamWindow;
+import ulb.controller.GameController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,13 +18,15 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 	private Player player;
 
 	private final Listener listener;
+	private final GameController gameController;
 	private CreateTeamWindow view;
 	private Stage stage;
 
-	public TeamController(Stage stage, Listener listener, Player player) {
+	public TeamController(Stage stage, Listener listener, Player player, GameController gameController) {
 		this.stage = stage;
 		this.listener = listener;
 		this.player = player;
+		this.gameController = gameController;
 	}
 
 	public void show() throws Exception {
@@ -31,6 +34,7 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 		loader.load();
 		view = loader.getController();
 		view.setViewListener(this);
+		view.setGameController(gameController);
 
 		Parent root = loader.getRoot();
 		if (stage.getScene() == null) {

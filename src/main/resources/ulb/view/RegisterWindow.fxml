@@ -8,20 +8,23 @@
 <?import javafx.scene.layout.VBox?>
 
 <StackPane style="-fx-background-image:url(backgrounds/ModeBackground.jpg); -fx-background-size: stretch;"
-           xmlns="http://javafx.com/javafx/25"
+           xmlns="http://javafx.com/javafx/23.0.1"
            xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="ulb.view.windows.RegisterWindow">
 
     <VBox fx:id="content" alignment="CENTER" maxWidth="400" spacing="16">
-        <Label text="Bugémon" style="-fx-text-fill: #e6ffff; -fx-font-size: 36; -fx-font-weight: bold;" />
+        <Label fx:id="titleLabel" text="Connexion" style="-fx-text-fill: #e6ffff; -fx-font-size: 36; -fx-font-weight: bold;" />
 
         <TextField fx:id="usernameField" promptText="Nom d'utilisateur" maxWidth="300" />
         <PasswordField fx:id="passwordField" promptText="Mot de passe" maxWidth="300" />
+        <PasswordField fx:id="confirmPasswordField" promptText="Confirmer le mot de passe" maxWidth="300" visible="false" managed="false" />
 
         <Label fx:id="errorLabel" style="-fx-text-fill: #ff4444;" />
 
-        <Button text="S'inscrire" onAction="#onSignUp" prefWidth="250" prefHeight="50" />
+        <Button fx:id="mainButton" text="Se connecter" onAction="#onMainAction" prefWidth="250" prefHeight="50" />
 
-        <Button text="Se connecter" onAction="#onLogin" prefWidth="250" prefHeight="50" />
+        <Button fx:id="toggleButton" text="Pas de compte ? S'inscrire" onAction="#onToggleMode"
+                prefWidth="250" prefHeight="35"
+                style="-fx-background-color: transparent; -fx-text-fill: #aaddff;" />
     </VBox>
 </StackPane>

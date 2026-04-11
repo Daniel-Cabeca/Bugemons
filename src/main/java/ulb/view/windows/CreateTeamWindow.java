@@ -10,13 +10,17 @@ import javafx.scene.layout.VBox;
 import java.util.ArrayList;
 import java.util.List;
 
+import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.BugemonSpecies;
+import ulb.model.team.Team;
+import ulb.repository.LoadException;
 import ulb.utils.Scaling;
 import ulb.service.BugemonService;
 import ulb.service.ServiceLoader;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+
 
 public class CreateTeamWindow extends Window {
 
@@ -27,8 +31,11 @@ public class CreateTeamWindow extends Window {
 	@FXML
 	private GridPane selectedBugemonsGrid;
 
+	@FXML
+	private Label errorLabel;
+
 	private final List<String> selectedBugemons = new ArrayList<>();
-	private final int MAX_BUGEMONS =6;
+	private final int MAX_BUGEMONS = 6;
 
 	private ViewListener viewListener;
 
@@ -180,9 +187,35 @@ public class CreateTeamWindow extends Window {
 	 */
 	public void handleConfirmTeam() {
 		if (!selectedBugemons.isEmpty() && selectedBugemons.size() <= MAX_BUGEMONS) {
+			try {
+				List<Bugemon> members = new ArrayList<>();
+				for (String name : selectedBugemons) {
+					members.add(new Bugemon(name.toLowerCase()));
+				}
+				ServiceLoader.getPlayerService().saveTeam(
+					gameController.getLoggedInUsername(), new Team(members));
+			} catch (LoadException e) {
+				System.err.println(e.getMessage());
+			}
 			viewListener.onConfirmTeam(selectedBugemons);
 		} else {
-			throw new IllegalStateException("Tu dois sélectionner entre 1 et 6 Bugémons pour confirmer ton équipe.");
+			errorLabel.setText("Sélectionne entre 1 et 6 Bugémons.");
+		}
+	}
+
+	public void handleLoadTeam() {
+		try {
+			List<String> savedIds = ServiceLoader.getPlayerService().loadTeamSpeciesIds(
+				gameController.getLoggedInUsername());
+			if (savedIds.isEmpty()) {
+				errorLabel.setText("Aucune équipe sauvegardée.");
+				return;
+			}
+			selectedBugemons.clear();
+			selectedBugemons.addAll(savedIds);
+			viewListener.onConfirmTeam(selectedBugemons);
+		} catch (LoadException e) {
+			errorLabel.setText("Erreur lors du chargement de l'équipe.");
 		}
 	}
 

@@ -6,6 +6,9 @@ public final class WindowPath {
 
     public static final String LOGIN = FXML_WINDOWS_PATH + "LoginWindow.fxml";
     public static final String REGISTER = FXML_WINDOWS_PATH + "RegisterWindow.fxml";
+    public static final String INTRO = FXML_WINDOWS_PATH + "IntroWindow.fxml";
+    public static final String NAME_CHOICE = FXML_WINDOWS_PATH + "NameChoiceWindow.fxml";
+    public static final String GENDER_CHOICE = FXML_WINDOWS_PATH + "GenderChoiceWindow.fxml";
     public static final String MODE = FXML_WINDOWS_PATH + "ModeWindow.fxml";
     public static final String CREATE_TEAM = FXML_WINDOWS_PATH + "CreateTeamWindow.fxml";
     public static final String BATTLE_MODE = FXML_WINDOWS_PATH + "BattleModeWindow.fxml";

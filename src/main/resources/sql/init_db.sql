@@ -1,7 +1,18 @@
 CREATE TABLE IF NOT EXISTS users (
                                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                                     username TEXT NOT NULL UNIQUE,
-                                    password_hash TEXT NOT NULL
+                                    password_hash TEXT NOT NULL,
+                                    first_login INTEGER DEFAULT 1,
+                                    player_name TEXT,
+                                    gender TEXT
+);
+
+CREATE TABLE IF NOT EXISTS friends (
+                                    user_id INTEGER,
+                                    friend_id INTEGER,
+                                    PRIMARY KEY (user_id, friend_id),
+                                    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                                    FOREIGN KEY (friend_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS inventory (

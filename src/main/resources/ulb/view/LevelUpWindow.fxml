@@ -11,7 +11,7 @@
 
 <StackPane prefHeight="450.0" prefWidth="750.0"
            style="-fx-background-image: url(backgrounds/LevelUpBackground.png); -fx-background-size: stretch;"
-           xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
+           xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="ulb.view.windows.LevelUpWindow">
 
     <VBox alignment="CENTER" spacing="20.0">

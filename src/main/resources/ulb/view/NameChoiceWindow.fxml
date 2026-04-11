@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<StackPane xmlns="http://javafx.com/javafx/23.0.1"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="ulb.view.windows.NameChoiceWindow"
+           style="-fx-background-image: url('backgrounds/IntroBackground.png'); -fx-background-size: stretch; -fx-background-repeat: no-repeat; -fx-background-position: center;">
+
+    <VBox alignment="CENTER" spacing="20" maxWidth="400" translateY="400">
+        <Label text="Quel est ton nom ?" style="-fx-font-size: 30px; -fx-text-fill: white;"/>
+        <TextField fx:id="nameField" promptText="Ton prénom..." style="-fx-font-size: 20px;"/>
+        <Label fx:id="errorLabel" style="-fx-text-fill: red;"/>
+        <Button text="Confirmer" onAction="#handleConfirm" prefWidth="200" prefHeight="50"/>
+    </VBox>
+
+</StackPane>

@@ -5,7 +5,9 @@ import ulb.repository.*;
 import ulb.repository.database.AbilityDatabaseRepository;
 import ulb.repository.database.AccountDatabaseRepository;
 import ulb.repository.database.BugemonSpeciesDatabaseRepository;
+import ulb.repository.database.FriendDatabaseRepository;
 import ulb.repository.database.ItemDatabaseRepository;
+import ulb.repository.database.PlayerDatabaseRepository;
 import ulb.repository.database.sql.Database;
 import ulb.repository.database.sql.DatabaseInitializer;
 import ulb.repository.json.AbilityJsonRepository;
@@ -22,6 +24,8 @@ public abstract class ServiceLoader {
 	private static BugemonService bugemonService;
 	private static AbilityService abilityService;
 	private static AccountService accountService;
+	private static PlayerService playerService;
+	private static FriendService friendService;
 
 	static {
 		// at class initialization
@@ -41,6 +45,10 @@ public abstract class ServiceLoader {
 	}
 
 	public static AccountService getAccountService() { return accountService; }
+
+	public static PlayerService getPlayerService() { return playerService; }
+
+	public static FriendService getFriendService() { return friendService; }
 
 	/**
 	 * Loads services with JSON repositories.
@@ -64,10 +72,14 @@ public abstract class ServiceLoader {
 		BugemonSpeciesRepository bugemonSpeciesRepository = new BugemonSpeciesDatabaseRepository(database);
 		ItemRepository itemRepository = new ItemDatabaseRepository(database);
 		InventoryRepository inventoryRepository = new InventoryJsonRepository(new ItemJsonRepository());
-		AccountRepository accountRepository = new AccountDatabaseRepository(database);
+		AccountDatabaseRepository accountRepository = new AccountDatabaseRepository(database);
+		PlayerDatabaseRepository playerRepository = new PlayerDatabaseRepository(database.getConnection());
+		FriendDatabaseRepository friendRepository = new FriendDatabaseRepository(database.getConnection());
 
 		ServiceLoader.bugemonService = new BugemonService(bugemonSpeciesRepository);
 		ServiceLoader.itemService = new ItemService(itemRepository, inventoryRepository);
 		ServiceLoader.accountService = new AccountService(accountRepository);
+		ServiceLoader.playerService = new PlayerService(playerRepository, accountRepository);
+		ServiceLoader.friendService = new FriendService(friendRepository, accountRepository);
 	}
 }

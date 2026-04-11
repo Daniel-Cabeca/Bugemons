@@ -6,8 +6,7 @@ import ulb.utils.Scaling;
 
 public final class ModeWindow extends Window {
 
-	@FXML
-	private VBox content;
+	@FXML private VBox content;
 
 	private ViewListener viewListener;
 

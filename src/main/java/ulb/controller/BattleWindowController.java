@@ -303,6 +303,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
             entries.add(new InventoryEntry(
                     item.getId(),
                     item.getName(),
+                    item.getDescription(),
                     item.getSprite(),
                     entry.getValue(),
                     usable
@@ -350,6 +351,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
                 entries.add(new AbilityEntry(
                         ability.getId(),
                         ability.getName(),
+                        ability.getAccurateDescription(),
                         getTypeColor(ability.getType()),
                         abilitiesEffectiveness.get(ability)
                 ));

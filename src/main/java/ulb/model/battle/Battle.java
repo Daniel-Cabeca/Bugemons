@@ -141,7 +141,7 @@ public class Battle {
 	private void useItem(Item item, ParticipantLabel team){
 		item.use(this, team);
 		removeUsedItemFromInventory(team, item);
-		logMsg.add("L'objet " + item.getName() + "a été utilisé.");
+		logMsg.add("L'objet " + item.getName() + " a été utilisé.");
 	}
 
 	/**

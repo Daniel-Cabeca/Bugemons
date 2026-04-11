@@ -68,6 +68,7 @@ public class BattleWindowSetupHelper {
                 if (empty || entry == null) {
                     setText(null);
                     setGraphic(null);
+                    setTooltip(null);
                 } else {
                     try {
                         Image image = new Image(getClass().getResourceAsStream(entry.itemSpritePath()));
@@ -77,6 +78,9 @@ public class BattleWindowSetupHelper {
                     }
                     label.setText(entry.itemName() + " x" + entry.quantity());
                     button.setDisable(!entry.usable());
+                    Tooltip tooltip = new Tooltip(entry.itemDescription());
+                    tooltip.setShowDelay(javafx.util.Duration.millis(100));
+                    setTooltip(tooltip);
                     setGraphic(hbox);
                 }
             }
@@ -154,13 +158,14 @@ public class BattleWindowSetupHelper {
                                     "-fx-padding: 6;" +
                                     "-fx-background-radius: 6;"
                     );
-
                     if (entry.effectiveness() != null) {
-                        Tooltip tooltip = new Tooltip(entry.effectiveness());
+                        Tooltip tooltip = new Tooltip(entry.effectiveness() + "\n" + entry.abilityDescription());
                         tooltip.setShowDelay(javafx.util.Duration.millis(100));
                         setTooltip(tooltip);
                     } else {
-                        setTooltip(null);
+                        Tooltip tooltip = new Tooltip(entry.abilityDescription());
+                        tooltip.setShowDelay(javafx.util.Duration.millis(100));
+                        setTooltip(tooltip);
                     }
 
                     setGraphic(hbox);

@@ -1,6 +1,8 @@
 
 package ulb.controller.windows;
 
+import java.io.IOException;
+
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -21,7 +23,7 @@ abstract class WindowController<T> {
     /**
      * @throws Exception if something wrong goes with loading the fxml file
      */
-    protected void init() throws Exception{
+    protected void init() throws IOException{
         loader = new FXMLLoader(getClass().getResource(this.windowPath));
         loader.load();
         view = loader.getController();

@@ -13,6 +13,7 @@ import ulb.utils.Scaling;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.model.bugemon.BugemonSpecies;
@@ -33,7 +34,7 @@ public class CreateTeamWindow extends Window {
 	private final int MAX_BUGEMONS = 6;
 
 	private final List<String> selectedBugemonIds = new ArrayList<>();
-	private List<CreateTeamBugemonDTO> availableBugemons = List.of();
+	private List<BugemonSpeciesDTO> availableBugemons = List.of();
 	private ViewListener viewListener;
 
 	/**
@@ -53,7 +54,7 @@ public class CreateTeamWindow extends Window {
 	 *
 	 * @param availableBugemons the Bugémons that can be selected
 	 */
-	public void displayAvailableBugemons(List<CreateTeamBugemonDTO> availableBugemons) {
+	public void displayAvailableBugemons(List<BugemonSpeciesDTO> availableBugemons) {
 		this.availableBugemons = List.copyOf(availableBugemons);
 		populateAvailableBugemons();
 	}
@@ -109,11 +110,11 @@ public class CreateTeamWindow extends Window {
 		int col = 0;
 		int row = 0;
 
-		for (String bugemonName : selectedBugemons) {
+		for (String bugemonId : selectedBugemonIds) {
 			VBox cell = new VBox();
 			cell.getStyleClass().add("selectedBugemonsGrid");
 
-			Label name = new Label(bugemonName);
+			Label name = new Label(bugemonId);
 			cell.getChildren().add(name);
 
 			selectedBugemonsGrid.add(cell, col, row);
@@ -128,7 +129,7 @@ public class CreateTeamWindow extends Window {
 	}
 
 	private String getBugemonName(String bugemonId) {
-		for (CreateTeamBugemonDTO bugemon : availableBugemons) {
+		for (BugemonSpeciesDTO bugemon : availableBugemons) {
 			if (bugemon.getId().equals(bugemonId)) {
 				return bugemon.getName();
 			}
@@ -154,7 +155,7 @@ public class CreateTeamWindow extends Window {
 		for (Node node : availableBugemonsGrid.getChildren()) {
 			VBox vbox = (VBox) node;
 			String bugemonName = ((Label)(vbox.getChildren().get(0))).getText();
-			if (!selectedBugemons.contains(bugemonName)) {  // contains name of the bugemon
+			if (!selectedBugemonIds.contains(bugemonName)) {  // contains name of the bugemon
 				vbox.setDisable(true);
 			}
 		}
@@ -176,8 +177,8 @@ public class CreateTeamWindow extends Window {
 	 * @param bugemonId the id of the Bugémon that was selected
 	 */
 	private void onSelectBugemon(String bugemonName) {
-		if (!selectedBugemons.contains(bugemonName) && selectedBugemons.size() < MAX_BUGEMONS) {
-			selectedBugemons.add(bugemonName);
+		if (!selectedBugemonIds.contains(bugemonName) && selectedBugemonIds.size() < MAX_BUGEMONS) {
+			selectedBugemonIds.add(bugemonName);
 			populateSelectedBugemons();
 		}
 	}
@@ -188,7 +189,7 @@ public class CreateTeamWindow extends Window {
 	 * @param bugemonId the id of the Bugémon that was deselected
 	 */
 	private void onDeselectBugemon(String bugemonName) {
-		selectedBugemons.remove(bugemonName);
+		selectedBugemonIds.remove(bugemonName);
 		populateSelectedBugemons();
 	}
 

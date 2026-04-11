@@ -670,15 +670,15 @@ AttackReplacementController.Listener {
 		return DTOSpeciesList;
 	}
 
-	@Override
-	public void onSolo() {
-		teamController = new TeamController(stage, this, player);
-		try {
-			teamController.show();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+	// @Override
+	// public void onSolo() {
+	// 	teamController = new TeamController(stage, this, player);
+	// 	try {
+	// 		teamController.show();
+	// 	} catch (Exception e) {
+	// 		e.printStackTrace();
+	// 	}
+	// }
 
 	@Override
 	public void onAutoBattle() {
@@ -728,6 +728,14 @@ AttackReplacementController.Listener {
 	private int getCurrentRoomIndex() {
 		return towerModeTowerManager != null ? towerModeTowerManager.getCurrentRoomIndex() : 0;
 	}
+
+	public List<BugemonDTO> getActiveBugemons(){return null;}
+	public Map<AbilityDTO, String> getAbilityEffectiveness(List<AbilityDTO> ability, BugemonDTO bugemon){return null;}
+	public List<Integer> getHpAfterFirstAction(){return null;}
+	public BattleState getState(){return null;}
+	public List<String> getLogs(){return null;}
+	public Map<ItemDTO, Boolean> checkItems(List<ItemDTO> items){return null;}
+	public boolean isGameFinished(){return false;}
 
 	@Override
 	public BattleState onAutoTurn() {
@@ -943,7 +951,7 @@ AttackReplacementController.Listener {
 	@Override
 	public void onRegister() {
 		if (modeController == null) {
-			modeController = new ModeController(stage, this, player);
+			modeController = new ModeController(stage);
 		}
 		modeController.show();
 	}

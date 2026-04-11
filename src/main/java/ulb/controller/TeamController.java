@@ -40,7 +40,7 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 		loader.load();
 		view = loader.getController();
 		view.setViewListener(this);
-		view.displayAvailableBugemons(getAvailableBugemons());
+		view.displayAvailableBugemons(listener.getAllSpecies());
 
 		Parent root = loader.getRoot();
 		if (stage.getScene() == null) {

@@ -22,6 +22,9 @@ public class ModeWindow {
 	}
 
 	@FXML
+	private void goMultiplayer() {	viewListener.onMultiplayer(); }
+
+	@FXML
 	private void quit() {
 		viewListener.onQuit();
 	}
@@ -32,6 +35,7 @@ public class ModeWindow {
 
 	public interface ViewListener {
 		void onSolo();
+		void onMultiplayer();
 		void onQuit();
 	}
 }

@@ -3,6 +3,7 @@ package ulb.view.windows;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -71,6 +72,10 @@ public class AttackReplacementWindow extends Window {
 
 			row.getChildren().addAll(abilityLabel, replaceButton);
 			abilitiesList.getChildren().add(row);
+			// adds a horizontal line between each ability
+			if (i < abilitySet.size() - 1) {
+				abilitiesList.getChildren().add(new Separator());
+			}
 		}
 	}
 

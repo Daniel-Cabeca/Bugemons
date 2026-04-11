@@ -21,6 +21,12 @@ public class BattleEndWindow extends Window {
 	@FXML
 	private VBox content;
 
+	private ViewListener listener;
+
+	public void setListener(ViewListener listener) {
+		this.listener = listener;
+	}
+
 	@FXML
 	public void initialize() {
 		Scaling.applyScaling(content);
@@ -47,6 +53,7 @@ public class BattleEndWindow extends Window {
 		} else {
 			titleLabel.setText("Défaite");
 			messageLabel.setText("Tous tes Bugemons sont KO. Tu as perdu !");
+			gainXPLabel.setText("");
 		}
 	}
 
@@ -54,6 +61,14 @@ public class BattleEndWindow extends Window {
 	 * Returns to the main menu
 	 */
 	public void handleReturn() {
-		switchWindow(WindowPath.MODE);
+		if (listener != null) {
+			listener.onHandleReturn();
+		} else {
+			switchWindow(WindowPath.MODE);
+		}
+	}
+
+	public interface ViewListener {
+		void onHandleReturn();
 	}
 }

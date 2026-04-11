@@ -36,6 +36,8 @@ import ulb.controller.action.UseItem;
 import ulb.controller.towerManager.FloorManager;
 import ulb.controller.towerManager.RoomManager;
 import ulb.controller.towerManager.TowerManager;
+import ulb.controller.windows.BattleEndController;
+import ulb.controller.windows.ModeController;
 import ulb.model.ability.Ability;
 import ulb.model.battle.BattleState;
 import ulb.model.Player;
@@ -70,7 +72,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class GameController extends Application implements TeamController.Listener, ModeController.Listener,
+public class GameController extends Application implements TeamController.Listener,
 BattleModeController.Listener, NextRoomController.Listener, ChooseBugemonController.Listener,
 BattleWindowController.Listener, RegisterController.Listener , LevelUpController.Listener, FloorRewardController.Listener,
 AttackReplacementController.Listener {
@@ -102,6 +104,7 @@ AttackReplacementController.Listener {
 	private RegisterController registerController;
 	private LevelUpController levelUpController;
 	private AttackReplacementController attackReplacementController;
+	private BattleEndController battleEndController;
 	private FloorRewardController.RewardChoice pendingFloorRewardChoice;
 
 	public static void main(String[] args) {
@@ -332,7 +335,10 @@ AttackReplacementController.Listener {
 		// CLIENT + SERVER
 		pendingVictory = victory;
 		pendingTotalXP = totalXP;
-		switchWindow(WindowPath.BATTLE_END);
+		if (battleEndController == null) {
+			battleEndController = new BattleEndController(stage, modeController);
+		}
+		battleEndController.show(victory, totalXP);
 	}
 
 	// Handles fleeing from a tower battle: restores HP and resets the room
@@ -666,29 +672,13 @@ AttackReplacementController.Listener {
 
 	@Override
 	public void onSolo() {
-		// CLIENT
-		//teamController = new TeamController(stage, this, player);
+		teamController = new TeamController(stage, this, player);
 		try {
 			teamController.show();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-
-	@Override
-	public List<BugemonDTO> getActiveBugemons(){return null;}
-	@Override
-	public Map<AbilityDTO, String> getAbilityEffectiveness(List<AbilityDTO> abilities, BugemonDTO bugemonTarget){return null;}
-	@Override
-	public List<Integer> getHpAfterFirstAction(){return null;}
-	@Override
-	public BattleState getState(){return null;}
-	@Override
-	public List<String> getLogs(){return null;}
-	@Override
-	public Map<ItemDTO, Boolean> checkItems(List<ItemDTO> items){return null;}
-	@Override
-	public boolean isGameFinished(){return false;}
 
 	@Override
 	public void onAutoBattle() {
@@ -874,7 +864,8 @@ AttackReplacementController.Listener {
 	}
 
 	@Override
-	public void onChooseBugemonReward(){
+	public void onChooseBugemonReward(FloorRewardController.RewardChoice rewardChoice) {
+		pendingFloorRewardChoice = rewardChoice;
 		if (chooseBugemonController == null) {
 			chooseBugemonController = new ChooseBugemonController(stage, floorRewardController, player);
 		}
@@ -952,12 +943,8 @@ AttackReplacementController.Listener {
 	@Override
 	public void onRegister() {
 		if (modeController == null) {
-			modeController = new ModeController(stage, this);
+			modeController = new ModeController(stage, this, player);
 		}
-		try {
-			modeController.show();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		modeController.show();
 	}
 }

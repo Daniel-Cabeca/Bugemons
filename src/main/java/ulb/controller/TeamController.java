@@ -9,7 +9,10 @@ import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.model.Player;
 import ulb.model.bugemon.Bugemon;
+import ulb.model.bugemon.BugemonSpecies;
 import ulb.model.team.Team;
+import ulb.service.BugemonService;
+import ulb.service.ServiceLoader;
 import ulb.view.WindowPath;
 import ulb.view.windows.CreateTeamWindow;
 
@@ -20,13 +23,16 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 	private PlayerDTO player;
 
 	private final Listener listener;
+	private final Stage stage;
+	private final BugemonService bugemonService;
+
 	private CreateTeamWindow view;
-	private Stage stage;
 
 	public TeamController(Stage stage, Listener listener, PlayerDTO player) {
 		this.stage = stage;
 		this.listener = listener;
 		this.player = player;
+		this.bugemonService = ServiceLoader.getBugemonService();
 	}
 
 	public void show() throws Exception {
@@ -34,6 +40,7 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 		loader.load();
 		view = loader.getController();
 		view.setViewListener(this);
+		view.displayAvailableBugemons(getAvailableBugemons());
 
 		Parent root = loader.getRoot();
 		if (stage.getScene() == null) {
@@ -59,8 +66,8 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 	}
 
 	@Override
-	public void onConfirmTeam(List<String> selectedBugemons) {
-		setTeam(selectedBugemons);
+	public void onConfirmTeam(List<String> selectedBugemonIds) {
+		setTeam(selectedBugemonIds);
 		listener.onTeamConfirmed();
 	}
 

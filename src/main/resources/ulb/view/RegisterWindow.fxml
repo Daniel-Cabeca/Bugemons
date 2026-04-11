@@ -13,7 +13,7 @@
            fx:controller="ulb.view.windows.RegisterWindow">
 
     <VBox fx:id="content" alignment="CENTER" maxWidth="400" spacing="16">
-        <Label text="Bugémon" style="-fx-text-fill: #e6ffff; -fx-font-size: 36; -fx-font-weight: bold;" />
+        <Label text="BUGÉMON" style="-fx-text-fill: #e6ffff; -fx-font-size: 50; -fx-font-weight: bold;" />
 
         <TextField fx:id="usernameField" promptText="Nom d'utilisateur" maxWidth="300" />
         <PasswordField fx:id="passwordField" promptText="Mot de passe" maxWidth="300" />

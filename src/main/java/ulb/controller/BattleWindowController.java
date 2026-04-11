@@ -62,6 +62,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         loader.load();
         view = loader.getController();
         view.setViewListener(this);
+        view.initializeContent();
 
         view.initializeView(gameMode == GameMode.AUTO);
         refreshView();

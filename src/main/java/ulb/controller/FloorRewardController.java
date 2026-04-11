@@ -65,13 +65,13 @@ public class FloorRewardController implements FloorRewardWindow.ViewListener, Ch
 	@Override
 	public void onChooseAttackReward() {
 		pendingChoice = RewardChoice.ATTACK;
-		listener.onChooseBugemonReward();
+		listener.onChooseBugemonReward(pendingChoice);
 	}
 
 	@Override
 	public void onStatReward() {
 		pendingChoice = RewardChoice.STAT;
-		listener.onChooseBugemonReward();
+		listener.onChooseBugemonReward(pendingChoice);
 	}
 
 	@Override
@@ -84,13 +84,10 @@ public class FloorRewardController implements FloorRewardWindow.ViewListener, Ch
 		listener.onReturnFloorRewardWindow();
 	}
 
-	public void setPendingChoice(RewardChoice pendingChoice) {
-		this.pendingChoice = pendingChoice;
-	}
 
 	public interface Listener {
 		void onObjectReward(Item rewardItem);
-		void onChooseBugemonReward();
+		void onChooseBugemonReward(RewardChoice rewardChoice);
 		void onBugemonChosen(Bugemon bugemon);
 		void onReturnFloorRewardWindow();
 	}

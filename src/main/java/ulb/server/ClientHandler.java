@@ -435,6 +435,8 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		int userId = accountService.getUserId(message.getUsername());
 		List<String> friends = accountService.getFriendsList(userId);
 		sendMessage(new FriendsListMessage(friends));
+	}
+
 	public void handle(GetRandomAbilityMessage message){
 		Bugemon bugemon = BugemonMapper.toEntity(message.getBugemon());
 

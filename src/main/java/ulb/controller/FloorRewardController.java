@@ -1,16 +1,13 @@
 package ulb.controller;
 
+import java.util.List;
+
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import ulb.model.bugemon.Bugemon;
-import ulb.communication.Message;
-import ulb.communication.old_types.GetInfoMessage;
-import ulb.communication.old_types.InfoType;
-import ulb.communication.old_types.RewardPlaceMessage;
-import ulb.model.item.Item;
-import ulb.service.ServiceLoader;
+import ulb.DTO.bugemon.BugemonDTO;
+import ulb.DTO.item.ItemDTO;
 import ulb.view.WindowPath;
 import ulb.view.windows.FloorRewardWindow;
 
@@ -22,15 +19,13 @@ public class FloorRewardController implements FloorRewardWindow.ViewListener, Ch
 	}
 
     private final Listener listener;
-	private final GameController gameController;
 	private final Stage stage;
 	private FloorRewardWindow view;
 	private RewardChoice pendingChoice;
-    private Item rewardItem;
+    private ItemDTO rewardItem;
 
-	public FloorRewardController(Stage stage, GameController gameController, Listener listener) {
+	public FloorRewardController(Stage stage, Listener listener) {
 		this.stage = stage;
-		this.gameController = gameController;
 		this.listener = listener;
 	}
 
@@ -40,11 +35,11 @@ public class FloorRewardController implements FloorRewardWindow.ViewListener, Ch
 		view = loader.getController();
 		view.setViewListener(this);
 
-        rewardItem = ServiceLoader.getItemService().getRandomItem();
-
-		Message m = gameController.handleMessage(new GetInfoMessage(InfoType.REWARD_PLACE));
-		if (m instanceof RewardPlaceMessage placeMessage) {
-			view.initializeLabels(placeMessage.getFloorNumber(), placeMessage.getRoomNumber(), rewardItem.getName());
+        rewardItem = listener.getRandomItem();
+		
+		List<Integer> towerInfo = listener.getTowerInfo();
+		if (towerInfo != null){
+			view.initializeLabels(towerInfo.get(0), towerInfo.get(1), rewardItem.getName());
 		}
 
 
@@ -75,7 +70,7 @@ public class FloorRewardController implements FloorRewardWindow.ViewListener, Ch
 	}
 
 	@Override
-	public void onBugemonChosen(Bugemon bugemon) {
+	public void onBugemonChosen(BugemonDTO bugemon) {
 		listener.onBugemonChosen(bugemon);
 	}
 
@@ -86,9 +81,11 @@ public class FloorRewardController implements FloorRewardWindow.ViewListener, Ch
 
 
 	public interface Listener {
-		void onObjectReward(Item rewardItem);
+		void onObjectReward(ItemDTO rewardItem);
 		void onChooseBugemonReward(RewardChoice rewardChoice);
-		void onBugemonChosen(Bugemon bugemon);
+		void onBugemonChosen(BugemonDTO bugemon);
 		void onReturnFloorRewardWindow();
+		ItemDTO getRandomItem();
+		List<Integer> getTowerInfo();
 	}
 }

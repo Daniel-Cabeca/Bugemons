@@ -1,5 +1,7 @@
 package ulb.view.windows;
 
+import java.util.List;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.CheckBox;
@@ -8,14 +10,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import ulb.model.bugemon.Bugemon;
-import ulb.model.team.Team;
+import ulb.DTO.bugemon.BugemonDTO;
 
 public class ChooseBugemonWindow extends Window {
 
 	private ViewListener viewListener;
     private CheckBox selectedCheckBox;
-    private Bugemon selectedBugemon;
+    private BugemonDTO selectedBugemon;
 
     @FXML
     private VBox bugemonList;
@@ -29,12 +30,12 @@ public class ChooseBugemonWindow extends Window {
      *
      * @param team the team to display
      */
-    public void populatePlayerBugemons(Team team) {
+    public void populatePlayerBugemons(List<BugemonDTO> team) {
         bugemonList.getChildren().clear();
 		selectedCheckBox = null;
 		selectedBugemon = null;
 
-        for (Bugemon bugemon : team.getMembers()) {
+        for (BugemonDTO bugemon : team) {
             HBox cell = new HBox(10);
 
             Image image = new Image(bugemon.getSpritePath());
@@ -88,7 +89,7 @@ public class ChooseBugemonWindow extends Window {
 	}
 
 	public interface ViewListener {
-        void onBugemonChosen(Bugemon bugemon);
+        void onBugemonChosen(BugemonDTO bugemon);
 		void onReturnFloorRewardWindow();
 	}
 

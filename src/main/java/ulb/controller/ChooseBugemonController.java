@@ -4,8 +4,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import ulb.model.Player;
-import ulb.model.bugemon.Bugemon;
+import ulb.DTO.bugemon.BugemonDTO;
+import ulb.DTO.player.PlayerDTO;
 import ulb.view.WindowPath;
 import ulb.view.windows.ChooseBugemonWindow;
 
@@ -13,11 +13,11 @@ public class ChooseBugemonController implements ChooseBugemonWindow.ViewListener
 
     private final Listener listener;
     private final Stage stage;
-    private final Player player;
+    private final PlayerDTO player;
 
     private ChooseBugemonWindow view;
 
-    public ChooseBugemonController(Stage stage, Listener listener, Player player) {
+    public ChooseBugemonController(Stage stage, Listener listener, PlayerDTO player) {
         this.stage = stage;
         this.listener = listener;
         this.player = player;
@@ -40,7 +40,7 @@ public class ChooseBugemonController implements ChooseBugemonWindow.ViewListener
     }
 
     @Override
-    public void onBugemonChosen(Bugemon bugemon) {
+    public void onBugemonChosen(BugemonDTO bugemon) {
         listener.onBugemonChosen(bugemon);
     }
 
@@ -50,7 +50,7 @@ public class ChooseBugemonController implements ChooseBugemonWindow.ViewListener
     }
 
 	public interface Listener {
-		void onBugemonChosen(Bugemon bugemon);
+		void onBugemonChosen(BugemonDTO bugemon);
 		void onReturnFloorRewardWindow();
     }
 }

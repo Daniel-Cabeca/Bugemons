@@ -1,5 +1,7 @@
 package ulb.view.windows;
 
+import java.util.List;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -8,14 +10,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import ulb.model.ability.Ability;
-import ulb.model.bugemon.Bugemon;
-import ulb.model.ability.AbilitySet;
+import ulb.DTO.ability.AbilityDTO;
+import ulb.DTO.bugemon.BugemonDTO;
 
 public class AttackReplacementWindow extends Window {
 
 	private ViewListener viewListener;
-	private Bugemon bugemon;
+	private BugemonDTO bugemon;
 
 	@FXML
 	private Label bugemonLabel;
@@ -30,7 +31,7 @@ public class AttackReplacementWindow extends Window {
 		this.viewListener = viewListener;
 	}
 
-	public void initializeReplacement(Bugemon bugemon, Ability newAbility) {
+	public void initializeReplacement(BugemonDTO bugemon, AbilityDTO newAbility) {
 		this.bugemon = bugemon;
 
         bugemonLabel.setText(bugemon.getName() + " apprend une nouvelle attaque");
@@ -39,7 +40,7 @@ public class AttackReplacementWindow extends Window {
         populateAbilities();
     }
 
-	private String createAbilityText(Ability ability) {
+	private String createAbilityText(AbilityDTO ability) {
 		return ability.getName() + "\n" +
 				"Type: " + ability.getType() + "\n" +
 				"Puissance: " + ability.getPower() + "\n" +
@@ -49,9 +50,9 @@ public class AttackReplacementWindow extends Window {
 	private void populateAbilities() {
 		abilitiesList.getChildren().clear();
 
-		AbilitySet abilitySet = bugemon.getAbilities();
+		List<AbilityDTO> abilitySet = bugemon.getAbilities();
 		for (int i = 0; i < abilitySet.size(); i++) {
-			Ability oldAbility = abilitySet.getAbility(i);
+			AbilityDTO oldAbility = abilitySet.get(i);
 			if (oldAbility == null) {
 				continue;
 			}
@@ -87,7 +88,7 @@ public class AttackReplacementWindow extends Window {
 	}
 
 	public interface ViewListener {
-		void onReplaceAbility(Ability oldAbility);
+		void onReplaceAbility(AbilityDTO oldAbility);
 		void onReturnToChooseBugemon();
 	}
 }

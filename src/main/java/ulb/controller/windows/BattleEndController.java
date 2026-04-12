@@ -30,6 +30,6 @@ public class BattleEndController extends WindowController<BattleEndWindow> imple
 
     @Override
     public void onHandleReturn() {
-        clientController.showModeController();
+        //clientController.showModeController();
     }
 }

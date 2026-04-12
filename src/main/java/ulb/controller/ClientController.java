@@ -10,11 +10,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.communication.SocketClient;
 import ulb.communication.old_types.TowerInfoMessage;
 import ulb.communication.types.GameMode;
 import ulb.controller.windows.BattleEndController;
-import ulb.controller.windows.TeamController;
 import ulb.message.ClientToServerMessage;
 import ulb.message.clientToServer.*;
 import ulb.message.serverToClient.*;
@@ -28,7 +28,7 @@ import ulb.repository.LoadException;
 
 
 public class ClientController extends Application implements RegisterController.Listener, ModeController.Listener,
-BattleModeController.Listener, BattleWindowController.Listener, NextRoomController.Listener {
+BattleModeController.Listener, BattleWindowController.Listener, NextRoomController.Listener,TeamController.Listener {
     SocketClient client;
     Stage stage;
 
@@ -102,14 +102,6 @@ BattleModeController.Listener, BattleWindowController.Listener, NextRoomControll
 
 	// Bye Bye
 
-	public PlayerDTO getPlayer(){ return this.player; }
-	public List<BugemonDTO> getPlayerTeam(){ return this.player.getTeam(); }
-	public void setPlayerTeam(List<BugemonDTO> playerTeam){ this.player.setTeam(playerTeam);}
-	public void setPlayer(PlayerDTO player){this.player=player; }
-	public void showModeController(){
-		try {this.modeController.show();}
-	catch (Exception e){}}
-	public void showTeamController(){this.teamController.show();}
 
 	// Register Controller :
 
@@ -158,7 +150,7 @@ BattleModeController.Listener, BattleWindowController.Listener, NextRoomControll
 
 	@Override
 	public void onSolo() {
-		this.teamController = new TeamController(this.stage, this);
+		this.teamController = new TeamController(this.stage, this, this.player);
 		try {
 			this.teamController.show();
 		} catch (Exception e){
@@ -174,6 +166,41 @@ BattleModeController.Listener, BattleWindowController.Listener, NextRoomControll
 	// Team Controller Listener :
 
 
+	@Override
+	public void onReturnToMode() {
+		try {
+			modeController.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public List<BugemonSpeciesDTO> getAllSpecies(){
+		Serializable message = this.getData(new GetAllBugemonSpeciesMessage());
+
+		if (message instanceof BugemonSpeciesMessage speciesMessage){
+			return speciesMessage.getSpecies();
+		}
+		return null;
+	}
+
+	@Override
+	public void onTeamConfirmed() {
+		List<BugemonDTO> team = player.getTeam();
+
+		if (!this.postData(new SetUpTeamMessage(team))){
+			return;
+		}
+
+		this.battleModeController = new BattleModeController(this.stage, this, player.getTeam());
+		try {
+			battleModeController.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 
 	// Battle Mode Controller Listener : 
 
@@ -183,6 +210,14 @@ BattleModeController.Listener, BattleWindowController.Listener, NextRoomControll
 	// 	}
 	// 	return normalModeBattleController;
 	// }
+
+	private void switchToModeWindow(){
+		try {
+			this.modeController.show();
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+	}
 
 	private void switchToNextRoomWindow(boolean hasFled){
 		this.nextRoomController = new NextRoomController(stage, this);
@@ -258,7 +293,7 @@ BattleModeController.Listener, BattleWindowController.Listener, NextRoomControll
 				break;
 			
 			case MAIN_MENU:
-				showModeController();
+				switchToModeWindow();
 				break;
 
 			default:
@@ -462,7 +497,11 @@ BattleModeController.Listener, BattleWindowController.Listener, NextRoomControll
 
 	@Override
 	public void onReturn() {
-		showModeController();
+		try {
+			this.modeController.show();
+		}catch (Exception e){
+			e.printStackTrace();
+		}
 	}
 
 }

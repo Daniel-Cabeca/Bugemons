@@ -22,7 +22,6 @@ import ulb.controller.action.Swap;
 import ulb.controller.action.UseAbility;
 import ulb.controller.action.UseItem;
 import ulb.controller.windows.BattleEndController;
-import ulb.controller.windows.TeamController;
 import ulb.model.ability.Ability;
 import ulb.model.battle.BattleState;
 import ulb.model.Player;

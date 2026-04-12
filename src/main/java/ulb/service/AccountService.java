@@ -33,4 +33,21 @@ public class AccountService {
 	public void addFriend(int userId, int friendId) throws LoadException {
 		repository.addFriend(userId, friendId);
 	}
+
+	public void sendFriendRequest(int requesterId, int addresseeId) throws LoadException {
+		repository.sendFriendRequest(requesterId, addresseeId);
+	}
+
+	public List<AccountRepository.PendingFriendRequest> getPendingFriendRequestsForAddressee(int addresseeUserId)
+			throws LoadException {
+		return repository.getPendingFriendRequestsForAddressee(addresseeUserId);
+	}
+
+	public void acceptFriendRequest(int addresseeId, int requesterId) throws LoadException {
+		repository.acceptFriendRequest(addresseeId, requesterId);
+	}
+
+	public void declineFriendRequest(int addresseeId, int requesterId) throws LoadException {
+		repository.declineFriendRequest(addresseeId, requesterId);
+	}
 }

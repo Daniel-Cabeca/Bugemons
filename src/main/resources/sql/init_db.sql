@@ -115,3 +115,12 @@ CREATE TABLE IF NOT EXISTS friends (
                                        FOREIGN KEY (friend_id) REFERENCES users(id) ON DELETE CASCADE,
                                        CHECK (user_id <> friend_id) -- Empêche d'être ami avec soi-même
 );
+
+CREATE TABLE IF NOT EXISTS friend_requests (
+    requester_id INTEGER NOT NULL,
+    addressee_id INTEGER NOT NULL,
+    PRIMARY KEY (requester_id, addressee_id),
+    FOREIGN KEY (requester_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (addressee_id) REFERENCES users(id) ON DELETE CASCADE,
+    CHECK (requester_id <> addressee_id)
+);

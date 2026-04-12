@@ -5,6 +5,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -35,7 +37,8 @@ import ulb.model.tower.Room;
 import ulb.model.tower.RoomType;
 import ulb.model.reward.Reward;
 import ulb.model.reward.RewardType;
-import ulb.repository.database.AccountDatabaseRepository;
+import ulb.repository.AccountRepository;
+import ulb.repository.LoadException;
 import ulb.service.ServiceLoader;
 import ulb.view.WindowPath;
 import ulb.view.windows.LevelUpWindow;
@@ -47,6 +50,7 @@ import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
+import java.util.Optional;
 
 
 public class GameController extends Application implements TeamController.Listener,
@@ -859,9 +863,36 @@ AttackReplacementController.Listener , FriendsController.Listener, MultiplayerWi
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		showPendingFriendRequestDialogs(username);
 	}
 
-
+	private void showPendingFriendRequestDialogs(String username) {
+		try {
+			int userId = ServiceLoader.getAccountService().getUserId(username);
+			if (userId <= 0) {
+				return;
+			}
+			List<AccountRepository.PendingFriendRequest> pending =
+					ServiceLoader.getAccountService().getPendingFriendRequestsForAddressee(userId);
+			for (AccountRepository.PendingFriendRequest req : pending) {
+				Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+				alert.setTitle("Demande d'ami");
+				alert.setHeaderText(null);
+				alert.setContentText(req.requesterUsername() + " souhaite vous ajouter en ami.");
+				ButtonType accept = new ButtonType("Accepter");
+				ButtonType decline = new ButtonType("Refuser");
+				alert.getButtonTypes().setAll(accept, decline);
+				Optional<ButtonType> result = alert.showAndWait();
+				if (result.isPresent() && result.get() == accept) {
+					ServiceLoader.getAccountService().acceptFriendRequest(userId, req.requesterId());
+				} else {
+					ServiceLoader.getAccountService().declineFriendRequest(userId, req.requesterId());
+				}
+			}
+		} catch (LoadException e) {
+			e.printStackTrace();
+		}
+	}
 
 	@Override
 	public void registerMultiplayerWindow(MultiplayerWindowController controller) {
@@ -904,10 +935,13 @@ AttackReplacementController.Listener , FriendsController.Listener, MultiplayerWi
 	@Override
 
 	public void addFriend(int id){
-		String username = player.getName();
-		int user_id = ServiceLoader.getAccountService().getUserId(username);
-		ServiceLoader.getAccountService().addFriend(user_id,id);
-
+		try {
+			String username = player.getName();
+			int user_id = ServiceLoader.getAccountService().getUserId(username);
+			ServiceLoader.getAccountService().sendFriendRequest(user_id, id);
+		} catch (LoadException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override

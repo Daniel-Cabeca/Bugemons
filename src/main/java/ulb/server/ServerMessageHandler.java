@@ -29,9 +29,14 @@ public interface ServerMessageHandler {
 	public void handle(SwapBugemonMessage message);
 	public void handle(UseAbilityMessage message);
 	public void handle(UseItemMessage message);
+	public void handle(ChooseAbilityRewardMessage message);
+	public void handle(ChooseItemRewardMessage message);
+	public void handle(ChooseStatRewardMessage message);
 	
 	// SPECIAL INFO
 	public void handle(GetAllBugemonSpeciesMessage message);
+	public void handle(GetRandomAbilityMessage message);
+	public void handle(GetRandomItemMessage message);
 
 	// FRIENDS
 	public void handle(SendFriendRequestMessage message);

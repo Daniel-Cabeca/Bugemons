@@ -16,7 +16,6 @@ import java.util.Map;
 
 import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.communication.SocketClient;
-import ulb.communication.old_types.TowerInfoMessage;
 import ulb.communication.types.GameMode;
 import ulb.message.ClientToServerMessage;
 import ulb.message.clientToServer.*;
@@ -33,7 +32,8 @@ import ulb.view.windows.SocialPanel;
 
 
 public class ClientController extends Application implements RegisterController.Listener, ModeController.Listener,
-BattleModeController.Listener,BattleEndController.Listener, BattleWindowController.Listener, NextRoomController.Listener,TeamController.Listener {
+BattleModeController.Listener,BattleEndController.Listener, BattleWindowController.Listener, NextRoomController.Listener, 
+FloorRewardController.Listener, AttackReplacementController.Listener,TeamController.Listener {
     SocketClient client;
     Stage stage;
 
@@ -49,6 +49,11 @@ BattleModeController.Listener,BattleEndController.Listener, BattleWindowControll
 
 	BattleEndController battleEndController;
 	NextRoomController nextRoomController;
+	FloorRewardController floorRewardController;
+	ChooseBugemonController chooseBugemonController;
+	AttackReplacementController attackReplacementController;
+
+	FloorRewardController.RewardChoice pendingFloorRewardChoice;
 
     @Override
     public void init(){
@@ -130,9 +135,6 @@ BattleModeController.Listener,BattleEndController.Listener, BattleWindowControll
 	public boolean signUp(PlayerDTO player){
 		return postData(new RegisterMessage(player, false));
 	}
-
-	// Bye Bye
-
 
 	// Register Controller :
 
@@ -292,9 +294,10 @@ BattleModeController.Listener,BattleEndController.Listener, BattleWindowControll
 	private void switchToBattleWindow() {
 		int towerFloorNumber = 0, towerRoomNumber = 0;
 		if (this.gameMode == GameMode.TOWER){
-			if (this.getData(new GetTowerInfoMessage()) instanceof TowerInfoMessage towerInfo){
-				towerFloorNumber = towerInfo.getFloorNumber();
-				towerRoomNumber = towerInfo.getRoomNumber();
+			List<Integer> towerInfo;
+			if ((towerInfo = this.getTowerInfo()) != null){
+				towerFloorNumber = towerInfo.get(0);
+				towerRoomNumber = towerInfo.get(1);
 			}
 		}
 		battleWindowController = new BattleWindowController(
@@ -334,7 +337,12 @@ BattleModeController.Listener,BattleEndController.Listener, BattleWindowControll
 	}
 
 	private void switchToTowerRewardWindow(){
-		System.out.println("SWITCHING TO REWARD WINDOW");
+		this.floorRewardController = new FloorRewardController(stage, this);
+		try{
+			floorRewardController.show();
+		} catch (Exception e){
+			System.err.println(e);
+		}
 	}
 
 
@@ -565,6 +573,120 @@ BattleModeController.Listener,BattleEndController.Listener, BattleWindowControll
 		try {
 			this.modeController.show();
 		}catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	// Floor Reward Listener
+
+	@Override
+	public void onObjectReward(ItemDTO rewardItem) {
+		if (postData(new ChooseItemRewardMessage(rewardItem))){
+			nextRoom(); // MAYBE
+		}
+		// player.getInventory().addItem(rewardItem, 1);
+		// switchToNextRoomWindow();
+	}
+
+	@Override
+	public void onChooseBugemonReward(FloorRewardController.RewardChoice rewardChoice) {
+		pendingFloorRewardChoice = rewardChoice;
+		if (chooseBugemonController == null) {
+			chooseBugemonController = new ChooseBugemonController(this.stage, this.floorRewardController, this.player);
+		}
+		try {
+			chooseBugemonController.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void onBugemonChosen(BugemonDTO bugemon) {
+		if (pendingFloorRewardChoice == FloorRewardController.RewardChoice.STAT) {
+			if (postData(new ChooseStatRewardMessage(bugemon))){
+				nextRoom();
+			}
+			// Reward reward = new Reward(bugemon);
+			// reward.configureReward(RewardType.COMBINATION);
+			// bugemon.changeBaseStats(reward.getStats());
+			// bugemon.changeFightStats(reward.getStats());
+			// switchToNextRoomWindow();
+			return;
+		}
+		AbilityDTO newAbility = null;
+		Serializable message = getData(new GetRandomAbilityMessage(bugemon));
+		if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
+			System.out.println(errorMessage.getMessage());
+			return; 
+		}else if (message instanceof RandomAbilityMessage randomAbility){
+			newAbility = randomAbility.getAbility();
+		}
+
+		// Ability newAbility = ServiceLoader.getAbilityService().getRandomAbility(bugemon.getType(), bugemon.getAbilities());
+		if (newAbility == null) {
+			nextRoom();
+			//switchToNextRoomWindow();
+			return;
+		}
+
+		if (attackReplacementController == null) {
+			attackReplacementController = new AttackReplacementController(stage, this);
+		}
+		try {
+			attackReplacementController.show(bugemon, newAbility);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void onReturnFloorRewardWindow() {
+		if (floorRewardController == null) {
+			floorRewardController = new FloorRewardController(stage, this);
+		}
+		try {
+			floorRewardController.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public ItemDTO getRandomItem() {
+		if (getData(new GetRandomItemMessage()) instanceof RandomItemMessage randomItem){
+			return randomItem.getItem();
+		}
+		return null;
+	}
+
+	@Override
+	public List<Integer> getTowerInfo() {
+		if (getData(new GetTowerInfoMessage()) instanceof TowerInfoMessage towerInfo){
+			return List.of(towerInfo.getFloorNumber(), towerInfo.getRoomNumber());
+		}
+		return null;
+	}
+
+	// Attack Replacement Controller Listener
+
+	@Override
+	public void onAttackReplaced(BugemonDTO bugemon, AbilityDTO newAbility, AbilityDTO oldAbility) {
+		if (postData(new ChooseAbilityRewardMessage(bugemon, newAbility, oldAbility))){
+			nextRoom();
+		}
+		// bugemon.swapAbility(newAbility, oldAbility);
+		// switchToNextRoomWindow();
+	}
+
+    @Override
+	public void onReturnToChooseBugemon() {
+		if (chooseBugemonController == null) {
+			return;
+		}
+		try {
+			chooseBugemonController.show();
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

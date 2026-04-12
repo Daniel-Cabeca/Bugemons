@@ -1,7 +1,6 @@
 package ulb.server;
 
 import ulb.communication.Messenger.SocketMessenger;
-import ulb.communication.old_types.TowerInfoMessage;
 import ulb.controller.action.Action;
 import ulb.controller.action.Run;
 import ulb.controller.action.Swap;
@@ -12,6 +11,7 @@ import ulb.mapper.bugemon.BugemonMapper;
 import ulb.mapper.bugemon.BugemonSpeciesMapper;
 import ulb.mapper.item.ItemMapper;
 import ulb.mapper.player.PlayerMapper;
+import ulb.mapper.stats.StatsMapper;
 import ulb.message.ClientToServerMessage;
 import ulb.message.clientToServer.*;
 import ulb.message.serverToClient.*;
@@ -22,7 +22,10 @@ import ulb.model.battle.Battle;
 import ulb.model.battle.BattleState;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.BugemonSpecies;
+import ulb.model.bugemon.Stats;
 import ulb.model.item.Item;
+import ulb.model.reward.Reward;
+import ulb.model.reward.RewardType;
 import ulb.model.team.OpponentTeamGenerator;
 import ulb.model.team.Team;
 import ulb.service.AccountService;
@@ -142,15 +145,15 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
 	public void handle(SetUpTeamMessage message){
 		Team team = new Team();
-            
-            for (BugemonDTO bugemonDTO : message.getTeam()){
-                if (!team.add(BugemonMapper.toEntity(bugemonDTO))){
-                    sendErrorMessage("Invalid Team");
-                }
-            }
+		
+		for (BugemonDTO bugemonDTO : message.getTeam()){
+			if (!team.add(BugemonMapper.toEntity(bugemonDTO))){
+				sendErrorMessage("Invalid Team");
+			}
+		}
 
-            this.player.setTeam(team);
-            sendSuccessMessage();
+		this.player.setTeam(team);
+		sendSuccessMessage();
 	}
 
 	public void handle(SetUpNormalModeMessage message){
@@ -338,8 +341,50 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
 		sendSuccessMessage();
 	}
+
+	public void handle(ChooseAbilityRewardMessage message){
+		BugemonDTO bugemonDTO = message.getBugemon();
+		Bugemon chosenBugemon = player.getTeam().getBugemonById(bugemonDTO.getId());
+
+		if (chosenBugemon == null){
+			sendErrorMessage("Bugemon not present in the Team");
+			return;
+		}
+
+		Ability oldAbility = AbilityMapper.toEntity(message.getOldAbility());
+		Ability newAbility = AbilityMapper.toEntity(message.getNewAbility());
+
+		chosenBugemon.swapAbility(newAbility, oldAbility);
+		sendSuccessMessage();
+	}
+
+	public void handle(ChooseItemRewardMessage message){
+		Item item = ItemMapper.toEntity(message.getItem());
+		player.getInventory().addItem(item, 1);
+
+		sendSuccessMessage();
+	}
+
+	public void handle(ChooseStatRewardMessage message){
+		BugemonDTO bugemonDTO = message.getBugemon();
+		Bugemon chosenBugemon = player.getTeam().getBugemonById(bugemonDTO.getId());
+
+		if (chosenBugemon == null){
+			sendErrorMessage("Bugemon not present in the Team");
+			return;
+		}
+
+		Reward reward = new Reward(chosenBugemon);
+		reward.configureReward(RewardType.COMBINATION);
+
+		chosenBugemon.changeBaseStats(reward.getStats());
+		chosenBugemon.changeFightStats(reward.getStats());
+
+		sendSuccessMessage();
+	}
 	
 	// SPECIAL INFO
+
 	public void handle(GetAllBugemonSpeciesMessage message){
 		BugemonService bugemonService = ServiceLoader.getBugemonService();
 		List<BugemonSpeciesDTO> DTOSpeciesList = new ArrayList<BugemonSpeciesDTO>();
@@ -390,6 +435,18 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		int userId = accountService.getUserId(message.getUsername());
 		List<String> friends = accountService.getFriendsList(userId);
 		sendMessage(new FriendsListMessage(friends));
+	public void handle(GetRandomAbilityMessage message){
+		Bugemon bugemon = BugemonMapper.toEntity(message.getBugemon());
+
+		Ability RandomAbility = ServiceLoader.getAbilityService().getRandomAbility(bugemon.getType(), bugemon.getAbilities());
+
+		sendMessage(new RandomAbilityMessage(AbilityMapper.toDTO(RandomAbility)));
+	}
+
+	public void handle(GetRandomItemMessage message){
+		Item randomItem = ServiceLoader.getItemService().getRandomItem();
+
+		sendMessage(new RandomItemMessage(ItemMapper.toDTO(randomItem)));
 	}
 
     private void handleMessage(){

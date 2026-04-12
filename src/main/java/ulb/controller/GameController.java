@@ -53,9 +53,8 @@ import java.util.Map;
 
 
 public class GameController extends Application implements
-BattleModeController.Listener, NextRoomController.Listener, ChooseBugemonController.Listener,
-BattleWindowController.Listener, LevelUpController.Listener, FloorRewardController.Listener,
-AttackReplacementController.Listener, ModeController.Listener, FriendsController.Listener,
+BattleModeController.Listener, NextRoomController.Listener,
+BattleWindowController.Listener, LevelUpController.Listener, ModeController.Listener, FriendsController.Listener,
 MultiplayerWindowController.Listener {
 
 	private Player player;
@@ -360,9 +359,9 @@ MultiplayerWindowController.Listener {
 					break;
 
 				case REWARD:
-					if (floorRewardController == null) {
-						floorRewardController = new FloorRewardController(stage, this, this);
-					}
+					// if (floorRewardController == null) {
+					// 	floorRewardController = new FloorRewardController(stage, this);
+					// }
 					try {
 						floorRewardController.show();
 					} catch (Exception e) {
@@ -837,11 +836,10 @@ MultiplayerWindowController.Listener {
 	// 	}
 	// }
 
-	@Override
 	public void onReturnFloorRewardWindow() {
-		if (floorRewardController == null) {
-			floorRewardController = new FloorRewardController(stage, this, this);
-		}
+		// if (floorRewardController == null) {
+		// 	floorRewardController = new FloorRewardController(stage, this, this);
+		// }
 		try {
 			floorRewardController.show();
 		} catch (Exception e) {
@@ -849,20 +847,18 @@ MultiplayerWindowController.Listener {
 		}
 	}
 
-	@Override
 	public void onChooseBugemonReward(FloorRewardController.RewardChoice rewardChoice) {
-		pendingFloorRewardChoice = rewardChoice;
-		if (chooseBugemonController == null) {
-			chooseBugemonController = new ChooseBugemonController(stage, floorRewardController, player);
-		}
-		try {
-			chooseBugemonController.show();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		// pendingFloorRewardChoice = rewardChoice;
+		// if (chooseBugemonController == null) {
+		// 	chooseBugemonController = new ChooseBugemonController(stage, floorRewardController, player);
+		// }
+		// try {
+		// 	chooseBugemonController.show();
+		// } catch (Exception e) {
+		// 	e.printStackTrace();
+		// }
 	}
 
-	@Override
 	public void onBugemonChosen(Bugemon bugemon) {
 		if (pendingFloorRewardChoice == FloorRewardController.RewardChoice.STAT) {
 			Reward reward = new Reward(bugemon);
@@ -879,23 +875,21 @@ MultiplayerWindowController.Listener {
 			return;
 		}
 
-		if (attackReplacementController == null) {
-			attackReplacementController = new AttackReplacementController(stage, this);
-		}
-		try {
-			attackReplacementController.show(bugemon, newAbility);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		// if (attackReplacementController == null) {
+		// 	attackReplacementController = new AttackReplacementController(stage, this);
+		// }
+		// try {
+		// 	attackReplacementController.show(bugemon, newAbility);
+		// } catch (Exception e) {
+		// 	e.printStackTrace();
+		// }
 	}
 
-	@Override
 	public void onAttackReplaced(Bugemon bugemon, Ability newAbility, Ability oldAbility) {
 		bugemon.swapAbility(newAbility, oldAbility);
 		switchToNextRoomWindow();
 	}
 
-	@Override
 	public void onReturnToChooseBugemon() {
 		if (chooseBugemonController == null) {
 			return;
@@ -907,7 +901,6 @@ MultiplayerWindowController.Listener {
 		}
 	}
 
-	@Override
 	public void onObjectReward(Item rewardItem) {
 		player.getInventory().addItem(rewardItem, 1);
 		switchToNextRoomWindow();
@@ -945,7 +938,6 @@ MultiplayerWindowController.Listener {
 		this.multiplayerWindowController = controller;
 	}
 
-	@Override
 	public void returnToMultiplayerWindow() {
 
 		try {
@@ -957,7 +949,6 @@ MultiplayerWindowController.Listener {
 
 	}
 
-	@Override
 	public void onGoFriendsWindow() {
 		friendsController = new FriendsController(this.stage, this);
 		try {

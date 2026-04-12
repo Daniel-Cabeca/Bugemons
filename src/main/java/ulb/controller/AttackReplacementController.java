@@ -4,8 +4,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import ulb.model.ability.Ability;
-import ulb.model.bugemon.Bugemon;
+import ulb.DTO.ability.AbilityDTO;
+import ulb.DTO.bugemon.BugemonDTO;
 import ulb.view.WindowPath;
 import ulb.view.windows.AttackReplacementWindow;
 
@@ -15,15 +15,15 @@ public class AttackReplacementController implements AttackReplacementWindow.View
     private final Listener listener;
 
     private AttackReplacementWindow view;
-    private Bugemon currentBugemon;
-    private Ability currentNewAbility;
+    private BugemonDTO currentBugemon;
+    private AbilityDTO currentNewAbility;
 
     public AttackReplacementController(Stage stage, Listener listener) {
         this.stage = stage;
         this.listener = listener;
     }
 
-    public void show(Bugemon bugemon, Ability newAbility) throws Exception {
+    public void show(BugemonDTO bugemon, AbilityDTO newAbility) throws Exception {
         currentBugemon = bugemon;
         currentNewAbility = newAbility;
 
@@ -43,7 +43,7 @@ public class AttackReplacementController implements AttackReplacementWindow.View
     }
 
     @Override
-    public void onReplaceAbility(Ability oldAbility) {
+    public void onReplaceAbility(AbilityDTO oldAbility) {
         listener.onAttackReplaced(currentBugemon, currentNewAbility, oldAbility);
     }
 
@@ -53,7 +53,7 @@ public class AttackReplacementController implements AttackReplacementWindow.View
     }
 
     public interface Listener {
-        void onAttackReplaced(Bugemon bugemon, Ability newAbility, Ability oldAbility);
+        void onAttackReplaced(BugemonDTO bugemon, AbilityDTO newAbility, AbilityDTO oldAbility);
         void onReturnToChooseBugemon();
     }
 }

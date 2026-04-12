@@ -11,6 +11,7 @@ import java.util.Map;
 import ulb.communication.SocketClient;
 import ulb.communication.old_types.TowerInfoMessage;
 import ulb.communication.types.GameMode;
+import ulb.controller.windows.BattleEndController;
 import ulb.controller.windows.ModeController;
 import ulb.controller.windows.RegisterController;
 import ulb.controller.windows.TeamController;
@@ -187,8 +188,10 @@ BattleModeController.Listener, BattleWindowController.Listener {
 
 	@Override
 	public void onBattleStateChecked(BattleState state, ActionEvent event) {
-		// CLIENT 
-		//handleBattleEndCheckMessage(new BattleEndCheckMessage(state, event));
+		if (state == BattleState.WON || state == BattleState.LOST) {
+			BattleEndController battleEndController = new BattleEndController(stage, this);
+			battleEndController.show(state == BattleState.WON, 0);
+		}
 	}
 	
 	@Override

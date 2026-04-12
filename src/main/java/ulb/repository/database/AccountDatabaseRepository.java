@@ -7,6 +7,8 @@ import ulb.repository.database.sql.Database;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AccountDatabaseRepository implements AccountRepository {
 	private final Database database;
@@ -52,4 +54,45 @@ public class AccountDatabaseRepository implements AccountRepository {
 			throw new LoadException("Failed to fetch user id: " + e.getMessage());
 		}
 	}
+
+	public void addFriend(int userId, int friendId) {
+		String sql = "INSERT INTO friends (user_id, friend_id) VALUES (?, ?)";
+		try (PreparedStatement pstmt = this.database.prepareStatement(sql)) {
+			// On insère les deux sens pour simplifier la lecture plus tard
+			pstmt.setInt(1, userId);
+			pstmt.setInt(2, friendId);
+			pstmt.executeUpdate();
+
+			pstmt.setInt(1, friendId);
+			pstmt.setInt(2, userId);
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public List<String> getFriendsList(int userId) {
+		List<String> friends = new ArrayList<>();
+
+		String sql = """
+        SELECT u.username 
+        FROM users u
+        JOIN friends f ON u.id = f.friend_id
+        WHERE f.user_id = ?
+    """;
+
+		try (PreparedStatement pstmt = this.database.prepareStatement(sql)) {
+			pstmt.setInt(1, userId);
+			ResultSet rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				friends.add(rs.getString("username"));
+			}
+		} catch (SQLException e) {
+			System.err.println("Erreur lors de la récupération des amis : " + e.getMessage());
+		}
+
+		return friends;
+	}
+
 }

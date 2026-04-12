@@ -113,11 +113,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
 
     @Override
     public void onReturn(ActionEvent event) {
-        if (gameMode == GameMode.TOWER) {
-            listener.onTowerFlee();
-        } else {
-            listener.onReturnToMode();
-        }
+        listener.onRun();
     }
 
     @Override
@@ -184,7 +180,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
 
     private void displayActionSequence(BattleState stateAfter, ActionEvent event, Runnable afterDisplay) {
         List<String> logs = consumeLogMessages();
-		
+
         List<Integer> hpAfterFirstAction = listener.getHpAfterFirstAction();
         Integer firstActionSelfHp = null, firstActionOpponentHp = null;
 
@@ -440,8 +436,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         BattleState onUseItem(ItemDTO item);
         BattleState onSwapBugemon(BugemonDTO bugemon);
         BattleState onUseAbility(AbilityDTO ability);
+		void onRun();
         void onBattleStateChecked(BattleState state, ActionEvent event);
-        void onTowerFlee();
-        void onReturnToMode();
     }
 }

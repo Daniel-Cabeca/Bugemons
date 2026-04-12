@@ -24,7 +24,7 @@ public class RegisterWindow extends Window {
 
     private ViewListener viewListener;
 
-    public void setListener(ViewListener viewListener) { this.viewListener = viewListener; }
+    public void setViewListener(ViewListener viewListener) { this.viewListener = viewListener; }
 
     @FXML
     public void initialize() {

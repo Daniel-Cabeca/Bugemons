@@ -12,7 +12,6 @@ import javafx.stage.Stage;
 import ulb.Main;
 import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.bugemon.BugemonDTO;
-import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.communication.SocketClient;
 import ulb.communication.Message;
@@ -22,28 +21,22 @@ import ulb.communication.types.*;
 import ulb.controller.action.Swap;
 import ulb.controller.action.UseAbility;
 import ulb.controller.action.UseItem;
-import ulb.controller.towerManager.FloorManager;
-import ulb.controller.towerManager.RoomManager;
-import ulb.controller.towerManager.TowerManager;
-import ulb.controller.windows.BattleEndController;
-import ulb.controller.ModeController;
-import ulb.controller.windows.RegisterController;
-import ulb.controller.windows.TeamController;
 import ulb.model.ability.Ability;
 import ulb.model.battle.BattleState;
 import ulb.model.Player;
 import ulb.model.battle.Battle;
 import ulb.model.battle.Battle.ParticipantLabel;
 import ulb.model.bugemon.Bugemon;
-import ulb.model.bugemon.BugemonSpecies;
 import ulb.model.item.Item;
 import ulb.model.team.OpponentTeamGenerator;
 import ulb.model.team.Team;
 import ulb.model.tower.Room;
 import ulb.model.tower.RoomType;
+import ulb.model.tower.towerManager.FloorManager;
+import ulb.model.tower.towerManager.RoomManager;
+import ulb.model.tower.towerManager.TowerManager;
 import ulb.model.reward.Reward;
 import ulb.model.reward.RewardType;
-import ulb.service.BugemonService;
 import ulb.service.ServiceLoader;
 import ulb.view.WindowPath;
 import ulb.view.windows.LevelUpWindow;
@@ -51,13 +44,9 @@ import ulb.view.windows.ModeWindow;
 import ulb.view.windows.NextRoomWindow;
 import ulb.view.windows.Window;
 
-import ulb.mapper.bugemon.BugemonMapper;
-import ulb.mapper.bugemon.BugemonSpeciesMapper;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map;
@@ -183,7 +172,7 @@ MultiplayerWindowController.Listener {
 
 			// temporary fix until all windows/controllers are mvc
 			if (controller instanceof ModeWindow modeWindow) {
-				modeWindow.setListener(modeController);
+				modeWindow.setViewListener(modeController);
 			}
 			if (controller instanceof NextRoomWindow nextRoomWindow) {
 				nextRoomWindow.setViewListener(nextRoomController);
@@ -332,7 +321,12 @@ MultiplayerWindowController.Listener {
 		if (battleEndController == null) {
 			//battleEndController = new BattleEndController(stage, modeController);
 		}
-		battleEndController.show(victory, totalXP);
+		try {
+			battleEndController.show(victory, totalXP);
+		}catch (Exception e){
+
+		}
+
 	}
 
 	// Handles fleeing from a tower battle: restores HP and resets the room
@@ -392,9 +386,9 @@ MultiplayerWindowController.Listener {
 	 */
 	private BattleController battleControllerForManualTurn() {
 		// SERVER
-		if (gameMode == GameMode.TOWER && towerModeTowerManager != null) {
-			return towerModeTowerManager.getCurrentBattleController();
-		}
+		// if (gameMode == GameMode.TOWER && towerModeTowerManager != null) {
+		// 	return towerModeTowerManager.getCurrentBattleController();
+		// }
 		return normalModeBattleController;
 	}
 
@@ -510,7 +504,7 @@ MultiplayerWindowController.Listener {
 		switch (m.getType()){
 			case SETUP_GAME:
 				if (gameMode == GameMode.TOWER) {
-					answer = new SetupGameModeMessage(gameMode, getTeam(), player.getInventory(), towerModeTowerManager.getCurrentBattleController());
+					// answer = new SetupGameModeMessage(gameMode, getTeam(), player.getInventory(), towerModeTowerManager.getCurrentBattleController());
 				} else {
 					answer = new SetupGameModeMessage(gameMode, getTeam(), player.getInventory(), normalModeBattleController);
 				}
@@ -600,9 +594,9 @@ MultiplayerWindowController.Listener {
 
 		if (event == null) return;
 
-		BattleController battleController;
+		BattleController battleController = normalModeBattleController;
 		if (gameMode == GameMode.TOWER && towerModeTowerManager != null) {
-			battleController = towerModeTowerManager.getCurrentBattleController();
+			// battleController = towerModeTowerManager.getCurrentBattleController();
 		} else {
 			battleController = normalModeBattleController;
 		}
@@ -696,7 +690,7 @@ MultiplayerWindowController.Listener {
 
 	private BattleController getCurrentBattleController() {
 		if (gameMode == GameMode.TOWER && towerModeTowerManager != null) {
-			return towerModeTowerManager.getCurrentBattleController();
+			// return towerModeTowerManager.getCurrentBattleController();
 		}
 		return normalModeBattleController;
 	}
@@ -765,21 +759,25 @@ MultiplayerWindowController.Listener {
 	}
 
 	@Override
-	public void onTowerFlee() {
-		// CLIENT + SERVER
-		handleTowerFlee();
-		switchToNextRoomWindow();
+	public void onRun() {
+		return;
 	}
+	// @Override
+	// public void onTowerFlee() {
+	// 	// CLIENT + SERVER
+	// 	handleTowerFlee();
+	// 	switchToNextRoomWindow();
+	// }
 
-	@Override
-	public void onReturnToMode() {
-		// CLIENT
-		try {
-			modeController.show();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+	// @Override
+	// public void onReturnToMode() {
+	// 	// CLIENT
+	// 	try {
+	// 		modeController.show();
+	// 	} catch (Exception e) {
+	// 		e.printStackTrace();
+	// 	}
+	// }
 
 	@Override
 	public void onContinue() {

@@ -34,7 +34,7 @@ public class ModeWindow {
 		viewListener.onQuit();
 	}
 
-	public void setListener(ViewListener viewListener) {
+	public void setViewListener(ViewListener viewListener) {
 		this.viewListener = viewListener;
 	}
 

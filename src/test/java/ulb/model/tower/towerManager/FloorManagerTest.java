@@ -1,16 +1,20 @@
-package ulb.controller.towerManager;
+package ulb.model.tower.towerManager;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
+import ulb.controller.action.UseAbility;
 import ulb.model.Player;
+import ulb.model.ability.Ability;
+import ulb.model.battle.Battle;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.team.Team;
 import ulb.model.tower.Floor;
 import ulb.model.tower.Room;
-
+import ulb.model.tower.towerManager.FloorManager;
+import ulb.model.type.Type;
 import ulb.repository.BugemonSpeciesRepository;
 import ulb.repository.mock.BugemonSpeciesMockRepository;
 import ulb.service.BugemonService;
@@ -66,7 +70,11 @@ public class FloorManagerTest {
         int beforeIndex = manager.getCurrentRoomIndex();
         Room currentRoom = manager.getCurrentRoomManager().getRoom();
 
-        currentRoom.setRoomCompleted(true);
+		Battle battle = manager.getCurrentBattle();
+		battle.chooseAction(new UseAbility(new Ability("", "", Type.AQUA, "", 1000)), Battle.ParticipantLabel.TEAM_A);
+		battle.chooseAction(new UseAbility(new Ability("", "", Type.AQUA, "", 0)), Battle.ParticipantLabel.TEAM_B);
+
+		currentRoom.setRoomCompleted(true);
         manager.nextRoom();
 
         int afterIndex = manager.getCurrentRoomIndex();

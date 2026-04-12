@@ -2,31 +2,38 @@ package ulb.controller;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.communication.SocketClient;
 import ulb.communication.old_types.TowerInfoMessage;
 import ulb.communication.types.GameMode;
-import ulb.controller.windows.BattleEndController;
-import ulb.controller.windows.ModeController;
-import ulb.controller.windows.RegisterController;
-import ulb.controller.windows.TeamController;
 import ulb.message.ClientToServerMessage;
 import ulb.message.clientToServer.*;
 import ulb.message.serverToClient.*;
+import ulb.message.serverToClient.NextWindowMessage.WindowType;
 import ulb.model.battle.BattleState;
 import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.bugemon.BugemonDTO;
-import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.DTO.item.ItemDTO;
+import ulb.repository.LoadException;
+import ulb.view.WindowPath;
+import ulb.view.windows.SocialPanel;
 
-public class ClientController extends Application implements
-BattleModeController.Listener, BattleWindowController.Listener {
+
+public class ClientController extends Application implements RegisterController.Listener, ModeController.Listener,
+BattleModeController.Listener,BattleEndController.Listener, BattleWindowController.Listener, NextRoomController.Listener,TeamController.Listener {
     SocketClient client;
     Stage stage;
 
@@ -40,6 +47,9 @@ BattleModeController.Listener, BattleWindowController.Listener {
 	BattleModeController battleModeController;
 	BattleWindowController battleWindowController;
 
+	BattleEndController battleEndController;
+	NextRoomController nextRoomController;
+
     @Override
     public void init(){
         List<String> params = getParameters().getRaw();
@@ -49,12 +59,6 @@ BattleModeController.Listener, BattleWindowController.Listener {
         
         this.client = new SocketClient(serverIp, serverPort);
     }
-
-	public void load(){
-		this.registerController = new RegisterController(this.stage, this);
-		this.modeController = new ModeController(this.stage,this);
-		this.teamController = new TeamController(this.stage, this);
-	}
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -66,9 +70,8 @@ BattleModeController.Listener, BattleWindowController.Listener {
 		primaryStage.setFullScreen(true);
 		primaryStage.setFullScreenExitHint("");
 
-		this.load();
+		this.registerController = new RegisterController(this.stage, this);
 		this.registerController.show();
-
 
 		if (primaryStage.getScene() != null) {
 			String stylesheet = getClass().getResource("/styles/global.css").toExternalForm();
@@ -94,14 +97,7 @@ BattleModeController.Listener, BattleWindowController.Listener {
 		return client.receiveMessage();
 	}
 
-	// Register Controler
-
-	public PlayerDTO getPlayer(){ return this.player; }
-	public List<BugemonDTO> getPlayerTeam(){ return this.player.getTeam(); }
-	public void setPlayerTeam(List<BugemonDTO> playerTeam){ this.player.setTeam(playerTeam);}
-	public void setPlayer(PlayerDTO player){this.player=player; }
-	public void showModeController(){this.modeController.show();}
-	public void showTeamController(){this.teamController.show();}
+	public PlayerDTO getPlayer() { return this.player; }
 
 	public boolean logIn(PlayerDTO player){
 		return postData(new RegisterMessage(player, true));
@@ -135,11 +131,135 @@ BattleModeController.Listener, BattleWindowController.Listener {
 		return postData(new RegisterMessage(player, false));
 	}
 
-	// Mode Controller Listener : 
+	// Bye Bye
 
 
-	// Team Controller Listener : 
+	// Register Controller :
 
+	@Override
+	public void onLogin(String username, String password){
+		try {
+			this.player = new PlayerDTO(username, password, new ArrayList<>(), new HashMap<>());
+			boolean success = logIn(this.player);
+			if (success) {
+				this.modeController = new ModeController(this.stage, this);
+				try {
+					this.modeController.show();
+				}catch (Exception e){
+					e.printStackTrace();
+				}
+			} else {
+				this.registerController.getView().setErrorLabel("Nom d'utilisateur ou mot de passe incorrect.");
+			}
+		} catch (LoadException e) {
+			this.registerController.getView().setErrorLabel("Erreur de connexion à la base de données.");
+		}
+	}
+
+	@Override
+	public void onSignUp(String username, String password){
+		try {
+			this.player = new PlayerDTO(username, password, new ArrayList<>(), new HashMap<>());
+			boolean success = this.signUp(this.player);
+			if (success) {
+				this.modeController = new ModeController(this.stage, this);
+				try {
+					this.modeController.show();
+				}catch (Exception e){
+					e.printStackTrace();
+				}
+			} else {
+				this.registerController.getView().setErrorLabel("Nom d'utilisateur ou mot de passe incorrect.");
+			}
+		} catch (LoadException e) {
+			this.registerController.getView().setErrorLabel("Nom d'utilisateur ou mot de passe incorrect.");
+		}
+	}
+
+
+	// Mode Controller Listener :
+
+	@Override
+	public void onOpenSocial() {
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(WindowPath.SOCIAL_PANEL));
+			Parent root = loader.load();
+			SocialPanel panel = loader.getController();
+			Stage popup = new Stage();
+			popup.initStyle(StageStyle.UNDECORATED);
+			popup.initOwner(stage);
+			Scene scene = new Scene(root);
+			scene.getStylesheets().add(getClass().getResource("/styles/global.css").toExternalForm());
+			popup.setScene(scene);
+			panel.setStage(popup);
+			popup.setX(stage.getX());
+			popup.setY(stage.getY());
+			popup.show();
+			panel.setClientController(this);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void onSolo() {
+		this.teamController = new TeamController(this.stage, this, this.player);
+		try {
+			this.teamController.show();
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void onMultiplayer() {
+
+	}
+
+	// Team Controller Listener :
+
+
+	@Override
+	public void onReturnToMode() {
+		try {
+			modeController.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public List<BugemonSpeciesDTO> getAllSpecies(){
+		Serializable message = this.getData(new GetAllBugemonSpeciesMessage());
+
+		if (message instanceof BugemonSpeciesMessage speciesMessage){
+			return speciesMessage.getSpecies();
+		}
+		return null;
+	}
+
+	@Override
+	public void onTeamConfirmed() {
+		List<BugemonDTO> team = player.getTeam();
+
+		if (!this.postData(new SetUpTeamMessage(team))){
+			return;
+		}
+
+		this.battleModeController = new BattleModeController(this.stage, this, player.getTeam());
+		try {
+			battleModeController.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	// BattleEndController
+
+	@Override
+	public void onHandleReturn() {
+		switchToModeWindow();
+	}
 
 
 	// Battle Mode Controller Listener : 
@@ -150,6 +270,24 @@ BattleModeController.Listener, BattleWindowController.Listener {
 	// 	}
 	// 	return normalModeBattleController;
 	// }
+
+	private void switchToModeWindow(){
+		try {
+			this.modeController.show();
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	private void switchToNextRoomWindow(boolean hasFled){
+		this.nextRoomController = new NextRoomController(stage, this);
+		try{
+			this.nextRoomController.show(hasFled);
+		} catch (Exception e){
+			System.err.println(e);
+		}
+		
+	}
 
 	private void switchToBattleWindow() {
 		int towerFloorNumber = 0, towerRoomNumber = 0;
@@ -175,6 +313,60 @@ BattleModeController.Listener, BattleWindowController.Listener {
 		}
 	}
 
+	private void switchToLevelUpWindow(){
+		Serializable message = getData(new GetBattleEndInfoMessage());
+		boolean victory = false;
+		int totaleXp = 0;
+		if (message instanceof BattleEndInfoMessage battleInfo){
+			victory = battleInfo.isVictory();
+			totaleXp = battleInfo.getTotalXp();
+		} else {
+			return;
+		}
+
+		this.battleEndController = new BattleEndController(stage, this);
+		try {
+			battleEndController.show(victory, totaleXp);
+		}
+		catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	private void switchToTowerRewardWindow(){
+		System.out.println("SWITCHING TO REWARD WINDOW");
+	}
+
+
+	public void nextRoom(){
+		WindowType nextWindow = this.getWindowType();
+		switch (nextWindow) {
+			case NEXT_ROOM:
+				switchToNextRoomWindow(false);
+				break;
+
+			case GAME:
+				switchToBattleWindow();
+				break;
+			
+			case LEVEL_UP:
+				switchToLevelUpWindow();
+				break;
+			
+			case REWARD:
+				switchToTowerRewardWindow();
+				break;
+			
+			case MAIN_MENU:
+				switchToModeWindow();
+				break;
+
+			default:
+				break;
+		}
+		
+	}
+
 	@Override
 	public void onAutoBattle() {
 		this.gameMode = GameMode.AUTO;
@@ -195,7 +387,7 @@ BattleModeController.Listener, BattleWindowController.Listener {
 	public void onTowerMode() {
 		this.gameMode = GameMode.TOWER;
 		if (this.postData(new SetUpTowerModeMessage())){
-			//handleTower();
+			switchToBattleWindow();
 		}
 	}
 
@@ -213,6 +405,11 @@ BattleModeController.Listener, BattleWindowController.Listener {
 	@Override
 	public void onBattleStateChecked(BattleState state, ActionEvent event) {
 		//CLIENT
+		if (state != BattleState.WON && state != BattleState.LOST){
+			return;
+		}
+
+		nextRoom();
 		//handleBattleEndCheckMessage(new BattleEndCheckMessage(state, event))
 	}
 	
@@ -336,18 +533,38 @@ BattleModeController.Listener, BattleWindowController.Listener {
 	}
 
 	@Override
-	public void onTowerFlee() {
-		// CLIENT + SERVER
-		// handleTowerFlee();
-		// switchToNextRoomWindow();
+	public void onRun() {
+		if (postData(new RunMessage())){
+			if (this.gameMode == GameMode.TOWER){
+				switchToNextRoomWindow(true);
+			} else {
+				nextRoom();
+			}
+		}
+	}
+
+	public WindowType getWindowType(){
+		Serializable message = getData(new GetNextWindowMessage());
+
+		if (message instanceof NextWindowMessage nextWindow){
+			return nextWindow.getNextWindow();
+		}
+
+		return null;
+	}
+
+	// Next Room Listener 
+
+	@Override
+	public void onContinue() {
+		nextRoom();
 	}
 
 	@Override
-	public void onReturnToMode() {
-		// CLIENT
+	public void onReturn() {
 		try {
-			modeController.show();
-		} catch (Exception e) {
+			this.modeController.show();
+		}catch (Exception e){
 			e.printStackTrace();
 		}
 	}

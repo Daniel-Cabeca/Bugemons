@@ -1,12 +1,12 @@
 package ulb.server;
 
 import ulb.communication.Messenger.SocketMessenger;
+import ulb.communication.old_types.TowerInfoMessage;
 import ulb.controller.action.Action;
 import ulb.controller.action.Run;
 import ulb.controller.action.Swap;
 import ulb.controller.action.UseAbility;
 import ulb.controller.action.UseItem;
-import ulb.controller.towerManager.TowerManager;
 import ulb.mapper.ability.AbilityMapper;
 import ulb.mapper.bugemon.BugemonMapper;
 import ulb.mapper.bugemon.BugemonSpeciesMapper;
@@ -15,15 +15,19 @@ import ulb.mapper.player.PlayerMapper;
 import ulb.message.ClientToServerMessage;
 import ulb.message.clientToServer.*;
 import ulb.message.serverToClient.*;
+import ulb.message.serverToClient.NextWindowMessage.WindowType;
 import ulb.model.Player;
 import ulb.model.ability.Ability;
 import ulb.model.battle.Battle;
+import ulb.model.battle.BattleState;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.BugemonSpecies;
 import ulb.model.item.Item;
 import ulb.model.team.OpponentTeamGenerator;
 import ulb.model.team.Team;
 import ulb.service.AccountService;
+import ulb.model.tower.towerManager.TowerManager;
+import ulb.model.tower.RoomType;
 import ulb.service.BugemonService;
 import ulb.service.ServiceLoader;
 import ulb.service.strategy.AI;
@@ -46,10 +50,12 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
     private Player player;
 
-    private TowerManager towerManager;
     private Battle battle;
     private Battle.ParticipantLabel teamLabel;
     private Thread opponentBot;
+
+	private TowerManager towerManager;
+	private boolean isGameTower;
 
     public ClientHandler(SocketMessenger messenger){
         this.socketMessenger = messenger;
@@ -103,6 +109,16 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
         this.socketMessenger.close();
     }
 
+	public void checkBattleEnd(){
+		if (this.battle == null){
+			return;
+		}
+		if (isGameTower){
+			this.towerManager.nextRoom();
+			this.battle = this.towerManager.getCurrentBattle();
+		}
+	}
+
 	// SETUP 
 	public void handle(RegisterMessage message){
 		boolean success;
@@ -139,30 +155,45 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
 	public void handle(SetUpNormalModeMessage message){
 		if (player == null){
-                sendErrorMessage("Player not initialized !");
-                return;
-            }
-            Team teamB;
-            try {
-                teamB = OpponentTeamGenerator.generateRandomOpponentTeam(player.getTeam());
-            } catch (Exception e){
-                sendErrorMessage(e.getMessage());
-                return;
-            }
-            this.battle = new Battle(player.getTeam(), teamB, player);
-            this.teamLabel = Battle.ParticipantLabel.TEAM_A;
+			sendErrorMessage("Player not initialized !");
+			return;
+		}
+		Team teamB;
+		try {
+			teamB = OpponentTeamGenerator.generateRandomOpponentTeam(player.getTeam());
+		} catch (Exception e){
+			sendErrorMessage(e.getMessage());
+			return;
+		}
+		if (this.battle != null){
+			sendErrorMessage("Game already initialized");
+			return;
+		}
+		this.battle = new Battle(player.getTeam(), teamB, player);
+		this.teamLabel = Battle.ParticipantLabel.TEAM_A;
+		this.isGameTower = false;
 
-            this.opponentBot = new AI(battle, new StrategyRandom());
-            this.opponentBot.start();
+		this.opponentBot = new AI(battle, new StrategyRandom());
+		this.opponentBot.start();
 
-            sendSuccessMessage();
+		sendSuccessMessage();
 	}
 
 	public void handle(SetUpTowerModeMessage message){
-		// TODO
+		if (this.battle != null){
+			sendErrorMessage("Game already initialized");
+			return;
+		}
+		this.towerManager = new TowerManager(player);
+		this.battle = towerManager.getCurrentBattle();
+		this.teamLabel = Battle.ParticipantLabel.TEAM_A;
+		this.isGameTower = true;
+
+		sendSuccessMessage();
 	}
 
 	// GAME INFO
+
 	public void handle(CheckGameFinishedMessage message){
 		sendMessage(new GameFinishedMessage(this.battle.isGameFinished()));
 	}
@@ -219,10 +250,60 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	}
 
 	public void handle(GetTowerInfoMessage message){
-		//TODO
+		if (!isGameTower){
+			sendErrorMessage("The game isn't in tower mode");
+			return;
+		}
+		int towerFloorNumber = this.towerManager.getFloorNumber();
+		int towerRoomNumber = this.towerManager.getCurrentRoomIndex();
+
+		sendMessage(new TowerInfoMessage(towerFloorNumber, towerRoomNumber));
+	}
+
+	public void handle(GetNextWindowMessage message){
+		WindowType nextWindow = WindowType.NEXT_ROOM;
+		if (this.battle == null){
+			nextWindow = WindowType.MAIN_MENU;
+		} else if (this.player.getTeam().getLevelUpBugemonNumber() > 0){
+			nextWindow = WindowType.LEVEL_UP;
+		}
+		if (this.isGameTower) {
+			if (towerManager.isRoomCompleted()){
+				nextWindow = WindowType.NEXT_ROOM;
+			} else{
+				switch (towerManager.getCurrentRoomType()) {
+					case BATTLE:
+					case BOSS:
+						nextWindow = WindowType.GAME;
+						break;
+
+					case REWARD:
+						nextWindow = WindowType.REWARD;
+						break;
+
+					default:
+						nextWindow = WindowType.MAIN_MENU;
+						break;	
+				}
+			}
+		}
+		checkBattleEnd();
+		sendMessage(new NextWindowMessage(nextWindow));
+	}
+
+	public void handle(GetBattleEndInfoMessage message){
+		boolean isWin = this.battle.getState(teamLabel) == BattleState.WON;
+		int gainedXp = this.battle.computeTotalXP(this.battle.getTeam(this.battle.getOpponentTeamLabel(teamLabel)));
+
+		if (this.battle.isGameFinished()){
+			this.battle = null;
+		}
+
+		sendMessage(new BattleEndInfoMessage(isWin, gainedXp));
 	}
 
 	//ACTIONS
+
 	public void handle(PickRandomActionMessage message){
 		StrategyRandom strategyRandom = new StrategyRandom();
 		Action randomAction = strategyRandom.pickAction(battle, teamLabel);

@@ -1,9 +1,10 @@
-package ulb.controller.towerManager;
-import ulb.controller.BattleController;
+package ulb.model.tower.towerManager;
 import ulb.model.tower.Floor;
 import ulb.model.tower.Room;
+import ulb.model.tower.RoomType;
 import  ulb.model.tower.Tower;
 import ulb.model.Player;
+import ulb.model.battle.Battle;
 
 public class TowerManager {
 	private Player player;
@@ -16,6 +17,11 @@ public class TowerManager {
 		this.tower = new Tower();
 		this.floorNumber = 0;
 		this.currentFloorManager = new FloorManager(tower.getFloors().get(floorNumber), this.player);
+	}
+
+	public void nextRoom(){
+		this.currentFloorManager.nextRoom();
+		nextFloor();
 	}
 
 	public void nextFloor(){
@@ -34,6 +40,10 @@ public class TowerManager {
 		}
 		tower.setTowerCompleted(true);
 		return true;
+	}
+
+	public boolean isRoomCompleted(){
+		return this.getCurrentRoomManager().isRoomCompleted();
 	}
 
 	public Player getPlayer() {return player;}
@@ -58,5 +68,7 @@ public class TowerManager {
 
 	public RoomManager getCurrentRoomManager() {return this.currentFloorManager.getCurrentRoomManager();}
 
-	public BattleController getCurrentBattleController() { return getCurrentRoomManager().getRoomBattleController();}
+	public Battle getCurrentBattle() { return getCurrentRoomManager().getBattle();}
+
+	public RoomType getCurrentRoomType() {return this.currentFloorManager.getRoom().getRoomType();}
 }

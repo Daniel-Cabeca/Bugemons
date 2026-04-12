@@ -23,7 +23,7 @@ public class ModeController implements ModeWindow.ViewListener {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(WindowPath.MODE));
         loader.load();
         view = loader.getController();
-        view.setListener(this);
+        view.setViewListener(this);
 
         Parent root = loader.getRoot();
         if (stage.getScene() == null) {
@@ -46,7 +46,7 @@ public class ModeController implements ModeWindow.ViewListener {
 
     @Override
     public void onMultiplayer() {
-        listener.onMultiplayer();
+        //listener.onMultiplayer();
     }
 
     @Override

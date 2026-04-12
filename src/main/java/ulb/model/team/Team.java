@@ -197,14 +197,14 @@ public class Team {
 		for (Bugemon bugemon : this.getMembers()){
 			if (bugemon.getRemainingReward() > 0){
 				levelUpNumber++;
-			}
-		}
+			} 	
+		}	
 		return levelUpNumber;
 	}
 
 	public Bugemon getBugemonById(String id){
 		for (Bugemon bugemon : this.getMembers()){
-			if (bugemon.getId() == id){
+			if (bugemon.getId().equals(id)){
 				return bugemon;
 			}
 		}

@@ -316,7 +316,7 @@ FloorRewardController.Listener, AttackReplacementController.Listener,TeamControl
 		}
 	}
 
-	private void switchToLevelUpWindow(){
+	private void switchToBattleEndWindow(){
 		Serializable message = getData(new GetBattleEndInfoMessage());
 		boolean victory = false;
 		int totaleXp = 0;
@@ -334,6 +334,10 @@ FloorRewardController.Listener, AttackReplacementController.Listener,TeamControl
 		catch (Exception e){
 			e.printStackTrace();
 		}
+	}
+
+	private void switchToLevelUpWindow(){
+		// TODO
 	}
 
 	private void switchToTowerRewardWindow(){
@@ -366,7 +370,7 @@ FloorRewardController.Listener, AttackReplacementController.Listener,TeamControl
 				break;
 			
 			case MAIN_MENU:
-				switchToModeWindow();
+				switchToBattleEndWindow();
 				break;
 
 			default:
@@ -617,7 +621,7 @@ FloorRewardController.Listener, AttackReplacementController.Listener,TeamControl
 		AbilityDTO newAbility = null;
 		Serializable message = getData(new GetRandomAbilityMessage(bugemon));
 		if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
-			System.out.println(errorMessage.getMessage());
+			System.err.println(errorMessage.getMessage());
 			return; 
 		}else if (message instanceof RandomAbilityMessage randomAbility){
 			newAbility = randomAbility.getAbility();
@@ -672,7 +676,7 @@ FloorRewardController.Listener, AttackReplacementController.Listener,TeamControl
 
 	@Override
 	public void onAttackReplaced(BugemonDTO bugemon, AbilityDTO newAbility, AbilityDTO oldAbility) {
-		if (postData(new ChooseAbilityRewardMessage(bugemon, newAbility, oldAbility))){
+		if (postData(new ChooseAbilityRewardMessage(bugemon, oldAbility, newAbility))){
 			nextRoom();
 		}
 		// bugemon.swapAbility(newAbility, oldAbility);

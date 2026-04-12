@@ -112,10 +112,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
         this.socketMessenger.close();
     }
 
-	public void checkBattleEnd(){
-		if (this.battle == null){
-			return;
-		}
+	public void nextTowerRoom(){
 		if (isGameTower){
 			this.towerManager.nextRoom();
 			this.battle = this.towerManager.getCurrentBattle();
@@ -265,12 +262,15 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
 	public void handle(GetNextWindowMessage message){
 		WindowType nextWindow = WindowType.NEXT_ROOM;
+
 		if (this.battle == null){
 			nextWindow = WindowType.MAIN_MENU;
-		} else if (this.player.getTeam().getLevelUpBugemonNumber() > 0){
-			nextWindow = WindowType.LEVEL_UP;
 		}
-		if (this.isGameTower) {
+
+		if (this.player.getTeam().getLevelUpBugemonNumber() > 0){
+			nextWindow = WindowType.LEVEL_UP;
+
+		} else if (this.isGameTower) {
 			if (towerManager.isRoomCompleted()){
 				nextWindow = WindowType.NEXT_ROOM;
 			} else{
@@ -289,8 +289,8 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 						break;	
 				}
 			}
+			nextTowerRoom();
 		}
-		checkBattleEnd();
 		sendMessage(new NextWindowMessage(nextWindow));
 	}
 
@@ -351,10 +351,17 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 			return;
 		}
 
-		Ability oldAbility = AbilityMapper.toEntity(message.getOldAbility());
+		Ability oldAbility = chosenBugemon.getAbilities().getAbilityById(message.getOldAbility().getId());
+		if (oldAbility == null){
+			sendErrorMessage("Ability not learned");
+			return;
+		}
 		Ability newAbility = AbilityMapper.toEntity(message.getNewAbility());
 
 		chosenBugemon.swapAbility(newAbility, oldAbility);
+
+		towerManager.getCurrentRoomManager().setRoomCompleted(true);
+		nextTowerRoom();
 		sendSuccessMessage();
 	}
 
@@ -362,6 +369,9 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		Item item = ItemMapper.toEntity(message.getItem());
 		player.getInventory().addItem(item, 1);
 
+		towerManager.getCurrentRoomManager().setRoomCompleted(true);
+
+		nextTowerRoom();
 		sendSuccessMessage();
 	}
 
@@ -380,6 +390,8 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		chosenBugemon.changeBaseStats(reward.getStats());
 		chosenBugemon.changeFightStats(reward.getStats());
 
+		towerManager.getCurrentRoomManager().setRoomCompleted(true);
+		nextTowerRoom();
 		sendSuccessMessage();
 	}
 	

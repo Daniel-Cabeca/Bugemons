@@ -8,6 +8,7 @@ public class LogsMessage implements Serializable {
     private List<String> logs;
 
     public LogsMessage(List<Integer> HpsAfterFirstAction, List<String> logs){
+		this.HpsAfterFirstAction = HpsAfterFirstAction;
         this.logs = logs;
     }
 

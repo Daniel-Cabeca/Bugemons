@@ -184,7 +184,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
 
     private void displayActionSequence(BattleState stateAfter, ActionEvent event, Runnable afterDisplay) {
         List<String> logs = consumeLogMessages();
-
+		
         List<Integer> hpAfterFirstAction = listener.getHpAfterFirstAction();
         Integer firstActionSelfHp = null, firstActionOpponentHp = null;
 

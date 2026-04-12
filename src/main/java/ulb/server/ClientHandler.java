@@ -172,14 +172,15 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
 	public void handle(GetLogsMessage message){
 		int selfHpAfterFirstAction = this.battle.getHpAfterFirstActionSelf(teamLabel);
-            int opponentHpAfterFirstAction = this.battle.getHpAfterFirstActionOpponent(teamLabel);
-            List<String> logs = this.battle.getLogMsg();
-            
-            if (message.clearLogs()){
-                this.battle.clearLogMsg();
-            }
+		int opponentHpAfterFirstAction = this.battle.getHpAfterFirstActionOpponent(teamLabel);
+		
+		List<String> logs = new ArrayList<String>(this.battle.getLogMsg());
+		
+		if (message.clearLogs()){
+			this.battle.clearLogMsg();
+		}
 
-            sendMessage(new LogsMessage(List.of(selfHpAfterFirstAction, opponentHpAfterFirstAction), logs));
+		sendMessage(new LogsMessage(List.of(selfHpAfterFirstAction, opponentHpAfterFirstAction), logs));
 	}
 
 	public void handle(CheckUsableItemMessage message){

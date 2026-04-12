@@ -107,12 +107,12 @@ public class Ability implements HasId {
 	 * @param damage The damage dealt
 	 */
 	private void writeLogs(Battle battle, Bugemon ownBugemon, Bugemon oppositeBugemon, int damage) {
-		battle.getLogMsg().add(ownBugemon.getName() + " a utilisé " + this.getName() + ". " + oppositeBugemon.getName() + " perd " +
+		battle.addLogMsg(ownBugemon.getName() + " a utilisé " + this.getName() + ". " + oppositeBugemon.getName() + " perd " +
 				damage + " PV!");
 
 		String effectivenessMessage = getEffectivenessMessage(oppositeBugemon);
 		if (effectivenessMessage != null) {
-			battle.getLogMsg().add(effectivenessMessage);
+			battle.addLogMsg(effectivenessMessage);
 		}
 	}
 

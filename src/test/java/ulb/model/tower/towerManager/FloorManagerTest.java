@@ -1,4 +1,4 @@
-package ulb.controller.towerManager;
+package ulb.model.tower.towerManager;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -10,7 +10,7 @@ import ulb.model.bugemon.Bugemon;
 import ulb.model.team.Team;
 import ulb.model.tower.Floor;
 import ulb.model.tower.Room;
-
+import ulb.model.tower.towerManager.FloorManager;
 import ulb.repository.BugemonSpeciesRepository;
 import ulb.repository.mock.BugemonSpeciesMockRepository;
 import ulb.service.BugemonService;

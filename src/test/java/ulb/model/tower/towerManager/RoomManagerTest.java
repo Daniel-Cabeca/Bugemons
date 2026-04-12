@@ -1,4 +1,4 @@
-package ulb.controller.towerManager;
+package ulb.model.tower.towerManager;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -10,7 +10,7 @@ import ulb.model.bugemon.Bugemon;
 import ulb.model.team.Team;
 import ulb.model.tower.Room;
 import ulb.model.tower.RoomType;
-
+import ulb.model.tower.towerManager.RoomManager;
 import ulb.repository.BugemonSpeciesRepository;
 import ulb.repository.mock.BugemonSpeciesMockRepository;
 import ulb.service.BugemonService;
@@ -62,7 +62,7 @@ public class RoomManagerTest {
 		Room room = new Room(1, RoomType.BATTLE);
 		RoomManager manager = new RoomManager(room, 1, player);
 
-		assertNotNull(manager.getRoomBattleController(),
+		assertNotNull(manager.getBattle(),
 				"Battle controller should be initialized for a BATTLE room");
 	}
 }

@@ -760,21 +760,25 @@ MultiplayerWindowController.Listener {
 	}
 
 	@Override
-	public void onTowerFlee() {
-		// CLIENT + SERVER
-		handleTowerFlee();
-		switchToNextRoomWindow();
+	public void onRun() {
+		return;
 	}
+	// @Override
+	// public void onTowerFlee() {
+	// 	// CLIENT + SERVER
+	// 	handleTowerFlee();
+	// 	switchToNextRoomWindow();
+	// }
 
-	@Override
-	public void onReturnToMode() {
-		// CLIENT
-		try {
-			modeController.show();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+	// @Override
+	// public void onReturnToMode() {
+	// 	// CLIENT
+	// 	try {
+	// 		modeController.show();
+	// 	} catch (Exception e) {
+	// 		e.printStackTrace();
+	// 	}
+	// }
 
 	@Override
 	public void onContinue() {

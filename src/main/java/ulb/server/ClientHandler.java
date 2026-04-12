@@ -108,6 +108,16 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
         this.socketMessenger.close();
     }
 
+	public void checkBattleEnd(){
+		if (this.battle == null){
+			return;
+		}
+		if (isGameTower){
+			this.towerManager.nextRoom();
+			this.battle = this.towerManager.getCurrentBattle();
+		}
+	}
+
 	// SETUP 
 	public void handle(RegisterMessage message){
 		boolean success;
@@ -250,26 +260,45 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	}
 
 	public void handle(GetNextWindowMessage message){
-		WindowType nextWindow = WindowType.MAIN_MENU;
-		if (this.player.getTeam().getLevelUpBugemonNumber() > 0){
+		WindowType nextWindow = WindowType.NEXT_ROOM;
+		if (this.battle == null){
+			nextWindow = WindowType.MAIN_MENU;
+		} else if (this.player.getTeam().getLevelUpBugemonNumber() > 0){
 			nextWindow = WindowType.LEVEL_UP;
 		}
 		if (this.isGameTower) {
-			switch (towerManager.getCurrentRoomType()) {
-				case BATTLE:
-				case BOSS:
-					nextWindow = WindowType.GAME;
-					break;
+			if (towerManager.isRoomCompleted()){
+				nextWindow = WindowType.NEXT_ROOM;
+			} else{
+				switch (towerManager.getCurrentRoomType()) {
+					case BATTLE:
+					case BOSS:
+						nextWindow = WindowType.GAME;
+						break;
 
-				case REWARD:
-					nextWindow = WindowType.REWARD;
-					break;
+					case REWARD:
+						nextWindow = WindowType.REWARD;
+						break;
 
-				default:
-					break;	
+					default:
+						nextWindow = WindowType.MAIN_MENU;
+						break;	
+				}
 			}
 		}
+		checkBattleEnd();
 		sendMessage(new NextWindowMessage(nextWindow));
+	}
+
+	public void handle(GetBattleEndInfoMessage message){
+		boolean isWin = this.battle.getState(teamLabel) == BattleState.WON;
+		int gainedXp = this.battle.computeTotalXP(this.battle.getTeam(this.battle.getOpponentTeamLabel(teamLabel)));
+
+		if (this.battle.isGameFinished()){
+			this.battle = null;
+		}
+
+		sendMessage(new BattleEndInfoMessage(isWin, gainedXp));
 	}
 
 	//ACTIONS
@@ -307,13 +336,6 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		this.battle.chooseAction(new UseItem(item), teamLabel);
 
 		sendSuccessMessage();
-	}
-
-	public void handle(GetBattleEndInfoMessage message){
-		boolean isWin = this.battle.getState(teamLabel) == BattleState.WON;
-		int gainedXp = this.battle.computeTotalXP(this.battle.getTeam(this.battle.getOpponentTeamLabel(teamLabel)));
-
-		sendMessage(new BattleEndInfoMessage(isWin, gainedXp));
 	}
 	
 	// SPECIAL INFO

@@ -25,7 +25,12 @@ public class RoomManager {
 		initializeRoomContent(room.getRoomType());
 	}
 
-	public boolean isRoomCompleted() {return room.isRoomCompleted();}
+	public boolean isRoomCompleted() {
+		if (room.getRoomType() != RoomType.REWARD){
+			return this.battle.isGameFinished();
+		}
+		return room.isRoomCompleted();
+	}
 
 	public void setRoomCompleted(boolean status) {room.setRoomCompleted(status);}
 

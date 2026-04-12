@@ -22,6 +22,7 @@ import ulb.message.clientToServer.*;
 import ulb.message.serverToClient.*;
 import ulb.message.serverToClient.NextWindowMessage.WindowType;
 import ulb.model.battle.BattleState;
+import ulb.model.tower.Tower;
 import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.bugemon.BugemonSpeciesDTO;
@@ -29,7 +30,7 @@ import ulb.DTO.player.PlayerDTO;
 import ulb.DTO.item.ItemDTO;
 
 public class ClientController extends Application implements
-BattleModeController.Listener, BattleWindowController.Listener {
+BattleModeController.Listener, BattleWindowController.Listener, NextRoomController.Listener {
     SocketClient client;
     Stage stage;
 
@@ -44,6 +45,7 @@ BattleModeController.Listener, BattleWindowController.Listener {
 	BattleWindowController battleWindowController;
 
 	BattleEndController battleEndController;
+	NextRoomController nextRoomController;
 
     @Override
     public void init(){
@@ -132,6 +134,16 @@ BattleModeController.Listener, BattleWindowController.Listener {
 	// 	return normalModeBattleController;
 	// }
 
+	private void switchToNextRoomWindow(boolean hasFled){
+		this.nextRoomController = new NextRoomController(stage, this);
+		try{
+			this.nextRoomController.show(hasFled);
+		} catch (Exception e){
+			System.err.println(e);
+		}
+		
+	}
+
 	private void switchToBattleWindow() {
 		int towerFloorNumber = 0, towerRoomNumber = 0;
 		if (this.gameMode == GameMode.TOWER){
@@ -171,12 +183,18 @@ BattleModeController.Listener, BattleWindowController.Listener {
 		battleEndController.show(victory, totaleXp);
 	}
 
-	private void switchToTowerRewardWindow(){}
+	private void switchToTowerRewardWindow(){
+		System.out.println("SWITCHING TO REWARD WINDOW");
+	}
 
 
-	public void handleBattleEnd(){
+	public void nextRoom(){
 		WindowType nextWindow = this.getWindowType();
 		switch (nextWindow) {
+			case NEXT_ROOM:
+				switchToNextRoomWindow(false);
+				break;
+
 			case GAME:
 				switchToBattleWindow();
 				break;
@@ -241,7 +259,7 @@ BattleModeController.Listener, BattleWindowController.Listener {
 			return;
 		}
 
-		handleBattleEnd();
+		nextRoom();
 		//handleBattleEndCheckMessage(new BattleEndCheckMessage(state, event))
 	}
 	
@@ -365,19 +383,13 @@ BattleModeController.Listener, BattleWindowController.Listener {
 	}
 
 	@Override
-	public void onTowerFlee() {
-		// CLIENT + SERVER
-		// handleTowerFlee();
-		// switchToNextRoomWindow();
-	}
-
-	@Override
-	public void onReturnToMode() {
-		// CLIENT
-		try {
-			modeController.show();
-		} catch (Exception e) {
-			e.printStackTrace();
+	public void onRun() {
+		if (postData(new RunMessage())){
+			if (this.gameMode == GameMode.TOWER){
+				switchToNextRoomWindow(true);
+			} else {
+				nextRoom();
+			}
 		}
 	}
 
@@ -389,6 +401,18 @@ BattleModeController.Listener, BattleWindowController.Listener {
 		}
 
 		return null;
+	}
+
+	// Next Room Listener 
+
+	@Override
+	public void onContinue() {
+		nextRoom();
+	}
+
+	@Override
+	public void onReturn() {
+		showModeController();
 	}
 
 }

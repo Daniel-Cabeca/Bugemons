@@ -19,6 +19,11 @@ public class TowerManager {
 		this.currentFloorManager = new FloorManager(tower.getFloors().get(floorNumber), this.player);
 	}
 
+	public void nextRoom(){
+		this.currentFloorManager.nextRoom();
+		nextFloor();
+	}
+
 	public void nextFloor(){
 		if (currentFloorManager.isFloorCompleted() && !isTowerCompleted()) {
 			floorNumber++;
@@ -35,6 +40,10 @@ public class TowerManager {
 		}
 		tower.setTowerCompleted(true);
 		return true;
+	}
+
+	public boolean isRoomCompleted(){
+		return this.getCurrentRoomManager().isRoomCompleted();
 	}
 
 	public Player getPlayer() {return player;}

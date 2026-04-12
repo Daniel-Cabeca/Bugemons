@@ -5,6 +5,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import ulb.Main;
@@ -24,7 +26,7 @@ import ulb.controller.towerManager.FloorManager;
 import ulb.controller.towerManager.RoomManager;
 import ulb.controller.towerManager.TowerManager;
 import ulb.controller.windows.BattleEndController;
-import ulb.controller.windows.ModeController;
+import ulb.controller.ModeController;
 import ulb.controller.windows.RegisterController;
 import ulb.controller.windows.TeamController;
 import ulb.model.ability.Ability;
@@ -64,7 +66,8 @@ import java.util.Map;
 public class GameController extends Application implements
 BattleModeController.Listener, NextRoomController.Listener, ChooseBugemonController.Listener,
 BattleWindowController.Listener, LevelUpController.Listener, FloorRewardController.Listener,
-AttackReplacementController.Listener {
+AttackReplacementController.Listener, ModeController.Listener, FriendsController.Listener,
+MultiplayerWindowController.Listener {
 
 	private Player player;
 	private TowerManager towerModeTowerManager;
@@ -95,6 +98,8 @@ AttackReplacementController.Listener {
 	private AttackReplacementController attackReplacementController;
 	private BattleEndController battleEndController;
 	private FloorRewardController.RewardChoice pendingFloorRewardChoice;
+	private MultiplayerWindowController multiplayerWindowController;
+	private FriendsController friendsController;
 
 	public static void main(String[] args) {
 		boolean launchClient = true;
@@ -635,15 +640,20 @@ AttackReplacementController.Listener {
 	}
 
 
-	// @Override
-	// public void onSolo() {
-	// 	teamController = new TeamController(stage, this, player);
-	// 	try {
-	// 		teamController.show();
-	// 	} catch (Exception e) {
-	// 		e.printStackTrace();
-	// 	}
-	// }
+	@Override
+	public void onSolo() {
+		// handled by ClientController in networked mode
+	}
+
+	@Override
+	public void onMultiplayer() {
+		multiplayerWindowController = new MultiplayerWindowController(stage, this);
+		try {
+			multiplayerWindowController.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	@Override
 	public void onAutoBattle() {
@@ -910,6 +920,79 @@ AttackReplacementController.Listener {
 			resetFledBattle();
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+
+	public void onRegister(String username) {
+		player.setName(username);
+		if (modeController == null) {
+			modeController = new ModeController(stage, this);
+		}
+		try {
+			modeController.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+
+
+	@Override
+	public void registerMultiplayerWindow(MultiplayerWindowController controller) {
+		this.multiplayerWindowController = controller;
+	}
+
+	@Override
+	public void returnToMultiplayerWindow() {
+
+		try {
+			this.multiplayerWindowController.show();
+		}
+		catch (Exception e) {
+			System.err.println("Couldn't load mult");
+		}
+
+	}
+
+	@Override
+	public void onGoFriendsWindow() {
+		friendsController = new FriendsController(this.stage, this);
+		try {
+			this.friendsController.show();
+		}
+		catch (Exception e) {
+			System.err.println("Couldn't load friends window fxml: " + e);
+		}
+	}
+
+	@Override
+	public void goModeWindow() {
+		try {
+			modeController.show();
+		}
+		catch (Exception e) {
+			System.err.println("Couldn't load mode window fxml ");
+		}
+	}
+
+	@Override
+
+	public void addFriend(int id){
+		String username = player.getName();
+		int user_id = ServiceLoader.getAccountService().getUserId(username);
+		ServiceLoader.getAccountService().addFriend(user_id,id);
+
+	}
+
+	@Override
+	public void populateFriends(VBox friendsList) {
+		friendsList.getChildren().clear();
+		int user_id = ServiceLoader.getAccountService().getUserId(player.getName());
+		List<String> friends = ServiceLoader.getAccountService().getFriendsList(user_id);
+		if (!friends.isEmpty()){
+			for (String friend :friends) {
+				friendsList.getChildren().add(new Label(friend));
+			}
 		}
 	}
 }

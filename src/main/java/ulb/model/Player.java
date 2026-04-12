@@ -55,7 +55,7 @@ public class Player {
 	public final String getPassword() {return this.password;}
 	public Team getTeam() {return this.team;}
 	public Inventory getInventory() {return this.inventory;}
-
+	public void setName(String name) {this.userName = name;}
 	public void setTeam(Team team) {this.team = team;}
 
 	/**

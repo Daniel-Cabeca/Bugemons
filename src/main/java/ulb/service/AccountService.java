@@ -3,6 +3,8 @@ package ulb.service;
 import ulb.repository.LoadException;
 import ulb.repository.AccountRepository;
 
+import java.util.List;
+
 public class AccountService {
     private final AccountRepository repository;
 
@@ -24,4 +26,11 @@ public class AccountService {
     public int getUserId(String username) throws LoadException {
         return repository.getUserId(username);
     }
+
+	public List<String> getFriendsList(int userId) throws LoadException {
+		return repository.getFriendsList(userId);
+	}
+	public void addFriend(int userId, int friendId) throws LoadException {
+		repository.addFriend(userId, friendId);
+	}
 }

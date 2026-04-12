@@ -5,6 +5,8 @@ import javafx.event.ActionEvent;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import java.io.Serializable;
+import java.lang.reflect.Member;
+import java.security.MessageDigest;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +20,7 @@ import ulb.controller.windows.TeamController;
 import ulb.message.ClientToServerMessage;
 import ulb.message.clientToServer.*;
 import ulb.message.serverToClient.*;
+import ulb.message.serverToClient.NextWindowMessage.WindowType;
 import ulb.model.battle.BattleState;
 import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.bugemon.BugemonDTO;
@@ -39,6 +42,8 @@ BattleModeController.Listener, BattleWindowController.Listener {
 	TeamController teamController;
 	BattleModeController battleModeController;
 	BattleWindowController battleWindowController;
+
+	BattleEndController battleEndController;
 
     @Override
     public void init(){
@@ -151,6 +156,49 @@ BattleModeController.Listener, BattleWindowController.Listener {
 		}
 	}
 
+	private void switchToLevelUpWindow(){
+		Serializable message = getData(new GetBattleEndInfoMessage());
+		boolean victory = false;
+		int totaleXp = 0;
+		if (message instanceof BattleEndInfoMessage battleInfo){
+			victory = battleInfo.isVictory();
+			totaleXp = battleInfo.getTotalXp();
+		} else {
+			return;
+		}
+
+		this.battleEndController = new BattleEndController(stage, this);
+		battleEndController.show(victory, totaleXp);
+	}
+
+	private void switchToTowerRewardWindow(){}
+
+
+	public void handleBattleEnd(){
+		WindowType nextWindow = this.getWindowType();
+		switch (nextWindow) {
+			case GAME:
+				switchToBattleWindow();
+				break;
+			
+			case LEVEL_UP:
+				switchToLevelUpWindow();
+				break;
+			
+			case REWARD:
+				switchToTowerRewardWindow();
+				break;
+			
+			case MAIN_MENU:
+				showModeController();
+				break;
+
+			default:
+				break;
+		}
+		
+	}
+
 	@Override
 	public void onAutoBattle() {
 		this.gameMode = GameMode.AUTO;
@@ -171,7 +219,7 @@ BattleModeController.Listener, BattleWindowController.Listener {
 	public void onTowerMode() {
 		this.gameMode = GameMode.TOWER;
 		if (this.postData(new SetUpTowerModeMessage())){
-			//handleTower();
+			switchToBattleWindow();
 		}
 	}
 
@@ -189,6 +237,11 @@ BattleModeController.Listener, BattleWindowController.Listener {
 	@Override
 	public void onBattleStateChecked(BattleState state, ActionEvent event) {
 		//CLIENT
+		if (state != BattleState.WON && state != BattleState.LOST){
+			return;
+		}
+
+		handleBattleEnd();
 		//handleBattleEndCheckMessage(new BattleEndCheckMessage(state, event))
 	}
 	
@@ -326,6 +379,16 @@ BattleModeController.Listener, BattleWindowController.Listener {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public WindowType getWindowType(){
+		Serializable message = getData(new GetNextWindowMessage());
+
+		if (message instanceof NextWindowMessage nextWindow){
+			return nextWindow.getNextWindow();
+		}
+
+		return null;
 	}
 
 }

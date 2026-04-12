@@ -22,9 +22,6 @@ import ulb.communication.types.*;
 import ulb.controller.action.Swap;
 import ulb.controller.action.UseAbility;
 import ulb.controller.action.UseItem;
-import ulb.controller.towerManager.FloorManager;
-import ulb.controller.towerManager.RoomManager;
-import ulb.controller.towerManager.TowerManager;
 import ulb.controller.windows.BattleEndController;
 import ulb.controller.ModeController;
 import ulb.controller.windows.RegisterController;
@@ -41,6 +38,9 @@ import ulb.model.team.OpponentTeamGenerator;
 import ulb.model.team.Team;
 import ulb.model.tower.Room;
 import ulb.model.tower.RoomType;
+import ulb.model.tower.towerManager.FloorManager;
+import ulb.model.tower.towerManager.RoomManager;
+import ulb.model.tower.towerManager.TowerManager;
 import ulb.model.reward.Reward;
 import ulb.model.reward.RewardType;
 import ulb.service.BugemonService;
@@ -392,9 +392,9 @@ MultiplayerWindowController.Listener {
 	 */
 	private BattleController battleControllerForManualTurn() {
 		// SERVER
-		if (gameMode == GameMode.TOWER && towerModeTowerManager != null) {
-			return towerModeTowerManager.getCurrentBattleController();
-		}
+		// if (gameMode == GameMode.TOWER && towerModeTowerManager != null) {
+		// 	return towerModeTowerManager.getCurrentBattleController();
+		// }
 		return normalModeBattleController;
 	}
 
@@ -510,7 +510,7 @@ MultiplayerWindowController.Listener {
 		switch (m.getType()){
 			case SETUP_GAME:
 				if (gameMode == GameMode.TOWER) {
-					answer = new SetupGameModeMessage(gameMode, getTeam(), player.getInventory(), towerModeTowerManager.getCurrentBattleController());
+					// answer = new SetupGameModeMessage(gameMode, getTeam(), player.getInventory(), towerModeTowerManager.getCurrentBattleController());
 				} else {
 					answer = new SetupGameModeMessage(gameMode, getTeam(), player.getInventory(), normalModeBattleController);
 				}
@@ -600,9 +600,9 @@ MultiplayerWindowController.Listener {
 
 		if (event == null) return;
 
-		BattleController battleController;
+		BattleController battleController = normalModeBattleController;
 		if (gameMode == GameMode.TOWER && towerModeTowerManager != null) {
-			battleController = towerModeTowerManager.getCurrentBattleController();
+			// battleController = towerModeTowerManager.getCurrentBattleController();
 		} else {
 			battleController = normalModeBattleController;
 		}
@@ -691,7 +691,7 @@ MultiplayerWindowController.Listener {
 
 	private BattleController getCurrentBattleController() {
 		if (gameMode == GameMode.TOWER && towerModeTowerManager != null) {
-			return towerModeTowerManager.getCurrentBattleController();
+			// return towerModeTowerManager.getCurrentBattleController();
 		}
 		return normalModeBattleController;
 	}

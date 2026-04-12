@@ -191,5 +191,15 @@ public class Team {
     public boolean isBugemonOK(Bugemon bugemon) {
         return this.contains(bugemon) && !bugemon.isKO();
     }
+
+	public int getLevelUpBugemonNumber(){
+		int levelUpNumber = 0;
+		for (Bugemon bugemon : this.getMembers()){
+			if (bugemon.getRemainingReward() > 0){
+				levelUpNumber++;
+			}
+		}
+		return levelUpNumber;
+	}
         
 }

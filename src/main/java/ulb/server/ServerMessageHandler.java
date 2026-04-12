@@ -20,6 +20,8 @@ public interface ServerMessageHandler {
 	public void handle(GetAbilityEffectivenessMessage message);
 	public void handle(GetActiveBugemonsMessage message);
 	public void handle(GetTowerInfoMessage message);
+	public void handle(GetNextWindowMessage message);
+	public void handle(GetBattleEndInfoMessage message);
 
 	//ACTIONS
 	public void handle(PickRandomActionMessage message);

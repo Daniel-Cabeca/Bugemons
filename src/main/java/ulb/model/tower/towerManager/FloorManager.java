@@ -1,4 +1,4 @@
-package ulb.controller.towerManager;
+package ulb.model.tower.towerManager;
 
 import ulb.model.Player;
 import ulb.model.tower.Floor;
@@ -51,5 +51,7 @@ public class FloorManager {
 	public void setPlayer(Player player) {this.player = player;}
 
 	public int getCurrentRoomIndex() {return currentRoomIndex;}
+
+	public Room getRoom(){return this.getCurrentRoomManager().getRoom();}
 
 }

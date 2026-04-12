@@ -5,8 +5,8 @@ import javafx.event.ActionEvent;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import java.io.Serializable;
-import java.lang.reflect.Member;
-import java.security.MessageDigest;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +15,6 @@ import ulb.communication.old_types.TowerInfoMessage;
 import ulb.communication.types.GameMode;
 import ulb.controller.windows.BattleEndController;
 import ulb.controller.windows.ModeController;
-import ulb.controller.windows.RegisterController;
 import ulb.controller.windows.TeamController;
 import ulb.message.ClientToServerMessage;
 import ulb.message.clientToServer.*;
@@ -25,11 +24,12 @@ import ulb.model.battle.BattleState;
 import ulb.model.tower.Tower;
 import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.bugemon.BugemonDTO;
-import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.DTO.item.ItemDTO;
+import ulb.repository.LoadException;
 
-public class ClientController extends Application implements
+
+public class ClientController extends Application implements RegisterController.Listener,
 BattleModeController.Listener, BattleWindowController.Listener, NextRoomController.Listener {
     SocketClient client;
     Stage stage;
@@ -58,7 +58,6 @@ BattleModeController.Listener, BattleWindowController.Listener, NextRoomControll
     }
 
 	public void load(){
-		this.registerController = new RegisterController(this.stage, this);
 		this.modeController = new ModeController(this.stage,this);
 		this.teamController = new TeamController(this.stage, this);
 	}
@@ -74,6 +73,7 @@ BattleModeController.Listener, BattleWindowController.Listener, NextRoomControll
 		primaryStage.setFullScreenExitHint("");
 
 		this.load();
+		this.registerController = new RegisterController(this.stage, this);
 		this.registerController.show();
 
 
@@ -101,7 +101,15 @@ BattleModeController.Listener, BattleWindowController.Listener, NextRoomControll
 		return client.receiveMessage();
 	}
 
-	// Register Controler
+	public boolean logIn(PlayerDTO player){
+		return postData(new RegisterMessage(player, true));
+	}
+
+	public boolean signUp(PlayerDTO player){
+		return postData(new RegisterMessage(player, false));
+	}
+
+	// Bye Bye
 
 	public PlayerDTO getPlayer(){ return this.player; }
 	public List<BugemonDTO> getPlayerTeam(){ return this.player.getTeam(); }
@@ -110,13 +118,38 @@ BattleModeController.Listener, BattleWindowController.Listener, NextRoomControll
 	public void showModeController(){this.modeController.show();}
 	public void showTeamController(){this.teamController.show();}
 
-	public boolean logIn(PlayerDTO player){
-		return postData(new RegisterMessage(player, true));
+	// Register Controller :
+
+	@Override
+	public void onLogin(String username, String password){
+		try {
+			this.player = new PlayerDTO(username, password, new ArrayList<>(), new HashMap<>());
+			boolean success = logIn(this.player);
+			if (success) {
+				this.modeController.show(); // TO CHANGE
+			} else {
+				this.registerController.getView().setErrorLabel("Nom d'utilisateur ou mot de passe incorrect.");
+			}
+		} catch (LoadException e) {
+			this.registerController.getView().setErrorLabel("Erreur de connexion à la base de données.");
+		}
 	}
 
-	public boolean signUp(PlayerDTO player){
-		return postData(new RegisterMessage(player, false));
+	@Override
+	public void onSignUp(String username, String password){
+		try {
+			this.player = new PlayerDTO(username, password, new ArrayList<>(), new HashMap<>());
+			boolean success = this.signUp(this.player);
+			if (success) {
+				this.modeController.show();
+			} else {
+				this.registerController.getView().setErrorLabel("Nom d'utilisateur ou mot de passe incorrect.");
+			}
+		} catch (LoadException e) {
+			this.registerController.getView().setErrorLabel("Nom d'utilisateur ou mot de passe incorrect.");
+		}
 	}
+
 
 	// Mode Controller Listener : 
 

@@ -17,5 +17,6 @@ public final class WindowPath {
     public static final String NEXT_ROOM = FXML_WINDOWS_PATH + "NextRoomWindow.fxml";
     public static final String MULTIPLAYER = FXML_WINDOWS_PATH + "MultiplayerWindow.fxml";
     public static final String FRIENDS = FXML_WINDOWS_PATH + "FriendsWindow.fxml";
+    public static final String SOCIAL_PANEL = FXML_WINDOWS_PATH + "SocialPanel.fxml";
     public static final String CHOOSE_BUGEMON = FXML_WINDOWS_PATH + "ChooseBugemonWindow.fxml";
 }

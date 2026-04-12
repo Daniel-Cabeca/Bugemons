@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefWidth="600" prefHeight="500"
+            style="-fx-font-size: 25px;
+                   -fx-background-color: #f8f8d8;
+                   -fx-border-color: #000000;
+                   -fx-border-width: 6;"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ulb.view.windows.SocialPanel">
+
+    <!-- Top navigation bar -->
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="6"
+              style="-fx-padding: 8;
+                     -fx-background-color: #3050d8;
+                     -fx-border-color: #000000;
+                     -fx-border-width: 0 0 4 0;">
+
+            <Button text="Inviter"   onAction="#showInvite"
+                    style="-fx-background-color: #f8f8d8; -fx-text-fill: #000000;
+                           -fx-border-color: #000000; -fx-border-width: 2;
+                           -fx-padding: 4 10; -fx-cursor: hand;" />
+            <Button text="Amis"      onAction="#showFriends"
+                    style="-fx-background-color: #f8f8d8; -fx-text-fill: #000000;
+                           -fx-border-color: #000000; -fx-border-width: 2;
+                           -fx-padding: 4 10; -fx-cursor: hand;" />
+            <Button text="Chat"      onAction="#showChat"
+                    style="-fx-background-color: #f8f8d8; -fx-text-fill: #000000;
+                           -fx-border-color: #000000; -fx-border-width: 2;
+                           -fx-padding: 4 10; -fx-cursor: hand;" />
+            <Button text="Demandes"  onAction="#showRequests"
+                    style="-fx-background-color: #f8f8d8; -fx-text-fill: #000000;
+                           -fx-border-color: #000000; -fx-border-width: 2;
+                           -fx-padding: 4 10; -fx-cursor: hand;" />
+
+            <Region HBox.hgrow="ALWAYS" />
+
+            <Button text="X" onAction="#handleClose"
+                    style="-fx-background-color: #c02020; -fx-text-fill: white;
+                           -fx-border-color: #000000; -fx-border-width: 2;
+                           -fx-font-weight: bold; -fx-padding: 4 10; -fx-cursor: hand;" />
+        </HBox>
+    </top>
+
+    <!-- Content area -->
+    <center>
+        <StackPane style="-fx-padding: 16;">
+
+            <!-- Invite pane -->
+            <VBox fx:id="invitePane" spacing="14" alignment="TOP_LEFT"
+                  visible="true">
+                <Label text="▶ Inviter un ami"
+                       style="-fx-text-fill: #000000; -fx-font-weight: bold;" />
+                <TextField fx:id="inviteField" promptText="Nom d'utilisateur"
+                           style="-fx-background-color: white; -fx-text-fill: #000000;
+                                  -fx-prompt-text-fill: #888888;
+                                  -fx-border-color: #000000; -fx-border-width: 3;" />
+                <Button text="Envoyer" onAction="#handleInvite"
+                        style="-fx-background-color: #97B35F; -fx-text-fill: white;
+                               -fx-border-color: #000000; -fx-border-width: 3;
+                               -fx-padding: 6 20; -fx-cursor: hand;" />
+                <Label fx:id="inviteStatus" text=""
+                       style="-fx-text-fill: #3050d8;" />
+            </VBox>
+
+            <!-- Friends list pane -->
+            <VBox fx:id="friendsPane" spacing="10"
+                  visible="false">
+                <Label text="▶ Liste d'amis"
+                       style="-fx-text-fill: #000000; -fx-font-weight: bold;" />
+                <ListView fx:id="friendsListView" VBox.vgrow="ALWAYS"
+                          style="-fx-background-color: white;
+                                 -fx-control-inner-background: white;
+                                 -fx-border-color: #000000; -fx-border-width: 3;
+                                 -fx-text-fill: #000000;" />
+            </VBox>
+
+            <!-- Chat pane -->
+            <VBox fx:id="chatPane" spacing="10"
+                  visible="false">
+                <Label text="▶ Chat"
+                       style="-fx-text-fill: #000000; -fx-font-weight: bold;" />
+                <HBox spacing="10" VBox.vgrow="ALWAYS">
+                    <ListView fx:id="chatFriendsList" prefWidth="170"
+                              style="-fx-background-color: white;
+                                     -fx-control-inner-background: white;
+                                     -fx-border-color: #000000; -fx-border-width: 3;
+                                     -fx-text-fill: #000000;" />
+                    <ListView fx:id="chatMessagesList" HBox.hgrow="ALWAYS"
+                              style="-fx-background-color: white;
+                                     -fx-control-inner-background: white;
+                                     -fx-border-color: #000000; -fx-border-width: 3;
+                                     -fx-text-fill: #000000;" />
+                </HBox>
+                <HBox spacing="8">
+                    <TextField fx:id="chatMessageField" promptText="Message..."
+                               HBox.hgrow="ALWAYS"
+                               style="-fx-background-color: white; -fx-text-fill: #000000;
+                                      -fx-prompt-text-fill: #888888;
+                                      -fx-border-color: #000000; -fx-border-width: 3;" />
+                    <Button text="Envoyer" onAction="#handleChatSend"
+                            style="-fx-background-color: #97B35F; -fx-text-fill: white;
+                                   -fx-border-color: #000000; -fx-border-width: 3;
+                                   -fx-padding: 6 14; -fx-cursor: hand;" />
+                </HBox>
+            </VBox>
+
+            <!-- Friend requests pane -->
+            <VBox fx:id="requestsPane" spacing="10"
+                  visible="false">
+                <Label text="▶ Demandes d'amis"
+                       style="-fx-text-fill: #000000; -fx-font-weight: bold;" />
+                <ListView fx:id="requestsListView" VBox.vgrow="ALWAYS"
+                          style="-fx-background-color: white;
+                                 -fx-control-inner-background: white;
+                                 -fx-border-color: #000000; -fx-border-width: 3;
+                                 -fx-text-fill: #000000;" />
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                    <Button text="✔ Accepter" onAction="#handleAccept"
+                            style="-fx-background-color: #97B35F; -fx-text-fill: white;
+                                   -fx-border-color: #000000; -fx-border-width: 3;
+                                   -fx-padding: 6 18; -fx-cursor: hand;" />
+                    <Button text="✘ Refuser" onAction="#handleDecline"
+                            style="-fx-background-color: #c02020; -fx-text-fill: white;
+                                   -fx-border-color: #000000; -fx-border-width: 3;
+                                   -fx-padding: 6 18; -fx-cursor: hand;" />
+                </HBox>
+            </VBox>
+
+        </StackPane>
+    </center>
+
+</BorderPane>

@@ -23,6 +23,7 @@ import ulb.model.bugemon.BugemonSpecies;
 import ulb.model.item.Item;
 import ulb.model.team.OpponentTeamGenerator;
 import ulb.model.team.Team;
+import ulb.service.AccountService;
 import ulb.service.BugemonService;
 import ulb.service.ServiceLoader;
 import ulb.service.strategy.AI;
@@ -266,6 +267,48 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 			DTOSpeciesList.add(BugemonSpeciesMapper.toDTO(species));
 		}
 		this.sendMessage(new BugemonSpeciesMessage(DTOSpeciesList));
+	}
+
+	public void handle(SendFriendRequestMessage message){
+		AccountService accountService = ServiceLoader.getAccountService();
+		int senderId = accountService.getUserId(message.getSenderUsername());
+		int receiverId = accountService.getUserId(message.getReceiverUsername());
+		if (senderId == -1 || receiverId == -1){
+			sendErrorMessage("Utilisateur introuvable");
+			return;
+		}
+		accountService.sendFriendRequest(senderId, receiverId);
+		sendSuccessMessage();
+	}
+
+	public void handle(GetFriendRequestsMessage message){
+		AccountService accountService = ServiceLoader.getAccountService();
+		int userId = accountService.getUserId(message.getUsername());
+		List<String> requests = accountService.getPendingRequests(userId);
+		sendMessage(new FriendRequestsMessage(requests));
+	}
+
+	public void handle(AcceptFriendRequestMessage message){
+		AccountService accountService = ServiceLoader.getAccountService();
+		int senderId = accountService.getUserId(message.getSenderUsername());
+		int receiverId = accountService.getUserId(message.getReceiverUsername());
+		accountService.acceptFriendRequest(senderId, receiverId);
+		sendSuccessMessage();
+	}
+
+	public void handle(DeclineFriendRequestMessage message){
+		AccountService accountService = ServiceLoader.getAccountService();
+		int senderId = accountService.getUserId(message.getSenderUsername());
+		int receiverId = accountService.getUserId(message.getReceiverUsername());
+		accountService.declineFriendRequest(senderId, receiverId);
+		sendSuccessMessage();
+	}
+
+	public void handle(GetFriendsListMessage message){
+		AccountService accountService = ServiceLoader.getAccountService();
+		int userId = accountService.getUserId(message.getUsername());
+		List<String> friends = accountService.getFriendsList(userId);
+		sendMessage(new FriendsListMessage(friends));
 	}
 
     private void handleMessage(){

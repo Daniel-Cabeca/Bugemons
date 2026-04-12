@@ -641,6 +641,11 @@ MultiplayerWindowController.Listener {
 
 
 	@Override
+	public void onOpenSocial() {
+		// social panel is handled by ClientController in networked mode
+	}
+
+	@Override
 	public void onSolo() {
 		// handled by ClientController in networked mode
 	}

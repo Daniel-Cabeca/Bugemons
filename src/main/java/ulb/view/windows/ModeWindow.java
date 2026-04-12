@@ -17,6 +17,11 @@ public class ModeWindow {
 	}
 
 	@FXML
+	private void openSocialPanel() {
+		viewListener.onOpenSocial();
+	}
+
+	@FXML
 	private void goSoloMode() {
 		viewListener.onSolo();
 	}
@@ -34,6 +39,7 @@ public class ModeWindow {
 	}
 
 	public interface ViewListener {
+		void onOpenSocial();
 		void onSolo();
 		void onMultiplayer();
 		void onQuit();

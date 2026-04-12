@@ -71,6 +71,53 @@ public class AccountDatabaseRepository implements AccountRepository {
 		}
 	}
 
+	public void sendFriendRequest(int senderId, int receiverId) throws LoadException {
+		String sql = "INSERT OR IGNORE INTO friend_requests (sender_id, receiver_id) VALUES (?, ?)";
+		try (PreparedStatement stmt = database.prepareStatement(sql)) {
+			stmt.setInt(1, senderId);
+			stmt.setInt(2, receiverId);
+			stmt.executeUpdate();
+		} catch (SQLException e) {
+			throw new LoadException("Failed to send friend request: " + e.getMessage());
+		}
+	}
+
+	public List<String> getPendingRequests(int receiverId) throws LoadException {
+		List<String> senders = new ArrayList<>();
+		String sql = "SELECT u.username FROM users u JOIN friend_requests r ON u.id = r.sender_id WHERE r.receiver_id = ?";
+		try (PreparedStatement stmt = database.prepareStatement(sql)) {
+			stmt.setInt(1, receiverId);
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) senders.add(rs.getString("username"));
+		} catch (SQLException e) {
+			throw new LoadException("Failed to fetch requests: " + e.getMessage());
+		}
+		return senders;
+	}
+
+	public void acceptFriendRequest(int senderId, int receiverId) throws LoadException {
+		String del = "DELETE FROM friend_requests WHERE sender_id = ? AND receiver_id = ?";
+		try (PreparedStatement stmt = database.prepareStatement(del)) {
+			stmt.setInt(1, senderId);
+			stmt.setInt(2, receiverId);
+			stmt.executeUpdate();
+		} catch (SQLException e) {
+			throw new LoadException("Failed to accept request: " + e.getMessage());
+		}
+		addFriend(senderId, receiverId);
+	}
+
+	public void declineFriendRequest(int senderId, int receiverId) throws LoadException {
+		String del = "DELETE FROM friend_requests WHERE sender_id = ? AND receiver_id = ?";
+		try (PreparedStatement stmt = database.prepareStatement(del)) {
+			stmt.setInt(1, senderId);
+			stmt.setInt(2, receiverId);
+			stmt.executeUpdate();
+		} catch (SQLException e) {
+			throw new LoadException("Failed to decline request: " + e.getMessage());
+		}
+	}
+
 	public List<String> getFriendsList(int userId) {
 		List<String> friends = new ArrayList<>();
 

@@ -114,7 +114,7 @@ CREATE TABLE IF NOT EXISTS chat_messages (
                                         sent_at           TEXT NOT NULL,
                                         FOREIGN KEY (sender_username)   REFERENCES users(username),
                                         FOREIGN KEY (receiver_username) REFERENCES users(username));
-
+                                        
 CREATE TABLE IF NOT EXISTS friends (
                                        user_id INTEGER NOT NULL,
                                        friend_id INTEGER NOT NULL,
@@ -122,5 +122,14 @@ CREATE TABLE IF NOT EXISTS friends (
                                        PRIMARY KEY (user_id, friend_id),
                                        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
                                        FOREIGN KEY (friend_id) REFERENCES users(id) ON DELETE CASCADE,
-                                       CHECK (user_id <> friend_id) -- Empêche d'être ami avec soi-même
+                                       CHECK (user_id <> friend_id)
+);
+
+CREATE TABLE IF NOT EXISTS friend_requests (
+                                       sender_id   INTEGER NOT NULL,
+                                       receiver_id INTEGER NOT NULL,
+
+                                       PRIMARY KEY (sender_id, receiver_id),
+                                       FOREIGN KEY (sender_id)   REFERENCES users(id) ON DELETE CASCADE,
+                                       FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE
 );

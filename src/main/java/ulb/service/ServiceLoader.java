@@ -11,6 +11,7 @@ import ulb.repository.database.sql.DatabaseInitializer;
 import ulb.repository.json.AbilityJsonRepository;
 import ulb.repository.json.BugemonSpeciesJsonRepository;
 import ulb.repository.json.ItemJsonRepository;
+import ulb.repository.json.ChatDatabaseRepository;
 import ulb.repository.json.InventoryJsonRepository;
 
 /**
@@ -22,6 +23,7 @@ public abstract class ServiceLoader {
     private static BugemonService bugemonService;
     private static AbilityService abilityService;
 	private static AccountService accountService;
+	private static ChatService chatService;
 
 	static {
 		// at class initialization
@@ -41,6 +43,7 @@ public abstract class ServiceLoader {
     }
 
 	public static AccountService getAccountService() { return accountService; }
+	public static ChatService getChatService() { return chatService; }
 
 	/**
 	 * Loads services with JSON repositories.
@@ -71,5 +74,6 @@ public abstract class ServiceLoader {
 		ServiceLoader.itemService = new ItemService(itemRepository, inventoryRepository);
 		ServiceLoader.accountService = new AccountService(accountRepository);
 		ServiceLoader.abilityService = new AbilityService(abilityRepository);
+		ServiceLoader.chatService = new ChatService(new ChatDatabaseRepository(database));
 	}
 }

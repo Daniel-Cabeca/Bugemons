@@ -61,8 +61,6 @@ public class SocketServer {
                 ClientHandler controller = new ClientHandler(clientMessenger);
                 clients.add(controller);
                 controller.start();
-
-                this.stopServer = true;
             }
         }
         waitAllThreads();

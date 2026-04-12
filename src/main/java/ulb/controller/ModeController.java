@@ -35,6 +35,11 @@ public class ModeController implements ModeWindow.ViewListener {
     }
 
     @Override
+    public void onOpenSocial() {
+        listener.onOpenSocial();
+    }
+
+    @Override
     public void onSolo() {
         listener.onSolo();
     }
@@ -51,6 +56,7 @@ public class ModeController implements ModeWindow.ViewListener {
     }
 
     public interface Listener {
+        void onOpenSocial();
         void onSolo();
         void onMultiplayer();
     }

@@ -107,6 +107,30 @@ BattleModeController.Listener, BattleWindowController.Listener {
 		return postData(new RegisterMessage(player, true));
 	}
 
+	public boolean sendFriendRequest(String receiver) {
+		return postData(new SendFriendRequestMessage(player.getName(), receiver));
+	}
+
+	public List<String> getFriendRequests() {
+		if (getData(new GetFriendRequestsMessage(player.getName())) instanceof FriendRequestsMessage msg)
+			return msg.getRequests();
+		return List.of();
+	}
+
+	public boolean acceptFriendRequest(String sender) {
+		return postData(new AcceptFriendRequestMessage(player.getName(), sender));
+	}
+
+	public boolean declineFriendRequest(String sender) {
+		return postData(new DeclineFriendRequestMessage(player.getName(), sender));
+	}
+
+	public List<String> getFriendsList() {
+		if (getData(new GetFriendsListMessage(player.getName())) instanceof FriendsListMessage msg)
+			return msg.getFriends();
+		return List.of();
+	}
+
 	public boolean signUp(PlayerDTO player){
 		return postData(new RegisterMessage(player, false));
 	}

@@ -31,4 +31,11 @@ public interface ServerMessageHandler {
 	// SPECIAL INFO
 	public void handle(GetAllBugemonSpeciesMessage message);
 
+	// FRIENDS
+	public void handle(SendFriendRequestMessage message);
+	public void handle(GetFriendRequestsMessage message);
+	public void handle(AcceptFriendRequestMessage message);
+	public void handle(DeclineFriendRequestMessage message);
+	public void handle(GetFriendsListMessage message);
+
 }

@@ -41,7 +41,7 @@ public class ModeController implements ModeWindow.ViewListener {
 
     @Override
     public void onMultiplayer() {
-        listener.onMultiplayer();
+        //listener.onMultiplayer();
     }
 
     @Override

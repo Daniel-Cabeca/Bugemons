@@ -14,14 +14,12 @@ import ulb.communication.SocketClient;
 import ulb.communication.old_types.TowerInfoMessage;
 import ulb.communication.types.GameMode;
 import ulb.controller.windows.BattleEndController;
-import ulb.controller.windows.ModeController;
 import ulb.controller.windows.TeamController;
 import ulb.message.ClientToServerMessage;
 import ulb.message.clientToServer.*;
 import ulb.message.serverToClient.*;
 import ulb.message.serverToClient.NextWindowMessage.WindowType;
 import ulb.model.battle.BattleState;
-import ulb.model.tower.Tower;
 import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.player.PlayerDTO;
@@ -29,7 +27,7 @@ import ulb.DTO.item.ItemDTO;
 import ulb.repository.LoadException;
 
 
-public class ClientController extends Application implements RegisterController.Listener,
+public class ClientController extends Application implements RegisterController.Listener, ModeController.Listener,
 BattleModeController.Listener, BattleWindowController.Listener, NextRoomController.Listener {
     SocketClient client;
     Stage stage;
@@ -57,11 +55,6 @@ BattleModeController.Listener, BattleWindowController.Listener, NextRoomControll
         this.client = new SocketClient(serverIp, serverPort);
     }
 
-	public void load(){
-		this.modeController = new ModeController(this.stage,this);
-		this.teamController = new TeamController(this.stage, this);
-	}
-
     @Override
     public void start(Stage primaryStage) throws Exception {
 		
@@ -72,10 +65,8 @@ BattleModeController.Listener, BattleWindowController.Listener, NextRoomControll
 		primaryStage.setFullScreen(true);
 		primaryStage.setFullScreenExitHint("");
 
-		this.load();
 		this.registerController = new RegisterController(this.stage, this);
 		this.registerController.show();
-
 
 		if (primaryStage.getScene() != null) {
 			String stylesheet = getClass().getResource("/styles/global.css").toExternalForm();
@@ -115,7 +106,9 @@ BattleModeController.Listener, BattleWindowController.Listener, NextRoomControll
 	public List<BugemonDTO> getPlayerTeam(){ return this.player.getTeam(); }
 	public void setPlayerTeam(List<BugemonDTO> playerTeam){ this.player.setTeam(playerTeam);}
 	public void setPlayer(PlayerDTO player){this.player=player; }
-	public void showModeController(){this.modeController.show();}
+	public void showModeController(){
+		try {this.modeController.show();}
+	catch (Exception e){}}
 	public void showTeamController(){this.teamController.show();}
 
 	// Register Controller :
@@ -126,7 +119,12 @@ BattleModeController.Listener, BattleWindowController.Listener, NextRoomControll
 			this.player = new PlayerDTO(username, password, new ArrayList<>(), new HashMap<>());
 			boolean success = logIn(this.player);
 			if (success) {
-				this.modeController.show(); // TO CHANGE
+				this.modeController = new ModeController(this.stage, this);
+				try {
+					this.modeController.show();
+				}catch (Exception e){
+					e.printStackTrace();
+				}
 			} else {
 				this.registerController.getView().setErrorLabel("Nom d'utilisateur ou mot de passe incorrect.");
 			}
@@ -141,7 +139,12 @@ BattleModeController.Listener, BattleWindowController.Listener, NextRoomControll
 			this.player = new PlayerDTO(username, password, new ArrayList<>(), new HashMap<>());
 			boolean success = this.signUp(this.player);
 			if (success) {
-				this.modeController.show();
+				this.modeController = new ModeController(this.stage, this);
+				try {
+					this.modeController.show();
+				}catch (Exception e){
+					e.printStackTrace();
+				}
 			} else {
 				this.registerController.getView().setErrorLabel("Nom d'utilisateur ou mot de passe incorrect.");
 			}
@@ -151,10 +154,24 @@ BattleModeController.Listener, BattleWindowController.Listener, NextRoomControll
 	}
 
 
-	// Mode Controller Listener : 
+	// Mode Controller Listener :
 
+	@Override
+	public void onSolo() {
+		this.teamController = new TeamController(this.stage, this);
+		try {
+			this.teamController.show();
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+	}
 
-	// Team Controller Listener : 
+	@Override
+	public void onMultiplayer() {
+
+	}
+
+	// Team Controller Listener :
 
 
 

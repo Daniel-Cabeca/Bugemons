@@ -23,7 +23,7 @@ public class BattleEndWindow extends Window {
 
 	private ViewListener listener;
 
-	public void setListener(ViewListener listener) {
+	public void setViewListener(ViewListener listener) {
 		this.listener = listener;
 	}
 

@@ -14,7 +14,6 @@ import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.communication.SocketClient;
 import ulb.communication.old_types.TowerInfoMessage;
 import ulb.communication.types.GameMode;
-import ulb.controller.windows.BattleEndController;
 import ulb.message.ClientToServerMessage;
 import ulb.message.clientToServer.*;
 import ulb.message.serverToClient.*;
@@ -28,7 +27,7 @@ import ulb.repository.LoadException;
 
 
 public class ClientController extends Application implements RegisterController.Listener, ModeController.Listener,
-BattleModeController.Listener, BattleWindowController.Listener, NextRoomController.Listener,TeamController.Listener {
+BattleModeController.Listener,BattleEndController.Listener, BattleWindowController.Listener, NextRoomController.Listener,TeamController.Listener {
     SocketClient client;
     Stage stage;
 
@@ -201,6 +200,13 @@ BattleModeController.Listener, BattleWindowController.Listener, NextRoomControll
 		}
 	}
 
+	// BattleEndController
+
+	@Override
+	public void onHandleReturn() {
+		switchToModeWindow();
+	}
+
 
 	// Battle Mode Controller Listener : 
 
@@ -265,7 +271,12 @@ BattleModeController.Listener, BattleWindowController.Listener, NextRoomControll
 		}
 
 		this.battleEndController = new BattleEndController(stage, this);
-		battleEndController.show(victory, totaleXp);
+		try {
+			battleEndController.show(victory, totaleXp);
+		}
+		catch (Exception e){
+			e.printStackTrace();
+		}
 	}
 
 	private void switchToTowerRewardWindow(){

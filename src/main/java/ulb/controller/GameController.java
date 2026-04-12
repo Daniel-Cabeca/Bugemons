@@ -21,7 +21,6 @@ import ulb.communication.types.*;
 import ulb.controller.action.Swap;
 import ulb.controller.action.UseAbility;
 import ulb.controller.action.UseItem;
-import ulb.controller.windows.BattleEndController;
 import ulb.model.ability.Ability;
 import ulb.model.battle.BattleState;
 import ulb.model.Player;
@@ -173,7 +172,7 @@ MultiplayerWindowController.Listener {
 
 			// temporary fix until all windows/controllers are mvc
 			if (controller instanceof ModeWindow modeWindow) {
-				modeWindow.setListener(modeController);
+				modeWindow.setViewListener(modeController);
 			}
 			if (controller instanceof NextRoomWindow nextRoomWindow) {
 				nextRoomWindow.setViewListener(nextRoomController);
@@ -322,7 +321,12 @@ MultiplayerWindowController.Listener {
 		if (battleEndController == null) {
 			//battleEndController = new BattleEndController(stage, modeController);
 		}
-		battleEndController.show(victory, totalXP);
+		try {
+			battleEndController.show(victory, totalXP);
+		}catch (Exception e){
+
+		}
+
 	}
 
 	// Handles fleeing from a tower battle: restores HP and resets the room

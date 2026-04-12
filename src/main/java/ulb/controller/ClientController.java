@@ -188,10 +188,8 @@ BattleModeController.Listener, BattleWindowController.Listener {
 
 	@Override
 	public void onBattleStateChecked(BattleState state, ActionEvent event) {
-		if (state == BattleState.WON || state == BattleState.LOST) {
-			BattleEndController battleEndController = new BattleEndController(stage, this);
-			battleEndController.show(state == BattleState.WON, 0);
-		}
+		//CLIENT
+		//handleBattleEndCheckMessage(new BattleEndCheckMessage(state, event))
 	}
 	
 	@Override

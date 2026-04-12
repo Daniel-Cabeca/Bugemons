@@ -113,7 +113,8 @@ CREATE TABLE IF NOT EXISTS chat_messages (
                                         content           TEXT NOT NULL,
                                         sent_at           TEXT NOT NULL,
                                         FOREIGN KEY (sender_username)   REFERENCES users(username),
-                                        FOREIGN KEY (receiver_username) REFERENCES users(username)
+                                        FOREIGN KEY (receiver_username) REFERENCES users(username));
+
 CREATE TABLE IF NOT EXISTS friends (
                                        user_id INTEGER NOT NULL,
                                        friend_id INTEGER NOT NULL,

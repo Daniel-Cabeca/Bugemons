@@ -318,7 +318,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         BugemonDTO activeBugemon = listener.getActiveBugemons().get(0);
         List<BugemonEntry> entries = new ArrayList<>();
         for (BugemonDTO bugemon : playerTeam) {
-            boolean active = bugemon.equals(activeBugemon);
+            boolean active = bugemon.getId().equals(activeBugemon.getId());
             boolean selectable = !active && bugemon.getHp() > 0;
             entries.add(new BugemonEntry(
                     bugemon.getId(),

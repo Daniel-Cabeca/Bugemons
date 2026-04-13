@@ -107,12 +107,14 @@ public class SocialPanel {
     private void showFriends() {
         chatRefresh.stop();
         show(friendsPane, invitePane, chatPane, requestsPane);
+        viewListener.refreshFriends();
     }
 
     @FXML
     private void showChat() {
         show(chatPane, invitePane, friendsPane, requestsPane);
         chatRefresh.play();
+        viewListener.refreshFriends();
     }
 
     @FXML
@@ -173,6 +175,7 @@ public class SocialPanel {
         void onInvite(String target);
         void onChatFriendSelected(String friend);
         void onRequestsOpened();
+        void refreshFriends();
         void onSendMessage(String friend, String content);
     }
 }

@@ -29,7 +29,7 @@ public class BugemonDTO implements Serializable{
 		this.baseStats = species.getBaseStats();
 		this.fightStats = species.getBaseStats();
 		this.xp = 0;
-		this.level = 0;
+		this.level = 1;
 		this.remainingRewards = 0;
 	}
 

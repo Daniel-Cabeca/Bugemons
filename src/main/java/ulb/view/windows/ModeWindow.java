@@ -34,6 +34,9 @@ public class ModeWindow {
 		viewListener.onQuit();
 	}
 
+	@FXML
+	private void logOut() { viewListener.onLogOut(); }
+
 	public void setViewListener(ViewListener viewListener) {
 		this.viewListener = viewListener;
 	}
@@ -43,5 +46,6 @@ public class ModeWindow {
 		void onSolo();
 		void onMultiplayer();
 		void onQuit();
+		void onLogOut();
 	}
 }

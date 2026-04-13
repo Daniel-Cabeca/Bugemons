@@ -122,6 +122,7 @@ SocialPanelController.Listener {
 
 	@Override
 	public boolean sendFriendRequest(String receiver) {
+
 		return postData(new SendFriendRequestMessage(player.getName(), receiver));
 	}
 
@@ -190,17 +191,21 @@ SocialPanelController.Listener {
 
 	@Override
 	public void onSignUp(String username, String password){
-		this.player = new PlayerDTO(username, password, new ArrayList<>(), new HashMap<>());
-		boolean success = this.signUp(this.player);
-		if (success) {
-			this.modeController = new ModeController(this.stage, this);
-			try {
-				this.modeController.show();
-			}catch (Exception e){
-				e.printStackTrace();
+		try {
+			this.player = new PlayerDTO(username, password, new ArrayList<>(), new HashMap<>());
+			boolean success = this.signUp(this.player);
+			if (success) {
+				this.modeController = new ModeController(this.stage, this);
+				try {
+					this.modeController.show();
+				}catch (Exception e){
+					e.printStackTrace();
+				}
+			} else {
+				this.registerController.getView().setErrorLabel("Ce nom d'utilisateur est déjà pris.");
 			}
-		} else {
-			this.registerController.getView().setErrorLabel("Nom d'utilisateur ou mot de passe incorrect.");
+		} catch (LoadException e) {
+			this.registerController.getView().setErrorLabel("Erreur de connexion à la base de données.");
 		}
 	}
 
@@ -230,6 +235,17 @@ SocialPanelController.Listener {
 	@Override
 	public void onMultiplayer() {
 
+	}
+
+	@Override
+	public void onLogOut() {
+		this.player = null;
+
+		try {
+			this.registerController.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	// Team Controller Listener :

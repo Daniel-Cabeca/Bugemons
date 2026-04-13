@@ -11,6 +11,7 @@ import ulb.view.windows.SocialPanel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class SocialPanelController implements SocialPanel.ViewListener {
 
@@ -52,18 +53,28 @@ public class SocialPanelController implements SocialPanel.ViewListener {
 
     @Override
     public void onDecline(String sender) {
-        listener.declineFriendRequest(sender);
-        refreshRequests();
+        if (listener.declineFriendRequest(sender)) {
+            refreshRequests();
+        }
     }
 
     @Override
     public void onAccept(String sender) {
-        listener.acceptFriendRequest(sender);
-        refreshRequests();
+        if (listener.acceptFriendRequest(sender)) {
+            refreshRequests();
+        }
     }
 
     @Override
     public void onInvite(String target) {
+        if (target.equals(listener.getPlayerName())) {
+            view.setInviteStatus("On ne peut pas être son propre ami...");
+            return;
+        }
+        if (listener.getFriendsList().contains(target)) {
+            view.setInviteStatus("Vous êtes déjà amis !");
+            return;
+        }
         boolean ok = listener.sendFriendRequest(target);
         view.setInviteStatus(ok ? "Demande envoyée !" : "Utilisateur introuvable.");
         if (ok) {
@@ -88,6 +99,11 @@ public class SocialPanelController implements SocialPanel.ViewListener {
             listener.sendChatMessage(friend, content);
             loadMessages(friend);
         }).start();
+    }
+
+    @Override
+    public void refreshFriends() {
+        view.setFriendsList(listener.getFriendsList());
     }
 
     private void refreshRequests() {

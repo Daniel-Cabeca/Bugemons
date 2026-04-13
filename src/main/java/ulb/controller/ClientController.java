@@ -39,7 +39,8 @@ import ulb.view.windows.SocialPanel;
 
 public class ClientController extends Application implements RegisterController.Listener, ModeController.Listener,
 BattleModeController.Listener,BattleEndController.Listener, BattleWindowController.Listener, NextRoomController.Listener, 
-FloorRewardController.Listener, AttackReplacementController.Listener, TeamController.Listener, LevelUpController.Listener {
+FloorRewardController.Listener, AttackReplacementController.Listener, TeamController.Listener, LevelUpController.Listener,
+SocialPanelController.Listener {
     SocketClient client;
     Stage stage;
 
@@ -117,34 +118,48 @@ FloorRewardController.Listener, AttackReplacementController.Listener, TeamContro
 		return postData(new RegisterMessage(player, true));
 	}
 
+	// Social Panel Controller
+
+	@Override
 	public boolean sendFriendRequest(String receiver) {
 		return postData(new SendFriendRequestMessage(player.getName(), receiver));
 	}
 
+	@Override
 	public List<String> getFriendRequests() {
 		if (getData(new GetFriendRequestsMessage(player.getName())) instanceof FriendRequestsMessage msg)
 			return msg.getRequests();
 		return List.of();
 	}
 
+	@Override
+	public String getPlayerName() {
+		return player.getName();
+	}
+
+	@Override
 	public boolean acceptFriendRequest(String sender) {
 		return postData(new AcceptFriendRequestMessage(player.getName(), sender));
 	}
 
+	@Override
 	public boolean declineFriendRequest(String sender) {
 		return postData(new DeclineFriendRequestMessage(player.getName(), sender));
 	}
 
+	@Override
 	public void sendChatMessage(String receiver, String content) {
 		postData(new SendChatMessageMessage(player.getName(), receiver, content));
 	}
 
+	@Override
 	public List<ChatMessage> getChatMessages(String friend) {
 		if (getData(new GetChatMessagesMessage(player.getName(), friend)) instanceof ChatMessagesMessage msg)
 			return msg.getMessages();
 		return List.of();
 	}
 
+	@Override
 	public List<String> getFriendsList() {
 		if (getData(new GetFriendsListMessage(player.getName())) instanceof FriendsListMessage msg)
 			return msg.getFriends();
@@ -203,20 +218,8 @@ FloorRewardController.Listener, AttackReplacementController.Listener, TeamContro
 	@Override
 	public void onOpenSocial() {
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource(WindowPath.SOCIAL_PANEL));
-			Parent root = loader.load();
-			SocialPanel panel = loader.getController();
-			Stage popup = new Stage();
-			popup.initStyle(StageStyle.UNDECORATED);
-			popup.initOwner(stage);
-			Scene scene = new Scene(root);
-			scene.getStylesheets().add(getClass().getResource("/styles/global.css").toExternalForm());
-			popup.setScene(scene);
-			panel.setStage(popup);
-			popup.setX(stage.getX());
-			popup.setY(stage.getY());
-			popup.show();
-			panel.setClientController(this);
+			SocialPanelController socialPanelController = new SocialPanelController(stage, this);
+			socialPanelController.show();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

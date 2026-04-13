@@ -32,4 +32,9 @@ public class ChatMessage implements Serializable {
     public String toString() {
         return "[" + this.sentAt + "] " + this.senderUsername + " → " + this.receiverUsername + ": " + this.content;
     }
+
+    public String format(String me) {
+        String prefix = getSenderUsername().equals(me) ? "Vous" : getSenderUsername();
+        return prefix + ": " + getContent();
+    }
 }

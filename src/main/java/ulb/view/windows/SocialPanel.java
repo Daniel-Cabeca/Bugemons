@@ -2,45 +2,53 @@ package ulb.view.windows;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import javafx.util.Duration;
-import ulb.controller.ClientController;
-import ulb.model.chat.ChatMessage;
 
 import java.util.List;
 
 public class SocialPanel {
 
-    @FXML private VBox invitePane;
-    @FXML private VBox friendsPane;
-    @FXML private VBox chatPane;
-    @FXML private VBox requestsPane;
-    @FXML private TextField inviteField;
-    @FXML private Label inviteStatus;
-    @FXML private ListView<String> friendsListView;
-    @FXML private ListView<String> chatFriendsList;
-    @FXML private ListView<String> chatMessagesList;
-    @FXML private TextField chatMessageField;
-    @FXML private ListView<String> requestsListView;
+    @FXML
+    private VBox invitePane;
+    @FXML
+    private VBox friendsPane;
+    @FXML
+    private VBox chatPane;
+    @FXML
+    private VBox requestsPane;
+    @FXML
+    private TextField inviteField;
+    @FXML
+    private Label inviteStatus;
+    @FXML
+    private ListView<String> friendsListView;
+    @FXML
+    private ListView<String> chatFriendsList;
+    @FXML
+    private ListView<String> chatMessagesList;
+    @FXML
+    private TextField chatMessageField;
+    @FXML
+    private ListView<String> requestsListView;
 
-    private Stage stage;
-    private ClientController clientController;
+    private ViewListener viewListener;
     private String selectedChatFriend;
     private Timeline chatRefresh;
 
-    public void setStage(Stage stage) { this.stage = stage; }
+    public void setViewListener(ViewListener viewListener) { this.viewListener = viewListener; }
 
     @FXML
     private void initialize() {
         chatRefresh = new Timeline(new KeyFrame(Duration.seconds(3), e -> {
-            if (selectedChatFriend != null) loadMessages();
+            if (selectedChatFriend != null) {
+                viewListener.onChatFriendSelected(selectedChatFriend);
+            }
         }));
         chatRefresh.setCycleCount(Timeline.INDEFINITE);
 
@@ -65,32 +73,29 @@ public class SocialPanel {
             String selected = chatFriendsList.getSelectionModel().getSelectedItem();
             if (selected != null) {
                 selectedChatFriend = selected;
-                loadMessages();
+                viewListener.onChatFriendSelected(selected);
             }
         });
     }
 
-    public void setClientController(ClientController clientController) {
-        this.clientController = clientController;
-        List<String> friends = clientController.getFriendsList();
+    public void setFriendsList(List<String> friends) {
         friendsListView.getItems().setAll(friends);
         chatFriendsList.getItems().setAll(friends);
     }
 
-    private void loadMessages() {
-        String me = clientController.getPlayer().getName();
-        String friend = selectedChatFriend;
-        new Thread(() -> {
-            List<ChatMessage> msgs = clientController.getChatMessages(friend);
-            Platform.runLater(() -> {
-                chatMessagesList.getItems().clear();
-                for (ChatMessage msg : msgs) {
-                    String prefix = msg.getSenderUsername().equals(me) ? "Vous" : msg.getSenderUsername();
-                    chatMessagesList.getItems().add(prefix + ": " + msg.getContent());
-                }
-            });
-        }).start();
+    public void setRequests(List<String> requests) {
+        requestsListView.getItems().setAll(requests);
     }
+
+    public void setMessages(List<String> messages) {
+        chatMessagesList.getItems().setAll(messages);
+    }
+
+    public void setInviteStatus(String status) { inviteStatus.setText(status); }
+
+    public void clearInviteField() { inviteField.clear(); }
+
+    public void clearChatField() { chatMessageField.clear(); }
 
     @FXML
     private void showInvite() {
@@ -114,51 +119,60 @@ public class SocialPanel {
     private void showRequests() {
         chatRefresh.stop();
         show(requestsPane, invitePane, friendsPane, chatPane);
-        requestsListView.getItems().setAll(clientController.getFriendRequests());
+        viewListener.onRequestsOpened();
     }
 
     private void show(VBox visible, VBox... hidden) {
         visible.setVisible(true);
-        for (VBox v : hidden) v.setVisible(false);
+        for (VBox v : hidden) {
+            v.setVisible(false);
+        }
     }
 
     @FXML
     private void handleInvite() {
         String target = inviteField.getText().trim();
-        if (target.isEmpty()) return;
-        boolean ok = clientController.sendFriendRequest(target);
-        inviteStatus.setText(ok ? "Demande envoyée !" : "Utilisateur introuvable.");
-        if (ok) inviteField.clear();
+        if (!target.isEmpty()) {
+            viewListener.onInvite(target);
+        }
     }
 
     @FXML
     private void handleAccept() {
         String sender = requestsListView.getSelectionModel().getSelectedItem();
-        if (sender == null) return;
-        clientController.acceptFriendRequest(sender);
-        showRequests();
+        if (sender != null) {
+            viewListener.onAccept(sender);
+        }
     }
 
     @FXML
     private void handleDecline() {
         String sender = requestsListView.getSelectionModel().getSelectedItem();
-        if (sender == null) return;
-        clientController.declineFriendRequest(sender);
-        showRequests();
+        if (sender != null) {
+            viewListener.onDecline(sender);
+        }
     }
 
     @FXML
     private void handleChatSend() {
         String content = chatMessageField.getText().trim();
-        if (content.isEmpty() || selectedChatFriend == null) return;
-        chatMessageField.clear();
-        String friend = selectedChatFriend;
-        new Thread(() -> {
-            clientController.sendChatMessage(friend, content);
-            loadMessages();
-        }).start();
+        if (!content.isEmpty() && selectedChatFriend != null) {
+            viewListener.onSendMessage(selectedChatFriend, content);
+        }
     }
 
     @FXML
-    private void handleClose() { stage.close(); }
+    private void handleClose() {
+        viewListener.onClose();
+    }
+
+    public interface ViewListener {
+        void onClose();
+        void onDecline(String sender);
+        void onAccept(String sender);
+        void onInvite(String target);
+        void onChatFriendSelected(String friend);
+        void onRequestsOpened();
+        void onSendMessage(String friend, String content);
+    }
 }

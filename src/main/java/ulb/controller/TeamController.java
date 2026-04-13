@@ -7,6 +7,12 @@ import javafx.stage.Stage;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.DTO.player.PlayerDTO;
+import ulb.DTO.bugemon.CreateTeamBugemonDTO;
+import ulb.model.Player;
+import ulb.model.bugemon.Bugemon;
+import ulb.model.bugemon.BugemonSpecies;
+import ulb.model.team.Team;
+import ulb.service.BugemonService;
 import ulb.view.WindowPath;
 import ulb.view.windows.CreateTeamWindow;
 
@@ -21,11 +27,14 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 
 	private CreateTeamWindow view;
 
-	public TeamController(Stage stage, Listener listener, PlayerDTO player) {
+	public TeamController(Stage stage, Listener listener, PlayerDTO player, BugemonService bugemonService) {
 		this.stage = stage;
 		this.listener = listener;
 		this.player = player;
+		this.bugemonService = bugemonService;
 	}
+
+	public BugemonService getBugemonService() { return this.bugemonService; }
 
 	public void show() throws Exception {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource(WindowPath.CREATE_TEAM));
@@ -44,7 +53,18 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 		this.stage.show();
 	}
 
-	public void setTeam(List<String> selectedBugemonsId){
+	private List<CreateTeamBugemonDTO> getAvailableBugemons() {
+		List<CreateTeamBugemonDTO> availableBugemons = new ArrayList<>();
+		for (BugemonSpecies bugemonSpecies : this.getBugemonService().getAllSpecies()) {
+			availableBugemons.add(new CreateTeamBugemonDTO(
+					bugemonSpecies.getId(),
+					bugemonSpecies.getName(),
+					bugemonSpecies.getSprite()));
+		}
+		return availableBugemons;
+	}
+
+	public void setTeam(List<String> selectedBugemonIds, BugemonService bugemonService) {
 		List<BugemonDTO> teamABugemons = new ArrayList<BugemonDTO>();
 		List<BugemonSpeciesDTO> allSpecies = this.getAllSpecies();
 		for (String bugemonId : selectedBugemonsId) {
@@ -59,7 +79,7 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 
 	@Override
 	public void onConfirmTeam(List<String> selectedBugemonIds) {
-		setTeam(selectedBugemonIds);
+		setTeam(selectedBugemonIds, this.getBugemonService());
 		listener.onTeamConfirmed();
 	}
 

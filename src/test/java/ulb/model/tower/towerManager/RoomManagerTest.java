@@ -13,7 +13,7 @@ import ulb.model.tower.RoomType;
 import ulb.model.tower.towerManager.RoomManager;
 import ulb.repository.BugemonSpeciesRepository;
 import ulb.repository.mock.BugemonSpeciesMockRepository;
-import ulb.service.BugemonService;
+import ulb.repository.mock.InventoryMockRepository;import ulb.repository.mock.ItemMockRepository;import ulb.service.BugemonService;import ulb.service.ItemService;
 
 public class RoomManagerTest {
 
@@ -26,12 +26,15 @@ public class RoomManagerTest {
 
     @Test
     void roomNotCompletedOnInitialisation() {
-		Player player = new Player("TestPlayer");
+		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
+		ItemService itemService = new ItemService(new ItemMockRepository(), new InventoryMockRepository());
+
+		Player player = new Player("TestPlayer", itemService);
 		Bugemon a = makeBugemon();
 		Team teamA = new Team(List.of(a));
 		player.setTeam(teamA);
         Room room = new Room(1, RoomType.BATTLE);
-        RoomManager manager = new RoomManager(room, 1, player);
+        RoomManager manager = new RoomManager(room, 1, player, bugemonService, itemService);
 
         assertFalse(manager.isRoomCompleted());
         assertFalse(room.isRoomCompleted());
@@ -39,12 +42,15 @@ public class RoomManagerTest {
 
     @Test
     void setRoomCompletedUpdatesManagerAndRoom() {
-		Player player = new Player("TestPlayer");
+		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
+		ItemService itemService = new ItemService(new ItemMockRepository(), new InventoryMockRepository());
+
+		Player player = new Player("TestPlayer", itemService);
 		Bugemon a = makeBugemon();
 		Team teamA = new Team(List.of(a));
 		player.setTeam(teamA);
         Room room = new Room(1, RoomType.REWARD);
-        RoomManager manager = new RoomManager(room, 1, player);
+        RoomManager manager = new RoomManager(room, 1, player, bugemonService, itemService);
 
         manager.setRoomCompleted(true);
 
@@ -54,13 +60,16 @@ public class RoomManagerTest {
 
 	@Test
 	void createBattleRoomInitializesBattleController() {
-		Player player = new Player("TestPlayer");
+		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
+		ItemService itemService = new ItemService(new ItemMockRepository(), new InventoryMockRepository());
+
+		Player player = new Player("TestPlayer", itemService);
 		// give the player a minimal valid team
 		Team team = new Team(List.of(makeBugemon()));
 		player.setTeam(team);
 
 		Room room = new Room(1, RoomType.BATTLE);
-		RoomManager manager = new RoomManager(room, 1, player);
+		RoomManager manager = new RoomManager(room, 1, player, bugemonService, itemService);
 
 		assertNotNull(manager.getBattle(),
 				"Battle controller should be initialized for a BATTLE room");

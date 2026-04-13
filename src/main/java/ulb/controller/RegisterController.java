@@ -5,6 +5,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import ulb.DTO.player.PlayerDTO;
+import ulb.repository.LoadException;
+import ulb.service.AccountService;
 import ulb.view.WindowPath;
 import ulb.view.windows.RegisterWindow;
 
@@ -16,11 +18,15 @@ public class RegisterController implements RegisterWindow.ViewListener {
     private Listener listener;
     private RegisterWindow view;
     private Stage stage;
+	private final AccountService accountService;
 
-    public RegisterController(Stage stage, Listener listener) {
+    public RegisterController(Stage stage, Listener listener, AccountService accountService) {
         this.stage = stage;
         this.listener = listener;
+		this.accountService = accountService;
     }
+
+	AccountService getAccountService() { return this.accountService; }
 
     public void show() throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(WindowPath.REGISTER));

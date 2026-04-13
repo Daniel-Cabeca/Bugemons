@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import ulb.repository.mock.BugemonSpeciesMockRepository;
+import ulb.repository.mock.InventoryMockRepository;
+import ulb.repository.mock.ItemMockRepository;
 import ulb.service.BugemonService;
 
 import java.util.List;
@@ -15,10 +17,15 @@ import ulb.model.battle.Battle.ParticipantLabel;
 import ulb.model.team.Team;
 import ulb.model.Player;
 
+import ulb.model.effect.EffectTarget;
+import ulb.model.effect.EffectStatModifier.EffectDuration;
+import ulb.service.ItemService;
+
 public class EffectTest {
 	private static Battle getTestBattle() {
 		BugemonSpeciesMockRepository repository = new BugemonSpeciesMockRepository();
 		BugemonService service = new BugemonService(repository);
+		ItemService itemService = new ItemService(new ItemMockRepository(), new InventoryMockRepository());
 
 		Team teamA = new Team(List.of(
 			service.spawnBugemon("florachu"),
@@ -29,8 +36,8 @@ public class EffectTest {
 			service.spawnBugemon("obsidian")
 		));
 
-		Player player = new Player("TestPlayer");
-		Battle battle = new Battle(teamA, teamB, player);
+		Player player = new Player("TestPOlayer", itemService);
+		Battle battle = new Battle(teamA, teamB, player, new Player(itemService));
 
 		return battle;
 	}

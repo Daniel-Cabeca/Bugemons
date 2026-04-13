@@ -7,8 +7,6 @@ import ulb.model.ability.Ability;
 import ulb.model.type.Type;
 import ulb.model.ability.AbilitySet;
 
-import ulb.service.ServiceLoader;
-
 public class Bugemon {
 	private BugemonSpecies species;
 	private AbilitySet abilities;
@@ -142,10 +140,6 @@ public class Bugemon {
 		} 
 		Random rand = new Random();
 		return rand.nextInt(2) == 0;
-	}
-
-	public Bugemon(String id) throws NoSuchElementException {
-		this(ServiceLoader.getBugemonService().getBugemonSpecies(id));
 	}
 
 }

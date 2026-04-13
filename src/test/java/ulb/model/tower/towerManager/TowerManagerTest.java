@@ -15,7 +15,7 @@ import ulb.model.tower.towerManager.FloorManager;
 import ulb.model.tower.towerManager.TowerManager;
 import ulb.repository.BugemonSpeciesRepository;
 import ulb.repository.mock.BugemonSpeciesMockRepository;
-import ulb.service.BugemonService;
+import ulb.repository.mock.InventoryMockRepository;import ulb.repository.mock.ItemMockRepository;import ulb.service.BugemonService;import ulb.service.ItemService;
 
 public class TowerManagerTest {
 
@@ -28,11 +28,14 @@ public class TowerManagerTest {
 
 	@Test
 	void towerIsNotCompletedOnInitialisation() {
-		Player player = new Player("TestPlayer");
+		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
+		ItemService itemService = new ItemService(new ItemMockRepository(), new InventoryMockRepository());
+
+		Player player = new Player("TestPlayer", itemService);
 		Bugemon a = makeBugemon();
 		Team teamA = new Team(List.of(a));
 		player.setTeam(teamA);
-		TowerManager manager = new TowerManager(player);
+		TowerManager manager = new TowerManager(player, bugemonService, itemService);
 
 		assertFalse(manager.isTowerCompleted(), "New tower should not be completed");
 
@@ -43,11 +46,14 @@ public class TowerManagerTest {
 
 	@Test
 	void towerIsCompletedWhenAllFloorsCompleted() {
-		Player player = new Player("TestPlayer");
+		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
+		ItemService itemService = new ItemService(new ItemMockRepository(), new InventoryMockRepository());
+
+		Player player = new Player("TestPlayer", itemService);
 		Bugemon a = makeBugemon();
 		Team teamA = new Team(List.of(a));
 		player.setTeam(teamA);
-		TowerManager manager = new TowerManager(player);
+		TowerManager manager = new TowerManager(player, bugemonService, itemService);
 
 		Tower tower = manager.getTower();
 		// mark all floors as completed
@@ -59,12 +65,14 @@ public class TowerManagerTest {
 
 	@Test
 	void advanceFloorWhenCurrentFloorIsCompletedAndTowerIsNotCompleted()throws Exception {
+		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
+		ItemService itemService = new ItemService(new ItemMockRepository(), new InventoryMockRepository());
 
-		Player player = new Player("TestPlayer");
+		Player player = new Player("TestPlayer", itemService);
 		Bugemon a = makeBugemon();
 		Team teamA = new Team(List.of(a));
 		player.setTeam(teamA);
-		TowerManager manager = new TowerManager(player);
+		TowerManager manager = new TowerManager(player, bugemonService, itemService);
 		int before = manager.getFloorNumber();
 		FloorManager floorManager = manager.getCurrentFloorManager();
 		Floor currentFloor = floorManager.getFloor();
@@ -87,11 +95,14 @@ public class TowerManagerTest {
 
 	@Test
 	void doesNotAdvanceFloorWhenTowerIsCompleted() throws Exception {
-		Player player = new Player("TestPlayer");
+		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
+		ItemService itemService = new ItemService(new ItemMockRepository(), new InventoryMockRepository());
+
+		Player player = new Player("TestPlayer", itemService);
 		Bugemon a = makeBugemon();
 		Team teamA = new Team(List.of(a));
 		player.setTeam(teamA);
-		TowerManager manager = new TowerManager(player);
+		TowerManager manager = new TowerManager(player, bugemonService, itemService);
 		Tower tower = manager.getTower();
 		// mark all floors as completed
 		tower.getFloors().forEach(f -> f.setFloorCompleted(true));

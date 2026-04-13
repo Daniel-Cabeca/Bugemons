@@ -14,6 +14,9 @@ import java.util.List;
 import ulb.model.Player;
 import ulb.model.ability.AbilitySet;
 import ulb.model.battle.Battle.ParticipantLabel;
+import ulb.repository.mock.InventoryMockRepository;
+import ulb.repository.mock.ItemMockRepository;
+import ulb.service.ItemService;
 
 public class BattleTest {
 
@@ -24,41 +27,47 @@ public class BattleTest {
 
 	@Test
 	public void initiaveReturnsAWhenAHasHigherInitiative() {
+		ItemService itemService = new ItemService(new ItemMockRepository(), new InventoryMockRepository());
+
 		Bugemon fast = createBugemon("fast", Type.PYRO, 100, 10, 10, 20);
 		Bugemon slow = createBugemon("slow", Type.AQUA, 100, 10, 10, 5);
 
 		Team teamA = new Team(List.of(fast));
 		Team teamB = new Team(List.of(slow));
-		Player p = new Player("TestPlayer");
-		Battle battle = new Battle(teamA, teamB, p);
+		Player p = new Player("TestPlayer", itemService);
+		Battle battle = new Battle(teamA, teamB, p, new Player(itemService));
 
 		assertSame(ParticipantLabel.TEAM_A, battle.getFirstTeamToPlay());
 	}
 
 	@Test
 	public void initiaveReturnsBWhenBHasHigherInitiative() {
+		ItemService itemService = new ItemService(new ItemMockRepository(), new InventoryMockRepository());
+
 		Bugemon slow = createBugemon("slow", Type.PYRO, 100, 10, 10, 5);
 		Bugemon fast = createBugemon("fast", Type.AQUA, 100, 10, 10, 20);
 
 		Team teamA = new Team(List.of(slow));
 		Team teamB = new Team(List.of(fast));
 
-		Player p = new Player("TestPlayer");
-		Battle battle = new Battle(teamA, teamB, p);
+		Player p = new Player("TestPlayer", itemService);
+		Battle battle = new Battle(teamA, teamB, p, new Player(itemService));
 
 		assertSame(ParticipantLabel.TEAM_B, battle.getFirstTeamToPlay());
 	}
 
 	@Test
 	public void initiaveIsRandomWhenInitiativesAreEqual() {
+		ItemService itemService = new ItemService(new ItemMockRepository(), new InventoryMockRepository());
+
 		Bugemon sameA = createBugemon("sameA", Type.PYRO, 100, 10, 10, 10);
 		Bugemon sameB = createBugemon("sameB", Type.AQUA, 100, 10, 10, 10);
 
 		Team teamA = new Team(List.of(sameA));
 		Team teamB = new Team(List.of(sameB));
 
-		Player p = new Player("TestPlayer");
-		Battle battle = new Battle(teamA, teamB, p);
+		Player p = new Player("TestPlayer", itemService);
+		Battle battle = new Battle(teamA, teamB, p, new Player(itemService));
 
 		boolean sawA = false;
 		boolean sawB = false;

@@ -14,8 +14,6 @@ import ulb.controller.action.Action;
 import ulb.controller.action.Swap;
 import ulb.controller.action.UseAbility;
 import ulb.controller.action.UseItem;
-import ulb.model.effect.Effect;
-import ulb.model.effect.EffectHeal;
 import ulb.model.item.Item;
 import ulb.model.reward.Reward;
 import ulb.model.Player;
@@ -27,9 +25,10 @@ import ulb.model.team.Team;
 import ulb.repository.BugemonSpeciesRepository;
 import ulb.repository.ItemRepository;
 import ulb.repository.mock.BugemonSpeciesMockRepository;
+import ulb.repository.mock.InventoryMockRepository;
 import ulb.repository.mock.ItemMockRepository;
 import ulb.service.BugemonService;
-import ulb.model.type.Type;
+import ulb.service.ItemService;
 
 public class BattleControllerTest {
 	private static Item getItem(String id) {
@@ -47,6 +46,7 @@ public class BattleControllerTest {
 	private static BattleController makeBattleController1v1(String bugemonIdA, String bugemonIdB) {
 		BugemonSpeciesRepository bugemonRepository = new BugemonSpeciesMockRepository();
 		BugemonService bugemonService = new BugemonService(bugemonRepository);
+		ItemService itemService = new ItemService(new ItemMockRepository(), new InventoryMockRepository());
 
 		Bugemon bugemonA = bugemonService.spawnBugemon(bugemonIdA);
 		Bugemon bugemonB = bugemonService.spawnBugemon(bugemonIdB);
@@ -54,19 +54,20 @@ public class BattleControllerTest {
 		Team teamA = new Team(List.of(bugemonA));
 		Team teamB = new Team(List.of(bugemonB));
 
-		Player player = new Player("TestPlayer");
+		Player player = new Player("TestPlayer", itemService);
 		player.setTeam(teamA);
 
-		Player otherPlayer = new Player("OtherPlayer");
+		Player otherPlayer = new Player("OtherPlayer", itemService);
 		otherPlayer.setTeam(teamB);
 
 		Battle battle = new Battle(teamA, teamB, player, otherPlayer);
-		return new BattleController(player, battle, ParticipantLabel.TEAM_A);
+		return new BattleController(player, battle, ParticipantLabel.TEAM_A, new ItemService(new ItemMockRepository(), new InventoryMockRepository()));
 	}
 
 	private static BattleController makeBattleController2v1(String bugemonIdA1, String bugemonIdA2, String bugemonIdB) {
 		BugemonSpeciesRepository bugemonRepository = new BugemonSpeciesMockRepository();
 		BugemonService bugemonService = new BugemonService(bugemonRepository);
+		ItemService itemService = new ItemService(new ItemMockRepository(), new InventoryMockRepository());
 
 		Bugemon bugemonA1 = bugemonService.spawnBugemon(bugemonIdA1);
 		Bugemon bugemonA2 = bugemonService.spawnBugemon(bugemonIdA2);
@@ -75,21 +76,21 @@ public class BattleControllerTest {
 		Team teamA = new Team(List.of(bugemonA1, bugemonA2));
 		Team teamB = new Team(List.of(bugemonB));
 
-		Player player = new Player("TestPlayer");
+		Player player = new Player("TestPlayer", itemService);
 		player.setTeam(teamA);
 
-		Player otherPlayer = new Player("OtherPlayer");
+		Player otherPlayer = new Player("OtherPlayer", itemService);
 		otherPlayer.setTeam(teamB);
 
 		Battle battle = new Battle(teamA, teamB, player, otherPlayer);
-		return new BattleController(player, battle, ParticipantLabel.TEAM_A);
+		return new BattleController(player, battle, ParticipantLabel.TEAM_A, new ItemService(new ItemMockRepository(), new InventoryMockRepository()));
 	}
 
 	private BattleController makeOtherPlayerBattleController(BattleController selfController) {
 		Battle battle = selfController.getBattle();
 		Player otherPlayer = battle.getPlayer(ParticipantLabel.TEAM_B);
 
-		return new BattleController(otherPlayer, battle, ParticipantLabel.TEAM_B);
+		return new BattleController(otherPlayer, battle, ParticipantLabel.TEAM_B, new ItemService(new ItemMockRepository(), new InventoryMockRepository()));
 	}
 
 	private static void playTurn(BattleController controllerA, BattleController controllerB, Action actionA, Action actionB) {

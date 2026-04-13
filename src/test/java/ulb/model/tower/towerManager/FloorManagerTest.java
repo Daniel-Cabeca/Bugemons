@@ -17,7 +17,7 @@ import ulb.model.tower.towerManager.FloorManager;
 import ulb.model.type.Type;
 import ulb.repository.BugemonSpeciesRepository;
 import ulb.repository.mock.BugemonSpeciesMockRepository;
-import ulb.service.BugemonService;
+import ulb.repository.mock.InventoryMockRepository;import ulb.repository.mock.ItemMockRepository;import ulb.service.BugemonService;import ulb.service.ItemService;
 
 public class FloorManagerTest {
 
@@ -30,12 +30,15 @@ public class FloorManagerTest {
 
     @Test
     void floorIsNotCompletedOnInitialisation() {
-		Player player = new Player("TestPlayer");
+		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
+		ItemService itemService = new ItemService(new ItemMockRepository(), new InventoryMockRepository());
+
+		Player player = new Player("TestPlayer", itemService);
         Floor floor = new Floor(1, false);
 		Bugemon a = makeBugemon();
 		Team teamA = new Team(List.of(a));
 		player.setTeam(teamA);
-        FloorManager manager = new FloorManager(floor, player);
+        FloorManager manager = new FloorManager(floor, player, bugemonService, itemService);
 
         assertFalse(manager.isFloorCompleted());
         assertFalse(floor.isFloorCompleted());
@@ -43,12 +46,15 @@ public class FloorManagerTest {
 
     @Test
     void floorIsCompletedWhenAllRoomsCompleted() {
-		Player player = new Player("TestPlayer");
+		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
+		ItemService itemService = new ItemService(new ItemMockRepository(), new InventoryMockRepository());
+
+		Player player = new Player("TestPlayer", itemService);
 		Bugemon a = makeBugemon();
 		Team teamA = new Team(List.of(a));
 		player.setTeam(teamA);
         Floor floor = new Floor(1, false);
-        FloorManager manager = new FloorManager(floor, player);
+        FloorManager manager = new FloorManager(floor, player, bugemonService, itemService);
 
         for (Room room : floor.getRooms()) {
             room.setRoomCompleted(true);
@@ -60,12 +66,15 @@ public class FloorManagerTest {
 
     @Test
     void AdvanceToNextRoomWhenCurrentRoomCompletedAndFloorNotCompleted() {
-		Player player = new Player("TestPlayer");
+		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
+		ItemService itemService = new ItemService(new ItemMockRepository(), new InventoryMockRepository());
+
+		Player player = new Player("TestPlayer", itemService);
 		Bugemon a = makeBugemon();
 		Team teamA = new Team(List.of(a));
 		player.setTeam(teamA);
         Floor floor = new Floor(1, false);
-        FloorManager manager = new FloorManager(floor, player);
+        FloorManager manager = new FloorManager(floor, player, bugemonService, itemService);
 
         int beforeIndex = manager.getCurrentRoomIndex();
         Room currentRoom = manager.getCurrentRoomManager().getRoom();

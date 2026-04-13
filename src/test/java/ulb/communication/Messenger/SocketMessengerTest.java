@@ -20,6 +20,7 @@ public class SocketMessengerTest {
         private ServerSocket connection;
         private boolean isClient;
         private Socket socket;
+        private volatile boolean ready = false;
 
         private SocketMessenger messenger;
 
@@ -36,9 +37,14 @@ public class SocketMessengerTest {
                 }
                 
                 this.messenger = new SocketMessenger(socket);
+                this.ready = true;
             } catch (Exception e){
                 System.err.println(e);
             }
+        }
+
+        public boolean isReady() {
+            return ready;
         }
 
         public Socket getSocket(){
@@ -92,6 +98,14 @@ public class SocketMessengerTest {
     @Test
     public void testSendingMessage(){
         this.createActors();
+        try {
+            while (client.getSocket() == null || server.getSocket() == null) {
+                    Thread.sleep(10);
+            }
+        } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+        }
+
         StatusMessage sendingMessage = new StatusMessage(false,"Test de la communication");
 
         this.client.sendMessage(sendingMessage);

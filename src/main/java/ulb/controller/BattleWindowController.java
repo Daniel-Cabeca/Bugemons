@@ -11,7 +11,7 @@ import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.DTO.player.PlayerDTO;
-import ulb.communication.types.GameMode;
+import ulb.communication.GameMode;
 import ulb.model.battle.BattleState;
 import ulb.model.type.Type;
 import ulb.view.WindowPath;

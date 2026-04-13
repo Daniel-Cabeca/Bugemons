@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import ulb.model.ability.Ability;
+import ulb.model.action.UseAbility;
+import ulb.model.action.UseItem;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.Stats;
 
@@ -14,10 +16,6 @@ import ulb.model.Player;
 import ulb.model.team.Team;
 import ulb.model.battle.Battle;
 import ulb.model.battle.Battle.ParticipantLabel;
-import ulb.controller.BattleController;
-import ulb.controller.action.UseAbility;
-import ulb.controller.action.UseItem;
-
 import ulb.repository.mock.InventoryMockRepository;import ulb.service.BugemonService;
 import ulb.repository.mock.BugemonSpeciesMockRepository;
 import ulb.repository.ItemRepository;
@@ -34,7 +32,7 @@ public class ItemTest {
 		return service.spawnBugemon(id);
 	}
 
-	private BattleController makeBattleController(Bugemon... bugemons) {
+	private Battle makeBattleController(Bugemon... bugemons) {
 		ItemService itemService = new ItemService(new ItemMockRepository(), new InventoryMockRepository());
 
 		List<Bugemon> bugemonList = bugemons.length > 0 ? List.of(bugemons) : List.of(spawnBugemon("florachu"));
@@ -47,24 +45,14 @@ public class ItemTest {
 		Player otherPlayer = new Player("OtherPlayer", itemService);
 		otherPlayer.setTeam(teamB);
 
-		Battle battle = new Battle(teamA, teamB, player, otherPlayer);
-		return new BattleController(player, battle, ParticipantLabel.TEAM_A, itemService);
+		return new Battle(teamA, teamB, player, otherPlayer);
 	}
 
-	private BattleController makeOtherPlayerBattleController(BattleController selfController) {
-		ItemService itemService = new ItemService(new ItemMockRepository(), new InventoryMockRepository());
+	private void playTurnWithItem(Battle battle, Item item) {
+		Ability otherAbility = battle.getActiveBugemon(ParticipantLabel.TEAM_B).getAbilities().getAbility(0);
 
-		Battle battle = selfController.getBattle();
-		Player otherPlayer = battle.getPlayer(ParticipantLabel.TEAM_B);
-
-		return new BattleController(otherPlayer, battle, ParticipantLabel.TEAM_B, itemService);
-	}
-
-	private void playTurnWithItem(BattleController controller, BattleController otherController, Item item) {
-		Ability otherAbility = otherController.getBattle().getActiveBugemon(ParticipantLabel.TEAM_B).getAbilities().getAbility(0);
-
-		controller.useAction(new UseItem(item));
-		otherController.useAction(new UseAbility(otherAbility));
+		battle.chooseAction(new UseItem(item), Battle.ParticipantLabel.TEAM_A);
+		battle.chooseAction(new UseAbility(otherAbility), Battle.ParticipantLabel.TEAM_B);
 	}
 
     @Test
@@ -72,14 +60,13 @@ public class ItemTest {
 		Bugemon bugemon = spawnBugemon("100hp");
 		bugemon.changeFightStats(new Stats(-20, 0, 0, 0));
 
-		BattleController controller = makeBattleController(bugemon);
-		Player player = controller.getPlayer();
-		BattleController otherController = makeOtherPlayerBattleController(controller);
+		Battle battle = makeBattleController(bugemon);
+		Player player = battle.getPlayer(Battle.ParticipantLabel.TEAM_A);
 
 		Item item = getItem("heal_10");
 		player.getInventory().addItem(item, 1);
 
-		playTurnWithItem(controller, otherController, item);
+		playTurnWithItem(battle, item);
 		assertEquals(90, bugemon.getFightStats().getHp());
 	}
 
@@ -88,14 +75,13 @@ public class ItemTest {
 		Bugemon bugemon = spawnBugemon("100hp");
 		bugemon.changeFightStats(new Stats(-5, 0, 0, 0));
 
-		BattleController controller = makeBattleController(bugemon);
-		Player player = controller.getPlayer();
-		BattleController otherController = makeOtherPlayerBattleController(controller);
+		Battle battle = makeBattleController(bugemon);
+		Player player = battle.getPlayer(ParticipantLabel.TEAM_A);
 
 		Item item = getItem("heal_10");
 		player.getInventory().addItem(item, 1);
 
-		playTurnWithItem(controller, otherController, item);
+		playTurnWithItem(battle, item);
 
 		assertEquals(100, bugemon.getFightStats().getHp());
 	}
@@ -104,14 +90,13 @@ public class ItemTest {
 	public void statModifierAppliesEffect() {
 		Bugemon bugemon = spawnBugemon("50atk");
 
-		BattleController controller = makeBattleController(bugemon);
-		Player player = controller.getPlayer();
-		BattleController otherController = makeOtherPlayerBattleController(controller);
+		Battle battle = makeBattleController(bugemon);
+		Player player = battle.getPlayer(ParticipantLabel.TEAM_A);
 
 		Item item = getItem("+10atk");
 		player.getInventory().addItem(item, 1);
 
-		playTurnWithItem(controller, otherController, item);
+		playTurnWithItem(battle, item);
 
 		assertEquals(60, bugemon.getFightStats().getAttack());
 	}
@@ -120,14 +105,13 @@ public class ItemTest {
 	public void multipleStatModifierAppliesEffect() {
 		Bugemon bugemon = spawnBugemon("100all");
 
-		BattleController controller = makeBattleController(bugemon);
-		Player player = controller.getPlayer();
-		BattleController otherController = makeOtherPlayerBattleController(controller);
+		Battle battle = makeBattleController(bugemon);
+		Player player = battle.getPlayer(ParticipantLabel.TEAM_A);
 
 		Item item = getItem("+10atk_+10def");
 		player.getInventory().addItem(item, 1);
 
-		playTurnWithItem(controller, otherController, item);
+		playTurnWithItem(battle, item);
 
 		assertEquals(110, bugemon.getFightStats().getAttack());
 		assertEquals(110, bugemon.getFightStats().getDefense());
@@ -135,16 +119,14 @@ public class ItemTest {
 
 	@Test
 	public void switchItemAppliesEffect() {
-		BattleController controller = makeBattleController(spawnBugemon("florachu"), spawnBugemon("pyricore"));
-		BattleController otherController = makeOtherPlayerBattleController(controller);
-		Player player = controller.getPlayer();
-		Battle battle = controller.getBattle();
+		Battle battle = makeBattleController(spawnBugemon("florachu"), spawnBugemon("pyricore"));
+		Player player = battle.getPlayer(ParticipantLabel.TEAM_A);
 
 		Item item = getItem("switch");
 		player.getInventory().addItem(item, 1);
 
 		Bugemon activeBefore = battle.getActiveBugemon(ParticipantLabel.TEAM_A);
-		playTurnWithItem(controller, otherController, item);
+		playTurnWithItem(battle, item);
 
 		assertNotEquals("florachu", battle.getActiveBugemon(ParticipantLabel.TEAM_A).getSpecies().getId());
 		assertEquals("pyricore", battle.getActiveBugemon(ParticipantLabel.TEAM_A).getSpecies().getId());
@@ -155,14 +137,13 @@ public class ItemTest {
 		Bugemon bugemon = spawnBugemon("100all");
 		bugemon.changeFightStats(new Stats(-5, -5, -5, -5)); 
 
-		BattleController controller = makeBattleController(bugemon);
-		Player player = controller.getPlayer();
-		BattleController otherController = makeOtherPlayerBattleController(controller);
+		Battle battle = makeBattleController(bugemon);
+		Player player = battle.getPlayer(ParticipantLabel.TEAM_A);
 
 		Item item = getItem("reset_malus");
 		player.getInventory().addItem(item, 1);
 
-		playTurnWithItem(controller, otherController, item);
+		playTurnWithItem(battle, item);
 
 		assertEquals(100, bugemon.getFightStats().getHp());
 		assertEquals(100, bugemon.getFightStats().getAttack());

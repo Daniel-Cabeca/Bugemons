@@ -1,4 +1,4 @@
-package ulb.controller.action;
+package ulb.model.action;
 
 import ulb.model.ability.Ability;
 import ulb.model.battle.Battle;

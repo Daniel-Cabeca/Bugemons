@@ -129,6 +129,7 @@ SocialPanelController.Listener {
 
 	@Override
 	public boolean sendFriendRequest(String receiver) {
+
 		return postData(new SendFriendRequestMessage(player.getName(), receiver));
 	}
 

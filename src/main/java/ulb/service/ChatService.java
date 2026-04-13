@@ -1,15 +1,15 @@
 package ulb.service;
 
 import ulb.model.chat.ChatMessage;
-import ulb.repository.json.ChatDatabaseRepository;
+import ulb.repository.ChatRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class ChatService {
-    private final ChatDatabaseRepository repository;
+    private final ChatRepository repository;
 
-    public ChatService(ChatDatabaseRepository repository) {
+    public ChatService(ChatRepository repository) {
         this.repository = repository;
     }
 

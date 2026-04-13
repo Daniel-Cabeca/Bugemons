@@ -17,7 +17,7 @@ public class Player {
 	}
 
 	public Player(String name, ItemService itemService) {
-		this.name = name;
+		this.userName = name;
 		this.password = "password";
 		this.team = new Team();
 		this.inventory = new Inventory();
@@ -25,13 +25,13 @@ public class Player {
 		addDefaultItems(itemService);
 	}
 
-	public Player(String name, String password) {
+	public Player(String name, String password, ItemService itemService) {
 		this.userName = name;
 		this.password = password;
 		this.team = new Team();
 		this.inventory = new Inventory();
 
-		addDefaultItems();
+		addDefaultItems(itemService);
 	}
 
 	public Player(String name, String password, Team team, Inventory inventory) {

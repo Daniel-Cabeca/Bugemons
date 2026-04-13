@@ -17,8 +17,6 @@ import ulb.model.battle.Battle.ParticipantLabel;
 import ulb.model.team.Team;
 import ulb.model.Player;
 
-import ulb.model.effect.EffectTarget;
-import ulb.model.effect.EffectStatModifier.EffectDuration;
 import ulb.service.ItemService;
 
 public class EffectTest {

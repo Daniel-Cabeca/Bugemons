@@ -40,6 +40,9 @@ public interface ServerMessageHandler {
 	public void handle(GetRandomAbilityMessage message);
 	public void handle(GetRandomItemMessage message);
 
+	// ACCOUNT
+	public void handle(GetUserIdFromNameMessage message);
+
 	// FRIENDS
 	public void handle(SendFriendRequestMessage message);
 	public void handle(GetFriendRequestsMessage message);

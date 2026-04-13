@@ -7,6 +7,7 @@ import java.util.List;
 
 import ulb.communication.Messenger.SocketMessenger;
 import ulb.server.ClientHandler;
+import ulb.service.*;
 
 public class SocketServer {
     private ServerSocket serverSocket;
@@ -51,14 +52,15 @@ public class SocketServer {
         return null;
     }
 
-    public void start(){
+    public void start(AbilityService abilityService, BugemonService bugemonService, ItemService itemService,
+    		AccountService accountService, ChatService chatService){
         while (!stopServer) {
             Socket clientSocket;
             if ((clientSocket = listenConnection()) != null){
                 System.out.println("CLIENT ACCEPTED");
                 SocketMessenger clientMessenger = new SocketMessenger(clientSocket);
 
-                ClientHandler controller = new ClientHandler(clientMessenger);
+                ClientHandler controller = new ClientHandler(clientMessenger, abilityService, bugemonService, itemService, accountService, chatService);
                 clients.add(controller);
                 controller.start();
             }

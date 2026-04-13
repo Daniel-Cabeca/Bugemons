@@ -107,40 +107,6 @@ MultiplayerWindowController.Listener {
 	private ItemService itemService;
 	private AccountService accountService;
 
-	public static void main(String[] args) {
-		boolean launchClient = true;
-		if (launchClient){
-			Main.main(args);
-		}else {
-			// CLIENT & SERVER
-			try {
-				if (args.length == 0) {
-					launch(args);
-				} else if ("--client".equals(args[0])) {
-					SocketClient client = new SocketClient(SERVER_IP, SERVER_PORT);
-
-					//client.sendMessage(new ConnectMessage("Bonjour server !"));
-
-					Serializable message = client.receiveMessage();
-					if (message instanceof ConnectMessage connectMessage) {
-						System.out.println("message reçu du serveur : " + connectMessage.getConnectMessage());
-					}
-
-					client.closeSocket();
-				} else if ("--server".equals(args[0])) {
-					SocketServer server = new SocketServer(SERVER_PORT);
-					server.start();
-				} else {
-					System.err.println("Unknown arguments.");
-				}
-			} catch (Exception e) {
-				System.err.println("Uncaught error.");
-				System.err.println(e.getMessage());
-			}
-		}
-		
-	}
-
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		// CLIENT
@@ -945,7 +911,7 @@ MultiplayerWindowController.Listener {
 	public void onRegister(String username) {
 		player.setName(username);
 		if (modeController == null) {
-			modeController = new ModeController(stage, this, player, this.getBugemonService());
+			modeController = new ModeController(stage, this);
 		}
 		try {
 			modeController.show();
@@ -996,20 +962,24 @@ MultiplayerWindowController.Listener {
 
 	public void addFriend(int id){
 		String username = player.getName();
-		int user_id = ServiceLoader.getAccountService().getUserId(username);
-		ServiceLoader.getAccountService().addFriend(user_id,id);
-
+		int user_id = this.getAccountService().getUserId(username);
+		this.getAccountService().addFriend(user_id,id);
 	}
 
 	@Override
 	public void populateFriends(VBox friendsList) {
 		friendsList.getChildren().clear();
-		int user_id = ServiceLoader.getAccountService().getUserId(player.getName());
-		List<String> friends = ServiceLoader.getAccountService().getFriendsList(user_id);
+		int user_id = this.getAccountService().getUserId(player.getName());
+		List<String> friends = this.getAccountService().getFriendsList(user_id);
 		if (!friends.isEmpty()){
 			for (String friend :friends) {
 				friendsList.getChildren().add(new Label(friend));
 			}
 		}
+	}
+
+	@Override
+	public int getUserIdFromName(String name) {
+		return this.getAccountService().getUserId(name);
 	}
 }

@@ -2,12 +2,8 @@ package ulb.controller;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,10 +23,7 @@ import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.DTO.reward.RewardDTO;
-import ulb.repository.LoadException;
 import ulb.model.chat.ChatMessage;
-import ulb.view.WindowPath;
-import ulb.view.windows.SocialPanel;
 
 
 public class ClientController extends Application implements RegisterController.Listener, ModeController.Listener,
@@ -181,40 +174,32 @@ SocialPanelController.Listener {
 
 	@Override
 	public void onLogin(String username, String password){
-		try {
-			this.player = new PlayerDTO(username, password, new ArrayList<>(), new HashMap<>());
-			boolean success = logIn(this.player);
-			if (success) {
-				this.modeController = new ModeController(this.stage, this);
-				try {
-					this.modeController.show();
-				}catch (Exception e){
-					e.printStackTrace();
-				}
-			} else {
-				this.registerController.getView().setErrorLabel("Nom d'utilisateur ou mot de passe incorrect.");
+		this.player = new PlayerDTO(username, password, new ArrayList<>(), new HashMap<>());
+		boolean success = logIn(this.player);
+		if (success) {
+			this.modeController = new ModeController(this.stage, this);
+			try {
+				this.modeController.show();
+			}catch (Exception e){
+				e.printStackTrace();
 			}
-		} catch (LoadException e) {
-			this.registerController.getView().setErrorLabel("Erreur de connexion à la base de données.");
+		} else {
+			this.registerController.getView().setErrorLabel("Nom d'utilisateur ou mot de passe incorrect.");
 		}
 	}
 
 	@Override
 	public void onSignUp(String username, String password){
-		try {
-			this.player = new PlayerDTO(username, password, new ArrayList<>(), new HashMap<>());
-			boolean success = this.signUp(this.player);
-			if (success) {
-				this.modeController = new ModeController(this.stage, this);
-				try {
-					this.modeController.show();
-				}catch (Exception e){
-					e.printStackTrace();
-				}
-			} else {
-				this.registerController.getView().setErrorLabel("Nom d'utilisateur ou mot de passe incorrect.");
+		this.player = new PlayerDTO(username, password, new ArrayList<>(), new HashMap<>());
+		boolean success = this.signUp(this.player);
+		if (success) {
+			this.modeController = new ModeController(this.stage, this);
+			try {
+				this.modeController.show();
+			}catch (Exception e){
+				e.printStackTrace();
 			}
-		} catch (LoadException e) {
+		} else {
 			this.registerController.getView().setErrorLabel("Nom d'utilisateur ou mot de passe incorrect.");
 		}
 	}

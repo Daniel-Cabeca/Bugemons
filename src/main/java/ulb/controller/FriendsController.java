@@ -5,10 +5,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import ulb.repository.AccountRepository;
-import ulb.repository.LoadException;
-import ulb.service.AccountService;
-import ulb.service.ServiceLoader;
 import ulb.view.WindowPath;
 import ulb.view.windows.FriendsWindow;
 
@@ -42,18 +38,11 @@ public class FriendsController implements FriendsWindow.ViewListener{
 
 	@Override
 	public void onInviteFriend(String usernameField){
-		try {
-			int id = ServiceLoader.getAccountService().getUserId(usernameField);
-			if (id > 0) {
-				listener.addFriend(id);
-				view.refreshFriendsList();
-			} else {
-
-			}
-		} catch (LoadException e) {
-
+		int id = this.listener.getUserIdFromName(usernameField);
+		if (id > 0) {
+			listener.addFriend(id);
+			view.refreshFriendsList();
 		}
-
 	}
 
 	public void show() throws Exception {
@@ -75,5 +64,6 @@ public class FriendsController implements FriendsWindow.ViewListener{
 		void returnToMultiplayerWindow();
 		void addFriend(int id);
 		void populateFriends(VBox friendsList);
+		int getUserIdFromName(String name);
 	}
 }

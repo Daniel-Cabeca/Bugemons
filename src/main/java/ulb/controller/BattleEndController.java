@@ -1,15 +1,11 @@
 package ulb.controller;
 
-import java.io.IOException;
-
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import ulb.view.WindowPath;
 import ulb.view.windows.BattleEndWindow;
-import ulb.view.windows.BattleModeWindow;
-import ulb.view.windows.ModeWindow;
 
 public class BattleEndController implements BattleEndWindow.ViewListener {
     private Listener listener;

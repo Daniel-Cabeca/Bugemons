@@ -1,6 +1,7 @@
-package ulb.repository.json;
+package ulb.repository.database;
 
 import ulb.model.chat.ChatMessage;
+import ulb.repository.ChatRepository;
 import ulb.repository.LoadException;
 import ulb.repository.database.sql.Database;
 
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ChatDatabaseRepository {
+public class ChatDatabaseRepository implements ChatRepository {
     public static final int MAX_MESSAGES = 20;
 
     private final Database database;
@@ -21,6 +22,7 @@ public class ChatDatabaseRepository {
         this.database = database;
     }
 
+	@Override
     public void insert(ChatMessage message) throws LoadException {
         String sql = "INSERT INTO chat_messages (sender_username, receiver_username, content, sent_at) VALUES (?, ?, ?, ?)";
         try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
@@ -36,13 +38,9 @@ public class ChatDatabaseRepository {
     }
 
     /**
-     * Returns the last {@link #MAX_MESSAGES} messages exchanged between two users,
-     * ordered from oldest to newest.
-     *
-     * @param usernameA One participant of the conversation
-     * @param usernameB The other participant
-     * @return All messages
+     * {@inheritDoc}
      */
+	@Override
     public List<ChatMessage> getMessages(String usernameA, String usernameB) throws LoadException {
         String sql = """
                 SELECT id, sender_username, receiver_username, content, sent_at
@@ -68,12 +66,9 @@ public class ChatDatabaseRepository {
     }
 
     /**
-     * Returns the total number of messages stored for a given conversation.
-     *
-     * @param usernameA One participant
-     * @param usernameB The other participant
-     * @return The amount of messages
+     * {@inheritDoc}
      */
+	@Override
     public int countMessages(String usernameA, String usernameB) throws LoadException {
         String sql = """
                 SELECT COUNT(*) FROM chat_messages
@@ -89,6 +84,7 @@ public class ChatDatabaseRepository {
             throw new LoadException(e.getMessage());
         }
     }
+
     private void pruneMessages(String usernameA, String usernameB) throws LoadException {
         String sql = """
                 DELETE FROM chat_messages

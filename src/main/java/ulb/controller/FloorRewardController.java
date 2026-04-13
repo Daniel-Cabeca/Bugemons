@@ -8,13 +8,6 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.item.ItemDTO;
-import ulb.model.bugemon.Bugemon;
-import ulb.communication.Message;
-import ulb.communication.types.GetInfoMessage;
-import ulb.communication.types.InfoType;
-import ulb.communication.types.RewardPlaceMessage;
-import ulb.model.item.Item;
-import ulb.service.ItemService;
 import ulb.view.WindowPath;
 import ulb.view.windows.FloorRewardWindow;
 
@@ -34,10 +27,6 @@ public class FloorRewardController implements FloorRewardWindow.ViewListener, Ch
 	public FloorRewardController(Stage stage, Listener listener) {
 		this.stage = stage;
 		this.listener = listener;
-	}
-
-	ItemService getItemService() {
-		return this.gameController.getItemService();
 	}
 
 	public void show() throws Exception {

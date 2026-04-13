@@ -54,7 +54,7 @@ import java.util.Map;
 
 public class GameController extends Application implements
 BattleModeController.Listener, NextRoomController.Listener,
-BattleWindowController.Listener, LevelUpController.Listener, ModeController.Listener, FriendsController.Listener,
+BattleWindowController.Listener, ModeController.Listener, FriendsController.Listener,
 MultiplayerWindowController.Listener {
 
 	private Player player;
@@ -255,12 +255,12 @@ MultiplayerWindowController.Listener {
 		this.pendingRewardBattleController = battleController;
 		this.rewardSequenceReturnsToNextRoom = returnToNextRoom;
 		this.pendingBattleXP = battleController.getTotalXP();
-		levelUpController = new LevelUpController(stage, this);
-		try {
-			levelUpController.show();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		// levelUpController = new LevelUpController(stage, this);
+		// try {
+		// 	levelUpController.show();
+		// } catch (Exception e) {
+		// 	e.printStackTrace();
+		// }
 		// switchWindow(WindowPath.LEVEL_UP);
 		return true;
 	}
@@ -782,25 +782,6 @@ MultiplayerWindowController.Listener {
 	public void onContinue() {
 		// SERVER
 		handleTower();
-	}
-
-	@Override
-	public void onRewardChosen(Reward reward, ActionEvent event){
-		handleLevelUpRewardChoice(reward, event);
-	}
-
-	@Override
-	public Bugemon getLevelUpBugemon() {
-		return pendingLevelUpBugemons.peekFirst();
-	}
-
-	@Override
-	public List<Reward> getLevelUpRewards() {
-		Bugemon current = pendingLevelUpBugemons.peekFirst();
-		if (current != null && pendingRewardBattleController != null) {
-			return pendingRewardBattleController.getRewards(current);
-		}
-		return List.of();
 	}
 
 	private void switchToBattleWindow() {

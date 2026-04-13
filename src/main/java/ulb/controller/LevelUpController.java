@@ -9,8 +9,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import ulb.model.bugemon.Bugemon;
-import ulb.model.reward.Reward;
+import ulb.DTO.bugemon.BugemonDTO;
+import ulb.DTO.reward.RewardDTO;
 import ulb.view.WindowPath;
 
 public class LevelUpController implements LevelUpWindow.ViewListener{
@@ -32,8 +32,8 @@ public class LevelUpController implements LevelUpWindow.ViewListener{
         view = loader.getController();
         view.setViewListener(this);
 
-        Bugemon bugemon = listener.getLevelUpBugemon();
-        List<Reward> rewards = listener.getLevelUpRewards();
+		List<RewardDTO> rewards = listener.getLevelUpRewards();
+		BugemonDTO bugemon = rewards.get(0).getBugemon();
 
         view.initializeView(bugemon, rewards);
 
@@ -47,13 +47,12 @@ public class LevelUpController implements LevelUpWindow.ViewListener{
     }
 
     @Override
-    public void onRewardChosen(Reward reward, ActionEvent event) {
+    public void onRewardChosen(RewardDTO reward, ActionEvent event) {
         listener.onRewardChosen(reward, event);
     }
 
     public interface Listener {
-        Bugemon getLevelUpBugemon();
-        List<Reward> getLevelUpRewards();
-        void onRewardChosen(Reward reward, ActionEvent event);
+        List<RewardDTO> getLevelUpRewards();
+        void onRewardChosen(RewardDTO reward, ActionEvent event);
     }
 }

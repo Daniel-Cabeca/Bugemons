@@ -3,9 +3,6 @@ package ulb.view.windows;
 
 import java.util.List;
 import javafx.fxml.FXML;
-import ulb.model.bugemon.Bugemon;
-import ulb.model.bugemon.Stats;
-import ulb.model.reward.Reward;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -14,8 +11,6 @@ import javafx.scene.image.ImageView;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.stats.StatsDTO;
 import ulb.DTO.reward.RewardDTO;
-
-import java.util.Vector;
 
 public class LevelUpWindow extends Window {
 	@FXML
@@ -30,21 +25,21 @@ public class LevelUpWindow extends Window {
 	private Label rewardCLabel;
 
 	private ViewListener viewListener;
-	private Reward rewardA;
-	private Reward rewardB;
-	private Reward rewardC;
+	private RewardDTO rewardA;
+	private RewardDTO rewardB;
+	private RewardDTO rewardC;
 
 	public void setViewListener(ViewListener viewListener) {
         this.viewListener = viewListener;
     }
 
-	private String createRewardsText(Reward r) {
-		Stats addedStats = r.getStats();
+	private String createRewardsText(RewardDTO r) {
+		StatsDTO addedStats = r.getStats();
 		return "HP: +" + addedStats.getHp() + "\nAttaque: +" + addedStats.getAttack() + "\nDefense: +" + addedStats.getDefense()
 				+ "\nInitiative: +" + addedStats.getInitiative();
 	}
 
-	public void initializeView(Bugemon bugemon, List<Reward> rewards) {
+	public void initializeView(BugemonDTO bugemon, List<RewardDTO> rewards) {
 		if (bugemon == null || rewards == null) {
 			System.err.println("Invalid arguments");
 			return;
@@ -54,7 +49,7 @@ public class LevelUpWindow extends Window {
 		setBugemonSprite(bugemon);
 	}
 
-	public void setRewards(List<Reward> rewards) {
+	public void setRewards(List<RewardDTO> rewards) {
 		if (rewards == null || rewards.size() < 3) {
 			System.err.println("Invalid reward list");
 			return;
@@ -68,11 +63,11 @@ public class LevelUpWindow extends Window {
 		rewardCLabel.setText(createRewardsText(rewardC));
 	}
 
-	public void setBugemonLevel(Bugemon bugemon) {
+	public void setBugemonLevel(BugemonDTO bugemon) {
 		bugemonLevel.setText("Bugémon a atteint le niveau " + bugemon.getLevel() + "!");
 	}
 
-	public void setBugemonSprite(Bugemon bugemon) {
+	public void setBugemonSprite(BugemonDTO bugemon) {
 		bugemonSprite.setImage(new Image(getClass().getResourceAsStream(bugemon.getSpritePath())));
 	}
 
@@ -92,6 +87,6 @@ public class LevelUpWindow extends Window {
 	}
 
 	public interface ViewListener {
-        void onRewardChosen(Reward reward, ActionEvent event);
+        void onRewardChosen(RewardDTO reward, ActionEvent event);
     }
 }

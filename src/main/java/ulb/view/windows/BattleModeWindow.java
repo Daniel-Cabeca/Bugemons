@@ -49,18 +49,13 @@ public class BattleModeWindow extends Window {
         viewListener.onReturn();
 	}
 
-    public void displayTeam(List<BugemonDTO> team) {
-        displayTeamWithStats(team, playerTeamGrid);
-    }
-
     /**
      * Displays the player's team with corresponding stats
      *
      * @param team the team to display
-     * @param grid the grid in which the bugemons are displayed
      */
-    public void displayTeamWithStats(List<BugemonDTO> team, GridPane grid) {
-        grid.getChildren().clear();
+    public void displayTeam(List<BugemonDTO> team) {
+        playerTeamGrid.getChildren().clear();
         int row = 0;
         int col = 0;
         int count =0;
@@ -82,7 +77,7 @@ public class BattleModeWindow extends Window {
                     bugemon.getFightStats().getDefense() + " INIT: " + bugemon.getFightStats().getInitiative());
 
             cell.getChildren().addAll(name, sprite, stats);
-            grid.add(cell, col, row++);
+            playerTeamGrid.add(cell, col, row++);
 
             count++;
             if (count == 3){ // put 3 bugemons in each col

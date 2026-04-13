@@ -4,7 +4,6 @@ import java.util.List;
 
 import ulb.model.bugemon.Bugemon;
 import ulb.service.BugemonService;
-import ulb.service.ServiceLoader;
 
 public class OpponentTeamGenerator {
 
@@ -38,13 +37,4 @@ public class OpponentTeamGenerator {
 		return opponentTeam;
 	}
 
-	/** Generates a random team for the opponent based on the player's team size
-	 * @param playerTeam the player's team based on which the opponent's is generated
-	 * @return the randomly generated opponent team
-	 * @throws Exception if the player team is null, empty or not valid
-	 */
-	public static Team generateRandomOpponentTeam(Team playerTeam) throws Exception {
-		BugemonService bugemonService = ServiceLoader.getBugemonService();
-		return generateRandomOpponentTeam(playerTeam, bugemonService);
-	}
 }

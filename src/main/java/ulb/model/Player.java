@@ -1,14 +1,7 @@
 package ulb.model;
 
 import ulb.model.team.Team;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
 import ulb.model.item.Inventory;
-
-import ulb.service.ServiceLoader;
 import ulb.service.ItemService;
 
 public class Player {
@@ -18,20 +11,16 @@ public class Player {
 
 	private static final String ITEMS_PATH = "src/main/resources/json/objets.json";
 
-	public Player() {
-		this.name = "Player";
-		this.team = new Team();
-		this.inventory = new Inventory();
-
-		addDefaultItems();
+	public Player(ItemService itemService) {
+		this("Player", itemService);
 	}
 
-	public Player(String name) {
+	public Player(String name, ItemService itemService) {
 		this.name = name;
 		this.team = new Team();
 		this.inventory = new Inventory();
 
-		addDefaultItems();
+		addDefaultItems(itemService);
 	}
 
 	public Player(String name, Team team, Inventory inventory) {
@@ -49,8 +38,7 @@ public class Player {
 	/**
 	 * Loads all items and adds the default items to the player's inventory
 	 */
-	public void addDefaultItems() {
-		ItemService itemService = ServiceLoader.getItemService();
+	public void addDefaultItems(ItemService itemService) {
 		this.inventory = itemService.createStarterInventory();
 	}
 }

@@ -10,7 +10,7 @@ import ulb.communication.types.GetInfoMessage;
 import ulb.communication.types.InfoType;
 import ulb.communication.types.RewardPlaceMessage;
 import ulb.model.item.Item;
-import ulb.service.ServiceLoader;
+import ulb.service.ItemService;
 import ulb.view.WindowPath;
 import ulb.view.windows.FloorRewardWindow;
 
@@ -34,13 +34,17 @@ public class FloorRewardController implements FloorRewardWindow.ViewListener, Ch
 		this.listener = listener;
 	}
 
+	ItemService getItemService() {
+		return this.gameController.getItemService();
+	}
+
 	public void show() throws Exception {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource(WindowPath.FLOOR_REWARD));
 		loader.load();
 		view = loader.getController();
 		view.setViewListener(this);
 
-        rewardItem = ServiceLoader.getItemService().getRandomItem();
+        rewardItem = this.getItemService().getRandomItem();
 
 		Message m = gameController.handleMessage(new GetInfoMessage(InfoType.REWARD_PLACE));
 		if (m instanceof RewardPlaceMessage placeMessage) {

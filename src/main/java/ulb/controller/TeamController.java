@@ -10,7 +10,6 @@ import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.BugemonSpecies;
 import ulb.model.team.Team;
 import ulb.service.BugemonService;
-import ulb.service.ServiceLoader;
 import ulb.view.WindowPath;
 import ulb.view.windows.CreateTeamWindow;
 
@@ -25,12 +24,14 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 
 	private CreateTeamWindow view;
 
-	public TeamController(Stage stage, Listener listener, Player player) {
+	public TeamController(Stage stage, Listener listener, Player player, BugemonService bugemonService) {
 		this.stage = stage;
 		this.listener = listener;
 		this.player = player;
-		this.bugemonService = ServiceLoader.getBugemonService();
+		this.bugemonService = bugemonService;
 	}
+
+	public BugemonService getBugemonService() { return this.bugemonService; }
 
 	public void show() throws Exception {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource(WindowPath.CREATE_TEAM));
@@ -50,7 +51,7 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 
 	private List<CreateTeamBugemonDTO> getAvailableBugemons() {
 		List<CreateTeamBugemonDTO> availableBugemons = new ArrayList<>();
-		for (BugemonSpecies bugemonSpecies : bugemonService.getAllSpecies()) {
+		for (BugemonSpecies bugemonSpecies : this.getBugemonService().getAllSpecies()) {
 			availableBugemons.add(new CreateTeamBugemonDTO(
 					bugemonSpecies.getId(),
 					bugemonSpecies.getName(),
@@ -59,10 +60,11 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 		return availableBugemons;
 	}
 
-	public void setTeam(List<String> selectedBugemonIds) {
+	public void setTeam(List<String> selectedBugemonIds, BugemonService bugemonService) {
 		List<Bugemon> teamABugemons = new ArrayList<>();
 		for (String bugemonId : selectedBugemonIds) {
-			teamABugemons.add(new Bugemon(bugemonId));
+			Bugemon bugemon = bugemonService.spawnBugemon(bugemonId);
+			teamABugemons.add(bugemon);
 		}
 		Team playerTeam = new Team(teamABugemons);
 		player.setTeam(playerTeam);
@@ -70,7 +72,7 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 
 	@Override
 	public void onConfirmTeam(List<String> selectedBugemonIds) {
-		setTeam(selectedBugemonIds);
+		setTeam(selectedBugemonIds, this.getBugemonService());
 		listener.onTeamConfirmed();
 	}
 

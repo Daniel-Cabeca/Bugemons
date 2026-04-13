@@ -33,7 +33,7 @@ import ulb.model.tower.Room;
 import ulb.model.tower.RoomType;
 import ulb.model.reward.Reward;
 import ulb.model.reward.RewardType;
-import ulb.service.ServiceLoader;
+import ulb.repository.*;
 import ulb.view.WindowPath;
 import ulb.view.windows.LevelUpWindow;
 import ulb.view.windows.ModeWindow;
@@ -44,6 +44,19 @@ import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
+
+import ulb.service.AbilityService;
+import ulb.service.BugemonService;
+import ulb.service.ItemService;
+import ulb.service.AccountService;
+import ulb.repository.database.sql.Database;
+import ulb.repository.database.sql.DatabaseInitializer;
+import ulb.repository.database.AccountDatabaseRepository;
+import ulb.repository.database.BugemonSpeciesDatabaseRepository;
+import ulb.repository.database.ItemDatabaseRepository;
+import ulb.repository.json.AbilityJsonRepository;
+import ulb.repository.json.InventoryJsonRepository;
+import ulb.repository.json.ItemJsonRepository;
 
 
 public class GameController extends Application implements TeamController.Listener,
@@ -81,6 +94,11 @@ AttackReplacementController.Listener {
 	private BattleEndController battleEndController;
 	private FloorRewardController.RewardChoice pendingFloorRewardChoice;
 
+	private AbilityService abilityService;
+	private BugemonService bugemonService;
+	private ItemService itemService;
+	private AccountService accountService;
+
 	public static void main(String[] args) {
 		try {
 			if (args.length == 0) {
@@ -110,7 +128,7 @@ AttackReplacementController.Listener {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		setPlayer(new Player("Player"));
+		setPlayer(new Player("Player", this.getItemService()));
 		this.stage = primaryStage;
 
 		Font.loadFont(getClass().getResourceAsStream("/fonts/pokemon-emerald-pro.otf"), 14);
@@ -118,7 +136,7 @@ AttackReplacementController.Listener {
 		primaryStage.setFullScreen(true);
 		primaryStage.setFullScreenExitHint("");
 
-		registerController = new RegisterController(stage, this);
+		registerController = new RegisterController(stage, this, this.getAccountService());
 		registerController.show();
 
 		if (primaryStage.getScene() != null) {
@@ -176,13 +194,37 @@ AttackReplacementController.Listener {
 	public boolean hasFledBattle() { return fledBattle; }
 	public void resetFledBattle() { fledBattle = false; }
 
-	public GameController() {}
+	public GameController() {
+		this.loadServices();
+	}
+
+	private void loadServices() {
+		Database database = DatabaseInitializer.prepareDefaultDatabase();
+
+		AbilityRepository abilityRepository = new AbilityJsonRepository();
+		this.abilityService = new AbilityService(abilityRepository);
+
+		BugemonSpeciesRepository bugemonSpeciesRepository = new BugemonSpeciesDatabaseRepository(database);
+		this.bugemonService = new BugemonService(bugemonSpeciesRepository);
+
+		ItemRepository itemRepository = new ItemDatabaseRepository(database);
+		InventoryRepository inventoryRepository = new InventoryJsonRepository(new ItemJsonRepository());
+		this.itemService = new ItemService(itemRepository, inventoryRepository);
+
+		AccountRepository accountRepository = new AccountDatabaseRepository(database);
+		this.accountService = new AccountService(accountRepository);
+	}
 
 	public void setPlayer(Player player) {this.player = player;}
 
 	public Player getPlayer() {return this.player;}
 
 	public Team getTeam() {return this.player.getTeam();}
+
+	public AbilityService getAbilityService() { return this.abilityService; }
+	public BugemonService getBugemonService() { return this.bugemonService; }
+	public ItemService getItemService() { return this.itemService; }
+	public AccountService getAccountService() { return this.accountService; }
 
 
 	/**
@@ -192,13 +234,13 @@ AttackReplacementController.Listener {
 		Team playerTeam = player.getTeam();
 		Team opponentTeam = new Team();
 		try{
-			opponentTeam = OpponentTeamGenerator.generateRandomOpponentTeam(playerTeam);
+			opponentTeam = OpponentTeamGenerator.generateRandomOpponentTeam(playerTeam, this.getBugemonService());
 		}catch(Exception e){
 			System.err.println(e);
 		}
-		Battle battle = new Battle(playerTeam, opponentTeam, player);
-		this.normalModeBattleController = new BattleController(player, battle, ParticipantLabel.TEAM_A);
-		StrategyRandom strategyRandom = new StrategyRandom(battle);
+		Battle battle = new Battle(playerTeam, opponentTeam, player, new Player(this.getItemService()));
+		this.normalModeBattleController = new BattleController(player, battle, ParticipantLabel.TEAM_A, this.getItemService());
+		StrategyRandom strategyRandom = new StrategyRandom(battle, this.getItemService());
 		Thread thread = new Thread(strategyRandom);
 		thread.setDaemon(true);
 		thread.start();
@@ -208,7 +250,7 @@ AttackReplacementController.Listener {
 	 * Setups the right settings for the tower mode
 	 */
 	public void setupTowerMode(){
-		towerModeTowerManager = new TowerManager(this.getPlayer());
+		towerModeTowerManager = new TowerManager(this.getPlayer(), this.getBugemonService(), this.getItemService());
 	}
 
 
@@ -430,7 +472,7 @@ AttackReplacementController.Listener {
 	}
 
 	public Message applyOn(ReceiveObjectRewardMessage m){
-		player.getInventory().addItem(ServiceLoader.getItemService().getRandomItem(), 1);
+		player.getInventory().addItem(this.getItemService().getRandomItem(), 1);
 		switchToNextRoomWindow();
 		return null;
 	}
@@ -790,7 +832,7 @@ AttackReplacementController.Listener {
 			return;
 		}
 
-		Ability newAbility = ServiceLoader.getAbilityService().getRandomAbility(bugemon.getType(), bugemon.getAbilities());
+		Ability newAbility = this.getAbilityService().getRandomAbility(bugemon.getType(), bugemon.getAbilities());
 		if (newAbility == null) {
 			switchToNextRoomWindow();
 			return;
@@ -846,7 +888,7 @@ AttackReplacementController.Listener {
 	@Override
 	public void onRegister() {
 		if (modeController == null) {
-			modeController = new ModeController(stage, this, player);
+			modeController = new ModeController(stage, this, player, this.getBugemonService());
 		}
 		modeController.show();
 	}

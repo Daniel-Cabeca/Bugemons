@@ -7,12 +7,14 @@ import java.util.Map;
 
 import ulb.model.item.Item;
 import ulb.model.Player;
-import ulb.model.item.Inventory;
+import ulb.model.item.Inventory;import ulb.repository.mock.InventoryMockRepository;import ulb.repository.mock.ItemMockRepository;import ulb.service.ItemService;
 
 public class PlayerTest {
 	@Test
 	public void addDefaultItemsToInventoryOnPlayerInitialisation() {
-		Player player = new Player();
+		ItemService itemService = new ItemService(new ItemMockRepository(), new InventoryMockRepository());
+
+		Player player = new Player(itemService);
 		Inventory inventory = player.getInventory();
 		Map<Item, Integer> items = inventory.getItems();
 

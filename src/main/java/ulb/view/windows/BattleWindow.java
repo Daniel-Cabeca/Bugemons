@@ -115,8 +115,12 @@ public class BattleWindow extends Window {
         updateBackButtonsState();
     }
 
+	public void setCurrentSnapshot(BattleSnapshot snapshot){
+		this.currentSnapshot = snapshot;
+	}
+
     public void renderBattle(BattleSnapshot snapshot) {
-        currentSnapshot = snapshot;
+        setCurrentSnapshot(snapshot);
         graphicsHelper.renderBattle(snapshot);
     }
 

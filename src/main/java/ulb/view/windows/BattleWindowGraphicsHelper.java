@@ -167,7 +167,7 @@ public class BattleWindowGraphicsHelper {
 
         BugemonDisplay playerBugemon = snapshot.playerBugemon();
         BugemonDisplay opponentBugemon = snapshot.opponentBugemon();
-
+		
         try {
             Image playerImage = new Image(getClass().getResourceAsStream(playerBugemon.spritePath()));
             ui.playerBugemon().setImage(playerImage);

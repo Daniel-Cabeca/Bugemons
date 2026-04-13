@@ -11,6 +11,9 @@ import ulb.model.effect.EffectSwitch;
 import ulb.model.effect.EffectType;
 import ulb.model.battle.Battle;
 
+/**
+ * Used to convert Regular Effect to DTO Effect
+ */
 public class EffectMapper {
 
     private EffectMapper(){}

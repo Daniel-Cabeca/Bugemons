@@ -36,16 +36,19 @@ public class ChooseBugemonWindow extends Window {
 
         for (BugemonDTO bugemon : team) {
             HBox cell = new HBox(10);
-
+			
+			// Setting Image of the Bugemon
             Image image = new Image(bugemon.getSpritePath());
             ImageView sprite = new ImageView(image);
             sprite.setFitWidth(60);
             sprite.setFitHeight(60);
             sprite.setPreserveRatio(true);
 
+			// Setting infos of the Bugemon
             Label name = new Label(bugemon.getName() + " (Niveau: " + bugemon.getLevel() + ")");
             name.setStyle("-fx-font-weight: bold; -fx-font-size: 30px");
 
+			// Setting stats of the Bugemon
             Label stats = new Label(
                     "PV: " + bugemon.getFightStats().getHp()
                             + " ATK: " + bugemon.getFightStats().getAttack()
@@ -55,6 +58,7 @@ public class ChooseBugemonWindow extends Window {
 
             CheckBox selectBox = new CheckBox();
             selectBox.setOnAction(event -> {
+				// Set the current Bugemon as the selected one
                 if (selectBox.isSelected()) {
                     if (selectedCheckBox != null && selectedCheckBox != selectBox) {
                         selectedCheckBox.setSelected(false);
@@ -72,7 +76,9 @@ public class ChooseBugemonWindow extends Window {
         }
     }
 
-
+	/**
+	 * Choose the last Bugemon selected
+	 */
 	@FXML
 	private void apply() {
         if (viewListener != null && selectedBugemon != null) {
@@ -80,6 +86,9 @@ public class ChooseBugemonWindow extends Window {
         }
 	}
 
+	/**
+	 * Return to the previous Menu (Floor Reward Window)
+	 */
 	@FXML
 	private void returnFloorRewardWindow() {
 		if (viewListener != null) {

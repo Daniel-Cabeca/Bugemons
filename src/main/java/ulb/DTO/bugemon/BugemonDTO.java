@@ -7,6 +7,9 @@ import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.stats.StatsDTO;
 import ulb.model.type.Type;
 
+/**
+ * Transferable Bugemon, used on the vue side.
+ */
 public class BugemonDTO implements Serializable{
     private BugemonSpeciesDTO species;
 	private StatsDTO baseStats;

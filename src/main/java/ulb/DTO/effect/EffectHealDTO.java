@@ -3,6 +3,9 @@ package ulb.DTO.effect;
 import ulb.model.effect.EffectTarget;
 import ulb.model.effect.EffectType;
 
+/**
+ * Transferable Effect-Heal, used on the vue side.
+ */
 public class EffectHealDTO extends EffectDTO {
     private int value;
 

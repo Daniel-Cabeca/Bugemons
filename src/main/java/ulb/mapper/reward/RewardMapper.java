@@ -5,6 +5,9 @@ import ulb.mapper.bugemon.BugemonMapper;
 import ulb.mapper.stats.StatsMapper;
 import ulb.model.reward.Reward;
 
+/**
+ * Used to convert Regular Reward to DTO Reward
+ */
 public class RewardMapper {
     private RewardMapper() {}
 

@@ -5,9 +5,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
-import ulb.controller.action.UseAbility;
 import ulb.model.Player;
 import ulb.model.ability.Ability;
+import ulb.model.action.UseAbility;
 import ulb.model.battle.Battle;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.team.Team;

@@ -350,12 +350,24 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         
         for (AbilityDTO ability : ownActiveBugemon.getAbilities()) {
             if (ability != null) {
+                // Cannot use map.get(ability) because DTO instances are different after serialization.
+                // the abilities are matched using their ID instead of object reference
+                String effectiveness = null;
+                if (abilitiesEffectiveness != null) {
+                    for (Map.Entry<AbilityDTO, String> entry : abilitiesEffectiveness.entrySet()) {
+                        if (entry.getKey() != null && entry.getKey().getId().equals(ability.getId())) {
+                            effectiveness = entry.getValue();
+                            break;
+                        }
+                    }
+                }
+
                 entries.add(new AbilityEntry(
                         ability.getId(),
                         ability.getName(),
                         ability.getAccurateDescription(),
                         getTypeColor(ability.getType()),
-                        abilitiesEffectiveness.get(ability)
+                        effectiveness
                 ));
             }
         }

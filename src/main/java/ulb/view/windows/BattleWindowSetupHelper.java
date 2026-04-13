@@ -159,7 +159,7 @@ public class BattleWindowSetupHelper {
                                     "-fx-background-radius: 6;"
                     );
                     if (entry.effectiveness() != null) {
-                        Tooltip tooltip = new Tooltip(entry.effectiveness() + "\n" + entry.abilityDescription());
+                        Tooltip tooltip = new Tooltip(entry.abilityDescription() + "\n" + entry.effectiveness());
                         tooltip.setShowDelay(javafx.util.Duration.millis(100));
                         setTooltip(tooltip);
                     } else {

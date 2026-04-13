@@ -4,15 +4,29 @@ import ulb.repository.LoadException;
 
 import java.sql.*;
 
+/**
+ * Base SQL database wrapper exposing helper operations.
+ */
 public abstract class Database {
 	private final String url;
 	private final Connection connection;
 
+	/**
+	 * Creates a database wrapper and opens its connection.
+	 *
+	 * @param url The JDBC URL
+	 */
 	public Database(String url) {
 		this.url = url;
 		this.connection = connect(this.getUrl());
 	}
 
+	/**
+	 * Opens a SQL connection to the provided URL.
+	 *
+	 * @param url The JDBC URL
+	 * @return The opened connection
+	 */
 	static Connection connect(String url) {
 		try {
 			return DriverManager.getConnection(url);
@@ -21,7 +35,17 @@ public abstract class Database {
 		}
 	}
 
+	/**
+	 * Returns the database JDBC URL.
+	 *
+	 * @return The configured database URL
+	 */
 	public String getUrl() { return this.url; }
+	/**
+	 * Returns the active SQL connection.
+	 *
+	 * @return The active SQL connection
+	 */
 	public Connection getConnection() { return this.connection; }
 
 	/**

@@ -14,19 +14,40 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
+/**
+ * Database-backed implementation of the ability repository.
+ */
 public class AbilityDatabaseRepository implements AbilityRepository {
 	private final Database database;
 
+	/**
+	 * Creates an ability repository using the provided database.
+	 *
+	 * @param database The database connection wrapper
+	 * @throws LoadException If the repository cannot be initialized
+	 */
 	public AbilityDatabaseRepository(Database database) throws LoadException {
 		this.database = database;
 	}
 
+	/**
+	 * Inserts multiple abilities into the database.
+	 *
+	 * @param abilities The abilities to insert
+	 * @throws DuplicateElementException If one ability already exists
+	 */
 	public void insertAbilities(Iterable<Ability> abilities) throws DuplicateElementException {
 		for (Ability ability : abilities) {
 			this.insertAbility(ability);
 		}
 	}
 
+	/**
+	 * Inserts a single ability into the database.
+	 *
+	 * @param ability The ability to insert
+	 * @throws DuplicateElementException If the ability already exists
+	 */
 	public void insertAbility(Ability ability) throws DuplicateElementException {
 		String sqlAbility = "INSERT INTO abilities (id, name, type, description, power) VALUES (?, ?, ?, ?, ?)";
 		try (PreparedStatement statement = this.database.prepareStatement(sqlAbility)) {
@@ -48,6 +69,9 @@ public class AbilityDatabaseRepository implements AbilityRepository {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Ability findById(String id) throws NoSuchElementException {
 		String sql = """
@@ -68,7 +92,7 @@ public class AbilityDatabaseRepository implements AbilityRepository {
 
 			while (rs.next()) {
 				if (ability == null) {
-					// On récupère le type via l'Enum Type
+
 					Type abilityType = Type.valueOf(rs.getString("type"));
 
 					ability = new Ability(
@@ -81,7 +105,7 @@ public class AbilityDatabaseRepository implements AbilityRepository {
 					);
 				}
 
-				// Gestion des effets (identique à ton exemple précédent)
+
 				String effectId = rs.getString("effect_id");
 				if (effectId != null) {
 					Effect effect = null;
@@ -118,25 +142,28 @@ public class AbilityDatabaseRepository implements AbilityRepository {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Iterable<Ability> findAll() {
 		List<Ability> abilities = new ArrayList<>();
 		String sql = "SELECT id FROM abilities";
 
-		// On récupère d'abord tous les IDs
+
 		try (PreparedStatement pstmt = this.database.prepareStatement(sql)) {
 			ResultSet rs = pstmt.executeQuery();
 
 			while (rs.next()) {
 				String AbilityId = rs.getString("id");
 				try {
-					// On réutilise ta méthode findById pour charger l'objet complet
+
 					Ability ability = findById(AbilityId);
 					if (ability != null) {
 						abilities.add(ability);
 					}
 				} catch (NoSuchElementException e) {
-					// Si un ID existe mais que findById échoue (peu probable mais possible)
+
 					System.err.println("Erreur : ID trouvé mais item non chargeable : " + AbilityId);
 				}
 			}

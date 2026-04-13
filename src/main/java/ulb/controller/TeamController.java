@@ -14,6 +14,9 @@ import ulb.view.windows.CreateTeamWindow;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Controller for creating and validating the player's starting team.
+ */
 public class TeamController implements CreateTeamWindow.ViewListener {
 	private PlayerDTO player;
 
@@ -28,6 +31,11 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 		this.player = player;
 	}
 
+	/**
+	 * Displays the create team screen.
+	 *
+	 * @throws Exception If the FXML cannot be loaded
+	 */
 	public void show() throws Exception {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource(WindowPath.CREATE_TEAM));
 		loader.load();
@@ -45,6 +53,11 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 		this.stage.show();
 	}
 
+	/**
+	 * Builds the list of available bugemon species for team creation.
+	 *
+	 * @return The list of available bugemon DTOs
+	 */
 	private List<CreateTeamBugemonDTO> getAvailableBugemons() {
 		List<CreateTeamBugemonDTO> availableBugemons = new ArrayList<>();
 		for (BugemonSpeciesDTO bugemonSpecies : this.listener.getAllSpecies()) {
@@ -69,12 +82,20 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 		player.setTeam(teamABugemons);
 	}
 
+	/**
+	 * Handles team confirmation from the view.
+	 *
+	 * @param selectedBugemonIds The selected species ids
+	 */
 	@Override
 	public void onConfirmTeam(List<String> selectedBugemonIds) {
 		setTeam(selectedBugemonIds);
 		listener.onTeamConfirmed();
 	}
 
+	/**
+	 * Handles return action from the team creation screen.
+	 */
 	@Override
 	public void onReturn() {
 		listener.onReturnToMode();
@@ -85,7 +106,11 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 		return listener.getAllSpecies();
 	}
 
+	/**
+	 * Listener for team creation flow events.
+	 */
 	public interface Listener {
+		/** Called when team selection is confirmed. */
 		void onTeamConfirmed();
 		void onReturnToMode();
 		List<BugemonSpeciesDTO> getAllSpecies();

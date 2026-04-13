@@ -91,7 +91,7 @@ CREATE TABLE IF NOT EXISTS bugemons (
                                         defense INTEGER NOT NULL,
                                         initiative INTEGER NOT NULL,
 
-                                        FOREIGN KEY (species_id) REFERENCES bugemon_species(id) ON DELETE CASCADE
+                                        FOREIGN KEY (species_id) REFERENCES bugemon_species(id) ON DELETE CASCADE,
                                         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 

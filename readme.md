@@ -18,8 +18,15 @@ Le projet utilise également `maven`. Pour l'installer :
 - sur Windows : https://git-scm.com/install/windows
 
 ## Démarrage
+Pour démarrer l'application, il faut lancer le serveur avant de lancer le client (en attendant que le serveur est bien lancé, càd lorsqu'il affiche "SERVER ON").
+
+### Démarrage via .jar
+- Pour lancer le serveur : `java --module-path <chemin_vers_lib_openjfx> --add-modules javafx.controls,javafx.fxml -jar target/info-F307-Groupe-10.jar --server`
+- Pour lancer le client : `java --module-path <chemin_vers_lib_openjfx> --add-modules javafx.controls,javafx.fxml -jar target/info-F307-Groupe-10.jar` 
+
+### Démarrage via commande
 - Pour compiler: `mvn compile`
-- Pour lancer l'application côté client : mvn clean javafx:run
+- Pour lancer l'application côté client : mvn javafx:run
 - Pour lancer l'application côté serveur : mvn clean javafx:run -Djavafx.args="--server"
 
 ## Auteurs

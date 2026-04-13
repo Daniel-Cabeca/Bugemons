@@ -13,13 +13,22 @@ import java.sql.SQLException;
  * Repository for saving and loading effects in the database.
  */
 public class EffectDatabaseRepository {
+	/** Database value for heal effects. */
 	public final static String TYPESTR_HEAL = "HEAL";
+	/** Database value for stat modifier effects. */
 	public final static String TYPESTR_STAT_MODIFIER = "STAT_MODIFIER";
+	/** Database value for reset malus effects. */
 	public final static String TYPESTR_RESET_MALUS = "RESET_MALUS";
+	/** Database value for switch effects. */
 	public final static String TYPESTR_SWITCH = "SWITCH";
 
 	private final Database database;
 
+	/**
+	 * Creates an effect repository using the provided database.
+	 *
+	 * @param database The database connection wrapper
+	 */
 	public EffectDatabaseRepository(Database database) {
 		this.database = database;
 	}
@@ -81,6 +90,14 @@ public class EffectDatabaseRepository {
 		this.insertStats(effect.buildStatsChange(), effectId, effect.getDuration());
 	}
 
+	/**
+	 * Inserts the stat modifiers linked to an effect.
+	 *
+	 * @param stats The stats delta
+	 * @param effectId The parent effect identifier
+	 * @param duration The duration of the stat modifier effect
+	 * @throws SQLException If the insert fails
+	 */
 	private void insertStats(Stats stats, long effectId, EffectStatModifier.EffectDuration duration) throws SQLException {
 		String sql = "INSERT INTO effect_stats_modifier (effect_id, hp,attack,defense,initiative,duration) VALUES (?, ?, ?, ?,?,?)";
 		PreparedStatement statement = this.database.prepareStatement(sql);

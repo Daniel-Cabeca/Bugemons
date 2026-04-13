@@ -19,19 +19,40 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+/**
+ * Database-backed implementation for Bugemon species persistence.
+ */
 public class BugemonSpeciesDatabaseRepository implements BugemonSpeciesRepository {
 	private final Database database;
 
+	/**
+	 * Creates a species repository using the provided database.
+	 *
+	 * @param database The database connection wrapper
+	 * @throws LoadException If the repository cannot be initialized
+	 */
 	public BugemonSpeciesDatabaseRepository(Database database) throws LoadException {
 		this.database = database;
 	}
 
+	/**
+	 * Inserts multiple species into the database.
+	 *
+	 * @param Species The species to insert
+	 * @throws DuplicateElementException If a species already exists
+	 */
 	public void insertSpecies(Iterable<BugemonSpecies> Species) throws DuplicateElementException {
 		for (BugemonSpecies specie: Species) {
 			this.insertSpecie(specie);
 		}
 	}
 
+	/**
+	 * Inserts a single species and its ability links into the database.
+	 *
+	 * @param specie The species to insert
+	 * @throws DuplicateElementException If the species already exists
+	 */
 	public void insertSpecie(BugemonSpecies specie) throws DuplicateElementException {
 		String sqlSpecies = "INSERT INTO bugemon_species (id, name, type, sprite, starter, hp, attack, defense,initiative) VALUES (?, ?, ?, ?, ?, ?,?,?,?)";
 
@@ -55,12 +76,12 @@ public class BugemonSpeciesDatabaseRepository implements BugemonSpeciesRepositor
 			}
 
 
-			// 3. Liaison avec les capacités (Abilities)
+
 			try (PreparedStatement pstmtLink = this.database.prepareStatement(sqlLinkAbility)) {
 				for (int i = 0; i <= 2; i++) {
 					pstmtLink.setString(1, specie.getId());
 					pstmtLink.setString(2, specie.getAbilities().getAbility(i).getId());
-					pstmtLink.addBatch(); // On utilise un batch pour la performance
+					pstmtLink.addBatch();
 				}
 				pstmtLink.executeBatch();
 			}
@@ -71,9 +92,12 @@ public class BugemonSpeciesDatabaseRepository implements BugemonSpeciesRepositor
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public BugemonSpecies findById(String id) throws NoSuchElementException {
-		// On récupère les infos de l'espèce + les IDs des capacités liées
+
 		String sql = """
        SELECT bs.*, ba.ability_id
        FROM bugemon_species bs
@@ -88,12 +112,12 @@ public class BugemonSpeciesDatabaseRepository implements BugemonSpeciesRepositor
 			BugemonSpecies species = null;
 			AbilitySet abilities = new AbilitySet();
 
-			// On a besoin d'un repository pour charger les objets Ability complets par leur ID
+
 			AbilityDatabaseRepository abilityRepo = new AbilityDatabaseRepository(this.database);
 			int index = 0;
 			while (rs.next()) {
 				if (species == null) {
-					// 1. Reconstitution des stats de base
+
 					Stats baseStats = new Stats(
 							rs.getInt("hp"),
 							rs.getInt("attack"),
@@ -101,7 +125,7 @@ public class BugemonSpeciesDatabaseRepository implements BugemonSpeciesRepositor
 							rs.getInt("initiative")
 					);
 
-					// 2. Création de l'objet Species
+
 					species = new BugemonSpecies(
 							rs.getString("id"),
 							rs.getString("name"),
@@ -113,7 +137,7 @@ public class BugemonSpeciesDatabaseRepository implements BugemonSpeciesRepositor
 					);
 				}
 
-				// 3. Ajout des capacités à l'AbilitySet
+
 				String abilityId = rs.getString("ability_id");
 				if (abilityId != null && index < 3) {
 					try {
@@ -137,25 +161,28 @@ public class BugemonSpeciesDatabaseRepository implements BugemonSpeciesRepositor
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Iterable<BugemonSpecies> findAll() {
 		List<BugemonSpecies> abilities = new ArrayList<>();
 		String sql = "SELECT id FROM bugemon_species";
 
-		// On récupère d'abord tous les IDs
+
 		try (PreparedStatement pstmt = this.database.prepareStatement(sql)) {
 			ResultSet rs = pstmt.executeQuery();
 
 			while (rs.next()) {
 				String BugemonId = rs.getString("id");
 				try {
-					// On réutilise ta méthode findById pour charger l'objet complet
+
 					BugemonSpecies bugemonSpecies = findById(BugemonId);
 					if (bugemonSpecies != null) {
 						abilities.add(bugemonSpecies);
 					}
 				} catch (NoSuchElementException e) {
-					// Si un ID existe mais que findById échoue (peu probable mais possible)
+
 					System.err.println("Erreur : ID trouvé mais item non chargeable : " + BugemonId);
 				}
 			}

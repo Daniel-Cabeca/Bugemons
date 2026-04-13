@@ -20,10 +20,20 @@ public class SqlScript {
 
 	private final URL url;
 
+	/**
+	 * Creates a script wrapper from an explicit URL.
+	 *
+	 * @param url The URL of the SQL script
+	 */
 	public SqlScript(URL url) {
 		this.url = url;
 	}
 
+	/**
+	 * Creates a script wrapper from a classpath resource path.
+	 *
+	 * @param path The classpath path to the SQL script
+	 */
 	public SqlScript(String path) {
 		this.url = SqlScript.class.getResource(path);
 
@@ -32,6 +42,11 @@ public class SqlScript {
 		}
 	}
 
+	/**
+	 * Returns the script resource URL.
+	 *
+	 * @return The SQL script URL
+	 */
 	public URL getUrl() { return this.url; }
 
 	/**

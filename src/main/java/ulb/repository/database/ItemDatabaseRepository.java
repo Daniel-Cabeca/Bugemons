@@ -18,6 +18,12 @@ import java.util.*;
 public class ItemDatabaseRepository implements ItemRepository {
 	private final Database database;
 
+	/**
+	 * Creates an item repository using the provided database.
+	 *
+	 * @param database The database connection wrapper
+	 * @throws LoadException If the repository cannot be initialized
+	 */
 	public ItemDatabaseRepository(Database database) throws LoadException {
 		this.database = database;
 	}
@@ -78,7 +84,7 @@ public class ItemDatabaseRepository implements ItemRepository {
 			ResultSet rs = pstmt.executeQuery();
 
 			if (rs.next()) {
-				// 1. On crée l'effet selon son type
+
 				Effect effect = null;
 				String typeStr = rs.getString("effect_type");
 
@@ -89,7 +95,7 @@ public class ItemDatabaseRepository implements ItemRepository {
 						effect = new EffectHeal(target, rs.getInt("value"));
 					}
 					else if (type == EffectType.STAT_MODIFIER) {
-						// On reconstruit l'objet Stats du modificateur
+
 						Map<EffectStatModifier.StatType, Integer> statsChanges = new EnumMap<>(EffectStatModifier.StatType.class);
 						statsChanges.put(EffectStatModifier.StatType.HP, rs.getInt("hp"));
 						statsChanges.put(EffectStatModifier.StatType.ATTACK, rs.getInt("attack"));
@@ -102,7 +108,7 @@ public class ItemDatabaseRepository implements ItemRepository {
 					}
 				}
 
-				// 2. On retourne l'Item complet
+
 				return new Item(
 						rs.getString("id"),
 						rs.getString("name"),
@@ -126,20 +132,20 @@ public class ItemDatabaseRepository implements ItemRepository {
 		List<Item> items = new ArrayList<>();
 		String sql = "SELECT id FROM items";
 
-		// On récupère d'abord tous les IDs
+
 		try (PreparedStatement pstmt = this.database.prepareStatement(sql)) {
 			ResultSet rs = pstmt.executeQuery();
 
 			while (rs.next()) {
 				String itemId = rs.getString("id");
 				try {
-					// On réutilise ta méthode findById pour charger l'objet complet
+
 					Item item = findById(itemId);
 					if (item != null) {
 						items.add(item);
 					}
 				} catch (NoSuchElementException e) {
-					// Si un ID existe mais que findById échoue (peu probable mais possible)
+
 					System.err.println("Erreur : ID trouvé mais item non chargeable : " + itemId);
 				}
 			}

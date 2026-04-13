@@ -11,8 +11,6 @@ import ulb.model.team.Team;
 import ulb.model.tower.Floor;
 import ulb.model.tower.Room;
 import  ulb.model.tower.Tower;
-import ulb.model.tower.towerManager.FloorManager;
-import ulb.model.tower.towerManager.TowerManager;
 import ulb.repository.BugemonSpeciesRepository;
 import ulb.repository.mock.BugemonSpeciesMockRepository;
 import ulb.repository.mock.InventoryMockRepository;import ulb.repository.mock.ItemMockRepository;import ulb.service.BugemonService;import ulb.service.ItemService;

@@ -2,7 +2,6 @@ package ulb.model.team;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import ulb.model.bugemon.Bugemon;
 

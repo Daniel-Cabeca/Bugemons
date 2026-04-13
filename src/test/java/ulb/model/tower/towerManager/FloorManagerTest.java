@@ -13,7 +13,6 @@ import ulb.model.bugemon.Bugemon;
 import ulb.model.team.Team;
 import ulb.model.tower.Floor;
 import ulb.model.tower.Room;
-import ulb.model.tower.towerManager.FloorManager;
 import ulb.model.type.Type;
 import ulb.repository.BugemonSpeciesRepository;
 import ulb.repository.mock.BugemonSpeciesMockRepository;

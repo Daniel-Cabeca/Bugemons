@@ -1,12 +1,10 @@
 package ulb.repository.database;
 
-import ulb.model.bugemon.Stats;
 import ulb.model.effect.*;
 import ulb.model.item.Item;
 import ulb.repository.ItemRepository;
 import ulb.repository.LoadException;
 import ulb.repository.database.sql.Database;
-import ulb.repository.json.ItemJsonRepository;
 import ulb.utils.DuplicateElementException;
 
 import java.sql.*;

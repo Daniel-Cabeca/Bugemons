@@ -1,7 +1,5 @@
 package ulb.repository.database.sql;
 
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.AfterEach;
 
 import java.io.IOException;

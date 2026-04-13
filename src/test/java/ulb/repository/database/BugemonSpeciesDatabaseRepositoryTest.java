@@ -3,9 +3,17 @@ package ulb.repository.database;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-import ulb.model.ability.Ability;import ulb.model.ability.AbilitySet;import ulb.model.bugemon.BugemonSpecies;
-import ulb.model.bugemon.Stats;import ulb.model.type.Type;import ulb.repository.database.sql.Database;import ulb.repository.database.sql.DatabaseInMemory;import ulb.repository.database.sql.DatabaseInitializer;import ulb.repository.database.sql.DatabaseMock;import ulb.utils.DuplicateElementException;
-import java.util.NoSuchElementException;import java.util.stream.StreamSupport;
+import ulb.model.ability.Ability;
+import ulb.model.ability.AbilitySet;
+import ulb.model.bugemon.BugemonSpecies;
+import ulb.model.bugemon.Stats;
+import ulb.model.type.Type;
+import ulb.repository.database.sql.Database;
+import ulb.repository.database.sql.DatabaseInMemory;
+import ulb.repository.database.sql.DatabaseInitializer;
+import ulb.repository.database.sql.DatabaseMock;
+import ulb.utils.DuplicateElementException;
+import java.util.stream.StreamSupport;
 
 public class BugemonSpeciesDatabaseRepositoryTest {
 

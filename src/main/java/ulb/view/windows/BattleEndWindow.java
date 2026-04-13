@@ -4,7 +4,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import ulb.utils.Scaling;
-import ulb.view.WindowPath;
 
 public class BattleEndWindow extends Window {
 

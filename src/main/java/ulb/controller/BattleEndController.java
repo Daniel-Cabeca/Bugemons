@@ -7,16 +7,32 @@ import javafx.stage.Stage;
 import ulb.view.WindowPath;
 import ulb.view.windows.BattleEndWindow;
 
+/**
+ * Controller for the battle end summary screen.
+ */
 public class BattleEndController implements BattleEndWindow.ViewListener {
     private Listener listener;
     private Stage stage;
     private BattleEndWindow view;
 
+    /**
+     * Creates the battle end controller.
+     *
+     * @param stage The application stage
+     * @param listener Listener handling return action
+     */
     public BattleEndController(Stage stage, Listener listener) {
         this.stage = stage;
         this.listener = listener;
     }
 
+    /**
+     * Displays battle result information.
+     *
+     * @param victory Whether the battle was won
+     * @param totalXP Total experience gained
+     * @throws Exception If FXML loading fails
+     */
     public void show(boolean victory, int totalXP) throws Exception{
         FXMLLoader loader = new FXMLLoader(getClass().getResource(WindowPath.BATTLE_END));
         loader.load();
@@ -34,12 +50,19 @@ public class BattleEndController implements BattleEndWindow.ViewListener {
     }
 
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onHandleReturn() {
         this.listener.onHandleReturn();
     }
 
+    /**
+     * Listener for battle end actions.
+     */
     public interface Listener{
+        /** Handles return action from the battle end window. */
         void onHandleReturn();
     }
 }

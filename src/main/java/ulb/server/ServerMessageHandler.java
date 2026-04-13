@@ -12,8 +12,6 @@ public interface ServerMessageHandler {
 	public void handle(SetUpNormalModeMessage message);
 	public void handle(SetUpTowerModeMessage message);
 
-	//
-
 	// GAME INFO
 	public void handle(GetPlayerMessage message);
 	public void handle(CheckGameFinishedMessage message);

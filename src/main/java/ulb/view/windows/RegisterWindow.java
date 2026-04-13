@@ -5,9 +5,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-import ulb.repository.LoadException;
 import ulb.utils.Scaling;
-import ulb.view.WindowPath;
 
 public class RegisterWindow extends Window {
 

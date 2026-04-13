@@ -8,6 +8,8 @@ import ulb.model.team.OpponentTeamGenerator;
 import ulb.model.team.Team;
 import ulb.model.tower.Room;
 import ulb.model.tower.RoomType;
+import ulb.service.BugemonService;
+import ulb.service.ItemService;
 
 
 public class RoomManager {
@@ -17,17 +19,24 @@ public class RoomManager {
 	private Battle battle;
 	private boolean isTeamA;
 	private BattleController roomBattleController;
+	private final BugemonService bugemonService;
+	private final ItemService itemService;
 
-	public RoomManager(Room room, int floorNumber, Player player){
+	public RoomManager(Room room, int floorNumber, Player player, BugemonService bugemonService, ItemService itemService){
 		this.room = room;
 		this.floorNumber = floorNumber;
 		this.player = player;
+		this.bugemonService = bugemonService;
+		this.itemService = itemService;
 		initializeRoomContent(room.getRoomType());
 	}
 
 	public boolean isRoomCompleted() {return room.isRoomCompleted();}
 
 	public void setRoomCompleted(boolean status) {room.setRoomCompleted(status);}
+
+	public ItemService getItemService() { return this.itemService; }
+	public BugemonService getBugemonService() { return this.bugemonService; }
 
 	public void initializeRoomContent(RoomType type) {
 		switch (type) {
@@ -48,17 +57,17 @@ public class RoomManager {
 		Team playerTeam = player.getTeam();
 		Team opponentTeam = new Team();
 		try{
-			opponentTeam = OpponentTeamGenerator.generateRandomOpponentTeam(playerTeam);
+			opponentTeam = OpponentTeamGenerator.generateRandomOpponentTeam(playerTeam, this.getBugemonService());
 		}catch(Exception e){
 			System.err.println(e);
 		}
-		Battle battle = new Battle(playerTeam, opponentTeam, player);
+		Battle battle = new Battle(playerTeam, opponentTeam, player, new Player(this.getItemService()));
 		battle.setFloorNumber(floorNumber);
 		if (isBossBattle) {
 			battle.enableBossBattle();
 		}
-		this.roomBattleController = new BattleController(player, battle, ParticipantLabel.TEAM_A);
-		StrategyRandom strategyRandom = new StrategyRandom(battle);
+		this.roomBattleController = new BattleController(player, battle, ParticipantLabel.TEAM_A, this.getItemService());
+		StrategyRandom strategyRandom = new StrategyRandom(battle, this.getItemService());
 		Thread thread = new Thread(strategyRandom);
 		thread.setDaemon(true);
 		thread.start();

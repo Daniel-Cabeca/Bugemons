@@ -5,7 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import ulb.repository.LoadException;
-import ulb.service.ServiceLoader;
+import ulb.service.AccountService;
 import ulb.view.WindowPath;
 import ulb.view.windows.RegisterWindow;
 
@@ -14,11 +14,15 @@ public class RegisterController implements RegisterWindow.ViewListener {
     private Listener listener;
     private RegisterWindow view;
     private Stage stage;
+	private final AccountService accountService;
 
-    public RegisterController(Stage stage, Listener listener) {
+    public RegisterController(Stage stage, Listener listener, AccountService accountService) {
         this.listener = listener;
         this.stage = stage;
+		this.accountService = accountService;
     }
+
+	AccountService getAccountService() { return this.accountService; }
 
     public void show() throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(WindowPath.REGISTER));
@@ -38,7 +42,7 @@ public class RegisterController implements RegisterWindow.ViewListener {
     @Override
     public void onLogin(String username, String password) {
         try {
-            boolean success = ServiceLoader.getAccountService().login(username, password);
+            boolean success = this.getAccountService().login(username, password);
             if (success) {
                 listener.onRegister();
             } else {
@@ -52,7 +56,7 @@ public class RegisterController implements RegisterWindow.ViewListener {
     @Override
     public void onSignUp(String username, String password) {
         try {
-            boolean success = ServiceLoader.getAccountService().register(username, password);
+            boolean success = this.getAccountService().register(username, password);
             if (success) {
                 listener.onRegister();
             } else {

@@ -3,28 +3,37 @@ package ulb.controller.towerManager;
 import ulb.model.Player;
 import ulb.model.tower.Floor;
 import ulb.model.tower.Room;
+import ulb.service.BugemonService;
+import ulb.service.ItemService;
 
 public class FloorManager {
 	private Player player;
 	private Floor floor;
 	private int currentRoomIndex;
 	private RoomManager currentRoomManager;
+	private final BugemonService bugemonService;
+	private final ItemService itemService;
 
-	public FloorManager(Floor floor, Player player){
+	public FloorManager(Floor floor, Player player, BugemonService bugemonService, ItemService itemService){
 		this.player = player;
+		this.bugemonService = bugemonService;
+		this.itemService = itemService;
 		this.floor = floor;
 		this.currentRoomIndex = 0;
-		this.currentRoomManager = new RoomManager(floor.getRooms().get(this.currentRoomIndex), floor.getId(), this.player);
+		this.currentRoomManager = new RoomManager(floor.getRooms().get(this.currentRoomIndex), floor.getId(), this.player, this.getBugemonService(), this.getItemService());
 	}
 
 	public Floor getFloor() {return this.floor;}
 
 	public RoomManager getCurrentRoomManager() {return this.currentRoomManager;}
 
+	public BugemonService getBugemonService() { return this.bugemonService; }
+	public ItemService getItemService() { return this.itemService; }
+
 	public void nextRoom(){
 		if (currentRoomManager.isRoomCompleted() && !isFloorCompleted()) {
 			currentRoomIndex++;
-			currentRoomManager = new RoomManager(floor.getRooms().get(this.currentRoomIndex), floor.getId(), this.player);
+			currentRoomManager = new RoomManager(floor.getRooms().get(this.currentRoomIndex), floor.getId(), this.player, this.getBugemonService(), this.getItemService());
 		}
 	}
 
@@ -32,7 +41,7 @@ public class FloorManager {
 	public void rewindRoom() {
 		Room room = floor.getRooms().get(currentRoomIndex);
 		room.setRoomCompleted(false);
-		currentRoomManager = new RoomManager(room, floor.getId(), this.player);
+		currentRoomManager = new RoomManager(room, floor.getId(), this.player, this.getBugemonService(), this.getItemService());
 	}
 
 	public boolean isFloorCompleted() {

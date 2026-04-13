@@ -13,19 +13,24 @@ import ulb.controller.action.*;
 import ulb.model.Player;
 import ulb.model.item.Item;
 import ulb.model.reward.Reward;
+import ulb.service.ItemService;
 
 public class BattleController {
 	private Player player;
 	private Battle battle;
 	private ParticipantLabel participantLabel;
+	private final ItemService itemService;
 
 	private Vector<Reward> rewards;
 
-	public BattleController(Player player, Battle battle, ParticipantLabel participantLabel) {
+	public BattleController(Player player, Battle battle, ParticipantLabel participantLabel, ItemService itemService) {
 		this.player = player;
 		this.battle = battle;
 		this.participantLabel = participantLabel;
+		this.itemService = itemService;
 	}
+
+	public ItemService getItemService() { return this.itemService; }
 
 	/**
 	 * Checks if an item can be used or not given the stats of the bugemon

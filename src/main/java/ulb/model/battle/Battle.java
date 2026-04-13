@@ -42,10 +42,6 @@ public class Battle {
 		this.activeEffects = new ArrayList<>();
 	}
 
-	public Battle(Team teamA, Team teamB, Player playerA) {
-		this(teamA, teamB, playerA, new Player());
-	}
-
 	public BattleParticipant getParticipant(ParticipantLabel team) {
 		if (team == ParticipantLabel.TEAM_A) {
 			return this.participantA;

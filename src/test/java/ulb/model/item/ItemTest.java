@@ -18,10 +18,10 @@ import ulb.controller.BattleController;
 import ulb.controller.action.UseAbility;
 import ulb.controller.action.UseItem;
 
-import ulb.service.BugemonService;
+import ulb.repository.mock.InventoryMockRepository;import ulb.service.BugemonService;
 import ulb.repository.mock.BugemonSpeciesMockRepository;
 import ulb.repository.ItemRepository;
-import ulb.repository.mock.ItemMockRepository;
+import ulb.repository.mock.ItemMockRepository;import ulb.service.ItemService;
 
 public class ItemTest {
 	private static Item getItem(String id) {
@@ -35,25 +35,29 @@ public class ItemTest {
 	}
 
 	private BattleController makeBattleController(Bugemon... bugemons) {
+		ItemService itemService = new ItemService(new ItemMockRepository(), new InventoryMockRepository());
+
 		List<Bugemon> bugemonList = bugemons.length > 0 ? List.of(bugemons) : List.of(spawnBugemon("florachu"));
 		Team teamA = new Team(bugemonList);
 		Team teamB = new Team(List.of(spawnBugemon("pass_turn")));
 
-		Player player = new Player("TestPlayer");
+		Player player = new Player("TestPlayer", itemService);
 		player.setTeam(teamA);
 
-		Player otherPlayer = new Player("OtherPlayer");
+		Player otherPlayer = new Player("OtherPlayer", itemService);
 		otherPlayer.setTeam(teamB);
 
 		Battle battle = new Battle(teamA, teamB, player, otherPlayer);
-		return new BattleController(player, battle, ParticipantLabel.TEAM_A);
+		return new BattleController(player, battle, ParticipantLabel.TEAM_A, itemService);
 	}
 
 	private BattleController makeOtherPlayerBattleController(BattleController selfController) {
+		ItemService itemService = new ItemService(new ItemMockRepository(), new InventoryMockRepository());
+
 		Battle battle = selfController.getBattle();
 		Player otherPlayer = battle.getPlayer(ParticipantLabel.TEAM_B);
 
-		return new BattleController(otherPlayer, battle, ParticipantLabel.TEAM_B);
+		return new BattleController(otherPlayer, battle, ParticipantLabel.TEAM_B, itemService);
 	}
 
 	private void playTurnWithItem(BattleController controller, BattleController otherController, Item item) {

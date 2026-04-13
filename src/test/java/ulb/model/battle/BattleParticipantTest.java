@@ -6,7 +6,7 @@ import ulb.model.Player;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.team.Team;
 import ulb.repository.mock.BugemonSpeciesMockRepository;
-import ulb.service.BugemonService;
+import ulb.repository.mock.InventoryMockRepository;import ulb.repository.mock.ItemMockRepository;import ulb.service.BugemonService;import ulb.service.ItemService;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,13 +18,14 @@ public class BattleParticipantTest {
     public void setActiveBugemonAddsToParticipatingBugemons() {
         BugemonSpeciesMockRepository repository = new BugemonSpeciesMockRepository();
         BugemonService service = new BugemonService(repository);
+		ItemService itemService = new ItemService(new ItemMockRepository(), new InventoryMockRepository());
 
         Bugemon a = service.spawnBugemon("florachu");
         Bugemon b = service.spawnBugemon("pyricore");
 
         Team team = new Team(List.of(a, b));
 
-        BattleParticipant participantTest = new BattleParticipant(new Player(), team);
+        BattleParticipant participantTest = new BattleParticipant(new Player(itemService), team);
 
         participantTest.setActiveBugemon(a);
         assertFalse(participantTest.getParticipatingBugemons().contains(b));
@@ -39,13 +40,14 @@ public class BattleParticipantTest {
     public void setActiveBugemonDoesntAddSameBugemonTwice() {
         BugemonSpeciesMockRepository repository = new BugemonSpeciesMockRepository();
         BugemonService service = new BugemonService(repository);
+		ItemService itemService = new ItemService(new ItemMockRepository(), new InventoryMockRepository());
 
         Bugemon a = service.spawnBugemon("florachu");
         Bugemon b = service.spawnBugemon("pyricore");
 
         Team team = new Team(List.of(a, b));
 
-        BattleParticipant participantTest = new BattleParticipant(new Player(), team);
+        BattleParticipant participantTest = new BattleParticipant(new Player(itemService), team);
 
         participantTest.setActiveBugemon(a);
         participantTest.setActiveBugemon(b);

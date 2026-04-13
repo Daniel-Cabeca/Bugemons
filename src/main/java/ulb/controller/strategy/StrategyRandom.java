@@ -13,13 +13,14 @@ import ulb.model.bugemon.Bugemon;
 import ulb.model.battle.Battle;
 import ulb.model.battle.BattleState;
 import ulb.model.battle.Battle.ParticipantLabel;
+import ulb.service.ItemService;
 
 public class StrategyRandom implements Strategy, Runnable {
     private BattleController battleController;
     private final long SLEEP_TIME = 1000;
 
-    public StrategyRandom(Battle battle) {
-        this(new BattleController(new Player(), battle, ParticipantLabel.TEAM_B));
+    public StrategyRandom(Battle battle, ItemService itemService) {
+        this(new BattleController(new Player(itemService), battle, ParticipantLabel.TEAM_B, itemService));
     }
     public StrategyRandom(BattleController battleController){
         this.battleController = battleController;

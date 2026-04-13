@@ -410,7 +410,8 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	}
 
 	public void handle(SwapBugemonMessage message){
-		Bugemon bugemonToSwap = BugemonMapper.toEntity(message.getBugemonToSwap());
+		BugemonDTO bugemonDTOToSwap = message.getBugemonToSwap();
+		Bugemon bugemonToSwap = this.player.getTeam().getBugemonById(bugemonDTOToSwap.getId());
 		this.battle.chooseAction(new Swap(bugemonToSwap), teamLabel);
 
 		sendSuccessMessage();

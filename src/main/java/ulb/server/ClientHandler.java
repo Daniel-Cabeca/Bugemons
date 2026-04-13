@@ -11,6 +11,7 @@ import ulb.mapper.bugemon.BugemonMapper;
 import ulb.mapper.bugemon.BugemonSpeciesMapper;
 import ulb.mapper.item.ItemMapper;
 import ulb.mapper.player.PlayerMapper;
+import ulb.mapper.reward.RewardMapper;
 import ulb.mapper.stats.StatsMapper;
 import ulb.message.ClientToServerMessage;
 import ulb.message.clientToServer.*;
@@ -46,6 +47,7 @@ import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.DTO.item.ItemDTO;
+import ulb.DTO.reward.RewardDTO;
 
 public class ClientHandler extends Thread implements ServerMessageHandler{
     private SocketMessenger socketMessenger;
@@ -59,6 +61,17 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
 	private TowerManager towerManager;
 	private boolean isGameTower;
+
+	private Bugemon pendingLevelUpBugemon;
+	private List<Reward> pendingLevelUpRewards;
+
+	private void resetGameSessionState() {
+		this.battle = null;
+		this.teamLabel = null;
+		this.towerManager = null;
+		this.isGameTower = false;
+		clearPendingLevelUpState();
+	}
 
     public ClientHandler(SocketMessenger messenger){
         this.socketMessenger = messenger;
@@ -112,14 +125,30 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
         this.socketMessenger.close();
     }
 
-	public void checkBattleEnd(){
-		if (this.battle == null){
-			return;
-		}
+	public void nextTowerRoom(){
 		if (isGameTower){
 			this.towerManager.nextRoom();
 			this.battle = this.towerManager.getCurrentBattle();
 		}
+	}
+
+	private void clearPendingLevelUpState() {
+		this.pendingLevelUpBugemon = null;
+		this.pendingLevelUpRewards = null;
+	}
+
+	private Bugemon getCurrentLevelUpBugemon() {
+		if (this.player == null || this.player.getTeam() == null) {
+			return null;
+		}
+
+		for (Bugemon bugemon : this.player.getTeam().getMembers()) {
+			if (bugemon.getRemainingReward() > 0) {
+				return bugemon;
+			}
+		}
+
+		return null;
 	}
 
 	// SETUP 
@@ -161,15 +190,16 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 			sendErrorMessage("Player not initialized !");
 			return;
 		}
+
+		if (this.battle != null || this.towerManager != null || this.isGameTower) {
+			resetGameSessionState();
+		}
+
 		Team teamB;
 		try {
 			teamB = OpponentTeamGenerator.generateRandomOpponentTeam(player.getTeam());
 		} catch (Exception e){
 			sendErrorMessage(e.getMessage());
-			return;
-		}
-		if (this.battle != null){
-			sendErrorMessage("Game already initialized");
 			return;
 		}
 		this.battle = new Battle(player.getTeam(), teamB, player);
@@ -178,19 +208,21 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
 		this.opponentBot = new AI(battle, new StrategyRandom());
 		this.opponentBot.start();
+		clearPendingLevelUpState();
 
 		sendSuccessMessage();
 	}
 
 	public void handle(SetUpTowerModeMessage message){
-		if (this.battle != null){
-			sendErrorMessage("Game already initialized");
-			return;
+		if (this.battle != null || this.towerManager != null || this.isGameTower) {
+			resetGameSessionState();
 		}
+
 		this.towerManager = new TowerManager(player);
 		this.battle = towerManager.getCurrentBattle();
 		this.teamLabel = Battle.ParticipantLabel.TEAM_A;
 		this.isGameTower = true;
+		clearPendingLevelUpState();
 
 		sendSuccessMessage();
 	}
@@ -264,45 +296,101 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	}
 
 	public void handle(GetNextWindowMessage message){
-		WindowType nextWindow = WindowType.NEXT_ROOM;
-		if (this.battle == null){
-			nextWindow = WindowType.MAIN_MENU;
-		} else if (this.player.getTeam().getLevelUpBugemonNumber() > 0){
+		WindowType nextWindow = WindowType.MAIN_MENU;
+
+		if (this.player != null && this.player.getTeam().getLevelUpBugemonNumber() > 0){
 			nextWindow = WindowType.LEVEL_UP;
+			sendMessage(new NextWindowMessage(nextWindow));
+			return;
 		}
-		if (this.isGameTower) {
-			if (towerManager.isRoomCompleted()){
-				nextWindow = WindowType.NEXT_ROOM;
-			} else{
-				switch (towerManager.getCurrentRoomType()) {
-					case BATTLE:
-					case BOSS:
-						nextWindow = WindowType.GAME;
-						break;
 
-					case REWARD:
-						nextWindow = WindowType.REWARD;
-						break;
+		if (this.isGameTower){
+			if (this.battle != null && this.battle.isGameFinished()) {
+				boolean won = this.battle.getState(teamLabel) == BattleState.WON;
 
-					default:
-						nextWindow = WindowType.MAIN_MENU;
-						break;	
+				if (won) {
+					this.towerManager.getCurrentRoomManager().setRoomCompleted(true);
+					this.battle.resetFightStats();
+					nextWindow = WindowType.NEXT_ROOM;
+					nextTowerRoom();
+				} else {
+					nextWindow = WindowType.MAIN_MENU;
 				}
+
+				sendMessage(new NextWindowMessage(nextWindow));
+				return;
 			}
+
+			switch (towerManager.getCurrentRoomType()) {
+				case BATTLE:
+				case BOSS:
+					nextWindow = WindowType.GAME;
+					break;
+
+				case REWARD:
+					nextWindow = WindowType.REWARD;
+					break;
+
+				default:
+					nextWindow = WindowType.MAIN_MENU;
+					break;
+			}
+
+			sendMessage(new NextWindowMessage(nextWindow));
+			return;
 		}
-		checkBattleEnd();
+
+		if (this.battle == null){
+			sendMessage(new NextWindowMessage(nextWindow));
+			return;
+		}
+
+		nextWindow = this.battle.isGameFinished() ? WindowType.MAIN_MENU : WindowType.GAME;
 		sendMessage(new NextWindowMessage(nextWindow));
 	}
 
 	public void handle(GetBattleEndInfoMessage message){
-		boolean isWin = this.battle.getState(teamLabel) == BattleState.WON;
-		int gainedXp = this.battle.computeTotalXP(this.battle.getTeam(this.battle.getOpponentTeamLabel(teamLabel)));
+		boolean isWin = this.battle != null && this.battle.getState(teamLabel) == BattleState.WON;
+		int gainedXp = 0;
 
-		if (this.battle.isGameFinished()){
-			this.battle = null;
+		if (isWin && this.battle != null){
+			gainedXp = this.battle.computeTotalXP(this.battle.getTeam(this.battle.getOpponentTeamLabel(teamLabel)));
 		}
 
+		if (this.battle != null && this.battle.isGameFinished()){
+			this.battle = null;
+		}
+		clearPendingLevelUpState();
+
 		sendMessage(new BattleEndInfoMessage(isWin, gainedXp));
+	}
+
+	public void handle(GetLevelUpInfoMessage message){
+		if (this.battle == null || this.player == null || this.player.getTeam() == null) {
+			sendErrorMessage("No pending level up information available");
+			return;
+		}
+
+		Bugemon currentBugemon = getCurrentLevelUpBugemon();
+		if (currentBugemon == null) {
+			clearPendingLevelUpState();
+			sendErrorMessage("No bugemon requires a level up reward");
+			return;
+		}
+
+		if (this.pendingLevelUpBugemon == null
+				|| this.pendingLevelUpRewards == null
+				|| !this.pendingLevelUpBugemon.getId().equals(currentBugemon.getId())) {
+			this.pendingLevelUpBugemon = currentBugemon;
+			this.pendingLevelUpRewards = new ArrayList<>(this.battle.computeRewards(currentBugemon));
+		}
+
+		List<RewardDTO> rewardDTOs = new ArrayList<>();
+		for (Reward reward : this.pendingLevelUpRewards) {
+			rewardDTOs.add(RewardMapper.toDTO(reward));
+		}
+
+		sendMessage(new LevelUpInfoMessage(BugemonMapper.toDTO(currentBugemon), rewardDTOs));
 	}
 
 	//ACTIONS
@@ -317,6 +405,17 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
 	public void handle(RunMessage message){
 		this.battle.chooseAction(new Run(), teamLabel);
+
+		if (this.isGameTower) {
+			for (Bugemon bugemon : this.player.getTeam().getMembers()) {
+				bugemon.getFightStats().setHp(bugemon.getBaseStats().getHp());
+			}
+			this.towerManager.getCurrentFloorManager().rewindRoom();
+			this.battle = this.towerManager.getCurrentBattle();
+		} else {
+			this.battle = null;
+			clearPendingLevelUpState();
+		}
 
         sendSuccessMessage();
 	}
@@ -351,10 +450,17 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 			return;
 		}
 
-		Ability oldAbility = AbilityMapper.toEntity(message.getOldAbility());
+		Ability oldAbility = chosenBugemon.getAbilities().getAbilityById(message.getOldAbility().getId());
+		if (oldAbility == null){
+			sendErrorMessage("Ability not learned");
+			return;
+		}
 		Ability newAbility = AbilityMapper.toEntity(message.getNewAbility());
 
 		chosenBugemon.swapAbility(newAbility, oldAbility);
+
+		towerManager.getCurrentRoomManager().setRoomCompleted(true);
+		nextTowerRoom();
 		sendSuccessMessage();
 	}
 
@@ -362,6 +468,9 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		Item item = ItemMapper.toEntity(message.getItem());
 		player.getInventory().addItem(item, 1);
 
+		towerManager.getCurrentRoomManager().setRoomCompleted(true);
+
+		nextTowerRoom();
 		sendSuccessMessage();
 	}
 
@@ -380,6 +489,39 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		chosenBugemon.changeBaseStats(reward.getStats());
 		chosenBugemon.changeFightStats(reward.getStats());
 
+		towerManager.getCurrentRoomManager().setRoomCompleted(true);
+		nextTowerRoom();
+		sendSuccessMessage();
+	}
+
+	public void handle(ChooseLevelUpRewardMessage message){
+		if (this.pendingLevelUpRewards == null || this.pendingLevelUpRewards.isEmpty()) {
+			sendErrorMessage("No pending level up reward to apply");
+			return;
+		}
+
+		RewardDTO rewardDTO = message.getReward();
+		if (rewardDTO == null) {
+			sendErrorMessage("Invalid reward");
+			return;
+		}
+
+		Reward chosenReward = RewardMapper.toEntity(rewardDTO);
+		boolean applied = false;
+		for (Reward reward : this.pendingLevelUpRewards) {
+			if (reward.getStats().equals(chosenReward.getStats())) {
+				reward.applyReward();
+				applied = true;
+				break;
+			}
+		}
+
+		if (!applied) {
+			sendErrorMessage("Reward does not match the current level up choices");
+			return;
+		}
+
+		clearPendingLevelUpState();
 		sendSuccessMessage();
 	}
 	

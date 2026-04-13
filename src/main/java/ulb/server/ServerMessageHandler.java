@@ -22,6 +22,7 @@ public interface ServerMessageHandler {
 	public void handle(GetTowerInfoMessage message);
 	public void handle(GetNextWindowMessage message);
 	public void handle(GetBattleEndInfoMessage message);
+	public void handle(GetLevelUpInfoMessage message);
 
 	//ACTIONS
 	public void handle(PickRandomActionMessage message);
@@ -32,6 +33,7 @@ public interface ServerMessageHandler {
 	public void handle(ChooseAbilityRewardMessage message);
 	public void handle(ChooseItemRewardMessage message);
 	public void handle(ChooseStatRewardMessage message);
+	public void handle(ChooseLevelUpRewardMessage message);
 	
 	// SPECIAL INFO
 	public void handle(GetAllBugemonSpeciesMessage message);

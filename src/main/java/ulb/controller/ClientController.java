@@ -26,6 +26,11 @@ import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.DTO.item.ItemDTO;
+import ulb.DTO.reward.RewardDTO;
+import ulb.mapper.bugemon.BugemonMapper;
+import ulb.mapper.reward.RewardMapper;
+import ulb.model.bugemon.Bugemon;
+import ulb.model.reward.Reward;
 import ulb.repository.LoadException;
 import ulb.model.chat.ChatMessage;
 import ulb.view.WindowPath;
@@ -34,7 +39,7 @@ import ulb.view.windows.SocialPanel;
 
 public class ClientController extends Application implements RegisterController.Listener, ModeController.Listener,
 BattleModeController.Listener,BattleEndController.Listener, BattleWindowController.Listener, NextRoomController.Listener, 
-FloorRewardController.Listener, AttackReplacementController.Listener,TeamController.Listener {
+FloorRewardController.Listener, AttackReplacementController.Listener, TeamController.Listener, LevelUpController.Listener {
     SocketClient client;
     Stage stage;
 
@@ -49,12 +54,15 @@ FloorRewardController.Listener, AttackReplacementController.Listener,TeamControl
 	BattleWindowController battleWindowController;
 
 	BattleEndController battleEndController;
+	LevelUpController levelUpController;
 	NextRoomController nextRoomController;
 	FloorRewardController floorRewardController;
 	ChooseBugemonController chooseBugemonController;
 	AttackReplacementController attackReplacementController;
 
 	FloorRewardController.RewardChoice pendingFloorRewardChoice;
+	BugemonDTO pendingLevelUpBugemon;
+	List<RewardDTO> pendingLevelUpRewards;
 
     @Override
     public void init(){
@@ -327,7 +335,7 @@ FloorRewardController.Listener, AttackReplacementController.Listener,TeamControl
 		}
 	}
 
-	private void switchToLevelUpWindow(){
+	private void switchToBattleEndWindow(){
 		Serializable message = getData(new GetBattleEndInfoMessage());
 		boolean victory = false;
 		int totaleXp = 0;
@@ -343,6 +351,22 @@ FloorRewardController.Listener, AttackReplacementController.Listener,TeamControl
 			battleEndController.show(victory, totaleXp);
 		}
 		catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	private void switchToLevelUpWindow(){
+		Serializable message = getData(new GetLevelUpInfoMessage());
+		if (!(message instanceof LevelUpInfoMessage levelUpInfo)) {
+			return;
+		}
+
+		this.pendingLevelUpBugemon = levelUpInfo.getBugemon();
+		this.pendingLevelUpRewards = levelUpInfo.getRewards();
+		this.levelUpController = new LevelUpController(stage, this);
+		try {
+			this.levelUpController.show();
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -377,7 +401,7 @@ FloorRewardController.Listener, AttackReplacementController.Listener,TeamControl
 				break;
 			
 			case MAIN_MENU:
-				switchToModeWindow();
+				switchToBattleEndWindow();
 				break;
 
 			default:
@@ -572,6 +596,31 @@ FloorRewardController.Listener, AttackReplacementController.Listener,TeamControl
 		return null;
 	}
 
+	@Override
+	public Bugemon getLevelUpBugemon() {
+		return BugemonMapper.toEntity(this.pendingLevelUpBugemon);
+	}
+
+	@Override
+	public List<Reward> getLevelUpRewards() {
+		if (this.pendingLevelUpRewards == null) {
+			return List.of();
+		}
+
+		List<Reward> rewards = new ArrayList<>();
+		for (RewardDTO rewardDTO : this.pendingLevelUpRewards) {
+			rewards.add(RewardMapper.toEntity(rewardDTO));
+		}
+		return rewards;
+	}
+
+	@Override
+	public void onRewardChosen(Reward reward, ActionEvent event) {
+		if (postData(new ChooseLevelUpRewardMessage(RewardMapper.toDTO(reward)))) {
+			nextRoom();
+		}
+	}
+
 	// Next Room Listener 
 
 	@Override
@@ -628,7 +677,7 @@ FloorRewardController.Listener, AttackReplacementController.Listener,TeamControl
 		AbilityDTO newAbility = null;
 		Serializable message = getData(new GetRandomAbilityMessage(bugemon));
 		if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
-			System.out.println(errorMessage.getMessage());
+			System.err.println(errorMessage.getMessage());
 			return; 
 		}else if (message instanceof RandomAbilityMessage randomAbility){
 			newAbility = randomAbility.getAbility();
@@ -683,7 +732,7 @@ FloorRewardController.Listener, AttackReplacementController.Listener,TeamControl
 
 	@Override
 	public void onAttackReplaced(BugemonDTO bugemon, AbilityDTO newAbility, AbilityDTO oldAbility) {
-		if (postData(new ChooseAbilityRewardMessage(bugemon, newAbility, oldAbility))){
+		if (postData(new ChooseAbilityRewardMessage(bugemon, oldAbility, newAbility))){
 			nextRoom();
 		}
 		// bugemon.swapAbility(newAbility, oldAbility);

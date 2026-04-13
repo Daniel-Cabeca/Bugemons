@@ -92,6 +92,7 @@ public class SocketMessengerTest {
     @Test
     public void testSendingMessage(){
         this.createActors();
+
         StatusMessage sendingMessage = new StatusMessage(false,"Test de la communication");
 
         this.client.sendMessage(sendingMessage);

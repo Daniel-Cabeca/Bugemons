@@ -726,7 +726,7 @@ MultiplayerWindowController.Listener {
 	public List<Integer> getHpAfterFirstAction(){return null;}
 	public BattleState getState(){return null;}
 	public List<String> getLogs(){return null;}
-	public Map<ItemDTO, Boolean> checkItems(List<ItemDTO> items){return null;}
+	public Map<String, Boolean> checkItems(List<ItemDTO> items){return null;}
 	public boolean isGameFinished(){return false;}
 
 	@Override

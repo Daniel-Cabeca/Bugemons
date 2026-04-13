@@ -1,6 +1,7 @@
 package ulb.DTO.item;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import ulb.DTO.effect.EffectDTO;
 
@@ -34,4 +35,6 @@ public class ItemDTO implements Serializable{
 	public void setCategory(String category) {this.category = category;}
 	public void setEffect(EffectDTO effect) {this.effect = effect;}
 	public void setSprite(String sprite) {this.sprite = sprite;}
+
+
 }

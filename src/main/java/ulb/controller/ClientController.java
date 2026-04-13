@@ -113,7 +113,16 @@ SocialPanelController.Listener {
 		return client.receiveMessage();
 	}
 
-	public PlayerDTO getPlayer() { return this.player; }
+	public PlayerDTO getPlayer() {
+		return this.player;
+	}
+
+	public PlayerDTO getPlayer(String username) { 
+		if (getData(new GetPlayerMessage(username)) instanceof PlayerMessage msg) {
+			return msg.getPlayer();
+		}
+		return null; 
+	}
 
 	public boolean logIn(PlayerDTO player){
 		return postData(new RegisterMessage(player, true));
@@ -176,26 +185,38 @@ SocialPanelController.Listener {
 
 	@Override
 	public void onLogin(String username, String password){
-		this.player = new PlayerDTO(username, password, new ArrayList<>(), new HashMap<>());
-		boolean success = logIn(this.player);
-		if (success) {
-			this.modeController = new ModeController(this.stage, this);
-			try {
-				this.modeController.show();
-			}catch (Exception e){
-				e.printStackTrace();
+		try {
+			PlayerDTO playerDTO = new PlayerDTO(username, password, new ArrayList<>(), new HashMap<>());
+			boolean success = logIn(playerDTO);
+			if (success) {
+				this.player = getPlayer(username);
+				if (this.player == null) {
+					throw new RuntimeException("Player is null after login");
+				}
+				this.modeController = new ModeController(this.stage, this);
+				try {
+					this.modeController.show();
+				}catch (Exception e){
+					e.printStackTrace();
+				}
+			} else {
+				this.registerController.getView().setErrorLabel("Nom d'utilisateur ou mot de passe incorrect.");
 			}
-		} else {
-			this.registerController.getView().setErrorLabel("Nom d'utilisateur ou mot de passe incorrect.");
+		} catch (LoadException e) {
+			this.registerController.getView().setErrorLabel("Erreur de connexion à la base de données.");
 		}
 	}
 
 	@Override
 	public void onSignUp(String username, String password){
 		try {
-			this.player = new PlayerDTO(username, password, new ArrayList<>(), new HashMap<>());
-			boolean success = this.signUp(this.player);
+			PlayerDTO playerDTO = new PlayerDTO(username, password, new ArrayList<>(), new HashMap<>());
+			boolean success = this.signUp(playerDTO);
 			if (success) {
+				this.player = getPlayer(username);
+				if (this.player == null) {
+					throw new RuntimeException("Player is null after login");
+				}
 				this.modeController = new ModeController(this.stage, this);
 				try {
 					this.modeController.show();
@@ -278,6 +299,7 @@ SocialPanelController.Listener {
 		if (!this.postData(new SetUpTeamMessage(team))){
 			return;
 		}
+
 
 		this.battleModeController = new BattleModeController(this.stage, this, player.getTeam());
 		try {
@@ -534,7 +556,7 @@ SocialPanelController.Listener {
 	}
 
 	@Override
-	public Map<ItemDTO, Boolean> checkItems(List<ItemDTO> items){
+	public Map<String, Boolean> checkItems(List<ItemDTO> items){
 		Serializable message = getData(new CheckUsableItemMessage(items));
 
 		if (message instanceof UsableItemsMessage usableItems){

@@ -69,6 +69,9 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 		return availableBugemons;
 	}
 
+	/**
+	 * Creates a new Team for the player and adds his selected bugémons.
+	 */
 	public void setTeam(List<String> selectedBugemonIds) {
 		List<BugemonDTO> teamABugemons = new ArrayList<BugemonDTO>();
 		List<BugemonSpeciesDTO> allSpecies = this.getAllSpecies();

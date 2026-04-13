@@ -86,8 +86,8 @@ public class CreateTeamWindow extends Window {
 
 			cell.getChildren().addAll(name, sprite, checkBox);
 			availableBugemonsGrid.add(cell, col, row);
-
-			col++;
+			
+			col++; // Switch to the next Bugemon to show
 			if (col == 8) {
 				col = 0;
 				row++;
@@ -120,15 +120,6 @@ public class CreateTeamWindow extends Window {
 			}
 		}
 		checkDisableBugemons();
-	}
-
-	private String getBugemonName(String bugemonId) {
-		for (BugemonSpeciesDTO bugemon : availableBugemons) {
-			if (bugemon.getId().equals(bugemonId)) {
-				return bugemon.getName();
-			}
-		}
-		throw new NoSuchElementException("Unknown Bugémon id: " + bugemonId);
 	}
 
 	/**

@@ -1,8 +1,9 @@
 package ulb.model.chat;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class ChatMessage {
+public class ChatMessage implements Serializable {
     private final long id;
     private final String senderUsername;
     private final String receiverUsername;

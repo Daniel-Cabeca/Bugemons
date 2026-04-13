@@ -437,6 +437,15 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		sendMessage(new FriendsListMessage(friends));
 	}
 
+	public void handle(SendChatMessageMessage message){
+		ServiceLoader.getChatService().sendMessage(message.getSenderUsername(), message.getReceiverUsername(), message.getContent());
+		sendSuccessMessage();
+	}
+
+	public void handle(GetChatMessagesMessage message){
+		sendMessage(new ChatMessagesMessage(ServiceLoader.getChatService().getMessages(message.getUsernameA(), message.getUsernameB())));
+	}
+
 	public void handle(GetRandomAbilityMessage message){
 		Bugemon bugemon = BugemonMapper.toEntity(message.getBugemon());
 

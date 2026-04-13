@@ -27,6 +27,7 @@ import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.repository.LoadException;
+import ulb.model.chat.ChatMessage;
 import ulb.view.WindowPath;
 import ulb.view.windows.SocialPanel;
 
@@ -124,6 +125,16 @@ FloorRewardController.Listener, AttackReplacementController.Listener,TeamControl
 
 	public boolean declineFriendRequest(String sender) {
 		return postData(new DeclineFriendRequestMessage(player.getName(), sender));
+	}
+
+	public void sendChatMessage(String receiver, String content) {
+		postData(new SendChatMessageMessage(player.getName(), receiver, content));
+	}
+
+	public List<ChatMessage> getChatMessages(String friend) {
+		if (getData(new GetChatMessagesMessage(player.getName(), friend)) instanceof ChatMessagesMessage msg)
+			return msg.getMessages();
+		return List.of();
 	}
 
 	public List<String> getFriendsList() {

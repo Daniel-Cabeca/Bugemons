@@ -5,7 +5,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import ulb.DTO.player.PlayerDTO;
-import ulb.repository.LoadException;
 import ulb.view.WindowPath;
 import ulb.view.windows.RegisterWindow;
 

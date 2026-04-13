@@ -7,12 +7,6 @@ import javafx.stage.Stage;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.DTO.player.PlayerDTO;
-import ulb.model.Player;
-import ulb.model.bugemon.Bugemon;
-import ulb.model.bugemon.BugemonSpecies;
-import ulb.model.team.Team;
-import ulb.service.BugemonService;
-import ulb.service.ServiceLoader;
 import ulb.view.WindowPath;
 import ulb.view.windows.CreateTeamWindow;
 
@@ -24,7 +18,6 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 
 	private final Listener listener;
 	private final Stage stage;
-	private final BugemonService bugemonService;
 
 	private CreateTeamWindow view;
 
@@ -32,7 +25,6 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 		this.stage = stage;
 		this.listener = listener;
 		this.player = player;
-		this.bugemonService = ServiceLoader.getBugemonService();
 	}
 
 	public void show() throws Exception {

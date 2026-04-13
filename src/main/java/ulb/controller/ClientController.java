@@ -27,10 +27,6 @@ import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.DTO.reward.RewardDTO;
-import ulb.mapper.bugemon.BugemonMapper;
-import ulb.mapper.reward.RewardMapper;
-import ulb.model.bugemon.Bugemon;
-import ulb.model.reward.Reward;
 import ulb.repository.LoadException;
 import ulb.model.chat.ChatMessage;
 import ulb.view.WindowPath;
@@ -98,6 +94,11 @@ SocialPanelController.Listener {
 		primaryStage.show();
     }
 
+	/**
+	 * Send data to the server and return a boolean depending on the StatusMessage received
+	 * @param message The message sent to the server
+	 * @return A boolean that tells if the request has been accepted
+	 */
 	public boolean postData(ClientToServerMessage message){
 		client.sendMessage(message);
 		if (client.receiveMessage() instanceof StatusMessage errorMessage && errorMessage.isFailure()){
@@ -107,6 +108,12 @@ SocialPanelController.Listener {
 		return true;
 	}
 
+
+	/**
+	 * Get data from the server
+	 * @param message The messenge sent to the server
+	 * @return The message received from the server and containing the data
+	 */
 	public Serializable getData(ClientToServerMessage message){
 		client.sendMessage(message);
 		return client.receiveMessage();
@@ -288,13 +295,6 @@ SocialPanelController.Listener {
 
 	// Battle Mode Controller Listener : 
 
-	// private BattleController getCurrentBattleController() {
-	// 	if (gameMode == GameMode.TOWER && towerModeTowerManager != null) {
-	// 		return towerModeTowerManager.getCurrentBattleController();
-	// 	}
-	// 	return normalModeBattleController;
-	// }
-
 	private void switchToModeWindow(){
 		try {
 			this.modeController.show();
@@ -450,13 +450,11 @@ SocialPanelController.Listener {
 
 	@Override
 	public void onBattleStateChecked(BattleState state, ActionEvent event) {
-		//CLIENT
 		if (state != BattleState.WON && state != BattleState.LOST){
 			return;
 		}
 
 		nextRoom();
-		//handleBattleEndCheckMessage(new BattleEndCheckMessage(state, event))
 	}
 	
 	@Override
@@ -547,7 +545,6 @@ SocialPanelController.Listener {
 
 	@Override
 	public BattleState onAutoTurn() {
-		// CLIENT
 		if (!postData(new PickRandomActionMessage())){
 			return null;
 		}
@@ -642,10 +639,8 @@ SocialPanelController.Listener {
 	@Override
 	public void onObjectReward(ItemDTO rewardItem) {
 		if (postData(new ChooseItemRewardMessage(rewardItem))){
-			nextRoom(); // MAYBE
+			nextRoom();
 		}
-		// player.getInventory().addItem(rewardItem, 1);
-		// switchToNextRoomWindow();
 	}
 
 	@Override
@@ -667,11 +662,6 @@ SocialPanelController.Listener {
 			if (postData(new ChooseStatRewardMessage(bugemon))){
 				nextRoom();
 			}
-			// Reward reward = new Reward(bugemon);
-			// reward.configureReward(RewardType.COMBINATION);
-			// bugemon.changeBaseStats(reward.getStats());
-			// bugemon.changeFightStats(reward.getStats());
-			// switchToNextRoomWindow();
 			return;
 		}
 		AbilityDTO newAbility = null;
@@ -679,14 +669,13 @@ SocialPanelController.Listener {
 		if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
 			System.err.println(errorMessage.getMessage());
 			return; 
+
 		}else if (message instanceof RandomAbilityMessage randomAbility){
 			newAbility = randomAbility.getAbility();
 		}
 
-		// Ability newAbility = ServiceLoader.getAbilityService().getRandomAbility(bugemon.getType(), bugemon.getAbilities());
 		if (newAbility == null) {
 			nextRoom();
-			//switchToNextRoomWindow();
 			return;
 		}
 
@@ -735,8 +724,6 @@ SocialPanelController.Listener {
 		if (postData(new ChooseAbilityRewardMessage(bugemon, oldAbility, newAbility))){
 			nextRoom();
 		}
-		// bugemon.swapAbility(newAbility, oldAbility);
-		// switchToNextRoomWindow();
 	}
 
     @Override

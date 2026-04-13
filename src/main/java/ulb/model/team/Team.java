@@ -192,6 +192,15 @@ public class Team {
         return this.contains(bugemon) && !bugemon.isKO();
     }
 
+	public Bugemon getFirstLevelUpBugemon(){
+		for (Bugemon bugemon : this.getMembers()){
+			if (bugemon.getRemainingReward() > 0){
+				return bugemon;
+			}
+		}
+		return null;
+	}
+
 	public int getLevelUpBugemonNumber(){
 		int levelUpNumber = 0;
 		for (Bugemon bugemon : this.getMembers()){

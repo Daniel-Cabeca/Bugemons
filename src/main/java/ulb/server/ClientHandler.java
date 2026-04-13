@@ -125,6 +125,9 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
         this.socketMessenger.close();
     }
 
+	/**
+	 * Go to the next room if the game is in tower mode
+	 */
 	public void nextTowerRoom(){
 		if (isGameTower){
 			this.towerManager.nextRoom();
@@ -137,26 +140,11 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		this.pendingLevelUpRewards = null;
 	}
 
-	private Bugemon getCurrentLevelUpBugemon() {
-		if (this.player == null || this.player.getTeam() == null) {
-			return null;
-		}
-
-		for (Bugemon bugemon : this.player.getTeam().getMembers()) {
-			if (bugemon.getRemainingReward() > 0) {
-				return bugemon;
-			}
-		}
-
-		return null;
-	}
-
 	// SETUP 
 	public void handle(RegisterMessage message){
 		boolean success;
 		System.out.println("Nouveau Player Reçu !");
 		this.player = PlayerMapper.toEntity(message.getPlayer());
-		// SEND SUCCES TO CLIENT
 
 		if (message.isLogin()) {
 			success = ServiceLoader.getAccountService().login(this.player.getName(), this.player.getPassword());
@@ -196,6 +184,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		}
 
 		Team teamB;
+
 		try {
 			teamB = OpponentTeamGenerator.generateRandomOpponentTeam(player.getTeam());
 		} catch (Exception e){
@@ -371,7 +360,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 			return;
 		}
 
-		Bugemon currentBugemon = getCurrentLevelUpBugemon();
+		Bugemon currentBugemon = this.player.getTeam().getFirstLevelUpBugemon();
 		if (currentBugemon == null) {
 			clearPendingLevelUpState();
 			sendErrorMessage("No bugemon requires a level up reward");
@@ -602,6 +591,9 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		sendMessage(new RandomItemMessage(ItemMapper.toDTO(randomItem)));
 	}
 
+	/**
+	 * Reads the socket and handle the received message
+	 */
     private void handleMessage(){
         ClientToServerMessage message = receiveMessage();
         

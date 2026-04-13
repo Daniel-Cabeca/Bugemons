@@ -22,7 +22,7 @@ public class SocketMessenger implements Messenger {
             System.err.println(e);
         }
     }
-
+	
     public void sendMessage(Serializable message) throws Exception{
         try{
             this.writer.writeObject(message);

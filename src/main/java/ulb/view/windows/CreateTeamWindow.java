@@ -8,7 +8,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import ulb.DTO.bugemon.CreateTeamBugemonDTO;
 import ulb.utils.Scaling;
 
 import java.util.ArrayList;
@@ -16,11 +15,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import ulb.DTO.bugemon.BugemonSpeciesDTO;
-import ulb.model.bugemon.BugemonSpecies;
-import ulb.utils.Scaling;
-
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 
 public class CreateTeamWindow extends Window {
 

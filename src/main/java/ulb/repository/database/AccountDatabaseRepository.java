@@ -26,12 +26,7 @@ public class AccountDatabaseRepository implements AccountRepository {
 	}
 
 	/**
-	 * Registers a new user account.
-	 *
-	 * @param username The account username
-	 * @param password The password hash to store
-	 * @return False if the username is already taken, true otherwise
-	 * @throws LoadException If the user cannot be persisted
+	 * {@inheritDoc}
 	 */
 	public boolean register(String username, String password) throws LoadException {
 		String sql = "INSERT INTO users (username, password_hash) VALUES (?, ?)";
@@ -47,11 +42,7 @@ public class AccountDatabaseRepository implements AccountRepository {
 	}
 
 	/**
-	 * Returns the password hash associated with a username.
-	 *
-	 * @param username The account username
-	 * @return The stored password hash, or null if not found
-	 * @throws LoadException If the lookup fails
+	 * {@inheritDoc}
 	 */
 	public String getPasswordHash(String username) throws LoadException {
 		String sql = "SELECT password_hash FROM users WHERE username = ?";
@@ -66,11 +57,7 @@ public class AccountDatabaseRepository implements AccountRepository {
 	}
 
 	/**
-	 * Returns the internal user identifier associated with a username.
-	 *
-	 * @param username The account username
-	 * @return The user id, or -1 if not found
-	 * @throws LoadException If the lookup fails
+	 * {@inheritDoc}
 	 */
 	public int getUserId(String username) throws LoadException {
 		String sql = "SELECT id FROM users WHERE username = ?";
@@ -84,6 +71,9 @@ public class AccountDatabaseRepository implements AccountRepository {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public void addFriend(int userId, int friendId) {
 		String sql = "INSERT INTO friends (user_id, friend_id) VALUES (?, ?)";
 		try (PreparedStatement pstmt = this.database.prepareStatement(sql)) {
@@ -100,6 +90,9 @@ public class AccountDatabaseRepository implements AccountRepository {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public void sendFriendRequest(int senderId, int receiverId) throws LoadException {
 		String sql = "INSERT OR IGNORE INTO friend_requests (sender_id, receiver_id) VALUES (?, ?)";
 		try (PreparedStatement stmt = database.prepareStatement(sql)) {
@@ -111,6 +104,9 @@ public class AccountDatabaseRepository implements AccountRepository {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public List<String> getPendingRequests(int receiverId) throws LoadException {
 		List<String> senders = new ArrayList<>();
 		String sql = "SELECT u.username FROM users u JOIN friend_requests r ON u.id = r.sender_id WHERE r.receiver_id = ?";
@@ -124,6 +120,9 @@ public class AccountDatabaseRepository implements AccountRepository {
 		return senders;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public void acceptFriendRequest(int senderId, int receiverId) throws LoadException {
 		String del = "DELETE FROM friend_requests WHERE sender_id = ? AND receiver_id = ?";
 		try (PreparedStatement stmt = database.prepareStatement(del)) {
@@ -136,6 +135,9 @@ public class AccountDatabaseRepository implements AccountRepository {
 		addFriend(senderId, receiverId);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public void declineFriendRequest(int senderId, int receiverId) throws LoadException {
 		String del = "DELETE FROM friend_requests WHERE sender_id = ? AND receiver_id = ?";
 		try (PreparedStatement stmt = database.prepareStatement(del)) {
@@ -147,6 +149,9 @@ public class AccountDatabaseRepository implements AccountRepository {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public List<String> getFriendsList(int userId) {
 		List<String> friends = new ArrayList<>();
 

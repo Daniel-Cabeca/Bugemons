@@ -295,10 +295,29 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         }
 
         List<InventoryEntry> entries = new ArrayList<>();
-        Map<ItemDTO, Boolean> itemMap = listener.checkItems(new ArrayList<ItemDTO>(inventory.keySet()));
+        Map<String, Boolean> itemMap = listener.checkItems(new ArrayList<ItemDTO>(inventory.keySet()));
+        if (itemMap == null) {
+            System.out.println("ITEMMAP NULL");
+        }
+        else{
+            System.out.println("ITEMMPA NOT NULL SIZE : "+itemMap.size());
+        }
+
+        for (ItemDTO item : inventory.keySet()) {
+            Boolean value = itemMap.get(item);
+            System.out.println("Item: " + item.getId() + " -> usable = " + value);
+        }
+
+
         for (Map.Entry<ItemDTO, Integer> entry : inventory.entrySet()) {
             ItemDTO item = entry.getKey();
-            boolean usable = itemMap.get(item);
+            System.out.println("LOOKUP:");
+            itemMap.forEach((k, v) -> {
+                System.out.println("MAP KEY = " + k + " | value=" + v);
+            });
+
+            System.out.println("LOOKING FOR ITEM ID = " + item.getId());
+            boolean usable = Boolean.TRUE.equals(itemMap.get(item.getId()));
             entries.add(new InventoryEntry(
                     item.getId(),
                     item.getName(),
@@ -433,7 +452,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         List<Integer> getHpAfterFirstAction();
         BattleState getState();
         List<String> getLogs();
-        Map<ItemDTO, Boolean> checkItems(List<ItemDTO> items);
+        Map<String, Boolean> checkItems(List<ItemDTO> items);
         boolean isGameFinished();
         BattleState onAutoTurn();
         BattleState onUseItem(ItemDTO item);

@@ -17,6 +17,7 @@ import ulb.message.ClientToServerMessage;
 import ulb.message.clientToServer.*;
 import ulb.message.serverToClient.*;
 import ulb.message.serverToClient.NextWindowMessage.WindowType;
+import ulb.model.Player;
 import ulb.model.battle.BattleState;
 import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.bugemon.BugemonDTO;
@@ -113,7 +114,20 @@ SocialPanelController.Listener {
 		return client.receiveMessage();
 	}
 
-	public PlayerDTO getPlayer() { return this.player; }
+	public PlayerDTO getPlayer() {
+		return this.player;
+	}
+
+	public PlayerDTO getPlayer(String username) { 
+		// Serializable msg = getData(new GetPlayerMessage(username));
+		Serializable response = getData(new GetPlayerMessage(username));
+		if (response instanceof PlayerMessage msg) {
+			return msg.getPlayer();
+		}
+		System.out.println("ERROR: unexpected response " + response);
+    	throw new RuntimeException("Failed to get player");
+		// return null; 
+	}
 
 	public boolean logIn(PlayerDTO player){
 		return postData(new RegisterMessage(player, true));
@@ -176,26 +190,40 @@ SocialPanelController.Listener {
 
 	@Override
 	public void onLogin(String username, String password){
-		this.player = new PlayerDTO(username, password, new ArrayList<>(), new HashMap<>());
-		boolean success = logIn(this.player);
-		if (success) {
-			this.modeController = new ModeController(this.stage, this);
-			try {
-				this.modeController.show();
-			}catch (Exception e){
-				e.printStackTrace();
+		try {
+			PlayerDTO playerDTO = new PlayerDTO(username, password, new ArrayList<>(), new HashMap<>());
+			boolean success = logIn(playerDTO);
+			if (success) {
+				this.player = getPlayer(username);
+				if (this.player == null) {
+					throw new RuntimeException("Player is null after login");
+				}
+				// System.out.println("PLAYER IS GOOD : " + this.player.getName());
+				this.modeController = new ModeController(this.stage, this);
+				try {
+					this.modeController.show();
+				}catch (Exception e){
+					e.printStackTrace();
+				}
+			} else {
+				this.registerController.getView().setErrorLabel("Nom d'utilisateur ou mot de passe incorrect.");
 			}
-		} else {
-			this.registerController.getView().setErrorLabel("Nom d'utilisateur ou mot de passe incorrect.");
+		} catch (LoadException e) {
+			this.registerController.getView().setErrorLabel("Erreur de connexion à la base de données.");
 		}
 	}
 
 	@Override
 	public void onSignUp(String username, String password){
 		try {
-			this.player = new PlayerDTO(username, password, new ArrayList<>(), new HashMap<>());
-			boolean success = this.signUp(this.player);
+			PlayerDTO playerDTO = new PlayerDTO(username, password, new ArrayList<>(), new HashMap<>());
+			boolean success = this.signUp(playerDTO);
 			if (success) {
+				this.player = getPlayer(username);
+				if (this.player == null) {
+					throw new RuntimeException("Player is null after login");
+				}
+				System.out.println("PLAYER IS GOOD : " );
 				this.modeController = new ModeController(this.stage, this);
 				try {
 					this.modeController.show();
@@ -275,9 +303,12 @@ SocialPanelController.Listener {
 	public void onTeamConfirmed() {
 		List<BugemonDTO> team = player.getTeam();
 
+		System.out.println("OKK before postdata");
 		if (!this.postData(new SetUpTeamMessage(team))){
 			return;
 		}
+		System.out.println("OKK after postdata");
+
 
 		this.battleModeController = new BattleModeController(this.stage, this, player.getTeam());
 		try {
@@ -323,6 +354,12 @@ SocialPanelController.Listener {
 				towerFloorNumber = towerInfo.get(0);
 				towerRoomNumber = towerInfo.get(1);
 			}
+		}
+		if (player.getInventory() == null){
+			throw new RuntimeException("Inventory is null");
+		}
+		else {
+			System.out.println("INVENTORY GOOD -> Contains : "+player.getInventory().size());
 		}
 		battleWindowController = new BattleWindowController(
 				this.stage,
@@ -522,7 +559,7 @@ SocialPanelController.Listener {
 	}
 
 	@Override
-	public Map<ItemDTO, Boolean> checkItems(List<ItemDTO> items){
+	public Map<String, Boolean> checkItems(List<ItemDTO> items){
 		Serializable message = getData(new CheckUsableItemMessage(items));
 
 		if (message instanceof UsableItemsMessage usableItems){

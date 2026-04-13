@@ -49,7 +49,7 @@ public class ModeController implements ModeWindow.ViewListener {
     }
 
     /**
-     * {@inheritDoc}
+     * Notifies the listener to open the social menu or tab.
      */
     @Override
     public void onOpenSocial() {
@@ -57,7 +57,7 @@ public class ModeController implements ModeWindow.ViewListener {
     }
 
     /**
-     * {@inheritDoc}
+     * Notifies the listener to initiate the solo (single-player) game mode.
      */
     @Override
     public void onSolo() {
@@ -65,7 +65,7 @@ public class ModeController implements ModeWindow.ViewListener {
     }
 
     /**
-     * {@inheritDoc}
+     * Notifies the listener to initiate the multiplayer game mode.
      */
     @Override
     public void onMultiplayer() {
@@ -73,7 +73,7 @@ public class ModeController implements ModeWindow.ViewListener {
     }
 
     /**
-     * {@inheritDoc}
+     * Shuts down the JavaFX platform and terminates the application process.
      */
     @Override
     public void onQuit() {
@@ -82,7 +82,7 @@ public class ModeController implements ModeWindow.ViewListener {
     }
 
     /**
-     * {@inheritDoc}
+     * Notifies the listener to log the current user out of their session.
      */
     @Override
     public void onLogOut() {

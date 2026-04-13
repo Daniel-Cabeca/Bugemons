@@ -3,7 +3,6 @@ package ulb.view.windows;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import ulb.view.WindowPath;
 
 public class FloorRewardWindow extends Window {
 

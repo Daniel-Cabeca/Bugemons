@@ -160,13 +160,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	@Override
 	public void handle(RegisterMessage message){
 		boolean success;
-		System.out.println("Nouveau Player Reçu !");
 		this.player = PlayerMapper.toEntity(message.getPlayer(), this.itemService);
-
-		if (this.player != null) {
-			System.out.println("NOT NULL !!!");
-			// System.out.println(this.player.getName());
-		}
 
 		if (message.isLogin()) {
 			success = this.getAccountService().login(this.player.getName(), this.player.getPassword());
@@ -244,10 +238,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	// GAME INFO
 
 	public void handle(GetPlayerMessage message) {
-		System.out.println("MESSAGE NAME : "+message.getUsername());
-		System.out.println("STORRED NAME : "+this.player.getName());
 		if (message.getUsername().equals(this.player.getName())){
-			System.out.println("IN IF CONDITION ");
 			PlayerDTO playerDTO = PlayerMapper.toDTO(this.player);
 			System.out.println(playerDTO.getName());
 			sendMessage(new PlayerMessage(playerDTO));
@@ -288,13 +279,8 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
 		for (ItemDTO itemDTO : message.getItems()){
 			Item item = ItemMapper.toEntity(itemDTO);
-			System.out.println("CHECK THIS : "+this.battle.checkItem(item, teamLabel));
 			usableItems.put(itemDTO.getId(), this.battle.checkItem(item, teamLabel));
 		}
-
-		usableItems.forEach((itemID, usable) -> {
-			System.out.println(itemID + " -> " + usable);
-		});
 
         sendMessage(new UsableItemsMessage(usableItems));
 	}

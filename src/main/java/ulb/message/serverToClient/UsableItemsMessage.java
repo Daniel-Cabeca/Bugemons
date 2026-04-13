@@ -3,8 +3,6 @@ package ulb.message.serverToClient;
 import java.io.Serializable;
 import java.util.Map;
 
-import ulb.DTO.item.ItemDTO;
-
 public class UsableItemsMessage implements Serializable {
     private Map<String, Boolean> itemMap;
 

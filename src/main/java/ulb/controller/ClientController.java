@@ -586,26 +586,23 @@ FloorRewardController.Listener, AttackReplacementController.Listener, TeamContro
 	}
 
 	@Override
-	public Bugemon getLevelUpBugemon() {
-		return BugemonMapper.toEntity(this.pendingLevelUpBugemon);
-	}
+	public List<RewardDTO> getLevelUpRewards() {
 
-	@Override
-	public List<Reward> getLevelUpRewards() {
-		if (this.pendingLevelUpRewards == null) {
-			return List.of();
-		}
+		Serializable message = getData(new GetLevelUpInfoMessage());
+		List<RewardDTO> rewards = null;
 
-		List<Reward> rewards = new ArrayList<>();
-		for (RewardDTO rewardDTO : this.pendingLevelUpRewards) {
-			rewards.add(RewardMapper.toEntity(rewardDTO));
+		if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
+			System.err.println(errorMessage.getMessage());
+			
+		} else if (message instanceof LevelUpInfoMessage levelUpInfo){
+			rewards = levelUpInfo.getRewards();
 		}
 		return rewards;
 	}
 
 	@Override
-	public void onRewardChosen(Reward reward, ActionEvent event) {
-		if (postData(new ChooseLevelUpRewardMessage(RewardMapper.toDTO(reward)))) {
+	public void onRewardChosen(RewardDTO reward, ActionEvent event) {
+		if (postData(new ChooseLevelUpRewardMessage(reward))) {
 			nextRoom();
 		}
 	}

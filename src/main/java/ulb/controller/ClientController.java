@@ -24,6 +24,7 @@ import ulb.DTO.player.PlayerDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.DTO.reward.RewardDTO;
 import ulb.model.chat.ChatMessage;
+import ulb.repository.LoadException;
 
 
 public class ClientController extends Application implements RegisterController.Listener, ModeController.Listener,

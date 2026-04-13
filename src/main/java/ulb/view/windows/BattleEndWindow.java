@@ -49,11 +49,8 @@ public class BattleEndWindow extends Window {
 	 * Returns to the main menu
 	 */
 	public void handleReturn() {
-		if (listener != null) {
-			listener.onHandleReturn();
-		} else {
-			switchWindow(WindowPath.MODE);
-		}
+		listener.onHandleReturn();
+		
 	}
 
 	public interface ViewListener {

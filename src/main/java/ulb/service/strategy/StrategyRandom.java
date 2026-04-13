@@ -4,9 +4,9 @@ import java.util.Random;
 import java.util.Vector;
 import java.util.List;
 
-import ulb.controller.action.*;
 import ulb.model.ability.Ability;
 import ulb.model.ability.AbilitySet;
+import ulb.model.action.*;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.battle.Battle;
 

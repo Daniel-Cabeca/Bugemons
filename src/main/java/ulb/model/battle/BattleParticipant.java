@@ -3,9 +3,9 @@ package ulb.model.battle;
 import java.util.Vector;
 
 import ulb.model.Player;
+import ulb.model.action.Action;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.team.Team;
-import ulb.controller.action.Action;
 
 public class BattleParticipant {
     private Player player;

@@ -12,7 +12,7 @@ import java.util.Map;
 
 import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.communication.SocketClient;
-import ulb.communication.types.GameMode;
+import ulb.communication.GameMode;
 import ulb.message.ClientToServerMessage;
 import ulb.message.clientToServer.*;
 import ulb.message.serverToClient.*;
@@ -36,7 +36,6 @@ SocialPanelController.Listener {
 
 	PlayerDTO player;
 	GameMode gameMode;
-	BattleController battleController;
 
 	RegisterController registerController;
     ModeController modeController;

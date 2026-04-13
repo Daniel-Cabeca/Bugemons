@@ -1,11 +1,6 @@
 package ulb.server;
 
 import ulb.communication.Messenger.SocketMessenger;
-import ulb.controller.action.Action;
-import ulb.controller.action.Run;
-import ulb.controller.action.Swap;
-import ulb.controller.action.UseAbility;
-import ulb.controller.action.UseItem;
 import ulb.mapper.ability.AbilityMapper;
 import ulb.mapper.bugemon.BugemonMapper;
 import ulb.mapper.bugemon.BugemonSpeciesMapper;
@@ -18,6 +13,7 @@ import ulb.message.serverToClient.*;
 import ulb.message.serverToClient.NextWindowMessage.WindowType;
 import ulb.model.Player;
 import ulb.model.ability.Ability;
+import ulb.model.action.*;
 import ulb.model.battle.Battle;
 import ulb.model.battle.BattleState;
 import ulb.model.bugemon.Bugemon;

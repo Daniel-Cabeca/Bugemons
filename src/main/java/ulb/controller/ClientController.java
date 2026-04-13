@@ -27,6 +27,9 @@ import ulb.model.chat.ChatMessage;
 import ulb.repository.LoadException;
 
 
+/**
+ * Client-side application controller coordinating UI flow and server messaging.
+ */
 public class ClientController extends Application implements RegisterController.Listener, ModeController.Listener,
 BattleModeController.Listener,BattleEndController.Listener, BattleWindowController.Listener, NextRoomController.Listener, 
 FloorRewardController.Listener, AttackReplacementController.Listener, TeamController.Listener, LevelUpController.Listener,
@@ -55,6 +58,9 @@ SocialPanelController.Listener {
 	BugemonDTO pendingLevelUpBugemon;
 	List<RewardDTO> pendingLevelUpRewards;
 
+    /**
+     * Initializes network client from application launch parameters.
+     */
     @Override
     public void init(){
         List<String> params = getParameters().getRaw();
@@ -65,6 +71,12 @@ SocialPanelController.Listener {
         this.client = new SocketClient(serverIp, serverPort);
     }
 
+    /**
+     * Initializes the main stage and displays the register screen.
+     *
+     * @param primaryStage The JavaFX primary stage
+     * @throws Exception If UI initialization fails
+     */
     @Override
     public void start(Stage primaryStage) throws Exception {
 		
@@ -113,10 +125,21 @@ SocialPanelController.Listener {
 		return client.receiveMessage();
 	}
 
+	/**
+	 * Returns the currently authenticated player.
+	 *
+	 * @return Current player DTO
+	 */
 	public PlayerDTO getPlayer() {
 		return this.player;
 	}
 
+	/**
+	 * Retrieves a player DTO by username from server.
+	 *
+	 * @param username Username to retrieve
+	 * @return Matching player DTO or null if unavailable
+	 */
 	public PlayerDTO getPlayer(String username) { 
 		if (getData(new GetPlayerMessage(username)) instanceof PlayerMessage msg) {
 			return msg.getPlayer();
@@ -124,18 +147,30 @@ SocialPanelController.Listener {
 		return null; 
 	}
 
+	/**
+	 * Sends a login request for a player.
+	 *
+	 * @param player Player credentials DTO
+	 * @return True if accepted by server
+	 */
 	public boolean logIn(PlayerDTO player){
 		return postData(new RegisterMessage(player, true));
 	}
 
 	// Social Panel Controller
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean sendFriendRequest(String receiver) {
 
 		return postData(new SendFriendRequestMessage(player.getName(), receiver));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<String> getFriendRequests() {
 		if (getData(new GetFriendRequestsMessage(player.getName())) instanceof FriendRequestsMessage msg)
@@ -143,26 +178,41 @@ SocialPanelController.Listener {
 		return List.of();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String getPlayerName() {
 		return player.getName();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean acceptFriendRequest(String sender) {
 		return postData(new AcceptFriendRequestMessage(player.getName(), sender));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean declineFriendRequest(String sender) {
 		return postData(new DeclineFriendRequestMessage(player.getName(), sender));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void sendChatMessage(String receiver, String content) {
 		postData(new SendChatMessageMessage(player.getName(), receiver, content));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<ChatMessage> getChatMessages(String friend) {
 		if (getData(new GetChatMessagesMessage(player.getName(), friend)) instanceof ChatMessagesMessage msg)
@@ -170,6 +220,9 @@ SocialPanelController.Listener {
 		return List.of();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<String> getFriendsList() {
 		if (getData(new GetFriendsListMessage(player.getName())) instanceof FriendsListMessage msg)
@@ -177,12 +230,21 @@ SocialPanelController.Listener {
 		return List.of();
 	}
 
+	/**
+	 * Sends a sign-up request for a player.
+	 *
+	 * @param player Player registration DTO
+	 * @return True if account creation succeeded
+	 */
 	public boolean signUp(PlayerDTO player){
 		return postData(new RegisterMessage(player, false));
 	}
 
 	// Register Controller :
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onLogin(String username, String password){
 		try {
@@ -207,6 +269,9 @@ SocialPanelController.Listener {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onSignUp(String username, String password){
 		try {
@@ -234,6 +299,9 @@ SocialPanelController.Listener {
 
 	// Mode Controller Listener :
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onOpenSocial() {
 		try {
@@ -244,6 +312,9 @@ SocialPanelController.Listener {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onSolo() {
 		this.teamController = new TeamController(this.stage, this, this.player);
@@ -254,11 +325,17 @@ SocialPanelController.Listener {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onMultiplayer() {
 
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onLogOut() {
 		this.player = null;
@@ -273,6 +350,9 @@ SocialPanelController.Listener {
 	// Team Controller Listener :
 
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onReturnToMode() {
 		try {
@@ -282,6 +362,9 @@ SocialPanelController.Listener {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<BugemonSpeciesDTO> getAllSpecies(){
 		Serializable message = this.getData(new GetAllBugemonSpeciesMessage());
@@ -292,6 +375,9 @@ SocialPanelController.Listener {
 		return null;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onTeamConfirmed() {
 		List<BugemonDTO> team = player.getTeam();
@@ -311,6 +397,9 @@ SocialPanelController.Listener {
 
 	// BattleEndController
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onHandleReturn() {
 		switchToModeWindow();
@@ -319,6 +408,9 @@ SocialPanelController.Listener {
 
 	// Battle Mode Controller Listener : 
 
+	/**
+	 * Shows the mode window.
+	 */
 	private void switchToModeWindow(){
 		try {
 			this.modeController.show();
@@ -327,6 +419,11 @@ SocialPanelController.Listener {
 		}
 	}
 
+	/**
+	 * Shows the next room window.
+	 *
+	 * @param hasFled Whether the player fled from battle
+	 */
 	private void switchToNextRoomWindow(boolean hasFled){
 		this.nextRoomController = new NextRoomController(stage, this);
 		try{
@@ -337,6 +434,9 @@ SocialPanelController.Listener {
 		
 	}
 
+	/**
+	 * Shows the battle window using current mode context.
+	 */
 	private void switchToBattleWindow() {
 		int towerFloorNumber = 0, towerRoomNumber = 0;
 		if (this.gameMode == GameMode.TOWER){
@@ -362,6 +462,9 @@ SocialPanelController.Listener {
 		}
 	}
 
+	/**
+	 * Shows the battle end window with current result payload.
+	 */
 	private void switchToBattleEndWindow(){
 		Serializable message = getData(new GetBattleEndInfoMessage());
 		boolean victory = false;
@@ -382,6 +485,9 @@ SocialPanelController.Listener {
 		}
 	}
 
+	/**
+	 * Shows the level-up window.
+	 */
 	private void switchToLevelUpWindow(){
 		Serializable message = getData(new GetLevelUpInfoMessage());
 		if (!(message instanceof LevelUpInfoMessage levelUpInfo)) {
@@ -398,6 +504,9 @@ SocialPanelController.Listener {
 		}
 	}
 
+	/**
+	 * Shows the tower reward window.
+	 */
 	private void switchToTowerRewardWindow(){
 		this.floorRewardController = new FloorRewardController(stage, this);
 		try{
@@ -408,6 +517,9 @@ SocialPanelController.Listener {
 	}
 
 
+	/**
+	 * Routes to the next window according to server-provided flow state.
+	 */
 	public void nextRoom(){
 		WindowType nextWindow = this.getWindowType();
 		switch (nextWindow) {
@@ -437,6 +549,9 @@ SocialPanelController.Listener {
 		
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onAutoBattle() {
 		this.gameMode = GameMode.AUTO;
@@ -445,6 +560,9 @@ SocialPanelController.Listener {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onControlledBattle() {
 		this.gameMode = GameMode.CONTROLLED;
@@ -453,6 +571,9 @@ SocialPanelController.Listener {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onTowerMode() {
 		this.gameMode = GameMode.TOWER;
@@ -461,6 +582,9 @@ SocialPanelController.Listener {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onReturnToCreateTeamWindow() {
 		try {
@@ -472,6 +596,9 @@ SocialPanelController.Listener {
 
 	// Battle Window Controller Listener : 
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onBattleStateChecked(BattleState state, ActionEvent event) {
 		if (state != BattleState.WON && state != BattleState.LOST){
@@ -481,6 +608,9 @@ SocialPanelController.Listener {
 		nextRoom();
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<BugemonDTO> getActiveBugemons(){
 		Serializable message = getData(new GetActiveBugemonsMessage());
@@ -493,6 +623,9 @@ SocialPanelController.Listener {
 		return null;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<BugemonDTO> getPlayerTeam(){
 		Serializable message = getData(new GetPlayerTeamMessage());
@@ -505,6 +638,9 @@ SocialPanelController.Listener {
 		return null;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Map<AbilityDTO, String> getAbilityEffectiveness(List<AbilityDTO> abilities, BugemonDTO bugemonTarget){
 		Serializable message = getData(new GetAbilityEffectivenessMessage(abilities, bugemonTarget));
@@ -517,6 +653,9 @@ SocialPanelController.Listener {
 		return null;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<Integer> getHpAfterFirstAction(){
 		Serializable message = getData(new GetLogsMessage(false));
@@ -529,6 +668,9 @@ SocialPanelController.Listener {
 		return null;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public BattleState getState(){
 		Serializable message = getData(new GetBattleStateMessage());
@@ -543,6 +685,9 @@ SocialPanelController.Listener {
 
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<String> getLogs(){
 		Serializable message = getData(new GetLogsMessage(true));
@@ -555,6 +700,9 @@ SocialPanelController.Listener {
 		return null;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Map<String, Boolean> checkItems(List<ItemDTO> items){
 		Serializable message = getData(new CheckUsableItemMessage(items));
@@ -567,6 +715,9 @@ SocialPanelController.Listener {
 		return null;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean isGameFinished(){
 		Serializable message = getData(new CheckGameFinishedMessage());
@@ -579,6 +730,9 @@ SocialPanelController.Listener {
 		return true;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public BattleState onAutoTurn() {
 		if (!postData(new PickRandomActionMessage())){
@@ -587,6 +741,9 @@ SocialPanelController.Listener {
 		return getState();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public BattleState onUseItem(ItemDTO item) {
 		if (!postData(new UseItemMessage(item))){
@@ -595,6 +752,9 @@ SocialPanelController.Listener {
 		return getState();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public BattleState onSwapBugemon(BugemonDTO bugemon) {
 		if (!postData(new SwapBugemonMessage(bugemon))){
@@ -603,6 +763,9 @@ SocialPanelController.Listener {
 		return getState();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public BattleState onUseAbility(AbilityDTO ability) {
 		if (!postData(new UseAbilityMessage(ability))){
@@ -611,6 +774,9 @@ SocialPanelController.Listener {
 		return getState();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onRun() {
 		if (postData(new RunMessage())){
@@ -622,6 +788,11 @@ SocialPanelController.Listener {
 		}
 	}
 
+	/**
+	 * Returns the next window type according to server flow.
+	 *
+	 * @return The next window type, or null if unavailable
+	 */
 	public WindowType getWindowType(){
 		Serializable message = getData(new GetNextWindowMessage());
 
@@ -632,6 +803,9 @@ SocialPanelController.Listener {
 		return null;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<RewardDTO> getLevelUpRewards() {
 
@@ -647,6 +821,9 @@ SocialPanelController.Listener {
 		return rewards;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onRewardChosen(RewardDTO reward, ActionEvent event) {
 		if (postData(new ChooseLevelUpRewardMessage(reward))) {
@@ -656,11 +833,17 @@ SocialPanelController.Listener {
 
 	// Next Room Listener 
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onContinue() {
 		nextRoom();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onReturn() {
 		try {
@@ -672,6 +855,9 @@ SocialPanelController.Listener {
 
 	// Floor Reward Listener
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onObjectReward(ItemDTO rewardItem) {
 		if (postData(new ChooseItemRewardMessage(rewardItem))){
@@ -679,6 +865,9 @@ SocialPanelController.Listener {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onChooseBugemonReward(FloorRewardController.RewardChoice rewardChoice) {
 		pendingFloorRewardChoice = rewardChoice;
@@ -692,6 +881,9 @@ SocialPanelController.Listener {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onBugemonChosen(BugemonDTO bugemon) {
 		if (pendingFloorRewardChoice == FloorRewardController.RewardChoice.STAT) {
@@ -725,6 +917,9 @@ SocialPanelController.Listener {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onReturnFloorRewardWindow() {
 		if (floorRewardController == null) {
@@ -737,6 +932,9 @@ SocialPanelController.Listener {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public ItemDTO getRandomItem() {
 		if (getData(new GetRandomItemMessage()) instanceof RandomItemMessage randomItem){
@@ -745,6 +943,9 @@ SocialPanelController.Listener {
 		return null;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<Integer> getTowerInfo() {
 		if (getData(new GetTowerInfoMessage()) instanceof TowerInfoMessage towerInfo){
@@ -755,6 +956,9 @@ SocialPanelController.Listener {
 
 	// Attack Replacement Controller Listener
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onAttackReplaced(BugemonDTO bugemon, AbilityDTO newAbility, AbilityDTO oldAbility) {
 		if (postData(new ChooseAbilityRewardMessage(bugemon, oldAbility, newAbility))){
@@ -762,6 +966,9 @@ SocialPanelController.Listener {
 		}
 	}
 
+    /**
+	 * {@inheritDoc}
+	 */
     @Override
 	public void onReturnToChooseBugemon() {
 		if (chooseBugemonController == null) {

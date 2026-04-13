@@ -5,6 +5,9 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import ulb.utils.Scaling;
 
+/**
+ * End screen displayed after winning/losing a battle
+ */
 public class BattleEndWindow extends Window {
 
 	@FXML

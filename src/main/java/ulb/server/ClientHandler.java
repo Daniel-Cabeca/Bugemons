@@ -65,6 +65,14 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	private Bugemon pendingLevelUpBugemon;
 	private List<Reward> pendingLevelUpRewards;
 
+	private void resetGameSessionState() {
+		this.battle = null;
+		this.teamLabel = null;
+		this.towerManager = null;
+		this.isGameTower = false;
+		clearPendingLevelUpState();
+	}
+
     public ClientHandler(SocketMessenger messenger){
         this.socketMessenger = messenger;
         this.stop = false;
@@ -182,15 +190,16 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 			sendErrorMessage("Player not initialized !");
 			return;
 		}
+
+		if (this.battle != null || this.towerManager != null || this.isGameTower) {
+			resetGameSessionState();
+		}
+
 		Team teamB;
 		try {
 			teamB = OpponentTeamGenerator.generateRandomOpponentTeam(player.getTeam());
 		} catch (Exception e){
 			sendErrorMessage(e.getMessage());
-			return;
-		}
-		if (this.battle != null){
-			sendErrorMessage("Game already initialized");
 			return;
 		}
 		this.battle = new Battle(player.getTeam(), teamB, player);
@@ -205,10 +214,10 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	}
 
 	public void handle(SetUpTowerModeMessage message){
-		if (this.battle != null){
-			sendErrorMessage("Game already initialized");
-			return;
+		if (this.battle != null || this.towerManager != null || this.isGameTower) {
+			resetGameSessionState();
 		}
+
 		this.towerManager = new TowerManager(player);
 		this.battle = towerManager.getCurrentBattle();
 		this.teamLabel = Battle.ParticipantLabel.TEAM_A;
@@ -403,6 +412,9 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 			}
 			this.towerManager.getCurrentFloorManager().rewindRoom();
 			this.battle = this.towerManager.getCurrentBattle();
+		} else {
+			this.battle = null;
+			clearPendingLevelUpState();
 		}
 
         sendSuccessMessage();

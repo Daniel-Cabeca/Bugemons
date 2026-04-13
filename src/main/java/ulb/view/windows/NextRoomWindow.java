@@ -17,6 +17,10 @@ public class NextRoomWindow extends Window {
 		this.viewListener = viewListener;
 	}
 
+	/**
+	 * Displays the end-of-battle message depending on whether the player fled.
+	 * @param boolean saying if the player has quit or not.
+	 */
 	public void displayMessage(boolean hasFled) {
 		if (hasFled) {
 			messageLabel.setText("Vous avez fui le combat.");
@@ -27,15 +31,17 @@ public class NextRoomWindow extends Window {
 	}
 
 	/**
-	 * Goes to the next room in tower mode
-	 *
-	 * @param event the action triggered by clicking the continue button
+	 * Handles the action to continue to the next room.
+	 * @param event next event.
 	 */
 	@FXML
 	public void handleContinue(ActionEvent event) {
 		viewListener.onContinue();
 	}
 
+	/**
+	 * Handles returning to the previous menu.
+	 */
 	@FXML
 	public void handleReturn() {
 		viewListener.onReturn();

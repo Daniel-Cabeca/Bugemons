@@ -1,12 +1,9 @@
 package ulb.model.tower.towerManager;
 import ulb.model.tower.Floor;
-import ulb.model.tower.Room;
 import ulb.model.tower.RoomType;
 import  ulb.model.tower.Tower;
 import ulb.model.Player;
 import ulb.model.battle.Battle;
-import  ulb.model.tower.Tower;
-import ulb.model.Player;
 import ulb.service.BugemonService;
 import ulb.service.ItemService;
 

@@ -20,13 +20,13 @@ public class Room {
         this.roomType = roomType;
     }
 
-	/** Returns room type. */
+
     public RoomType getRoomType() {return roomType;}
 
-	/** Returns room id. */
+
     public int getId() {return id;}
 
-	/** Indicates whether the room has been completed. */
+
 	public boolean isRoomCompleted() {return this.completedRoom;}
 
 	/**

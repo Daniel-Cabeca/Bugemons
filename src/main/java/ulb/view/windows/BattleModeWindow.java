@@ -12,7 +12,10 @@ import ulb.utils.Scaling;
 
 import ulb.DTO.bugemon.BugemonDTO;
 
-
+/**
+ * Window responsible for selecting a game mode (Classic, Automatic, Tower).
+ * Displays the player's team and provides options to start different game modes
+ */
 public class BattleModeWindow extends Window {
 
     @FXML
@@ -22,6 +25,9 @@ public class BattleModeWindow extends Window {
 
     private ViewListener viewListener;
 
+    /**
+     * Applies scaling when the window is initialized.
+     */
     @FXML
     public void initialize() {
         Scaling.applyScaling(content);
@@ -30,7 +36,6 @@ public class BattleModeWindow extends Window {
     public void setViewListener(ViewListener viewListener) {
         this.viewListener = viewListener;
     }
-
 
     public void handleAutomaticBattle() {
         viewListener.onAutoBattle();
@@ -44,6 +49,9 @@ public class BattleModeWindow extends Window {
         viewListener.onTowerMode();
 	}
 
+    /**
+     * Goes back to the Create Team Window
+     */
 	@FXML
 	private void handleReturn(){
         viewListener.onReturn();
@@ -60,6 +68,7 @@ public class BattleModeWindow extends Window {
         int col = 0;
         int count =0;
 
+        // for each Bugemon it displays its sprite, name and stats
         for (BugemonDTO bugemon : team) {
             VBox cell = new VBox();
 

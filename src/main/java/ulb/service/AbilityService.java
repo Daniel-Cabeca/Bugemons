@@ -7,8 +7,6 @@ import java.util.Random;
 import ulb.model.ability.Ability;
 import ulb.model.ability.AbilitySet;
 import ulb.model.type.Type;
-import ulb.model.ability.AbilitySet;
-import ulb.model.type.Type;
 import ulb.repository.AbilityRepository;
 
 public class AbilityService {

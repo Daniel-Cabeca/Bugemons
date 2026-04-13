@@ -4,7 +4,6 @@ import ulb.model.bugemon.Stats;
 import ulb.model.effect.*;
 import ulb.repository.database.sql.Database;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;

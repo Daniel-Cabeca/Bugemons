@@ -2,7 +2,6 @@ package ulb.repository.database;
 
 import ulb.model.ability.Ability;
 import ulb.model.effect.*;
-import ulb.model.item.Item;
 import ulb.model.type.Type;
 import ulb.repository.AbilityRepository;
 import ulb.repository.LoadException;

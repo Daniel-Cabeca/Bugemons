@@ -1,11 +1,8 @@
 package ulb.repository.database;
 
-import ulb.model.ability.Ability;
 import ulb.model.ability.AbilitySet;
-import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.BugemonSpecies;
 import ulb.model.bugemon.Stats;
-import ulb.model.effect.Effect;
 import ulb.model.type.Type;
 import ulb.repository.BugemonSpeciesRepository;
 import ulb.repository.LoadException;

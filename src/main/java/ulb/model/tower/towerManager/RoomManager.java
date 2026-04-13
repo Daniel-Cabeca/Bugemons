@@ -1,8 +1,6 @@
 package ulb.model.tower.towerManager;
 import ulb.model.Player;
 import ulb.model.battle.Battle;
-import ulb.model.battle.Battle.ParticipantLabel;
-import ulb.model.bugemon.Bugemon;
 import ulb.model.team.OpponentTeamGenerator;
 import ulb.model.team.Team;
 import ulb.model.tower.Room;

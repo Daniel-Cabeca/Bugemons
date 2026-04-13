@@ -3,8 +3,6 @@ package ulb.model.effect;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-import ulb.model.effect.EffectTarget;
-
 public class EffectListTest {
 	@Test
 	public void addOneEffect() {

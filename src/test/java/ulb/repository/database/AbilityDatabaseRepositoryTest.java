@@ -4,14 +4,13 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import ulb.model.ability.Ability;
-import ulb.model.item.Item;
 import ulb.model.type.Type;
 import ulb.repository.database.sql.Database;
 import ulb.repository.database.sql.DatabaseInMemory;
 import ulb.repository.database.sql.DatabaseInitializer;import ulb.repository.database.sql.DatabaseMock;
 import ulb.utils.DuplicateElementException;
 
-import java.util.Objects;import java.util.stream.StreamSupport;
+import java.util.stream.StreamSupport;
 
 
 public class AbilityDatabaseRepositoryTest {

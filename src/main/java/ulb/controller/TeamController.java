@@ -7,7 +7,6 @@ import javafx.stage.Stage;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.DTO.player.PlayerDTO;
-import ulb.DTO.bugemon.CreateTeamBugemonDTO;
 import ulb.view.WindowPath;
 import ulb.view.windows.CreateTeamWindow;
 
@@ -51,22 +50,6 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 		}
 		view.populateAvailableBugemons();
 		this.stage.show();
-	}
-
-	/**
-	 * Builds the list of available bugemon species for team creation.
-	 *
-	 * @return The list of available bugemon DTOs
-	 */
-	private List<CreateTeamBugemonDTO> getAvailableBugemons() {
-		List<CreateTeamBugemonDTO> availableBugemons = new ArrayList<>();
-		for (BugemonSpeciesDTO bugemonSpecies : this.listener.getAllSpecies()) {
-			availableBugemons.add(new CreateTeamBugemonDTO(
-					bugemonSpecies.getId(),
-					bugemonSpecies.getName(),
-					bugemonSpecies.getSprite()));
-		}
-		return availableBugemons;
 	}
 
 	/**

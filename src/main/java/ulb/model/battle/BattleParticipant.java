@@ -64,19 +64,19 @@ public class BattleParticipant {
         }
     }
 
-	/** Returns participant battle state. */
+
     public BattleState getState() { return state; }
-	/** Sets participant battle state. */
+
     public void setState(BattleState state) { this.state = state; }
-	/** Returns bugemons that participated in battle. */
+
     public Vector<Bugemon> getParticipatingBugemons() { return participatingBugemons; }
-	/** Returns selected action for current turn. */
+
     public Action getAction() { return action; }
-	/** Sets selected action for current turn. */
+
     public void setAction(Action action) { this.action = action; }
-	/** Returns HP after first resolved action in turn. */
+
     public int getHpAfterFirstAction() { return hpAfterFirstAction; }
-	/** Stores HP after first resolved action in turn. */
+
     public void setHpAfterFirstAction(int hpAfterFirstAction) { this.hpAfterFirstAction = hpAfterFirstAction; }
 
 }

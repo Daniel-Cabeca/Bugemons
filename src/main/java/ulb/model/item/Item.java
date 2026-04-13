@@ -39,15 +39,15 @@ public class Item implements HasId {
 	@Override
 	public String getId() { return this.id; }
 
-	/** Returns the item display name. */
+
 	public String getName() { return this.name; }
-	/** Returns the item description. */
+
 	public String getDescription() { return this.description; }
-	/** Returns the item category. */
+
 	public String getCategory() { return this.category; }
-	/** Returns the item effect. */
+
 	public Effect getEffect() { return this.effect; }
-	/** Returns the item sprite path. */
+
 	public String getSprite() { return this.sprite; }
 
 	/**

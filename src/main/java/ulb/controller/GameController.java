@@ -99,6 +99,11 @@ AttackReplacementController.Listener {
 	private ItemService itemService;
 	private AccountService accountService;
 
+	/**
+	 * Launches the application or communication test mode based on CLI arguments.
+	 *
+	 * @param args Command line arguments
+	 */
 	public static void main(String[] args) {
 		try {
 			if (args.length == 0) {
@@ -126,6 +131,12 @@ AttackReplacementController.Listener {
 		}
 	}
 
+	/**
+	 * Initializes the primary stage and displays the registration screen.
+	 *
+	 * @param primaryStage The JavaFX primary stage
+	 * @throws Exception If UI initialization fails
+	 */
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		setPlayer(new Player("Player", this.getItemService()));
@@ -191,13 +202,27 @@ AttackReplacementController.Listener {
 		}
 	}
 
+	/**
+	 * Indicates whether the player fled the current battle.
+	 *
+	 * @return True if the player fled, false otherwise
+	 */
 	public boolean hasFledBattle() { return fledBattle; }
+	/**
+	 * Resets the flee flag after transitioning to the next screen.
+	 */
 	public void resetFledBattle() { fledBattle = false; }
 
+	/**
+	 * Creates the game controller and initializes application services.
+	 */
 	public GameController() {
 		this.loadServices();
 	}
 
+	/**
+	 * Loads repositories and initializes all domain services.
+	 */
 	private void loadServices() {
 		Database database = DatabaseInitializer.prepareDefaultDatabase();
 
@@ -215,15 +240,50 @@ AttackReplacementController.Listener {
 		this.accountService = new AccountService(accountRepository);
 	}
 
+	/**
+	 * Sets the active player.
+	 *
+	 * @param player The player instance
+	 */
 	public void setPlayer(Player player) {this.player = player;}
 
+	/**
+	 * Returns the active player.
+	 *
+	 * @return The current player
+	 */
 	public Player getPlayer() {return this.player;}
 
+	/**
+	 * Returns the active player's team.
+	 *
+	 * @return The current team
+	 */
 	public Team getTeam() {return this.player.getTeam();}
 
+	/**
+	 * Returns the ability service.
+	 *
+	 * @return The ability service
+	 */
 	public AbilityService getAbilityService() { return this.abilityService; }
+	/**
+	 * Returns the bugemon service.
+	 *
+	 * @return The bugemon service
+	 */
 	public BugemonService getBugemonService() { return this.bugemonService; }
+	/**
+	 * Returns the item service.
+	 *
+	 * @return The item service
+	 */
 	public ItemService getItemService() { return this.itemService; }
+	/**
+	 * Returns the account service.
+	 *
+	 * @return The account service
+	 */
 	public AccountService getAccountService() { return this.accountService; }
 
 
@@ -332,7 +392,12 @@ AttackReplacementController.Listener {
 		pendingBattleXP = 0;
 	}
 
-	// Stores the battle result and switches to BattleEndWindow
+	/**
+	 * Stores battle end data and shows the battle end window.
+	 *
+	 * @param victory Whether the battle was won
+	 * @param totalXP The total experience earned
+	 */
 	private void handleBattleEnd(boolean victory, int totalXP) {
 		pendingVictory = victory;
 		pendingTotalXP = totalXP;
@@ -342,7 +407,9 @@ AttackReplacementController.Listener {
 		battleEndController.show(victory, totalXP);
 	}
 
-	// Handles fleeing from a tower battle: restores HP and resets the room
+	/**
+	 * Handles flee action in tower mode by restoring HP and rewinding room state.
+	 */
 	private void handleTowerFlee() {
 		for (Bugemon b : player.getTeam().getMembers()) {
 			b.getFightStats().setHp(b.getBaseStats().getHp());
@@ -403,6 +470,11 @@ AttackReplacementController.Listener {
 		return normalModeBattleController;
 	}
 
+	/**
+	 * Returns the active tower manager instance.
+	 *
+	 * @return The tower manager
+	 */
 	public TowerManager getTowerManager() {
 		return towerModeTowerManager;
 	}
@@ -417,66 +489,144 @@ AttackReplacementController.Listener {
 		return m.handle(this);
     }
 
+	/**
+	 * Handles an automatic turn request message.
+	 *
+	 * @param m The incoming request message
+	 * @return The resulting battle state response
+	 */
 	public Message applyOn(AutoTurnRequestMessage m){
 		StrategyRandom strategyRandom = new StrategyRandom(normalModeBattleController);
 		BattleState state = strategyRandom.playAutoTurn();
 		return new AutoTurnResponseMessage(state);
 	}
 
+	/**
+	 * Handles a request to switch the active window.
+	 *
+	 * @param m The incoming switch window message
+	 * @return Null as no response payload is needed
+	 */
 	public Message applyOn(SwitchWindowMessage m){
 		switchWindow(m.getSwitchWindow());
 		return null;
 	}
 
+	/**
+	 * Handles game mode setup message.
+	 *
+	 * @param m The incoming setup message
+	 * @return Null as no response payload is needed
+	 */
 	public Message applyOn(SetupGameModeMessage m){
 		handleSetupGameModeMessage(m);
 		return null;
 	}
 
+	/**
+	 * Handles player flee event in tower mode.
+	 *
+	 * @param m The flee message
+	 * @return Null as no response payload is needed
+	 */
 	public Message applyOn(TowerFleeMessage m){
 		handleTowerFlee();
 		switchToNextRoomWindow();
 		return null;
 	}
 
+	/**
+	 * Handles tower room progression request.
+	 *
+	 * @param m The next room message
+	 * @return Null as no response payload is needed
+	 */
 	public Message applyOn(TowerNextRoomMessage m){
 		handleTower();
 		return null;
 	}
 
+	/**
+	 * Handles information lookup request.
+	 *
+	 * @param m The info request message
+	 * @return The corresponding info response
+	 */
 	public Message applyOn(GetInfoMessage m){
 		return handleGetInfoMessage(m);
 	}
 
+	/**
+	 * Handles item usage request.
+	 *
+	 * @param m The use item request message
+	 * @return The resulting battle state response
+	 */
 	public Message applyOn(UseItemRequestMessage m){
 		return handleUseItemMessage(m);
 	}
 
+	/**
+	 * Handles bugemon swap request.
+	 *
+	 * @param m The swap request message
+	 * @return The resulting battle state response
+	 */
 	public Message applyOn(SwapRequestMessage m){
 		return handleSwapMessage(m);
 	}
 
+	/**
+	 * Handles ability usage request.
+	 *
+	 * @param m The use ability request message
+	 * @return The resulting battle state response
+	 */
 	public Message applyOn(UseAbilityRequestMessage m){
 		return handleUseAbilityMessage(m);
 	}
 
+	/**
+	 * Handles battle end check request.
+	 *
+	 * @param m The battle end check message
+	 * @return Null as no response payload is needed
+	 */
 	public Message applyOn(BattleEndCheckMessage m){
 		handleBattleEndCheckMessage(m);
 		return null;
 	}
 
+	/**
+	 * Handles level-up reward choice message.
+	 *
+	 * @param m The level-up message
+	 * @return Null as no response payload is needed
+	 */
 	public Message applyOn(LevelUpMessage m){
 		LevelUpMessage levelUpMessage = (LevelUpMessage) m;
 		handleLevelUpRewardChoice(levelUpMessage.getReward(), levelUpMessage.getEvent());
 		return null;
 	}
 
+	/**
+	 * Handles object reward reception message.
+	 *
+	 * @param m The object reward message
+	 * @return Null as no response payload is needed
+	 */
 	public Message applyOn(ReceiveObjectRewardMessage m){
 		player.getInventory().addItem(this.getItemService().getRandomItem(), 1);
 		switchToNextRoomWindow();
 		return null;
 	}
 
+	/**
+	 * Fallback handler for unsupported messages.
+	 *
+	 * @param m The incoming message
+	 * @return Null when no specific handler exists
+	 */
 	public Message applyOn(Message m){
 		return null;
 	}
@@ -619,6 +769,9 @@ AttackReplacementController.Listener {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onTeamConfirmed() {
 		battleModeController = new BattleModeController(stage, this, getTeam());
@@ -629,6 +782,9 @@ AttackReplacementController.Listener {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onReturn() {
 		try {
@@ -639,6 +795,9 @@ AttackReplacementController.Listener {
 	}
 
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onAutoBattle() {
 		gameMode = GameMode.AUTO;
@@ -646,6 +805,9 @@ AttackReplacementController.Listener {
 		switchToBattleWindow();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onControlledBattle() {
 		gameMode = GameMode.CONTROLLED;
@@ -653,6 +815,9 @@ AttackReplacementController.Listener {
 		switchToBattleWindow();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onTowerMode() {
 		gameMode = GameMode.TOWER;
@@ -660,6 +825,9 @@ AttackReplacementController.Listener {
 		handleTower();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onReturnToCreateTeamWindow() {
 		try {
@@ -669,6 +837,11 @@ AttackReplacementController.Listener {
 		}
 	}
 
+	/**
+	 * Returns the current battle controller for active game mode.
+	 *
+	 * @return The battle controller for normal or tower mode
+	 */
 	private BattleController getCurrentBattleController() {
 		if (gameMode == GameMode.TOWER && towerModeTowerManager != null) {
 			return towerModeTowerManager.getCurrentBattleController();
@@ -676,20 +849,36 @@ AttackReplacementController.Listener {
 		return normalModeBattleController;
 	}
 
+	/**
+	 * Returns the current tower floor number.
+	 *
+	 * @return The current floor number, or 0 if tower is not active
+	 */
 	private int getTowerFloorNumber() {
 		return towerModeTowerManager != null ? towerModeTowerManager.getFloorNumber() : 0;
 	}
 
+	/**
+	 * Returns the current room index in the active tower floor.
+	 *
+	 * @return The current room index, or 0 if tower is not active
+	 */
 	private int getCurrentRoomIndex() {
 		return towerModeTowerManager != null ? towerModeTowerManager.getCurrentRoomIndex() : 0;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public BattleState onAutoTurn() {
 		StrategyRandom strategyRandom = new StrategyRandom(normalModeBattleController);
 		return strategyRandom.playAutoTurn();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public BattleState onUseItem(Item item) {
 		BattleController battleController = battleControllerForManualTurn();
@@ -700,6 +889,9 @@ AttackReplacementController.Listener {
 		return null;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public BattleState onSwapBugemon(Bugemon bugemon) {
 		BattleController battleController = battleControllerForManualTurn();
@@ -710,6 +902,9 @@ AttackReplacementController.Listener {
 		return null;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public BattleState onUseAbility(Ability ability) {
 		BattleController battleController = battleControllerForManualTurn();
@@ -720,17 +915,26 @@ AttackReplacementController.Listener {
 		return null;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onBattleStateChecked(BattleState state, ActionEvent event) {
 		handleBattleEndCheckMessage(new BattleEndCheckMessage(state, event));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onTowerFlee() {
 		handleTowerFlee();
 		switchToNextRoomWindow();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onReturnToMode() {
 		try {
@@ -740,21 +944,33 @@ AttackReplacementController.Listener {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onContinue() {
 		handleTower();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onRewardChosen(Reward reward, ActionEvent event){
 		handleLevelUpRewardChoice(reward, event);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Bugemon getLevelUpBugemon() {
 		return pendingLevelUpBugemons.peekFirst();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<Reward> getLevelUpRewards() {
 		Bugemon current = pendingLevelUpBugemons.peekFirst();
@@ -764,6 +980,9 @@ AttackReplacementController.Listener {
 		return List.of();
 	}
 
+	/**
+	 * Switches to the battle window for the current mode and room context.
+	 */
 	private void switchToBattleWindow() {
 		BattleController battleController = getCurrentBattleController();
 		int towerFloorNumber = gameMode == GameMode.TOWER ? getTowerFloorNumber() : 0;
@@ -796,6 +1015,9 @@ AttackReplacementController.Listener {
 	// 	}
 	// }
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onReturnFloorRewardWindow() {
 		if (floorRewardController == null) {
@@ -808,6 +1030,9 @@ AttackReplacementController.Listener {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onChooseBugemonReward(FloorRewardController.RewardChoice rewardChoice) {
 		pendingFloorRewardChoice = rewardChoice;
@@ -821,6 +1046,9 @@ AttackReplacementController.Listener {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onBugemonChosen(Bugemon bugemon) {
 		if (pendingFloorRewardChoice == FloorRewardController.RewardChoice.STAT) {
@@ -848,12 +1076,18 @@ AttackReplacementController.Listener {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onAttackReplaced(Bugemon bugemon, Ability newAbility, Ability oldAbility) {
 		bugemon.swapAbility(newAbility, oldAbility);
 		switchToNextRoomWindow();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onReturnToChooseBugemon() {
 		if (chooseBugemonController == null) {
@@ -866,12 +1100,18 @@ AttackReplacementController.Listener {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onObjectReward(Item rewardItem) {
 		player.getInventory().addItem(rewardItem, 1);
 		switchToNextRoomWindow();
 	}
 
+	/**
+	 * Switches to the next room transition window.
+	 */
 	private void switchToNextRoomWindow() {
 		if (nextRoomController == null) {
 			nextRoomController = new NextRoomController(stage, this);
@@ -885,6 +1125,9 @@ AttackReplacementController.Listener {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onRegister() {
 		if (modeController == null) {

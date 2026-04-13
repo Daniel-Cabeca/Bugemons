@@ -84,12 +84,6 @@ public class SocketMessengerTest {
     } 
 
     @Test
-    public void testConnection(){
-        this.createActors();
-        assertTrue(true);
-    }
-
-    @Test
     public void testSendingMessage(){
         this.createActors();
 

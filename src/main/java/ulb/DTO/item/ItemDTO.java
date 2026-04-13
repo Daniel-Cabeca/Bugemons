@@ -36,16 +36,5 @@ public class ItemDTO implements Serializable{
 	public void setEffect(EffectDTO effect) {this.effect = effect;}
 	public void setSprite(String sprite) {this.sprite = sprite;}
 
-	// @Override
-	// public boolean equals(Object o) {
-	// 	if (this == o) return true;
-	// 	if (!(o instanceof ItemDTO)) return false;
-	// 	ItemDTO item = (ItemDTO) o;
-	// 	return Objects.equals(id, item.id);
-	// }
 
-	// @Override
-	// public int hashCode() {
-	// 	return Objects.hash(id);
-	// }
 }

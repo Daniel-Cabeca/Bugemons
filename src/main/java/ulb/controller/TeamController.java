@@ -71,7 +71,6 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 
 	@Override
 	public void onConfirmTeam(List<String> selectedBugemonIds) {
-		System.out.println("button CLICKED");
 		setTeam(selectedBugemonIds);
 		listener.onTeamConfirmed();
 	}

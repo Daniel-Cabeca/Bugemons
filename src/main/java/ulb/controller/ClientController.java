@@ -17,7 +17,6 @@ import ulb.message.ClientToServerMessage;
 import ulb.message.clientToServer.*;
 import ulb.message.serverToClient.*;
 import ulb.message.serverToClient.NextWindowMessage.WindowType;
-import ulb.model.Player;
 import ulb.model.battle.BattleState;
 import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.bugemon.BugemonDTO;
@@ -119,14 +118,10 @@ SocialPanelController.Listener {
 	}
 
 	public PlayerDTO getPlayer(String username) { 
-		// Serializable msg = getData(new GetPlayerMessage(username));
-		Serializable response = getData(new GetPlayerMessage(username));
-		if (response instanceof PlayerMessage msg) {
+		if (getData(new GetPlayerMessage(username)) instanceof PlayerMessage msg) {
 			return msg.getPlayer();
 		}
-		System.out.println("ERROR: unexpected response " + response);
-    	throw new RuntimeException("Failed to get player");
-		// return null; 
+		return null; 
 	}
 
 	public boolean logIn(PlayerDTO player){
@@ -198,7 +193,6 @@ SocialPanelController.Listener {
 				if (this.player == null) {
 					throw new RuntimeException("Player is null after login");
 				}
-				// System.out.println("PLAYER IS GOOD : " + this.player.getName());
 				this.modeController = new ModeController(this.stage, this);
 				try {
 					this.modeController.show();
@@ -223,7 +217,6 @@ SocialPanelController.Listener {
 				if (this.player == null) {
 					throw new RuntimeException("Player is null after login");
 				}
-				System.out.println("PLAYER IS GOOD : " );
 				this.modeController = new ModeController(this.stage, this);
 				try {
 					this.modeController.show();
@@ -303,11 +296,9 @@ SocialPanelController.Listener {
 	public void onTeamConfirmed() {
 		List<BugemonDTO> team = player.getTeam();
 
-		System.out.println("OKK before postdata");
 		if (!this.postData(new SetUpTeamMessage(team))){
 			return;
 		}
-		System.out.println("OKK after postdata");
 
 
 		this.battleModeController = new BattleModeController(this.stage, this, player.getTeam());
@@ -354,12 +345,6 @@ SocialPanelController.Listener {
 				towerFloorNumber = towerInfo.get(0);
 				towerRoomNumber = towerInfo.get(1);
 			}
-		}
-		if (player.getInventory() == null){
-			throw new RuntimeException("Inventory is null");
-		}
-		else {
-			System.out.println("INVENTORY GOOD -> Contains : "+player.getInventory().size());
 		}
 		battleWindowController = new BattleWindowController(
 				this.stage,

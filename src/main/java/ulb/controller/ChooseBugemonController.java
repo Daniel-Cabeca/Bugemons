@@ -6,7 +6,6 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.player.PlayerDTO;
-import ulb.model.Player;
 import ulb.view.WindowPath;
 import ulb.view.windows.ChooseBugemonWindow;
 

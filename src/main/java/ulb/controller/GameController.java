@@ -716,6 +716,12 @@ MultiplayerWindowController.Listener {
 	}
 
 	public List<BugemonDTO> getActiveBugemons(){return null;}
+
+	@Override
+	public List<BugemonDTO> getPlayerTeam() {
+		return List.of();
+	}
+
 	public Map<AbilityDTO, String> getAbilityEffectiveness(List<AbilityDTO> ability, BugemonDTO bugemon){return null;}
 	public List<Integer> getHpAfterFirstAction(){return null;}
 	public BattleState getState(){return null;}

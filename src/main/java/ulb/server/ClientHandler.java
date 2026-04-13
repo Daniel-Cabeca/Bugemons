@@ -300,6 +300,21 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	}
 
 	@Override
+	public void handle(GetPlayerTeamMessage message) {
+		if (battle == null){
+			sendErrorMessage("The battle has not been created");
+			return;
+		}
+		Team team = this.battle.getTeam(teamLabel);
+		List<BugemonDTO> teamDTO = team.getMembers()
+				.stream()
+				.map(BugemonMapper::toDTO)
+				.toList();
+
+		sendMessage(new PlayerTeamMessage(teamDTO));
+	}
+
+	@Override
 	public void handle(GetTowerInfoMessage message){
 		if (!isGameTower){
 			sendErrorMessage("The game isn't in tower mode");

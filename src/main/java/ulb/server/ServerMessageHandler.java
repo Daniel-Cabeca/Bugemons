@@ -23,6 +23,7 @@ public interface ServerMessageHandler {
 	public void handle(GetNextWindowMessage message);
 	public void handle(GetBattleEndInfoMessage message);
 	public void handle(GetLevelUpInfoMessage message);
+	public void handle(GetPlayerTeamMessage message);
 
 	//ACTIONS
 	public void handle(PickRandomActionMessage message);

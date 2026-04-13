@@ -472,6 +472,18 @@ SocialPanelController.Listener {
 	}
 
 	@Override
+	public List<BugemonDTO> getPlayerTeam(){
+		Serializable message = getData(new GetPlayerTeamMessage());
+		if (message instanceof PlayerTeamMessage playerTeam){
+			return playerTeam.getBugemons();
+
+		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
+			System.err.println(errorMessage.getMessage());
+		}
+		return null;
+	}
+
+	@Override
 	public Map<AbilityDTO, String> getAbilityEffectiveness(List<AbilityDTO> abilities, BugemonDTO bugemonTarget){
 		Serializable message = getData(new GetAbilityEffectivenessMessage(abilities, bugemonTarget));
 

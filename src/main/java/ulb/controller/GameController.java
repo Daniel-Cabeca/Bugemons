@@ -654,6 +654,11 @@ MultiplayerWindowController.Listener {
 	}
 
 	@Override
+	public void onLogOut() {
+
+	}
+
+	@Override
 	public void onAutoBattle() {
 		// CLIENT & SERVER
 		gameMode = GameMode.AUTO;

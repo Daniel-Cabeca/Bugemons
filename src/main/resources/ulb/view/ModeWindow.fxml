@@ -22,6 +22,9 @@
          <Button onAction="#goMultiplayer" prefHeight="100" prefWidth="200" style="-fx-background-color: #ff9933; -fx-border-color: black; -fx-font-size: 20px;" text="MULTIPLAYER" />
       </HBox>
 
-      <Button fx:id="Quit" onAction="#quit" prefHeight="60" prefWidth="160" style="-fx-background-color: #800000; -fx-border-color: black; -fx-font-size: 16px;" text="QUITTER" textFill="white" />
+      <VBox alignment="CENTER" spacing="10">
+         <Button fx:id="LogOut" onAction="#logOut" prefHeight="50" prefWidth="160" style="-fx-background-color: #800000; -fx-border-color: black; -fx-font-size: 16px;" text="SE DÉCONNECTER" textFill="white" />
+         <Button fx:id="Quit" onAction="#quit" prefHeight="50" prefWidth="160" style="-fx-background-color: #800000; -fx-border-color: black; -fx-font-size: 16px;" text="QUITTER" textFill="white" />
+      </VBox>
    </VBox>
 </StackPane>

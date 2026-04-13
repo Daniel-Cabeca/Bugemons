@@ -212,10 +212,10 @@ SocialPanelController.Listener {
 					e.printStackTrace();
 				}
 			} else {
-				this.registerController.getView().setErrorLabel("Nom d'utilisateur ou mot de passe incorrect.");
+				this.registerController.getView().setErrorLabel("Ce nom d'utilisateur est déjà pris.");
 			}
 		} catch (LoadException e) {
-			this.registerController.getView().setErrorLabel("Nom d'utilisateur ou mot de passe incorrect.");
+			this.registerController.getView().setErrorLabel("Erreur de connexion à la base de données.");
 		}
 	}
 
@@ -245,6 +245,17 @@ SocialPanelController.Listener {
 	@Override
 	public void onMultiplayer() {
 
+	}
+
+	@Override
+	public void onLogOut() {
+		this.player = null;
+
+		try {
+			this.registerController.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	// Team Controller Listener :

@@ -26,14 +26,6 @@ public class RoomManager {
 	}
 
 	public boolean isRoomCompleted() {
-		if (room.getRoomType() != RoomType.REWARD){
-			room.setRoomCompleted(this.battle.isGameFinished());
-			
-			if (room.isRoomCompleted()){
-				this.battle.resetFightStats();
-			}
-			return this.battle.isGameFinished();
-		}
 		return room.isRoomCompleted();
 	}
 

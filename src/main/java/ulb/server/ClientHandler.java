@@ -240,7 +240,6 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	public void handle(GetPlayerMessage message) {
 		if (message.getUsername().equals(this.player.getName())){
 			PlayerDTO playerDTO = PlayerMapper.toDTO(this.player);
-			System.out.println(playerDTO.getName());
 			sendMessage(new PlayerMessage(playerDTO));
 		}
 		else{

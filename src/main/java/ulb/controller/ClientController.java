@@ -186,7 +186,7 @@ SocialPanelController.Listener {
 	@Override
 	public void onLogin(String username, String password){
 		try {
-			PlayerDTO playerDTO = new PlayerDTO(username, password, new ArrayList<>(), new HashMap<>());
+			PlayerDTO playerDTO = new PlayerDTO(username, password);
 			boolean success = logIn(playerDTO);
 			if (success) {
 				this.player = getPlayer(username);
@@ -210,7 +210,7 @@ SocialPanelController.Listener {
 	@Override
 	public void onSignUp(String username, String password){
 		try {
-			PlayerDTO playerDTO = new PlayerDTO(username, password, new ArrayList<>(), new HashMap<>());
+			PlayerDTO playerDTO = new PlayerDTO(username, password);
 			boolean success = this.signUp(playerDTO);
 			if (success) {
 				this.player = getPlayer(username);

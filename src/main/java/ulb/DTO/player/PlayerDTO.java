@@ -1,6 +1,8 @@
 package ulb.DTO.player;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +20,13 @@ public class PlayerDTO implements Serializable{
 		this.password = password;
 		this.team = team;
 		this.inventory = inventory;
+	}
+
+	public PlayerDTO(String userName, String password) {
+		this.userName = userName;
+		this.password = password;
+		this.team = new ArrayList<>();
+		this.inventory = new HashMap<>();
 	}
 
 	public String getName() {return userName;}

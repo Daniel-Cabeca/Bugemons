@@ -5,6 +5,9 @@ import java.io.Serializable;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.stats.StatsDTO;
 
+/**
+ * Transferable Reward, used on the vue side.
+ */
 public class RewardDTO implements Serializable {
     private BugemonDTO bugemon;
     private StatsDTO stats;

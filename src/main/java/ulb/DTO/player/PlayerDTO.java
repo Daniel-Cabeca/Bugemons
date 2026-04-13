@@ -9,6 +9,9 @@ import java.util.Map;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.item.ItemDTO;
 
+/**
+ * Transferable Player, used on the vue side.
+ */
 public class PlayerDTO implements Serializable{
     private String userName;
 	private String password;

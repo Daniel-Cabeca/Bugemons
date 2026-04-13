@@ -1,10 +1,12 @@
 package ulb.DTO.item;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 import ulb.DTO.effect.EffectDTO;
 
+/**
+ * Transferable Item, used on the vue side.
+ */
 public class ItemDTO implements Serializable{
     private String id;
 	private String name;

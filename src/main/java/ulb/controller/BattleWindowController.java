@@ -27,6 +27,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Controller coordinating the battle view and player battle actions.
+ */
 public class BattleWindowController implements BattleWindow.ViewListener {
 
     private final Stage stage;
@@ -40,6 +43,17 @@ public class BattleWindowController implements BattleWindow.ViewListener {
     private BattleWindow view;
     private boolean waitingForOpponentAction = false;
 
+    /**
+     * Creates the battle window controller.
+     *
+     * @param stage The application stage
+     * @param listener The listener handling battle actions
+     * @param player The current player
+     * @param battleController The battle domain controller
+     * @param gameMode The current game mode
+     * @param towerFloorNumber The current tower floor number
+     * @param currentRoomIndex The current room index in the floor
+     */
     public BattleWindowController(Stage stage, Listener listener, Player player, BattleController battleController,
                                   GameMode gameMode, int towerFloorNumber, int currentRoomIndex) {
         this.stage = stage;
@@ -51,6 +65,11 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         this.currentRoomIndex = currentRoomIndex;
     }
 
+    /**
+     * Displays the battle window and initializes its content.
+     *
+     * @throws Exception If the FXML cannot be loaded
+     */
     public void show() throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(WindowPath.BATTLE));
         loader.load();
@@ -71,16 +90,27 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         stage.show();
     }
 
+    /**
+     * Opens the inventory menu.
+     */
     @Override
     public void onItemMenu() {
         view.showInventoryMenu(buildInventoryEntries());
     }
 
+    /**
+     * Opens the bugemon switch menu.
+     */
     @Override
     public void onBugemonsMenu() {
         view.showBugemonsMenu(buildBugemonEntries());
     }
 
+    /**
+     * Executes an automatic turn.
+     *
+     * @param event The triggering action event
+     */
     @Override
     public void onAuto(ActionEvent event) {
         if (view == null) {
@@ -95,16 +125,27 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         });
     }
 
+    /**
+     * Opens the abilities menu.
+     */
     @Override
     public void onAttack() {
         view.showAbilitiesMenu(buildAbilityEntries());
     }
 
+    /**
+     * Returns to the battle main menu.
+     */
     @Override
     public void onBackToMenu() {
         view.showMainMenu();
     }
 
+    /**
+     * Handles return/flee action from the battle window.
+     *
+     * @param event The triggering action event
+     */
     @Override
     public void onReturn(ActionEvent event) {
         if (gameMode == GameMode.TOWER) {
@@ -114,6 +155,12 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         }
     }
 
+    /**
+     * Uses an inventory item and displays resulting battle logs.
+     *
+     * @param itemId The selected item id
+     * @param event The triggering action event
+     */
     @Override
     public void onUseItem(String itemId, ActionEvent event) {
         Item item = findInventoryItemById(itemId);
@@ -127,6 +174,12 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         });
     }
 
+    /**
+     * Swaps active bugemon and displays resulting battle logs.
+     *
+     * @param bugemonId The selected bugemon id
+     * @param event The triggering action event
+     */
     @Override
     public void onSwapBugemon(String bugemonId, ActionEvent event) {
         Bugemon bugemon = findTeamBugemonById(bugemonId);
@@ -144,6 +197,12 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         });
     }
 
+    /**
+     * Uses an ability and displays resulting battle logs.
+     *
+     * @param abilityId The selected ability id
+     * @param event The triggering action event
+     */
     @Override
     public void onUseAbility(String abilityId, ActionEvent event) {
         Ability ability = findActiveAbilityById(abilityId);
@@ -155,6 +214,9 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         });
     }
 
+    /**
+     * Refreshes battle UI content from current battle state.
+     */
     private void refreshView() {
         if (view == null) {
             return;
@@ -168,6 +230,9 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         view.showLogMessages(consumeLogMessages());
     }
 
+    /**
+     * Updates tower information banner when in tower mode.
+     */
     private void updateTowerInfo() {
         if (gameMode == GameMode.TOWER) {
             view.setTowerInfo(towerFloorNumber, currentRoomIndex);
@@ -176,6 +241,13 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         }
     }
 
+    /**
+     * Displays action logs sequentially, then handles resulting state changes.
+     *
+     * @param stateAfter The battle state after the selected action
+     * @param event The triggering action event
+     * @param afterDisplay Callback executed when no state-specific transition occurs
+     */
     private void displayActionSequence(BattleState stateAfter, ActionEvent event, Runnable afterDisplay) {
         List<String> logs = consumeLogMessages();
         Integer firstActionSelfHp = logs.contains(null) && battleController != null
@@ -198,6 +270,12 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         });
     }
 
+    /**
+     * Returns the provided state or the current controller state when null.
+     *
+     * @param state The candidate state
+     * @return The resolved battle state
+     */
     private BattleState stateOrCurrent(BattleState state) {
         if (state != null) {
             return state;
@@ -205,6 +283,11 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         return battleController != null ? battleController.getState() : null;
     }
 
+    /**
+     * Waits asynchronously for the opponent action to complete.
+     *
+     * @param event The action event tied to the current interaction
+     */
     private void waitingForOpponentAction(ActionEvent event) {
         if (waitingForOpponentAction || battleController == null) {
             return;
@@ -239,6 +322,13 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         waitingThread.start();
     }
 
+    /**
+     * Applies UI transitions for a given battle state.
+     *
+     * @param state The battle state to handle
+     * @param event The triggering action event
+     * @return True if the state transition was handled
+     */
     private boolean handleBattleState(BattleState state, ActionEvent event) {
         listener.onBattleStateChecked(state, event);
         view.setForcedSwitch(state == BattleState.SWAPPING);
@@ -250,10 +340,20 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         return state == BattleState.WON || state == BattleState.LOST;
     }
 
+    /**
+     * Indicates whether the player is currently forced to switch bugemon.
+     *
+     * @return True if switch is mandatory
+     */
     private boolean isForcedSwitch() {
         return battleController != null && battleController.getState() == BattleState.SWAPPING;
     }
 
+    /**
+     * Builds a snapshot model for rendering the battle view.
+     *
+     * @return The battle snapshot, or null if unavailable
+     */
     private BattleSnapshot buildBattleSnapshot() {
         if (battleController == null) {
             return null;
@@ -268,6 +368,12 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         return new BattleSnapshot(toBugemonDisplay(playerBugemon), toBugemonDisplay(opponentBugemon));
     }
 
+    /**
+     * Converts a bugemon model into a UI display object.
+     *
+     * @param bugemon The bugemon to convert
+     * @return The corresponding display object
+     */
     private BugemonDisplay toBugemonDisplay(Bugemon bugemon) {
         return new BugemonDisplay(
                 bugemon.getName(),
@@ -279,6 +385,11 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         );
     }
 
+    /**
+     * Retrieves and clears accumulated battle log messages.
+     *
+     * @return The current list of log messages
+     */
     private List<String> consumeLogMessages() {
         if (battleController == null) {
             return List.of();
@@ -289,6 +400,11 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         return logs;
     }
 
+    /**
+     * Builds inventory entries for the inventory menu.
+     *
+     * @return The list of inventory entries
+     */
     private List<InventoryEntry> buildInventoryEntries() {
         Inventory inventory = getPlayerInventory();
         if (inventory == null) {
@@ -311,6 +427,11 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         return entries;
     }
 
+    /**
+     * Builds bugemon entries for the bugemon selection menu.
+     *
+     * @return The list of bugemon entries
+     */
     private List<BugemonEntry> buildBugemonEntries() {
         Team playerTeam = getPlayerTeam();
         if (playerTeam == null) {
@@ -334,6 +455,11 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         return entries;
     }
 
+    /**
+     * Builds ability entries for the abilities menu.
+     *
+     * @return The list of ability entries
+     */
     private List<AbilityEntry> buildAbilityEntries() {
         if (battleController == null || battleController.getActiveBugemonSelf() == null) {
             return List.of();
@@ -354,6 +480,12 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         return entries;
     }
 
+    /**
+     * Finds an inventory item by its identifier.
+     *
+     * @param itemId The item identifier
+     * @return The matching item, or null if not found
+     */
     private Item findInventoryItemById(String itemId) {
         if (itemId == null) {
             return null;
@@ -372,6 +504,12 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         return null;
     }
 
+    /**
+     * Finds a player team bugemon by its identifier.
+     *
+     * @param bugemonId The bugemon identifier
+     * @return The matching bugemon, or null if not found
+     */
     private Bugemon findTeamBugemonById(String bugemonId) {
         if (bugemonId == null) {
             return null;
@@ -390,6 +528,12 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         return null;
     }
 
+    /**
+     * Finds an active bugemon ability by its identifier.
+     *
+     * @param abilityId The ability identifier
+     * @return The matching ability, or null if not found
+     */
     private Ability findActiveAbilityById(String abilityId) {
         if (abilityId == null || battleController == null || battleController.getActiveBugemonSelf() == null) {
             return null;
@@ -403,14 +547,30 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         return null;
     }
 
+    /**
+     * Returns the current player's team.
+     *
+     * @return The player team, or null when unavailable
+     */
     private Team getPlayerTeam() {
         return player != null ? player.getTeam() : null;
     }
 
+    /**
+     * Returns the current player's inventory.
+     *
+     * @return The player inventory, or null when unavailable
+     */
     private Inventory getPlayerInventory() {
         return player != null ? player.getInventory() : null;
     }
 
+    /**
+     * Maps a bugemon type to a UI color code.
+     *
+     * @param type The bugemon type
+     * @return The corresponding hex color string
+     */
     private String getTypeColor(Type type) {
         return switch (type) {
             case PYRO -> "#ED2424";
@@ -421,13 +581,47 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         };
     }
 
+    /**
+     * Listener for battle actions requested from the view.
+     */
     public interface Listener {
+        /**
+         * Executes an automatic turn.
+         *
+         * @return The resulting battle state
+         */
         BattleState onAutoTurn();
+        /**
+         * Uses an item in the current battle turn.
+         *
+         * @param item The item to use
+         * @return The resulting battle state
+         */
         BattleState onUseItem(Item item);
+        /**
+         * Swaps the player's active bugemon.
+         *
+         * @param bugemon The bugemon to switch to
+         * @return The resulting battle state
+         */
         BattleState onSwapBugemon(Bugemon bugemon);
+        /**
+         * Uses an ability in the current battle turn.
+         *
+         * @param ability The ability to use
+         * @return The resulting battle state
+         */
         BattleState onUseAbility(Ability ability);
+        /**
+         * Handles state-driven navigation or transitions.
+         *
+         * @param state The state to handle
+         * @param event The related UI event
+         */
         void onBattleStateChecked(BattleState state, ActionEvent event);
+        /** Handles fleeing from tower mode battle. */
         void onTowerFlee();
+        /** Handles return action outside tower mode. */
         void onReturnToMode();
     }
 }

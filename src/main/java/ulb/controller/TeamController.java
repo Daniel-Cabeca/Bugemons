@@ -16,6 +16,9 @@ import ulb.view.windows.CreateTeamWindow;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Controller for creating and validating the player's starting team.
+ */
 public class TeamController implements CreateTeamWindow.ViewListener {
 	private final Player player;
 	private final Listener listener;
@@ -24,6 +27,14 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 
 	private CreateTeamWindow view;
 
+	/**
+	 * Creates the team controller.
+	 *
+	 * @param stage The application stage
+	 * @param listener The listener notified when team flow events occur
+	 * @param player The player owning the team
+	 * @param bugemonService The service used to retrieve and spawn bugemons
+	 */
 	public TeamController(Stage stage, Listener listener, Player player, BugemonService bugemonService) {
 		this.stage = stage;
 		this.listener = listener;
@@ -31,8 +42,18 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 		this.bugemonService = bugemonService;
 	}
 
+	/**
+	 * Returns the bugemon service used by this controller.
+	 *
+	 * @return The bugemon service
+	 */
 	public BugemonService getBugemonService() { return this.bugemonService; }
 
+	/**
+	 * Displays the create team screen.
+	 *
+	 * @throws Exception If the FXML cannot be loaded
+	 */
 	public void show() throws Exception {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource(WindowPath.CREATE_TEAM));
 		loader.load();
@@ -49,6 +70,11 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 		this.stage.show();
 	}
 
+	/**
+	 * Builds the list of available bugemon species for team creation.
+	 *
+	 * @return The list of available bugemon DTOs
+	 */
 	private List<CreateTeamBugemonDTO> getAvailableBugemons() {
 		List<CreateTeamBugemonDTO> availableBugemons = new ArrayList<>();
 		for (BugemonSpecies bugemonSpecies : this.getBugemonService().getAllSpecies()) {
@@ -60,6 +86,12 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 		return availableBugemons;
 	}
 
+	/**
+	 * Creates and assigns a team from selected species identifiers.
+	 *
+	 * @param selectedBugemonIds The selected species ids
+	 * @param bugemonService The service used to spawn bugemons
+	 */
 	public void setTeam(List<String> selectedBugemonIds, BugemonService bugemonService) {
 		List<Bugemon> teamABugemons = new ArrayList<>();
 		for (String bugemonId : selectedBugemonIds) {
@@ -70,19 +102,32 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 		player.setTeam(playerTeam);
 	}
 
+	/**
+	 * Handles team confirmation from the view.
+	 *
+	 * @param selectedBugemonIds The selected species ids
+	 */
 	@Override
 	public void onConfirmTeam(List<String> selectedBugemonIds) {
 		setTeam(selectedBugemonIds, this.getBugemonService());
 		listener.onTeamConfirmed();
 	}
 
+	/**
+	 * Handles return action from the team creation screen.
+	 */
 	@Override
 	public void onReturn() {
 		listener.onReturn();
 	}
 
+	/**
+	 * Listener for team creation flow events.
+	 */
 	public interface Listener {
+		/** Called when team selection is confirmed. */
 		void onTeamConfirmed();
+		/** Called when user returns to previous screen. */
 		void onReturn();
 	}
 }

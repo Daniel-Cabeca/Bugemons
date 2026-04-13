@@ -9,6 +9,9 @@ import ulb.service.AccountService;
 import ulb.view.WindowPath;
 import ulb.view.windows.RegisterWindow;
 
+/**
+ * Controller for login and registration actions.
+ */
 public class RegisterController implements RegisterWindow.ViewListener {
 
     private Listener listener;
@@ -16,14 +19,31 @@ public class RegisterController implements RegisterWindow.ViewListener {
     private Stage stage;
 	private final AccountService accountService;
 
+    /**
+     * Creates the register controller.
+     *
+     * @param stage The application stage
+     * @param listener The listener notified after successful authentication
+     * @param accountService The account service used for authentication and registration
+     */
     public RegisterController(Stage stage, Listener listener, AccountService accountService) {
         this.listener = listener;
         this.stage = stage;
 		this.accountService = accountService;
     }
 
+	/**
+	 * Returns the account service used by this controller.
+	 *
+	 * @return The account service
+	 */
 	AccountService getAccountService() { return this.accountService; }
 
+    /**
+     * Displays the register/login view.
+     *
+     * @throws Exception If the FXML cannot be loaded
+     */
     public void show() throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(WindowPath.REGISTER));
         loader.load();
@@ -39,6 +59,12 @@ public class RegisterController implements RegisterWindow.ViewListener {
         this.stage.show();
     }
 
+    /**
+     * Handles login form submission.
+     *
+     * @param username The entered username
+     * @param password The entered password
+     */
     @Override
     public void onLogin(String username, String password) {
         try {
@@ -53,6 +79,12 @@ public class RegisterController implements RegisterWindow.ViewListener {
         }
     }
 
+    /**
+     * Handles sign-up form submission.
+     *
+     * @param username The entered username
+     * @param password The entered password
+     */
     @Override
     public void onSignUp(String username, String password) {
         try {
@@ -67,7 +99,11 @@ public class RegisterController implements RegisterWindow.ViewListener {
         }
     }
 
+    /**
+     * Listener for authentication completion events.
+     */
     public interface Listener {
+        /** Called after successful login or registration. */
         void onRegister();
     }
 

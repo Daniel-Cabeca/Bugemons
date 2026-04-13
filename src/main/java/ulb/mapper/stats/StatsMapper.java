@@ -3,6 +3,9 @@ package ulb.mapper.stats;
 import ulb.DTO.stats.StatsDTO;
 import ulb.model.bugemon.Stats;
 
+/**
+ * Used to convert Regular Stat to DTO Stat
+ */
 public class StatsMapper {
     private StatsMapper() {}
 

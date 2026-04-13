@@ -7,6 +7,9 @@ import ulb.model.effect.EffectStatType;
 import ulb.model.effect.EffectType;
 import ulb.model.effect.EffectTarget;
 
+/**
+ * Transferable Effect-Stat Modifier, used on the vue side.
+ */
 public class EffectStatModifierDTO extends EffectDTO {
 
     public Map<EffectStatType, Integer> modifiers;

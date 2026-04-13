@@ -4,6 +4,9 @@ import ulb.DTO.item.ItemDTO;
 import ulb.mapper.effect.EffectMapper;
 import ulb.model.item.Item;
 
+/**
+ * Used to convert Regular Item to DTO Item
+ */
 public class ItemMapper {
     private ItemMapper() {}
 

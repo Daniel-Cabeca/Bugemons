@@ -14,7 +14,9 @@ import ulb.model.bugemon.Bugemon;
 import ulb.model.item.Item;
 import ulb.service.ItemService;
 
-
+/**
+ * Used to convert Regular Player to DTO Player
+ */
 public class PlayerMapper {
     private PlayerMapper() {}
 

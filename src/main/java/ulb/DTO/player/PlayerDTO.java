@@ -32,7 +32,7 @@ public class PlayerDTO implements Serializable{
 		this.inventory = new HashMap<>();
 	}
 
-	public String getName() {return userName;}
+	public String getUserName() {return userName;}
 	public String getPassword() {return password;}
 	public List<BugemonDTO> getTeam() {return team;}
 	public Map<ItemDTO, Integer> getInventory() {return inventory;}

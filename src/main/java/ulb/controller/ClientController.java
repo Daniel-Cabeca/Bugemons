@@ -176,7 +176,7 @@ SocialPanelController.Listener {
 	@Override
 	public boolean sendFriendRequest(String receiver) {
 
-		return postData(new SendFriendRequestMessage(player.getName(), receiver));
+		return postData(new SendFriendRequestMessage(player.getUserName(), receiver));
 	}
 
 	/**
@@ -184,7 +184,7 @@ SocialPanelController.Listener {
 	 */
 	@Override
 	public List<String> getFriendRequests() {
-		if (getData(new GetFriendRequestsMessage(player.getName())) instanceof FriendRequestsMessage msg)
+		if (getData(new GetFriendRequestsMessage(player.getUserName())) instanceof FriendRequestsMessage msg)
 			return msg.getRequests();
 		return List.of();
 	}
@@ -194,7 +194,7 @@ SocialPanelController.Listener {
 	 */
 	@Override
 	public String getPlayerName() {
-		return player.getName();
+		return player.getUserName();
 	}
 
 	/**
@@ -202,7 +202,7 @@ SocialPanelController.Listener {
 	 */
 	@Override
 	public boolean acceptFriendRequest(String sender) {
-		return postData(new AcceptFriendRequestMessage(player.getName(), sender));
+		return postData(new AcceptFriendRequestMessage(player.getUserName(), sender));
 	}
 
 	/**
@@ -210,7 +210,7 @@ SocialPanelController.Listener {
 	 */
 	@Override
 	public boolean declineFriendRequest(String sender) {
-		return postData(new DeclineFriendRequestMessage(player.getName(), sender));
+		return postData(new DeclineFriendRequestMessage(player.getUserName(), sender));
 	}
 
 	/**
@@ -218,7 +218,7 @@ SocialPanelController.Listener {
 	 */
 	@Override
 	public void sendChatMessage(String receiver, String content) {
-		postData(new SendChatMessageMessage(player.getName(), receiver, content));
+		postData(new SendChatMessageMessage(player.getUserName(), receiver, content));
 	}
 
 	/**
@@ -226,7 +226,7 @@ SocialPanelController.Listener {
 	 */
 	@Override
 	public List<ChatMessage> getChatMessages(String friend) {
-		if (getData(new GetChatMessagesMessage(player.getName(), friend)) instanceof ChatMessagesMessage msg)
+		if (getData(new GetChatMessagesMessage(player.getUserName(), friend)) instanceof ChatMessagesMessage msg)
 			return msg.getMessages();
 		return List.of();
 	}
@@ -236,7 +236,7 @@ SocialPanelController.Listener {
 	 */
 	@Override
 	public List<String> getFriendsList() {
-		if (getData(new GetFriendsListMessage(player.getName())) instanceof FriendsListMessage msg)
+		if (getData(new GetFriendsListMessage(player.getUserName())) instanceof FriendsListMessage msg)
 			return msg.getFriends();
 		return List.of();
 	}
@@ -247,12 +247,12 @@ SocialPanelController.Listener {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void onLogin(String username, String password){
+	public void onLogin(String userName, String password){
 		try {
-			PlayerDTO playerDTO = new PlayerDTO(username, password);
+			PlayerDTO playerDTO = new PlayerDTO(userName, password);
 			boolean success = logIn(playerDTO);
 			if (success) {
-				this.player = getPlayer(username);
+				this.player = getPlayer(userName);
 				if (this.player == null) {
 					throw new RuntimeException("Player is null after login");
 				}
@@ -274,12 +274,12 @@ SocialPanelController.Listener {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void onSignUp(String username, String password){
+	public void onSignUp(String userName, String password){
 		try {
-			PlayerDTO playerDTO = new PlayerDTO(username, password);
+			PlayerDTO playerDTO = new PlayerDTO(userName, password);
 			boolean success = this.signUp(playerDTO);
 			if (success) {
-				this.player = getPlayer(username);
+				this.player = getPlayer(userName);
 				if (this.player == null) {
 					throw new RuntimeException("Player is null after login");
 				}
@@ -597,6 +597,17 @@ SocialPanelController.Listener {
 
 	// Battle Window Controller Listener : 
 
+	@Override
+	public void updatePlayerInventory(String userName){
+		Serializable message = getData(new GetPlayerInventory(userName));
+		if (message instanceof PlayerInventoryMessage playerInventory){
+			this.player.setInventory(playerInventory.getInventory());
+			
+		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
+			System.err.println(errorMessage.getMessage());
+		}
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -605,7 +616,6 @@ SocialPanelController.Listener {
 		if (state != BattleState.WON && state != BattleState.LOST){
 			return;
 		}
-
 		nextRoom();
 	}
 	

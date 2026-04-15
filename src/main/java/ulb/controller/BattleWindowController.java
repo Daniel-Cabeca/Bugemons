@@ -377,6 +377,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
      * @return The list of inventory entries
      */
     private List<InventoryEntry> buildInventoryEntries() {
+        listener.updatePlayerInventory(this.player.getUserName());
         Map<ItemDTO, Integer> inventory = getPlayerInventory();
         if (inventory == null) {
             return List.of();
@@ -550,6 +551,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
      * Listener for battle actions requested from the view.
      */
     public interface Listener {
+        void updatePlayerInventory(String userName);
         List<BugemonDTO> getActiveBugemons();
         List<BugemonDTO> getPlayerTeam();
         Map<AbilityDTO, String> getAbilityEffectiveness(List<AbilityDTO> ability, BugemonDTO bugemon);

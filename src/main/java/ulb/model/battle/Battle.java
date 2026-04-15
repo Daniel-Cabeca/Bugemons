@@ -129,7 +129,6 @@ public class Battle {
 		if (item == null) {
 			return false;
 		}
-
 		item.use(this, team);
 		removeUsedItemFromInventory(team, item);
 		logMsg.add("L'objet " + item.getName() + " a été utilisé.");

@@ -59,8 +59,8 @@ public class EffectMapper {
         if(dto == null) return null;
 
         return new EffectHeal(dto.getTarget(), dto.getValue()) {
-            @Override
-            public void apply(Battle battle, Battle.ParticipantLabel team){}
+            // @Override
+            // public void apply(Battle battle, Battle.ParticipantLabel team){}
         };
     }
 
@@ -69,8 +69,8 @@ public class EffectMapper {
             return null;
         }
         return new EffectStatModifier(dto.getTarget(), dto.getDuration(), dto.getModifiers()) {
-            @Override
-            public void apply(Battle battle, Battle.ParticipantLabel team){}
+            // @Override
+            // public void apply(Battle battle, Battle.ParticipantLabel team){}
         };
     }
 

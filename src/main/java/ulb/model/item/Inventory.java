@@ -17,6 +17,11 @@ public class Inventory {
 		this.items = new HashMap<>(o.items);
 	}
 
+	/**
+	 * Looks for an item with the given id.
+	 * @param id the id of the item to find
+	 * @return the coresponding item if found, if not returns null
+	 */
 	private Item findItemByID(String id) {
 		for (Item item : items.keySet()) {
 			if (item != null && item.getId().equals(id)) {

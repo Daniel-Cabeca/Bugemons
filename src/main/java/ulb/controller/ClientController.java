@@ -597,6 +597,10 @@ SocialPanelController.Listener {
 
 	// Battle Window Controller Listener : 
 
+	/**
+	 * Updates the inventory of the player.
+	 * @param String the userName of the player used to confirm the player identity on the server side
+	 */
 	@Override
 	public void updatePlayerInventory(String userName){
 		Serializable message = getData(new GetPlayerInventory(userName));

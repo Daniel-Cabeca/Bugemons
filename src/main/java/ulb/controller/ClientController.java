@@ -4,6 +4,8 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -79,7 +81,9 @@ SocialPanelController.Listener {
 		
 		this.stage = primaryStage;
 
-        Font.loadFont(getClass().getResourceAsStream("/fonts/pokemon-emerald-pro.otf"), 14);
+		InputStream font = getClass().getResourceAsStream("/fonts/pokemon-emerald-pro.otf");
+
+        Font.loadFont(font, 14);
 		primaryStage.setTitle("INFO-F307 Groupe 10");
 		primaryStage.setFullScreen(true);
 		primaryStage.setFullScreenExitHint("");
@@ -154,6 +158,16 @@ SocialPanelController.Listener {
 		return postData(new RegisterMessage(player, true));
 	}
 
+	/**
+	 * Sends a sign-up request for a player.
+	 *
+	 * @param player Player registration DTO
+	 * @return True if account creation succeeded
+	 */
+	public boolean signUp(PlayerDTO player){
+		return postData(new RegisterMessage(player, false));
+	}
+
 	// Social Panel Controller
 
 	/**
@@ -225,16 +239,6 @@ SocialPanelController.Listener {
 		if (getData(new GetFriendsListMessage(player.getName())) instanceof FriendsListMessage msg)
 			return msg.getFriends();
 		return List.of();
-	}
-
-	/**
-	 * Sends a sign-up request for a player.
-	 *
-	 * @param player Player registration DTO
-	 * @return True if account creation succeeded
-	 */
-	public boolean signUp(PlayerDTO player){
-		return postData(new RegisterMessage(player, false));
 	}
 
 	// Register Controller :
@@ -673,7 +677,6 @@ SocialPanelController.Listener {
 		Serializable message = getData(new GetBattleStateMessage());
 
 		if (message instanceof BattleStateMessage battleState){
-			System.out.println("State  = " + battleState.getBattleState());
 			return battleState.getBattleState();
 		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
 			System.err.println(errorMessage.getMessage());

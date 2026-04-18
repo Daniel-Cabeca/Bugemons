@@ -5,8 +5,6 @@ import javafx.event.ActionEvent;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -137,8 +135,21 @@ SocialPanelController.Listener {
 	}
 
 	@Override
+	public boolean sendBattleRequest(String receiver) {
+
+		return postData(new SendBattleRequestMessage(player.getName(), receiver));
+	}
+
+	@Override
 	public List<String> getFriendRequests() {
 		if (getData(new GetFriendRequestsMessage(player.getName())) instanceof FriendRequestsMessage msg)
+			return msg.getRequests();
+		return List.of();
+	}
+
+	@Override
+	public List<String> getBattleRequests() {
+		if (getData(new GetBattleRequestsMessage(player.getName())) instanceof BattleRequestsMessage msg)
 			return msg.getRequests();
 		return List.of();
 	}
@@ -156,6 +167,16 @@ SocialPanelController.Listener {
 	@Override
 	public boolean declineFriendRequest(String sender) {
 		return postData(new DeclineFriendRequestMessage(player.getName(), sender));
+	}
+
+	@Override
+	public boolean acceptBattleRequest(String sender) {
+		return postData(new AcceptBattleRequestMessage(player.getName(), sender));
+	}
+
+	@Override
+	public boolean declineBattleRequest(String sender) {
+		return postData(new DeclineBattleRequestMessage(player.getName(), sender));
 	}
 
 	@Override

@@ -607,11 +607,36 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	}
 
 	@Override
+	public void handle(SendBattleRequestMessage message){
+		AccountService accountService = this.getAccountService();
+		int senderId = accountService.getUserId(message.getSenderUsername());
+		int receiverId = accountService.getUserId(message.getReceiverUsername());
+		if (senderId == -1 || receiverId == -1){
+			sendErrorMessage("Utilisateur introuvable");
+			return;
+		}
+		if (accountService.hasPendingBattleRequestBetween(senderId, receiverId)) {
+			sendErrorMessage("Un défi est déjà en attente avec cet ami");
+			return;
+		}
+		accountService.sendBattleRequest(senderId, receiverId);
+		sendSuccessMessage();
+	}
+
+	@Override
 	public void handle(GetFriendRequestsMessage message){
 		AccountService accountService = this.getAccountService();
 		int userId = accountService.getUserId(message.getUsername());
-		List<String> requests = accountService.getPendingRequests(userId);
+		List<String> requests = accountService.getPendingFriendRequests(userId);
 		sendMessage(new FriendRequestsMessage(requests));
+	}
+
+	@Override
+	public void handle(GetBattleRequestsMessage message){
+		AccountService accountService = this.getAccountService();
+		int userId = accountService.getUserId(message.getUsername());
+		List<String> requests = accountService.getPendingBattleRequests(userId);
+		sendMessage(new BattleRequestsMessage(requests));
 	}
 
 	@Override
@@ -624,11 +649,29 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	}
 
 	@Override
+	public void handle(AcceptBattleRequestMessage message){
+		AccountService accountService = this.getAccountService();
+		int senderId = accountService.getUserId(message.getSenderUsername());
+		int receiverId = accountService.getUserId(message.getReceiverUsername());
+		accountService.acceptBattleRequest(senderId, receiverId);
+		sendSuccessMessage();
+	}
+
+	@Override
 	public void handle(DeclineFriendRequestMessage message){
 		AccountService accountService = this.getAccountService();
 		int senderId = accountService.getUserId(message.getSenderUsername());
 		int receiverId = accountService.getUserId(message.getReceiverUsername());
 		accountService.declineFriendRequest(senderId, receiverId);
+		sendSuccessMessage();
+	}
+
+	@Override
+	public void handle(DeclineBattleRequestMessage message){
+		AccountService accountService = this.getAccountService();
+		int senderId = accountService.getUserId(message.getSenderUsername());
+		int receiverId = accountService.getUserId(message.getReceiverUsername());
+		accountService.declineBattleRequest(senderId, receiverId);
 		sendSuccessMessage();
 	}
 

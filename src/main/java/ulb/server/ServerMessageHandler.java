@@ -52,6 +52,12 @@ public interface ServerMessageHandler {
 	public void handle(DeclineFriendRequestMessage message);
 	public void handle(GetFriendsListMessage message);
 
+	// BATTLE
+	public void handle(SendBattleRequestMessage message);
+	public void handle(GetBattleRequestsMessage message);
+	public void handle(AcceptBattleRequestMessage message);
+	public void handle(DeclineBattleRequestMessage message);
+
 	// CHAT
 	public void handle(SendChatMessageMessage message);
 	public void handle(GetChatMessagesMessage message);

@@ -436,7 +436,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
 		if (this.pendingLevelUpBugemon == null
 				|| this.pendingLevelUpRewards == null
-				|| !this.pendingLevelUpBugemon.getId().equals(currentBugemon.getId())) {
+				|| !this.pendingLevelUpBugemon.getSpeciesId().equals(currentBugemon.getSpeciesId())) {
 			this.pendingLevelUpBugemon = currentBugemon;
 			this.pendingLevelUpRewards = new ArrayList<>(this.battle.computeRewards(currentBugemon));
 		}

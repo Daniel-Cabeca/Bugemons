@@ -133,3 +133,20 @@ CREATE TABLE IF NOT EXISTS friend_requests (
                                        FOREIGN KEY (sender_id)   REFERENCES users(id) ON DELETE CASCADE,
                                        FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS teams (
+                                team_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                user_id INTEGER NOT NULL,
+                                team_name TEXT NOT NULL,
+                                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS team_members (
+                                     team_id INTEGER NOT NULL,
+                                     bugemon_species_id TEXT NOT NULL,
+                                     PRIMARY KEY (team_id, bugemon_species_id),
+                                     FOREIGN KEY (team_id) REFERENCES teams(team_id) ON DELETE CASCADE,
+                                     FOREIGN KEY (bugemon_species_id) REFERENCES bugemons_species(id) ON DELETE CASCADE
+);
+
+

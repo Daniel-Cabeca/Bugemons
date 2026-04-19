@@ -14,14 +14,14 @@ public class Team {
         this.members = new ArrayList<>();
     }
 
-    public Team(List<Bugemon> initalMembers) {
+    public Team(List<Bugemon> initialMembers) {
         this();
 
-        if (initalMembers == null) {
+        if (initialMembers == null) {
             throw new IllegalArgumentException("Initial members list cannot be null.");
         }
 
-        for (Bugemon bugemon : initalMembers) {
+        for (Bugemon bugemon : initialMembers) {
             boolean added = this.add(bugemon);
             if (!added) {
                 throw new IllegalArgumentException("Invalid team composition (duplicated Bugemons or more than 6 Bugemons.");
@@ -212,7 +212,7 @@ public class Team {
 
 	public Bugemon getBugemonById(String id){
 		for (Bugemon bugemon : this.getMembers()){
-			if (bugemon.getId().equals(id)){
+			if (bugemon.getSpeciesId().equals(id)){
 				return bugemon;
 			}
 		}

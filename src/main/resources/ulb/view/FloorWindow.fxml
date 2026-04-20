@@ -48,12 +48,12 @@
             <Font name="System Bold" size="18.0" />
          </font>
       </Button>
-      <Button fx:id="BattleA2" layoutX="460.0" layoutY="277.0" mnemonicParsing="false" onAction="#onBattleA2" prefHeight="50.0" prefWidth="100.0" style="-fx-background-color: orange;" text="Combat" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+      <Button fx:id="battleA2" layoutX="460.0" layoutY="277.0" mnemonicParsing="false" onAction="#onBattleA2" prefHeight="50.0" prefWidth="100.0" style="-fx-background-color: orange;" text="Combat" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
          <font>
             <Font name="System Bold" size="18.0" />
          </font>
       </Button>
-      <Button fx:id="bonus" layoutX="10.0" layoutY="37.0" mnemonicParsing="false" onAction="#onBonusA" prefHeight="50.0" prefWidth="100.0" style="-fx-background-color: green;" text="Bonus" textFill="WHITE" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+      <Button fx:id="bonusA" layoutX="10.0" layoutY="37.0" mnemonicParsing="false" onAction="#onBonusA" prefHeight="50.0" prefWidth="100.0" style="-fx-background-color: green;" text="Bonus" textFill="WHITE" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
          <font>
             <Font name="System Bold" size="18.0" />
          </font>

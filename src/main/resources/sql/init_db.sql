@@ -146,7 +146,7 @@ CREATE TABLE IF NOT EXISTS team_members (
                                      bugemon_species_id TEXT NOT NULL,
                                      PRIMARY KEY (team_id, bugemon_species_id),
                                      FOREIGN KEY (team_id) REFERENCES teams(team_id) ON DELETE CASCADE,
-                                     FOREIGN KEY (bugemon_species_id) REFERENCES bugemons_species(id) ON DELETE CASCADE
+                                     FOREIGN KEY (bugemon_species_id) REFERENCES bugemon_species(id) ON DELETE CASCADE
 );
 
 

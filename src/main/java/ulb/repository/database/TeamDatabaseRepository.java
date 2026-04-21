@@ -1,6 +1,9 @@
 package ulb.repository.database;
 
 import ulb.model.bugemon.Bugemon;
+import ulb.model.bugemon.BugemonSpecies;
+import ulb.model.bugemon.Stats;
+import ulb.model.team.Team;
 import ulb.repository.LoadException;
 import ulb.repository.TeamRepository;
 import ulb.repository.database.sql.Database;
@@ -8,6 +11,10 @@ import ulb.repository.database.sql.Database;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 public class TeamDatabaseRepository implements TeamRepository {
 
@@ -37,10 +44,10 @@ public class TeamDatabaseRepository implements TeamRepository {
      */
     @Override
     public void insertBugemonInTeam(Bugemon bugemon, int teamId) throws LoadException {
-        String sql = "INSERT INTO team_members (team_id, bugemon_species_id) VALUES (?, ?)";
+        String sql = "INSERT INTO team_members (team_id, bugemon_id) VALUES (?, ?)";
         try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
             stmt.setInt(1, teamId);
-            stmt.setString(2, bugemon.getSpeciesId());
+            stmt.setInt(2, bugemon.getId());
             stmt.executeUpdate();
         } catch (SQLException e) {
             throw new LoadException("Failed to insert bugemons in team: " + e.getMessage());
@@ -62,4 +69,138 @@ public class TeamDatabaseRepository implements TeamRepository {
             throw new LoadException("Failed to fetch team id: " + e.getMessage());
         }
     }
+
+	@Override
+	public void insertUserBugemon(Bugemon bugemon, String username) throws LoadException {
+		String sql = """
+        INSERT INTO bugemons (species_id, user_id, level, xp, remaining_rewards, hp, attack, defense, initiative) 
+        VALUES (?, (SELECT id FROM users WHERE username = ?), ?, ?, ?, ?, ?, ?, ?)
+    """;
+
+
+		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
+
+			stmt.setString(1, bugemon.getSpecies().getId());
+			stmt.setString(2, username);
+			stmt.setInt(3, bugemon.getLevel());
+			stmt.setInt(4, bugemon.getXp());
+
+			stmt.setInt(5, 0);
+			stmt.setInt(6, bugemon.getFightStats().getHp());
+			stmt.setInt(7, bugemon.getFightStats().getAttack());
+			stmt.setInt(8, bugemon.getFightStats().getDefense());
+			stmt.setInt(9, bugemon.getFightStats().getInitiative());
+
+			int affectedRows = stmt.executeUpdate();
+
+			if (affectedRows == 0) {
+				throw new SQLException("Creating bugemon failed, no rows affected.");
+			}
+
+
+			try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+				if (generatedKeys.next()) {
+
+					int newId = generatedKeys.getInt(1);
+
+
+					bugemon.setId(newId);
+				} else {
+					throw new SQLException("Creating bugemon failed, no ID obtained.");
+				}
+			}
+
+		} catch (SQLException e) {
+			throw new LoadException("Failed to insert bugemon: " + e.getMessage());
+		}
+	}
+
+	@Override
+	public Bugemon findBugemon(int id) throws NoSuchElementException {
+		String sql = "SELECT * FROM bugemons WHERE id = ?";
+		Bugemon bugemon = null;
+		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
+			stmt.setInt(1, id);
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				BugemonSpeciesDatabaseRepository speciesRepo = new BugemonSpeciesDatabaseRepository(this.database);
+				String speciesId = rs.getString("species_id");
+				BugemonSpecies species = speciesRepo.findById(speciesId);
+				bugemon = new Bugemon(species);
+				bugemon.setId(rs.getInt("id"));
+				bugemon.setLevel(rs.getInt("level"));
+				bugemon.setXp(rs.getInt("xp"));
+				bugemon.setRemainingRewards(rs.getInt("remaining_rewards"));
+
+				Stats savedStats = new Stats(
+						rs.getInt("hp"),
+						rs.getInt("attack"),
+						rs.getInt("defense"),
+						rs.getInt("initiative")
+				);
+
+				bugemon.setBaseStats(savedStats);
+
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return bugemon;
+	}
+
+	@Override
+	public Team findById(int id) throws NoSuchElementException {
+		String sql = "SELECT bugemon_id FROM team_members WHERE team_id = ?";
+		List<Bugemon> bugemons = new ArrayList<>();
+		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
+			stmt.setInt(1, id);
+			ResultSet rs = stmt.executeQuery();
+
+			while (rs.next()) {
+				int bugemonId = rs.getInt("bugemon_id");
+				try {
+					Bugemon bugemon = findBugemon(bugemonId);
+					bugemons.add(bugemon);
+				} catch (NoSuchElementException e) {
+					System.err.println("Erreur : ID trouvé mais item non chargeable : " + bugemonId);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return new Team(bugemons);
+	}
+
+	@Override
+	public List<Team> findAll(String username) {
+		String sql = """
+        SELECT t.team_id
+        FROM teams t
+        JOIN users u ON t.user_id = u.id
+        WHERE u.username = ?
+    """;
+		List<Team> teams = new ArrayList<>();
+		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
+			stmt.setString(1, username);
+			ResultSet rs = stmt.executeQuery();
+
+			while (rs.next()) {
+				int teamId = rs.getInt("team_id");
+				try {
+					Team team = findById(teamId);
+					teams.add(team);
+				} catch (NoSuchElementException e) {
+					System.err.println("Erreur : ID trouvé mais item non chargeable : " + teamId);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return teams;
+	}
+
+
+
 }

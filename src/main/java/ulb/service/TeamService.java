@@ -5,6 +5,8 @@ import ulb.model.team.Team;
 import ulb.repository.LoadException;
 import ulb.repository.TeamRepository;
 
+import java.util.List;
+
 /**
  * Service layer for team saving and loading.
  */
@@ -46,4 +48,17 @@ public class TeamService {
     public int getTeamId(String teamName, String username) throws LoadException {
         return repository.getTeamId(teamName, username);
     }
+
+	public void insertUserBugemon(Bugemon bugemon, String username){
+		repository.insertUserBugemon(bugemon, username);
+	}
+
+	public List<Team> getAllTeams(String username) {
+		return repository.findAll(username);
+	}
+
+	public Team getTeam(String teamName, String username) {
+		int teamId = repository.getTeamId(teamName, username);
+		return repository.findById(teamId);
+	}
 }

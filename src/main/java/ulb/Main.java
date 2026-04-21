@@ -51,6 +51,9 @@ public class Main{
 		ChatRepository chatRepository = new ChatDatabaseRepository(database);
 		ChatService chatService = new ChatService(chatRepository);
 
-		server.start(abilityService, bugemonService, itemService, accountService, chatService);
+		TeamRepository teamRepository = new TeamDatabaseRepository(database);
+		TeamService teamService = new TeamService(teamRepository);
+
+		server.start(abilityService, bugemonService, itemService, accountService, chatService, teamService);
 	}
 }

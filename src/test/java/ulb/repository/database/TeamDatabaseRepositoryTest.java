@@ -13,7 +13,7 @@ import ulb.service.BugemonService;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TeamDatabaseRepositoryTest {
 
@@ -54,4 +54,32 @@ public class TeamDatabaseRepositoryTest {
         teamRepository.insertBugemonInTeam(bugemon, teamId);
         assertTrue(true);
     }
+
+	@Test
+	public void findAllGivesCorrectTeams() {
+
+		DatabaseInMemory database = new DatabaseInMemory();
+		DatabaseInitializer databaseInitializer = new DatabaseInitializer(database);
+		databaseInitializer.createTables();
+
+		TeamDatabaseRepository repository = new TeamDatabaseRepository(database);
+
+
+		insertUser((DatabaseInMemory) database);
+
+
+		repository.insertTeam("player", "Team_Alpha");
+		repository.insertTeam("player", "Team_Beta");
+
+
+		List<Team> obtained = repository.findAll("player");
+
+
+		assertEquals(2, obtained.size());
+		assertNotNull(obtained.get(0));
+		assertNotNull(obtained.get(1));
+	}
+
+
+
 }

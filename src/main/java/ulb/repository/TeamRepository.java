@@ -1,6 +1,10 @@
 package ulb.repository;
 
 import ulb.model.bugemon.Bugemon;
+import ulb.model.team.Team;
+
+import java.util.List;
+import java.util.NoSuchElementException;
 
 public interface TeamRepository {
 
@@ -28,6 +32,12 @@ public interface TeamRepository {
      */
     int getTeamId(String teamName, String username) throws LoadException;
 
+	void insertUserBugemon(Bugemon bugemon, String username) throws LoadException;
     // TO DO: getTeams
 
+	Bugemon findBugemon(int id) throws NoSuchElementException;
+
+	Team findById(int id) throws NoSuchElementException;
+
+	List<Team> findAll(String username);
 }

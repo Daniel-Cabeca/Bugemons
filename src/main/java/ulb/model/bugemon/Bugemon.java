@@ -30,6 +30,8 @@ public class Bugemon {
 	public void setRemainingRewards(int remainingRewards) {this.remainingRewards = remainingRewards;}
 	public void setBaseStats(Stats baseStats) {this.baseStats = baseStats;}
 	public void setFightStats(Stats fightStats) {this.fightStats = fightStats;}
+	public void setId(int id){this.id = id;}
+
 
 	public BugemonSpecies getSpecies() { return this.species; }
 	public AbilitySet getAbilities() { return this.abilities; }
@@ -142,5 +144,6 @@ public class Bugemon {
 		Random rand = new Random();
 		return rand.nextInt(2) == 0;
 	}
+
 
 }

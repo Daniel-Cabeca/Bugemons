@@ -62,6 +62,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	private final ItemService itemService;
 	private final AccountService accountService;
 	private final ChatService chatService;
+	private final TeamService teamService;
 
 	private void resetGameSessionState() {
 		this.battle = null;
@@ -72,10 +73,11 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	}
 
     public ClientHandler(SocketMessenger messenger,
-    		AbilityService abilityService, BugemonService bugemonService, ItemService itemService,
-    		AccountService accountService, ChatService chatService) {
+                         AbilityService abilityService, BugemonService bugemonService, ItemService itemService,
+                         AccountService accountService, ChatService chatService, TeamService teamService) {
         this.socketMessenger = messenger;
-        this.stop = false;
+		this.teamService = teamService;
+		this.stop = false;
 		this.abilityService = abilityService;
 		this.bugemonService = bugemonService;
 		this.itemService = itemService;
@@ -88,6 +90,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	public ItemService getItemService() { return this.itemService; }
 	public AccountService getAccountService() { return this.accountService; }
 	public ChatService getChatService() { return this.chatService; }
+	public TeamService getTeamService() { return this.teamService; }
 
     @Override
     public void run(){
@@ -175,8 +178,9 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	@Override
 	public void handle(SetUpTeamMessage message){
 		Team team = new Team();
-		
+
 		for (BugemonDTO bugemonDTO : message.getTeam()){
+			this.teamService.insertUserBugemon(BugemonMapper.toEntity(bugemonDTO), player.getName());
 			if (!team.add(BugemonMapper.toEntity(bugemonDTO))){
 				sendErrorMessage("Invalid Team");
 			}

@@ -143,10 +143,10 @@ CREATE TABLE IF NOT EXISTS teams (
 
 CREATE TABLE IF NOT EXISTS team_members (
                                      team_id INTEGER NOT NULL,
-                                     bugemon_species_id TEXT NOT NULL,
-                                     PRIMARY KEY (team_id, bugemon_species_id),
+                                     bugemon_id INTEGER NOT NULL,
+                                     PRIMARY KEY (team_id, bugemon_id),
                                      FOREIGN KEY (team_id) REFERENCES teams(team_id) ON DELETE CASCADE,
-                                     FOREIGN KEY (bugemon_species_id) REFERENCES bugemon_species(id) ON DELETE CASCADE
+                                     FOREIGN KEY (bugemon_id) REFERENCES bugemons(id) ON DELETE CASCADE
 );
 
 

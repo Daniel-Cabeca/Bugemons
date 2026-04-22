@@ -9,9 +9,11 @@ public class Team {
     public static final int MAX_PARTY_SIZE = 6;
 
     private List<Bugemon> members;
+    private String teamName;
 
     public Team() {
         this.members = new ArrayList<>();
+        this.teamName = "";
     }
 
     public Team(List<Bugemon> initialMembers) {
@@ -44,6 +46,9 @@ public class Team {
     public boolean isValid() {
         return !this.isEmpty() && this.size() <= MAX_PARTY_SIZE;
     }
+
+    public void setTeamName(String teamName) { this.teamName = teamName; }
+    public String getTeamName() { return this.teamName; }
 
     /**
      * Adds a Bugemon to the team

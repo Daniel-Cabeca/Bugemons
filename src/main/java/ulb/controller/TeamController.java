@@ -87,6 +87,19 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 		listener.onReturnToMode();
 	}
 
+	/**
+	 * Handles team loading by opening the load team panel
+	 */
+	@Override
+	public void onLoadTeam() {
+		listener.onLoadTeam();
+	}
+
+	@Override
+	public void onSaveTeam(List<String> selectedBugemonIds, String teamName) {
+		listener.onTeamSaved(selectedBugemonIds, teamName);
+	}
+
 	@Override
 	public List<BugemonSpeciesDTO> getAllSpecies(){
 		return listener.getAllSpecies();
@@ -98,7 +111,9 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 	public interface Listener {
 		/** Called when team selection is confirmed. */
 		void onTeamConfirmed();
+		void onTeamSaved(List<String> selectedBugemonIds, String teamName);
 		void onReturnToMode();
+		void onLoadTeam();
 		List<BugemonSpeciesDTO> getAllSpecies();
 	}
 }

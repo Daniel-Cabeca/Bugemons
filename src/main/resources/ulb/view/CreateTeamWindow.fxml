@@ -37,13 +37,29 @@
 
         </ScrollPane>
 
-        <Button onAction="#handleConfirmTeam"
-                prefHeight="50" prefWidth="250"
-                text="Confirmer l'Équipe" />
+        <VBox spacing="20" alignment="CENTER">
 
-        <Button onAction="#handleReturn"
-                prefHeight="50" prefWidth="250"
-                text="Menu Principal" />
+            <HBox spacing="20" alignment="CENTER">
+                <Button onAction="#handleConfirmTeam"
+                        prefHeight="50" prefWidth="250"
+                        text="Confirmer l'équipe" />
+
+                <Button onAction="#handleSaveTeam"
+                        prefHeight="50" prefWidth="250"
+                        text="Sauvegarder l'équipe" />
+            </HBox>
+
+            <HBox spacing="20" alignment="CENTER">
+                <Button onAction="#handleLoadTeam"
+                        prefHeight="50" prefWidth="250"
+                        text="Charger une équipe" />
+
+                <Button onAction="#handleReturn"
+                        prefHeight="50" prefWidth="250"
+                        text="Menu Principal" />
+            </HBox>
+
+        </VBox>
 
     </VBox>
 </StackPane>

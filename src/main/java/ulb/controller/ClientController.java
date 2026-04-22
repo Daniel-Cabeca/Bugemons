@@ -23,7 +23,9 @@ import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.DTO.reward.RewardDTO;
+import ulb.model.bugemon.Bugemon;
 import ulb.model.chat.ChatMessage;
+import ulb.model.team.Team;
 import ulb.repository.LoadException;
 
 
@@ -33,7 +35,7 @@ import ulb.repository.LoadException;
 public class ClientController extends Application implements RegisterController.Listener, ModeController.Listener,
 BattleModeController.Listener,BattleEndController.Listener, BattleWindowController.Listener, NextRoomController.Listener, 
 FloorRewardController.Listener, AttackReplacementController.Listener, TeamController.Listener, LevelUpController.Listener,
-SocialPanelController.Listener {
+SocialPanelController.Listener, LoadTeamPanelController.Listener {
     SocketClient client;
     Stage stage;
 
@@ -350,7 +352,6 @@ SocialPanelController.Listener {
 
 	// Team Controller Listener :
 
-
 	/**
 	 * {@inheritDoc}
 	 */
@@ -394,6 +395,49 @@ SocialPanelController.Listener {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Shows the Load team panel when the load a team button is clicked in create team window
+	 */
+	@Override
+	public void onLoadTeam() {
+		try {
+			LoadTeamPanelController loadTeamPanelController = new LoadTeamPanelController(stage, this);
+			loadTeamPanelController.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Returns the player's saved teams from the database
+	 *
+	 * @return the player's saved teams
+	 */
+	@Override
+	public List<Team> getSavedTeams() {
+		// TO DO
+		return List.of();
+	}
+
+	/**
+	 * Saves the team to the database
+	 * @param selectedBugemonIds the list of the ids of the bugemons to be saved
+	 * @param teamName the name of the team to be saved
+	 */
+	@Override
+	public void onTeamSaved(List<String> selectedBugemonIds, String teamName) {
+		// TO DO
+	}
+
+	/**
+	 * Loads the selected team from the load team panel
+	 * @param selectedTeam the selected team
+	 */
+	@Override
+	public void onTeamLoaded(Team selectedTeam) {
+		// TO DO
 	}
 
 	// BattleEndController
@@ -599,7 +643,7 @@ SocialPanelController.Listener {
 
 	/**
 	 * Updates the inventory of the player.
-	 * @param String the userName of the player used to confirm the player identity on the server side
+	 * @param userName the userName of the player used to confirm the player identity on the server side
 	 */
 	@Override
 	public void updatePlayerInventory(String userName){

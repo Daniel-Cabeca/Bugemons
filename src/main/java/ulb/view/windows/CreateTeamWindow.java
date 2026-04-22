@@ -2,16 +2,17 @@ package ulb.view.windows;
 
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import ulb.utils.Scaling;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import ulb.DTO.bugemon.BugemonSpeciesDTO;
 
@@ -122,7 +123,7 @@ public class CreateTeamWindow extends Window {
 	}
 
 	/**
-	 * Disable all Bugémons after {@value #MAX_BUGEMONS} are selected so that no more can be selected.
+	 * Disable all Bugémons after MAX_BUGEMONS are selected so that no more can be selected.
 	 */
 	private void checkDisableBugemons() {
 		if (selectedBugemonIds.size() == MAX_BUGEMONS) {
@@ -158,7 +159,7 @@ public class CreateTeamWindow extends Window {
 	/**
 	 * Adds the selected Bugémon to the selection list when clicking the checkbox.
 	 *
-	 * @param bugemonId the id of the Bugémon that was selected
+	 * @param bugemonName the id of the Bugémon that was selected
 	 */
 	private void onSelectBugemon(String bugemonName) {
 		if (!selectedBugemonIds.contains(bugemonName) && selectedBugemonIds.size() < MAX_BUGEMONS) {
@@ -170,7 +171,7 @@ public class CreateTeamWindow extends Window {
 	/**
 	 * Removes the selected Bugémon from the selection list when clicking the checkbox.
 	 *
-	 * @param bugemonId the id of the Bugémon that was deselected
+	 * @param bugemonName the id of the Bugémon that was deselected
 	 */
 	private void onDeselectBugemon(String bugemonName) {
 		selectedBugemonIds.remove(bugemonName);
@@ -186,8 +187,60 @@ public class CreateTeamWindow extends Window {
 		if (!selectedBugemonIds.isEmpty() && selectedBugemonIds.size() <= MAX_BUGEMONS) {
 			viewListener.onConfirmTeam(selectedBugemonIds);
 		} else {
-			throw new IllegalStateException("Tu dois sélectionner entre 1 et 6 Bugémons pour confirmer ton équipe.");
+			showAlert("confirmer");
 		}
+	}
+
+	/**
+	 * Displays the load team panel
+	 */
+	public void handleLoadTeam() {
+		viewListener.onLoadTeam();
+	}
+
+
+    /**
+     * Displays a dialog to input the team's name then handles team saving
+     */
+	public void handleSaveTeam() {
+
+		if (!selectedBugemonIds.isEmpty() && selectedBugemonIds.size() <= MAX_BUGEMONS) {
+
+			Stage owner = (Stage) content.getScene().getWindow();
+
+			TextInputDialog dialog = new TextInputDialog();
+			dialog.initOwner(owner);
+			dialog.setTitle("Sauvegarder l'équipe");
+			dialog.setHeaderText("Donne un nom à ton équipe");
+
+			// changes the default dialog button names to be in French
+			dialog.getDialogPane().getButtonTypes().setAll(
+					new ButtonType("Valider", ButtonBar.ButtonData.OK_DONE),
+					new ButtonType("Annuler", ButtonBar.ButtonData.CANCEL_CLOSE)
+			);
+
+			Optional<String> result = dialog.showAndWait();
+			result.ifPresent(teamName -> viewListener.onSaveTeam(selectedBugemonIds, teamName));
+
+		}  else {
+			showAlert("sauvegarder");
+		}
+	}
+
+    /**
+	 * Shows an alert when the user tries to save/confirm a team with the wrong Bugemon number
+	 *
+     * @param action the action (confirm or save) that triggered the alert
+     */
+	private void showAlert(String action) {
+		Stage owner = (Stage) content.getScene().getWindow();
+		Alert alert = new Alert(Alert.AlertType.ERROR);
+		alert.initOwner(owner);
+		alert.setTitle("Erreur");
+		alert.setHeaderText("Équipe invalide");
+		alert.setContentText("Tu dois sélectionner entre 1 et 6 Bugémons pour " + action.toLowerCase() + " ton équipe.");
+
+		alert.showAndWait();
 	}
 
 	/**
@@ -199,6 +252,8 @@ public class CreateTeamWindow extends Window {
 
 	public interface ViewListener {
 		void onConfirmTeam(List<String> selectedBugemonIds);
+		void onLoadTeam();
+		void onSaveTeam(List<String> selectedBugemonIds, String teamName);
 		void onReturn();
 		List<BugemonSpeciesDTO> getAllSpecies();
 	}

@@ -24,4 +24,5 @@ public interface ItemRepository {
 	 * @return An object iterable over the existing items
 	 */
 	public Iterable<Item> findAll();
+
 }

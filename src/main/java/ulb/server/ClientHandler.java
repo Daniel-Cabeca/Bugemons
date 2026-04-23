@@ -66,6 +66,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	private final AccountService accountService;
 	private final ChatService chatService;
 	private final TeamService teamService;
+	private final InventoryService inventoryService;
 
 	private void resetGameSessionState() {
 		this.battle = null;
@@ -77,7 +78,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
     public ClientHandler(SocketMessenger messenger,
                          AbilityService abilityService, BugemonService bugemonService, ItemService itemService,
-                         AccountService accountService, ChatService chatService, TeamService teamService) {
+                         AccountService accountService, ChatService chatService, TeamService teamService, InventoryService inventoryService) {
         this.socketMessenger = messenger;
 		this.teamService = teamService;
 		this.stop = false;
@@ -86,6 +87,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		this.itemService = itemService;
 		this.accountService = accountService;
 		this.chatService = chatService;
+		this.inventoryService = inventoryService;
     }
 
 	public AbilityService getAbilityService() { return this.abilityService; }
@@ -94,6 +96,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	public AccountService getAccountService() { return this.accountService; }
 	public ChatService getChatService() { return this.chatService; }
 	public TeamService getTeamService() { return this.teamService; }
+	public InventoryService getInventoryService() { return this.inventoryService; }
 
     @Override
     public void run(){

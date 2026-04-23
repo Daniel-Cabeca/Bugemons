@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import ulb.repository.mock.BugemonSpeciesMockRepository;
-import ulb.repository.mock.InventoryMockRepository;
+import ulb.repository.mock.StartingInventoryMockRepository;
 import ulb.repository.mock.ItemMockRepository;
 import ulb.service.BugemonService;
 
@@ -23,7 +23,7 @@ public class EffectTest {
 	private static Battle getTestBattle() {
 		BugemonSpeciesMockRepository repository = new BugemonSpeciesMockRepository();
 		BugemonService service = new BugemonService(repository);
-		ItemService itemService = new ItemService(new ItemMockRepository(), new InventoryMockRepository());
+		ItemService itemService = new ItemService(new ItemMockRepository(), new StartingInventoryMockRepository());
 
 		Team teamA = new Team(List.of(
 			service.spawnBugemon("florachu"),

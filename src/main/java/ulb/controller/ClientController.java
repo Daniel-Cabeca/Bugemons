@@ -33,7 +33,7 @@ import ulb.repository.LoadException;
 public class ClientController extends Application implements RegisterController.Listener, ModeController.Listener,
 BattleModeController.Listener,BattleEndController.Listener, BattleWindowController.Listener, NextRoomController.Listener, 
 FloorRewardController.Listener, AttackReplacementController.Listener, TeamController.Listener, LevelUpController.Listener,
-SocialPanelController.Listener {
+SocialPanelController.Listener, FloorController.Listener {
     SocketClient client;
     Stage stage;
 
@@ -54,6 +54,7 @@ SocialPanelController.Listener {
 	AttackReplacementController attackReplacementController;
 
 	FloorRewardController.RewardChoice pendingFloorRewardChoice;
+	FloorController floorController;
 	BugemonDTO pendingLevelUpBugemon;
 	List<RewardDTO> pendingLevelUpRewards;
 
@@ -463,6 +464,16 @@ SocialPanelController.Listener {
 		}
 	}
 
+	private void switchToFloorWindow(){
+		this.floorController = new FloorController(this.stage, this);
+		try {
+			this.floorController.show();
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+
+	}
+
 	/**
 	 * Shows the battle end window with current result payload.
 	 */
@@ -579,7 +590,8 @@ SocialPanelController.Listener {
 	public void onTowerMode() {
 		this.gameMode = GameMode.TOWER;
 		if (this.postData(new SetUpTowerModeMessage())){
-			switchToBattleWindow();
+//			switchToBattleWindow();
+			switchToFloorWindow();
 		}
 	}
 
@@ -599,7 +611,7 @@ SocialPanelController.Listener {
 
 	/**
 	 * Updates the inventory of the player.
-	 * @param String the userName of the player used to confirm the player identity on the server side
+	 * @param {String} the userName of the player used to confirm the player identity on the server side
 	 */
 	@Override
 	public void updatePlayerInventory(String userName){
@@ -995,4 +1007,40 @@ SocialPanelController.Listener {
 		}
 	}
 
+	// FloorController
+
+	@Override
+	public void onPlayer() {
+
+	}
+
+	@Override
+	public void onBonusB() {
+
+	}
+
+	@Override
+	public void onBonusA() {
+
+	}
+
+	@Override
+	public void onBattleB() {
+
+	}
+
+	@Override
+	public void onBattleA2() {
+
+	}
+
+	@Override
+	public void onBattleA1() {
+
+	}
+
+	@Override
+	public void onBoss() {
+
+	}
 }

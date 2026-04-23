@@ -160,7 +160,7 @@ public class TeamDatabaseRepository implements TeamRepository {
 		String sql = """
         SELECT t.team_name, tm.bugemon_id
         FROM teams t
-        JOIN team_members tm ON t.team_id = tm.team_id
+        LEFT JOIN team_members tm ON t.team_id = tm.team_id
         WHERE t.team_id = ?
     """;
 

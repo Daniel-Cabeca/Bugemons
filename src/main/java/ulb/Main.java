@@ -9,7 +9,6 @@ import ulb.repository.database.*;
 import ulb.repository.database.sql.*;
 import ulb.repository.json.ItemJsonRepository;
 import ulb.repository.json.StartingInventoryJsonRepository;
-// import ulb.repository.json.InventoryJsonRepository;
 import ulb.service.*;
 
 public class Main{

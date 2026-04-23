@@ -37,7 +37,6 @@ class InventoryJsonRespositoryTest {
 		InputStream stream = new ByteArrayInputStream(str.getBytes());
 		ItemJsonRepository itemRepository = new ItemJsonRepository(stream);
 		StartingInventoryJsonRepository startingInventoryJsonRepository = new StartingInventoryJsonRepository(itemRepository);
-		// InventoryJsonRepository inventoryRepository = new InventoryJsonRepository(itemRepository);
 
 		Inventory startingA = startingInventoryJsonRepository.findStartingInventory();
 		Inventory startingB = startingInventoryJsonRepository.findStartingInventory();

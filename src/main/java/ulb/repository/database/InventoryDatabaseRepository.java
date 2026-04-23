@@ -1,14 +1,11 @@
 package ulb.repository.database;
 
-import ulb.model.effect.*;
 import ulb.model.item.Inventory;
 import ulb.model.item.Item;
-import ulb.model.team.Team;
 import ulb.repository.InventoryRepository;
 import ulb.repository.ItemRepository;
 import ulb.repository.LoadException;
 import ulb.repository.database.sql.Database;
-import ulb.utils.DuplicateElementException;
 
 import java.sql.*;
 import java.util.*;

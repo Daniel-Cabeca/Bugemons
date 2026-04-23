@@ -36,10 +36,11 @@ class InventoryJsonRespositoryTest {
 
 		InputStream stream = new ByteArrayInputStream(str.getBytes());
 		ItemJsonRepository itemRepository = new ItemJsonRepository(stream);
-		InventoryJsonRepository inventoryRepository = new InventoryJsonRepository(itemRepository);
+		StartingInventoryJsonRepository startingInventoryJsonRepository = new StartingInventoryJsonRepository(itemRepository);
+		// InventoryJsonRepository inventoryRepository = new InventoryJsonRepository(itemRepository);
 
-		Inventory startingA = inventoryRepository.findStartingInventory();
-		Inventory startingB = inventoryRepository.findStartingInventory();
+		Inventory startingA = startingInventoryJsonRepository.findStartingInventory();
+		Inventory startingB = startingInventoryJsonRepository.findStartingInventory();
 		Item item = itemRepository.findById("baie_revigorante");
 
 		startingA.removeItem(item);

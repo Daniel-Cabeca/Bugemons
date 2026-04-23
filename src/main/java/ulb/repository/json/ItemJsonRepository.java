@@ -64,5 +64,9 @@ public class ItemJsonRepository implements ItemRepository {
 		return this.items;
 	}
 
+	// public Inventory findStartingInventory() {
+	// 	return this.startingInventory;
+	// }
+
 	public Inventory getStartingInventory() { return this.startingInventory; }
 }

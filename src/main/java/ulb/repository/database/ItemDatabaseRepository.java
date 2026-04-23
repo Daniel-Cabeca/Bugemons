@@ -1,6 +1,7 @@
 package ulb.repository.database;
 
 import ulb.model.effect.*;
+import ulb.model.item.Inventory;
 import ulb.model.item.Item;
 import ulb.repository.ItemRepository;
 import ulb.repository.LoadException;
@@ -153,4 +154,8 @@ public class ItemDatabaseRepository implements ItemRepository {
 
 		return items;
 	}
+
+	// public Inventory findStartingInventory() {
+	// 	return null;
+	// }
 }

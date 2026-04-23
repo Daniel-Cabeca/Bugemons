@@ -4,6 +4,7 @@ import java.util.NoSuchElementException;
 
 import ulb.repository.ItemRepository;
 import ulb.repository.InventoryRepository;
+import ulb.repository.StartingInventoryRepository;
 import ulb.model.item.Item;
 import ulb.model.item.Inventory;
 import java.util.List;
@@ -12,11 +13,12 @@ import java.util.Random;
 
 public class ItemService {
 	private final ItemRepository itemRepository;
-	private final InventoryRepository inventoryRepository;
+	private final StartingInventoryRepository startingInventoryRepository;
 
-	public ItemService(ItemRepository itemRepository, InventoryRepository inventoryRepository) {
+	public ItemService(ItemRepository itemRepository, StartingInventoryRepository startingInventoryRepository) {//, InventoryRepository inventoryRepository) {
 		this.itemRepository = itemRepository;
-		this.inventoryRepository = inventoryRepository;
+		this.startingInventoryRepository = startingInventoryRepository;
+		// this.inventoryRepository = inventoryRepository;
 	}
 
 	/**
@@ -50,7 +52,9 @@ public class ItemService {
 	* @return The starter Inventory
 	*/
 	public Inventory createStarterInventory() {
-		return this.inventoryRepository.findStartingInventory();
+		// return this.itemRepository.findStartingInventory();
+		// return this.inventoryRepository.findStartingInventory();
+		return this.startingInventoryRepository.findStartingInventory();
 	}
 
 	/**

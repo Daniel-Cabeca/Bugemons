@@ -9,7 +9,7 @@ import java.io.ByteArrayInputStream;
 import ulb.model.item.Item;
 import ulb.model.item.Inventory;
 
-class InventoryJsonRespositoryTest {
+class StartingInventoryJsonRespositoryTest {
 	@Test
 	public void testStartingInventoryWasCloned() {
 		String str = """

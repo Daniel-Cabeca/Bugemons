@@ -17,7 +17,7 @@ public class TeamService {
     /**
      * Creates a team service using the provided repository.
      *
-     * @param teamRepository The repository used for team persistence
+     * @param teamRepository the repository used for team persistence
      */
     public TeamService(TeamRepository teamRepository) {
         this.repository = teamRepository;

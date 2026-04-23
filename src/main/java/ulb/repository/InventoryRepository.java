@@ -5,20 +5,30 @@ import java.util.NoSuchElementException;
 import ulb.model.item.Inventory;
 import ulb.model.item.Item;
 
-/**
- * Repository of the Items instances in the game data.
- */
 public interface InventoryRepository {
-	/**
-	 * Gives a player starting inventory.
-	 *
-	 * @return A starting inventory
-	 */
-	// public Inventory findStartingInventory();
 
+	/**
+	 * Saves an item to the inventory in the database.
+	 * @param item the item that needs to be saved
+	 * @param quantity the amount of the given item
+	 * @param username the owner of the inventory
+	 * @throws LoadException
+	 */
 	public void insertItem(Item item, int quantity, String username) throws LoadException;
 
+	/**
+	 * Saves the inventory of the given user.
+	 * @param inventory the inventory that needs to be saved
+	 * @param username the owner of the inventory
+	 * @throws LoadException
+	 */
 	public void insertInventory(Inventory inventory, String username) throws LoadException;
 
+	/**
+	 * Loads the inventory of the given user.
+	 * @param username the user that requests it's inventory
+	 * @return the corresponding inventory of the user
+	 * @throws NoSuchElementException
+	 */
 	public Inventory getInventory(String username) throws NoSuchElementException;
 }

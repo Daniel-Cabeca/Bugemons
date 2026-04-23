@@ -14,7 +14,7 @@ public class ItemService {
 	private final ItemRepository itemRepository;
 	private final StartingInventoryRepository startingInventoryRepository;
 
-	public ItemService(ItemRepository itemRepository, StartingInventoryRepository startingInventoryRepository) {//, InventoryRepository inventoryRepository) {
+	public ItemService(ItemRepository itemRepository, StartingInventoryRepository startingInventoryRepository) {
 		this.itemRepository = itemRepository;
 		this.startingInventoryRepository = startingInventoryRepository;
 	}

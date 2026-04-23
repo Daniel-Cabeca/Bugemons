@@ -5,10 +5,10 @@ import ulb.repository.json.StartingInventoryJsonRepository;
 import ulb.repository.json.ItemJsonRepository;
 import ulb.model.item.Inventory;
 
-public class InventoryMockRepository implements StartingInventoryRepository {
+public class StartingInventoryMockRepository implements StartingInventoryRepository {
 	private static StartingInventoryRepository inventoryRepository = null;
 
-	public InventoryMockRepository() {
+	public StartingInventoryMockRepository() {
 		if (inventoryRepository == null) {
 			load();
 		}

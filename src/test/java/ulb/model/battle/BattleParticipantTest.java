@@ -6,7 +6,7 @@ import ulb.model.Player;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.team.Team;
 import ulb.repository.mock.BugemonSpeciesMockRepository;
-import ulb.repository.mock.InventoryMockRepository;
+import ulb.repository.mock.StartingInventoryMockRepository;
 import ulb.repository.mock.ItemMockRepository;
 import ulb.service.BugemonService;
 import ulb.service.ItemService;
@@ -21,7 +21,7 @@ public class BattleParticipantTest {
     public void setActiveBugemonAddsToParticipatingBugemons() {
         BugemonSpeciesMockRepository repository = new BugemonSpeciesMockRepository();
         BugemonService service = new BugemonService(repository);
-		ItemService itemService = new ItemService(new ItemMockRepository(), new InventoryMockRepository());
+		ItemService itemService = new ItemService(new ItemMockRepository(), new StartingInventoryMockRepository());
 
         Bugemon a = service.spawnBugemon("florachu");
         Bugemon b = service.spawnBugemon("pyricore");
@@ -43,7 +43,7 @@ public class BattleParticipantTest {
     public void setActiveBugemonDoesntAddSameBugemonTwice() {
         BugemonSpeciesMockRepository repository = new BugemonSpeciesMockRepository();
         BugemonService service = new BugemonService(repository);
-		ItemService itemService = new ItemService(new ItemMockRepository(), new InventoryMockRepository());
+		ItemService itemService = new ItemService(new ItemMockRepository(), new StartingInventoryMockRepository());
 
         Bugemon a = service.spawnBugemon("florachu");
         Bugemon b = service.spawnBugemon("pyricore");

@@ -43,8 +43,7 @@ public class Main{
 
 		ItemRepository itemRepository = new ItemDatabaseRepository(database);
 		StartingInventoryRepository startingInventoryRepository = new StartingInventoryJsonRepository(new ItemJsonRepository());
-		// InventoryRepository inventoryRepository = new InventoryJsonRepository(new ItemJsonRepository());
-		ItemService itemService = new ItemService(itemRepository, startingInventoryRepository);//, inventoryRepository);
+		ItemService itemService = new ItemService(itemRepository, startingInventoryRepository);
 
 		AccountRepository accountRepository = new AccountDatabaseRepository(database);
 		AccountService accountService = new AccountService(accountRepository);

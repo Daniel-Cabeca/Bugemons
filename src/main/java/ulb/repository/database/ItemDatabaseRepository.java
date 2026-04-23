@@ -11,7 +11,7 @@ import java.sql.*;
 import java.util.*;
 
 /**
- * Items repository connected to the SLQ database.
+ * Items repository connected to the SQL database.
  */
 public class ItemDatabaseRepository implements ItemRepository {
 	private final Database database;

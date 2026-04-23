@@ -10,15 +10,27 @@ import ulb.repository.database.sql.Database;
 import java.sql.*;
 import java.util.*;
 
+/**
+ * Inventory repository connected to the database
+ */
 public class InventoryDatabaseRepository implements InventoryRepository {
     private final Database database;
     private ItemRepository itemRepository;
 
+    /**
+     * Creates an inventory repository using the given database
+     * @param database the database used
+     * @param itemRepository used to acces the items in the database
+     * @throws LoadException
+     */
 	public InventoryDatabaseRepository(Database database, ItemRepository itemRepository) throws LoadException {
 		this.database = database;
         this.itemRepository = itemRepository;
 	}
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void insertItem(Item item, int quantity, String username) throws LoadException {
         String sql = "INSERT INTO inventory (user_id, item_id, quantity) VALUES ((SELECT id FROM users WHERE username = ?), ?, ?)";
@@ -32,6 +44,9 @@ public class InventoryDatabaseRepository implements InventoryRepository {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void insertInventory(Inventory inventory, String username) throws LoadException {
         for (Item item : inventory.getItems().keySet()) {
@@ -40,6 +55,9 @@ public class InventoryDatabaseRepository implements InventoryRepository {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Inventory getInventory(String username) throws NoSuchElementException {
         Inventory inventory = new Inventory();
@@ -58,7 +76,7 @@ public class InventoryDatabaseRepository implements InventoryRepository {
 
 			while (rs.next()) {
                 String itemID = rs.getString("id");
-                Item item = itemRepository.findById(itemID);
+                Item item = this.itemRepository.findById(itemID);
                 int quantity = rs.getInt("quantity");
 
 				inventory.addItem(item, quantity);

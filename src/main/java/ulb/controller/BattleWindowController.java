@@ -104,6 +104,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
 
         view.setAutoButtonVisible(false);
         BattleState stateAfter = stateOrCurrent(listener.onAutoTurn());
+		view.playAttackAnimation(true);
         displayActionSequence(stateAfter, event, () -> {
             view.showMainMenu();
             view.setAutoButtonVisible(true);
@@ -189,6 +190,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
     @Override
     public void onUseAbility(String abilityId, ActionEvent event) {
         AbilityDTO ability = findActiveAbilityById(abilityId);
+		view.playAttackAnimation(true);
         BattleState stateAfter = stateOrCurrent(listener.onUseAbility(ability));
         displayActionSequence(stateAfter, event, () -> {
             if (stateAfter == BattleState.WAITING || stateAfter == BattleState.INGAME) {

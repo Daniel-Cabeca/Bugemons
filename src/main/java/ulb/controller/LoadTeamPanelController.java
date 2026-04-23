@@ -4,7 +4,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import ulb.model.team.Team;
+import ulb.DTO.team.TeamDTO;
 import ulb.view.WindowPath;
 import ulb.view.windows.LoadTeamPanel;
 
@@ -47,8 +47,9 @@ public class LoadTeamPanelController implements LoadTeamPanel.ViewListener {
     }
 
     @Override
-    public void onLoadTeam(Team selectedTeam) {
+    public void onLoadTeam(TeamDTO selectedTeam) {
         listener.onTeamLoaded(selectedTeam);
+        popupStage.close();
     }
 
     @Override
@@ -57,7 +58,7 @@ public class LoadTeamPanelController implements LoadTeamPanel.ViewListener {
     }
 
     public interface Listener {
-        List<Team> getSavedTeams();
-        void onTeamLoaded(Team selectedTeam);
+        List<TeamDTO> getSavedTeams();
+        void onTeamLoaded(TeamDTO selectedTeam);
     }
 }

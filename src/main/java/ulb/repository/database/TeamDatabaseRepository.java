@@ -11,7 +11,6 @@ import ulb.repository.database.sql.Database;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -70,13 +69,15 @@ public class TeamDatabaseRepository implements TeamRepository {
         }
     }
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void insertUserBugemon(Bugemon bugemon, String username) throws LoadException {
 		String sql = """
         INSERT INTO bugemons (species_id, user_id, level, xp, remaining_rewards, hp, attack, defense, initiative) 
         VALUES (?, (SELECT id FROM users WHERE username = ?), ?, ?, ?, ?, ?, ?, ?)
     """;
-
 
 		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
 
@@ -97,7 +98,6 @@ public class TeamDatabaseRepository implements TeamRepository {
 				throw new SQLException("Creating bugemon failed, no rows affected.");
 			}
 
-
 			try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
 				if (generatedKeys.next()) {
 
@@ -115,6 +115,9 @@ public class TeamDatabaseRepository implements TeamRepository {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Bugemon findBugemon(int id) throws NoSuchElementException {
 		String sql = "SELECT * FROM bugemons WHERE id = ?";
@@ -149,29 +152,50 @@ public class TeamDatabaseRepository implements TeamRepository {
 		return bugemon;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Team findById(int id) throws NoSuchElementException {
-		String sql = "SELECT bugemon_id FROM team_members WHERE team_id = ?";
+		String sql = """
+        SELECT t.team_name, tm.bugemon_id
+        FROM teams t
+        JOIN team_members tm ON t.team_id = tm.team_id
+        WHERE t.team_id = ?
+    """;
+
 		List<Bugemon> bugemons = new ArrayList<>();
+		String teamName = "";
+
 		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
 			stmt.setInt(1, id);
 			ResultSet rs = stmt.executeQuery();
 
 			while (rs.next()) {
+				if (teamName.isEmpty()) {
+					teamName = rs.getString("team_name");
+				}
 				int bugemonId = rs.getInt("bugemon_id");
-				try {
-					Bugemon bugemon = findBugemon(bugemonId);
-					bugemons.add(bugemon);
-				} catch (NoSuchElementException e) {
-					System.err.println("Erreur : ID trouvé mais item non chargeable : " + bugemonId);
+				if (bugemonId != 0) {
+					try {
+						bugemons.add(findBugemon(bugemonId));
+					} catch (NoSuchElementException e) {
+						System.err.println("Erreur : ID trouvé mais item non chargeable : " + bugemonId);
+					}
 				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return new Team(bugemons);
+
+		Team team = new Team(bugemons);
+		team.setTeamName(teamName);
+		return team;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<Team> findAll(String username) {
 		String sql = """
@@ -200,7 +224,4 @@ public class TeamDatabaseRepository implements TeamRepository {
 
 		return teams;
 	}
-
-
-
 }

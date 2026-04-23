@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import ulb.DTO.bugemon.BugemonSpeciesDTO;
+import ulb.DTO.team.TeamDTO;
 import ulb.communication.SocketClient;
 import ulb.communication.GameMode;
 import ulb.message.ClientToServerMessage;
@@ -23,9 +24,7 @@ import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.DTO.reward.RewardDTO;
-import ulb.model.bugemon.Bugemon;
 import ulb.model.chat.ChatMessage;
-import ulb.model.team.Team;
 import ulb.repository.LoadException;
 
 
@@ -36,7 +35,8 @@ public class ClientController extends Application implements RegisterController.
 BattleModeController.Listener,BattleEndController.Listener, BattleWindowController.Listener, NextRoomController.Listener, 
 FloorRewardController.Listener, AttackReplacementController.Listener, TeamController.Listener, LevelUpController.Listener,
 SocialPanelController.Listener, LoadTeamPanelController.Listener {
-    SocketClient client;
+
+	SocketClient client;
     Stage stage;
 
 	PlayerDTO player;
@@ -377,24 +377,30 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onTeamConfirmed() {
+    /**
+     * Sends the player's team to the server and switches to the battle mode window
+     */
+	private void setupTeamAndShowModeMenu() {
 		List<BugemonDTO> team = player.getTeam();
 
 		if (!this.postData(new SetUpTeamMessage(team))){
 			return;
 		}
 
-
-		this.battleModeController = new BattleModeController(this.stage, this, player.getTeam());
+		this.battleModeController = new BattleModeController(this.stage, this, team);
 		try {
 			battleModeController.show();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void onTeamConfirmed() {
+		setupTeamAndShowModeMenu();
 	}
 
 	/**
@@ -416,19 +422,25 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 	 * @return the player's saved teams
 	 */
 	@Override
-	public List<Team> getSavedTeams() {
-		// TO DO
-		return List.of();
+	public List<TeamDTO> getSavedTeams() {
+		Serializable message = this.getData(new GetSavedTeamsMessage());
+
+		if (message instanceof SavedTeamsMessage teamsMessage){
+			return teamsMessage.getTeams();
+		}
+		return null;
 	}
 
 	/**
 	 * Saves the team to the database
-	 * @param selectedBugemonIds the list of the ids of the bugemons to be saved
-	 * @param teamName the name of the team to be saved
+	 * @param teamDTO the DTO of the team to be saved
 	 */
 	@Override
-	public void onTeamSaved(List<String> selectedBugemonIds, String teamName) {
-		// TO DO
+	public void onTeamSaved(TeamDTO teamDTO) {
+		boolean success = postData(new SaveTeamMessage(teamDTO));
+		if (!success) {
+			teamController.getView().showInvalidSaveAlert("Tu as déjà une équipe avec ce nom!");
+		}
 	}
 
 	/**
@@ -436,9 +448,11 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 	 * @param selectedTeam the selected team
 	 */
 	@Override
-	public void onTeamLoaded(Team selectedTeam) {
-		// TO DO
+	public void onTeamLoaded(TeamDTO selectedTeam) {
+		player.setTeam(selectedTeam.getMembers());
+		setupTeamAndShowModeMenu();
 	}
+
 
 	// BattleEndController
 

@@ -8,8 +8,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import ulb.model.bugemon.Bugemon;
-import ulb.model.team.Team;
+import ulb.DTO.bugemon.BugemonDTO;
+import ulb.DTO.team.TeamDTO;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ public class LoadTeamPanel {
     public Accordion savedTeamsAccordion;
 
     private ViewListener viewListener;
-    private Team selectedTeam;
+    private TeamDTO selectedTeam;
 
     public void setViewListener(ViewListener viewListener) { this.viewListener = viewListener; }
 
@@ -28,8 +28,8 @@ public class LoadTeamPanel {
      *
      * @param savedTeams the player's saved teams
      */
-    public void populateSavedTeams(List<Team> savedTeams) {
-        for (Team team : savedTeams) {
+    public void populateSavedTeams(List<TeamDTO> savedTeams) {
+        for (TeamDTO team : savedTeams) {
             TitledPane pane = createTeamPane(team);
             savedTeamsAccordion.getPanes().add(pane);
             pane.setOnMouseClicked(e -> {
@@ -44,9 +44,9 @@ public class LoadTeamPanel {
      * @param team the team to display
      * @return the constructed TitledPane
      */
-    private TitledPane createTeamPane(Team team) {
+    private TitledPane createTeamPane(TeamDTO team) {
         HBox teamBugemonsBox = new HBox(12);
-        for (Bugemon bugemon : team.getMembers()) {
+        for (BugemonDTO bugemon : team.getMembers()) {
             VBox cell = new VBox(4);
             Image image = new Image(bugemon.getSpritePath());
             ImageView sprite = new ImageView(image);
@@ -82,7 +82,7 @@ public class LoadTeamPanel {
     }
 
     public interface ViewListener {
-        void onLoadTeam(Team selectedTeam);
+        void onLoadTeam(TeamDTO selectedTeam);
         void onReturn();
     }
 

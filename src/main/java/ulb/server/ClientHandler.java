@@ -1,5 +1,6 @@
 package ulb.server;
 
+import ulb.DTO.team.TeamDTO;
 import ulb.communication.Messenger.SocketMessenger;
 import ulb.mapper.ability.AbilityMapper;
 import ulb.mapper.bugemon.BugemonMapper;
@@ -7,6 +8,7 @@ import ulb.mapper.bugemon.BugemonSpeciesMapper;
 import ulb.mapper.item.ItemMapper;
 import ulb.mapper.player.PlayerMapper;
 import ulb.mapper.reward.RewardMapper;
+import ulb.mapper.team.TeamMapper;
 import ulb.message.ClientToServerMessage;
 import ulb.message.clientToServer.*;
 import ulb.message.serverToClient.*;
@@ -23,6 +25,7 @@ import ulb.model.reward.Reward;
 import ulb.model.reward.RewardType;
 import ulb.model.team.OpponentTeamGenerator;
 import ulb.model.team.Team;
+import ulb.repository.LoadException;
 import ulb.service.*;
 import ulb.model.tower.towerManager.TowerManager;
 import ulb.service.strategy.AI;
@@ -302,11 +305,11 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	@Override
 	public void handle(GetAbilityEffectivenessMessage message){
 		Map<AbilityDTO, String> effectiveness = new HashMap<AbilityDTO, String>();
-		Bugemon bugemonTarger = BugemonMapper.toEntity(message.getBugemonTarget());
+		Bugemon bugemonTarget = BugemonMapper.toEntity(message.getBugemonTarget());
 		
 		for (AbilityDTO abilityDTO : message.getAbilities()){
 			Ability ability = AbilityMapper.toEntity(abilityDTO);
-			String effectivenessMessage = ability.getEffectivenessMessage(bugemonTarger);
+			String effectivenessMessage = ability.getEffectivenessMessage(bugemonTarget);
 			effectiveness.put(abilityDTO, effectivenessMessage);
 		}
 
@@ -689,6 +692,54 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		int id = this.getAccountService().getUserId(name);
 		UserIdMessage response = new UserIdMessage(id);
 		sendMessage(response);
+	}
+
+	// TEAM
+
+	@Override
+	public void handle(SaveTeamMessage message) {
+		TeamDTO teamDTO = message.getTeam();
+		Team team = TeamMapper.toEntity(teamDTO);
+
+		try {
+			// checks if a team with the same name already exists
+			int existingId = this.teamService.getTeamId(teamDTO.getTeamName(), player.getName());
+			if (existingId != -1) {
+				sendErrorMessage("A team with this name already exists.");
+				return;
+			}
+
+			// inserts the member bugemons in bugemons so they can be referenced in team_members
+			for (Bugemon b : team.getMembers()) {
+				this.teamService.insertUserBugemon(b, player.getName());
+			}
+
+			this.teamService.insertTeam(player.getName(), teamDTO.getTeamName());
+			int teamId = this.teamService.getTeamId(teamDTO.getTeamName(), player.getName());
+
+			if (teamId == -1) {
+				sendErrorMessage("Failed to retrieve team ID after insertion.");
+				return;
+			}
+
+			this.teamService.insertAllBugemonsInTeam(team, teamId);
+			sendSuccessMessage();
+
+		} catch (LoadException e) {
+			sendErrorMessage(e.getMessage());
+		}
+	}
+
+	@Override
+	public void handle(GetSavedTeamsMessage message) {
+		TeamService teamService = this.getTeamService();
+
+		List<TeamDTO> DTOTeams = new ArrayList<>();
+
+		for (Team team : teamService.getAllTeams(player.getName())){
+			DTOTeams.add(TeamMapper.toDTO(team));
+		}
+		this.sendMessage(new SavedTeamsMessage(DTOTeams));
 	}
 
 	/**

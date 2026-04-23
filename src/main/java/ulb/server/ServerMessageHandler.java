@@ -11,6 +11,7 @@ public interface ServerMessageHandler {
 	public void handle(SetUpTeamMessage message);
 	public void handle(SetUpNormalModeMessage message);
 	public void handle(SetUpTowerModeMessage message);
+	public void handle(SaveTeamMessage saveTeamMessage);
 
 	// GAME INFO
 	public void handle(GetPlayerMessage message);
@@ -42,6 +43,7 @@ public interface ServerMessageHandler {
 	public void handle(GetAllBugemonSpeciesMessage message);
 	public void handle(GetRandomAbilityMessage message);
 	public void handle(GetRandomItemMessage message);
+	public void handle(GetSavedTeamsMessage getSavedTeamsMessage);
 
 	// ACCOUNT
 	public void handle(GetUserIdFromNameMessage message);
@@ -56,5 +58,4 @@ public interface ServerMessageHandler {
 	// CHAT
 	public void handle(SendChatMessageMessage message);
 	public void handle(GetChatMessagesMessage message);
-
 }

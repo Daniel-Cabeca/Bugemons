@@ -32,12 +32,38 @@ public interface TeamRepository {
      */
     int getTeamId(String teamName, String username) throws LoadException;
 
+    /**
+     * Inserts a bugemon into the bugemons table
+     *
+     * @param bugemon the bugemon to insert
+     * @param username the name of the user who has the bugemon
+     * @throws LoadException if the operation fails
+     */
 	void insertUserBugemon(Bugemon bugemon, String username) throws LoadException;
-    // TO DO: getTeams
 
+    /**
+     * Finds a bugemon in the bugemons table based on its id
+     *
+     * @param id the id of the bugemon to find
+     * @return the constructed Bugemon object
+     * @throws NoSuchElementException if the bugemon is not found
+     */
 	Bugemon findBugemon(int id) throws NoSuchElementException;
 
+    /**
+     * Finds the team in the teams table based on its id
+     *
+     * @param id the id of the team to find
+     * @return the constructed Team object
+     * @throws NoSuchElementException if the team is not found
+     */
 	Team findById(int id) throws NoSuchElementException;
 
+    /**
+     * Finds all the teams belonging to a user
+     *
+     * @param username the name of the user whose teams are to be retrieved
+     * @return the list of Team objects
+     */
 	List<Team> findAll(String username);
 }

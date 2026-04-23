@@ -187,7 +187,7 @@ public class CreateTeamWindow extends Window {
 		if (!selectedBugemonIds.isEmpty() && selectedBugemonIds.size() <= MAX_BUGEMONS) {
 			viewListener.onConfirmTeam(selectedBugemonIds);
 		} else {
-			showAlert("confirmer");
+			showWrongBugemonNumberAlert("confirmer");
 		}
 	}
 
@@ -220,10 +220,16 @@ public class CreateTeamWindow extends Window {
 			);
 
 			Optional<String> result = dialog.showAndWait();
-			result.ifPresent(teamName -> viewListener.onSaveTeam(selectedBugemonIds, teamName));
+			result.ifPresent(teamName -> {
+				if (teamName.isBlank()) {
+					showInvalidSaveAlert("Tu dois donner un nom à ton équipe!");
+					return;
+				}
+				viewListener.onSaveTeam(selectedBugemonIds, teamName);
+			});
 
 		}  else {
-			showAlert("sauvegarder");
+			showWrongBugemonNumberAlert("sauvegarder");
 		}
 	}
 
@@ -232,13 +238,29 @@ public class CreateTeamWindow extends Window {
 	 *
      * @param action the action (confirm or save) that triggered the alert
      */
-	private void showAlert(String action) {
+	private void showWrongBugemonNumberAlert(String action) {
 		Stage owner = (Stage) content.getScene().getWindow();
 		Alert alert = new Alert(Alert.AlertType.ERROR);
 		alert.initOwner(owner);
 		alert.setTitle("Erreur");
 		alert.setHeaderText("Équipe invalide");
 		alert.setContentText("Tu dois sélectionner entre 1 et 6 Bugémons pour " + action.toLowerCase() + " ton équipe.");
+
+		alert.showAndWait();
+	}
+
+    /**
+	 * Shows an alert when the user tries to save a team with no name or with an already existing name
+	 *
+     * @param message the message to display in the alert
+     */
+	public void showInvalidSaveAlert(String message) {
+		Stage owner = (Stage) content.getScene().getWindow();
+		Alert alert = new Alert(Alert.AlertType.ERROR);
+		alert.initOwner(owner);
+		alert.setTitle("Erreur");
+		alert.setHeaderText("Sauvegarde impossible");
+		alert.setContentText(message);
 
 		alert.showAndWait();
 	}

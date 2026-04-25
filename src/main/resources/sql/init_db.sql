@@ -149,4 +149,11 @@ CREATE TABLE IF NOT EXISTS team_members (
                                      FOREIGN KEY (bugemon_id) REFERENCES bugemons(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS battle_requests (
+                                       sender_id   INTEGER NOT NULL,
+                                       receiver_id INTEGER NOT NULL,
 
+                                       PRIMARY KEY (sender_id, receiver_id),
+                                       FOREIGN KEY (sender_id)   REFERENCES users(id) ON DELETE CASCADE,
+                                       FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE
+);

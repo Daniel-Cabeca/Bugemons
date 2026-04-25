@@ -160,6 +160,31 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 		return postData(new RegisterMessage(player, true));
 	}
 
+	// Social Panel Controller
+
+	@Override
+	public boolean sendBattleRequest(String receiver) {
+
+		return postData(new SendBattleRequestMessage(player.getUserName(), receiver));
+	}
+
+	@Override
+	public List<String> getBattleRequests() {
+		if (getData(new GetBattleRequestsMessage(player.getUserName())) instanceof BattleRequestsMessage msg)
+			return msg.getRequests();
+		return List.of();
+	}
+
+	@Override
+	public boolean acceptBattleRequest(String sender) {
+		return postData(new AcceptBattleRequestMessage(player.getUserName(), sender));
+	}
+
+	@Override
+	public boolean declineBattleRequest(String sender) {
+		return postData(new DeclineBattleRequestMessage(player.getUserName(), sender));
+	}
+
 	/**
 	 * Sends a sign-up request for a player.
 	 *
@@ -170,14 +195,11 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 		return postData(new RegisterMessage(player, false));
 	}
 
-	// Social Panel Controller
-
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public boolean sendFriendRequest(String receiver) {
-
 		return postData(new SendFriendRequestMessage(player.getUserName(), receiver));
 	}
 

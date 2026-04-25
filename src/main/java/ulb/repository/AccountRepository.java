@@ -64,6 +64,11 @@ public interface AccountRepository {
 	 */
 	void sendFriendRequest(int senderId, int receiverId) throws LoadException;
 
+	void sendBattleRequest(int senderId, int receiverId) throws LoadException;
+	boolean hasPendingBattleRequestBetween(int userIdA, int userIdB) throws LoadException;
+	List<String> getPendingBattleRequests(int receiverId) throws LoadException;
+	void acceptBattleRequest(int senderId, int receiverId) throws LoadException;
+
 	/**
 	 * Gets the list of friend requests that have not been handled for a given player.
 	 *
@@ -71,7 +76,7 @@ public interface AccountRepository {
 	 * @return The list of the usernames of the pending friend requests
 	 * @throws LoadException If the operation fails
 	 */
-	List<String> getPendingRequests(int receiverId) throws LoadException;
+	List<String> getPendingFriendRequests(int receiverId) throws LoadException;
 
 	/**
 	 * Accept a friend request.
@@ -90,4 +95,6 @@ public interface AccountRepository {
 	 * @throws LoadException If the operation fails
 	 */
 	void declineFriendRequest(int senderId, int receiverId) throws LoadException;
+
+	void declineBattleRequest(int senderId, int receiverId) throws LoadException;
 }

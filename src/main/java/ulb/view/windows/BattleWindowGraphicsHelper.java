@@ -1,6 +1,8 @@
 package ulb.view.windows;
 
 import javafx.animation.PauseTransition;
+import javafx.animation.SequentialTransition;
+import javafx.animation.TranslateTransition;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
@@ -426,6 +428,22 @@ public class BattleWindowGraphicsHelper {
         }
         return result.toString();
     }
+
+	/**
+	 * Plays an animation when a Bugemon attacks
+	 * 
+	 * @param attacker the sprite of the Bugemon attacking
+	 * @param isPlayer true if the attacking Bugemon is the player's, false otherwise
+	 */
+	public void playAttackAnimation(ImageView attacker, boolean isPlayer) {
+		TranslateTransition attackAnimation = new TranslateTransition(javafx.util.Duration.seconds(0.3), attacker);
+		attackAnimation.setByX(isPlayer ? 200 : -200);
+		
+		TranslateTransition attackAnimationBack = new TranslateTransition(javafx.util.Duration.seconds(0.2), attacker);
+		attackAnimationBack.setByX(isPlayer ? -200 : 200);
+
+		new SequentialTransition(attackAnimation, attackAnimationBack).play();
+	}
 
     /**
      * Describes the visual state to apply during a battle phase.

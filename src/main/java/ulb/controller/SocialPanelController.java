@@ -61,9 +61,16 @@ public class SocialPanelController implements SocialPanel.ViewListener {
      * Decline a friend request.
      */
     @Override
-    public void onDecline(String sender) {
+    public void onDeclineFriend(String sender) {
         if (listener.declineFriendRequest(sender)) {
-            refreshRequests();
+            refreshFriendRequests();
+        }
+    }
+
+	@Override
+    public void onDeclineBattle(String sender) {
+        if (listener.declineBattleRequest(sender)) {
+            refreshBattleRequests();
         }
     }
 
@@ -71,9 +78,16 @@ public class SocialPanelController implements SocialPanel.ViewListener {
      * Accept a friend request.
      */
     @Override
-    public void onAccept(String sender) {
+    public void onAcceptFriend(String sender) {
         if (listener.acceptFriendRequest(sender)) {
-            refreshRequests();
+            refreshFriendRequests();
+        }
+    }
+
+	@Override
+    public void onAcceptBattle(String sender) {
+        if (listener.acceptBattleRequest(sender)) {
+            refreshBattleRequests();
         }
     }
 
@@ -109,8 +123,22 @@ public class SocialPanelController implements SocialPanel.ViewListener {
      * Open request tab and refreshes.
      */
     @Override
-    public void onRequestsOpened() {
-        refreshRequests();
+    public void onFriendRequestsOpened() {
+        refreshFriendRequests();
+    }
+
+	@Override
+    public void onBattleRequestsOpened() {
+        refreshBattleRequests();
+    }
+
+    @Override
+    public void onChallengeFriend(String friend) {
+        if (friend == null || friend.isBlank()) {
+            return;
+        }
+        boolean ok = listener.sendBattleRequest(friend);
+        view.setInviteStatus(ok ? "Défi envoyé !" : "Impossible d'envoyer le défi.");
     }
 
     /**
@@ -130,8 +158,12 @@ public class SocialPanelController implements SocialPanel.ViewListener {
         view.setFriendsList(listener.getFriendsList());
     }
 
-    private void refreshRequests() {
-        view.setRequests(listener.getFriendRequests());
+    private void refreshFriendRequests() {
+        view.setFriendRequests(listener.getFriendRequests());
+    }
+
+    private void refreshBattleRequests() {
+        view.setBattleRequests(listener.getBattleRequests());
     }
 
     /**
@@ -152,9 +184,13 @@ public class SocialPanelController implements SocialPanel.ViewListener {
     public interface Listener {
         boolean acceptFriendRequest(String sender);
         boolean declineFriendRequest(String sender);
+		boolean acceptBattleRequest(String sender);
+        boolean declineBattleRequest(String sender);
         boolean sendFriendRequest(String target);
+        boolean sendBattleRequest(String target);
         void sendChatMessage(String friend, String content);
         List<String> getFriendRequests();
+        List<String> getBattleRequests();
         String getPlayerName();
         List<ChatMessage> getChatMessages(String friend);
         List<String> getFriendsList();

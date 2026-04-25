@@ -151,6 +151,16 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 	}
 
 	/**
+	 * Sends a sign-up request for a player.
+	 *
+	 * @param player Player registration DTO
+	 * @return True if account creation succeeded
+	 */
+	public boolean signUp(PlayerDTO player){
+		return postData(new RegisterMessage(player, false));
+	}
+
+	/**
 	 * Sends a login request for a player.
 	 *
 	 * @param player Player credentials DTO
@@ -183,16 +193,6 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 	@Override
 	public boolean declineBattleRequest(String sender) {
 		return postData(new DeclineBattleRequestMessage(player.getUserName(), sender));
-	}
-
-	/**
-	 * Sends a sign-up request for a player.
-	 *
-	 * @param player Player registration DTO
-	 * @return True if account creation succeeded
-	 */
-	public boolean signUp(PlayerDTO player){
-		return postData(new RegisterMessage(player, false));
 	}
 
 	/**

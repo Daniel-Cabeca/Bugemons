@@ -165,15 +165,17 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	@Override
 	public void handle(RegisterMessage message){
 		boolean success;
-		this.player = PlayerMapper.toEntity(message.getPlayer(), this.itemService);
+		String username = message.getPlayer().getUserName();
+		String password = message.getPlayer().getPassword();
 
 		if (message.isLogin()) {
-			success = this.getAccountService().login(this.player.getName(), this.player.getPassword());
+			success = this.getAccountService().login(username, password);
 		}
 		else {
-			success = this.getAccountService().register(this.player.getName(), this.player.getPassword());
+			success = this.getAccountService().register(username, password);
 		}
 		if (success) {
+			this.player = PlayerMapper.toEntity(message.getPlayer(), message.isLogin(), this.itemService, this.inventoryService);
 			sendSuccessMessage();
 		}
 		else {
@@ -243,7 +245,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	// GAME INFO
 
 	public void handle(GetPlayerMessage message) {
-		if (message.getUsername().equals(this.player.getName())){
+		if (message.getUsername().equals(this.player.getUsername())){
 			PlayerDTO playerDTO = PlayerMapper.toDTO(this.player);
 			sendMessage(new PlayerMessage(playerDTO));
 		}
@@ -254,10 +256,10 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	}
 
 	public void handle(GetPlayerInventory message) {
-		if (message.getUserName().equals(this.player.getName())){
+		if (message.getUserName().equals(this.player.getUsername())){
 			Inventory inventory = this.player.getInventory();
 			Map<ItemDTO, Integer> inventoryDTO = new HashMap<>();
-
+			
 			for (Map.Entry<Item, Integer> e : inventory.getItems().entrySet()) {
 				inventoryDTO.put(ItemMapper.toDTO(e.getKey()), e.getValue());
 			}
@@ -282,9 +284,9 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	public void handle(GetLogsMessage message){
 		int selfHpAfterFirstAction = this.battle.getHpAfterFirstActionSelf(teamLabel);
 		int opponentHpAfterFirstAction = this.battle.getHpAfterFirstActionOpponent(teamLabel);
-
+		
 		List<String> logs = new ArrayList<String>(this.battle.getLogMsg());
-
+		
 		if (message.clearLogs()){
 			this.battle.clearLogMsg();
 		}
@@ -308,7 +310,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	public void handle(GetAbilityEffectivenessMessage message){
 		Map<AbilityDTO, String> effectiveness = new HashMap<AbilityDTO, String>();
 		Bugemon bugemonTarget = BugemonMapper.toEntity(message.getBugemonTarget());
-
+		
 		for (AbilityDTO abilityDTO : message.getAbilities()){
 			Ability ability = AbilityMapper.toEntity(abilityDTO);
 			String effectivenessMessage = ability.getEffectivenessMessage(bugemonTarget);
@@ -325,8 +327,8 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 			return;
 		}
 		Bugemon selfActive = this.battle.getActiveBugemon(teamLabel);
-		Bugemon opponentActive = this.battle.getActiveBugemon(this.battle.getOpponentTeamLabel(teamLabel));
-
+		Bugemon opponentActive = this.battle.getActiveBugemon(this.battle.getOpponentTeamLabel(teamLabel)); 
+		
 		sendMessage(new ActiveBugemonsMessage(BugemonMapper.toDTO(selfActive), BugemonMapper.toDTO(opponentActive)));
 	}
 
@@ -508,6 +510,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	public void handle(UseItemMessage message){
 		Item item = ItemMapper.toEntity(message.getItem());
 		this.battle.chooseAction(new UseItem(item), teamLabel);
+		this.inventoryService.deleteItem(item, 1, player.getUsername());
 		sendSuccessMessage();
 	}
 
@@ -539,6 +542,8 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	public void handle(ChooseItemRewardMessage message){
 		Item item = ItemMapper.toEntity(message.getItem());
 		player.getInventory().addItem(item, 1);
+
+		this.inventoryService.insertItem(item, 1, player.getUsername());
 
 		towerManager.getCurrentRoomManager().setRoomCompleted(true);
 
@@ -598,7 +603,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		clearPendingLevelUpState();
 		sendSuccessMessage();
 	}
-
+	
 	// SPECIAL INFO
 
 	@Override
@@ -748,17 +753,17 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		TeamService teamService = this.getTeamService();
 
 		try {
-			if (teamService.teamExists(team.getTeamName(), player.getName())) {
+			if (teamService.teamExists(team.getTeamName(), player.getUsername())) {
 				sendErrorMessage("A team with this name already exists.");
 				return;
 			}
 
 			// inserts the member bugemons in bugemons so they can be referenced in team_members
 			for (Bugemon b : team.getMembers()) {
-				teamService.insertUserBugemon(b, player.getName());
+				teamService.insertUserBugemon(b, player.getUsername());
 			}
 
-			teamService.insertTeam(player.getName(), team);
+			teamService.insertTeam(player.getUsername(), team);
 			teamService.insertAllBugemonsInTeam(team, team.getId());
 			sendSuccessMessage();
 
@@ -773,7 +778,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
 		List<TeamDTO> DTOTeams = new ArrayList<>();
 
-		for (Team team : teamService.getAllTeams(player.getName())){
+		for (Team team : teamService.getAllTeams(player.getUsername())){
 			DTOTeams.add(TeamMapper.toDTO(team));
 		}
 		this.sendMessage(new SavedTeamsMessage(DTOTeams));
@@ -784,11 +789,11 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	 */
     private void handleMessage(){
         ClientToServerMessage message = receiveMessage();
-
+        
         if (message == null){
             return;
-        }
-
+        } 
+		
 		message.dispatch(this);
     }
 }

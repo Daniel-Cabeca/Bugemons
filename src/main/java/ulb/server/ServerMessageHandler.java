@@ -38,6 +38,7 @@ public interface ServerMessageHandler {
 	public void handle(ChooseItemRewardMessage message);
 	public void handle(ChooseStatRewardMessage message);
 	public void handle(ChooseLevelUpRewardMessage message);
+	public void handle(UpdateInventory message);
 	
 	// SPECIAL INFO
 	public void handle(GetAllBugemonSpeciesMessage message);

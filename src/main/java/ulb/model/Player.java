@@ -2,13 +2,14 @@ package ulb.model;
 
 import ulb.model.team.Team;
 import ulb.model.item.Inventory;
+import ulb.service.InventoryService;
 import ulb.service.ItemService;
 
 /**
  * Represents a player with credentials, team, and inventory.
  */
 public class Player {
-	private String userName;
+	private String username;
 	private String password;
 	private Team team;
 	private Inventory inventory;
@@ -27,11 +28,11 @@ public class Player {
 	/**
 	 * Creates a player with default password.
 	 *
-	 * @param name Player name
+	 * @param username Player name
 	 * @param itemService Item service for starter inventory
 	 */
-	public Player(String name, ItemService itemService) {
-		this.userName = name;
+	public Player(String username, ItemService itemService) {
+		this.username = username;
 		this.password = "password";
 		this.team = new Team();
 		this.inventory = new Inventory();
@@ -42,50 +43,50 @@ public class Player {
 	/**
 	 * Creates a player with explicit credentials.
 	 *
-	 * @param name Player name
+	 * @param username Player name
 	 * @param password Player password
 	 * @param itemService Item service for starter inventory
 	 */
-	public Player(String name, String password, ItemService itemService) {
-		this.userName = name;
+	public Player(String username, String password, ItemService itemService, InventoryService inventoryService) {
+		this.username = username;
 		this.password = password;
 		this.team = new Team();
 		this.inventory = new Inventory();
 
 		addDefaultItems(itemService);
+		inventoryService.insertInventory(this.inventory, username);
 	}
 
 	/**
 	 * Creates a player from fully specified state.
 	 *
-	 * @param name Player name
+	 * @param username Player name
 	 * @param password Player password
-	 * @param team Player team
 	 * @param inventory Player inventory
 	 */
-	public Player(String name, String password, Team team, Inventory inventory) {
-		this.userName = name;
+	public Player(String username, String password, Inventory inventory) {
+		this.username = username;
 		this.password = password;
-		this.team = team;
+		this.team = new Team();
 		this.inventory = inventory;
 	}
 
-	/**
-	 * Creates a player with default password and provided state.
-	 *
-	 * @param name Player name
-	 * @param team Player team
-	 * @param inventory Player inventory
-	 */
-	public Player(String name, Team team, Inventory inventory) {
-		this.userName = name;
-		this.password = "password";
-		this.team = team;
-		this.inventory = inventory;
-	}
+	// /**
+	//  * Creates a player with default password and provided state.
+	//  *
+	//  * @param name Player name
+	//  * @param team Player team
+	//  * @param inventory Player inventory
+	//  */
+	// public Player(String name, Team team, Inventory inventory) {
+	// 	this.userName = name;
+	// 	this.password = "password";
+	// 	this.team = team;
+	// 	this.inventory = inventory;
+	// }
 
 	/** Returns player username. */
-	public final String getName() {return this.userName;}
+	public final String getUsername() {return this.username;}
 	/** Returns player password. */
 	public final String getPassword() {return this.password;}
 	/** Returns player team. */
@@ -93,7 +94,7 @@ public class Player {
 	/** Returns player inventory. */
 	public Inventory getInventory() {return this.inventory;}
 	/** Sets player username. */
-	public void setName(String name) {this.userName = name;}
+	public void setUsername(String username) {this.username = username;}
 	/** Sets player team. */
 	public void setTeam(Team team) {this.team = team;}
 

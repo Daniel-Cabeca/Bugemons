@@ -165,13 +165,13 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	@Override
 	public void handle(RegisterMessage message){
 		boolean success;
-		this.player = PlayerMapper.toEntity(message.getPlayer(), this.itemService);
+		this.player = PlayerMapper.toEntity(message.getPlayer(), message.isLogin(), this.itemService, this.inventoryService);
 
 		if (message.isLogin()) {
-			success = this.getAccountService().login(this.player.getName(), this.player.getPassword());
+			success = this.getAccountService().login(this.player.getUsername(), this.player.getPassword());
 		}
 		else {
-			success = this.getAccountService().register(this.player.getName(), this.player.getPassword());
+			success = this.getAccountService().register(this.player.getUsername(), this.player.getPassword());
 		}
 		if (success) {
 			sendSuccessMessage();
@@ -186,7 +186,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		Team team = new Team();
 
 		for (BugemonDTO bugemonDTO : message.getTeam()){
-			this.teamService.insertUserBugemon(BugemonMapper.toEntity(bugemonDTO), player.getName());
+			this.teamService.insertUserBugemon(BugemonMapper.toEntity(bugemonDTO), player.getUsername());
 			if (!team.add(BugemonMapper.toEntity(bugemonDTO))){
 				sendErrorMessage("Invalid Team");
 			}
@@ -244,7 +244,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	// GAME INFO
 
 	public void handle(GetPlayerMessage message) {
-		if (message.getUsername().equals(this.player.getName())){
+		if (message.getUsername().equals(this.player.getUsername())){
 			PlayerDTO playerDTO = PlayerMapper.toDTO(this.player);
 			sendMessage(new PlayerMessage(playerDTO));
 		}
@@ -255,7 +255,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	}
 
 	public void handle(GetPlayerInventory message) {
-		if (message.getUserName().equals(this.player.getName())){
+		if (message.getUserName().equals(this.player.getUsername())){
 			Inventory inventory = this.player.getInventory();
 			Map<ItemDTO, Integer> inventoryDTO = new HashMap<>();
 			
@@ -509,6 +509,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	public void handle(UseItemMessage message){
 		Item item = ItemMapper.toEntity(message.getItem());
 		this.battle.chooseAction(new UseItem(item), teamLabel);
+		this.inventoryService.deleteItem(item, 1, player.getUsername());
 		sendSuccessMessage();
 	}
 
@@ -540,6 +541,8 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	public void handle(ChooseItemRewardMessage message){
 		Item item = ItemMapper.toEntity(message.getItem());
 		player.getInventory().addItem(item, 1);
+
+		this.inventoryService.insertItem(item, 1, player.getUsername());
 
 		towerManager.getCurrentRoomManager().setRoomCompleted(true);
 
@@ -597,6 +600,23 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		}
 
 		clearPendingLevelUpState();
+		sendSuccessMessage();
+	}
+
+	@Override
+	public void handle(UpdateInventory message) {
+		boolean isAddAction = message.isAdd();
+		Item item = ItemMapper.toEntity(message.getItem());
+		String username = message.getUsername();
+		int quantity = message.getQuantity();
+
+		if (isAddAction) {
+			this.inventoryService.insertItem(item, quantity, username);
+		}
+		else {
+			this.inventoryService.deleteItem(item, quantity, username);
+		}
+
 		sendSuccessMessage();
 	}
 	
@@ -749,7 +769,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
 		try {
 			// checks if a team with the same name already exists
-			int existingId = this.teamService.getTeamId(teamDTO.getTeamName(), player.getName());
+			int existingId = this.teamService.getTeamId(teamDTO.getTeamName(), player.getUsername());
 			if (existingId != -1) {
 				sendErrorMessage("A team with this name already exists.");
 				return;
@@ -757,11 +777,11 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
 			// inserts the member bugemons in bugemons so they can be referenced in team_members
 			for (Bugemon b : team.getMembers()) {
-				this.teamService.insertUserBugemon(b, player.getName());
+				this.teamService.insertUserBugemon(b, player.getUsername());
 			}
 
-			this.teamService.insertTeam(player.getName(), teamDTO.getTeamName());
-			int teamId = this.teamService.getTeamId(teamDTO.getTeamName(), player.getName());
+			this.teamService.insertTeam(player.getUsername(), teamDTO.getTeamName());
+			int teamId = this.teamService.getTeamId(teamDTO.getTeamName(), player.getUsername());
 
 			if (teamId == -1) {
 				sendErrorMessage("Failed to retrieve team ID after insertion.");
@@ -782,7 +802,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
 		List<TeamDTO> DTOTeams = new ArrayList<>();
 
-		for (Team team : teamService.getAllTeams(player.getName())){
+		for (Team team : teamService.getAllTeams(player.getUsername())){
 			DTOTeams.add(TeamMapper.toDTO(team));
 		}
 		this.sendMessage(new SavedTeamsMessage(DTOTeams));

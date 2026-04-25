@@ -25,10 +25,11 @@ public class TeamDatabaseRepositoryTest {
         TeamDatabaseRepository repository = new TeamDatabaseRepository(database);
         insertUser(database, "player");
 
-        repository.insertTeam("player", "Team_Alpha");
+        Team team = new Team();
+        team.setTeamName("Team_Alpha");
+        repository.insertTeam("player", team);
 
-        int id = repository.getTeamId("Team_Alpha", "player");
-        Team obtained = repository.findById(id);
+        Team obtained = repository.findById(team.getId());
 
         assertEquals("Team_Alpha", obtained.getTeamName());
     }
@@ -40,8 +41,11 @@ public class TeamDatabaseRepositoryTest {
         databaseInitializer.createTables();
         TeamDatabaseRepository repository = new TeamDatabaseRepository(database);
         insertUser(database, "player");
+        Team team = new Team();
+        team.setTeamName("Team_Alpha");
+
         assertThrows(Exception.class,
-                () -> repository.insertTeam("ghost", "TeamAlpha"));
+                () -> repository.insertTeam("ghost", team));
     }
 
 	@Test
@@ -54,8 +58,14 @@ public class TeamDatabaseRepositoryTest {
 		TeamDatabaseRepository repository = new TeamDatabaseRepository(database);
 
 		insertUser(database,  "player");
-		repository.insertTeam("player", "Team_Alpha");
-		repository.insertTeam("player", "Team_Beta");
+
+        Team teamA = new Team();
+        teamA.setTeamName("Team_Alpha");
+        Team teamB = new Team();
+        teamB.setTeamName("Team_Beta");
+
+		repository.insertTeam("player", teamA);
+		repository.insertTeam("player", teamB);
 
 		List<Team> obtained = repository.findAll("player");
 
@@ -74,8 +84,15 @@ public class TeamDatabaseRepositoryTest {
         TeamDatabaseRepository repository = new TeamDatabaseRepository(database);
 
         insertUser(database, "player");
-        repository.insertTeam("player", "Team_Alpha");
-        repository.insertTeam("player", "Team_Beta");
+
+        Team teamA = new Team();
+        teamA.setTeamName("Team_Alpha");
+        Team teamB = new Team();
+        teamB.setTeamName("Team_Beta");
+
+        repository.insertTeam("player", teamA);
+        repository.insertTeam("player", teamB);
+
 
         List<Team> obtained = repository.findAll("player");
 
@@ -95,9 +112,16 @@ public class TeamDatabaseRepositoryTest {
         insertUser(database,  "player");
         insertUser(database,  "player2");
 
-        repository.insertTeam("player", "Team_Alpha");
-        repository.insertTeam("player", "Team_Beta");
-        repository.insertTeam("player2", "Team_Alpha");
+        Team teamA = new Team();
+        teamA.setTeamName("Team_Alpha");
+        Team teamB = new Team();
+        teamB.setTeamName("Team_Beta");
+        Team teamC = new Team();
+        teamC.setTeamName("Team_Alpha");
+
+        repository.insertTeam("player", teamA);
+        repository.insertTeam("player", teamB);
+        repository.insertTeam("player2", teamC);
 
         assertEquals(2, repository.findAll("player").size());
     }

@@ -8,6 +8,7 @@ import ulb.model.bugemon.Bugemon;
 public class Team {
     public static final int MAX_PARTY_SIZE = 6;
 
+    private int id;
     private List<Bugemon> members;
     private String teamName;
 
@@ -34,6 +35,10 @@ public class Team {
     public List<Bugemon> getMembers() {
         return this.members;
     }
+
+    public int getId() { return this.id; }
+
+    public void setId(int id) { this.id = id; }
 
     public int size() {
         return this.members.size();

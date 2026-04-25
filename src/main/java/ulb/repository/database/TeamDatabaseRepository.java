@@ -27,12 +27,18 @@ public class TeamDatabaseRepository implements TeamRepository {
      * {@inheritDoc}
      */
     @Override
-    public void insertTeam(String username, String teamName) throws LoadException {
+    public void insertTeam(String username, Team team) throws LoadException {
         String sql = "INSERT INTO teams (user_id, team_name) VALUES ((SELECT id FROM users WHERE username = ?), ?)";
         try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
             stmt.setString(1, username);
-            stmt.setString(2, teamName);
+            stmt.setString(2, team.getTeamName());
             stmt.executeUpdate();
+
+			try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+				if (generatedKeys.next()) {
+					team.setId(generatedKeys.getInt(1));
+				}
+			}
         } catch (SQLException e) {
             throw new LoadException("Failed to insert team: " + e.getMessage());
         }
@@ -50,22 +56,6 @@ public class TeamDatabaseRepository implements TeamRepository {
             stmt.executeUpdate();
         } catch (SQLException e) {
             throw new LoadException("Failed to insert bugemons in team: " + e.getMessage());
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public int getTeamId(String teamName, String username) throws LoadException {
-        String sql = "SELECT team_id FROM teams WHERE team_name = ? AND user_id = (SELECT id FROM users WHERE username = ?)";
-        try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
-            stmt.setString(1, teamName);
-            stmt.setString(2, username);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) return rs.getInt("team_id");
-            return -1;
-        } catch (SQLException e) {
-            throw new LoadException("Failed to fetch team id: " + e.getMessage());
         }
     }
 
@@ -190,6 +180,7 @@ public class TeamDatabaseRepository implements TeamRepository {
 
 		Team team = new Team(bugemons);
 		team.setTeamName(teamName);
+		team.setId(id);
 		return team;
 	}
 
@@ -223,5 +214,23 @@ public class TeamDatabaseRepository implements TeamRepository {
 		}
 
 		return teams;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean teamExists(String teamName, String username) throws LoadException {
+		String sql = "SELECT 1 FROM teams WHERE team_name = ? AND user_id = (SELECT id FROM users WHERE username = ?)";
+
+		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
+			stmt.setString(1, teamName);
+			stmt.setString(2, username);
+			ResultSet rs = stmt.executeQuery();
+			return rs.next();
+
+		} catch (SQLException e) {
+			throw new LoadException("Failed to check team existence: " + e.getMessage());
+		}
 	}
 }

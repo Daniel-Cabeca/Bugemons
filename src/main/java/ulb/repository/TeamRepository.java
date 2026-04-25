@@ -10,10 +10,10 @@ public interface TeamRepository {
 
     /**
      * Saves the team in the database
-     * @param teamName the team's to be saved name
+     * @param team the team to be saved
      * @throws LoadException if the operation fails
      */
-    void insertTeam(String username, String teamName) throws LoadException;
+    void insertTeam(String username, Team team) throws LoadException;
 
     /**
      * Inserts a bugemon in the team into the database
@@ -23,14 +23,16 @@ public interface TeamRepository {
      */
     void insertBugemonInTeam(Bugemon bugemon, int teamId) throws LoadException;
 
+
     /**
-     * Gets the team id
+     * Checks if the user already has a team with the same name
+     *
      * @param teamName the name of the team
-     * @param username the username of the user who saved the team
-     * @return the id of the team
+     * @param username the name of the user
+     * @return true if the team name already exists, false otherwise
      * @throws LoadException if the operation fails
      */
-    int getTeamId(String teamName, String username) throws LoadException;
+    boolean teamExists(String teamName, String username) throws LoadException;
 
     /**
      * Inserts a bugemon into the bugemons table

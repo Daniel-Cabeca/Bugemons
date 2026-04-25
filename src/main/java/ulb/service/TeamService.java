@@ -26,11 +26,11 @@ public class TeamService {
     /**
      * Saves a new team
      * @param username the name of the user who saves the team
-     * @param teamName the name of the team to be saved
+     * @param team the team to be saved
      * @throws LoadException if the saving fails
      */
-    public void insertTeam(String username, String teamName) throws LoadException {
-        repository.insertTeam(username, teamName);
+    public void insertTeam(String username, Team team) throws LoadException {
+        repository.insertTeam(username, team);
     }
 
     /**
@@ -45,20 +45,35 @@ public class TeamService {
         }
     }
 
-    public int getTeamId(String teamName, String username) throws LoadException {
-        return repository.getTeamId(teamName, username);
+    /**
+     * Checks if a team with the same name for the same user already exists in the database
+     *
+     * @param teamName the name of the team
+     * @param username the name of the user
+     * @return true if a team with the same name already exists, false otherwise
+     * @throws LoadException if the operation fails
+     */
+    public boolean teamExists(String teamName, String username) throws LoadException {
+        return repository.teamExists(teamName, username);
     }
 
+    /**
+     * Inserts a user-specific bugemon in the database
+     *
+     * @param bugemon the bugemon to insert
+     * @param username the user's name
+     */
 	public void insertUserBugemon(Bugemon bugemon, String username){
 		repository.insertUserBugemon(bugemon, username);
 	}
 
+    /**
+     * Returns a list of all the teams belonging to a user
+     *
+     * @param username the user's name
+     * @return the list of the user's saved teams
+     */
 	public List<Team> getAllTeams(String username) {
 		return repository.findAll(username);
-	}
-
-	public Team getTeam(String teamName, String username) {
-		int teamId = repository.getTeamId(teamName, username);
-		return repository.findById(teamId);
 	}
 }

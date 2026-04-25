@@ -186,7 +186,6 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		Team team = new Team();
 
 		for (BugemonDTO bugemonDTO : message.getTeam()){
-			this.teamService.insertUserBugemon(BugemonMapper.toEntity(bugemonDTO), player.getName());
 			if (!team.add(BugemonMapper.toEntity(bugemonDTO))){
 				sendErrorMessage("Invalid Team");
 			}
@@ -251,14 +250,14 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		else{
 			sendErrorMessage("Wrong Username");
 		}
-		
+
 	}
 
 	public void handle(GetPlayerInventory message) {
 		if (message.getUserName().equals(this.player.getName())){
 			Inventory inventory = this.player.getInventory();
 			Map<ItemDTO, Integer> inventoryDTO = new HashMap<>();
-			
+
 			for (Map.Entry<Item, Integer> e : inventory.getItems().entrySet()) {
 				inventoryDTO.put(ItemMapper.toDTO(e.getKey()), e.getValue());
 			}
@@ -283,9 +282,9 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	public void handle(GetLogsMessage message){
 		int selfHpAfterFirstAction = this.battle.getHpAfterFirstActionSelf(teamLabel);
 		int opponentHpAfterFirstAction = this.battle.getHpAfterFirstActionOpponent(teamLabel);
-		
+
 		List<String> logs = new ArrayList<String>(this.battle.getLogMsg());
-		
+
 		if (message.clearLogs()){
 			this.battle.clearLogMsg();
 		}
@@ -309,7 +308,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	public void handle(GetAbilityEffectivenessMessage message){
 		Map<AbilityDTO, String> effectiveness = new HashMap<AbilityDTO, String>();
 		Bugemon bugemonTarget = BugemonMapper.toEntity(message.getBugemonTarget());
-		
+
 		for (AbilityDTO abilityDTO : message.getAbilities()){
 			Ability ability = AbilityMapper.toEntity(abilityDTO);
 			String effectivenessMessage = ability.getEffectivenessMessage(bugemonTarget);
@@ -326,8 +325,8 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 			return;
 		}
 		Bugemon selfActive = this.battle.getActiveBugemon(teamLabel);
-		Bugemon opponentActive = this.battle.getActiveBugemon(this.battle.getOpponentTeamLabel(teamLabel)); 
-		
+		Bugemon opponentActive = this.battle.getActiveBugemon(this.battle.getOpponentTeamLabel(teamLabel));
+
 		sendMessage(new ActiveBugemonsMessage(BugemonMapper.toDTO(selfActive), BugemonMapper.toDTO(opponentActive)));
 	}
 
@@ -599,7 +598,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		clearPendingLevelUpState();
 		sendSuccessMessage();
 	}
-	
+
 	// SPECIAL INFO
 
 	@Override
@@ -746,29 +745,21 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	public void handle(SaveTeamMessage message) {
 		TeamDTO teamDTO = message.getTeam();
 		Team team = TeamMapper.toEntity(teamDTO);
+		TeamService teamService = this.getTeamService();
 
 		try {
-			// checks if a team with the same name already exists
-			int existingId = this.teamService.getTeamId(teamDTO.getTeamName(), player.getName());
-			if (existingId != -1) {
+			if (teamService.teamExists(team.getTeamName(), player.getName())) {
 				sendErrorMessage("A team with this name already exists.");
 				return;
 			}
 
 			// inserts the member bugemons in bugemons so they can be referenced in team_members
 			for (Bugemon b : team.getMembers()) {
-				this.teamService.insertUserBugemon(b, player.getName());
+				teamService.insertUserBugemon(b, player.getName());
 			}
 
-			this.teamService.insertTeam(player.getName(), teamDTO.getTeamName());
-			int teamId = this.teamService.getTeamId(teamDTO.getTeamName(), player.getName());
-
-			if (teamId == -1) {
-				sendErrorMessage("Failed to retrieve team ID after insertion.");
-				return;
-			}
-
-			this.teamService.insertAllBugemonsInTeam(team, teamId);
+			teamService.insertTeam(player.getName(), team);
+			teamService.insertAllBugemonsInTeam(team, team.getId());
 			sendSuccessMessage();
 
 		} catch (LoadException e) {
@@ -793,11 +784,11 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	 */
     private void handleMessage(){
         ClientToServerMessage message = receiveMessage();
-        
+
         if (message == null){
             return;
-        } 
-		
+        }
+
 		message.dispatch(this);
     }
 }

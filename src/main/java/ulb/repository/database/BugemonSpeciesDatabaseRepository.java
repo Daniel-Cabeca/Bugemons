@@ -138,7 +138,6 @@ public class BugemonSpeciesDatabaseRepository implements BugemonSpeciesRepositor
 				String abilityId = rs.getString("ability_id");
 				if (abilityId != null && index < 3) {
 					try {
-						// On récupère l'objet Ability complet via son propre repo
 						abilities.setAbility(index,abilityRepo.findById(abilityId));
 						index++;
 					} catch (NoSuchElementException e) {

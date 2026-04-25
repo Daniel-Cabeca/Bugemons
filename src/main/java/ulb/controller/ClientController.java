@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import ulb.DTO.bugemon.BugemonSpeciesDTO;
+import ulb.DTO.team.TeamDTO;
 import ulb.communication.SocketClient;
 import ulb.communication.GameMode;
 import ulb.message.ClientToServerMessage;
@@ -33,8 +34,9 @@ import ulb.repository.LoadException;
 public class ClientController extends Application implements RegisterController.Listener, ModeController.Listener,
 BattleModeController.Listener,BattleEndController.Listener, BattleWindowController.Listener, NextRoomController.Listener, 
 FloorRewardController.Listener, AttackReplacementController.Listener, TeamController.Listener, LevelUpController.Listener,
-SocialPanelController.Listener {
-    SocketClient client;
+SocialPanelController.Listener, LoadTeamPanelController.Listener {
+
+	SocketClient client;
     Stage stage;
 
 	PlayerDTO player;
@@ -158,6 +160,31 @@ SocialPanelController.Listener {
 		return postData(new RegisterMessage(player, true));
 	}
 
+	// Social Panel Controller
+
+	@Override
+	public boolean sendBattleRequest(String receiver) {
+
+		return postData(new SendBattleRequestMessage(player.getUserName(), receiver));
+	}
+
+	@Override
+	public List<String> getBattleRequests() {
+		if (getData(new GetBattleRequestsMessage(player.getUserName())) instanceof BattleRequestsMessage msg)
+			return msg.getRequests();
+		return List.of();
+	}
+
+	@Override
+	public boolean acceptBattleRequest(String sender) {
+		return postData(new AcceptBattleRequestMessage(player.getUserName(), sender));
+	}
+
+	@Override
+	public boolean declineBattleRequest(String sender) {
+		return postData(new DeclineBattleRequestMessage(player.getUserName(), sender));
+	}
+
 	/**
 	 * Sends a sign-up request for a player.
 	 *
@@ -168,14 +195,11 @@ SocialPanelController.Listener {
 		return postData(new RegisterMessage(player, false));
 	}
 
-	// Social Panel Controller
-
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public boolean sendFriendRequest(String receiver) {
-
 		return postData(new SendFriendRequestMessage(player.getUserName(), receiver));
 	}
 
@@ -350,7 +374,6 @@ SocialPanelController.Listener {
 
 	// Team Controller Listener :
 
-
 	/**
 	 * {@inheritDoc}
 	 */
@@ -376,25 +399,82 @@ SocialPanelController.Listener {
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onTeamConfirmed() {
+    /**
+     * Sends the player's team to the server and switches to the battle mode window
+     */
+	private void setupTeamAndShowModeMenu() {
 		List<BugemonDTO> team = player.getTeam();
 
 		if (!this.postData(new SetUpTeamMessage(team))){
 			return;
 		}
 
-
-		this.battleModeController = new BattleModeController(this.stage, this, player.getTeam());
+		this.battleModeController = new BattleModeController(this.stage, this, team);
 		try {
 			battleModeController.show();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void onTeamConfirmed() {
+		setupTeamAndShowModeMenu();
+	}
+
+	/**
+	 * Shows the Load team panel when the load a team button is clicked in create team window
+	 */
+	@Override
+	public void onLoadTeam() {
+		try {
+			LoadTeamPanelController loadTeamPanelController = new LoadTeamPanelController(stage, this);
+			loadTeamPanelController.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Returns the player's saved teams from the database
+	 *
+	 * @return the player's saved teams
+	 */
+	@Override
+	public List<TeamDTO> getSavedTeams() {
+		Serializable message = this.getData(new GetSavedTeamsMessage());
+
+		if (message instanceof SavedTeamsMessage teamsMessage){
+			return teamsMessage.getTeams();
+		}
+		return null;
+	}
+
+	/**
+	 * Saves the team to the database
+	 * @param teamDTO the DTO of the team to be saved
+	 */
+	@Override
+	public void onTeamSaved(TeamDTO teamDTO) {
+		boolean success = postData(new SaveTeamMessage(teamDTO));
+		if (!success) {
+			teamController.getView().showInvalidSaveAlert("Tu as déjà une équipe avec ce nom!");
+		}
+	}
+
+	/**
+	 * Loads the selected team from the load team panel
+	 * @param selectedTeam the selected team
+	 */
+	@Override
+	public void onTeamLoaded(TeamDTO selectedTeam) {
+		player.setTeam(selectedTeam.getMembers());
+		setupTeamAndShowModeMenu();
+	}
+
 
 	// BattleEndController
 
@@ -599,7 +679,7 @@ SocialPanelController.Listener {
 
 	/**
 	 * Updates the inventory of the player.
-	 * @param String the userName of the player used to confirm the player identity on the server side
+	 * @param userName the userName of the player used to confirm the player identity on the server side
 	 */
 	@Override
 	public void updatePlayerInventory(String userName){

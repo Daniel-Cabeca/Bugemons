@@ -70,8 +70,8 @@ public class AccountService {
 		repository.sendFriendRequest(senderId, receiverId);
 	}
 
-	public List<String> getPendingRequests(int receiverId) throws LoadException {
-		return repository.getPendingRequests(receiverId);
+	public List<String> getPendingFriendRequests(int receiverId) throws LoadException {
+		return repository.getPendingFriendRequests(receiverId);
 	}
 
 	public void acceptFriendRequest(int senderId, int receiverId) throws LoadException {
@@ -80,5 +80,25 @@ public class AccountService {
 
 	public void declineFriendRequest(int senderId, int receiverId) throws LoadException {
 		repository.declineFriendRequest(senderId, receiverId);
+	}
+
+	public void sendBattleRequest(int senderId, int receiverId) throws LoadException {
+		repository.sendBattleRequest(senderId, receiverId);
+	}
+
+	public boolean hasPendingBattleRequestBetween(int userIdA, int userIdB) throws LoadException {
+		return repository.hasPendingBattleRequestBetween(userIdA, userIdB);
+	}
+
+	public List<String> getPendingBattleRequests(int receiverId) throws LoadException {
+		return repository.getPendingBattleRequests(receiverId);
+	}
+
+	public void acceptBattleRequest(int senderId, int receiverId) throws LoadException {
+		repository.acceptBattleRequest(senderId, receiverId);
+	}
+
+	public void declineBattleRequest(int senderId, int receiverId) throws LoadException {
+		repository.declineBattleRequest(senderId, receiverId);
 	}
 }

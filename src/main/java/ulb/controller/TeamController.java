@@ -7,8 +7,10 @@ import javafx.stage.Stage;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.DTO.player.PlayerDTO;
+import ulb.DTO.team.TeamDTO;
 import ulb.view.WindowPath;
 import ulb.view.windows.CreateTeamWindow;
+import ulb.view.windows.RegisterWindow;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +32,8 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 		this.player = player;
 	}
 
+	public CreateTeamWindow getView(){return this.view;}
+
 	/**
 	 * Displays the create team screen.
 	 *
@@ -40,7 +44,7 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 		loader.load();
 		view = loader.getController();
 		view.setViewListener(this);
-		view.displayAvailableBugemons(listener.getAllSpecies());
+		view.populateAvailableBugemons();
 
 		Parent root = loader.getRoot();
 		if (stage.getScene() == null) {
@@ -56,16 +60,8 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 	 * Creates a new Team for the player and adds his selected bugémons.
 	 */
 	public void setTeam(List<String> selectedBugemonIds) {
-		List<BugemonDTO> teamABugemons = new ArrayList<BugemonDTO>();
-		List<BugemonSpeciesDTO> allSpecies = this.getAllSpecies();
-		for (String bugemonId : selectedBugemonIds) {
-			for (BugemonSpeciesDTO species : allSpecies){
-				if (bugemonId.equals(species.getId())){
-					teamABugemons.add(new BugemonDTO(species));
-				}
-			}
-		}
-		player.setTeam(teamABugemons);
+		List<BugemonDTO> members = setupTeamMembers(selectedBugemonIds);
+		player.setTeam(members);
 	}
 
 	/**
@@ -87,6 +83,46 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 		listener.onReturnToMode();
 	}
 
+	/**
+	 * Handles team loading by opening the load team panel
+	 */
+	@Override
+	public void onLoadTeam() {
+		listener.onLoadTeam();
+	}
+
+
+    /**
+	 * Handles saving the team to the database
+     * @param selectedBugemonIds the list of the ids of the team members
+     * @param teamName the name of the team
+     */
+	@Override
+	public void onSaveTeam(List<String> selectedBugemonIds, String teamName) {
+		List<BugemonDTO> members = setupTeamMembers(selectedBugemonIds);
+		TeamDTO team = new TeamDTO(teamName, members);
+		listener.onTeamSaved(team);
+	}
+
+    /**
+	 * Transforms the list of bugemon ids to a list of BugemonDTO objects
+	 *
+     * @param selectedBugemonIds the list of bugemon ids
+     * @return the list of BugemonDTO
+     */
+	private List<BugemonDTO> setupTeamMembers(List<String> selectedBugemonIds) {
+		List<BugemonDTO> members = new ArrayList<BugemonDTO>();
+		List<BugemonSpeciesDTO> allSpecies = this.getAllSpecies();
+		for (String bugemonId : selectedBugemonIds) {
+			for (BugemonSpeciesDTO species : allSpecies){
+				if (bugemonId.equals(species.getId())){
+					members.add(new BugemonDTO(species));
+				}
+			}
+		}
+		return members;
+	}
+
 	@Override
 	public List<BugemonSpeciesDTO> getAllSpecies(){
 		return listener.getAllSpecies();
@@ -98,7 +134,9 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 	public interface Listener {
 		/** Called when team selection is confirmed. */
 		void onTeamConfirmed();
+		void onTeamSaved(TeamDTO teamDTO);
 		void onReturnToMode();
+		void onLoadTeam();
 		List<BugemonSpeciesDTO> getAllSpecies();
 	}
 }

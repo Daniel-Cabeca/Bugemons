@@ -16,7 +16,7 @@ import ulb.model.tower.Room;
 import ulb.model.type.Type;
 import ulb.repository.BugemonSpeciesRepository;
 import ulb.repository.mock.BugemonSpeciesMockRepository;
-import ulb.repository.mock.InventoryMockRepository;import ulb.repository.mock.ItemMockRepository;import ulb.service.BugemonService;import ulb.service.ItemService;
+import ulb.repository.mock.StartingInventoryMockRepository;import ulb.repository.mock.ItemMockRepository;import ulb.service.BugemonService;import ulb.service.ItemService;
 
 public class FloorManagerTest {
 
@@ -30,7 +30,7 @@ public class FloorManagerTest {
     @Test
     void floorIsNotCompletedOnInitialisation() {
 		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
-		ItemService itemService = new ItemService(new ItemMockRepository(), new InventoryMockRepository());
+		ItemService itemService = new ItemService(new ItemMockRepository(), new StartingInventoryMockRepository());
 
 		Player player = new Player("TestPlayer", itemService);
         Floor floor = new Floor(1, false);
@@ -46,7 +46,7 @@ public class FloorManagerTest {
     @Test
     void floorIsCompletedWhenAllRoomsCompleted() {
 		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
-		ItemService itemService = new ItemService(new ItemMockRepository(), new InventoryMockRepository());
+		ItemService itemService = new ItemService(new ItemMockRepository(), new StartingInventoryMockRepository());
 
 		Player player = new Player("TestPlayer", itemService);
 		Bugemon a = makeBugemon();
@@ -66,7 +66,7 @@ public class FloorManagerTest {
     @Test
     void AdvanceToNextRoomWhenCurrentRoomCompletedAndFloorNotCompleted() {
 		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
-		ItemService itemService = new ItemService(new ItemMockRepository(), new InventoryMockRepository());
+		ItemService itemService = new ItemService(new ItemMockRepository(), new StartingInventoryMockRepository());
 
 		Player player = new Player("TestPlayer", itemService);
 		Bugemon a = makeBugemon();

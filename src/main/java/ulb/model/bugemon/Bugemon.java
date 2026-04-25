@@ -7,6 +7,7 @@ import ulb.model.type.Type;
 import ulb.model.ability.AbilitySet;
 
 public class Bugemon {
+	private int id;
 	private BugemonSpecies species;
 	private AbilitySet abilities;
 	private Stats baseStats;
@@ -29,6 +30,8 @@ public class Bugemon {
 	public void setRemainingRewards(int remainingRewards) {this.remainingRewards = remainingRewards;}
 	public void setBaseStats(Stats baseStats) {this.baseStats = baseStats;}
 	public void setFightStats(Stats fightStats) {this.fightStats = fightStats;}
+	public void setId(int id){this.id = id;}
+
 
 	public BugemonSpecies getSpecies() { return this.species; }
 	public AbilitySet getAbilities() { return this.abilities; }
@@ -39,7 +42,8 @@ public class Bugemon {
 	public int getRemainingReward() { return this.remainingRewards; }
 
 
-	public String getId() { return this.getSpecies().getId(); }
+	public String getSpeciesId() { return this.getSpecies().getId(); }
+	public int getId() { return this.id; }
 	public String getName() { return this.getSpecies().getName(); }
 	public Type getType() { return this.getSpecies().getType(); }
 	public String getSprite() { return this.getSpecies().getSprite(); }
@@ -123,7 +127,7 @@ public class Bugemon {
 
 	public boolean equals(Bugemon other){
 		return this.getName() == other.getName() &&
-			   this.getId() == other.getId() &&
+			   this.getSpeciesId() == other.getSpeciesId() &&
 			   this.getFightStats().equals(other.getFightStats()) &&
 			   this.getBaseStats().equals(other.getBaseStats());
 	}
@@ -140,5 +144,6 @@ public class Bugemon {
 		Random rand = new Random();
 		return rand.nextInt(2) == 0;
 	}
+
 
 }

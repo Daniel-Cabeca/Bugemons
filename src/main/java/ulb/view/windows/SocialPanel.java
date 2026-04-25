@@ -3,10 +3,13 @@ package ulb.view.windows;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
@@ -21,7 +24,9 @@ public class SocialPanel {
     @FXML
     private VBox chatPane;
     @FXML
-    private VBox requestsPane;
+    private VBox friendRequestsPane;
+	@FXML
+	private VBox battleRequestsPane;
     @FXML
     private TextField inviteField;
     @FXML
@@ -35,7 +40,9 @@ public class SocialPanel {
     @FXML
     private TextField chatMessageField;
     @FXML
-    private ListView<String> requestsListView;
+    private ListView<String> friendRequestsListView;
+	@FXML
+    private ListView<String> battleRequestsListView;
 
     private ViewListener viewListener;
     private String selectedChatFriend;
@@ -72,6 +79,33 @@ public class SocialPanel {
             }
         });
 
+        friendsListView.setCellFactory(lv -> new ListCell<String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setGraphic(null);
+                    return;
+                }
+
+                Label nameLabel = new Label(item);
+                nameLabel.setStyle("-fx-text-fill: #000000; -fx-font-weight: bold;");
+
+                Button challengeButton = new Button("Défier");
+                challengeButton.setStyle("-fx-background-color: #f8f8d8; -fx-text-fill: #000000;"
+                        + " -fx-border-color: #000000; -fx-border-width: 2;"
+                        + " -fx-padding: 4 10; -fx-cursor: hand;");
+                challengeButton.setOnAction(e -> viewListener.onChallengeFriend(item));
+
+                HBox row = new HBox(12, nameLabel, challengeButton);
+                row.setAlignment(Pos.CENTER_LEFT);
+
+                setText(null);
+                setGraphic(row);
+            }
+        });
+
         chatFriendsList.setOnMouseClicked(e -> {
             String selected = chatFriendsList.getSelectionModel().getSelectedItem();
             if (selected != null) {
@@ -90,12 +124,16 @@ public class SocialPanel {
         chatFriendsList.getItems().setAll(friends);
     }
 
-    /**
+	public void setBattleRequests(List<String> battleRequests) {
+        battleRequestsListView.getItems().setAll(battleRequests);
+	}
+
+	/**
      * Updates the list of incoming friend requests.
      * @param List<String> the list of requests that need to be shown.
      */
-    public void setRequests(List<String> requests) {
-        requestsListView.getItems().setAll(requests);
+    public void setFriendRequests(List<String> requests) {
+        friendRequestsListView.getItems().setAll(requests);
     }
 
     /**
@@ -118,7 +156,7 @@ public class SocialPanel {
     @FXML
     private void showInvite() {
         chatRefresh.stop();
-        show(invitePane, friendsPane, chatPane, requestsPane);
+        show(invitePane, friendsPane, chatPane, friendRequestsPane, battleRequestsPane);
     }
 
     /**
@@ -127,7 +165,7 @@ public class SocialPanel {
     @FXML
     private void showFriends() {
         chatRefresh.stop();
-        show(friendsPane, invitePane, chatPane, requestsPane);
+        show(friendsPane, invitePane, chatPane, friendRequestsPane, battleRequestsPane);
         viewListener.refreshFriends();
     }
 
@@ -136,7 +174,7 @@ public class SocialPanel {
      */
     @FXML
     private void showChat() {
-        show(chatPane, invitePane, friendsPane, requestsPane);
+        show(chatPane, invitePane, friendsPane, friendRequestsPane, battleRequestsPane);
         chatRefresh.play();
         viewListener.refreshFriends();
     }
@@ -145,10 +183,17 @@ public class SocialPanel {
      * Displays the friend requests panel.
      */
     @FXML
-    private void showRequests() {
+    private void showFriendRequests() {
         chatRefresh.stop();
-        show(requestsPane, invitePane, friendsPane, chatPane);
-        viewListener.onRequestsOpened();
+        show(friendRequestsPane, invitePane, friendsPane, chatPane, battleRequestsPane);
+        viewListener.onFriendRequestsOpened();
+    }
+
+	@FXML
+    private void showBattleRequests() {
+        chatRefresh.stop();
+        show(battleRequestsPane, friendRequestsPane, invitePane, friendsPane, chatPane);
+        viewListener.onBattleRequestsOpened();
     }
 
     /**
@@ -178,10 +223,10 @@ public class SocialPanel {
      * Handles accepting a selected friend request.
      */
     @FXML
-    private void handleAccept() {
-        String sender = requestsListView.getSelectionModel().getSelectedItem();
+    private void handleAcceptFriend() {
+        String sender = friendRequestsListView.getSelectionModel().getSelectedItem();
         if (sender != null) {
-            viewListener.onAccept(sender);
+            viewListener.onAcceptFriend(sender);
         }
     }
 
@@ -189,10 +234,26 @@ public class SocialPanel {
      * Handles declining a selected friend request.
      */
     @FXML
-    private void handleDecline() {
-        String sender = requestsListView.getSelectionModel().getSelectedItem();
+    private void handleDeclineFriend() {
+        String sender = friendRequestsListView.getSelectionModel().getSelectedItem();
         if (sender != null) {
-            viewListener.onDecline(sender);
+            viewListener.onDeclineFriend(sender);
+        }
+    }
+
+	@FXML
+    private void handleAcceptBattle() {
+        String sender = battleRequestsListView.getSelectionModel().getSelectedItem();
+        if (sender != null) {
+            viewListener.onAcceptBattle(sender);
+        }
+    }
+
+    @FXML
+    private void handleDeclineBattle() {
+        String sender = battleRequestsListView.getSelectionModel().getSelectedItem();
+        if (sender != null) {
+            viewListener.onDeclineBattle(sender);
         }
     }
 
@@ -217,11 +278,15 @@ public class SocialPanel {
 
     public interface ViewListener {
         void onClose();
-        void onDecline(String sender);
-        void onAccept(String sender);
+        void onDeclineFriend(String sender);
+        void onDeclineBattle(String sender);
+        void onAcceptFriend(String sender);
+        void onAcceptBattle(String sender);
         void onInvite(String target);
         void onChatFriendSelected(String friend);
-        void onRequestsOpened();
+        void onFriendRequestsOpened();
+        void onBattleRequestsOpened();
+        void onChallengeFriend(String friend);
         void refreshFriends();
         void onSendMessage(String friend, String content);
     }

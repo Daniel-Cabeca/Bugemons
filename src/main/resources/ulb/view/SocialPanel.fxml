@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane prefWidth="600" prefHeight="500"
+<BorderPane prefWidth="800" prefHeight="500"
             style="-fx-font-size: 25px;
                    -fx-background-color: #f8f8d8;
                    -fx-border-color: #000000;
@@ -32,7 +32,11 @@
                     style="-fx-background-color: #f8f8d8; -fx-text-fill: #000000;
                            -fx-border-color: #000000; -fx-border-width: 2;
                            -fx-padding: 4 10; -fx-cursor: hand;" />
-            <Button text="Demandes"  onAction="#showRequests"
+            <Button text="Demandes d'amis"  onAction="#showFriendRequests"
+                    style="-fx-background-color: #f8f8d8; -fx-text-fill: #000000;
+                           -fx-border-color: #000000; -fx-border-width: 2;
+                           -fx-padding: 4 10; -fx-cursor: hand;" />
+			<Button text="Demandes de combat"  onAction="#showBattleRequests"
                     style="-fx-background-color: #f8f8d8; -fx-text-fill: #000000;
                            -fx-border-color: #000000; -fx-border-width: 2;
                            -fx-padding: 4 10; -fx-cursor: hand;" />
@@ -110,21 +114,43 @@
             </VBox>
 
             <!-- Friend requests pane -->
-            <VBox fx:id="requestsPane" spacing="10"
+            <VBox fx:id="friendRequestsPane" spacing="10"
                   visible="false">
                 <Label text="▶ Demandes d'amis"
                        style="-fx-text-fill: #000000; -fx-font-weight: bold;" />
-                <ListView fx:id="requestsListView" VBox.vgrow="ALWAYS"
+                <ListView fx:id="friendRequestsListView" VBox.vgrow="ALWAYS"
                           style="-fx-background-color: white;
                                  -fx-control-inner-background: white;
                                  -fx-border-color: #000000; -fx-border-width: 3;
                                  -fx-text-fill: #000000;" />
                 <HBox spacing="12" alignment="CENTER_LEFT">
-                    <Button text="✔ Accepter" onAction="#handleAccept"
+                    <Button text="✔ Accepter" onAction="#handleAcceptFriend"
                             style="-fx-background-color: #97B35F; -fx-text-fill: white;
                                    -fx-border-color: #000000; -fx-border-width: 3;
                                    -fx-padding: 6 18; -fx-cursor: hand;" />
-                    <Button text="✘ Refuser" onAction="#handleDecline"
+                    <Button text="✘ Refuser" onAction="#handleDeclineFriend"
+                            style="-fx-background-color: #c02020; -fx-text-fill: white;
+                                   -fx-border-color: #000000; -fx-border-width: 3;
+                                   -fx-padding: 6 18; -fx-cursor: hand;" />
+                </HBox>
+            </VBox>
+
+			<!-- Battle requests pane -->
+            <VBox fx:id="battleRequestsPane" spacing="10"
+                  visible="false">
+                <Label text="▶ Demandes de combat"
+                       style="-fx-text-fill: #000000; -fx-font-weight: bold;" />
+                <ListView fx:id="battleRequestsListView" VBox.vgrow="ALWAYS"
+                          style="-fx-background-color: white;
+                                 -fx-control-inner-background: white;
+                                 -fx-border-color: #000000; -fx-border-width: 3;
+                                 -fx-text-fill: #000000;" />
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                    <Button text="✔ Accepter" onAction="#handleAcceptBattle"
+                            style="-fx-background-color: #97B35F; -fx-text-fill: white;
+                                   -fx-border-color: #000000; -fx-border-width: 3;
+                                   -fx-padding: 6 18; -fx-cursor: hand;" />
+                    <Button text="✘ Refuser" onAction="#handleDeclineBattle"
                             style="-fx-background-color: #c02020; -fx-text-fill: white;
                                    -fx-border-color: #000000; -fx-border-width: 3;
                                    -fx-padding: 6 18; -fx-cursor: hand;" />

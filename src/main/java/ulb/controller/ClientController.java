@@ -170,14 +170,6 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 		return postData(new RegisterMessage(player, true));
 	}
 
-	public boolean deleteItem(ItemDTO item, int quantity) {
-		return postData(new UpdateInventory(item, quantity, this.player.getUserName(), false));
-	}
-
-	public boolean addItem(ItemDTO item, int quantity) {
-		return postData(new UpdateInventory(item, quantity, this.player.getUserName(), true));
-	}
-
 	// Social Panel Controller
 
 	@Override

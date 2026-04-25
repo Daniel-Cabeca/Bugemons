@@ -165,15 +165,17 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	@Override
 	public void handle(RegisterMessage message){
 		boolean success;
-		this.player = PlayerMapper.toEntity(message.getPlayer(), message.isLogin(), this.itemService, this.inventoryService);
+		String username = message.getPlayer().getUserName();
+		String password = message.getPlayer().getPassword();
 
 		if (message.isLogin()) {
-			success = this.getAccountService().login(this.player.getUsername(), this.player.getPassword());
+			success = this.getAccountService().login(username, password);
 		}
 		else {
-			success = this.getAccountService().register(this.player.getUsername(), this.player.getPassword());
+			success = this.getAccountService().register(username, password);
 		}
 		if (success) {
+			this.player = PlayerMapper.toEntity(message.getPlayer(), message.isLogin(), this.itemService, this.inventoryService);
 			sendSuccessMessage();
 		}
 		else {
@@ -603,22 +605,6 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		sendSuccessMessage();
 	}
 
-	@Override
-	public void handle(UpdateInventory message) {
-		boolean isAddAction = message.isAdd();
-		Item item = ItemMapper.toEntity(message.getItem());
-		String username = message.getUsername();
-		int quantity = message.getQuantity();
-
-		if (isAddAction) {
-			this.inventoryService.insertItem(item, quantity, username);
-		}
-		else {
-			this.inventoryService.deleteItem(item, quantity, username);
-		}
-
-		sendSuccessMessage();
-	}
 	
 	// SPECIAL INFO
 

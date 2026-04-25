@@ -71,19 +71,6 @@ public class Player {
 		this.inventory = inventory;
 	}
 
-	// /**
-	//  * Creates a player with default password and provided state.
-	//  *
-	//  * @param name Player name
-	//  * @param team Player team
-	//  * @param inventory Player inventory
-	//  */
-	// public Player(String name, Team team, Inventory inventory) {
-	// 	this.userName = name;
-	// 	this.password = "password";
-	// 	this.team = team;
-	// 	this.inventory = inventory;
-	// }
 
 	/** Returns player username. */
 	public final String getUsername() {return this.username;}

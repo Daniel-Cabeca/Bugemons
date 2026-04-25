@@ -6,6 +6,9 @@ import java.io.Serializable;
 
 import ulb.model.effect.EffectTarget;
 
+/**
+ * Transferable Effect, used on the vue side.
+ */
 public class EffectDTO implements Serializable{
 	private EffectType type;
 	private EffectTarget target;

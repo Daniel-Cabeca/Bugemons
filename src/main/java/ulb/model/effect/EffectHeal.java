@@ -24,7 +24,6 @@ public class EffectHeal extends Effect {
     @Override
     public void apply(Battle battle, ParticipantLabel team) {
         List<Bugemon> targets = this.getTargets(battle, team);
-
 		for (Bugemon target: targets) {
             target.changeFightStats(new Stats(this.value, 0, 0, 0));
         }

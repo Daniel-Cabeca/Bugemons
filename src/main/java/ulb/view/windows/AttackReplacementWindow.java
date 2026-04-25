@@ -13,6 +13,9 @@ import javafx.scene.layout.VBox;
 import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.bugemon.BugemonDTO;
 
+/**
+ * Window responsible for handling the replacement of an ability when a Bugemon learns a new attack as a reward.
+ */
 public class AttackReplacementWindow extends Window {
 
 	private ViewListener viewListener;
@@ -31,6 +34,12 @@ public class AttackReplacementWindow extends Window {
 		this.viewListener = viewListener;
 	}
 
+	/**
+	 * Initializes the window with the given Bugemon and new ability.
+	 *
+	 * @param bugemon the Bugemon learning a new ability
+	 * @param newAbility the new ability being learned
+	 */
 	public void initializeReplacement(BugemonDTO bugemon, AbilityDTO newAbility) {
 		this.bugemon = bugemon;
 
@@ -40,6 +49,12 @@ public class AttackReplacementWindow extends Window {
         populateAbilities();
     }
 
+	/**
+	 * Creates a formatted string describing an ability.
+	 *
+	 * @param ability the ability to format
+	 * @return a string containing the ability name, type, power and description
+	 */
 	private String createAbilityText(AbilityDTO ability) {
 		return ability.getName() + "\n" +
 				"Type: " + ability.getType() + "\n" +
@@ -47,6 +62,9 @@ public class AttackReplacementWindow extends Window {
 				ability.getDescription();
 	}
 
+	/**
+	 * Populates the list with the Bugemon's current abilities, each with a button "to replace"
+	 */
 	private void populateAbilities() {
 		abilitiesList.getChildren().clear();
 
@@ -56,7 +74,7 @@ public class AttackReplacementWindow extends Window {
 			if (oldAbility == null) {
 				continue;
 			}
-
+			// one row per existing attack with the description + button to replace the ability
 			HBox row = new HBox(10);
 			row.getStyleClass().add("attack-replacement-row");
 
@@ -80,6 +98,9 @@ public class AttackReplacementWindow extends Window {
 		}
 	}
 
+	/**
+	 * Returns to the previous window (ChooseBugemonWindow)
+	 */
 	@FXML
 	private void returnToPrevious() {
 		if (viewListener != null) {

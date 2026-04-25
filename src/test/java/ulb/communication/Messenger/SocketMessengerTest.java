@@ -2,7 +2,6 @@ package ulb.communication.Messenger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.Serializable;
 import java.net.ServerSocket;
@@ -82,12 +81,6 @@ public class SocketMessengerTest {
             System.err.println(e);
         }
     } 
-
-    @Test
-    public void testConnection(){
-        this.createActors();
-        assertTrue(true);
-    }
 
     @Test
     public void testSendingMessage(){

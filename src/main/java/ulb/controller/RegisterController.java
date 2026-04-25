@@ -19,6 +19,11 @@ public class RegisterController implements RegisterWindow.ViewListener {
         this.listener = listener;
     }
 
+    /**
+     * Displays the register/login view.
+     *
+     * @throws Exception If the FXML cannot be loaded
+     */
     public void show() throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(WindowPath.REGISTER));
         loader.load();
@@ -36,11 +41,23 @@ public class RegisterController implements RegisterWindow.ViewListener {
 
     public RegisterWindow getView(){return this.view;}
 
+    /**
+     * Handles login form submission.
+     *
+     * @param username The entered username
+     * @param password The entered password
+     */
     @Override
     public void onLogin(String username, String password) {
         listener.onLogin(username,password);
     }
 
+    /**
+     * Handles sign-up form submission.
+     *
+     * @param username The entered username
+     * @param password The entered password
+     */
     @Override
     public void onSignUp(String username, String password) {
         this.listener.onSignUp(username, password);

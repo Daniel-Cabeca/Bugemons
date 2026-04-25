@@ -18,13 +18,33 @@ public class Inventory {
 	}
 
 	/**
+	 * Looks for an item with the given id.
+	 * @param id the id of the item to find
+	 * @return the coresponding item if found, if not returns null
+	 */
+	private Item findItemByID(String id) {
+		for (Item item : items.keySet()) {
+			if (item != null && item.getId().equals(id)) {
+				return item;
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Adds an item to the inventory.
 	 *
 	 * @param item The item to add
 	 * @param quantity The quantity to add
 	 */
 	public void addItem(Item item, int quantity) {
-		this.items.put(item, this.items.getOrDefault(item, 0) + quantity);
+		Item itemToAdd = findItemByID(item.getId());
+
+		if (itemToAdd == null) {
+			this.items.put(item, quantity);
+		} else {
+			this.items.put(itemToAdd, this.items.get(itemToAdd) + quantity);
+		}
 	}
 
 	/**
@@ -33,12 +53,13 @@ public class Inventory {
 	 * @param item The item to remove
 	 */
 	public void removeItem(Item item) {
-		if (this.items.containsKey(item)) {
-			int current = this.items.get(item);
+		Item itemToRemove = findItemByID(item.getId());
+		if (this.items.containsKey(itemToRemove)) {
+			int current = this.items.get(itemToRemove);
 			if (current <= 1) {
-				this.items.remove(item);
+				this.items.remove(itemToRemove);
 			} else {
-				this.items.put(item, current - 1);
+				this.items.put(itemToRemove, current - 1);
 			}
 		}
 	}
@@ -53,7 +74,8 @@ public class Inventory {
 	 * @return The quantity of the item in the inventory (0 if not present)
 	 */
 	public int getQuantity(Item item) {
-		Integer quantity = this.items.get(item);
+		Item itemToFind = findItemByID(item.getId());
+		Integer quantity = this.items.get(itemToFind);
 
 		if (quantity == null) {
 			return 0;

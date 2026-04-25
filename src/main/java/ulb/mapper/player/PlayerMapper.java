@@ -14,7 +14,9 @@ import ulb.model.bugemon.Bugemon;
 import ulb.model.item.Item;
 import ulb.service.ItemService;
 
-
+/**
+ * Used to convert Regular Player to DTO Player
+ */
 public class PlayerMapper {
     private PlayerMapper() {}
 
@@ -36,6 +38,6 @@ public class PlayerMapper {
 
     public static Player toEntity(PlayerDTO dto, ItemService itemService) {
         if (dto == null) return null;
-        return new Player(dto.getName(), dto.getPassword(), itemService);
+        return new Player(dto.getUserName(), dto.getPassword(), itemService);
     }
 }

@@ -2,11 +2,11 @@ package ulb.model.battle;
 
 import ulb.model.team.Team;
 import ulb.model.Player;
+import ulb.model.action.*;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.Stats;
 import ulb.model.item.Item;
 import ulb.model.effect.EffectHeal;
-import ulb.controller.action.*; 
 import ulb.model.reward.Reward;
 
 import java.util.ArrayList;
@@ -129,7 +129,6 @@ public class Battle {
 		if (item == null) {
 			return false;
 		}
-
 		item.use(this, team);
 		removeUsedItemFromInventory(team, item);
 		logMsg.add("L'objet " + item.getName() + " a été utilisé.");

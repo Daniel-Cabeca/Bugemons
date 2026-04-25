@@ -1,11 +1,6 @@
 package ulb.server;
 
 import ulb.communication.Messenger.SocketMessenger;
-import ulb.controller.action.Action;
-import ulb.controller.action.Run;
-import ulb.controller.action.Swap;
-import ulb.controller.action.UseAbility;
-import ulb.controller.action.UseItem;
 import ulb.mapper.ability.AbilityMapper;
 import ulb.mapper.bugemon.BugemonMapper;
 import ulb.mapper.bugemon.BugemonSpeciesMapper;
@@ -18,11 +13,12 @@ import ulb.message.serverToClient.*;
 import ulb.message.serverToClient.NextWindowMessage.WindowType;
 import ulb.model.Player;
 import ulb.model.ability.Ability;
+import ulb.model.action.*;
 import ulb.model.battle.Battle;
 import ulb.model.battle.BattleState;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.BugemonSpecies;
-import ulb.model.item.Item;
+import ulb.model.item.*;
 import ulb.model.reward.Reward;
 import ulb.model.reward.RewardType;
 import ulb.model.team.OpponentTeamGenerator;
@@ -246,6 +242,21 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 			sendErrorMessage("Wrong Username");
 		}
 		
+	}
+
+	public void handle(GetPlayerInventory message) {
+		if (message.getUserName().equals(this.player.getName())){
+			Inventory inventory = this.player.getInventory();
+			Map<ItemDTO, Integer> inventoryDTO = new HashMap<>();
+			
+			for (Map.Entry<Item, Integer> e : inventory.getItems().entrySet()) {
+				inventoryDTO.put(ItemMapper.toDTO(e.getKey()), e.getValue());
+			}
+			sendMessage(new PlayerInventoryMessage(inventoryDTO));
+		}
+		else{
+			sendErrorMessage("Wrong Username");
+		}
 	}
 
 	@Override
@@ -488,7 +499,6 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	public void handle(UseItemMessage message){
 		Item item = ItemMapper.toEntity(message.getItem());
 		this.battle.chooseAction(new UseItem(item), teamLabel);
-
 		sendSuccessMessage();
 	}
 

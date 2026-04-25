@@ -50,6 +50,9 @@ public class SocialPanel {
 
     public void setViewListener(ViewListener viewListener) { this.viewListener = viewListener; }
 
+    /**
+     * Initializes the fonts, chats of the social panel.
+     */
     @FXML
     private void initialize() {
         chatRefresh = new Timeline(new KeyFrame(Duration.seconds(3), e -> {
@@ -112,19 +115,31 @@ public class SocialPanel {
         });
     }
 
+    /**
+     * Updates the friends list in both friends and chat views.
+     * @param List<String> the list of friends that need to be shown.
+     */
     public void setFriendsList(List<String> friends) {
         friendsListView.getItems().setAll(friends);
         chatFriendsList.getItems().setAll(friends);
     }
 
+	public void setBattleRequests(List<String> battleRequests) {
+        battleRequestsListView.getItems().setAll(battleRequests);
+	}
+
+	/**
+     * Updates the list of incoming friend requests.
+     * @param List<String> the list of requests that need to be shown.
+     */
     public void setFriendRequests(List<String> requests) {
         friendRequestsListView.getItems().setAll(requests);
     }
 
-	public void setBattleRequests(List<String> battleRequests) {
-        battleRequestsListView.getItems().setAll(battleRequests);
-    }
-
+    /**
+     * Updates the displayed chat messages.
+     * @param List<String> messages the list of messages that need to be shown.
+     */
     public void setMessages(List<String> messages) {
         chatMessagesList.getItems().setAll(messages);
     }
@@ -135,12 +150,18 @@ public class SocialPanel {
 
     public void clearChatField() { chatMessageField.clear(); }
 
+    /**
+     * Displays the invite panel.
+     */
     @FXML
     private void showInvite() {
         chatRefresh.stop();
         show(invitePane, friendsPane, chatPane, friendRequestsPane, battleRequestsPane);
     }
 
+    /**
+     * Displays the friends panel and refreshes the friends list.
+     */
     @FXML
     private void showFriends() {
         chatRefresh.stop();
@@ -148,6 +169,9 @@ public class SocialPanel {
         viewListener.refreshFriends();
     }
 
+    /**
+     * Displays the chat panel and starts chat refresh.
+     */
     @FXML
     private void showChat() {
         show(chatPane, invitePane, friendsPane, friendRequestsPane, battleRequestsPane);
@@ -155,6 +179,9 @@ public class SocialPanel {
         viewListener.refreshFriends();
     }
 
+    /**
+     * Displays the friend requests panel.
+     */
     @FXML
     private void showFriendRequests() {
         chatRefresh.stop();
@@ -169,6 +196,11 @@ public class SocialPanel {
         viewListener.onBattleRequestsOpened();
     }
 
+    /**
+     * Shows one panel and hides the others.
+     * @param VBox visible, the panel that needs to be shown.
+     * @param VBox hidden, the panel that needs to be hidden.
+     */
     private void show(VBox visible, VBox... hidden) {
         visible.setVisible(true);
         for (VBox v : hidden) {
@@ -176,6 +208,9 @@ public class SocialPanel {
         }
     }
 
+    /**
+     * Handles sending a friend invite.
+     */
     @FXML
     private void handleInvite() {
         String target = inviteField.getText().trim();
@@ -184,6 +219,9 @@ public class SocialPanel {
         }
     }
 
+    /**
+     * Handles accepting a selected friend request.
+     */
     @FXML
     private void handleAcceptFriend() {
         String sender = friendRequestsListView.getSelectionModel().getSelectedItem();
@@ -192,6 +230,9 @@ public class SocialPanel {
         }
     }
 
+    /**
+     * Handles declining a selected friend request.
+     */
     @FXML
     private void handleDeclineFriend() {
         String sender = friendRequestsListView.getSelectionModel().getSelectedItem();
@@ -216,6 +257,9 @@ public class SocialPanel {
         }
     }
 
+    /**
+     * Handles sending a chat message.
+     */
     @FXML
     private void handleChatSend() {
         String content = chatMessageField.getText().trim();
@@ -224,6 +268,9 @@ public class SocialPanel {
         }
     }
 
+    /**
+     * Handles closing the social panel.
+     */
     @FXML
     private void handleClose() {
         viewListener.onClose();

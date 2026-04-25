@@ -24,10 +24,20 @@ public class DatabaseInitializer {
 
 	private final Database database;
 
+	/**
+	 * Creates a database initializer for a target database.
+	 *
+	 * @param database The database to initialize
+	 */
 	public DatabaseInitializer(Database database) {
 		this.database = database;
 	}
 
+	/**
+	 * Returns the database managed by this initializer.
+	 *
+	 * @return The managed database
+	 */
 	public Database getDatabase() { return this.database; }
 
 	/**
@@ -47,6 +57,8 @@ public class DatabaseInitializer {
 	 * Populates the database with game data.
 	 *
 	 * @param items The list of items
+	 * @param abilities The list of abilities
+	 * @param species The list of species
 	 */
 	void populate(Iterable<Item> items, Iterable<Ability> abilities, Iterable<BugemonSpecies> species) {
 		ItemDatabaseRepository itemRepository = new ItemDatabaseRepository(this.getDatabase());

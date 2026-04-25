@@ -18,12 +18,23 @@ public class DatabaseInFile extends Database {
 	private final String name;
 	private final boolean isNew;
 
+	/**
+	 * Creates a file-backed database instance.
+	 *
+	 * @param name The database base filename
+	 * @param isNew Whether the database file is newly created
+	 */
 	DatabaseInFile(String name, boolean isNew) {
 		super("jdbc:sqlite:"+ name +".db");
 		this.name = name;
 		this.isNew = isNew;
 	}
 
+	/**
+	 * Creates a file-backed database instance and infers if it is new.
+	 *
+	 * @param name The database base filename
+	 */
 	DatabaseInFile(String name) {
 		this(name, !Files.exists(getPath(name)));
 	}
@@ -45,7 +56,23 @@ public class DatabaseInFile extends Database {
 		return db;
 	}
 
+	/**
+	 * Returns the database name.
+	 *
+	 * @return The database name without extension
+	 */
 	public String getName() { return this.name; }
+	/**
+	 * Returns the path to this database file.
+	 *
+	 * @return The file path for this database
+	 */
 	public Path getPath() { return getPath(this.getName()); }
+	/**
+	 * Returns the file path associated with a database name.
+	 *
+	 * @param name The database base filename
+	 * @return The corresponding file path
+	 */
 	static Path getPath(String name) { return Path.of(name +".db"); }
 }

@@ -9,6 +9,9 @@ import java.util.Map;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.item.ItemDTO;
 
+/**
+ * Transferable Player, used on the vue side.
+ */
 public class PlayerDTO implements Serializable{
     private String userName;
 	private String password;
@@ -29,7 +32,7 @@ public class PlayerDTO implements Serializable{
 		this.inventory = new HashMap<>();
 	}
 
-	public String getName() {return userName;}
+	public String getUserName() {return userName;}
 	public String getPassword() {return password;}
 	public List<BugemonDTO> getTeam() {return team;}
 	public Map<ItemDTO, Integer> getInventory() {return inventory;}

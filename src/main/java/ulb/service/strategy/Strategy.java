@@ -1,6 +1,6 @@
 package ulb.service.strategy;
 
-import ulb.controller.action.Action;
+import ulb.model.action.Action;
 import ulb.model.battle.Battle;
 
 public interface Strategy {

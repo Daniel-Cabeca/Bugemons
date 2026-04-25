@@ -12,7 +12,6 @@ import ulb.model.battle.Battle.ParticipantLabel;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.Stats;
 import ulb.model.type.Effectiveness;
-import ulb.model.effect.*;
 
 /**
  * Represents a move that can be used by a Bugemon in battle.

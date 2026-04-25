@@ -1,6 +1,5 @@
 package ulb.model.bugemon;
 
-import java.util.NoSuchElementException;
 import java.util.Random;
 
 import ulb.model.ability.Ability;

@@ -11,6 +11,9 @@ import ulb.view.windows.BattleModeWindow;
 
 import ulb.DTO.bugemon.BugemonDTO;
 
+/**
+ * Controller for the battle mode selection screen.
+ */
 public class BattleModeController implements BattleModeWindow.ViewListener {
 
     private final Listener listener;
@@ -24,6 +27,11 @@ public class BattleModeController implements BattleModeWindow.ViewListener {
         this.playerTeam = playerTeam;
     }
 
+    /**
+     * Displays the battle mode selection view.
+     *
+     * @throws Exception If the FXML cannot be loaded
+     */
     public void show() throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(WindowPath.BATTLE_MODE));
         loader.load();
@@ -40,30 +48,49 @@ public class BattleModeController implements BattleModeWindow.ViewListener {
         this.stage.show();
     }
 
+    /**
+     * Handles auto-battle mode selection.
+     */
     @Override
     public void onAutoBattle() {
         listener.onAutoBattle();
     }
 
+    /**
+     * Handles controlled-battle mode selection.
+     */
     @Override
     public void onControlledBattle() {
         listener.onControlledBattle();
     }
 
+    /**
+     * Handles tower mode selection.
+     */
     @Override
     public void onTowerMode() {
         listener.onTowerMode();
     }
 
+    /**
+     * Handles returning to the previous screen.
+     */
     @Override
     public void onReturn() {
         listener.onReturnToCreateTeamWindow();
     }
 
+    /**
+     * Listener for battle mode selection events.
+     */
     public interface Listener {
+        /** Called when auto-battle mode is selected. */
         void onAutoBattle();
+        /** Called when controlled-battle mode is selected. */
         void onControlledBattle();
+        /** Called when tower mode is selected. */
         void onTowerMode();
+        /** Called when returning to the create team screen. */
         void onReturnToCreateTeamWindow();
     }
 }

@@ -4,7 +4,6 @@ import ulb.model.bugemon.Stats;
 import ulb.model.effect.*;
 import ulb.repository.database.sql.Database;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,13 +12,22 @@ import java.sql.SQLException;
  * Repository for saving and loading effects in the database.
  */
 public class EffectDatabaseRepository {
+	/** Database value for heal effects. */
 	public final static String TYPESTR_HEAL = "HEAL";
+	/** Database value for stat modifier effects. */
 	public final static String TYPESTR_STAT_MODIFIER = "STAT_MODIFIER";
+	/** Database value for reset malus effects. */
 	public final static String TYPESTR_RESET_MALUS = "RESET_MALUS";
+	/** Database value for switch effects. */
 	public final static String TYPESTR_SWITCH = "SWITCH";
 
 	private final Database database;
 
+	/**
+	 * Creates an effect repository using the provided database.
+	 *
+	 * @param database The database connection wrapper
+	 */
 	public EffectDatabaseRepository(Database database) {
 		this.database = database;
 	}

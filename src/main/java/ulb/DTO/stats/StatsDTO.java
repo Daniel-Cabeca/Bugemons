@@ -2,6 +2,9 @@ package ulb.DTO.stats;
 
 import java.io.Serializable;
 
+/**
+ * Transferable Stats, used on the vue side.
+ */
 public class StatsDTO implements Serializable{
     private int hp;
 	private int attack;

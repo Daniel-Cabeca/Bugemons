@@ -29,6 +29,9 @@ public class RegisterWindow extends Window {
         Scaling.applyScaling(content);
     }
 
+    /**
+     * Handles the sign-up action by validating inputs and notifying the listener.
+     */
     @FXML
     private void onSignUp() {
         String username = usernameField.getText().trim();
@@ -42,11 +45,17 @@ public class RegisterWindow extends Window {
         viewListener.onSignUp(username, password);
     }
 
+    /**
+     * Displays an error message in the UI.
+     * @param String the error that needs to be shown.
+     */
     public void setErrorLabel(String error) {
         errorLabel.setText(error);
     }
 
-
+    /**
+     * Handles the login action by validating inputs and notifying the listener.
+     */
     @FXML
     private void onLogin() {
         String username = usernameField.getText().trim();

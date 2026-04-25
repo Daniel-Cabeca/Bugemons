@@ -12,6 +12,9 @@ import ulb.model.ability.AbilitySet;
 import ulb.mapper.stats.StatsMapper;
 import ulb.mapper.ability.AbilityMapper;
 
+/**
+ * Used to convert Regular Bugemon Species to DTO Bugemon Species
+ */
 public class BugemonSpeciesMapper {
 
     private BugemonSpeciesMapper(){}

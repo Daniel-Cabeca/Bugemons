@@ -9,6 +9,9 @@ import ulb.DTO.player.PlayerDTO;
 import ulb.view.WindowPath;
 import ulb.view.windows.ChooseBugemonWindow;
 
+/**
+ * Controller for selecting a bugemon for a reward action.
+ */
 public class ChooseBugemonController implements ChooseBugemonWindow.ViewListener {
 
     private final Listener listener;
@@ -23,6 +26,11 @@ public class ChooseBugemonController implements ChooseBugemonWindow.ViewListener
         this.player = player;
     }
 
+    /**
+     * Displays the choose bugemon screen.
+     *
+     * @throws Exception If the FXML cannot be loaded
+     */
     public void show() throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(WindowPath.CHOOSE_BUGEMON));
         loader.load();
@@ -39,16 +47,27 @@ public class ChooseBugemonController implements ChooseBugemonWindow.ViewListener
         stage.show();
     }
 
+    /**
+     * Handles bugemon selection.
+     *
+     * @param bugemon The chosen bugemon
+     */
     @Override
     public void onBugemonChosen(BugemonDTO bugemon) {
         listener.onBugemonChosen(bugemon);
     }
 
-        @Override
+    /**
+     * Handles returning to the floor reward window.
+     */
+    @Override
     public void onReturnFloorRewardWindow() {
         listener.onReturnFloorRewardWindow();
     }
 
+    /**
+     * Listener for choose bugemon actions.
+     */
 	public interface Listener {
 		void onBugemonChosen(BugemonDTO bugemon);
 		void onReturnFloorRewardWindow();

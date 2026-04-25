@@ -24,6 +24,11 @@ public class SocialPanelController implements SocialPanel.ViewListener {
         this.listener = listener;
     }
 
+    /**
+	 * Displays the Social panel screen.
+	 *
+	 * @throws Exception If the FXML cannot be loaded
+	 */
     public void show() throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(WindowPath.SOCIAL_PANEL));
         loader.load();
@@ -44,12 +49,17 @@ public class SocialPanelController implements SocialPanel.ViewListener {
         popupStage.show();
     }
 
-
+    /**
+     * Close the social panel screen.
+     */
     @Override
     public void onClose() {
         popupStage.close();
     }
 
+    /**
+     * Decline a friend request.
+     */
     @Override
     public void onDeclineFriend(String sender) {
         if (listener.declineFriendRequest(sender)) {
@@ -64,6 +74,9 @@ public class SocialPanelController implements SocialPanel.ViewListener {
         }
     }
 
+    /**
+     * Accept a friend request.
+     */
     @Override
     public void onAcceptFriend(String sender) {
         if (listener.acceptFriendRequest(sender)) {
@@ -78,6 +91,9 @@ public class SocialPanelController implements SocialPanel.ViewListener {
         }
     }
 
+    /**
+     * Displays the appropriat status and sends friend request.
+     */
     @Override
     public void onInvite(String target) {
         if (target.equals(listener.getPlayerName())) {
@@ -95,11 +111,17 @@ public class SocialPanelController implements SocialPanel.ViewListener {
         }
     }
 
+    /**
+     * Select given friend to chat.
+     */
     @Override
     public void onChatFriendSelected(String friend) {
         loadMessages(friend);
     }
 
+    /**
+     * Open request tab and refreshes.
+     */
     @Override
     public void onFriendRequestsOpened() {
         refreshFriendRequests();
@@ -119,6 +141,9 @@ public class SocialPanelController implements SocialPanel.ViewListener {
         view.setInviteStatus(ok ? "Défi envoyé !" : "Impossible d'envoyer le défi.");
     }
 
+    /**
+     * Send given contents in form of a message to a given friend.
+     */
     @Override
     public void onSendMessage(String friend, String content) {
         view.clearChatField();
@@ -141,6 +166,9 @@ public class SocialPanelController implements SocialPanel.ViewListener {
         view.setBattleRequests(listener.getBattleRequests());
     }
 
+    /**
+     * Load messages of a chat with a given friend.
+     */
     private void loadMessages(String friend) {
         String me = listener.getPlayerName();
         new Thread(() -> {

@@ -1,26 +1,42 @@
-package ulb.controller.action;
+package ulb.model.action;
 
 import ulb.model.battle.Battle;
 import ulb.model.battle.Battle.ParticipantLabel;
 import ulb.model.bugemon.Bugemon;
 
+/**
+ * Action representing a bugemon swap.
+ */
 public class Swap implements Action {
     private Bugemon toSwap;
 
+    /** Creates an empty swap action. */
     public Swap() {}
 
+    /**
+     * Creates a swap action.
+     *
+     * @param toSwap Target bugemon to swap in
+     */
     public Swap(Bugemon toSwap) {
         this.toSwap = toSwap;
     }
 
+    /** Returns the bugemon to swap in. */
     public Bugemon getToSwap() {
         return this.toSwap;
     }
 
+    /**
+     * Sets the bugemon to swap in.
+     *
+     * @param toSwap Bugemon to swap in
+     */
     public void setToSwap(Bugemon toSwap) {
         this.toSwap = toSwap;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean executeAction(Battle battle, ParticipantLabel team) {
         return battle.performSwap(this.toSwap, team);

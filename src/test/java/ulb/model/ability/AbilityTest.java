@@ -12,8 +12,6 @@ import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.BugemonSpecies;
 import ulb.model.type.Type;
 import ulb.model.bugemon.Stats;
-import ulb.model.ability.Ability;
-import ulb.model.ability.AbilitySet;
 
 public class AbilityTest {
 	private Ability createAbilityA() {

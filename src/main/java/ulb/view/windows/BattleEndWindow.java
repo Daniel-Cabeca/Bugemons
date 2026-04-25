@@ -4,8 +4,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import ulb.utils.Scaling;
-import ulb.view.WindowPath;
 
+/**
+ * End screen displayed after winning/losing a battle
+ */
 public class BattleEndWindow extends Window {
 
 	@FXML
@@ -49,11 +51,8 @@ public class BattleEndWindow extends Window {
 	 * Returns to the main menu
 	 */
 	public void handleReturn() {
-		if (listener != null) {
-			listener.onHandleReturn();
-		} else {
-			switchWindow(WindowPath.MODE);
-		}
+		listener.onHandleReturn();
+		
 	}
 
 	public interface ViewListener {

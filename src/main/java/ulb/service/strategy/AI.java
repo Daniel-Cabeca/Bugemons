@@ -1,17 +1,6 @@
 package ulb.service.strategy;
 
-import java.util.List;
-import java.util.Random;
-import java.util.Vector;
-
-import ulb.controller.BattleController;
-import ulb.controller.action.Action;
-import ulb.controller.action.Run;
-import ulb.controller.action.Swap;
-import ulb.controller.action.UseAbility;
-import ulb.model.Player;
-import ulb.model.ability.Ability;
-import ulb.model.ability.AbilitySet;
+import ulb.model.action.Action;
 import ulb.model.battle.Battle;
 
 public class AI extends Thread {

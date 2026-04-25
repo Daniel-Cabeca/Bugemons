@@ -6,6 +6,9 @@ import java.util.List;
 import ulb.DTO.effect.EffectDTO;
 import ulb.model.type.Type;
 
+/**
+ * Transferable Ability, used on the vue side.
+ */
 public class AbilityDTO implements Serializable{
     private String id;
 	private String name;

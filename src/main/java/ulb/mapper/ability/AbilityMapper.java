@@ -11,6 +11,9 @@ import ulb.model.effect.EffectList;
 
 import ulb.mapper.effect.EffectMapper;
 
+/**
+ * Used to convert Regular Ability to DTO Ability
+ */
 public class AbilityMapper {
 
     private AbilityMapper() {}

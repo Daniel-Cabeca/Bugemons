@@ -104,7 +104,6 @@ public class BattleWindowController implements BattleWindow.ViewListener {
 
         view.setAutoButtonVisible(false);
         BattleState stateAfter = stateOrCurrent(listener.onAutoTurn());
-		view.playAttackAnimation(true);
         displayActionSequence(stateAfter, event, () -> {
             view.showMainMenu();
             view.setAutoButtonVisible(true);
@@ -165,9 +164,12 @@ public class BattleWindowController implements BattleWindow.ViewListener {
     @Override
     public void onSwapBugemon(String bugemonId, ActionEvent event) {
         BugemonDTO bugemon = findTeamBugemonById(bugemonId);
+        BattleSnapshot snapshotBeforeAction = buildBattleSnapshot();
+        if (snapshotBeforeAction != null) {
+            view.setCurrentSnapshot(snapshotBeforeAction);
+        }
+
         BattleState stateAfter = stateOrCurrent(listener.onSwapBugemon(bugemon));
-		BattleSnapshot currentSnapshot = buildBattleSnapshot();
-		view.setCurrentSnapshot(currentSnapshot);
         displayActionSequence(stateAfter, event, () -> {
             if (stateAfter == BattleState.WAITING || stateAfter == BattleState.INGAME) {
                 view.showMainMenu();
@@ -190,7 +192,6 @@ public class BattleWindowController implements BattleWindow.ViewListener {
     @Override
     public void onUseAbility(String abilityId, ActionEvent event) {
         AbilityDTO ability = findActiveAbilityById(abilityId);
-		view.playAttackAnimation(true);
         BattleState stateAfter = stateOrCurrent(listener.onUseAbility(ability));
         displayActionSequence(stateAfter, event, () -> {
             if (stateAfter == BattleState.WAITING || stateAfter == BattleState.INGAME) {
@@ -296,13 +297,13 @@ public class BattleWindowController implements BattleWindow.ViewListener {
             Platform.runLater(() -> {
                 waitingForOpponentAction = false;
                 view.setBattleInputsDisabled(false);
-                refreshView();
 
                 BattleState currentState = listener.getState();
-                boolean stateHandled = handleBattleState(currentState, event);
-                if (!stateHandled && currentState == BattleState.INGAME) {
-                    view.showMainMenu();
-                }
+                displayActionSequence(currentState, event, () -> {
+                    if (currentState == BattleState.INGAME) {
+                        view.showMainMenu();
+                    }
+                });
             });
         });
 

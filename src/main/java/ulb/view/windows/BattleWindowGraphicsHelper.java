@@ -174,7 +174,7 @@ public class BattleWindowGraphicsHelper {
             if (phaseCount == 1) {
                 visual = new BattlePhaseVisual(finalSnapshot, null, null);
             } else if (i == 0) {
-                visual = new BattlePhaseVisual(currentSnapshot, hpAfterFirstActionSelf, hpAfterFirstActionOpponent);
+                visual = buildFirstPhaseVisual(messages, currentSnapshot, finalSnapshot, hpAfterFirstActionSelf, hpAfterFirstActionOpponent);
             } else if (i == phaseCount - 1) {
                 visual = new BattlePhaseVisual(finalSnapshot, null, null);
             } else {
@@ -185,6 +185,50 @@ public class BattleWindowGraphicsHelper {
         }
 
         return steps;
+    }
+
+    /**
+     * Builds the visual state for the first action phase.
+     * When the first phase is a swap, the final snapshot already contains the new active Bugemon
+     * and should be rendered immediately. Otherwise, the previous active Bugemon stays visible
+     * while it receives the first action.
+     *
+     * @param messages the messages belonging to the first phase
+     * @param currentSnapshot the battle state before the resolved action sequence
+     * @param finalSnapshot the battle state after all actions have resolved
+     * @param hpAfterFirstActionSelf player HP after the first action
+     * @param hpAfterFirstActionOpponent opponent HP after the first action
+     * @return the visual descriptor for the first phase
+     */
+    private BattlePhaseVisual buildFirstPhaseVisual(List<String> messages, BattleSnapshot currentSnapshot, BattleSnapshot finalSnapshot,
+                                                    Integer hpAfterFirstActionSelf, Integer hpAfterFirstActionOpponent) {
+        BattleSnapshot phaseSnapshot = isSwapPhase(messages) && finalSnapshot != null
+                ? finalSnapshot
+                : currentSnapshot;
+
+        return new BattlePhaseVisual(phaseSnapshot, hpAfterFirstActionSelf, hpAfterFirstActionOpponent);
+    }
+
+    /**
+     * Checks whether a phase corresponds to a Bugemon switch.
+     *
+     * @param messages the messages to inspect
+     * @return {@code true} when at least one message announces a switch
+     */
+    private boolean isSwapPhase(List<String> messages) {
+        return messages.stream().anyMatch(this::isSwapMessage);
+    }
+
+    /**
+     * Detects the existing log messages used when either side sends a new Bugemon.
+     *
+     * @param message the log message to inspect
+     * @return {@code true} if the message announces a switch
+     */
+    private boolean isSwapMessage(String message) {
+        return message != null
+                && (message.startsWith("Tu as envoyé ")
+                || message.startsWith("L'adversaire a envoyé "));
     }
 
     /**

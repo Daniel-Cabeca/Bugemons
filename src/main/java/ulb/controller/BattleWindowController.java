@@ -164,9 +164,12 @@ public class BattleWindowController implements BattleWindow.ViewListener {
     @Override
     public void onSwapBugemon(String bugemonId, ActionEvent event) {
         BugemonDTO bugemon = findTeamBugemonById(bugemonId);
+        BattleSnapshot snapshotBeforeAction = buildBattleSnapshot();
+        if (snapshotBeforeAction != null) {
+            view.setCurrentSnapshot(snapshotBeforeAction);
+        }
+
         BattleState stateAfter = stateOrCurrent(listener.onSwapBugemon(bugemon));
-		BattleSnapshot currentSnapshot = buildBattleSnapshot();
-		view.setCurrentSnapshot(currentSnapshot);
         displayActionSequence(stateAfter, event, () -> {
             if (stateAfter == BattleState.WAITING || stateAfter == BattleState.INGAME) {
                 view.showMainMenu();

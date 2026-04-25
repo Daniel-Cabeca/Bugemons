@@ -326,8 +326,12 @@ public class BattleWindowGraphicsHelper {
             return;
         }
 
-        ui.battleLog().setText(wrapText(messages.get(index), 35));
+        // ui.battleLog().setText(wrapText(messages.get(index), 35));
+        String message = messages.get(index);
         applyPhaseVisual(visual, currentSnapshotSupplier, battleRenderer);
+
+        ui.battleLog().setText(wrapText(messages.get(index), 35));
+        playAttackAnimationIfNeeded(message, visual, currentSnapshotSupplier);
 
         PauseTransition pause = new PauseTransition(javafx.util.Duration.seconds(2));
         pause.setOnFinished(event -> displayPhase(messages, index + 1, visual, currentSnapshotSupplier, battleRenderer, onComplete));
@@ -430,7 +434,7 @@ public class BattleWindowGraphicsHelper {
     }
 
 	/**
-	 * Plays an animation when a Bugemon attacks
+	 * Plays an animation when a Bugemon attacks. Helper function for playAttackAnimationIfNeeded()
 	 * 
 	 * @param attacker the sprite of the Bugemon attacking
 	 * @param isPlayer true if the attacking Bugemon is the player's, false otherwise
@@ -444,6 +448,37 @@ public class BattleWindowGraphicsHelper {
 
 		new SequentialTransition(attackAnimation, attackAnimationBack).play();
 	}
+
+    /**
+	 * Plays an attack animation when the currently displayed combat message corresponds to a Bugemon attack.
+     * The attacker is detected from the beginning of messages such as "Florachu a utilisé Fouet-Liane".
+	 * 
+     * @param message the combat log message currently displayed
+	 * @param visual the visual active state for this message
+	 * @param currentSnapshotSupplier supplier returning the most recent snapshot
+	 */
+    private void playAttackAnimationIfNeeded(String message, BattlePhaseVisual visual, Supplier<BattleSnapshot> currentSnapshotSupplier) {
+        if (message == null || !message.contains(" a utilisé ")) {
+            return;
+        }
+
+        BattleSnapshot snapshot = visual.snapshot() != null ? visual.snapshot() : currentSnapshotSupplier.get();
+        if (snapshot == null) {
+            return;
+        }
+
+        String attackerName = message.substring(0, message.indexOf(" a utilisé "));
+
+        if (snapshot.playerBugemon() != null && attackerName.equals(snapshot.playerBugemon().name())) {
+            playAttackAnimation(ui.playerBugemon, true);
+            return;
+        }
+
+        if (snapshot.opponentBugemon() != null && attackerName.equals(snapshot.opponentBugemon().name())) {
+            playAttackAnimation(ui.opponentBugemon, false);
+            return;
+        }
+    }
 
     /**
      * Describes the visual state to apply during a battle phase.

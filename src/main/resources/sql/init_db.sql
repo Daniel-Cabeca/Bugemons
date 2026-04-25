@@ -4,6 +4,17 @@ CREATE TABLE IF NOT EXISTS users (
                                     password_hash TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS tower_saves (
+									user_id INTEGER PRIMARY KEY,
+									current_floor_id INTEGER NOT NULL,
+									completed_rooms_id TEXT,
+									current_team_id INTEGER,
+
+									FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+									FOREIGN KEY (current_team_id) REFERENCES teams(id) ON DELETE CASCADE
+
+);
+
 CREATE TABLE IF NOT EXISTS inventory (
                                         user_id INTEGER,
                                         item_id TEXT,

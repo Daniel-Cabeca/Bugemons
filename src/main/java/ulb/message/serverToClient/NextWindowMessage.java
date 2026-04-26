@@ -8,7 +8,8 @@ public class NextWindowMessage implements Serializable {
 		NEXT_ROOM,
 		LEVEL_UP,
 		GAME,
-		REWARD
+		REWARD,
+		FLOOR
 	}
 
 	private WindowType nextWindow;

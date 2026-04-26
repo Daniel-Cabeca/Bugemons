@@ -9,6 +9,6 @@ public class FloorTest {
     @Test
     public void amountOfRoomsInFloorOnInitialisation() {
         Floor floor = new Floor(1, false);
-        assertEquals(6, floor.getRooms().size());
+        assertEquals(7, floor.getRooms().size());
     }
 }

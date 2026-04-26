@@ -139,11 +139,16 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	/**
 	 * Go to the next room if the game is in tower mode
 	 */
-	public void nextTowerRoom(){
-		if (isGameTower){
-			this.towerManager.nextRoom();
-			this.battle = this.towerManager.getCurrentBattle();
+	public boolean nextTowerRoom(int targetRoomId){
+		if (!isGameTower){
+			return false;
 		}
+		if(this.towerManager.moveToRoom(targetRoomId)){
+			this.battle = this.towerManager.getCurrentBattle();
+			return true;
+		}
+		return false;
+		
 	}
 
 	private void clearPendingLevelUpState() {
@@ -343,7 +348,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 			return;
 		}
 		int towerFloorNumber = this.towerManager.getFloorNumber();
-		int towerRoomNumber = this.towerManager.getCurrentRoomIndex();
+		int towerRoomNumber = this.towerManager.getCurrentRoomId();
 
 		sendMessage(new TowerInfoMessage(towerFloorNumber, towerRoomNumber));
 	}
@@ -365,8 +370,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 				if (won) {
 					this.towerManager.getCurrentRoomManager().setRoomCompleted(true);
 					this.battle.resetFightStats();
-					nextWindow = WindowType.NEXT_ROOM;
-					nextTowerRoom();
+					nextWindow = WindowType.FLOOR;
 				} else {
 					nextWindow = WindowType.MAIN_MENU;
 				}
@@ -522,7 +526,6 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		chosenBugemon.swapAbility(newAbility, oldAbility);
 
 		towerManager.getCurrentRoomManager().setRoomCompleted(true);
-		nextTowerRoom();
 		sendSuccessMessage();
 	}
 
@@ -533,7 +536,6 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
 		towerManager.getCurrentRoomManager().setRoomCompleted(true);
 
-		nextTowerRoom();
 		sendSuccessMessage();
 	}
 
@@ -554,7 +556,6 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		chosenBugemon.changeFightStats(reward.getStats());
 
 		towerManager.getCurrentRoomManager().setRoomCompleted(true);
-		nextTowerRoom();
 		sendSuccessMessage();
 	}
 
@@ -588,6 +589,22 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
 		clearPendingLevelUpState();
 		sendSuccessMessage();
+	}
+
+	@Override
+	public void handle(ChooseTowerRoomMessage message){
+		if (!isGameTower){
+			sendErrorMessage("The game isn't in tower mode");
+			return;
+		}
+		int targetRoomId = message.getRoomId();
+		if (nextTowerRoom(targetRoomId)){
+			sendSuccessMessage();
+		}
+		else{
+			sendErrorMessage("Cannot move to the selected room");
+			return;
+		}
 	}
 	
 	// SPECIAL INFO

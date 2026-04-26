@@ -63,31 +63,5 @@ public class FloorManagerTest {
         assertTrue(floor.isFloorCompleted());
     }
 
-    @Test
-    void AdvanceToNextRoomWhenCurrentRoomCompletedAndFloorNotCompleted() {
-		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
-		ItemService itemService = new ItemService(new ItemMockRepository(), new InventoryMockRepository());
-
-		Player player = new Player("TestPlayer", itemService);
-		Bugemon a = makeBugemon();
-		Team teamA = new Team(List.of(a));
-		player.setTeam(teamA);
-        Floor floor = new Floor(1, false);
-        FloorManager manager = new FloorManager(floor, player, bugemonService, itemService);
-
-        int beforeIndex = manager.getCurrentRoomIndex();
-        Room currentRoom = manager.getCurrentRoomManager().getRoom();
-
-		Battle battle = manager.getCurrentBattle();
-		battle.chooseAction(new UseAbility(new Ability("", "", Type.AQUA, "", 1000)), Battle.ParticipantLabel.TEAM_A);
-		battle.chooseAction(new UseAbility(new Ability("", "", Type.AQUA, "", 0)), Battle.ParticipantLabel.TEAM_B);
-
-		currentRoom.setRoomCompleted(true);
-        manager.nextRoom();
-
-        int afterIndex = manager.getCurrentRoomIndex();
-        assertEquals(beforeIndex + 1, afterIndex);
-        assertEquals(floor.getRooms().get(afterIndex), manager.getCurrentRoomManager().getRoom());
-    }
 }
 

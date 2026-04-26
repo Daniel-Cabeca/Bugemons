@@ -25,7 +25,9 @@ public class FloorWindow {
     @FXML
     Button bonusB;
     @FXML
-    Button player;
+    Button start;
+	@FXML
+	Button returnFloorWindow;
 
     @FXML
     private void onBoss(){
@@ -52,8 +54,16 @@ public class FloorWindow {
         this.viewListener.onBonusB();
     }
     @FXML
-    private void onPlayer(){
-        this.viewListener.onPlayer();
+    private void onStart(){
+        this.viewListener.onStart();
+    }
+	@FXML
+    private void onReturnFloorWindow(){
+        this.viewListener.onReturnFloorWindow();
+    }
+
+	public void setFloorNumber(int floorNumber) {
+        floor.setText("Etage NO" + floorNumber);
     }
 
     public interface ViewListener{
@@ -63,7 +73,8 @@ public class FloorWindow {
         void onBattleB();
         void onBonusA();
         void onBonusB();
-        void onPlayer();
+        void onStart();
+		void onReturnFloorWindow();
     }
 
 }

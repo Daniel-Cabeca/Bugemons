@@ -554,6 +554,10 @@ SocialPanelController.Listener, FloorController.Listener {
 			case MAIN_MENU:
 				switchToBattleEndWindow();
 				break;
+			
+			case FLOOR:
+				switchToFloorWindow();
+				break;
 
 			default:
 				break;
@@ -590,7 +594,6 @@ SocialPanelController.Listener, FloorController.Listener {
 	public void onTowerMode() {
 		this.gameMode = GameMode.TOWER;
 		if (this.postData(new SetUpTowerModeMessage())){
-//			switchToBattleWindow();
 			switchToFloorWindow();
 		}
 	}
@@ -887,7 +890,7 @@ SocialPanelController.Listener, FloorController.Listener {
 	@Override
 	public void onObjectReward(ItemDTO rewardItem) {
 		if (postData(new ChooseItemRewardMessage(rewardItem))){
-			nextRoom();
+			switchToFloorWindow();
 		}
 	}
 
@@ -914,7 +917,7 @@ SocialPanelController.Listener, FloorController.Listener {
 	public void onBugemonChosen(BugemonDTO bugemon) {
 		if (pendingFloorRewardChoice == FloorRewardController.RewardChoice.STAT) {
 			if (postData(new ChooseStatRewardMessage(bugemon))){
-				nextRoom();
+				switchToFloorWindow();
 			}
 			return;
 		}
@@ -988,7 +991,7 @@ SocialPanelController.Listener, FloorController.Listener {
 	@Override
 	public void onAttackReplaced(BugemonDTO bugemon, AbilityDTO newAbility, AbilityDTO oldAbility) {
 		if (postData(new ChooseAbilityRewardMessage(bugemon, oldAbility, newAbility))){
-			nextRoom();
+			switchToFloorWindow();
 		}
 	}
 
@@ -1010,37 +1013,20 @@ SocialPanelController.Listener, FloorController.Listener {
 	// FloorController
 
 	@Override
-	public void onPlayer() {
-
+	public boolean onRoomSelected(int roomId) {
+		if (postData(new ChooseTowerRoomMessage(roomId))) {
+			nextRoom();
+			return true;
+		}
+		return false;
 	}
 
 	@Override
-	public void onBonusB() {
-
-	}
-
-	@Override
-	public void onBonusA() {
-
-	}
-
-	@Override
-	public void onBattleB() {
-
-	}
-
-	@Override
-	public void onBattleA2() {
-
-	}
-
-	@Override
-	public void onBattleA1() {
-
-	}
-
-	@Override
-	public void onBoss() {
-
-	}
+    public void onReturnFloorWindow() {
+        try {
+			this.battleModeController.show();
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+    }
 }

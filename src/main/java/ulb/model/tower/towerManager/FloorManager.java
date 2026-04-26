@@ -13,7 +13,7 @@ import ulb.service.ItemService;
 public class FloorManager {
 	private Player player;
 	private Floor floor;
-	private int currentRoomIndex;
+	private int currentRoomId;
 	private RoomManager currentRoomManager;
 	private final BugemonService bugemonService;
 	private final ItemService itemService;
@@ -31,8 +31,8 @@ public class FloorManager {
 		this.bugemonService = bugemonService;
 		this.itemService = itemService;
 		this.floor = floor;
-		this.currentRoomIndex = 0;
-		this.currentRoomManager = new RoomManager(floor.getRooms().get(this.currentRoomIndex), floor.getId(), this.player, this.getBugemonService(), this.getItemService());
+		this.currentRoomId = 4;
+		this.currentRoomManager = new RoomManager(floor.getRoomById(currentRoomId), floor.getId(), this.player, this.getBugemonService(), this.getItemService());
 	}
 
 	/** Returns managed floor. */
@@ -46,17 +46,29 @@ public class FloorManager {
 	/** Returns item service. */
 	public ItemService getItemService() { return this.itemService; }
 
-	/** Advances to next room if current one is completed. */
-	public void nextRoom(){
-		if (currentRoomManager.isRoomCompleted() && !isFloorCompleted()) {
-			currentRoomIndex++;
-			currentRoomManager = new RoomManager(floor.getRooms().get(this.currentRoomIndex), floor.getId(), this.player, this.getBugemonService(), this.getItemService());
-		}
+	/** Advances to the specified room if it's adjacent and the current one is completed.
+	 * @param targetRoomId ID of the room to move to
+	 */
+	public boolean moveToRoom(int targetRoomId){
+		int currentRoomId = getCurrentRoomId();
+
+        if (targetRoomId == currentRoomId) return true;
+        if (!currentRoomManager.isRoomCompleted()) return false;
+        if (!floor.getAdjacentRoomsIds(currentRoomId).contains(targetRoomId)) return false;
+
+        Room target = floor.getRoomById(targetRoomId);
+        if (target == null) return false;
+
+        currentRoomId = target.getId();
+        currentRoomManager = new RoomManager(target, floor.getId(), player, getBugemonService(),
+            getItemService()
+        );
+        return true;
 	}
 
 	/** Resets current room so the player can retry it. */
 	public void rewindRoom() {
-		Room room = floor.getRooms().get(currentRoomIndex);
+		Room room = floor.getRooms().get(currentRoomId);
 		room.setRoomCompleted(false);
 		currentRoomManager = new RoomManager(room, floor.getId(), this.player, this.getBugemonService(), this.getItemService());
 	}
@@ -83,13 +95,15 @@ public class FloorManager {
 	/** Sets current player. */
 	public void setPlayer(Player player) {this.player = player;}
 
-	/** Returns current room index. */
-	public int getCurrentRoomIndex() {return currentRoomIndex;}
-
 	/** Returns current battle instance. */
 	public Battle getCurrentBattle() {return getCurrentRoomManager().getBattle();}
 
 	/** Returns current room. */
 	public Room getRoom(){return this.getCurrentRoomManager().getRoom();}
+
+	/** Returns current room id. */
+	public int getCurrentRoomId() {
+        return getRoom().getId();
+    }
 
 }

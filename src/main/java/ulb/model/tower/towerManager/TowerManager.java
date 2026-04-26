@@ -34,10 +34,17 @@ public class TowerManager {
 		this.currentFloorManager = new FloorManager(tower.getFloors().get(floorNumber), this.player, this.getBugemonService(), this.getItemService());
 	}
 
-	/** Advances to next room and updates floor when needed. */
-	public void nextRoom(){
-		this.currentFloorManager.nextRoom();
+	/** Advances to the specified room and updates floor when needed. 
+	 * 
+	 * @param targetRoomId ID of the room to move to
+	 * @return True if move was successful, false otherwise
+	*/
+	public boolean moveToRoom(int targetRoomId){
+		if(!this.currentFloorManager.moveToRoom(targetRoomId)){
+			return false;
+		};
 		nextFloor();
+		return true;
 	}
 
 	/** Advances to next floor if current floor is completed. */
@@ -91,9 +98,8 @@ public class TowerManager {
 	public FloorManager getCurrentFloorManager() {return currentFloorManager;}
 
 	/** Returns current room index as displayed in game. */
-	public int getCurrentRoomIndex() {
-		// + 1 so the rooms start at 1 and not 0
-		return getCurrentFloorManager().getCurrentRoomIndex()+1;
+	public int getCurrentRoomId() {
+		return getCurrentFloorManager().getCurrentRoomId();
 	}
 
 	/** Returns current room manager. */

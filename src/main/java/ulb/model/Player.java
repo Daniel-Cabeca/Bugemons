@@ -71,13 +71,16 @@ public class Player {
 		this.inventory = inventory;
 	}
 
-
-	/** Returns player username. */
+	/** Returns User ID. */
+	public final int getUserId() {return -1;} // TODO
+	/** Returns username. */
 	public final String getUsername() {return this.username;}
 	/** Returns player password. */
 	public final String getPassword() {return this.password;}
 	/** Returns player team. */
 	public Team getTeam() {return this.team;}
+	/** Returns player team ID. */
+	public final int getTeamId(){return this.team.getId();}
 	/** Returns player inventory. */
 	public Inventory getInventory() {return this.inventory;}
 	/** Sets player username. */
@@ -91,4 +94,5 @@ public class Player {
 	public void addDefaultItems(ItemService itemService) {
 		this.inventory = itemService.createStarterInventory();
 	}
+
 }

@@ -57,6 +57,9 @@ public class Main{
 		InventoryRepository inventoryRepository = new InventoryDatabaseRepository(database, itemRepository);
 		InventoryService inventoryService = new InventoryService(inventoryRepository);
 
-		server.start(abilityService, bugemonService, itemService, accountService, chatService, teamService, inventoryService);
+		TowerSaveRepository towerSaveRepository = new TowerSaveDatabaseRepository(database);
+		TowerSaveService towerSaveService = new TowerSaveService(towerSaveRepository);
+
+		server.start(abilityService, bugemonService, itemService, accountService, chatService, teamService, inventoryService, towerSaveService);
 	}
 }

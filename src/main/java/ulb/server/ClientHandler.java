@@ -67,6 +67,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	private final ChatService chatService;
 	private final TeamService teamService;
 	private final InventoryService inventoryService;
+	private final TowerSaveService towerSaveService;
 
 	private void resetGameSessionState() {
 		this.battle = null;
@@ -78,7 +79,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
     public ClientHandler(SocketMessenger messenger,
                          AbilityService abilityService, BugemonService bugemonService, ItemService itemService,
-                         AccountService accountService, ChatService chatService, TeamService teamService, InventoryService inventoryService) {
+                         AccountService accountService, ChatService chatService, TeamService teamService, InventoryService inventoryService, TowerSaveService towerSaveService) {
         this.socketMessenger = messenger;
 		this.teamService = teamService;
 		this.stop = false;
@@ -88,6 +89,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		this.accountService = accountService;
 		this.chatService = chatService;
 		this.inventoryService = inventoryService;
+		this.towerSaveService = towerSaveService;
     }
 
 	public AbilityService getAbilityService() { return this.abilityService; }
@@ -97,6 +99,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	public ChatService getChatService() { return this.chatService; }
 	public TeamService getTeamService() { return this.teamService; }
 	public InventoryService getInventoryService() { return this.inventoryService; }
+	public TowerSaveService getTowerSaveService() { return this.towerSaveService; }
 
     @Override
     public void run(){
@@ -152,6 +155,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		if (isGameTower){
 			this.towerManager.nextRoom();
 			this.battle = this.towerManager.getCurrentBattle();
+			//this.towerSaveService.saveTowerInfo(this.towerManager.getTower(), this.player); TODO
 		}
 	}
 

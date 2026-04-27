@@ -28,7 +28,7 @@ public class RoomManagerTest {
 		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
 		ItemService itemService = new ItemService(new ItemMockRepository(), new StartingInventoryMockRepository());
 
-		Player player = new Player(itemService);
+		Player player = new Player();
 		Bugemon a = makeBugemon();
 		Team teamA = new Team(List.of(a));
 		player.setTeam(teamA);
@@ -44,7 +44,7 @@ public class RoomManagerTest {
 		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
 		ItemService itemService = new ItemService(new ItemMockRepository(), new StartingInventoryMockRepository());
 
-		Player player = new Player(itemService);
+		Player player = new Player();
 		Bugemon a = makeBugemon();
 		Team teamA = new Team(List.of(a));
 		player.setTeam(teamA);
@@ -62,7 +62,7 @@ public class RoomManagerTest {
 		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
 		ItemService itemService = new ItemService(new ItemMockRepository(), new StartingInventoryMockRepository());
 
-		Player player = new Player(itemService);
+		Player player = new Player();
 		// give the player a minimal valid team
 		Team team = new Team(List.of(makeBugemon()));
 		player.setTeam(team);

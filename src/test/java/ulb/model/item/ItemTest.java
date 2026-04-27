@@ -15,10 +15,10 @@ import ulb.model.Player;
 import ulb.model.team.Team;
 import ulb.model.battle.Battle;
 import ulb.model.battle.Battle.ParticipantLabel;
-import ulb.repository.mock.StartingInventoryMockRepository;import ulb.service.BugemonService;
+import ulb.service.BugemonService;
 import ulb.repository.mock.BugemonSpeciesMockRepository;
 import ulb.repository.ItemRepository;
-import ulb.repository.mock.ItemMockRepository;import ulb.service.ItemService;
+import ulb.repository.mock.ItemMockRepository;
 
 public class ItemTest {
 	private static Item getItem(String id) {
@@ -32,16 +32,14 @@ public class ItemTest {
 	}
 
 	private Battle makeBattleController(Bugemon... bugemons) {
-		ItemService itemService = new ItemService(new ItemMockRepository(), new StartingInventoryMockRepository());
-
 		List<Bugemon> bugemonList = bugemons.length > 0 ? List.of(bugemons) : List.of(spawnBugemon("florachu"));
 		Team teamA = new Team(bugemonList);
 		Team teamB = new Team(List.of(spawnBugemon("pass_turn")));
 
-		Player player = new Player(itemService);
+		Player player = new Player();
 		player.setTeam(teamA);
 
-		Player otherPlayer = new Player(itemService);
+		Player otherPlayer = new Player();
 		otherPlayer.setTeam(teamB);
 
 		return new Battle(teamA, teamB, player, otherPlayer);

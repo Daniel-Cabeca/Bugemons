@@ -167,6 +167,22 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
 	// SETUP
 
+	private Player buildPlayer(PlayerRegisterDTO dto, boolean isLogin) {
+    String username = dto.username();
+
+    Inventory inventory;
+    if (isLogin) {
+        inventory = inventoryService.getInventoryFromDatabase(username);
+    } else {
+        inventory = itemService.createStarterInventory();
+        inventoryService.insertInventory(inventory, username);
+    }
+
+    int userId = accountService.getUserId(username);
+
+    return PlayerMapper.toEntity(dto, inventory, userId);
+}
+
 	@Override
 	public void handle(RegisterMessage message){
 		boolean success;
@@ -180,7 +196,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 			success = this.getAccountService().register(username, password);
 		}
 		if (success) {
-			this.player = PlayerMapper.toEntity(message.getPlayer(), message.isLogin(), this.getAccountService(), this.itemService, this.inventoryService);
+			this.player = buildPlayer(message.getPlayer(), message.isLogin());
 			sendSuccessMessage();
 		} else {
 			sendErrorMessage("Register failed");
@@ -220,7 +236,9 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 			sendErrorMessage(e.getMessage());
 			return;
 		}
-		this.battle = new Battle(player.getTeam(), teamB, player, new Player(this.getItemService()));
+
+		Inventory playerBInventory = this.getItemService().createStarterInventory();
+		this.battle = new Battle(player.getTeam(), teamB, player, new Player("PlayerB", -1, playerBInventory));
 		this.teamLabel = Battle.ParticipantLabel.TEAM_A;
 		this.isGameTower = false;
 

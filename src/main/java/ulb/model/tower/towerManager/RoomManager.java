@@ -1,6 +1,7 @@
 package ulb.model.tower.towerManager;
 import ulb.model.Player;
 import ulb.model.battle.Battle;
+import ulb.model.item.Inventory;
 import ulb.model.team.OpponentTeamGenerator;
 import ulb.model.team.Team;
 import ulb.model.tower.Room;
@@ -89,7 +90,8 @@ public class RoomManager {
 			System.err.println(e);
 		}
 
-		this.battle = new Battle(playerTeam, opponentTeam, player, new Player(this.getItemService()));
+		Inventory playerBInventory = this.getItemService().createStarterInventory();
+		this.battle = new Battle(playerTeam, opponentTeam, player, new Player("PlayerB", -1, playerBInventory));
 		battle.setFloorNumber(floorNumber);
 		
 		if (isBossBattle) {

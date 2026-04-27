@@ -14,9 +14,6 @@ import ulb.model.Player;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.item.Inventory;
 import ulb.model.item.Item;
-import ulb.service.AccountService;
-import ulb.service.InventoryService;
-import ulb.service.ItemService;
 
 /**
  * Used to convert Regular Player to DTO Player
@@ -40,20 +37,8 @@ public class PlayerMapper {
         return new PlayerDTO(entity.getUsername(), team, inventory);
     }
 
-    public static Player toEntity(PlayerRegisterDTO dto, boolean isLogin, AccountService accountService, ItemService itemService, InventoryService inventoryService) {
+    public static Player toEntity(PlayerRegisterDTO dto, Inventory inventory, int userId) {
         if (dto == null) return null;
-
-        String username = dto.username();
-        Inventory inventory;
-
-        if (isLogin) {
-		    inventory = inventoryService.getInventoryFromDatabase(username);
-        }
-        else {
-            inventory = itemService.createStarterInventory();
-            inventoryService.insertInventory(inventory, username);
-        }
-		int userId = accountService.getUserId(username);
-		return new Player(username, userId, inventory);
+		return new Player(dto.username(), userId, inventory);
     }
 }

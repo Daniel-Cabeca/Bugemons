@@ -7,12 +7,14 @@ import java.util.Map;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.DTO.player.PlayerDTO;
+import ulb.DTO.player.PlayerRegisterDTO;
 import ulb.mapper.bugemon.BugemonMapper;
 import ulb.mapper.item.ItemMapper;
 import ulb.model.Player;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.item.Inventory;
 import ulb.model.item.Item;
+import ulb.service.AccountService;
 import ulb.service.InventoryService;
 import ulb.service.ItemService;
 
@@ -35,20 +37,16 @@ public class PlayerMapper {
         for (Map.Entry<Item, Integer> e : entity.getInventory().getItems().entrySet())
             inventory.put(ItemMapper.toDTO(e.getKey()), e.getValue());
 
-        return new PlayerDTO(entity.getUsername(), entity.getPassword(), team, inventory);
+        return new PlayerDTO(entity.getUsername(), team, inventory);
     }
 
-    public static Player toEntity(PlayerDTO dto, boolean isLogin, ItemService itemService, InventoryService inventoryService) {
+    public static Player toEntity(PlayerRegisterDTO dto, AccountService accountService, ItemService itemService, InventoryService inventoryService) {
         if (dto == null) return null;
 
-        String username = dto.getUserName();
-        String password = dto.getPassword();
-        if (isLogin){
-            Inventory inventory = inventoryService.getInventoryFromDatabase(username);
-            return new Player(username, password, inventory);
-        }
-        else {
-            return new Player(username, password, itemService, inventoryService);
-        }
+        String username = dto.getUsername();
+
+		Inventory inventory = inventoryService.getInventoryFromDatabase(username);
+		int userId = accountService.getUserId(username);
+		return new Player(username, userId, inventory);
     }
 }

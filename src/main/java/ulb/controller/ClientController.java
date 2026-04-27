@@ -22,6 +22,7 @@ import ulb.model.battle.BattleState;
 import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.player.PlayerDTO;
+import ulb.DTO.player.PlayerRegisterDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.DTO.reward.RewardDTO;
 import ulb.model.chat.ChatMessage;
@@ -156,7 +157,7 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 	 * @param player Player registration DTO
 	 * @return True if account creation succeeded
 	 */
-	public boolean signUp(PlayerDTO player){
+	public boolean signUp(PlayerRegisterDTO player){
 		return postData(new RegisterMessage(player, false));
 	}
 
@@ -166,7 +167,7 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 	 * @param player Player credentials DTO
 	 * @return True if accepted by server
 	 */
-	public boolean logIn(PlayerDTO player){
+	public boolean logIn(PlayerRegisterDTO player){
 		return postData(new RegisterMessage(player, true));
 	}
 
@@ -175,24 +176,24 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 	@Override
 	public boolean sendBattleRequest(String receiver) {
 
-		return postData(new SendBattleRequestMessage(player.getUserName(), receiver));
+		return postData(new SendBattleRequestMessage(player.getUsername(), receiver));
 	}
 
 	@Override
 	public List<String> getBattleRequests() {
-		if (getData(new GetBattleRequestsMessage(player.getUserName())) instanceof BattleRequestsMessage msg)
+		if (getData(new GetBattleRequestsMessage(player.getUsername())) instanceof BattleRequestsMessage msg)
 			return msg.getRequests();
 		return List.of();
 	}
 
 	@Override
 	public boolean acceptBattleRequest(String sender) {
-		return postData(new AcceptBattleRequestMessage(player.getUserName(), sender));
+		return postData(new AcceptBattleRequestMessage(player.getUsername(), sender));
 	}
 
 	@Override
 	public boolean declineBattleRequest(String sender) {
-		return postData(new DeclineBattleRequestMessage(player.getUserName(), sender));
+		return postData(new DeclineBattleRequestMessage(player.getUsername(), sender));
 	}
 
 	/**
@@ -200,7 +201,7 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 	 */
 	@Override
 	public boolean sendFriendRequest(String receiver) {
-		return postData(new SendFriendRequestMessage(player.getUserName(), receiver));
+		return postData(new SendFriendRequestMessage(player.getUsername(), receiver));
 	}
 
 	/**
@@ -208,7 +209,7 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 	 */
 	@Override
 	public List<String> getFriendRequests() {
-		if (getData(new GetFriendRequestsMessage(player.getUserName())) instanceof FriendRequestsMessage msg)
+		if (getData(new GetFriendRequestsMessage(player.getUsername())) instanceof FriendRequestsMessage msg)
 			return msg.getRequests();
 		return List.of();
 	}
@@ -218,7 +219,7 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 	 */
 	@Override
 	public String getPlayerName() {
-		return player.getUserName();
+		return player.getUsername();
 	}
 
 	/**
@@ -226,7 +227,7 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 	 */
 	@Override
 	public boolean acceptFriendRequest(String sender) {
-		return postData(new AcceptFriendRequestMessage(player.getUserName(), sender));
+		return postData(new AcceptFriendRequestMessage(player.getUsername(), sender));
 	}
 
 	/**
@@ -234,7 +235,7 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 	 */
 	@Override
 	public boolean declineFriendRequest(String sender) {
-		return postData(new DeclineFriendRequestMessage(player.getUserName(), sender));
+		return postData(new DeclineFriendRequestMessage(player.getUsername(), sender));
 	}
 
 	/**
@@ -242,7 +243,7 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 	 */
 	@Override
 	public void sendChatMessage(String receiver, String content) {
-		postData(new SendChatMessageMessage(player.getUserName(), receiver, content));
+		postData(new SendChatMessageMessage(player.getUsername(), receiver, content));
 	}
 
 	/**
@@ -250,7 +251,7 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 	 */
 	@Override
 	public List<ChatMessage> getChatMessages(String friend) {
-		if (getData(new GetChatMessagesMessage(player.getUserName(), friend)) instanceof ChatMessagesMessage msg)
+		if (getData(new GetChatMessagesMessage(player.getUsername(), friend)) instanceof ChatMessagesMessage msg)
 			return msg.getMessages();
 		return List.of();
 	}
@@ -260,7 +261,7 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 	 */
 	@Override
 	public List<String> getFriendsList() {
-		if (getData(new GetFriendsListMessage(player.getUserName())) instanceof FriendsListMessage msg)
+		if (getData(new GetFriendsListMessage(player.getUsername())) instanceof FriendsListMessage msg)
 			return msg.getFriends();
 		return List.of();
 	}
@@ -273,7 +274,7 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 	@Override
 	public void onLogin(String userName, String password){
 		try {
-			PlayerDTO playerDTO = new PlayerDTO(userName, password);
+			PlayerRegisterDTO playerDTO = new PlayerRegisterDTO(userName, password);
 			boolean success = logIn(playerDTO);
 			if (success) {
 				this.player = getPlayer(userName);
@@ -300,7 +301,7 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 	@Override
 	public void onSignUp(String userName, String password){
 		try {
-			PlayerDTO playerDTO = new PlayerDTO(userName, password);
+			PlayerRegisterDTO playerDTO = new PlayerRegisterDTO(userName, password);
 			boolean success = this.signUp(playerDTO);
 			if (success) {
 				this.player = getPlayer(userName);

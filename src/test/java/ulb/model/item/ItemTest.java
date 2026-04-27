@@ -38,10 +38,10 @@ public class ItemTest {
 		Team teamA = new Team(bugemonList);
 		Team teamB = new Team(List.of(spawnBugemon("pass_turn")));
 
-		Player player = new Player("TestPlayer", itemService);
+		Player player = new Player(itemService);
 		player.setTeam(teamA);
 
-		Player otherPlayer = new Player("OtherPlayer", itemService);
+		Player otherPlayer = new Player(itemService);
 		otherPlayer.setTeam(teamB);
 
 		return new Battle(teamA, teamB, player, otherPlayer);

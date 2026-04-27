@@ -46,6 +46,10 @@ public class TowerSaveDatabaseRepository implements TowerSaveRepository {
             throw new LoadException("Failed to insert item to tower_saves: " + e.getMessage());
         }
 	} 
+
+	public void updateTowerSave(Integer userId, Integer currentFloorId, List<Integer> completedRoomsId, Integer teamId) throws LoadException{} // TODO
+
+	public boolean isTowerSaved(Integer userId){return false;} // TODO
 	
 	/**
 	 * {@inheritDoc}

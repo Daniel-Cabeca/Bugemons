@@ -10,7 +10,7 @@ import ulb.service.ItemService;
  */
 public class Player {
 	private String username;
-	private String password;
+	private final int userId;
 	private Team team;
 	private Inventory inventory;
 
@@ -22,7 +22,7 @@ public class Player {
 	 * @param itemService Item service for starter inventory
 	 */
 	public Player(ItemService itemService) {
-		this("Player", itemService);
+		this("Player", -1, itemService);
 	}
 
 	/**
@@ -31,9 +31,9 @@ public class Player {
 	 * @param username Player name
 	 * @param itemService Item service for starter inventory
 	 */
-	public Player(String username, ItemService itemService) {
+	public Player(String username, int userId, ItemService itemService) {
 		this.username = username;
-		this.password = "password";
+		this.userId = userId;
 		this.team = new Team();
 		this.inventory = new Inventory();
 
@@ -44,12 +44,11 @@ public class Player {
 	 * Creates a player with explicit credentials.
 	 *
 	 * @param username Player name
-	 * @param password Player password
 	 * @param itemService Item service for starter inventory
 	 */
-	public Player(String username, String password, ItemService itemService, InventoryService inventoryService) {
+	public Player(String username, int userId, ItemService itemService, InventoryService inventoryService) {
 		this.username = username;
-		this.password = password;
+		this.userId = userId;
 		this.team = new Team();
 		this.inventory = new Inventory();
 
@@ -61,22 +60,19 @@ public class Player {
 	 * Creates a player from fully specified state.
 	 *
 	 * @param username Player name
-	 * @param password Player password
 	 * @param inventory Player inventory
 	 */
-	public Player(String username, String password, Inventory inventory) {
+	public Player(String username, int userId, Inventory inventory) {
 		this.username = username;
-		this.password = password;
+		this.userId = userId;
 		this.team = new Team();
 		this.inventory = inventory;
 	}
 
 	/** Returns User ID. */
-	public final int getUserId() {return -1;} // TODO
+	public final int getUserId() {return this.userId;}
 	/** Returns username. */
 	public final String getUsername() {return this.username;}
-	/** Returns player password. */
-	public final String getPassword() {return this.password;}
 	/** Returns player team. */
 	public Team getTeam() {return this.team;}
 	/** Returns player team ID. */

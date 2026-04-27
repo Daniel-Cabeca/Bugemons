@@ -380,7 +380,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
      * @return The list of inventory entries
      */
     private List<InventoryEntry> buildInventoryEntries() {
-        listener.updatePlayerInventory(this.player.getUserName());
+        listener.updatePlayerInventory(this.player.getUsername());
         Map<ItemDTO, Integer> inventory = getPlayerInventory();
         if (inventory == null) {
             return List.of();

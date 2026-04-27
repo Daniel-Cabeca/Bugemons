@@ -20,6 +20,12 @@ public class TowerSaveService {
 		Integer currentFloorId = tower.getCurrentFloorId();
 		List<Integer> completedRoomsId = tower.getCurrentFloorCompletedRoomsId();
 		Integer teamId = player.getTeamId();
-		this.towerSaveRepository.addTowerSave(userId, currentFloorId, completedRoomsId, teamId);
+		
+		if (this.towerSaveRepository.isTowerSaved(userId)){
+			this.towerSaveRepository.updateTowerSave(userId, currentFloorId, completedRoomsId, teamId);
+		} else {
+			this.towerSaveRepository.addTowerSave(userId, currentFloorId, completedRoomsId, teamId);
+		}
+		
 	}
 }

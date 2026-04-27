@@ -34,7 +34,7 @@ public class EffectTest {
 			service.spawnBugemon("obsidian")
 		));
 
-		Player player = new Player("TestPOlayer", itemService);
+		Player player = new Player(itemService);
 		Battle battle = new Battle(teamA, teamB, player, new Player(itemService));
 
 		return battle;

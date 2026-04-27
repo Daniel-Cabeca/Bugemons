@@ -13,6 +13,10 @@ public interface TowerSaveRepository {
 	 */
 	public void addTowerSave(Integer userId, Integer currentFloorId, List<Integer> completedRoomsId, Integer teamId) throws LoadException;
 
+	public void updateTowerSave(Integer userId, Integer currentFloorId, List<Integer> completedRoomsId, Integer teamId) throws LoadException;
+
+	public boolean isTowerSaved(Integer userId);
+
 	/**
 	 * get the id of all the rooms completed by the user in the current floor
 	 * @param userId the id of the user

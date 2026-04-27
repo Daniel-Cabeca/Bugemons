@@ -28,7 +28,7 @@ public class BattleParticipantTest {
 
         Team team = new Team(List.of(a, b));
 
-        BattleParticipant participantTest = new BattleParticipant(new Player("TestPlayer", itemService), team);
+        BattleParticipant participantTest = new BattleParticipant(new Player(itemService), team);
 
         participantTest.setActiveBugemon(a);
         assertFalse(participantTest.getParticipatingBugemons().contains(b));
@@ -50,7 +50,7 @@ public class BattleParticipantTest {
 
         Team team = new Team(List.of(a, b));
 
-        BattleParticipant participantTest = new BattleParticipant(new Player("TestPlayer", itemService), team);
+        BattleParticipant participantTest = new BattleParticipant(new Player(itemService), team);
 
         participantTest.setActiveBugemon(a);
         participantTest.setActiveBugemon(b);

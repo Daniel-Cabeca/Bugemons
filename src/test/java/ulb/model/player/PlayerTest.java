@@ -17,7 +17,7 @@ public class PlayerTest {
 	public void addDefaultItemsToInventoryOnPlayerInitialisation() {
 		ItemService itemService = new ItemService(new ItemMockRepository(), new StartingInventoryMockRepository());
 
-		Player player = new Player("TestPlayer", itemService);
+		Player player = new Player(itemService);
 		Inventory inventory = player.getInventory();
 		Map<Item, Integer> items = inventory.getItems();
 

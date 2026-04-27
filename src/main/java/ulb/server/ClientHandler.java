@@ -42,6 +42,7 @@ import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.DTO.player.PlayerDTO;
+import ulb.DTO.player.PlayerRegisterDTO;
 import ulb.DTO.reward.RewardDTO;
 
 public class ClientHandler extends Thread implements ServerMessageHandler{
@@ -169,7 +170,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	@Override
 	public void handle(RegisterMessage message){
 		boolean success;
-		String username = message.getPlayer().getUserName();
+		String username = message.getPlayer().getUsername();
 		String password = message.getPlayer().getPassword();
 
 		if (message.isLogin()) {
@@ -179,10 +180,9 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 			success = this.getAccountService().register(username, password);
 		}
 		if (success) {
-			this.player = PlayerMapper.toEntity(message.getPlayer(), message.isLogin(), this.itemService, this.inventoryService);
+			this.player = PlayerMapper.toEntity(message.getPlayer(), this.getAccountService(), this.itemService, this.inventoryService);
 			sendSuccessMessage();
-		}
-		else {
+		} else {
 			sendErrorMessage("Register failed");
 		}
 	}

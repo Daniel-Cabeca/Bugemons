@@ -29,7 +29,7 @@ public class TowerManagerTest {
 		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
 		ItemService itemService = new ItemService(new ItemMockRepository(), new StartingInventoryMockRepository());
 
-		Player player = new Player("TestPlayer", itemService);
+		Player player = new Player(itemService);
 		Bugemon a = makeBugemon();
 		Team teamA = new Team(List.of(a));
 		player.setTeam(teamA);
@@ -47,7 +47,7 @@ public class TowerManagerTest {
 		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
 		ItemService itemService = new ItemService(new ItemMockRepository(), new StartingInventoryMockRepository());
 
-		Player player = new Player("TestPlayer", itemService);
+		Player player = new Player(itemService);
 		Bugemon a = makeBugemon();
 		Team teamA = new Team(List.of(a));
 		player.setTeam(teamA);
@@ -66,7 +66,7 @@ public class TowerManagerTest {
 		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
 		ItemService itemService = new ItemService(new ItemMockRepository(), new StartingInventoryMockRepository());
 
-		Player player = new Player("TestPlayer", itemService);
+		Player player = new Player(itemService);
 		Bugemon a = makeBugemon();
 		Team teamA = new Team(List.of(a));
 		player.setTeam(teamA);
@@ -96,7 +96,7 @@ public class TowerManagerTest {
 		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
 		ItemService itemService = new ItemService(new ItemMockRepository(), new StartingInventoryMockRepository());
 
-		Player player = new Player("TestPlayer", itemService);
+		Player player = new Player(itemService);
 		Bugemon a = makeBugemon();
 		Team teamA = new Team(List.of(a));
 		player.setTeam(teamA);

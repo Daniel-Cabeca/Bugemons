@@ -3,6 +3,8 @@ package ulb.view.windows;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
 
 public class FloorWindow {
     public ViewListener viewListener;
@@ -28,6 +30,8 @@ public class FloorWindow {
     Button start;
 	@FXML
 	Button returnFloorWindow;
+    @FXML
+    ImageView playerSprite;
 
     @FXML
     private void onBoss(){
@@ -63,7 +67,53 @@ public class FloorWindow {
     }
 
 	public void setFloorNumber(int floorNumber) {
-        floor.setText("Etage NO" + floorNumber);
+        floor.setText("Étage : NO" + floorNumber);
+    }
+
+    /**
+     * Updates the player's sprite position to the correct cell based on the current room id
+     *
+     * @param roomId the id of the current room
+     */
+    public void updatePlayerPosition(int roomId) {
+        switch (roomId) {
+            case 1: // BonusA
+                setIconLocation(0, 2);
+                break;
+            case 2: // BattleA2
+                setIconLocation(1, 2);
+                break;
+            case 3: // BattleA1
+                setIconLocation(2, 2);
+                break;
+            case 4: // Start
+                setIconLocation(3, 2);
+                break;
+            case 5: // BattleB
+                setIconLocation(3, 3);
+                break;
+            case 6: // BonusB
+                setIconLocation(3, 4);
+                break;
+            case 7: // Boss
+                setIconLocation(3, 1);
+                break;
+        }
+    }
+
+    /**
+     * Sets the location of the player icon to a specific cell
+     *
+     * @param col the column of the cell
+     * @param row the row of the cell
+     */
+    private void setIconLocation(int col, int row) {
+        GridPane.setColumnIndex(playerSprite, col);
+        GridPane.setRowIndex(playerSprite, row);
+        GridPane.setHalignment(playerSprite, javafx.geometry.HPos.CENTER);
+        GridPane.setValignment(playerSprite, javafx.geometry.VPos.CENTER);
+        playerSprite.setTranslateY(-70); // moves the sprite to be above the button
+        playerSprite.toFront();
     }
 
     public interface ViewListener{

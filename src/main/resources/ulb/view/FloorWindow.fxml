@@ -8,6 +8,8 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <GridPane fx:id="content" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/23.0.1" fx:controller="ulb.view.windows.FloorWindow">
   <columnConstraints>
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -23,50 +25,46 @@
     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <Button fx:id="boss" mnemonicParsing="false" onAction="#onBoss" prefHeight="50.0" prefWidth="150.0" style="-fx-background-color: red;" text="Boss" textFill="WHITE" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
-         <font>
-            <Font name="System Bold" size="18.0" />
-         </font>
+       <ImageView fx:id="playerSprite" fitHeight="80.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true" mouseTransparent="true">
+           <image>
+               <Image url="/png/player.png" />
+           </image>
+       </ImageView>
+      <Button fx:id="boss" mnemonicParsing="false" onAction="#onBoss" prefHeight="50.0" prefWidth="150.0"
+              style="-fx-background-color: red; -fx-font-size: 24px" text="Boss" textFill="WHITE" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
       </Button>
-      <Button fx:id="bonusB" layoutX="460.0" layoutY="47.0" mnemonicParsing="false" onAction="#onBonusB" prefHeight="50.0" prefWidth="150.0" style="-fx-background-color: green;" text="Bonus" textFill="WHITE" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
-         <font>
-            <Font name="System Bold" size="18.0" />
-         </font>
+
+      <Button fx:id="bonusB" layoutX="460.0" layoutY="47.0" mnemonicParsing="false" onAction="#onBonusB" prefHeight="50.0" prefWidth="150.0"
+              style="-fx-background-color: green; -fx-font-size: 24px" text="Bonus" textFill="WHITE" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER">
       </Button>
-      <Button fx:id="battleB" layoutX="460.0" layoutY="117.0" mnemonicParsing="false" onAction="#onBattleB" prefHeight="50.0" prefWidth="150.0" style="-fx-background-color: orange;" text="Combat" textFill="WHITE" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
-         <font>
-            <Font name="System Bold" size="18.0" />
-         </font>
+
+      <Button fx:id="battleB" layoutX="460.0" layoutY="117.0" mnemonicParsing="false" onAction="#onBattleB" prefHeight="50.0" prefWidth="150.0"
+              style="-fx-background-color: orange; -fx-font-size: 24px" text="Combat" textFill="WHITE" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
       </Button>
-      <Button fx:id="start" layoutX="460.0" layoutY="117.0" mnemonicParsing="false" onAction="#onStart" prefHeight="50.0" prefWidth="150.0" style="-fx-background-color: blue;" text="START" textFill="WHITE" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
-         <font>
-            <Font name="System Bold" size="18.0" />
-         </font>
+
+      <Button fx:id="start" layoutX="460.0" layoutY="117.0" mnemonicParsing="false" onAction="#onStart" prefHeight="50.0" prefWidth="150.0"
+              style="-fx-background-color: blue; -fx-font-size: 24px" text="START" textFill="WHITE" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
       </Button>
-      <Button fx:id="battleA1" layoutX="460.0" layoutY="357.0" mnemonicParsing="false" onAction="#onBattleA1" prefHeight="50.0" prefWidth="150.0" style="-fx-background-color: orange;" text="Combat" textFill="WHITE" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
-         <font>
-            <Font name="System Bold" size="18.0" />
-         </font>
+
+      <Button fx:id="battleA1" layoutX="460.0" layoutY="357.0" mnemonicParsing="false" onAction="#onBattleA1" prefHeight="50.0" prefWidth="150.0"
+              style="-fx-background-color: orange; -fx-font-size: 24px" text="Combat" textFill="WHITE" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
       </Button>
-      <Button fx:id="battleA2" layoutX="460.0" layoutY="277.0" mnemonicParsing="false" onAction="#onBattleA2" prefHeight="50.0" prefWidth="150.0" style="-fx-background-color: orange;" text="Combat" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
-         <font>
-            <Font name="System Bold" size="18.0" />
-         </font>
+
+      <Button fx:id="battleA2" layoutX="460.0" layoutY="277.0" mnemonicParsing="false" onAction="#onBattleA2" prefHeight="50.0" prefWidth="150.0"
+              style="-fx-background-color: orange; -fx-font-size: 24px" text="Combat" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
       </Button>
-      <Button fx:id="bonusA" layoutX="10.0" layoutY="37.0" mnemonicParsing="false" onAction="#onBonusA" prefHeight="50.0" prefWidth="150.0" style="-fx-background-color: green;" text="Bonus" textFill="WHITE" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
-         <font>
-            <Font name="System Bold" size="18.0" />
-         </font>
+
+      <Button fx:id="bonusA" layoutX="10.0" layoutY="37.0" mnemonicParsing="false" onAction="#onBonusA" prefHeight="50.0" prefWidth="150.0"
+              style="-fx-background-color: green; -fx-font-size: 24px" text="Bonus" textFill="WHITE" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
       </Button>
-      <Button fx:id="returnFloorWindow" mnemonicParsing="false" onAction="#onReturnFloorWindow" prefHeight="40.0" prefWidth="110.0" style="-fx-background-color: #666666;" text="Retour" textFill="WHITE" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER">
-         <font>
-            <Font name="System Bold" size="16.0" />
-         </font>
+
+      <Button fx:id="returnFloorWindow" mnemonicParsing="false" onAction="#onReturnFloorWindow" prefHeight="40.0" prefWidth="110.0"
+              style="-fx-background-color: #666666; -fx-font-size: 24px" text="Retour" textFill="WHITE" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER">
 	  </Button>
-	  <Label fx:id="floor" lineSpacing="10.0" text="Etage :" GridPane.columnIndex="1" GridPane.rowIndex="0">
-         <font>
-            <Font name="System Bold" size="18.0" />
-         </font>
+
+	  <Label fx:id="floor" lineSpacing="10.0" text="Étage :" GridPane.columnIndex="1" GridPane.rowIndex="0"
+      style="-fx-font-size: 30px">
+
          <GridPane.margin>
             <Insets left="10.0" />
          </GridPane.margin>

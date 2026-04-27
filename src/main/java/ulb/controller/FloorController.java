@@ -53,6 +53,7 @@ public class FloorController implements FloorWindow.ViewListener {
             this.visitedRooms.add(this.currentRoomId);
 
 			view.setFloorNumber(towerInfo.get(0));
+            view.updatePlayerPosition(this.currentRoomId);
         }
     }
 

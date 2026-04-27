@@ -23,6 +23,7 @@ import ulb.model.reward.Reward;
 import ulb.model.reward.RewardType;
 import ulb.model.team.OpponentTeamGenerator;
 import ulb.model.team.Team;
+import ulb.model.tower.Room;
 import ulb.model.tower.RoomType;
 import ulb.service.*;
 import ulb.model.tower.towerManager.TowerManager;
@@ -144,7 +145,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		if (!isGameTower){
 			return false;
 		}
-		if(this.towerManager.moveToRoom(targetRoomId)){
+		if (this.towerManager.moveToRoom(targetRoomId)){
 			this.battle = this.towerManager.getCurrentBattle();
 			return true;
 		}
@@ -375,7 +376,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 						this.towerManager.nextFloor();
 						nextWindow = WindowType.NEXT_ROOM;
 					} else {
-					nextWindow = WindowType.FLOOR;
+						nextWindow = WindowType.FLOOR;
 					}
 				}
 
@@ -383,19 +384,24 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 				return;
 			}
 
-			switch (towerManager.getCurrentRoomType()) {
-				case BATTLE:
-				case BOSS:
-					nextWindow = WindowType.GAME;
-					break;
-
-				case REWARD:
-					nextWindow = WindowType.REWARD;
-					break;
-
-				default:
-					nextWindow = WindowType.MAIN_MENU;
-					break;
+			Room currentRoom = towerManager.getCurrentRoomManager().getRoom();
+			if (currentRoom.isRoomCompleted()) { // to avoid redoing an already won battle
+				nextWindow = WindowType.FLOOR;
+			} else {
+				switch (towerManager.getCurrentRoomType()) {
+					case BATTLE:
+					case BOSS:
+						nextWindow = WindowType.GAME;
+						break;
+					case REWARD:
+						nextWindow = WindowType.REWARD;
+						break;
+					case EMPTY:
+						nextWindow = WindowType.FLOOR;
+						break;
+					default:
+						break;
+				}
 			}
 
 			sendMessage(new NextWindowMessage(nextWindow));

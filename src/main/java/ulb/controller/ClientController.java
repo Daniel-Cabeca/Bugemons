@@ -463,7 +463,9 @@ SocialPanelController.Listener, FloorController.Listener {
 	}
 
 	private void switchToFloorWindow(){
-		this.floorController = new FloorController(this.stage, this);
+		if (this.floorController == null) {
+			this.floorController = new FloorController(this.stage, this);
+		}
 		try {
 			this.floorController.show();
 		}catch (Exception e){
@@ -534,6 +536,7 @@ SocialPanelController.Listener, FloorController.Listener {
 		WindowType nextWindow = this.getWindowType();
 		switch (nextWindow) {
 			case NEXT_ROOM:
+				this.floorController = null;
 				switchToNextRoomWindow();
 				break;
 
@@ -591,6 +594,7 @@ SocialPanelController.Listener, FloorController.Listener {
 	@Override
 	public void onTowerMode() {
 		this.gameMode = GameMode.TOWER;
+		this.floorController = null;
 		if (this.postData(new SetUpTowerModeMessage())){
 			switchToFloorWindow();
 		}

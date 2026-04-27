@@ -21,8 +21,8 @@ public class RewardMapper {
 
     public static Reward toEntity(RewardDTO dto) {
         if (dto == null) return null;
-        Reward reward = new Reward(BugemonMapper.toEntity(dto.getBugemon()));
-        reward.setStats(StatsMapper.toEntity(dto.getStats()));
+        Reward reward = new Reward(BugemonMapper.toEntity(dto.bugemon()));
+        reward.setStats(StatsMapper.toEntity(dto.stats()));
         return reward;
     }
 }

@@ -12,8 +12,8 @@ import ulb.model.effect.EffectTarget;
  */
 public class EffectStatModifierDTO extends EffectDTO {
 
-    public Map<EffectStatType, Integer> modifiers;
-	private EffectStatDuration duration;
+    public final Map<EffectStatType, Integer> modifiers;
+	private final EffectStatDuration duration;
 
 	public EffectStatModifierDTO(EffectType type, EffectTarget target, EffectStatDuration duration, Map<EffectStatType, Integer> modifiers){
 		super(type, target);
@@ -23,14 +23,4 @@ public class EffectStatModifierDTO extends EffectDTO {
 
 	public Map<EffectStatType, Integer> getModifiers() {return modifiers;}
 	public EffectStatDuration getDuration() {return duration;}
-	public Integer getModifier(EffectStatType type) {
-		if (this.modifiers.containsKey(type)) {
-			return this.modifiers.get(type);
-		}
-		return -1;
-	}
-
-	public void setModifiers(Map<EffectStatType, Integer> modifiers) {this.modifiers = modifiers;}
-	public void addModifier(EffectStatType type, Integer modifier){this.modifiers.put(type, modifier);}
-	public void setDuration(EffectStatDuration duration) {this.duration = duration;}
 }

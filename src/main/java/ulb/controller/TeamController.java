@@ -100,7 +100,7 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 	@Override
 	public void onSaveTeam(List<String> selectedBugemonIds, String teamName) {
 		List<BugemonDTO> members = setupTeamMembers(selectedBugemonIds);
-		TeamDTO team = new TeamDTO(teamName, members);
+		TeamDTO team = new TeamDTO(-1, teamName, members);
 		listener.onTeamSaved(team);
 	}
 

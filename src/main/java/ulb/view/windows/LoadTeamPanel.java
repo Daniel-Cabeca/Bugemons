@@ -46,7 +46,7 @@ public class LoadTeamPanel {
      */
     private TitledPane createTeamPane(TeamDTO team) {
         HBox teamBugemonsBox = new HBox(12);
-        for (BugemonDTO bugemon : team.getMembers()) {
+        for (BugemonDTO bugemon : team.members()) {
             VBox cell = new VBox(4);
             Image image = new Image(bugemon.getSpritePath());
             ImageView sprite = new ImageView(image);
@@ -59,7 +59,7 @@ public class LoadTeamPanel {
             cell.getChildren().addAll(sprite, name);
             teamBugemonsBox.getChildren().add(cell);
         }
-        return new TitledPane(team.getTeamName(), teamBugemonsBox);
+        return new TitledPane(team.teamName(), teamBugemonsBox);
     }
 
 

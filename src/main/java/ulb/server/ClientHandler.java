@@ -170,8 +170,8 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	@Override
 	public void handle(RegisterMessage message){
 		boolean success;
-		String username = message.getPlayer().getUsername();
-		String password = message.getPlayer().getPassword();
+		String username = message.getPlayer().username();
+		String password = message.getPlayer().password();
 
 		if (message.isLogin()) {
 			success = this.getAccountService().login(username, password);
@@ -304,7 +304,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
 		for (ItemDTO itemDTO : message.getItems()){
 			Item item = ItemMapper.toEntity(itemDTO);
-			usableItems.put(itemDTO.getId(), this.battle.checkItem(item, teamLabel));
+			usableItems.put(itemDTO.id(), this.battle.checkItem(item, teamLabel));
 		}
 
         sendMessage(new UsableItemsMessage(usableItems));
@@ -528,7 +528,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 			return;
 		}
 
-		Ability oldAbility = chosenBugemon.getAbilities().getAbilityById(message.getOldAbility().getId());
+		Ability oldAbility = chosenBugemon.getAbilities().getAbilityById(message.getOldAbility().id());
 		if (oldAbility == null){
 			sendErrorMessage("Ability not learned");
 			return;

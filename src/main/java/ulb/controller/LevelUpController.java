@@ -47,7 +47,7 @@ public class LevelUpController implements LevelUpWindow.ViewListener{
         view.setViewListener(this);
 
 		List<RewardDTO> rewards = listener.getLevelUpRewards();
-		BugemonDTO bugemon = rewards.get(0).getBugemon();
+		BugemonDTO bugemon = rewards.get(0).bugemon();
 
         view.initializeView(bugemon, rewards);
 

@@ -43,7 +43,7 @@ public class PlayerMapper {
     public static Player toEntity(PlayerRegisterDTO dto, boolean isLogin, AccountService accountService, ItemService itemService, InventoryService inventoryService) {
         if (dto == null) return null;
 
-        String username = dto.getUsername();
+        String username = dto.username();
         Inventory inventory;
 
         if (isLogin) {

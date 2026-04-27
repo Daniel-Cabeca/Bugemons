@@ -472,7 +472,7 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 	 */
 	@Override
 	public void onTeamLoaded(TeamDTO selectedTeam) {
-		player.setTeam(selectedTeam.getMembers());
+		player.setTeam(selectedTeam.members());
 		setupTeamAndShowModeMenu();
 	}
 

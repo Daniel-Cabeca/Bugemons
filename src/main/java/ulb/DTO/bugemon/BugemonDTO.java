@@ -50,7 +50,7 @@ public class BugemonDTO implements Serializable{
 	public Type getType(){return this.getSpecies().getType();}
 	public List<AbilityDTO> getAbilities(){return this.getSpecies().getAbilities();}
 
-	public int getHp(){return this.getFightStats().getHp();}
+	public int getHp(){return this.getFightStats().hp();}
 
 	public void setSpecies(BugemonSpeciesDTO species) {this.species = species;}
 	public void setBaseStats(StatsDTO baseStats) {this.baseStats = baseStats;}

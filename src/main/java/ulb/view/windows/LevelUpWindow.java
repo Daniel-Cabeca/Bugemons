@@ -38,9 +38,9 @@ public class LevelUpWindow extends Window {
 	 * @return the generated text.
 	 */
 	private String createRewardsText(RewardDTO r) {
-		StatsDTO addedStats = r.getStats();
-		return "HP: +" + addedStats.getHp() + "\nAttaque: +" + addedStats.getAttack() + "\nDefense: +" + addedStats.getDefense()
-				+ "\nInitiative: +" + addedStats.getInitiative();
+		StatsDTO addedStats = r.stats();
+		return "HP: +" + addedStats.hp() + "\nAttaque: +" + addedStats.attack() + "\nDefense: +" + addedStats.defense()
+				+ "\nInitiative: +" + addedStats.initiative();
 	}
 
 	/**

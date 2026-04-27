@@ -56,10 +56,10 @@ public class AttackReplacementWindow extends Window {
 	 * @return a string containing the ability name, type, power and description
 	 */
 	private String createAbilityText(AbilityDTO ability) {
-		return ability.getName() + "\n" +
-				"Type: " + ability.getType() + "\n" +
-				"Puissance: " + ability.getPower() + "\n" +
-				ability.getDescription();
+		return ability.name() + "\n" +
+				"Type: " + ability.type() + "\n" +
+				"Puissance: " + ability.power() + "\n" +
+				ability.description();
 	}
 
 	/**

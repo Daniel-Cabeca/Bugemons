@@ -81,9 +81,9 @@ public class BattleModeWindow extends Window {
             Label name = new Label(bugemon.getName() + " (Niveau: " + bugemon.getLevel() + ")");
             name.setStyle("-fx-font-weight: bold;");
 
-            Label stats = new Label("PV: " + bugemon.getFightStats().getHp() +
-                    " ATK: " + bugemon.getFightStats().getAttack() + " DEF: " +
-                    bugemon.getFightStats().getDefense() + " INIT: " + bugemon.getFightStats().getInitiative());
+            Label stats = new Label("PV: " + bugemon.getFightStats().hp() +
+                    " ATK: " + bugemon.getFightStats().attack() + " DEF: " +
+                    bugemon.getFightStats().defense() + " INIT: " + bugemon.getFightStats().initiative());
 
             cell.getChildren().addAll(name, sprite, stats);
             playerTeamGrid.add(cell, col, row++);

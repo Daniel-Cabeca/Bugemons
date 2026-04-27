@@ -24,8 +24,7 @@ public class TeamMapper {
         for (Bugemon b : entity.getMembers())
             members.add(BugemonMapper.toDTO(b));
 
-        TeamDTO teamDTO = new TeamDTO(entity.getTeamName(), members);
-        teamDTO.setId(entity.getId());
+        TeamDTO teamDTO = new TeamDTO(entity.getId(), entity.getTeamName(), members);
         return teamDTO;
     }
 
@@ -33,12 +32,12 @@ public class TeamMapper {
         if (dto == null) return null;
         List<Bugemon> members = new ArrayList<>();
 
-        for (BugemonDTO b : dto.getMembers()) {
+        for (BugemonDTO b : dto.members()) {
             members.add(BugemonMapper.toEntity(b));
         }
         Team team = new Team(members);
-        team.setTeamName(dto.getTeamName());
-        team.setId(dto.getId());
+        team.setTeamName(dto.teamName());
+        team.setId(dto.id());
         return team;
     }
 

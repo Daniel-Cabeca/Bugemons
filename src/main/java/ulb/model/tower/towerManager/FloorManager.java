@@ -74,16 +74,14 @@ public class FloorManager {
 	}
 
 	/**
-	 * Checks whether every room in this floor is completed.
+	 * Checks whether the floor is completed based on if the boss battle is won.
 	 *
-	 * @return True if floor is completed
+	 * @return True if the boss battle is won, false otherwise
 	 */
 	public boolean isFloorCompleted() {
-		for (Room room : this.floor.getRooms()){
-			if (!room.isRoomCompleted()){
-				floor.setFloorCompleted(false);
-				return false;
-			}
+		if (!floor.isBossCompleted()) {
+			floor.setFloorCompleted(false);
+			return false;
 		}
 		floor.setFloorCompleted(true);
 		return true;

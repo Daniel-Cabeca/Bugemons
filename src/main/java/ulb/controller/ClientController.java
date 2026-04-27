@@ -423,13 +423,11 @@ SocialPanelController.Listener, FloorController.Listener {
 
 	/**
 	 * Shows the next room window.
-	 *
-	 * @param hasFled Whether the player fled from battle
 	 */
-	private void switchToNextRoomWindow(boolean hasFled){
+	private void switchToNextRoomWindow(){
 		this.nextRoomController = new NextRoomController(stage, this);
 		try{
-			this.nextRoomController.show(hasFled);
+			this.nextRoomController.show();
 		} catch (Exception e){
 			System.err.println(e);
 		}
@@ -536,7 +534,7 @@ SocialPanelController.Listener, FloorController.Listener {
 		WindowType nextWindow = this.getWindowType();
 		switch (nextWindow) {
 			case NEXT_ROOM:
-				switchToNextRoomWindow(false);
+				switchToNextRoomWindow();
 				break;
 
 			case GAME:
@@ -810,7 +808,7 @@ SocialPanelController.Listener, FloorController.Listener {
 	public void onRun() {
 		if (postData(new RunMessage())){
 			if (this.gameMode == GameMode.TOWER){
-				switchToNextRoomWindow(true);
+				switchToNextRoomWindow();
 			} else {
 				nextRoom();
 			}

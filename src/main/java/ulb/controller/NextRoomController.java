@@ -30,16 +30,13 @@ public class NextRoomController implements NextRoomWindow.ViewListener {
     /**
      * Displays the next room screen.
      *
-     * @param hasFled Whether the player fled the previous fight
      * @throws Exception If the FXML cannot be loaded
      */
-    public void show(boolean hasFled) throws Exception {
+    public void show() throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(WindowPath.NEXT_ROOM));
         loader.load();
         view = loader.getController();
         view.setViewListener(this);
-
-        view.displayMessage(hasFled);
 
         Parent root = loader.getRoot();
         if (stage.getScene() == null) {

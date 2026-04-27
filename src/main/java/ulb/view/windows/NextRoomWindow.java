@@ -6,28 +6,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
 public class NextRoomWindow extends Window {
-	@FXML
-	private Label messageLabel;
-	@FXML
-	private Button nextButton;
 
 	private ViewListener viewListener;
 
 	public void setViewListener(ViewListener viewListener) {
 		this.viewListener = viewListener;
-	}
-
-	/**
-	 * Displays the end-of-battle message depending on whether the player fled.
-	 * @param boolean saying if the player has quit or not.
-	 */
-	public void displayMessage(boolean hasFled) {
-		if (hasFled) {
-			messageLabel.setText("Vous avez fui le combat.");
-			nextButton.setText("Réessayer");
-		} else {
-			messageLabel.setText("Vous avez mis tous les Bugémons ennemis KO!");
-		}
 	}
 
 	/**

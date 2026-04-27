@@ -51,6 +51,15 @@ public class Floor {
 		return null;
 	}
 
+    public boolean isBossCompleted() {
+        for (Room room : rooms) {
+            if (room.getRoomType() == RoomType.BOSS) {
+                return room.isRoomCompleted();
+            }
+        }
+        return false;
+    }
+
 	public List<Integer> getAdjacentRoomsIds(int roomId) {
 		return switch (roomId) {
 			case 1 -> List.of(2);

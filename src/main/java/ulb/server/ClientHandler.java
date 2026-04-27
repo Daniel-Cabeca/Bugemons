@@ -23,6 +23,7 @@ import ulb.model.reward.Reward;
 import ulb.model.reward.RewardType;
 import ulb.model.team.OpponentTeamGenerator;
 import ulb.model.team.Team;
+import ulb.model.tower.RoomType;
 import ulb.service.*;
 import ulb.model.tower.towerManager.TowerManager;
 import ulb.service.strategy.AI;
@@ -370,9 +371,12 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 				if (won) {
 					this.towerManager.getCurrentRoomManager().setRoomCompleted(true);
 					this.battle.resetFightStats();
+					if (this.towerManager.getCurrentRoomType() == RoomType.BOSS) {
+						this.towerManager.nextFloor();
+						nextWindow = WindowType.NEXT_ROOM;
+					} else {
 					nextWindow = WindowType.FLOOR;
-				} else {
-					nextWindow = WindowType.MAIN_MENU;
+					}
 				}
 
 				sendMessage(new NextWindowMessage(nextWindow));

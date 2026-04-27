@@ -14,6 +14,7 @@ public class FloorManager {
 	private Player player;
 	private Floor floor;
 	private int currentRoomId;
+	private int previousRoomId;
 	private RoomManager currentRoomManager;
 	private final BugemonService bugemonService;
 	private final ItemService itemService;
@@ -32,6 +33,7 @@ public class FloorManager {
 		this.itemService = itemService;
 		this.floor = floor;
 		this.currentRoomId = 4;
+		this.previousRoomId = 4;
 		this.currentRoomManager = new RoomManager(floor.getRoomById(currentRoomId), floor.getId(), this.player, this.getBugemonService(), this.getItemService());
 	}
 
@@ -59,18 +61,20 @@ public class FloorManager {
         Room target = floor.getRoomById(targetRoomId);
         if (target == null) return false;
 
-        currentRoomId = target.getId();
-        currentRoomManager = new RoomManager(target, floor.getId(), player, getBugemonService(),
-            getItemService()
-        );
+		this.previousRoomId = currentRoomId;
+        this.currentRoomId = target.getId();
+        currentRoomManager = new RoomManager(target, floor.getId(), player, getBugemonService(), getItemService());
         return true;
 	}
 
-	/** Resets current room so the player can retry it. */
+	/** Resets current room to the previous one so the player can retry it. */
 	public void rewindRoom() {
-		Room room = floor.getRooms().get(currentRoomId);
-		room.setRoomCompleted(false);
-		currentRoomManager = new RoomManager(room, floor.getId(), this.player, this.getBugemonService(), this.getItemService());
+		Room fledRoom = floor.getRoomById(this.currentRoomId);
+		fledRoom.setRoomCompleted(false);
+
+		this.currentRoomId = this.previousRoomId;
+		Room previousRoom =  floor.getRoomById(this.currentRoomId);
+		currentRoomManager = new RoomManager(previousRoom, floor.getId(), this.player, this.getBugemonService(), this.getItemService());
 	}
 
 	/**

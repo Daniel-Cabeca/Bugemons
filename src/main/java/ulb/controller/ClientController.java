@@ -808,7 +808,7 @@ SocialPanelController.Listener, FloorController.Listener {
 	public void onRun() {
 		if (postData(new RunMessage())){
 			if (this.gameMode == GameMode.TOWER){
-				switchToNextRoomWindow();
+				switchToFloorWindow();
 			} else {
 				nextRoom();
 			}

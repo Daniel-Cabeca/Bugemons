@@ -180,7 +180,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 			success = this.getAccountService().register(username, password);
 		}
 		if (success) {
-			this.player = PlayerMapper.toEntity(message.getPlayer(), this.getAccountService(), this.itemService, this.inventoryService);
+			this.player = PlayerMapper.toEntity(message.getPlayer(), message.isLogin(), this.getAccountService(), this.itemService, this.inventoryService);
 			sendSuccessMessage();
 		} else {
 			sendErrorMessage("Register failed");

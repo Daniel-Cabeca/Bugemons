@@ -40,12 +40,19 @@ public class PlayerMapper {
         return new PlayerDTO(entity.getUsername(), team, inventory);
     }
 
-    public static Player toEntity(PlayerRegisterDTO dto, AccountService accountService, ItemService itemService, InventoryService inventoryService) {
+    public static Player toEntity(PlayerRegisterDTO dto, boolean isLogin, AccountService accountService, ItemService itemService, InventoryService inventoryService) {
         if (dto == null) return null;
 
         String username = dto.getUsername();
+        Inventory inventory;
 
-		Inventory inventory = inventoryService.getInventoryFromDatabase(username);
+        if (isLogin) {
+		    inventory = inventoryService.getInventoryFromDatabase(username);
+        }
+        else {
+            inventory = itemService.createStarterInventory();
+            inventoryService.insertInventory(inventory, username);
+        }
 		int userId = accountService.getUserId(username);
 		return new Player(username, userId, inventory);
     }

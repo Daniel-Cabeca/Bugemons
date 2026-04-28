@@ -28,7 +28,7 @@ public class BugemonService {
 	/**
 	 * Creates a Bugemon instance of the specified species, at level 1.
 	 *
-	 * @param spedies_id The id of the species
+	 * @param speciesId The id of the species
 	 * @return The instanciated Bugemon
 	 * @throws NoSuchElementException If the species id was not recognized
 	 */

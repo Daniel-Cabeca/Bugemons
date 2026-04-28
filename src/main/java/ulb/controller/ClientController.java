@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import ulb.DTO.bugemon.BugemonSpeciesDTO;
+import ulb.DTO.team.TeamDTO;
 import ulb.communication.SocketClient;
 import ulb.communication.GameMode;
 import ulb.message.ClientToServerMessage;
@@ -21,6 +22,7 @@ import ulb.model.battle.BattleState;
 import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.player.PlayerDTO;
+import ulb.DTO.player.PlayerRegisterDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.DTO.reward.RewardDTO;
 import ulb.model.chat.ChatMessage;
@@ -33,8 +35,9 @@ import ulb.repository.LoadException;
 public class ClientController extends Application implements RegisterController.Listener, ModeController.Listener,
 BattleModeController.Listener,BattleEndController.Listener, BattleWindowController.Listener, NextRoomController.Listener, 
 FloorRewardController.Listener, AttackReplacementController.Listener, TeamController.Listener, LevelUpController.Listener,
-SocialPanelController.Listener, FloorController.Listener {
-    SocketClient client;
+SocialPanelController.Listener, LoadTeamPanelController.Listener, FloorController.Listener {
+
+	SocketClient client;
     Stage stage;
 
 	PlayerDTO player;
@@ -150,34 +153,56 @@ SocialPanelController.Listener, FloorController.Listener {
 	}
 
 	/**
-	 * Sends a login request for a player.
-	 *
-	 * @param player Player credentials DTO
-	 * @return True if accepted by server
-	 */
-	public boolean logIn(PlayerDTO player){
-		return postData(new RegisterMessage(player, true));
-	}
-
-	/**
 	 * Sends a sign-up request for a player.
 	 *
 	 * @param player Player registration DTO
 	 * @return True if account creation succeeded
 	 */
-	public boolean signUp(PlayerDTO player){
+	public boolean signUp(PlayerRegisterDTO player){
 		return postData(new RegisterMessage(player, false));
 	}
 
+	/**
+	 * Sends a login request for a player.
+	 *
+	 * @param player Player credentials DTO
+	 * @return True if accepted by server
+	 */
+	public boolean logIn(PlayerRegisterDTO player){
+		return postData(new RegisterMessage(player, true));
+	}
+
 	// Social Panel Controller
+
+	@Override
+	public boolean sendBattleRequest(String receiver) {
+
+		return postData(new SendBattleRequestMessage(player.getUsername(), receiver));
+	}
+
+	@Override
+	public List<String> getBattleRequests() {
+		if (getData(new GetBattleRequestsMessage(player.getUsername())) instanceof BattleRequestsMessage msg)
+			return msg.getRequests();
+		return List.of();
+	}
+
+	@Override
+	public boolean acceptBattleRequest(String sender) {
+		return postData(new AcceptBattleRequestMessage(player.getUsername(), sender));
+	}
+
+	@Override
+	public boolean declineBattleRequest(String sender) {
+		return postData(new DeclineBattleRequestMessage(player.getUsername(), sender));
+	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public boolean sendFriendRequest(String receiver) {
-
-		return postData(new SendFriendRequestMessage(player.getUserName(), receiver));
+		return postData(new SendFriendRequestMessage(player.getUsername(), receiver));
 	}
 
 	/**
@@ -185,7 +210,7 @@ SocialPanelController.Listener, FloorController.Listener {
 	 */
 	@Override
 	public List<String> getFriendRequests() {
-		if (getData(new GetFriendRequestsMessage(player.getUserName())) instanceof FriendRequestsMessage msg)
+		if (getData(new GetFriendRequestsMessage(player.getUsername())) instanceof FriendRequestsMessage msg)
 			return msg.getRequests();
 		return List.of();
 	}
@@ -195,7 +220,7 @@ SocialPanelController.Listener, FloorController.Listener {
 	 */
 	@Override
 	public String getPlayerName() {
-		return player.getUserName();
+		return player.getUsername();
 	}
 
 	/**
@@ -203,7 +228,7 @@ SocialPanelController.Listener, FloorController.Listener {
 	 */
 	@Override
 	public boolean acceptFriendRequest(String sender) {
-		return postData(new AcceptFriendRequestMessage(player.getUserName(), sender));
+		return postData(new AcceptFriendRequestMessage(player.getUsername(), sender));
 	}
 
 	/**
@@ -211,7 +236,7 @@ SocialPanelController.Listener, FloorController.Listener {
 	 */
 	@Override
 	public boolean declineFriendRequest(String sender) {
-		return postData(new DeclineFriendRequestMessage(player.getUserName(), sender));
+		return postData(new DeclineFriendRequestMessage(player.getUsername(), sender));
 	}
 
 	/**
@@ -219,7 +244,7 @@ SocialPanelController.Listener, FloorController.Listener {
 	 */
 	@Override
 	public void sendChatMessage(String receiver, String content) {
-		postData(new SendChatMessageMessage(player.getUserName(), receiver, content));
+		postData(new SendChatMessageMessage(player.getUsername(), receiver, content));
 	}
 
 	/**
@@ -227,7 +252,7 @@ SocialPanelController.Listener, FloorController.Listener {
 	 */
 	@Override
 	public List<ChatMessage> getChatMessages(String friend) {
-		if (getData(new GetChatMessagesMessage(player.getUserName(), friend)) instanceof ChatMessagesMessage msg)
+		if (getData(new GetChatMessagesMessage(player.getUsername(), friend)) instanceof ChatMessagesMessage msg)
 			return msg.getMessages();
 		return List.of();
 	}
@@ -237,7 +262,7 @@ SocialPanelController.Listener, FloorController.Listener {
 	 */
 	@Override
 	public List<String> getFriendsList() {
-		if (getData(new GetFriendsListMessage(player.getUserName())) instanceof FriendsListMessage msg)
+		if (getData(new GetFriendsListMessage(player.getUsername())) instanceof FriendsListMessage msg)
 			return msg.getFriends();
 		return List.of();
 	}
@@ -250,7 +275,7 @@ SocialPanelController.Listener, FloorController.Listener {
 	@Override
 	public void onLogin(String userName, String password){
 		try {
-			PlayerDTO playerDTO = new PlayerDTO(userName, password);
+			PlayerRegisterDTO playerDTO = new PlayerRegisterDTO(userName, password);
 			boolean success = logIn(playerDTO);
 			if (success) {
 				this.player = getPlayer(userName);
@@ -277,7 +302,7 @@ SocialPanelController.Listener, FloorController.Listener {
 	@Override
 	public void onSignUp(String userName, String password){
 		try {
-			PlayerDTO playerDTO = new PlayerDTO(userName, password);
+			PlayerRegisterDTO playerDTO = new PlayerRegisterDTO(userName, password);
 			boolean success = this.signUp(playerDTO);
 			if (success) {
 				this.player = getPlayer(userName);
@@ -351,7 +376,6 @@ SocialPanelController.Listener, FloorController.Listener {
 
 	// Team Controller Listener :
 
-
 	/**
 	 * {@inheritDoc}
 	 */
@@ -377,25 +401,82 @@ SocialPanelController.Listener, FloorController.Listener {
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onTeamConfirmed() {
+    /**
+     * Sends the player's team to the server and switches to the battle mode window
+     */
+	private void setupTeamAndShowModeMenu() {
 		List<BugemonDTO> team = player.getTeam();
 
 		if (!this.postData(new SetUpTeamMessage(team))){
 			return;
 		}
 
-
-		this.battleModeController = new BattleModeController(this.stage, this, player.getTeam());
+		this.battleModeController = new BattleModeController(this.stage, this, team);
 		try {
 			battleModeController.show();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void onTeamConfirmed() {
+		setupTeamAndShowModeMenu();
+	}
+
+	/**
+	 * Shows the Load team panel when the load a team button is clicked in create team window
+	 */
+	@Override
+	public void onLoadTeam() {
+		try {
+			LoadTeamPanelController loadTeamPanelController = new LoadTeamPanelController(stage, this);
+			loadTeamPanelController.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Returns the player's saved teams from the database
+	 *
+	 * @return the player's saved teams
+	 */
+	@Override
+	public List<TeamDTO> getSavedTeams() {
+		Serializable message = this.getData(new GetSavedTeamsMessage());
+
+		if (message instanceof SavedTeamsMessage teamsMessage){
+			return teamsMessage.getTeams();
+		}
+		return null;
+	}
+
+	/**
+	 * Saves the team to the database
+	 * @param teamDTO the DTO of the team to be saved
+	 */
+	@Override
+	public void onTeamSaved(TeamDTO teamDTO) {
+		boolean success = postData(new SaveTeamMessage(teamDTO));
+		if (!success) {
+			teamController.getView().showInvalidSaveAlert("Tu as déjà une équipe avec ce nom!");
+		}
+	}
+
+	/**
+	 * Loads the selected team from the load team panel
+	 * @param selectedTeam the selected team
+	 */
+	@Override
+	public void onTeamLoaded(TeamDTO selectedTeam) {
+		player.setTeam(selectedTeam.members());
+		setupTeamAndShowModeMenu();
+	}
+
 
 	// BattleEndController
 
@@ -555,7 +636,7 @@ SocialPanelController.Listener, FloorController.Listener {
 			case MAIN_MENU:
 				switchToBattleEndWindow();
 				break;
-			
+
 			case FLOOR:
 				switchToFloorWindow();
 				break;
@@ -616,7 +697,7 @@ SocialPanelController.Listener, FloorController.Listener {
 
 	/**
 	 * Updates the inventory of the player.
-	 * @param {String} the userName of the player used to confirm the player identity on the server side
+	 * @param userName the userName of the player used to confirm the player identity on the server side
 	 */
 	@Override
 	public void updatePlayerInventory(String userName){
@@ -878,7 +959,9 @@ SocialPanelController.Listener, FloorController.Listener {
 	@Override
 	public void onReturn() {
 		try {
-			this.modeController.show();
+			if (this.postData(new AbandonTowerMessage())){
+				this.modeController.show();
+			}
 		}catch (Exception e){
 			e.printStackTrace();
 		}

@@ -13,12 +13,12 @@ public class ItemMapper {
     public static Item toEntity(ItemDTO dto) {
         if (dto == null) return null;
         return new Item(
-                dto.getId(),
-                dto.getName(),
-                dto.getDescription(),
-                dto.getCategory(),
-                EffectMapper.toEntity(dto.getEffect()),
-                dto.getSprite()
+                dto.id(),
+                dto.name(),
+                dto.description(),
+                dto.category(),
+                EffectMapper.toEntity(dto.effect()),
+                dto.sprite()
         );
     }
 

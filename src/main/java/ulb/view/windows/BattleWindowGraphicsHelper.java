@@ -1,6 +1,8 @@
 package ulb.view.windows;
 
 import javafx.animation.PauseTransition;
+import javafx.animation.SequentialTransition;
+import javafx.animation.TranslateTransition;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
@@ -172,7 +174,7 @@ public class BattleWindowGraphicsHelper {
             if (phaseCount == 1) {
                 visual = new BattlePhaseVisual(finalSnapshot, null, null);
             } else if (i == 0) {
-                visual = new BattlePhaseVisual(currentSnapshot, hpAfterFirstActionSelf, hpAfterFirstActionOpponent);
+                visual = buildFirstPhaseVisual(messages, currentSnapshot, finalSnapshot, hpAfterFirstActionSelf, hpAfterFirstActionOpponent);
             } else if (i == phaseCount - 1) {
                 visual = new BattlePhaseVisual(finalSnapshot, null, null);
             } else {
@@ -183,6 +185,50 @@ public class BattleWindowGraphicsHelper {
         }
 
         return steps;
+    }
+
+    /**
+     * Builds the visual state for the first action phase.
+     * When the first phase is a swap, the final snapshot already contains the new active Bugemon
+     * and should be rendered immediately. Otherwise, the previous active Bugemon stays visible
+     * while it receives the first action.
+     *
+     * @param messages the messages belonging to the first phase
+     * @param currentSnapshot the battle state before the resolved action sequence
+     * @param finalSnapshot the battle state after all actions have resolved
+     * @param hpAfterFirstActionSelf player HP after the first action
+     * @param hpAfterFirstActionOpponent opponent HP after the first action
+     * @return the visual descriptor for the first phase
+     */
+    private BattlePhaseVisual buildFirstPhaseVisual(List<String> messages, BattleSnapshot currentSnapshot, BattleSnapshot finalSnapshot,
+                                                    Integer hpAfterFirstActionSelf, Integer hpAfterFirstActionOpponent) {
+        BattleSnapshot phaseSnapshot = isSwapPhase(messages) && finalSnapshot != null
+                ? finalSnapshot
+                : currentSnapshot;
+
+        return new BattlePhaseVisual(phaseSnapshot, hpAfterFirstActionSelf, hpAfterFirstActionOpponent);
+    }
+
+    /**
+     * Checks whether a phase corresponds to a Bugemon switch.
+     *
+     * @param messages the messages to inspect
+     * @return {@code true} when at least one message announces a switch
+     */
+    private boolean isSwapPhase(List<String> messages) {
+        return messages.stream().anyMatch(this::isSwapMessage);
+    }
+
+    /**
+     * Detects the existing log messages used when either side sends a new Bugemon.
+     *
+     * @param message the log message to inspect
+     * @return {@code true} if the message announces a switch
+     */
+    private boolean isSwapMessage(String message) {
+        return message != null
+                && (message.startsWith("Tu as envoyé ")
+                || message.startsWith("L'adversaire a envoyé "));
     }
 
     /**
@@ -324,8 +370,12 @@ public class BattleWindowGraphicsHelper {
             return;
         }
 
-        ui.battleLog().setText(wrapText(messages.get(index), 35));
+        // ui.battleLog().setText(wrapText(messages.get(index), 35));
+        String message = messages.get(index);
         applyPhaseVisual(visual, currentSnapshotSupplier, battleRenderer);
+
+        ui.battleLog().setText(wrapText(messages.get(index), 35));
+        playAttackAnimationIfNeeded(message, visual, currentSnapshotSupplier);
 
         PauseTransition pause = new PauseTransition(javafx.util.Duration.seconds(2));
         pause.setOnFinished(event -> displayPhase(messages, index + 1, visual, currentSnapshotSupplier, battleRenderer, onComplete));
@@ -425,6 +475,53 @@ public class BattleWindowGraphicsHelper {
             }
         }
         return result.toString();
+    }
+
+	/**
+	 * Plays an animation when a Bugemon attacks. Helper function for playAttackAnimationIfNeeded()
+	 * 
+	 * @param attacker the sprite of the Bugemon attacking
+	 * @param isPlayer true if the attacking Bugemon is the player's, false otherwise
+	 */
+	public void playAttackAnimation(ImageView attacker, boolean isPlayer) {
+		TranslateTransition attackAnimation = new TranslateTransition(javafx.util.Duration.seconds(0.3), attacker);
+		attackAnimation.setByX(isPlayer ? 200 : -200);
+		
+		TranslateTransition attackAnimationBack = new TranslateTransition(javafx.util.Duration.seconds(0.2), attacker);
+		attackAnimationBack.setByX(isPlayer ? -200 : 200);
+
+		new SequentialTransition(attackAnimation, attackAnimationBack).play();
+	}
+
+    /**
+	 * Plays an attack animation when the currently displayed combat message corresponds to a Bugemon attack.
+     * The attacker is detected from the beginning of messages such as "Florachu a utilisé Fouet-Liane".
+	 * 
+     * @param message the combat log message currently displayed
+	 * @param visual the visual active state for this message
+	 * @param currentSnapshotSupplier supplier returning the most recent snapshot
+	 */
+    private void playAttackAnimationIfNeeded(String message, BattlePhaseVisual visual, Supplier<BattleSnapshot> currentSnapshotSupplier) {
+        if (message == null || !message.contains(" a utilisé ")) {
+            return;
+        }
+
+        BattleSnapshot snapshot = visual.snapshot() != null ? visual.snapshot() : currentSnapshotSupplier.get();
+        if (snapshot == null) {
+            return;
+        }
+
+        String attackerName = message.substring(0, message.indexOf(" a utilisé "));
+
+        if (snapshot.playerBugemon() != null && attackerName.equals(snapshot.playerBugemon().name())) {
+            playAttackAnimation(ui.playerBugemon, true);
+            return;
+        }
+
+        if (snapshot.opponentBugemon() != null && attackerName.equals(snapshot.opponentBugemon().name())) {
+            playAttackAnimation(ui.opponentBugemon, false);
+            return;
+        }
     }
 
     /**

@@ -8,20 +8,23 @@ import ulb.model.bugemon.Bugemon;
 public class Team {
     public static final int MAX_PARTY_SIZE = 6;
 
+    private int id;
     private List<Bugemon> members;
+    private String teamName;
 
     public Team() {
         this.members = new ArrayList<>();
+        this.teamName = "";
     }
 
-    public Team(List<Bugemon> initalMembers) {
+    public Team(List<Bugemon> initialMembers) {
         this();
 
-        if (initalMembers == null) {
+        if (initialMembers == null) {
             throw new IllegalArgumentException("Initial members list cannot be null.");
         }
 
-        for (Bugemon bugemon : initalMembers) {
+        for (Bugemon bugemon : initialMembers) {
             boolean added = this.add(bugemon);
             if (!added) {
                 throw new IllegalArgumentException("Invalid team composition (duplicated Bugemons or more than 6 Bugemons.");
@@ -32,6 +35,10 @@ public class Team {
     public List<Bugemon> getMembers() {
         return this.members;
     }
+
+    public int getId() { return this.id; }
+
+    public void setId(int id) { this.id = id; }
 
     public int size() {
         return this.members.size();
@@ -44,6 +51,9 @@ public class Team {
     public boolean isValid() {
         return !this.isEmpty() && this.size() <= MAX_PARTY_SIZE;
     }
+
+    public void setTeamName(String teamName) { this.teamName = teamName; }
+    public String getTeamName() { return this.teamName; }
 
     /**
      * Adds a Bugemon to the team
@@ -212,7 +222,7 @@ public class Team {
 
 	public Bugemon getBugemonById(String id){
 		for (Bugemon bugemon : this.getMembers()){
-			if (bugemon.getId().equals(id)){
+			if (bugemon.getSpeciesId().equals(id)){
 				return bugemon;
 			}
 		}

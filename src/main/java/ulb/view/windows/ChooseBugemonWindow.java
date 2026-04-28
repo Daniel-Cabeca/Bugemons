@@ -50,10 +50,10 @@ public class ChooseBugemonWindow extends Window {
 
 			// Setting stats of the Bugemon
             Label stats = new Label(
-                    "PV: " + bugemon.getFightStats().getHp()
-                            + " ATK: " + bugemon.getFightStats().getAttack()
-                            + " DEF: " + bugemon.getFightStats().getDefense()
-                            + " INIT: " + bugemon.getFightStats().getInitiative());
+                    "PV: " + bugemon.getFightStats().hp()
+                            + " ATK: " + bugemon.getFightStats().attack()
+                            + " DEF: " + bugemon.getFightStats().defense()
+                            + " INIT: " + bugemon.getFightStats().initiative());
             stats.setStyle("-fx-font-size: 30px");
 
             CheckBox selectBox = new CheckBox();

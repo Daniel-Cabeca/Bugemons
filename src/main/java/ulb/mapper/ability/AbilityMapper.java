@@ -23,19 +23,19 @@ public class AbilityMapper {
 
         EffectList effectList = new EffectList();
 
-        if (dto.getEffects() != null) {
-            dto.getEffects().forEach(effectDTO -> {
+        if (dto.effects() != null) {
+            dto.effects().forEach(effectDTO -> {
                     effectList.add(EffectMapper.toEntity(effectDTO));
                 }
             );
         }
 
         return new Ability(
-                dto.getId(),
-                dto.getName(),
-                dto.getType(),
-                dto.getDescription(),
-                dto.getPower(),
+                dto.id(),
+                dto.name(),
+                dto.type(),
+                dto.description(),
+                dto.power(),
                 effectList);
     }
 

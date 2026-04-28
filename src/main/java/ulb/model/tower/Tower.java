@@ -26,6 +26,31 @@ public class Tower {
 
     public List<Floor> getFloors() {return floors;}
 
+    public Floor getCurrentFloor() {
+    	for (Floor floor: this.floors) {
+     		if (!floor.isFloorCompleted()){
+    			return floor;
+       		}
+     	}
+     	return null;
+    }
+
+    public int getCurrentFloorId(){
+    	Floor currentFloor = getCurrentFloor();
+     	if (currentFloor != null){
+    		return currentFloor.getId();
+      	}
+      	return -1;
+    }
+
+    public List<Integer> getCurrentFloorCompletedRoomsId(){
+   		Floor currentFloor = getCurrentFloor();
+    	if (currentFloor != null){
+   			return currentFloor.getCompletedRoomsId();
+     	}
+     	return null;
+    }
+
 	public boolean getTowerCompleted() {return this.completedTower;}
 
 	public void setTowerCompleted(boolean status) {this.completedTower = status;}

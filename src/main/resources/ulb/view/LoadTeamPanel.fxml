@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<StackPane style="-fx-background-image:url(backgrounds/CreateTeamBackground.png);
+                  -fx-background-size: stretch;
+                  -fx-background-repeat: no-repeat;
+                  -fx-background-position: center"
+           xmlns="http://javafx.com/javafx/23.0.1"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="ulb.view.windows.LoadTeamPanel">
+
+    <VBox alignment="CENTER" spacing="20"
+          maxWidth="800" maxHeight="700">
+
+        <padding>
+            <Insets bottom="20" left="20" right="20" top="20"/>
+        </padding>
+
+        <Label style="-fx-font-size: 50px;" text="Charger une Équipe" />
+
+        <Separator />
+
+        <ScrollPane fitToWidth="true" prefWidth="700" prefHeight="450"
+                    style="-fx-background-color: rgba(0, 0, 0, 0.3); -fx-background: transparent;">
+            <Accordion fx:id="savedTeamsAccordion" />
+        </ScrollPane>
+
+        <HBox spacing="20" alignment="CENTER">
+
+            <Button onAction="#handleLoadTeam"
+                    prefHeight="50" prefWidth="250"
+                    text="Charger l'équipe" />
+
+            <Button onAction="#handleReturn"
+                    prefHeight="50" prefWidth="250"
+                    text="Retour" />
+        </HBox>
+
+    </VBox>
+
+</StackPane>

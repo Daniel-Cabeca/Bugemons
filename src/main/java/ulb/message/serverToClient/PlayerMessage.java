@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import ulb.DTO.player.PlayerDTO;
 
-
 public class PlayerMessage implements Serializable {
     private PlayerDTO player;
 

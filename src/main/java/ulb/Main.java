@@ -8,7 +8,7 @@ import ulb.repository.*;
 import ulb.repository.database.*;
 import ulb.repository.database.sql.*;
 import ulb.repository.json.ItemJsonRepository;
-import ulb.repository.json.InventoryJsonRepository;
+import ulb.repository.json.StartingInventoryJsonRepository;
 import ulb.service.*;
 
 public class Main{
@@ -42,8 +42,8 @@ public class Main{
 		BugemonService bugemonService = new BugemonService(bugemonSpeciesRepository);
 
 		ItemRepository itemRepository = new ItemDatabaseRepository(database);
-		InventoryRepository inventoryRepository = new InventoryJsonRepository(new ItemJsonRepository());
-		ItemService itemService = new ItemService(itemRepository, inventoryRepository);
+		StartingInventoryRepository startingInventoryRepository = new StartingInventoryJsonRepository(new ItemJsonRepository());
+		ItemService itemService = new ItemService(itemRepository, startingInventoryRepository);
 
 		AccountRepository accountRepository = new AccountDatabaseRepository(database);
 		AccountService accountService = new AccountService(accountRepository);
@@ -51,6 +51,15 @@ public class Main{
 		ChatRepository chatRepository = new ChatDatabaseRepository(database);
 		ChatService chatService = new ChatService(chatRepository);
 
-		server.start(abilityService, bugemonService, itemService, accountService, chatService);
+		TeamRepository teamRepository = new TeamDatabaseRepository(database);
+		TeamService teamService = new TeamService(teamRepository);
+
+		InventoryRepository inventoryRepository = new InventoryDatabaseRepository(database, itemRepository);
+		InventoryService inventoryService = new InventoryService(inventoryRepository);
+
+		TowerSaveRepository towerSaveRepository = new TowerSaveDatabaseRepository(database);
+		TowerSaveService towerSaveService = new TowerSaveService(towerSaveRepository);
+
+		server.start(abilityService, bugemonService, itemService, accountService, chatService, teamService, inventoryService, towerSaveService);
 	}
 }

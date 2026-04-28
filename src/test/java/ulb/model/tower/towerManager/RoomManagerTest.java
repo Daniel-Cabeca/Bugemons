@@ -12,7 +12,7 @@ import ulb.model.tower.Room;
 import ulb.model.tower.RoomType;
 import ulb.repository.BugemonSpeciesRepository;
 import ulb.repository.mock.BugemonSpeciesMockRepository;
-import ulb.repository.mock.InventoryMockRepository;import ulb.repository.mock.ItemMockRepository;import ulb.service.BugemonService;import ulb.service.ItemService;
+import ulb.repository.mock.StartingInventoryMockRepository;import ulb.repository.mock.ItemMockRepository;import ulb.service.BugemonService;import ulb.service.ItemService;
 
 public class RoomManagerTest {
 
@@ -26,9 +26,9 @@ public class RoomManagerTest {
     @Test
     void roomNotCompletedOnInitialisation() {
 		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
-		ItemService itemService = new ItemService(new ItemMockRepository(), new InventoryMockRepository());
+		ItemService itemService = new ItemService(new ItemMockRepository(), new StartingInventoryMockRepository());
 
-		Player player = new Player("TestPlayer", itemService);
+		Player player = new Player();
 		Bugemon a = makeBugemon();
 		Team teamA = new Team(List.of(a));
 		player.setTeam(teamA);
@@ -42,9 +42,9 @@ public class RoomManagerTest {
     @Test
     void setRoomCompletedUpdatesManagerAndRoom() {
 		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
-		ItemService itemService = new ItemService(new ItemMockRepository(), new InventoryMockRepository());
+		ItemService itemService = new ItemService(new ItemMockRepository(), new StartingInventoryMockRepository());
 
-		Player player = new Player("TestPlayer", itemService);
+		Player player = new Player();
 		Bugemon a = makeBugemon();
 		Team teamA = new Team(List.of(a));
 		player.setTeam(teamA);
@@ -60,9 +60,9 @@ public class RoomManagerTest {
 	@Test
 	void createBattleRoomInitializesBattleController() {
 		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
-		ItemService itemService = new ItemService(new ItemMockRepository(), new InventoryMockRepository());
+		ItemService itemService = new ItemService(new ItemMockRepository(), new StartingInventoryMockRepository());
 
-		Player player = new Player("TestPlayer", itemService);
+		Player player = new Player();
 		// give the player a minimal valid team
 		Team team = new Team(List.of(makeBugemon()));
 		player.setTeam(team);

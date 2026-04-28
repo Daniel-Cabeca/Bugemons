@@ -73,6 +73,16 @@ public class Floor {
 		};
 	}
 
+    public List<Integer> getCompletedRoomsId(){
+    	List<Integer> completedRoomsId = new ArrayList<>();
+     	for (Room room: this.rooms){
+      		if (room.isRoomCompleted()){
+      			completedRoomsId.add(room.getId());
+        	}
+      	}
+      	return completedRoomsId;
+    }
+
     public boolean isFloorCompleted() {return completed;}
 
     public void setFloorCompleted(boolean status) {this.completed = status;}

@@ -164,9 +164,12 @@ public class BattleWindowController implements BattleWindow.ViewListener {
     @Override
     public void onSwapBugemon(String bugemonId, ActionEvent event) {
         BugemonDTO bugemon = findTeamBugemonById(bugemonId);
+        BattleSnapshot snapshotBeforeAction = buildBattleSnapshot();
+        if (snapshotBeforeAction != null) {
+            view.setCurrentSnapshot(snapshotBeforeAction);
+        }
+
         BattleState stateAfter = stateOrCurrent(listener.onSwapBugemon(bugemon));
-		BattleSnapshot currentSnapshot = buildBattleSnapshot();
-		view.setCurrentSnapshot(currentSnapshot);
         displayActionSequence(stateAfter, event, () -> {
             if (stateAfter == BattleState.WAITING || stateAfter == BattleState.INGAME) {
                 view.showMainMenu();
@@ -294,13 +297,13 @@ public class BattleWindowController implements BattleWindow.ViewListener {
             Platform.runLater(() -> {
                 waitingForOpponentAction = false;
                 view.setBattleInputsDisabled(false);
-                refreshView();
 
                 BattleState currentState = listener.getState();
-                boolean stateHandled = handleBattleState(currentState, event);
-                if (!stateHandled && currentState == BattleState.INGAME) {
-                    view.showMainMenu();
-                }
+                displayActionSequence(currentState, event, () -> {
+                    if (currentState == BattleState.INGAME) {
+                        view.showMainMenu();
+                    }
+                });
             });
         });
 
@@ -358,7 +361,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
                 getTypeColor(bugemon.getType()),
                 bugemon.getLevel(),
                 bugemon.getHp(),
-                bugemon.getBaseStats().getHp()
+                bugemon.getBaseStats().hp()
         );
     }
 
@@ -377,7 +380,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
      * @return The list of inventory entries
      */
     private List<InventoryEntry> buildInventoryEntries() {
-        listener.updatePlayerInventory(this.player.getUserName());
+        listener.updatePlayerInventory(this.player.getUsername());
         Map<ItemDTO, Integer> inventory = getPlayerInventory();
         if (inventory == null) {
             return List.of();
@@ -390,12 +393,12 @@ public class BattleWindowController implements BattleWindow.ViewListener {
 
         for (Map.Entry<ItemDTO, Integer> entry : inventory.entrySet()) {
             ItemDTO item = entry.getKey();
-            boolean usable = itemMap.get(item.getId());
+            boolean usable = itemMap.get(item.id());
             entries.add(new InventoryEntry(
-                    item.getId(),
-                    item.getName(),
-                    item.getDescription(),
-                    item.getSprite(),
+                    item.id(),
+                    item.name(),
+                    item.description(),
+                    item.sprite(),
                     entry.getValue(),
                     usable
             ));
@@ -454,7 +457,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
                 String effectiveness = null;
                 if (abilitiesEffectiveness != null) {
                     for (Map.Entry<AbilityDTO, String> entry : abilitiesEffectiveness.entrySet()) {
-                        if (entry.getKey() != null && entry.getKey().getId().equals(ability.getId())) {
+                        if (entry.getKey() != null && entry.getKey().id().equals(ability.id())) {
                             effectiveness = entry.getValue();
                             break;
                         }
@@ -462,10 +465,10 @@ public class BattleWindowController implements BattleWindow.ViewListener {
                 }
 
                 entries.add(new AbilityEntry(
-                        ability.getId(),
-                        ability.getName(),
-                        ability.getAccurateDescription(),
-                        getTypeColor(ability.getType()),
+                        ability.id(),
+                        ability.name(),
+                        ability.description() + "\n Puissance:  " + ability.power(),
+                        getTypeColor(ability.type()),
                         effectiveness
                 ));
             }
@@ -484,7 +487,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         }
 
         for (ItemDTO item : inventory.keySet()) {
-            if (itemId.equals(item.getId())) {
+            if (itemId.equals(item.id())) {
                 return item;
             }
         }
@@ -516,7 +519,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         }
 
         for (AbilityDTO ability : activeBugemon.getAbilities()) {
-            if (ability != null && abilityId.equals(ability.getId())) {
+            if (ability != null && abilityId.equals(ability.id())) {
                 return ability;
             }
         }

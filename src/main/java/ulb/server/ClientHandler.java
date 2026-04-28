@@ -1,5 +1,6 @@
 package ulb.server;
 
+import ulb.DTO.team.TeamDTO;
 import ulb.communication.Messenger.SocketMessenger;
 import ulb.mapper.ability.AbilityMapper;
 import ulb.mapper.bugemon.BugemonMapper;
@@ -7,6 +8,7 @@ import ulb.mapper.bugemon.BugemonSpeciesMapper;
 import ulb.mapper.item.ItemMapper;
 import ulb.mapper.player.PlayerMapper;
 import ulb.mapper.reward.RewardMapper;
+import ulb.mapper.team.TeamMapper;
 import ulb.message.ClientToServerMessage;
 import ulb.message.clientToServer.*;
 import ulb.message.serverToClient.*;
@@ -25,6 +27,7 @@ import ulb.model.team.OpponentTeamGenerator;
 import ulb.model.team.Team;
 import ulb.model.tower.Room;
 import ulb.model.tower.RoomType;
+import ulb.repository.LoadException;
 import ulb.service.*;
 import ulb.model.tower.towerManager.TowerManager;
 import ulb.service.strategy.AI;
@@ -41,6 +44,7 @@ import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.DTO.player.PlayerDTO;
+import ulb.DTO.player.PlayerRegisterDTO;
 import ulb.DTO.reward.RewardDTO;
 
 public class ClientHandler extends Thread implements ServerMessageHandler{
@@ -64,6 +68,9 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	private final ItemService itemService;
 	private final AccountService accountService;
 	private final ChatService chatService;
+	private final TeamService teamService;
+	private final InventoryService inventoryService;
+	private final TowerSaveService towerSaveService;
 
 	private void resetGameSessionState() {
 		this.battle = null;
@@ -74,15 +81,18 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	}
 
     public ClientHandler(SocketMessenger messenger,
-    		AbilityService abilityService, BugemonService bugemonService, ItemService itemService,
-    		AccountService accountService, ChatService chatService) {
+                         AbilityService abilityService, BugemonService bugemonService, ItemService itemService,
+                         AccountService accountService, ChatService chatService, TeamService teamService, InventoryService inventoryService, TowerSaveService towerSaveService) {
         this.socketMessenger = messenger;
-        this.stop = false;
+		this.teamService = teamService;
+		this.stop = false;
 		this.abilityService = abilityService;
 		this.bugemonService = bugemonService;
 		this.itemService = itemService;
 		this.accountService = accountService;
 		this.chatService = chatService;
+		this.inventoryService = inventoryService;
+		this.towerSaveService = towerSaveService;
     }
 
 	public AbilityService getAbilityService() { return this.abilityService; }
@@ -90,6 +100,9 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	public ItemService getItemService() { return this.itemService; }
 	public AccountService getAccountService() { return this.accountService; }
 	public ChatService getChatService() { return this.chatService; }
+	public TeamService getTeamService() { return this.teamService; }
+	public InventoryService getInventoryService() { return this.inventoryService; }
+	public TowerSaveService getTowerSaveService() { return this.towerSaveService; }
 
     @Override
     public void run(){
@@ -147,10 +160,17 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		}
 		if (this.towerManager.moveToRoom(targetRoomId)){
 			this.battle = this.towerManager.getCurrentBattle();
+			this.towerSaveService.saveTowerInfo(this.towerManager.getTower(), this.player);
 			return true;
 		}
 		return false;
-		
+
+	}
+
+	private void finishTower(){
+		if (!isGameTower){return;}
+		this.towerSaveService.deleteTowerInfo(player);
+		this.resetGameSessionState();
 	}
 
 	private void clearPendingLevelUpState() {
@@ -160,21 +180,38 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
 	// SETUP
 
+	private Player buildPlayer(PlayerRegisterDTO dto, boolean isLogin) {
+    String username = dto.username();
+
+    Inventory inventory;
+    if (isLogin) {
+        inventory = inventoryService.getInventoryFromDatabase(username);
+    } else {
+        inventory = itemService.createStarterInventory();
+        inventoryService.insertInventory(inventory, username);
+    }
+
+    int userId = accountService.getUserId(username);
+
+    return PlayerMapper.toEntity(dto, inventory, userId);
+}
+
 	@Override
 	public void handle(RegisterMessage message){
 		boolean success;
-		this.player = PlayerMapper.toEntity(message.getPlayer(), this.itemService);
+		String username = message.getPlayer().username();
+		String password = message.getPlayer().password();
 
 		if (message.isLogin()) {
-			success = this.getAccountService().login(this.player.getName(), this.player.getPassword());
+			success = this.getAccountService().login(username, password);
 		}
 		else {
-			success = this.getAccountService().register(this.player.getName(), this.player.getPassword());
+			success = this.getAccountService().register(username, password);
 		}
 		if (success) {
+			this.player = buildPlayer(message.getPlayer(), message.isLogin());
 			sendSuccessMessage();
-		}
-		else {
+		} else {
 			sendErrorMessage("Register failed");
 		}
 	}
@@ -182,7 +219,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	@Override
 	public void handle(SetUpTeamMessage message){
 		Team team = new Team();
-		
+
 		for (BugemonDTO bugemonDTO : message.getTeam()){
 			if (!team.add(BugemonMapper.toEntity(bugemonDTO))){
 				sendErrorMessage("Invalid Team");
@@ -212,7 +249,9 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 			sendErrorMessage(e.getMessage());
 			return;
 		}
-		this.battle = new Battle(player.getTeam(), teamB, player, new Player(this.getItemService()));
+
+		Inventory playerBInventory = this.getItemService().createStarterInventory();
+		this.battle = new Battle(player.getTeam(), teamB, player, new Player("PlayerB", -1, playerBInventory));
 		this.teamLabel = Battle.ParticipantLabel.TEAM_A;
 		this.isGameTower = false;
 
@@ -241,18 +280,18 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	// GAME INFO
 
 	public void handle(GetPlayerMessage message) {
-		if (message.getUsername().equals(this.player.getName())){
+		if (message.getUsername().equals(this.player.getUsername())){
 			PlayerDTO playerDTO = PlayerMapper.toDTO(this.player);
 			sendMessage(new PlayerMessage(playerDTO));
 		}
 		else{
 			sendErrorMessage("Wrong Username");
 		}
-		
+
 	}
 
 	public void handle(GetPlayerInventory message) {
-		if (message.getUserName().equals(this.player.getName())){
+		if (message.getUserName().equals(this.player.getUsername())){
 			Inventory inventory = this.player.getInventory();
 			Map<ItemDTO, Integer> inventoryDTO = new HashMap<>();
 			
@@ -296,7 +335,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
 		for (ItemDTO itemDTO : message.getItems()){
 			Item item = ItemMapper.toEntity(itemDTO);
-			usableItems.put(itemDTO.getId(), this.battle.checkItem(item, teamLabel));
+			usableItems.put(itemDTO.id(), this.battle.checkItem(item, teamLabel));
 		}
 
         sendMessage(new UsableItemsMessage(usableItems));
@@ -305,11 +344,11 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	@Override
 	public void handle(GetAbilityEffectivenessMessage message){
 		Map<AbilityDTO, String> effectiveness = new HashMap<AbilityDTO, String>();
-		Bugemon bugemonTarger = BugemonMapper.toEntity(message.getBugemonTarget());
+		Bugemon bugemonTarget = BugemonMapper.toEntity(message.getBugemonTarget());
 		
 		for (AbilityDTO abilityDTO : message.getAbilities()){
 			Ability ability = AbilityMapper.toEntity(abilityDTO);
-			String effectivenessMessage = ability.getEffectivenessMessage(bugemonTarger);
+			String effectivenessMessage = ability.getEffectivenessMessage(bugemonTarget);
 			effectiveness.put(abilityDTO, effectivenessMessage);
 		}
 
@@ -378,7 +417,9 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 					} else {
 						nextWindow = WindowType.FLOOR;
 					}
-				}
+				} else {
+                    finishTower();
+                }
 
 				sendMessage(new NextWindowMessage(nextWindow));
 				return;
@@ -450,7 +491,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
 		if (this.pendingLevelUpBugemon == null
 				|| this.pendingLevelUpRewards == null
-				|| !this.pendingLevelUpBugemon.getId().equals(currentBugemon.getId())) {
+				|| !this.pendingLevelUpBugemon.getSpeciesId().equals(currentBugemon.getSpeciesId())) {
 			this.pendingLevelUpBugemon = currentBugemon;
 			this.pendingLevelUpRewards = new ArrayList<>(this.battle.computeRewards(currentBugemon));
 		}
@@ -493,6 +534,16 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	}
 
 	@Override
+	public void handle(AbandonTowerMessage message){
+		if (!this.isGameTower){
+			sendErrorMessage(getName());
+			return;
+		}
+		this.finishTower();
+		sendSuccessMessage();
+	}
+
+	@Override
 	public void handle(SwapBugemonMessage message){
 		BugemonDTO bugemonDTOToSwap = message.getBugemonToSwap();
 		Bugemon bugemonToSwap = this.player.getTeam().getBugemonById(bugemonDTOToSwap.getId());
@@ -513,6 +564,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	public void handle(UseItemMessage message){
 		Item item = ItemMapper.toEntity(message.getItem());
 		this.battle.chooseAction(new UseItem(item), teamLabel);
+		this.inventoryService.deleteItem(item, 1, player.getUsername());
 		sendSuccessMessage();
 	}
 
@@ -526,7 +578,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 			return;
 		}
 
-		Ability oldAbility = chosenBugemon.getAbilities().getAbilityById(message.getOldAbility().getId());
+		Ability oldAbility = chosenBugemon.getAbilities().getAbilityById(message.getOldAbility().id());
 		if (oldAbility == null){
 			sendErrorMessage("Ability not learned");
 			return;
@@ -543,6 +595,8 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	public void handle(ChooseItemRewardMessage message){
 		Item item = ItemMapper.toEntity(message.getItem());
 		player.getInventory().addItem(item, 1);
+
+		this.inventoryService.insertItem(item, 1, player.getUsername());
 
 		towerManager.getCurrentRoomManager().setRoomCompleted(true);
 
@@ -616,7 +670,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 			return;
 		}
 	}
-	
+
 	// SPECIAL INFO
 
 	@Override
@@ -644,11 +698,36 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	}
 
 	@Override
+	public void handle(SendBattleRequestMessage message){
+		AccountService accountService = this.getAccountService();
+		int senderId = accountService.getUserId(message.getSenderUsername());
+		int receiverId = accountService.getUserId(message.getReceiverUsername());
+		if (senderId == -1 || receiverId == -1){
+			sendErrorMessage("Utilisateur introuvable");
+			return;
+		}
+		if (accountService.hasPendingBattleRequestBetween(senderId, receiverId)) {
+			sendErrorMessage("Un défi est déjà en attente avec cet ami");
+			return;
+		}
+		accountService.sendBattleRequest(senderId, receiverId);
+		sendSuccessMessage();
+	}
+
+	@Override
 	public void handle(GetFriendRequestsMessage message){
 		AccountService accountService = this.getAccountService();
 		int userId = accountService.getUserId(message.getUsername());
-		List<String> requests = accountService.getPendingRequests(userId);
+		List<String> requests = accountService.getPendingFriendRequests(userId);
 		sendMessage(new FriendRequestsMessage(requests));
+	}
+
+	@Override
+	public void handle(GetBattleRequestsMessage message){
+		AccountService accountService = this.getAccountService();
+		int userId = accountService.getUserId(message.getUsername());
+		List<String> requests = accountService.getPendingBattleRequests(userId);
+		sendMessage(new BattleRequestsMessage(requests));
 	}
 
 	@Override
@@ -661,11 +740,29 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	}
 
 	@Override
+	public void handle(AcceptBattleRequestMessage message){
+		AccountService accountService = this.getAccountService();
+		int senderId = accountService.getUserId(message.getSenderUsername());
+		int receiverId = accountService.getUserId(message.getReceiverUsername());
+		accountService.acceptBattleRequest(senderId, receiverId);
+		sendSuccessMessage();
+	}
+
+	@Override
 	public void handle(DeclineFriendRequestMessage message){
 		AccountService accountService = this.getAccountService();
 		int senderId = accountService.getUserId(message.getSenderUsername());
 		int receiverId = accountService.getUserId(message.getReceiverUsername());
 		accountService.declineFriendRequest(senderId, receiverId);
+		sendSuccessMessage();
+	}
+
+	@Override
+	public void handle(DeclineBattleRequestMessage message){
+		AccountService accountService = this.getAccountService();
+		int senderId = accountService.getUserId(message.getSenderUsername());
+		int receiverId = accountService.getUserId(message.getReceiverUsername());
+		accountService.declineBattleRequest(senderId, receiverId);
 		sendSuccessMessage();
 	}
 
@@ -712,6 +809,46 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		int id = this.getAccountService().getUserId(name);
 		UserIdMessage response = new UserIdMessage(id);
 		sendMessage(response);
+	}
+
+	// TEAM
+
+	@Override
+	public void handle(SaveTeamMessage message) {
+		TeamDTO teamDTO = message.getTeam();
+		Team team = TeamMapper.toEntity(teamDTO);
+		TeamService teamService = this.getTeamService();
+
+		try {
+			if (teamService.teamExists(team.getTeamName(), player.getUsername())) {
+				sendErrorMessage("A team with this name already exists.");
+				return;
+			}
+
+			// inserts the member bugemons in bugemons so they can be referenced in team_members
+			for (Bugemon b : team.getMembers()) {
+				teamService.insertUserBugemon(b, player.getUsername());
+			}
+
+			teamService.insertTeam(player.getUsername(), team);
+			teamService.insertAllBugemonsInTeam(team, team.getId());
+			sendSuccessMessage();
+
+		} catch (LoadException e) {
+			sendErrorMessage(e.getMessage());
+		}
+	}
+
+	@Override
+	public void handle(GetSavedTeamsMessage message) {
+		TeamService teamService = this.getTeamService();
+
+		List<TeamDTO> DTOTeams = new ArrayList<>();
+
+		for (Team team : teamService.getAllTeams(player.getUsername())){
+			DTOTeams.add(TeamMapper.toDTO(team));
+		}
+		this.sendMessage(new SavedTeamsMessage(DTOTeams));
 	}
 
 	/**

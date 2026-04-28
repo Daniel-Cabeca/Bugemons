@@ -42,7 +42,7 @@ public class FloorRewardController implements FloorRewardWindow.ViewListener, Ch
 
 		List<Integer> towerInfo = listener.getTowerInfo();
 		if (towerInfo != null){
-			view.initializeLabels(towerInfo.get(0), towerInfo.get(1), rewardItem.getName());
+			view.initializeLabels(towerInfo.get(0), towerInfo.get(1), rewardItem.name());
 		}
 
 

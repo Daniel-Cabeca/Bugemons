@@ -8,16 +8,17 @@ import java.util.Map;
 import ulb.model.item.Item;
 import ulb.model.Player;
 import ulb.model.item.Inventory;
-import ulb.repository.mock.InventoryMockRepository;
+import ulb.repository.mock.StartingInventoryMockRepository;
 import ulb.repository.mock.ItemMockRepository;
 import ulb.service.ItemService;
 
 public class PlayerTest {
 	@Test
 	public void addDefaultItemsToInventoryOnPlayerInitialisation() {
-		ItemService itemService = new ItemService(new ItemMockRepository(), new InventoryMockRepository());
+		ItemService itemService = new ItemService(new ItemMockRepository(), new StartingInventoryMockRepository());
 
-		Player player = new Player("TestPlayer", itemService);
+		Inventory starterInventory = itemService.createStarterInventory();
+		Player player = new Player("Player", -1, starterInventory);
 		Inventory inventory = player.getInventory();
 		Map<Item, Integer> items = inventory.getItems();
 

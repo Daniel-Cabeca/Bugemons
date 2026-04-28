@@ -4,6 +4,17 @@ CREATE TABLE IF NOT EXISTS users (
                                     password_hash TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS tower_saves (
+									user_id INTEGER PRIMARY KEY,
+									current_floor_id INTEGER NOT NULL,
+									completed_rooms_id TEXT,
+									current_team_id INTEGER,
+
+									FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+									FOREIGN KEY (current_team_id) REFERENCES teams(id) ON DELETE CASCADE
+
+);
+
 CREATE TABLE IF NOT EXISTS inventory (
                                         user_id INTEGER,
                                         item_id TEXT,
@@ -126,6 +137,30 @@ CREATE TABLE IF NOT EXISTS friends (
 );
 
 CREATE TABLE IF NOT EXISTS friend_requests (
+                                       sender_id   INTEGER NOT NULL,
+                                       receiver_id INTEGER NOT NULL,
+
+                                       PRIMARY KEY (sender_id, receiver_id),
+                                       FOREIGN KEY (sender_id)   REFERENCES users(id) ON DELETE CASCADE,
+                                       FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS teams (
+                                team_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                user_id INTEGER NOT NULL,
+                                team_name TEXT NOT NULL,
+                                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS team_members (
+                                     team_id INTEGER NOT NULL,
+                                     bugemon_id INTEGER NOT NULL,
+                                     PRIMARY KEY (team_id, bugemon_id),
+                                     FOREIGN KEY (team_id) REFERENCES teams(team_id) ON DELETE CASCADE,
+                                     FOREIGN KEY (bugemon_id) REFERENCES bugemons(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS battle_requests (
                                        sender_id   INTEGER NOT NULL,
                                        receiver_id INTEGER NOT NULL,
 

@@ -387,6 +387,14 @@ public class BattleWindow extends Window {
         roomLabel.setText("");
     }
 
+	/**
+	 * Plays the attack animation for the correct Bugemon
+	 * @param isPlayer
+	 */
+	public void playAttackAnimation(boolean isPlayer) {
+		graphicsHelper.playAttackAnimation(isPlayer ? PlayerBugemon : OpponentBugemon, isPlayer);
+	}
+
     /**
      * Immutable snapshot of the current battle state for both the player and opponent Bugemons.
      *

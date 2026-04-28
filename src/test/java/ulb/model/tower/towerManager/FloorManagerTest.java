@@ -16,7 +16,7 @@ import ulb.model.tower.Room;
 import ulb.model.type.Type;
 import ulb.repository.BugemonSpeciesRepository;
 import ulb.repository.mock.BugemonSpeciesMockRepository;
-import ulb.repository.mock.InventoryMockRepository;import ulb.repository.mock.ItemMockRepository;import ulb.service.BugemonService;import ulb.service.ItemService;
+import ulb.repository.mock.StartingInventoryMockRepository;import ulb.repository.mock.ItemMockRepository;import ulb.service.BugemonService;import ulb.service.ItemService;
 
 public class FloorManagerTest {
 
@@ -30,9 +30,9 @@ public class FloorManagerTest {
     @Test
     void floorIsNotCompletedOnInitialisation() {
 		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
-		ItemService itemService = new ItemService(new ItemMockRepository(), new InventoryMockRepository());
+		ItemService itemService = new ItemService(new ItemMockRepository(), new StartingInventoryMockRepository());
 
-		Player player = new Player("TestPlayer", itemService);
+		Player player = new Player();
         Floor floor = new Floor(1, false);
 		Bugemon a = makeBugemon();
 		Team teamA = new Team(List.of(a));
@@ -46,9 +46,9 @@ public class FloorManagerTest {
     @Test
     void floorIsCompletedWhenAllRoomsCompleted() {
 		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
-		ItemService itemService = new ItemService(new ItemMockRepository(), new InventoryMockRepository());
+		ItemService itemService = new ItemService(new ItemMockRepository(), new StartingInventoryMockRepository());
 
-		Player player = new Player("TestPlayer", itemService);
+		Player player = new Player();
 		Bugemon a = makeBugemon();
 		Team teamA = new Team(List.of(a));
 		player.setTeam(teamA);
@@ -62,6 +62,5 @@ public class FloorManagerTest {
         assertTrue(manager.isFloorCompleted());
         assertTrue(floor.isFloorCompleted());
     }
-
 }
 

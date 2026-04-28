@@ -1,14 +1,14 @@
 package ulb.message.clientToServer;
 
-import ulb.DTO.player.PlayerDTO;
+import ulb.DTO.player.PlayerRegisterDTO;
 import ulb.message.ClientToServerMessage;
 import ulb.server.ServerMessageHandler;
 
 public class RegisterMessage implements ClientToServerMessage {
-    private PlayerDTO playerDTO;
+    private PlayerRegisterDTO playerDTO;
     private boolean login;
 
-    public RegisterMessage(PlayerDTO playerDTO, boolean login){
+    public RegisterMessage(PlayerRegisterDTO playerDTO, boolean login){
         this.playerDTO = playerDTO;
         this.login = login;
     }
@@ -18,6 +18,6 @@ public class RegisterMessage implements ClientToServerMessage {
 		handler.handle(this);
 	}
 
-    public PlayerDTO getPlayer() {return this.playerDTO;}
+    public PlayerRegisterDTO getPlayer() {return this.playerDTO;}
     public boolean isLogin() {return this.login;}
 }

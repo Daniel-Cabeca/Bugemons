@@ -22,10 +22,10 @@ public class StatsMapper {
     public static Stats toEntity(StatsDTO dto) {
         if (dto == null) return null;
         return new Stats(
-                dto.getHp(),
-                dto.getAttack(),
-                dto.getDefense(),
-                dto.getInitiative()
+                dto.hp(),
+                dto.attack(),
+                dto.defense(),
+                dto.initiative()
         );
     }
 }

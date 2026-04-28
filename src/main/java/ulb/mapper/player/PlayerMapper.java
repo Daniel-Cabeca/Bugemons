@@ -7,12 +7,13 @@ import java.util.Map;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.DTO.player.PlayerDTO;
+import ulb.DTO.player.PlayerRegisterDTO;
 import ulb.mapper.bugemon.BugemonMapper;
 import ulb.mapper.item.ItemMapper;
 import ulb.model.Player;
 import ulb.model.bugemon.Bugemon;
+import ulb.model.item.Inventory;
 import ulb.model.item.Item;
-import ulb.service.ItemService;
 
 /**
  * Used to convert Regular Player to DTO Player
@@ -33,11 +34,11 @@ public class PlayerMapper {
         for (Map.Entry<Item, Integer> e : entity.getInventory().getItems().entrySet())
             inventory.put(ItemMapper.toDTO(e.getKey()), e.getValue());
 
-        return new PlayerDTO(entity.getName(), entity.getPassword(), team, inventory);
+        return new PlayerDTO(entity.getUsername(), team, inventory);
     }
 
-    public static Player toEntity(PlayerDTO dto, ItemService itemService) {
+    public static Player toEntity(PlayerRegisterDTO dto, Inventory inventory, int userId) {
         if (dto == null) return null;
-        return new Player(dto.getUserName(), dto.getPassword(), itemService);
+		return new Player(dto.username(), userId, inventory);
     }
 }

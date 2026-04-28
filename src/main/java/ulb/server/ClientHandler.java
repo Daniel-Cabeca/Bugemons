@@ -411,23 +411,31 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 				if (won) {
 					this.towerManager.getCurrentRoomManager().setRoomCompleted(true);
 					this.battle.resetFightStats();
-					if (this.towerManager.getCurrentRoomType() == RoomType.BOSS) {
+					RoomType currentRoomType = this.towerManager.getCurrentRoomType();
+
+					if (currentRoomType == RoomType.BOSS) {
 						this.towerManager.nextFloor();
 						this.towerSaveService.saveTowerInfo(this.towerManager.getTower(), this.player);
-						nextWindow = WindowType.NEXT_ROOM;
+
+						if (!this.towerManager.isTowerCompleted()) {
+							RoomType nextRoomType = this.towerManager.getCurrentRoomType();
+							this.battle = this.towerManager.getCurrentBattle();
+							// the final floor is just one boss battle
+							nextWindow = (nextRoomType == RoomType.BOSS) ? WindowType.GAME : WindowType.NEXT_ROOM;
+						}
 					} else {
 						nextWindow = WindowType.FLOOR;
 					}
 				} else {
-                    finishTower();
-                }
+					finishTower();
+				}
 
 				sendMessage(new NextWindowMessage(nextWindow));
 				return;
 			}
 
 			Room currentRoom = towerManager.getCurrentRoomManager().getRoom();
-			if (currentRoom.isRoomCompleted()) { // to avoid redoing an already won battle
+			if (currentRoom.isRoomCompleted()) { // to avoid redoing a completed room
 				nextWindow = WindowType.FLOOR;
 			} else {
 				switch (towerManager.getCurrentRoomType()) {
@@ -471,8 +479,12 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		if (this.battle != null && this.battle.isGameFinished()){
 			this.battle = null;
 		}
-		clearPendingLevelUpState();
 
+		if (this.isGameTower && this.towerManager != null && this.towerManager.isTowerCompleted()) {
+			finishTower();
+		}
+
+		clearPendingLevelUpState();
 		sendMessage(new BattleEndInfoMessage(isWin, gainedXp));
 	}
 
@@ -524,8 +536,12 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 			for (Bugemon bugemon : this.player.getTeam().getMembers()) {
 				bugemon.getFightStats().setHp(bugemon.getBaseStats().getHp());
 			}
-			this.towerManager.getCurrentFloorManager().rewindRoom();
-			this.battle = this.towerManager.getCurrentBattle();
+			if (this.towerManager.isFinalFloor()) {
+				finishTower();
+			} else {
+				this.towerManager.getCurrentFloorManager().rewindRoom();
+				this.battle = this.towerManager.getCurrentBattle();
+			}
 		} else {
 			this.battle = null;
 			clearPendingLevelUpState();

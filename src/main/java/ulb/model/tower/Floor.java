@@ -42,6 +42,14 @@ public class Floor {
 
     public List<Room> getRooms() {return rooms;}
 
+    /**
+     * @return the start room id (4 for all floors except the final floor that only has one boss battle)
+     */
+    public int getStartRoomId() {
+        Room room4 = getRoomById(4);
+        return room4 != null ? 4 : rooms.getFirst().getId();
+    }
+
 	public Room getRoomById(int roomId) {
 		for (Room room : rooms) {
 			if (room.getId() == roomId) {

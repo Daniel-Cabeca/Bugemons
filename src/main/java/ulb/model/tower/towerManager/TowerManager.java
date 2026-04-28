@@ -71,6 +71,10 @@ public class TowerManager {
 		return true;
 	}
 
+	public boolean isFinalFloor() {
+		return floorNumber == 8;
+	}
+
 	/** Returns whether current room is completed. */
 	public boolean isRoomCompleted(){
 		return this.getCurrentRoomManager().isRoomCompleted();

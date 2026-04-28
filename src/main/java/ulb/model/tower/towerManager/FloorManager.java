@@ -32,8 +32,9 @@ public class FloorManager {
 		this.bugemonService = bugemonService;
 		this.itemService = itemService;
 		this.floor = floor;
-		this.currentRoomId = 4;
-		this.previousRoomId = 4;
+
+		this.currentRoomId = floor.getStartRoomId();
+		this.previousRoomId = this.currentRoomId;
 		this.currentRoomManager = new RoomManager(floor.getRoomById(currentRoomId), floor.getId(), this.player, this.getBugemonService(), this.getItemService());
 	}
 

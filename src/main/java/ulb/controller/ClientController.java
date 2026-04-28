@@ -892,11 +892,7 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener, FloorControlle
 	@Override
 	public void onRun() {
 		if (postData(new RunMessage())){
-			if (this.gameMode == GameMode.TOWER){
-				switchToFloorWindow();
-			} else {
-				nextRoom();
-			}
+			nextRoom();
 		}
 	}
 

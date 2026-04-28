@@ -43,4 +43,26 @@ public class TowerSaveDatabaseRepositoryTest {
 		assertEquals(completedRoomsIdList, result);
 		
 	}
+	@Test
+	void updateInfo(){
+		DatabaseInMemory database = new DatabaseInMemory();
+		DatabaseInitializer databaseInitializer = new DatabaseInitializer(database);
+		databaseInitializer.createTables();
+
+		Team team = insertUserAndTeam(database, "player", "team_alpha");
+
+		AccountDatabaseRepository accountRepository = new AccountDatabaseRepository(database);
+		int userId = accountRepository.getUserId("player");
+
+		TowerSaveDatabaseRepository towerSaveRepository = new TowerSaveDatabaseRepository(database);
+		towerSaveRepository.addTowerSave(userId, 4, new ArrayList<>(List.of(1, 2, 3)), team.getId());
+
+		ArrayList<Integer> completedRoomsId = new ArrayList<>(List.of(1, 3, 4));
+		int currentFloorId = 5;
+		assertDoesNotThrow(() ->towerSaveRepository.updateTowerSave(userId, currentFloorId, completedRoomsId, team.getId()));
+
+		assertEquals(completedRoomsId, towerSaveRepository.getCompletedRoomsId(userId));
+		assertEquals(currentFloorId, towerSaveRepository.getCurrentFloorId(userId));
+		assertEquals(team.getId(), towerSaveRepository.getCurrentTeamId(userId));
+	}
 }

@@ -7,14 +7,27 @@ import ulb.model.Player;
 import ulb.model.tower.Tower;
 import ulb.repository.TowerSaveRepository;
 
+/**
+ * Service layer for tower saves
+ */
 public class TowerSaveService {
 
 	private final TowerSaveRepository towerSaveRepository;
 
+	/**
+	 * Creates a tower save service using the provided repository.
+	 *
+	 * @param towerSaveRepository the repository used for tower save
+	 */
 	public TowerSaveService(TowerSaveRepository towerSaveRepository) {
 		this.towerSaveRepository = towerSaveRepository;
 	}
 
+    /**
+	 * Add or update tower save
+     * @param tower current tower played by the player
+     * @param player player who played in the tower
+     */
 	public void saveTowerInfo(Tower tower, Player player) {
 		Integer userId = player.getUserId();
 		Integer currentFloorId = tower.getCurrentFloorId();

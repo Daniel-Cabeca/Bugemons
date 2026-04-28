@@ -30,12 +30,7 @@ public class TowerSaveDatabaseRepository implements TowerSaveRepository {
 	@Override
 	public void addTowerSave(Integer userId, Integer currentFloorId, List<Integer> completedRoomsId, Integer teamId) throws LoadException{
 		String sql = "INSERT INTO tower_saves (user_id, current_floor_id, completed_rooms_id, current_team_id) VALUES (?, ?, ?, ?)";
-		String completedRoomsIdString = completedRoomsId.stream()
-                       .map(String::valueOf) // Convert Integer to String
-                       .collect(Collectors.joining(",")); // Join with commas;
-		completedRoomsIdString = completedRoomsId.toString();
-		System.out.println("---------------------------------------------------------------------------");
-		System.out.println(completedRoomsIdString);
+		String completedRoomsIdString = completedRoomsId.toString();
 		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {		
             stmt.setInt(1, userId);
             stmt.setInt(2, currentFloorId);
@@ -43,13 +38,45 @@ public class TowerSaveDatabaseRepository implements TowerSaveRepository {
 			stmt.setInt(4, teamId);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new LoadException("Failed to insert item to tower_saves: " + e.getMessage());
+            throw new LoadException("Failed to insert save in tower_saves sql table: " + e.getMessage());
         }
-	} 
+	}
 
-	public void updateTowerSave(Integer userId, Integer currentFloorId, List<Integer> completedRoomsId, Integer teamId) throws LoadException{} // TODO
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void updateTowerSave(Integer userId, Integer currentFloorId, List<Integer> completedRoomsId, Integer teamId) throws LoadException{
+		String sql = "UPDATE tower_saves SET current_floor_id=?, completed_rooms_id=?, current_team_id=? WHERE user_id=?";
+		String completedRoomsIdString = completedRoomsId.toString();
+		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
+			stmt.setInt(1, currentFloorId);
+			stmt.setString(2, completedRoomsIdString);
+			stmt.setInt(3, teamId);
+			stmt.setInt(4, userId);
+			stmt.executeUpdate();
+		} catch (SQLException e) {
+			throw new LoadException("Failed to update save in tower_saves sql table: " + e.getMessage());
+		}
+	}
 
-	public boolean isTowerSaved(Integer userId){return false;} // TODO
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isTowerSaved(Integer userId){
+		String sql = "SELECT COUNT(1) AS present FROM tower_saves WHERE user_id=?";
+		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
+			stmt.setInt(1, userId);
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next()){
+				return rs.getInt("present") == 1;
+			}
+		} catch (SQLException e) {
+			throw new LoadException("Failed to check user_id exists in tower_saves sql table: " + e.getMessage());
+		}
+		return false;
+	}
 	
 	/**
 	 * {@inheritDoc}
@@ -76,4 +103,41 @@ public class TowerSaveDatabaseRepository implements TowerSaveRepository {
         }
 		return null;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Integer getCurrentFloorId(Integer userId) throws LoadException{
+		String sql = "SELECT current_floor_id FROM tower_saves WHERE user_id=?";
+		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
+			stmt.setInt(1, userId);
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next()){
+				return rs.getInt("current_floor_id");
+			}
+		} catch (SQLException e) {
+			throw new LoadException("Failed to get current_floor_id from tower_saves: " + e.getMessage());
+		}
+		return -1;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Integer getCurrentTeamId(Integer userId) throws LoadException{
+		String sql = "SELECT current_team_id FROM tower_saves WHERE user_id=?";
+		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
+			stmt.setInt(1, userId);
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next()){
+				return rs.getInt("current_team_id");
+			}
+		} catch (SQLException e) {
+			throw new LoadException("Failed to get current_team_id from tower_saves: " + e.getMessage());
+		}
+		return -1;
+	}
+
 }

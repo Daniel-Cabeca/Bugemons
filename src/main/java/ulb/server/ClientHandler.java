@@ -156,7 +156,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		if (isGameTower){
 			this.towerManager.nextRoom();
 			this.battle = this.towerManager.getCurrentBattle();
-			//this.towerSaveService.saveTowerInfo(this.towerManager.getTower(), this.player); TODO
+			this.towerSaveService.saveTowerInfo(this.towerManager.getTower(), this.player);
 		}
 	}
 

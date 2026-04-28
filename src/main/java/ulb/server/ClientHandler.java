@@ -413,6 +413,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 					this.battle.resetFightStats();
 					if (this.towerManager.getCurrentRoomType() == RoomType.BOSS) {
 						this.towerManager.nextFloor();
+						this.towerSaveService.saveTowerInfo(this.towerManager.getTower(), this.player);
 						nextWindow = WindowType.NEXT_ROOM;
 					} else {
 						nextWindow = WindowType.FLOOR;

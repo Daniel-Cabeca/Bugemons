@@ -23,12 +23,10 @@ import ulb.model.bugemon.BugemonSpecies;
 import ulb.model.item.*;
 import ulb.model.reward.Reward;
 import ulb.model.reward.RewardType;
-import ulb.model.team.OpponentTeamGenerator;
 import ulb.model.team.Team;
 import ulb.repository.LoadException;
 import ulb.service.*;
 import ulb.model.tower.towerManager.TowerManager;
-import ulb.service.strategy.AI;
 import ulb.service.strategy.StrategyRandom;
 
 import java.io.Serializable;
@@ -42,7 +40,6 @@ import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.DTO.player.PlayerDTO;
-import ulb.DTO.player.PlayerRegisterDTO;
 import ulb.DTO.reward.RewardDTO;
 
 public class ClientHandler extends Thread implements ServerMessageHandler{
@@ -70,7 +67,9 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	private final InventoryService inventoryService;
 	private final TowerSaveService towerSaveService;
 
-	private void resetGameSessionState() {
+	private SetupHandler setupHandler;
+
+	void resetGameSessionState() { // package-private
 		this.battle = null;
 		this.teamLabel = null;
 		this.towerManager = null;
@@ -91,6 +90,8 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		this.chatService = chatService;
 		this.inventoryService = inventoryService;
 		this.towerSaveService = towerSaveService;
+
+		this.setupHandler = new SetupHandler(this, accountService, itemService, inventoryService, bugemonService);
     }
 
 	public AbilityService getAbilityService() { return this.abilityService; }
@@ -102,12 +103,45 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	public InventoryService getInventoryService() { return this.inventoryService; }
 	public TowerSaveService getTowerSaveService() { return this.towerSaveService; }
 
+	public Player getPlayer() { return this.player; }
+	public Battle getBattle() { return this.battle; }
+	public TowerManager getTowerManager() { return this.towerManager; }
+	public boolean isGameTower() { return this.isGameTower; }
+	public Battle.ParticipantLabel getTeamLabel() { return this.teamLabel; }
+	public Thread getOpponentBot() { return this.opponentBot; }
+	public Bugemon getPendingLevelUpBugemon() { return this.pendingLevelUpBugemon; }
+	public List<Reward> getPendingLevelUpRewards() { return this.pendingLevelUpRewards; }
+
+	public void setPlayer(Player player) { this.player = player; }
+	public void setTeam(Team team) { this.player.setTeam(team); }
+	public void setBattle(Battle battle) { this.battle = battle; }
+	public void setTowerManager(TowerManager towerManager) { this.towerManager = towerManager; }
+	public void setGameMode(boolean isGameTower) { this.isGameTower = isGameTower; }
+	public void setTeamLabel(Battle.ParticipantLabel label) { this.teamLabel = label; }
+	public void setOpponentBot(Thread opponentBot) { this.opponentBot = opponentBot; }
+	public void setPendingLevelUpBugemon(Bugemon pendingLevelUpBugemon) { this.pendingLevelUpBugemon = pendingLevelUpBugemon; }
+	public void setPendingLevelUpRewards(List<Reward> rewards) { this.pendingLevelUpRewards = rewards; }
+
+
     @Override
     public void run(){
         while (! this.stop){
             handleMessage();
         }
         end();
+    }
+
+	/**
+	 * Reads the socket and handle the received message
+	 */
+    private void handleMessage(){
+        ClientToServerMessage message = receiveMessage();
+        
+        if (message == null){
+            return;
+        } 
+		
+		message.dispatch(this);
     }
 
     public void stopProcess(){
@@ -166,108 +200,32 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		this.resetGameSessionState();
 	}
 
-	private void clearPendingLevelUpState() {
+	void clearPendingLevelUpState() {
 		this.pendingLevelUpBugemon = null;
 		this.pendingLevelUpRewards = null;
 	}
 
 	// SETUP
 
-	private Player buildPlayer(PlayerRegisterDTO dto, boolean isLogin) {
-    String username = dto.username();
-
-    Inventory inventory;
-    if (isLogin) {
-        inventory = inventoryService.getInventoryFromDatabase(username);
-    } else {
-        inventory = itemService.createStarterInventory();
-        inventoryService.insertInventory(inventory, username);
-    }
-
-    int userId = accountService.getUserId(username);
-
-    return PlayerMapper.toEntity(dto, inventory, userId);
-}
 
 	@Override
-	public void handle(RegisterMessage message){
-		boolean success;
-		String username = message.getPlayer().username();
-		String password = message.getPlayer().password();
-
-		if (message.isLogin()) {
-			success = this.getAccountService().login(username, password);
-		}
-		else {
-			success = this.getAccountService().register(username, password);
-		}
-		if (success) {
-			this.player = buildPlayer(message.getPlayer(), message.isLogin());
-			sendSuccessMessage();
-		} else {
-			sendErrorMessage("Register failed");
-		}
+	public void handle(RegisterMessage message){//
+		setupHandler.handle(message);
 	}
 
 	@Override
 	public void handle(SetUpTeamMessage message){
-		Team team = new Team();
-
-		for (BugemonDTO bugemonDTO : message.getTeam()){
-			if (!team.add(BugemonMapper.toEntity(bugemonDTO))){
-				sendErrorMessage("Invalid Team");
-			}
-		}
-
-		this.player.setTeam(team);
-		sendSuccessMessage();
+		setupHandler.handle(message);
 	}
 
 	@Override
 	public void handle(SetUpNormalModeMessage message){
-		if (player == null){
-			sendErrorMessage("Player not initialized !");
-			return;
-		}
-
-		if (this.battle != null || this.towerManager != null || this.isGameTower) {
-			resetGameSessionState();
-		}
-
-		Team teamB;
-
-		try {
-			teamB = OpponentTeamGenerator.generateRandomOpponentTeam(player.getTeam(), this.getBugemonService());
-		} catch (Exception e){
-			sendErrorMessage(e.getMessage());
-			return;
-		}
-
-		Inventory playerBInventory = this.getItemService().createStarterInventory();
-		this.battle = new Battle(player.getTeam(), teamB, player, new Player("PlayerB", -1, playerBInventory));
-		this.teamLabel = Battle.ParticipantLabel.TEAM_A;
-		this.isGameTower = false;
-
-		this.opponentBot = new AI(battle, new StrategyRandom());
-		this.opponentBot.start();
-		clearPendingLevelUpState();
-
-		sendSuccessMessage();
+		setupHandler.handle(message);
 	}
 
 	@Override
 	public void handle(SetUpTowerModeMessage message){
-		if (this.battle != null || this.towerManager != null || this.isGameTower) {
-			resetGameSessionState();
-		}
-
-		this.towerManager = new TowerManager(player, this.getBugemonService(), this.getItemService());
-		this.battle = towerManager.getCurrentBattle();
-		this.teamLabel = Battle.ParticipantLabel.TEAM_A;
-		this.isGameTower = true;
-		clearPendingLevelUpState();
-
-		sendSuccessMessage();
+		setupHandler.handle(message);
 	}
 
 	// GAME INFO
@@ -489,7 +447,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		sendMessage(new LevelUpInfoMessage(BugemonMapper.toDTO(currentBugemon), rewardDTOs));
 	}
 
-	//ACTIONS
+	// GAME ACTIONS
 
 	@Override
 	public void handle(PickRandomActionMessage message){
@@ -642,19 +600,8 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		clearPendingLevelUpState();
 		sendSuccessMessage();
 	}
-	
-	// SPECIAL INFO
 
-	@Override
-	public void handle(GetAllBugemonSpeciesMessage message){
-		BugemonService bugemonService = this.getBugemonService();
-		List<BugemonSpeciesDTO> DTOSpeciesList = new ArrayList<BugemonSpeciesDTO>();
-
-		for (BugemonSpecies species : bugemonService.getAllSpecies()){
-			DTOSpeciesList.add(BugemonSpeciesMapper.toDTO(species));
-		}
-		this.sendMessage(new BugemonSpeciesMessage(DTOSpeciesList));
-	}
+	// SOCIAL PANEL
 
 	@Override
 	public void handle(SendFriendRequestMessage message){
@@ -756,6 +703,19 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	public void handle(GetChatMessagesMessage message){
 		sendMessage(new ChatMessagesMessage(this.getChatService().getMessages(message.getUsernameA(), message.getUsernameB())));
 	}
+	
+	// SPECIAL INFO
+
+	@Override
+	public void handle(GetAllBugemonSpeciesMessage message){
+		BugemonService bugemonService = this.getBugemonService();
+		List<BugemonSpeciesDTO> DTOSpeciesList = new ArrayList<BugemonSpeciesDTO>();
+
+		for (BugemonSpecies species : bugemonService.getAllSpecies()){
+			DTOSpeciesList.add(BugemonSpeciesMapper.toDTO(species));
+		}
+		this.sendMessage(new BugemonSpeciesMessage(DTOSpeciesList));
+	}
 
 	@Override
 	public void handle(GetRandomAbilityMessage message){
@@ -823,16 +783,5 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		this.sendMessage(new SavedTeamsMessage(DTOTeams));
 	}
 
-	/**
-	 * Reads the socket and handle the received message
-	 */
-    private void handleMessage(){
-        ClientToServerMessage message = receiveMessage();
-        
-        if (message == null){
-            return;
-        } 
-		
-		message.dispatch(this);
-    }
+
 }

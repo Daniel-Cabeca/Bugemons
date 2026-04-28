@@ -160,6 +160,12 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		}
 	}
 
+	private void finishTower(){
+		if (!isGameTower){return;}
+		this.towerSaveService.deleteTowerInfo(player);
+		this.resetGameSessionState();
+	}
+
 	private void clearPendingLevelUpState() {
 		this.pendingLevelUpBugemon = null;
 		this.pendingLevelUpRewards = null;
@@ -401,6 +407,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 					nextWindow = WindowType.NEXT_ROOM;
 					nextTowerRoom();
 				} else {
+					finishTower();
 					nextWindow = WindowType.MAIN_MENU;
 				}
 
@@ -509,6 +516,16 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		}
 
         sendSuccessMessage();
+	}
+
+	@Override
+	public void handle(AbandonTowerMessage message){
+		if (!this.isGameTower){
+			sendErrorMessage(getName());
+			return;
+		}
+		this.finishTower();
+		sendSuccessMessage();
 	}
 
 	@Override

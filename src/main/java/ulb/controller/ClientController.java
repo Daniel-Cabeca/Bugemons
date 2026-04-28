@@ -942,7 +942,9 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 	@Override
 	public void onReturn() {
 		try {
-			this.modeController.show();
+			if (this.postData(new AbandonTowerMessage())){
+				this.modeController.show();
+			}
 		}catch (Exception e){
 			e.printStackTrace();
 		}

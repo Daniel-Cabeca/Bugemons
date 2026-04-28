@@ -10,7 +10,6 @@ import ulb.DTO.player.PlayerDTO;
 import ulb.DTO.team.TeamDTO;
 import ulb.view.WindowPath;
 import ulb.view.windows.CreateTeamWindow;
-import ulb.view.windows.RegisterWindow;
 
 import java.util.ArrayList;
 import java.util.List;

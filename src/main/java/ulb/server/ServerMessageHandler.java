@@ -31,6 +31,7 @@ import ulb.message.clientToServer.*;
 	//ACTIONS
 	 void handle(PickRandomActionMessage message);
 	 void handle(RunMessage message);
+	 void handle(AbandonTowerMessage message);
 	 void handle(SwapBugemonMessage message);
 	 void handle(UseAbilityMessage message);
 	 void handle(UseItemMessage message);

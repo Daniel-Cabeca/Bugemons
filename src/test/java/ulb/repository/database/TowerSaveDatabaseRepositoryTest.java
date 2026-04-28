@@ -2,6 +2,7 @@ package ulb.repository.database;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,5 +65,23 @@ public class TowerSaveDatabaseRepositoryTest {
 		assertEquals(completedRoomsId, towerSaveRepository.getCompletedRoomsId(userId));
 		assertEquals(currentFloorId, towerSaveRepository.getCurrentFloorId(userId));
 		assertEquals(team.getId(), towerSaveRepository.getCurrentTeamId(userId));
+	}
+
+	@Test
+	void deleteInfo(){
+		DatabaseInMemory database = new DatabaseInMemory();
+		DatabaseInitializer databaseInitializer = new DatabaseInitializer(database);
+		databaseInitializer.createTables();
+
+		Team team = insertUserAndTeam(database, "player", "team_alpha");
+
+		AccountDatabaseRepository accountRepository = new AccountDatabaseRepository(database);
+		int userId = accountRepository.getUserId("player");
+
+		TowerSaveDatabaseRepository towerSaveRepository = new TowerSaveDatabaseRepository(database);
+		towerSaveRepository.addTowerSave(userId, 4, new ArrayList<>(List.of(1, 2, 3)), team.getId());
+
+		assertDoesNotThrow(() -> towerSaveRepository.deleteTowerInfo(userId));
+		assertFalse(towerSaveRepository.isTowerSaved(userId));
 	}
 }

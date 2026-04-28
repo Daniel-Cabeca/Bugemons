@@ -64,6 +64,20 @@ public class TowerSaveDatabaseRepository implements TowerSaveRepository {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void deleteTowerInfo(Integer userId) throws LoadException {
+		String sql = "DELETE FROM tower_saves WHERE user_id=?";
+		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
+			stmt.setInt(1, userId);
+			stmt.executeUpdate();
+		} catch (SQLException e) {
+			throw new LoadException("Failed to delete save from tower_saves sql table: " + e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public boolean isTowerSaved(Integer userId){
 		String sql = "SELECT COUNT(1) AS present FROM tower_saves WHERE user_id=?";
 		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {

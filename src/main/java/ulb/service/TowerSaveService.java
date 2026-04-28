@@ -41,4 +41,16 @@ public class TowerSaveService {
 		}
 		
 	}
+
+	/**
+	 * Delete tower save
+	 * @param player the player who played in the tower
+	 */
+	public void deleteTowerInfo(Player player){
+		Integer userId = player.getUserId();
+		if (this.towerSaveRepository.isTowerSaved(userId)){
+			this.towerSaveRepository.deleteTowerInfo(userId);
+		}
+	}
+
 }

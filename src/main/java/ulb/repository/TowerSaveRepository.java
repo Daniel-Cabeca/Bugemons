@@ -23,6 +23,13 @@ public interface TowerSaveRepository {
 	 */
 	void updateTowerSave(Integer userId, Integer currentFloorId, List<Integer> completedRoomsId, Integer teamId) throws LoadException;
 
+	/**
+	 * delete tower information for the user
+	 * @param userId the id of the user
+	 * @throws LoadException if the operation fails
+	 */
+	void deleteTowerInfo(Integer userId) throws LoadException;
+
     /**
 	 * checks if tower information is already saved in database
      * @param userId the id of the user

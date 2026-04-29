@@ -79,6 +79,15 @@ public class FloorWindow {
         floor.setText("Étage : NO" + floorNumber);
     }
 
+    /**
+     * Gives the direction to take based on the current coordinates of the player
+     * and the coordinates of the room he wants to go to.
+     * @param currentCol collum part of the current coordinates of the player
+     * @param currentRow row part of the current coordinates of the player
+     * @param futureCol collum part of the coordinates of the destination room
+     * @param futureRow row part of the coordinates of the destination room
+     * @return the direction that needs to be taken to get to the right destination
+     */
     public Direction directionPicker(int currentCol, int currentRow, int futureCol, int futureRow) {
         if (currentRow == futureRow) {
             if (currentCol < futureCol) {
@@ -98,6 +107,11 @@ public class FloorWindow {
         }
     }
 
+    /**
+     * Makes a horizontal translation animation based on the given direction.
+     * @param direction the way the translation has to move, right/left
+     * @param onFinished to allow the animation to fully take place without being interrupted
+     */
     public void playHorizontalTranslationAnimation(Direction direction, Runnable onFinished ) {
         TranslateTransition moveAnimation = new TranslateTransition(javafx.util.Duration.seconds(0.5), playerSprite);
 
@@ -107,15 +121,21 @@ public class FloorWindow {
         else if (direction == Direction.LEFT) {
             moveAnimation.setByX(-450);
         }
-        moveAnimation.setOnFinished(e -> {
 
+        moveAnimation.setOnFinished(e -> {
             if (onFinished != null) {
                 onFinished.run();
             }
         });
+
         moveAnimation.play();
     }
 
+    /**
+     * Makes a vertical translation animation based on the given direction.
+     * @param direction the way the translation has to move, up/down
+     * @param onFinished to allow the animation to fully take place without being interrupted
+     */
     public void playVerticalTranslationAnimation(Direction direction, Runnable onFinished) {
         TranslateTransition moveAnimation = new TranslateTransition(javafx.util.Duration.seconds(0.5), playerSprite);
 
@@ -126,15 +146,21 @@ public class FloorWindow {
         else if (direction == Direction.DOWN) {
             moveAnimation.setByY(225);
         }
-        moveAnimation.setOnFinished(e -> {
 
+        moveAnimation.setOnFinished(e -> {
             if (onFinished != null) {
                 onFinished.run();
             }
         });
+
         moveAnimation.play();
     }
 
+    /**
+     * Decides which type of translation to do based on the given direction.
+     * @param direction the direction of the translation right/left/up/down
+     * @param onFinished to allow the animation to fully take place without being interrupted
+     */
     public void playTranslationAnimation(Direction direction, Runnable onFinished) {
         if (direction == Direction.RIGHT || direction == Direction.LEFT) {
             playHorizontalTranslationAnimation(direction, onFinished);
@@ -144,6 +170,11 @@ public class FloorWindow {
         }
     }
 
+    /**
+     * Initiates the animation to the given target room.
+     * @param targetRoomId the destination room
+     * @param onFinished to allow the animation to fully take place without being interrupted
+     */
     public void translationAnimationHandler(int targetRoomId, Runnable onFinished) {
         Integer col = GridPane.getColumnIndex(playerSprite);
         int currentCol = (col==null) ? 0 : col;
@@ -178,7 +209,7 @@ public class FloorWindow {
     }
 
     /**
-     * Updates the player's sprite position to the correct cell based on the current room id
+     * Updates the player's sprite position to the correct cell based on the current room id.
      *
      * @param roomId the id of the current room
      */
@@ -209,7 +240,7 @@ public class FloorWindow {
     }
 
     /**
-     * Sets the location of the player icon to a specific cell
+     * Sets the location of the player icon to a specific cell.
      *
      * @param col the column of the cell
      * @param row the row of the cell

@@ -1,5 +1,7 @@
 package ulb.view.windows;
 
+import javafx.animation.Transition;
+import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -10,6 +12,13 @@ public class FloorWindow {
     public ViewListener viewListener;
     public void setViewListener(ViewListener viewlistener){
         this.viewListener = viewlistener;
+    }
+
+    public enum Direction {
+        RIGHT,
+        LEFT,
+        UP,
+        DOWN
     }
 
     @FXML
@@ -68,6 +77,124 @@ public class FloorWindow {
 
 	public void setFloorNumber(int floorNumber) {
         floor.setText("Étage : NO" + floorNumber);
+    }
+
+    public Direction directionPicker(int currentCol, int currentRow, int futureCol, int futureRow) {
+        if (currentRow == futureRow) {
+            if (currentCol < futureCol) {
+                return Direction.RIGHT;
+            }
+            else {
+                return Direction.LEFT;
+            }
+        }
+        else {
+            if (currentRow > futureRow) {
+                return Direction.UP;
+            }
+            else {
+                return Direction.DOWN;
+            }
+        }
+    }
+
+    public void playHorizontalTranslationAnimation(Direction direction, Runnable onFinished ) {
+        TranslateTransition moveAnimation = new TranslateTransition(javafx.util.Duration.seconds(0.5), playerSprite);
+
+        // reset avant animation
+        playerSprite.setTranslateX(0);
+        playerSprite.setTranslateY(-70);
+
+        if (direction == Direction.RIGHT) {
+            moveAnimation.setByX(450);
+        }
+        else if (direction == Direction.LEFT) {
+            moveAnimation.setByX(-450);
+        }
+        moveAnimation.setOnFinished(e -> {
+            // reset après animation
+            playerSprite.setTranslateX(0);
+            playerSprite.setTranslateY(-70);
+
+            if (onFinished != null) {
+                onFinished.run();
+            }
+        });
+        moveAnimation.play();
+    }
+
+    public void playVerticalTranslationAnimation(Direction direction, Runnable onFinished) {
+        TranslateTransition moveAnimation = new TranslateTransition(javafx.util.Duration.seconds(0.5), playerSprite);
+
+        // reset avant animation
+        //playerSprite.setTranslateX(0);
+        //playerSprite.setTranslateY(-70);
+
+        if (direction == Direction.UP) {
+            moveAnimation.setByY(-225);
+        }
+        else if (direction == Direction.DOWN) {
+            moveAnimation.setByY(225);
+        }
+        moveAnimation.setOnFinished(e -> {
+            // reset après animation
+            //playerSprite.setTranslateX(0);
+            //playerSprite.setTranslateY(-70);
+
+            if (onFinished != null) {
+                onFinished.run();
+            }
+        });
+        moveAnimation.play();
+    }
+
+    public void playTranslationAnimation(Direction direction, Runnable onFinished) {
+        if (direction == Direction.RIGHT || direction == Direction.LEFT) {
+            playHorizontalTranslationAnimation(direction, onFinished);
+        }
+        else {
+            playVerticalTranslationAnimation(direction, onFinished);
+        }
+    }
+
+    public void translationAnimationHandler(int targetRoomId, Runnable onFinished) {
+        Integer col = GridPane.getColumnIndex(playerSprite);
+        int currentCol = (col==null) ? 0 : col;
+        Integer row = GridPane.getRowIndex(playerSprite);
+        int currentRow = (row==null) ? 0 : row;
+
+        Direction direction = null;
+        switch (targetRoomId) {
+            case 1: // BonusA
+                direction = directionPicker(currentCol, currentRow, 0, 2);
+                //playTranslationAnimation(directionToBonusA);
+                break;
+            case 2: // BattleA2
+                direction = directionPicker(currentCol, currentRow, 1, 2);
+                //playTranslationAnimation(directionToBattleA2);
+                break;
+            case 3: // BattleA1
+                direction = directionPicker(currentCol, currentRow, 2, 2);
+                //playTranslationAnimation(directionToBattleA1);
+                break;
+            case 4: // Start
+                direction = directionPicker(currentCol, currentRow, 3, 2);
+                //playTranslationAnimation(directionToStart);
+                break;
+            case 5: // BattleB
+                direction = directionPicker(currentCol, currentRow, 3, 3);
+                //playTranslationAnimation(directionToBattleB);
+                break;
+            case 6: // BonusB
+                direction = directionPicker(currentCol, currentRow, 3, 4);
+                //playTranslationAnimation(directionToBonusB);
+                break;
+            case 7: // Boss
+                direction = directionPicker(currentCol, currentRow, 3, 1);
+                //playTranslationAnimation(directionToBoss);
+                break;
+        }
+        playTranslationAnimation(direction, onFinished);
     }
 
     /**

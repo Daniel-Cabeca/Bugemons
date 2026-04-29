@@ -72,11 +72,22 @@ public class FloorController implements FloorWindow.ViewListener {
 
 		if (!isAdjacent) return;
 
-		boolean success = this.listener.onRoomSelected(targetRoomId);
-		if (!success) return;
+        System.out.println("Current: " + currentRoomId + " -> Target: " + targetRoomId);
 
-		syncCurrentRoomFromServer();
-		visitedRooms.add(targetRoomId);
+        view.translationAnimationHandler(targetRoomId, () -> {
+            boolean success = this.listener.onRoomSelected(targetRoomId);
+            if (!success){
+                return;}
+
+            syncCurrentRoomFromServer();
+            visitedRooms.add(targetRoomId);
+        });
+
+		//boolean success = this.listener.onRoomSelected(targetRoomId);
+		//if (!success) return;
+
+		//syncCurrentRoomFromServer();
+		//visitedRooms.add(targetRoomId);
     }
 
     @Override

@@ -70,6 +70,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	private SetupHandler setupHandler;
 	private GameInfoHandler gameInfoHandler;
 	private GameActionsHandler gameActionsHandler;
+	private SocialHandler socialHandler;
 
 	void resetGameSessionState() { // package-private
 		this.battle = null;
@@ -96,6 +97,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		this.setupHandler = new SetupHandler(this, accountService, itemService, inventoryService, bugemonService);
 		this.gameInfoHandler = new GameInfoHandler(this);
 		this.gameActionsHandler = new GameActionsHandler(this, inventoryService);
+		this.socialHandler = new SocialHandler(this, accountService, chatService);
     }
 
 	public AbilityService getAbilityService() { return this.abilityService; }
@@ -351,107 +353,61 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		gameActionsHandler.handle(message);
 	}
 
-	// SOCIAL PANEL 466
+	// SOCIAL
 
 	@Override
 	public void handle(SendFriendRequestMessage message){
-		AccountService accountService = this.getAccountService();
-		int senderId = accountService.getUserId(message.getSenderUsername());
-		int receiverId = accountService.getUserId(message.getReceiverUsername());
-		if (senderId == -1 || receiverId == -1){
-			sendErrorMessage("Utilisateur introuvable");
-			return;
-		}
-		accountService.sendFriendRequest(senderId, receiverId);
-		sendSuccessMessage();
+		socialHandler.handle(message);
 	}
 
 	@Override
 	public void handle(SendBattleRequestMessage message){
-		AccountService accountService = this.getAccountService();
-		int senderId = accountService.getUserId(message.getSenderUsername());
-		int receiverId = accountService.getUserId(message.getReceiverUsername());
-		if (senderId == -1 || receiverId == -1){
-			sendErrorMessage("Utilisateur introuvable");
-			return;
-		}
-		if (accountService.hasPendingBattleRequestBetween(senderId, receiverId)) {
-			sendErrorMessage("Un défi est déjà en attente avec cet ami");
-			return;
-		}
-		accountService.sendBattleRequest(senderId, receiverId);
-		sendSuccessMessage();
+		socialHandler.handle(message);
 	}
 
 	@Override
 	public void handle(GetFriendRequestsMessage message){
-		AccountService accountService = this.getAccountService();
-		int userId = accountService.getUserId(message.getUsername());
-		List<String> requests = accountService.getPendingFriendRequests(userId);
-		sendMessage(new FriendRequestsMessage(requests));
+		socialHandler.handle(message);
 	}
 
 	@Override
 	public void handle(GetBattleRequestsMessage message){
-		AccountService accountService = this.getAccountService();
-		int userId = accountService.getUserId(message.getUsername());
-		List<String> requests = accountService.getPendingBattleRequests(userId);
-		sendMessage(new BattleRequestsMessage(requests));
+		socialHandler.handle(message);
 	}
 
 	@Override
 	public void handle(AcceptFriendRequestMessage message){
-		AccountService accountService = this.getAccountService();
-		int senderId = accountService.getUserId(message.getSenderUsername());
-		int receiverId = accountService.getUserId(message.getReceiverUsername());
-		accountService.acceptFriendRequest(senderId, receiverId);
-		sendSuccessMessage();
+		socialHandler.handle(message);
 	}
 
 	@Override
 	public void handle(AcceptBattleRequestMessage message){
-		AccountService accountService = this.getAccountService();
-		int senderId = accountService.getUserId(message.getSenderUsername());
-		int receiverId = accountService.getUserId(message.getReceiverUsername());
-		accountService.acceptBattleRequest(senderId, receiverId);
-		sendSuccessMessage();
+		socialHandler.handle(message);
 	}
 
 	@Override
 	public void handle(DeclineFriendRequestMessage message){
-		AccountService accountService = this.getAccountService();
-		int senderId = accountService.getUserId(message.getSenderUsername());
-		int receiverId = accountService.getUserId(message.getReceiverUsername());
-		accountService.declineFriendRequest(senderId, receiverId);
-		sendSuccessMessage();
+		socialHandler.handle(message);
 	}
 
 	@Override
 	public void handle(DeclineBattleRequestMessage message){
-		AccountService accountService = this.getAccountService();
-		int senderId = accountService.getUserId(message.getSenderUsername());
-		int receiverId = accountService.getUserId(message.getReceiverUsername());
-		accountService.declineBattleRequest(senderId, receiverId);
-		sendSuccessMessage();
+		socialHandler.handle(message);
 	}
 
 	@Override
 	public void handle(GetFriendsListMessage message){
-		AccountService accountService = this.getAccountService();
-		int userId = accountService.getUserId(message.getUsername());
-		List<String> friends = accountService.getFriendsList(userId);
-		sendMessage(new FriendsListMessage(friends));
+		socialHandler.handle(message);
 	}
 
 	@Override
 	public void handle(SendChatMessageMessage message){
-		this.getChatService().sendMessage(message.getSenderUsername(), message.getReceiverUsername(), message.getContent());
-		sendSuccessMessage();
+		socialHandler.handle(message);
 	}
 
 	@Override
 	public void handle(GetChatMessagesMessage message){
-		sendMessage(new ChatMessagesMessage(this.getChatService().getMessages(message.getUsernameA(), message.getUsernameB())));
+		socialHandler.handle(message);
 	}
 	
 	// SPECIAL INFO

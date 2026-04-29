@@ -8,11 +8,13 @@ import java.util.Map;
 import ulb.message.serverToClient.NextWindowMessage.WindowType;
 import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.bugemon.BugemonDTO;
+import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.DTO.reward.RewardDTO;
 import ulb.mapper.ability.AbilityMapper;
 import ulb.mapper.bugemon.BugemonMapper;
+import ulb.mapper.bugemon.BugemonSpeciesMapper;
 import ulb.mapper.item.ItemMapper;
 import ulb.mapper.player.PlayerMapper;
 import ulb.mapper.reward.RewardMapper;
@@ -20,6 +22,7 @@ import ulb.message.clientToServer.CheckGameFinishedMessage;
 import ulb.message.clientToServer.CheckUsableItemMessage;
 import ulb.message.clientToServer.GetAbilityEffectivenessMessage;
 import ulb.message.clientToServer.GetActiveBugemonsMessage;
+import ulb.message.clientToServer.GetAllBugemonSpeciesMessage;
 import ulb.message.clientToServer.GetBattleEndInfoMessage;
 import ulb.message.clientToServer.GetBattleStateMessage;
 import ulb.message.clientToServer.GetLevelUpInfoMessage;
@@ -28,11 +31,14 @@ import ulb.message.clientToServer.GetNextWindowMessage;
 import ulb.message.clientToServer.GetPlayerInventoryMessage;
 import ulb.message.clientToServer.GetPlayerMessage;
 import ulb.message.clientToServer.GetPlayerTeamMessage;
+import ulb.message.clientToServer.GetRandomAbilityMessage;
+import ulb.message.clientToServer.GetRandomItemMessage;
 import ulb.message.clientToServer.GetTowerInfoMessage;
 import ulb.message.serverToClient.AbilityEffectivenessMessage;
 import ulb.message.serverToClient.ActiveBugemonsMessage;
 import ulb.message.serverToClient.BattleEndInfoMessage;
 import ulb.message.serverToClient.BattleStateMessage;
+import ulb.message.serverToClient.BugemonSpeciesMessage;
 import ulb.message.serverToClient.GameFinishedMessage;
 import ulb.message.serverToClient.LevelUpInfoMessage;
 import ulb.message.serverToClient.LogsMessage;
@@ -40,6 +46,8 @@ import ulb.message.serverToClient.NextWindowMessage;
 import ulb.message.serverToClient.PlayerInventoryMessage;
 import ulb.message.serverToClient.PlayerMessage;
 import ulb.message.serverToClient.PlayerTeamMessage;
+import ulb.message.serverToClient.RandomAbilityMessage;
+import ulb.message.serverToClient.RandomItemMessage;
 import ulb.message.serverToClient.TowerInfoMessage;
 import ulb.message.serverToClient.UsableItemsMessage;
 import ulb.model.Player;
@@ -48,11 +56,13 @@ import ulb.model.battle.Battle;
 import ulb.model.battle.Battle.ParticipantLabel;
 import ulb.model.battle.BattleState;
 import ulb.model.bugemon.Bugemon;
+import ulb.model.bugemon.BugemonSpecies;
 import ulb.model.item.Inventory;
 import ulb.model.item.Item;
 import ulb.model.reward.Reward;
 import ulb.model.team.Team;
 import ulb.model.tower.towerManager.TowerManager;
+import ulb.service.BugemonService;
 
 public class GameInfoHandler {
     ClientHandler clientHandler;
@@ -60,34 +70,6 @@ public class GameInfoHandler {
     public GameInfoHandler(ClientHandler clientHandler) {
         this.clientHandler = clientHandler;
     }
-
-    public void handle(GetPlayerMessage message) {
-        Player player = clientHandler.getPlayer();
-		if (message.getUsername().equals(player.getUsername())){
-			PlayerDTO playerDTO = PlayerMapper.toDTO(player);
-			clientHandler.sendMessage(new PlayerMessage(playerDTO));
-		}
-		else{
-			clientHandler.sendErrorMessage("Wrong Username");
-		}
-	}
-
-    public void handle(GetPlayerInventoryMessage message) {
-        Player player = clientHandler.getPlayer();
-
-		if (message.getUserName().equals(player.getUsername())){
-			Inventory inventory = player.getInventory();
-			Map<ItemDTO, Integer> inventoryDTO = new HashMap<>();
-			
-			for (Map.Entry<Item, Integer> e : inventory.getItems().entrySet()) {
-				inventoryDTO.put(ItemMapper.toDTO(e.getKey()), e.getValue());
-			}
-			clientHandler.sendMessage(new PlayerInventoryMessage(inventoryDTO));
-		}
-		else{
-			clientHandler.sendErrorMessage("Wrong Username");
-		}
-	}
 
     public void handle(CheckGameFinishedMessage message){
         Battle battle = clientHandler.getBattle();
@@ -157,23 +139,6 @@ public class GameInfoHandler {
 		Bugemon opponentActive = battle.getActiveBugemon(battle.getOpponentTeamLabel(teamLabel)); 
 		
 		clientHandler.sendMessage(new ActiveBugemonsMessage(BugemonMapper.toDTO(selfActive), BugemonMapper.toDTO(opponentActive)));
-	}
-
-    public void handle(GetPlayerTeamMessage message) {
-        Battle battle = clientHandler.getBattle();
-        ParticipantLabel teamLabel = clientHandler.getTeamLabel();
-
-		if (battle == null){
-			clientHandler.sendErrorMessage("The battle has not been created");
-			return;
-		}
-		Team team = battle.getTeam(teamLabel);
-		List<BugemonDTO> teamDTO = team.getMembers()
-				.stream()
-				.map(BugemonMapper::toDTO)
-				.toList();
-
-		clientHandler.sendMessage(new PlayerTeamMessage(teamDTO));
 	}
 
     public void handle(GetTowerInfoMessage message){

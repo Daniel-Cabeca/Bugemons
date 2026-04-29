@@ -68,9 +68,12 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	private final TowerSaveService towerSaveService;
 
 	private SetupHandler setupHandler;
+	private PlayerInfoHandler playerInfoHandler;
 	private GameInfoHandler gameInfoHandler;
 	private GameActionsHandler gameActionsHandler;
+	private GameDataHandler gameDataHandler;
 	private SocialHandler socialHandler;
+	private TeamSaveHandler teamSaveHandler;
 
 	void resetGameSessionState() { // package-private
 		this.battle = null;
@@ -98,6 +101,9 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		this.gameInfoHandler = new GameInfoHandler(this);
 		this.gameActionsHandler = new GameActionsHandler(this, inventoryService);
 		this.socialHandler = new SocialHandler(this, accountService, chatService);
+		this.playerInfoHandler = new PlayerInfoHandler(this, accountService);
+		this.gameDataHandler = new GameDataHandler(this, bugemonService, abilityService, itemService);
+		this.teamSaveHandler = new TeamSaveHandler(this, teamService);
     }
 
 	public AbilityService getAbilityService() { return this.abilityService; }
@@ -213,7 +219,6 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
 	// SETUP
 
-
 	@Override
 	public void handle(RegisterMessage message){//
 		setupHandler.handle(message);
@@ -234,17 +239,29 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		setupHandler.handle(message);
 	}
 
-	// GAME INFO
+	// PLAYER INFO
 
 	@Override
 	public void handle(GetPlayerMessage message) {
-		gameInfoHandler.handle(message);
+		playerInfoHandler.handle(message);
 	}
 
 	@Override
 	public void handle(GetPlayerInventoryMessage message) {
-		gameInfoHandler.handle(message);
+		playerInfoHandler.handle(message);
 	}
+
+	@Override
+	public void handle(GetPlayerTeamMessage message) {
+		playerInfoHandler.handle(message);
+	}
+
+	@Override
+	public void handle(GetUserIdFromNameMessage message) {
+		playerInfoHandler.handle(message);
+	}
+
+	// GAME INFO
 
 	@Override
 	public void handle(CheckGameFinishedMessage message){
@@ -273,11 +290,6 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
 	@Override
 	public void handle(GetActiveBugemonsMessage message){
-		gameInfoHandler.handle(message);
-	}
-
-	@Override
-	public void handle(GetPlayerTeamMessage message) {
 		gameInfoHandler.handle(message);
 	}
 
@@ -353,6 +365,23 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		gameActionsHandler.handle(message);
 	}
 
+	// GAME DATA
+
+	@Override
+	public void handle(GetAllBugemonSpeciesMessage message){
+		gameDataHandler.handle(message);
+	}
+
+	@Override
+	public void handle(GetRandomAbilityMessage message){
+		gameDataHandler.handle(message);
+	}
+
+	@Override
+	public void handle(GetRandomItemMessage message){
+		gameDataHandler.handle(message);
+	}
+
 	// SOCIAL
 
 	@Override
@@ -409,84 +438,17 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	public void handle(GetChatMessagesMessage message){
 		socialHandler.handle(message);
 	}
-	
-	// SPECIAL INFO
 
-	@Override
-	public void handle(GetAllBugemonSpeciesMessage message){
-		BugemonService bugemonService = this.getBugemonService();
-		List<BugemonSpeciesDTO> DTOSpeciesList = new ArrayList<BugemonSpeciesDTO>();
-
-		for (BugemonSpecies species : bugemonService.getAllSpecies()){
-			DTOSpeciesList.add(BugemonSpeciesMapper.toDTO(species));
-		}
-		this.sendMessage(new BugemonSpeciesMessage(DTOSpeciesList));
-	}
-
-	@Override
-	public void handle(GetRandomAbilityMessage message){
-		Bugemon bugemon = BugemonMapper.toEntity(message.getBugemon());
-
-		Ability RandomAbility = this.getAbilityService().getRandomAbility(bugemon.getType(), bugemon.getAbilities());
-
-		sendMessage(new RandomAbilityMessage(AbilityMapper.toDTO(RandomAbility)));
-	}
-
-	@Override
-	public void handle(GetRandomItemMessage message){
-		Item randomItem = this.getItemService().getRandomItem();
-
-		sendMessage(new RandomItemMessage(ItemMapper.toDTO(randomItem)));
-	}
-
-	// ACCOUNT
-
-	@Override
-	public void handle(GetUserIdFromNameMessage message) {
-		String name = message.getName();
-		int id = this.getAccountService().getUserId(name);
-		UserIdMessage response = new UserIdMessage(id);
-		sendMessage(response);
-	}
-
-	// TEAM
+	// TEAM SAVE
 
 	@Override
 	public void handle(SaveTeamMessage message) {
-		TeamDTO teamDTO = message.getTeam();
-		Team team = TeamMapper.toEntity(teamDTO);
-		TeamService teamService = this.getTeamService();
-
-		try {
-			if (teamService.teamExists(team.getTeamName(), player.getUsername())) {
-				sendErrorMessage("A team with this name already exists.");
-				return;
-			}
-
-			// inserts the member bugemons in bugemons so they can be referenced in team_members
-			for (Bugemon b : team.getMembers()) {
-				teamService.insertUserBugemon(b, player.getUsername());
-			}
-
-			teamService.insertTeam(player.getUsername(), team);
-			teamService.insertAllBugemonsInTeam(team, team.getId());
-			sendSuccessMessage();
-
-		} catch (LoadException e) {
-			sendErrorMessage(e.getMessage());
-		}
+		teamSaveHandler.handle(message);
 	}
 
 	@Override
 	public void handle(GetSavedTeamsMessage message) {
-		TeamService teamService = this.getTeamService();
-
-		List<TeamDTO> DTOTeams = new ArrayList<>();
-
-		for (Team team : teamService.getAllTeams(player.getUsername())){
-			DTOTeams.add(TeamMapper.toDTO(team));
-		}
-		this.sendMessage(new SavedTeamsMessage(DTOTeams));
+		teamSaveHandler.handle(message);
 	}
 
 

@@ -68,6 +68,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	private final TowerSaveService towerSaveService;
 
 	private SetupHandler setupHandler;
+	private GameInfoHandler gameInfoHandler;
 
 	void resetGameSessionState() { // package-private
 		this.battle = null;
@@ -92,6 +93,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		this.towerSaveService = towerSaveService;
 
 		this.setupHandler = new SetupHandler(this, accountService, itemService, inventoryService, bugemonService);
+		this.gameInfoHandler = new GameInfoHandler(this);
     }
 
 	public AbilityService getAbilityService() { return this.abilityService; }
@@ -194,7 +196,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		}
 	}
 
-	private void finishTower(){
+	void finishTower(){
 		if (!isGameTower){return;}
 		this.towerSaveService.deleteTowerInfo(player);
 		this.resetGameSessionState();
@@ -230,221 +232,69 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
 	// GAME INFO
 
+	@Override
 	public void handle(GetPlayerMessage message) {
-		if (message.getUsername().equals(this.player.getUsername())){
-			PlayerDTO playerDTO = PlayerMapper.toDTO(this.player);
-			sendMessage(new PlayerMessage(playerDTO));
-		}
-		else{
-			sendErrorMessage("Wrong Username");
-		}
-
+		gameInfoHandler.handle(message);
 	}
 
-	public void handle(GetPlayerInventory message) {
-		if (message.getUserName().equals(this.player.getUsername())){
-			Inventory inventory = this.player.getInventory();
-			Map<ItemDTO, Integer> inventoryDTO = new HashMap<>();
-			
-			for (Map.Entry<Item, Integer> e : inventory.getItems().entrySet()) {
-				inventoryDTO.put(ItemMapper.toDTO(e.getKey()), e.getValue());
-			}
-			sendMessage(new PlayerInventoryMessage(inventoryDTO));
-		}
-		else{
-			sendErrorMessage("Wrong Username");
-		}
+	@Override
+	public void handle(GetPlayerInventoryMessage message) {
+		gameInfoHandler.handle(message);
 	}
 
 	@Override
 	public void handle(CheckGameFinishedMessage message){
-		sendMessage(new GameFinishedMessage(this.battle.isGameFinished()));
+		gameInfoHandler.handle(message);
 	}
 
 	@Override
 	public void handle(GetBattleStateMessage message){
-		sendMessage(new BattleStateMessage(this.battle.getState(teamLabel)));
+		gameInfoHandler.handle(message);
 	}
 
 	@Override
 	public void handle(GetLogsMessage message){
-		int selfHpAfterFirstAction = this.battle.getHpAfterFirstActionSelf(teamLabel);
-		int opponentHpAfterFirstAction = this.battle.getHpAfterFirstActionOpponent(teamLabel);
-		
-		List<String> logs = new ArrayList<String>(this.battle.getLogMsg());
-		
-		if (message.clearLogs()){
-			this.battle.clearLogMsg();
-		}
-
-		sendMessage(new LogsMessage(List.of(selfHpAfterFirstAction, opponentHpAfterFirstAction), logs));
+		gameInfoHandler.handle(message);
 	}
 
 	@Override
 	public void handle(CheckUsableItemMessage message){
-		Map<String, Boolean> usableItems = new HashMap<String, Boolean>();
-
-		for (ItemDTO itemDTO : message.getItems()){
-			Item item = ItemMapper.toEntity(itemDTO);
-			usableItems.put(itemDTO.id(), this.battle.checkItem(item, teamLabel));
-		}
-
-        sendMessage(new UsableItemsMessage(usableItems));
+		gameInfoHandler.handle(message);
 	}
 
 	@Override
 	public void handle(GetAbilityEffectivenessMessage message){
-		Map<AbilityDTO, String> effectiveness = new HashMap<AbilityDTO, String>();
-		Bugemon bugemonTarget = BugemonMapper.toEntity(message.getBugemonTarget());
-		
-		for (AbilityDTO abilityDTO : message.getAbilities()){
-			Ability ability = AbilityMapper.toEntity(abilityDTO);
-			String effectivenessMessage = ability.getEffectivenessMessage(bugemonTarget);
-			effectiveness.put(abilityDTO, effectivenessMessage);
-		}
-
-		sendMessage(new AbilityEffectivenessMessage(effectiveness));
+		gameInfoHandler.handle(message);
 	}
 
 	@Override
 	public void handle(GetActiveBugemonsMessage message){
-		if (battle == null){
-			sendErrorMessage("The battle has not been created");
-			return;
-		}
-		Bugemon selfActive = this.battle.getActiveBugemon(teamLabel);
-		Bugemon opponentActive = this.battle.getActiveBugemon(this.battle.getOpponentTeamLabel(teamLabel)); 
-		
-		sendMessage(new ActiveBugemonsMessage(BugemonMapper.toDTO(selfActive), BugemonMapper.toDTO(opponentActive)));
+		gameInfoHandler.handle(message);
 	}
 
 	@Override
 	public void handle(GetPlayerTeamMessage message) {
-		if (battle == null){
-			sendErrorMessage("The battle has not been created");
-			return;
-		}
-		Team team = this.battle.getTeam(teamLabel);
-		List<BugemonDTO> teamDTO = team.getMembers()
-				.stream()
-				.map(BugemonMapper::toDTO)
-				.toList();
-
-		sendMessage(new PlayerTeamMessage(teamDTO));
+		gameInfoHandler.handle(message);
 	}
 
 	@Override
 	public void handle(GetTowerInfoMessage message){
-		if (!isGameTower){
-			sendErrorMessage("The game isn't in tower mode");
-			return;
-		}
-		int towerFloorNumber = this.towerManager.getFloorNumber();
-		int towerRoomNumber = this.towerManager.getCurrentRoomIndex();
-
-		sendMessage(new TowerInfoMessage(towerFloorNumber, towerRoomNumber));
+		gameInfoHandler.handle(message);
 	}
 
 	@Override
 	public void handle(GetNextWindowMessage message){
-		WindowType nextWindow = WindowType.MAIN_MENU;
-
-		if (this.player != null && this.player.getTeam().getLevelUpBugemonNumber() > 0){
-			nextWindow = WindowType.LEVEL_UP;
-			sendMessage(new NextWindowMessage(nextWindow));
-			return;
-		}
-
-		if (this.isGameTower){
-			if (this.battle != null && this.battle.isGameFinished()) {
-				boolean won = this.battle.getState(teamLabel) == BattleState.WON;
-
-				if (won) {
-					this.towerManager.getCurrentRoomManager().setRoomCompleted(true);
-					this.battle.resetFightStats();
-					nextWindow = WindowType.NEXT_ROOM;
-					nextTowerRoom();
-				} else {
-					finishTower();
-					nextWindow = WindowType.MAIN_MENU;
-				}
-
-				sendMessage(new NextWindowMessage(nextWindow));
-				return;
-			}
-
-			switch (towerManager.getCurrentRoomType()) {
-				case BATTLE:
-				case BOSS:
-					nextWindow = WindowType.GAME;
-					break;
-
-				case REWARD:
-					nextWindow = WindowType.REWARD;
-					break;
-
-				default:
-					nextWindow = WindowType.MAIN_MENU;
-					break;
-			}
-
-			sendMessage(new NextWindowMessage(nextWindow));
-			return;
-		}
-
-		if (this.battle == null){
-			sendMessage(new NextWindowMessage(nextWindow));
-			return;
-		}
-
-		nextWindow = this.battle.isGameFinished() ? WindowType.MAIN_MENU : WindowType.GAME;
-		sendMessage(new NextWindowMessage(nextWindow));
+		gameInfoHandler.handle(message);
 	}
 
 	@Override
 	public void handle(GetBattleEndInfoMessage message){
-		boolean isWin = this.battle != null && this.battle.getState(teamLabel) == BattleState.WON;
-		int gainedXp = 0;
-
-		if (isWin && this.battle != null){
-			gainedXp = this.battle.computeTotalXP(this.battle.getTeam(this.battle.getOpponentTeamLabel(teamLabel)));
-		}
-
-		if (this.battle != null && this.battle.isGameFinished()){
-			this.battle = null;
-		}
-		clearPendingLevelUpState();
-
-		sendMessage(new BattleEndInfoMessage(isWin, gainedXp));
+		gameInfoHandler.handle(message);
 	}
 
 	@Override
 	public void handle(GetLevelUpInfoMessage message){
-		if (this.battle == null || this.player == null || this.player.getTeam() == null) {
-			sendErrorMessage("No pending level up information available");
-			return;
-		}
-
-		Bugemon currentBugemon = this.player.getTeam().getFirstLevelUpBugemon();
-		if (currentBugemon == null) {
-			clearPendingLevelUpState();
-			sendErrorMessage("No bugemon requires a level up reward");
-			return;
-		}
-
-		if (this.pendingLevelUpBugemon == null
-				|| this.pendingLevelUpRewards == null
-				|| !this.pendingLevelUpBugemon.getSpeciesId().equals(currentBugemon.getSpeciesId())) {
-			this.pendingLevelUpBugemon = currentBugemon;
-			this.pendingLevelUpRewards = new ArrayList<>(this.battle.computeRewards(currentBugemon));
-		}
-
-		List<RewardDTO> rewardDTOs = new ArrayList<>();
-		for (Reward reward : this.pendingLevelUpRewards) {
-			rewardDTOs.add(RewardMapper.toDTO(reward));
-		}
-
-		sendMessage(new LevelUpInfoMessage(BugemonMapper.toDTO(currentBugemon), rewardDTOs));
+		gameInfoHandler.handle(message);
 	}
 
 	// GAME ACTIONS

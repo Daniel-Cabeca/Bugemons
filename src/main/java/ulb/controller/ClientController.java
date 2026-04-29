@@ -684,7 +684,7 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 	 */
 	@Override
 	public void updatePlayerInventory(String userName){
-		Serializable message = getData(new GetPlayerInventory(userName));
+		Serializable message = getData(new GetPlayerInventoryMessage(userName));
 		if (message instanceof PlayerInventoryMessage playerInventory){
 			this.player.setInventory(playerInventory.getInventory());
 			

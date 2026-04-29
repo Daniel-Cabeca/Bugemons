@@ -3,10 +3,10 @@ package ulb.message.clientToServer;
 import ulb.message.ClientToServerMessage;
 import ulb.server.ServerMessageHandler;
 
-public class GetPlayerInventory implements ClientToServerMessage {
+public class GetPlayerInventoryMessage implements ClientToServerMessage {
     private String userName;
 
-    public GetPlayerInventory(String userName) {
+    public GetPlayerInventoryMessage(String userName) {
         this.userName = userName;
     }
 

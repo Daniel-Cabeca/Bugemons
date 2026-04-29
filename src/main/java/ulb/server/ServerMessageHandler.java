@@ -15,7 +15,7 @@ import ulb.message.clientToServer.*;
 
 	// GAME INFO
 	 void handle(GetPlayerMessage message);
-	 void handle(GetPlayerInventory message);
+	 void handle(GetPlayerInventoryMessage message);
 	 void handle(CheckGameFinishedMessage message);
 	 void handle(GetBattleStateMessage message);
 	 void handle(GetLogsMessage message);

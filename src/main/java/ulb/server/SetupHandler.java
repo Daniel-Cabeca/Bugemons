@@ -30,10 +30,10 @@ public class SetupHandler {
 
     public SetupHandler(ClientHandler clientHandler, AccountService accountService, ItemService itemService, InventoryService inventoryService, BugemonService bugemonService) {
         this.clientHandler = clientHandler;
-        this.accountService = clientHandler.getAccountService();
-        this.itemService = clientHandler.getItemService();
-        this.inventoryService = clientHandler.getInventoryService();
-        this.bugemonService = clientHandler.getBugemonService();
+        this.accountService = accountService;
+        this.itemService = itemService;
+        this.inventoryService = inventoryService;
+        this.bugemonService = bugemonService;
     }
 
 

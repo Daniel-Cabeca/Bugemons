@@ -1,46 +1,19 @@
 package ulb.server;
 
-import ulb.DTO.team.TeamDTO;
 import ulb.communication.Messenger.SocketMessenger;
-import ulb.mapper.ability.AbilityMapper;
-import ulb.mapper.bugemon.BugemonMapper;
-import ulb.mapper.bugemon.BugemonSpeciesMapper;
-import ulb.mapper.item.ItemMapper;
-import ulb.mapper.player.PlayerMapper;
-import ulb.mapper.reward.RewardMapper;
-import ulb.mapper.team.TeamMapper;
 import ulb.message.ClientToServerMessage;
 import ulb.message.clientToServer.*;
 import ulb.message.serverToClient.*;
-import ulb.message.serverToClient.NextWindowMessage.WindowType;
 import ulb.model.Player;
-import ulb.model.ability.Ability;
-import ulb.model.action.*;
 import ulb.model.battle.Battle;
-import ulb.model.battle.BattleState;
 import ulb.model.bugemon.Bugemon;
-import ulb.model.bugemon.BugemonSpecies;
-import ulb.model.item.*;
 import ulb.model.reward.Reward;
-import ulb.model.reward.RewardType;
 import ulb.model.team.Team;
-import ulb.repository.LoadException;
 import ulb.service.*;
 import ulb.model.tower.towerManager.TowerManager;
-import ulb.service.strategy.StrategyRandom;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import ulb.DTO.ability.AbilityDTO;
-import ulb.DTO.bugemon.BugemonDTO;
-import ulb.DTO.bugemon.BugemonSpeciesDTO;
-import ulb.DTO.item.ItemDTO;
-import ulb.DTO.player.PlayerDTO;
-import ulb.DTO.reward.RewardDTO;
 
 public class ClientHandler extends Thread implements ServerMessageHandler{
     private SocketMessenger socketMessenger;
@@ -58,13 +31,6 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	private Bugemon pendingLevelUpBugemon;
 	private List<Reward> pendingLevelUpRewards;
 
-	private final AbilityService abilityService;
-	private final BugemonService bugemonService;
-	private final ItemService itemService;
-	private final AccountService accountService;
-	private final ChatService chatService;
-	private final TeamService teamService;
-	private final InventoryService inventoryService;
 	private final TowerSaveService towerSaveService;
 
 	private SetupHandler setupHandler;
@@ -87,14 +53,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
                          AbilityService abilityService, BugemonService bugemonService, ItemService itemService,
                          AccountService accountService, ChatService chatService, TeamService teamService, InventoryService inventoryService, TowerSaveService towerSaveService) {
         this.socketMessenger = messenger;
-		this.teamService = teamService;
 		this.stop = false;
-		this.abilityService = abilityService;
-		this.bugemonService = bugemonService;
-		this.itemService = itemService;
-		this.accountService = accountService;
-		this.chatService = chatService;
-		this.inventoryService = inventoryService;
 		this.towerSaveService = towerSaveService;
 
 		this.setupHandler = new SetupHandler(this, accountService, itemService, inventoryService, bugemonService);
@@ -105,15 +64,6 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		this.gameDataHandler = new GameDataHandler(this, bugemonService, abilityService, itemService);
 		this.teamSaveHandler = new TeamSaveHandler(this, teamService);
     }
-
-	public AbilityService getAbilityService() { return this.abilityService; }
-	public BugemonService getBugemonService() { return this.bugemonService; }
-	public ItemService getItemService() { return this.itemService; }
-	public AccountService getAccountService() { return this.accountService; }
-	public ChatService getChatService() { return this.chatService; }
-	public TeamService getTeamService() { return this.teamService; }
-	public InventoryService getInventoryService() { return this.inventoryService; }
-	public TowerSaveService getTowerSaveService() { return this.towerSaveService; }
 
 	public Player getPlayer() { return this.player; }
 	public Battle getBattle() { return this.battle; }
@@ -219,237 +169,73 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
 	// SETUP
 
-	@Override
-	public void handle(RegisterMessage message){//
-		setupHandler.handle(message);
-	}
+	@Override public void handle(RegisterMessage message) { setupHandler.handle(message); }
+	@Override public void handle(SetUpNormalModeMessage message) { setupHandler.handle(message); }
+	@Override public void handle(SetUpTeamMessage message) { setupHandler.handle(message); }
+	@Override public void handle(SetUpTowerModeMessage message) { setupHandler.handle(message); }
 
-	@Override
-	public void handle(SetUpTeamMessage message){
-		setupHandler.handle(message);
-	}
-
-	@Override
-	public void handle(SetUpNormalModeMessage message){
-		setupHandler.handle(message);
-	}
-
-	@Override
-	public void handle(SetUpTowerModeMessage message){
-		setupHandler.handle(message);
-	}
 
 	// PLAYER INFO
 
-	@Override
-	public void handle(GetPlayerMessage message) {
-		playerInfoHandler.handle(message);
-	}
+	@Override public void handle(GetPlayerMessage message) { playerInfoHandler.handle(message); }
+	@Override public void handle(GetPlayerInventoryMessage message) { playerInfoHandler.handle(message); }
+	@Override public void handle(GetPlayerTeamMessage message) { playerInfoHandler.handle(message); }
+	@Override public void handle(GetUserIdFromNameMessage message) { playerInfoHandler.handle(message); }
 
-	@Override
-	public void handle(GetPlayerInventoryMessage message) {
-		playerInfoHandler.handle(message);
-	}
-
-	@Override
-	public void handle(GetPlayerTeamMessage message) {
-		playerInfoHandler.handle(message);
-	}
-
-	@Override
-	public void handle(GetUserIdFromNameMessage message) {
-		playerInfoHandler.handle(message);
-	}
 
 	// GAME INFO
 
-	@Override
-	public void handle(CheckGameFinishedMessage message){
-		gameInfoHandler.handle(message);
-	}
+	@Override public void handle(CheckGameFinishedMessage message) { gameInfoHandler.handle(message); }
+	@Override public void handle(CheckUsableItemMessage message) { gameInfoHandler.handle(message); }
+	@Override public void handle(GetAbilityEffectivenessMessage message) { gameInfoHandler.handle(message); }
+	@Override public void handle(GetActiveBugemonsMessage message) { gameInfoHandler.handle(message); }
+	@Override public void handle(GetBattleEndInfoMessage message) { gameInfoHandler.handle(message); }
+	@Override public void handle(GetBattleStateMessage message) { gameInfoHandler.handle(message); }
+	@Override public void handle(GetLevelUpInfoMessage message) { gameInfoHandler.handle(message); }
+	@Override public void handle(GetLogsMessage message) { gameInfoHandler.handle(message); }
+	@Override public void handle(GetNextWindowMessage message) { gameInfoHandler.handle(message); }
+	@Override public void handle(GetTowerInfoMessage message) { gameInfoHandler.handle(message); }
 
-	@Override
-	public void handle(GetBattleStateMessage message){
-		gameInfoHandler.handle(message);
-	}
-
-	@Override
-	public void handle(GetLogsMessage message){
-		gameInfoHandler.handle(message);
-	}
-
-	@Override
-	public void handle(CheckUsableItemMessage message){
-		gameInfoHandler.handle(message);
-	}
-
-	@Override
-	public void handle(GetAbilityEffectivenessMessage message){
-		gameInfoHandler.handle(message);
-	}
-
-	@Override
-	public void handle(GetActiveBugemonsMessage message){
-		gameInfoHandler.handle(message);
-	}
-
-	@Override
-	public void handle(GetTowerInfoMessage message){
-		gameInfoHandler.handle(message);
-	}
-
-	@Override
-	public void handle(GetNextWindowMessage message){
-		gameInfoHandler.handle(message);
-	}
-
-	@Override
-	public void handle(GetBattleEndInfoMessage message){
-		gameInfoHandler.handle(message);
-	}
-
-	@Override
-	public void handle(GetLevelUpInfoMessage message){
-		gameInfoHandler.handle(message);
-	}
 
 	// GAME ACTIONS
 
-	@Override
-	public void handle(PickRandomActionMessage message){
-		gameActionsHandler.handle(message);
-	}
+	@Override public void handle(AbandonTowerMessage message) { gameActionsHandler.handle(message); }
+	@Override public void handle(ChooseAbilityRewardMessage message) { gameActionsHandler.handle(message); }
+	@Override public void handle(ChooseItemRewardMessage message) { gameActionsHandler.handle(message); }
+	@Override public void handle(ChooseLevelUpRewardMessage message) { gameActionsHandler.handle(message); }
+	@Override public void handle(ChooseStatRewardMessage message) { gameActionsHandler.handle(message); }
+	@Override public void handle(PickRandomActionMessage message) { gameActionsHandler.handle(message); }
+	@Override public void handle(RunMessage message) { gameActionsHandler.handle(message); }
+	@Override public void handle(SwapBugemonMessage message) { gameActionsHandler.handle(message); }
+	@Override public void handle(UseAbilityMessage message) { gameActionsHandler.handle(message); }
+	@Override public void handle(UseItemMessage message) { gameActionsHandler.handle(message); }
 
-	@Override
-	public void handle(RunMessage message){
-		gameActionsHandler.handle(message);
-	}
-
-	@Override
-	public void handle(AbandonTowerMessage message){
-		gameActionsHandler.handle(message);
-	}
-
-	@Override
-	public void handle(SwapBugemonMessage message){
-		gameActionsHandler.handle(message);
-	}
-
-	@Override
-	public void handle(UseAbilityMessage message){
-		gameActionsHandler.handle(message);
-	}
-
-	@Override
-	public void handle(UseItemMessage message){
-		gameActionsHandler.handle(message);
-	}
-
-	@Override
-	public void handle(ChooseAbilityRewardMessage message){
-		gameActionsHandler.handle(message);
-	}
-
-	@Override
-	public void handle(ChooseItemRewardMessage message){
-		gameActionsHandler.handle(message);
-	}
-
-	@Override
-	public void handle(ChooseStatRewardMessage message){
-		gameActionsHandler.handle(message);
-	}
-
-	@Override
-	public void handle(ChooseLevelUpRewardMessage message){
-		gameActionsHandler.handle(message);
-	}
 
 	// GAME DATA
 
-	@Override
-	public void handle(GetAllBugemonSpeciesMessage message){
-		gameDataHandler.handle(message);
-	}
+	@Override public void handle(GetAllBugemonSpeciesMessage message) { gameDataHandler.handle(message); }
+	@Override public void handle(GetRandomAbilityMessage message) { gameDataHandler.handle(message); }
+	@Override public void handle(GetRandomItemMessage message) { gameDataHandler.handle(message); }
 
-	@Override
-	public void handle(GetRandomAbilityMessage message){
-		gameDataHandler.handle(message);
-	}
-
-	@Override
-	public void handle(GetRandomItemMessage message){
-		gameDataHandler.handle(message);
-	}
 
 	// SOCIAL
 
-	@Override
-	public void handle(SendFriendRequestMessage message){
-		socialHandler.handle(message);
-	}
+	@Override public void handle(AcceptBattleRequestMessage message) { socialHandler.handle(message); }
+	@Override public void handle(AcceptFriendRequestMessage message) { socialHandler.handle(message); }
+	@Override public void handle(DeclineBattleRequestMessage message) { socialHandler.handle(message); }
+	@Override public void handle(DeclineFriendRequestMessage message) { socialHandler.handle(message); }
+	@Override public void handle(GetBattleRequestsMessage message) { socialHandler.handle(message); } 
+	@Override public void handle(GetChatMessagesMessage message) { socialHandler.handle(message); }
+	@Override public void handle(GetFriendRequestsMessage message) { socialHandler.handle(message); }
+	@Override public void handle(GetFriendsListMessage message) { socialHandler.handle(message); }
+	@Override public void handle(SendBattleRequestMessage message) { socialHandler.handle(message); }
+	@Override public void handle(SendChatMessageMessage message) { socialHandler.handle(message); }
+	@Override public void handle(SendFriendRequestMessage message) { socialHandler.handle(message); }
 
-	@Override
-	public void handle(SendBattleRequestMessage message){
-		socialHandler.handle(message);
-	}
-
-	@Override
-	public void handle(GetFriendRequestsMessage message){
-		socialHandler.handle(message);
-	}
-
-	@Override
-	public void handle(GetBattleRequestsMessage message){
-		socialHandler.handle(message);
-	}
-
-	@Override
-	public void handle(AcceptFriendRequestMessage message){
-		socialHandler.handle(message);
-	}
-
-	@Override
-	public void handle(AcceptBattleRequestMessage message){
-		socialHandler.handle(message);
-	}
-
-	@Override
-	public void handle(DeclineFriendRequestMessage message){
-		socialHandler.handle(message);
-	}
-
-	@Override
-	public void handle(DeclineBattleRequestMessage message){
-		socialHandler.handle(message);
-	}
-
-	@Override
-	public void handle(GetFriendsListMessage message){
-		socialHandler.handle(message);
-	}
-
-	@Override
-	public void handle(SendChatMessageMessage message){
-		socialHandler.handle(message);
-	}
-
-	@Override
-	public void handle(GetChatMessagesMessage message){
-		socialHandler.handle(message);
-	}
 
 	// TEAM SAVE
 
-	@Override
-	public void handle(SaveTeamMessage message) {
-		teamSaveHandler.handle(message);
-	}
-
-	@Override
-	public void handle(GetSavedTeamsMessage message) {
-		teamSaveHandler.handle(message);
-	}
-
+	@Override public void handle(GetSavedTeamsMessage message) { teamSaveHandler.handle(message); }
+	@Override public void handle(SaveTeamMessage message) { teamSaveHandler.handle(message); }
 
 }

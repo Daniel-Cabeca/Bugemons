@@ -69,6 +69,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
 	private SetupHandler setupHandler;
 	private GameInfoHandler gameInfoHandler;
+	private GameActionsHandler gameActionsHandler;
 
 	void resetGameSessionState() { // package-private
 		this.battle = null;
@@ -94,6 +95,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
 		this.setupHandler = new SetupHandler(this, accountService, itemService, inventoryService, bugemonService);
 		this.gameInfoHandler = new GameInfoHandler(this);
+		this.gameActionsHandler = new GameActionsHandler(this, inventoryService);
     }
 
 	public AbilityService getAbilityService() { return this.abilityService; }
@@ -301,157 +303,55 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
 	@Override
 	public void handle(PickRandomActionMessage message){
-		StrategyRandom strategyRandom = new StrategyRandom();
-		Action randomAction = strategyRandom.pickAction(battle, teamLabel);
-		this.battle.chooseAction(randomAction, teamLabel);
-
-		sendSuccessMessage();
+		gameActionsHandler.handle(message);
 	}
 
 	@Override
 	public void handle(RunMessage message){
-		this.battle.chooseAction(new Run(), teamLabel);
-
-		if (this.isGameTower) {
-			for (Bugemon bugemon : this.player.getTeam().getMembers()) {
-				bugemon.getFightStats().setHp(bugemon.getBaseStats().getHp());
-			}
-			this.towerManager.getCurrentFloorManager().rewindRoom();
-			this.battle = this.towerManager.getCurrentBattle();
-		} else {
-			this.battle = null;
-			clearPendingLevelUpState();
-		}
-
-        sendSuccessMessage();
+		gameActionsHandler.handle(message);
 	}
 
 	@Override
 	public void handle(AbandonTowerMessage message){
-		if (!this.isGameTower){
-			sendErrorMessage(getName());
-			return;
-		}
-		this.finishTower();
-		sendSuccessMessage();
+		gameActionsHandler.handle(message);
 	}
 
 	@Override
 	public void handle(SwapBugemonMessage message){
-		BugemonDTO bugemonDTOToSwap = message.getBugemonToSwap();
-		Bugemon bugemonToSwap = this.player.getTeam().getBugemonById(bugemonDTOToSwap.getId());
-		this.battle.chooseAction(new Swap(bugemonToSwap), teamLabel);
-
-		sendSuccessMessage();
+		gameActionsHandler.handle(message);
 	}
 
 	@Override
 	public void handle(UseAbilityMessage message){
-		Ability ability = AbilityMapper.toEntity(message.getAbility());
-		this.battle.chooseAction(new UseAbility(ability), teamLabel);
-
-		sendSuccessMessage();
+		gameActionsHandler.handle(message);
 	}
 
 	@Override
 	public void handle(UseItemMessage message){
-		Item item = ItemMapper.toEntity(message.getItem());
-		this.battle.chooseAction(new UseItem(item), teamLabel);
-		this.inventoryService.deleteItem(item, 1, player.getUsername());
-		sendSuccessMessage();
+		gameActionsHandler.handle(message);
 	}
 
 	@Override
 	public void handle(ChooseAbilityRewardMessage message){
-		BugemonDTO bugemonDTO = message.getBugemon();
-		Bugemon chosenBugemon = player.getTeam().getBugemonById(bugemonDTO.getId());
-
-		if (chosenBugemon == null){
-			sendErrorMessage("Bugemon not present in the Team");
-			return;
-		}
-
-		Ability oldAbility = chosenBugemon.getAbilities().getAbilityById(message.getOldAbility().id());
-		if (oldAbility == null){
-			sendErrorMessage("Ability not learned");
-			return;
-		}
-		Ability newAbility = AbilityMapper.toEntity(message.getNewAbility());
-
-		chosenBugemon.swapAbility(newAbility, oldAbility);
-
-		towerManager.getCurrentRoomManager().setRoomCompleted(true);
-		nextTowerRoom();
-		sendSuccessMessage();
+		gameActionsHandler.handle(message);
 	}
 
 	@Override
 	public void handle(ChooseItemRewardMessage message){
-		Item item = ItemMapper.toEntity(message.getItem());
-		player.getInventory().addItem(item, 1);
-
-		this.inventoryService.insertItem(item, 1, player.getUsername());
-
-		towerManager.getCurrentRoomManager().setRoomCompleted(true);
-
-		nextTowerRoom();
-		sendSuccessMessage();
+		gameActionsHandler.handle(message);
 	}
 
 	@Override
 	public void handle(ChooseStatRewardMessage message){
-		BugemonDTO bugemonDTO = message.getBugemon();
-		Bugemon chosenBugemon = player.getTeam().getBugemonById(bugemonDTO.getId());
-
-		if (chosenBugemon == null){
-			sendErrorMessage("Bugemon not present in the Team");
-			return;
-		}
-
-		Reward reward = new Reward(chosenBugemon);
-		reward.configureReward(RewardType.COMBINATION);
-
-		chosenBugemon.changeBaseStats(reward.getStats());
-		chosenBugemon.changeFightStats(reward.getStats());
-
-		towerManager.getCurrentRoomManager().setRoomCompleted(true);
-		nextTowerRoom();
-		sendSuccessMessage();
+		gameActionsHandler.handle(message);
 	}
 
 	@Override
 	public void handle(ChooseLevelUpRewardMessage message){
-		if (this.pendingLevelUpRewards == null || this.pendingLevelUpRewards.isEmpty()) {
-			sendErrorMessage("No pending level up reward to apply");
-			return;
-		}
-
-		RewardDTO rewardDTO = message.getReward();
-		if (rewardDTO == null) {
-			sendErrorMessage("Invalid reward");
-			return;
-		}
-
-		Reward chosenReward = RewardMapper.toEntity(rewardDTO);
-		boolean applied = false;
-		for (Reward reward : this.pendingLevelUpRewards) {
-			if (reward.getStats().equals(chosenReward.getStats())) {
-				reward.applyReward();
-				applied = true;
-				break;
-			}
-		}
-
-		if (!applied) {
-			sendErrorMessage("Reward does not match the current level up choices");
-			return;
-		}
-
-		clearPendingLevelUpState();
-		sendSuccessMessage();
+		gameActionsHandler.handle(message);
 	}
 
-	// SOCIAL PANEL
+	// SOCIAL PANEL 466
 
 	@Override
 	public void handle(SendFriendRequestMessage message){

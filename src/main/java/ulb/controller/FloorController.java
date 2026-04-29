@@ -59,7 +59,7 @@ public class FloorController implements FloorWindow.ViewListener {
 
 	/**
 	 * Tries to select a room based on the player's click, checking if it's 
-	 * adjacent and not the current room.
+	 * adjacent and not the current room. Once verified, it lauches the animation process and then accesses to the room.
 	 * 
 	 * @param targetRoomId the room ID corresponding to the clicked room
 	 */
@@ -72,8 +72,6 @@ public class FloorController implements FloorWindow.ViewListener {
 
 		if (!isAdjacent) return;
 
-        System.out.println("Current: " + currentRoomId + " -> Target: " + targetRoomId);
-
         view.translationAnimationHandler(targetRoomId, () -> {
             boolean success = this.listener.onRoomSelected(targetRoomId);
             if (!success){
@@ -82,12 +80,6 @@ public class FloorController implements FloorWindow.ViewListener {
             syncCurrentRoomFromServer();
             visitedRooms.add(targetRoomId);
         });
-
-		//boolean success = this.listener.onRoomSelected(targetRoomId);
-		//if (!success) return;
-
-		//syncCurrentRoomFromServer();
-		//visitedRooms.add(targetRoomId);
     }
 
     @Override

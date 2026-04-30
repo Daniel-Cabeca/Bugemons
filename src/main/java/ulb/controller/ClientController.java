@@ -35,9 +35,10 @@ import ulb.repository.LoadException;
 public class ClientController extends Application implements RegisterController.Listener, ModeController.Listener,
 BattleModeController.Listener,BattleEndController.Listener, BattleWindowController.Listener, NextRoomController.Listener, 
 FloorRewardController.Listener, AttackReplacementController.Listener, TeamController.Listener, LevelUpController.Listener,
-SocialPanelController.Listener, LoadTeamPanelController.Listener {
+LoadTeamPanelController.Listener, FloorController.Listener {
 
 	SocketClient client;
+	private final Object serverRequestLock = new Object();
     Stage stage;
 
 	PlayerDTO player;
@@ -57,8 +58,14 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 	AttackReplacementController attackReplacementController;
 
 	FloorRewardController.RewardChoice pendingFloorRewardChoice;
+	FloorController floorController;
 	BugemonDTO pendingLevelUpBugemon;
 	List<RewardDTO> pendingLevelUpRewards;
+
+	SocialPanelController socialPanelController;
+	WaitWindowController waitWindowController;
+
+	public Stage getStage() { return this.stage; }
 
     /**
      * Initializes network client from application launch parameters.
@@ -110,12 +117,21 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 	 * @return A boolean that tells if the request has been accepted
 	 */
 	public boolean postData(ClientToServerMessage message){
-		client.sendMessage(message);
-		if (client.receiveMessage() instanceof StatusMessage errorMessage && errorMessage.isFailure()){
-			System.err.println(errorMessage.getMessage());
+		synchronized (serverRequestLock) {
+			client.sendMessage(message);
+			Serializable response = client.receiveMessage();
+
+			if (response instanceof StatusMessage statusMessage) {
+				if (statusMessage.isFailure()) {
+					System.err.println(statusMessage.getMessage());
+					return false;
+				}
+				return true;
+			}
+
+			System.err.println("Réponse inattendue du serveur : " + response);
 			return false;
 		}
-		return true;
 	}
 
 
@@ -125,8 +141,10 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 	 * @return The message received from the server and containing the data
 	 */
 	public Serializable getData(ClientToServerMessage message){
-		client.sendMessage(message);
-		return client.receiveMessage();
+		synchronized (serverRequestLock) {
+			client.sendMessage(message);
+			return client.receiveMessage();
+		}
 	}
 
 	/**
@@ -173,93 +191,57 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 
 	// Social Panel Controller
 
-	@Override
 	public boolean sendBattleRequest(String receiver) {
 
 		return postData(new SendBattleRequestMessage(player.getUsername(), receiver));
 	}
 
-	@Override
 	public List<String> getBattleRequests() {
 		if (getData(new GetBattleRequestsMessage(player.getUsername())) instanceof BattleRequestsMessage msg)
 			return msg.getRequests();
 		return List.of();
 	}
 
-	@Override
 	public boolean acceptBattleRequest(String sender) {
 		return postData(new AcceptBattleRequestMessage(player.getUsername(), sender));
 	}
 
-	@Override
 	public boolean declineBattleRequest(String sender) {
 		return postData(new DeclineBattleRequestMessage(player.getUsername(), sender));
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public boolean sendFriendRequest(String receiver) {
 		return postData(new SendFriendRequestMessage(player.getUsername(), receiver));
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public List<String> getFriendRequests() {
 		if (getData(new GetFriendRequestsMessage(player.getUsername())) instanceof FriendRequestsMessage msg)
 			return msg.getRequests();
 		return List.of();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public String getPlayerName() {
 		return player.getUsername();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public boolean acceptFriendRequest(String sender) {
 		return postData(new AcceptFriendRequestMessage(player.getUsername(), sender));
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public boolean declineFriendRequest(String sender) {
 		return postData(new DeclineFriendRequestMessage(player.getUsername(), sender));
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public void sendChatMessage(String receiver, String content) {
 		postData(new SendChatMessageMessage(player.getUsername(), receiver, content));
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public List<ChatMessage> getChatMessages(String friend) {
 		if (getData(new GetChatMessagesMessage(player.getUsername(), friend)) instanceof ChatMessagesMessage msg)
 			return msg.getMessages();
 		return List.of();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public List<String> getFriendsList() {
 		if (getData(new GetFriendsListMessage(player.getUsername())) instanceof FriendsListMessage msg)
 			return msg.getFriends();
@@ -330,12 +312,8 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 	 */
 	@Override
 	public void onOpenSocial() {
-		try {
-			SocialPanelController socialPanelController = new SocialPanelController(stage, this);
-			socialPanelController.show();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		this.socialPanelController = new SocialPanelController(this);
+		this.socialPanelController.show();
 	}
 
 	/**
@@ -503,13 +481,11 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 
 	/**
 	 * Shows the next room window.
-	 *
-	 * @param hasFled Whether the player fled from battle
 	 */
-	private void switchToNextRoomWindow(boolean hasFled){
+	private void switchToNextRoomWindow(){
 		this.nextRoomController = new NextRoomController(stage, this);
 		try{
-			this.nextRoomController.show(hasFled);
+			this.nextRoomController.show();
 		} catch (Exception e){
 			System.err.println(e);
 		}
@@ -542,6 +518,18 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void switchToFloorWindow(){
+		if (this.floorController == null) {
+			this.floorController = new FloorController(this.stage, this);
+		}
+		try {
+			this.floorController.show();
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+
 	}
 
 	/**
@@ -606,7 +594,8 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 		WindowType nextWindow = this.getWindowType();
 		switch (nextWindow) {
 			case NEXT_ROOM:
-				switchToNextRoomWindow(false);
+				this.floorController = null;
+				switchToNextRoomWindow();
 				break;
 
 			case GAME:
@@ -623,6 +612,10 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 			
 			case MAIN_MENU:
 				switchToBattleEndWindow();
+				break;
+
+			case FLOOR:
+				switchToFloorWindow();
 				break;
 
 			default:
@@ -659,8 +652,9 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 	@Override
 	public void onTowerMode() {
 		this.gameMode = GameMode.TOWER;
+		this.floorController = null;
 		if (this.postData(new SetUpTowerModeMessage())){
-			switchToBattleWindow();
+			switchToFloorWindow();
 		}
 	}
 
@@ -875,11 +869,7 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 	@Override
 	public void onRun() {
 		if (postData(new RunMessage())){
-			if (this.gameMode == GameMode.TOWER){
-				switchToNextRoomWindow(true);
-			} else {
-				nextRoom();
-			}
+			nextRoom();
 		}
 	}
 
@@ -958,7 +948,7 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 	@Override
 	public void onObjectReward(ItemDTO rewardItem) {
 		if (postData(new ChooseItemRewardMessage(rewardItem))){
-			nextRoom();
+			switchToFloorWindow();
 		}
 	}
 
@@ -985,7 +975,7 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 	public void onBugemonChosen(BugemonDTO bugemon) {
 		if (pendingFloorRewardChoice == FloorRewardController.RewardChoice.STAT) {
 			if (postData(new ChooseStatRewardMessage(bugemon))){
-				nextRoom();
+				switchToFloorWindow();
 			}
 			return;
 		}
@@ -1059,7 +1049,7 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 	@Override
 	public void onAttackReplaced(BugemonDTO bugemon, AbilityDTO newAbility, AbilityDTO oldAbility) {
 		if (postData(new ChooseAbilityRewardMessage(bugemon, oldAbility, newAbility))){
-			nextRoom();
+			switchToFloorWindow();
 		}
 	}
 
@@ -1078,4 +1068,32 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener {
 		}
 	}
 
+	// FloorController
+
+	@Override
+	public boolean onRoomSelected(int roomId) {
+		if (postData(new ChooseTowerRoomMessage(roomId))) {
+			nextRoom();
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+    public void onReturnFloorWindow() {
+        try {
+			this.battleModeController.show();
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+    }
+
+    // Wait Window
+
+    public void openWaitWindow() {
+		this.socialPanelController.close();
+
+		this.waitWindowController = new WaitWindowController(this);
+		this.waitWindowController.show();
+    }
 }

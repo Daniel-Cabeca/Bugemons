@@ -41,7 +41,7 @@ import ulb.message.clientToServer.*;
 	 void handle(SwapBugemonMessage message);
 	 void handle(UseAbilityMessage message);
 	 void handle(UseItemMessage message);
-	
+	 void handle(ChooseTowerRoomMessage message);
 	// GAME DATA
 	 void handle(GetAllBugemonSpeciesMessage message);
 	 void handle(GetRandomAbilityMessage message);

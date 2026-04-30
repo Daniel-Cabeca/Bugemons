@@ -48,7 +48,7 @@ public class Tower {
     	if (currentFloor != null){
    			return currentFloor.getCompletedRoomsId();
      	}
-     	return null;
+     	return new ArrayList<>();
     }
 
 	public boolean getTowerCompleted() {return this.completedTower;}

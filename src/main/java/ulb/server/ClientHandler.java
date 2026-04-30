@@ -9,6 +9,9 @@ import ulb.model.battle.Battle;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.reward.Reward;
 import ulb.model.team.Team;
+import ulb.model.tower.Room;
+import ulb.model.tower.RoomType;
+import ulb.repository.LoadException;
 import ulb.service.*;
 import ulb.model.tower.towerManager.TowerManager;
 
@@ -148,12 +151,17 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	/**
 	 * Go to the next room if the game is in tower mode
 	 */
-	public void nextTowerRoom(){
-		if (isGameTower){
-			this.towerManager.nextRoom();
+	public boolean nextTowerRoom(int targetRoomId){
+		if (!isGameTower){
+			return false;
+		}
+		if (this.towerManager.moveToRoom(targetRoomId)){
 			this.battle = this.towerManager.getCurrentBattle();
 			this.towerSaveService.saveTowerInfo(this.towerManager.getTower(), this.player);
+			return true;
 		}
+		return false;
+
 	}
 
 	void finishTower(){
@@ -238,4 +246,19 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	@Override public void handle(GetSavedTeamsMessage message) { teamSaveHandler.handle(message); }
 	@Override public void handle(SaveTeamMessage message) { teamSaveHandler.handle(message); }
 
+	@Override
+	public void handle(ChooseTowerRoomMessage message){
+		if (!isGameTower){
+			sendErrorMessage("The game isn't in tower mode");
+			return;
+		}
+		int targetRoomId = message.getRoomId();
+		if (nextTowerRoom(targetRoomId)){
+			sendSuccessMessage();
+		}
+		else{
+			sendErrorMessage("Cannot move to the selected room");
+			return;
+		}
+	}
 }

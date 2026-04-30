@@ -74,8 +74,8 @@ public class AccountDatabaseRepository implements AccountRepository {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void addFriend(int userId, int friendId) {
-		String sql = "INSERT INTO friends (user_id, friend_id) VALUES (?, ?)";
+	public void addFriend(int userId, int friendId) throws LoadException {
+		String sql = "INSERT OR IGNORE INTO friends (user_id, friend_id) VALUES (?, ?)";
 		try (PreparedStatement pstmt = this.database.prepareStatement(sql)) {
 			// On insère les deux sens pour simplifier la lecture plus tard
 			pstmt.setInt(1, userId);
@@ -86,7 +86,7 @@ public class AccountDatabaseRepository implements AccountRepository {
 			pstmt.setInt(2, userId);
 			pstmt.executeUpdate();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw new LoadException("Failed to add friend: " + e.getMessage());
 		}
 	}
 
@@ -152,11 +152,11 @@ public class AccountDatabaseRepository implements AccountRepository {
 	/**
 	 * {@inheritDoc}
 	 */
-	public List<String> getFriendsList(int userId) {
+	public List<String> getFriendsList(int userId) throws LoadException {
 		List<String> friends = new ArrayList<>();
 
 		String sql = """
-        SELECT u.username 
+        SELECT u.username
         FROM users u
         JOIN friends f ON u.id = f.friend_id
         WHERE f.user_id = ?
@@ -170,7 +170,7 @@ public class AccountDatabaseRepository implements AccountRepository {
 				friends.add(rs.getString("username"));
 			}
 		} catch (SQLException e) {
-			System.err.println("Erreur lors de la récupération des amis : " + e.getMessage());
+			throw new LoadException("Failed to fetch friends list: " + e.getMessage());
 		}
 
 		return friends;

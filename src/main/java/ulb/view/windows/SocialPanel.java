@@ -120,8 +120,14 @@ public class SocialPanel {
      * @param List<String> the list of friends that need to be shown.
      */
     public void setFriendsList(List<String> friends) {
+        String selectedFriend = selectedChatFriend;
+
         friendsListView.getItems().setAll(friends);
         chatFriendsList.getItems().setAll(friends);
+
+        if (selectedFriend != null && friends.contains(selectedFriend)) {
+            chatFriendsList.getSelectionModel().select(selectedFriend);
+        }
     }
 
 	public void setBattleRequests(List<String> battleRequests) {

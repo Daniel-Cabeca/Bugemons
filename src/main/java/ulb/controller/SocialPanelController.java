@@ -9,191 +9,194 @@ import ulb.model.chat.ChatMessage;
 import ulb.view.WindowPath;
 import ulb.view.windows.SocialPanel;
 
+import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class SocialPanelController implements SocialPanel.ViewListener {
+	private Stage WindowStage;
+	private SocialPanel view;
+	private final ClientController clientController;
 
-    private final Stage stage;
-    private Stage popupStage;
-    private SocialPanel view;
-    private final Listener listener;
+	public SocialPanelController(ClientController clientController) {
+		this.clientController = clientController;
+	}
 
-    public SocialPanelController(Stage stage, Listener listener) {
-        this.stage = stage;
-        this.listener = listener;
-    }
+	public Stage getParentStage() { return this.clientController.getStage(); }
 
-    /**
-	 * Displays the Social panel screen.
-	 *
-	 * @throws Exception If the FXML cannot be loaded
-	 */
-    public void show() throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(WindowPath.SOCIAL_PANEL));
-        loader.load();
-        view = loader.getController();
-        view.setViewListener(this);
+	/**
+	* Displays the Social panel screen.
+	*/
+	public void show() {
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource(WindowPath.SOCIAL_PANEL));
+			loader.load();
+			view = loader.getController();
+			view.setViewListener(this);
 
-        view.setFriendsList(listener.getFriendsList());
+			view.setFriendsList(this.clientController.getFriendsList());
 
-        popupStage = new Stage();
-        popupStage.initStyle(StageStyle.UNDECORATED);
-        popupStage.initOwner(stage);
+			WindowStage = new Stage();
+			WindowStage.initStyle(StageStyle.UNDECORATED);
+			WindowStage.initOwner(this.getParentStage());
 
-        Scene scene = new Scene(loader.getRoot());
-        scene.getStylesheets().add(getClass().getResource("/styles/global.css").toExternalForm());
-        popupStage.setScene(scene);
-        popupStage.setX(stage.getX());
-        popupStage.setY(stage.getY());
-        popupStage.show();
-    }
+			Scene scene = new Scene(loader.getRoot());
+			scene.getStylesheets().add(getClass().getResource("/styles/global.css").toExternalForm());
+			WindowStage.setScene(scene);
+			WindowStage.setX(this.getParentStage().getX());
+			WindowStage.setY(this.getParentStage().getY());
+			WindowStage.show();
+		}
+		catch (IOException e) {
+			throw new RuntimeException("Failed to load social panel: "+ e.getMessage());
+		}
+	}
 
-    /**
-     * Close the social panel screen.
-     */
-    @Override
-    public void onClose() {
-        popupStage.close();
-    }
+	/**
+	* Closes the social panel screen.
+	*/
+	public void close() {
+		this.WindowStage.close();
+	}
 
-    /**
-     * Decline a friend request.
-     */
-    @Override
-    public void onDeclineFriend(String sender) {
-        if (listener.declineFriendRequest(sender)) {
-            refreshFriendRequests();
-        }
-    }
+	/**
+	* Close the social panel screen.
+	*/
+	@Override
+	public void onClose() {
+		this.close();
+	}
+
+	/**
+	* Decline a friend request.
+	*/
+	@Override
+	public void onDeclineFriend(String sender) {
+		if (this.clientController.declineFriendRequest(sender)) {
+			refreshFriendRequests();
+		}
+	}
 
 	@Override
-    public void onDeclineBattle(String sender) {
-        if (listener.declineBattleRequest(sender)) {
-            refreshBattleRequests();
-        }
-    }
+	public void onDeclineBattle(String sender) {
+		if (this.clientController.declineBattleRequest(sender)) {
+			refreshBattleRequests();
+		}
+	}
 
-    /**
-     * Accept a friend request.
-     */
-    @Override
-    public void onAcceptFriend(String sender) {
-        if (listener.acceptFriendRequest(sender)) {
-            refreshFriendRequests();
-        }
-    }
+	/**
+	* Accept a friend request.
+	*/
+	@Override
+	public void onAcceptFriend(String sender) {
+		if (this.clientController.acceptFriendRequest(sender)) {
+			refreshFriendRequests();
+            refreshFriends();
+		}
+	}
 
 	@Override
-    public void onAcceptBattle(String sender) {
-        if (listener.acceptBattleRequest(sender)) {
-            refreshBattleRequests();
-        }
-    }
+	public void onAcceptBattle(String sender) {
+		if (this.clientController.acceptBattleRequest(sender)) {
+			refreshBattleRequests();
+		}
+	}
 
-    /**
-     * Displays the appropriat status and sends friend request.
-     */
-    @Override
-    public void onInvite(String target) {
-        if (target.equals(listener.getPlayerName())) {
-            view.setInviteStatus("On ne peut pas être son propre ami...");
-            return;
-        }
-        if (listener.getFriendsList().contains(target)) {
-            view.setInviteStatus("Vous êtes déjà amis !");
-            return;
-        }
-        boolean ok = listener.sendFriendRequest(target);
-        view.setInviteStatus(ok ? "Demande envoyée !" : "Utilisateur introuvable.");
-        if (ok) {
-            view.clearInviteField();
-        }
-    }
+	/**
+	* Displays the appropriat status and sends friend request.
+	*/
+	@Override
+	public void onInvite(String target) {
+		if (target.equals(this.clientController.getPlayerName())) {
+			view.setInviteStatus("On ne peut pas être son propre ami...");
+			return;
+		}
+		if (this.clientController.getFriendsList().contains(target)) {
+			view.setInviteStatus("Vous êtes déjà amis !");
+			return;
+		}
+		boolean ok = this.clientController.sendFriendRequest(target);
+		view.setInviteStatus(ok ? "Demande envoyée !" : "Utilisateur introuvable.");
+		if (ok) {
+			view.clearInviteField();
+		}
+	}
 
-    /**
-     * Select given friend to chat.
-     */
-    @Override
-    public void onChatFriendSelected(String friend) {
-        loadMessages(friend);
-    }
+	/**
+	* Select given friend to chat.
+	*/
+	@Override
+	public void onChatFriendSelected(String friend) {
+		loadMessages(friend);
+	}
 
-    /**
-     * Open request tab and refreshes.
-     */
-    @Override
-    public void onFriendRequestsOpened() {
-        refreshFriendRequests();
-    }
+	/**
+	* Open request tab and refreshes.
+	*/
+	@Override
+	public void onFriendRequestsOpened() {
+		refreshFriendRequests();
+	}
 
 	@Override
-    public void onBattleRequestsOpened() {
-        refreshBattleRequests();
-    }
+	public void onBattleRequestsOpened() {
+		refreshBattleRequests();
+	}
 
-    @Override
-    public void onChallengeFriend(String friend) {
-        if (friend == null || friend.isBlank()) {
-            return;
-        }
-        boolean ok = listener.sendBattleRequest(friend);
-        view.setInviteStatus(ok ? "Défi envoyé !" : "Impossible d'envoyer le défi.");
-    }
+	@Override
+	public void onChallengeFriend(String friend) {
+		if (friend == null || friend.isBlank()) {
+			return;
+		}
+		boolean ok = this.clientController.sendBattleRequest(friend);
+		view.setInviteStatus(ok ? "Défi envoyé !" : "Impossible d'envoyer le défi.");
 
-    /**
+		if (ok) {
+			this.clientController.openWaitWindow();
+		}
+	}
+
+	/**
      * Send given contents in form of a message to a given friend.
      */
     @Override
     public void onSendMessage(String friend, String content) {
         view.clearChatField();
         new Thread(() -> {
-            listener.sendChatMessage(friend, content);
-            loadMessages(friend);
+            this.clientController.sendChatMessage(friend, content);
+            loadMessagesInCurrentThread(friend);
         }).start();
     }
 
-    @Override
-    public void refreshFriends() {
-        view.setFriendsList(listener.getFriendsList());
-    }
+	@Override
+	public void refreshFriends() {
+		view.setFriendsList(this.clientController.getFriendsList());
+	}
 
-    private void refreshFriendRequests() {
-        view.setFriendRequests(listener.getFriendRequests());
-    }
+	private void refreshFriendRequests() {
+		view.setFriendRequests(this.clientController.getFriendRequests());
+	}
 
-    private void refreshBattleRequests() {
-        view.setBattleRequests(listener.getBattleRequests());
-    }
+	private void refreshBattleRequests() {
+		view.setBattleRequests(this.clientController.getBattleRequests());
+	}
 
-    /**
+	/**
      * Load messages of a chat with a given friend.
      */
     private void loadMessages(String friend) {
-        String me = listener.getPlayerName();
-        new Thread(() -> {
-            List<ChatMessage> msgs = listener.getChatMessages(friend);
-            List<String> lines = new ArrayList<>();
-            for (ChatMessage msg : msgs) {
-                lines.add(msg.format(me));
-            }
-            Platform.runLater(() -> view.setMessages(lines));
-        }).start();
+        new Thread(() -> loadMessagesInCurrentThread(friend)).start();
     }
 
-    public interface Listener {
-        boolean acceptFriendRequest(String sender);
-        boolean declineFriendRequest(String sender);
-		boolean acceptBattleRequest(String sender);
-        boolean declineBattleRequest(String sender);
-        boolean sendFriendRequest(String target);
-        boolean sendBattleRequest(String target);
-        void sendChatMessage(String friend, String content);
-        List<String> getFriendRequests();
-        List<String> getBattleRequests();
-        String getPlayerName();
-        List<ChatMessage> getChatMessages(String friend);
-        List<String> getFriendsList();
+    private void loadMessagesInCurrentThread(String friend) {
+        String me = this.clientController.getPlayerName();
+        List<ChatMessage> msgs = this.clientController.getChatMessages(friend);
+        List<String> lines = new ArrayList<>();
+        for (ChatMessage msg : msgs) {
+            lines.add(msg.format(me));
+        }
+        Platform.runLater(() -> view.setMessages(lines));
     }
 
 }

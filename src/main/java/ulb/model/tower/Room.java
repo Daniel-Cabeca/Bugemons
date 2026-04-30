@@ -18,6 +18,9 @@ public class Room {
     public Room(int id, RoomType roomType) {
         this.id = id;
         this.roomType = roomType;
+		if (roomType == RoomType.EMPTY) {
+			this.completedRoom = true;
+		}
     }
 
 

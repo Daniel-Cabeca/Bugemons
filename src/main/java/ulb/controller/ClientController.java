@@ -1085,7 +1085,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
     public void openWaitWindow() {
 		this.socialPanelController.close();
 
-		this.waitWindowController = new WaitWindowController(this.stage);
+		this.waitWindowController = new WaitWindowController(this);
 		this.waitWindowController.show();
     }
 }

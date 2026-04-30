@@ -7,6 +7,8 @@ import ulb.model.battle.Battle;
 import ulb.service.BugemonService;
 import ulb.service.ItemService;
 
+import java.util.List;
+
 /**
  * Manages overall tower progression across floors and rooms.
  */
@@ -42,7 +44,7 @@ public class TowerManager {
 	public boolean moveToRoom(int targetRoomId){
 		if(!this.currentFloorManager.moveToRoom(targetRoomId)){
 			return false;
-		};
+		}
 		nextFloor();
 		return true;
 	}
@@ -75,9 +77,11 @@ public class TowerManager {
 		return floorNumber == 8;
 	}
 
-	/** Returns whether current room is completed. */
-	public boolean isRoomCompleted(){
-		return this.getCurrentRoomManager().isRoomCompleted();
+    /**
+     * @return the list of the ids of the current floor's cleared rooms
+     */
+	public List<Integer> getCurrentFloorClearedRooms() {
+		return this.tower.getCurrentFloorCompletedRoomsId();
 	}
 
 	/** Returns current player. */

@@ -1,8 +1,6 @@
 package ulb.controller;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -18,12 +16,10 @@ public class FloorController implements FloorWindow.ViewListener {
     private FloorWindow view;
 	private final Floor floorGraph = new Floor(1, false);
 	private int currentRoomId = 4;
-	private final Set<Integer> visitedRooms = new HashSet<>();
 
     public FloorController(Stage stage, Listener listener){
         this.stage = stage;
         this.listener = listener;
-		this.visitedRooms.add(currentRoomId);
     }
 
     public void show() throws Exception {
@@ -51,16 +47,15 @@ public class FloorController implements FloorWindow.ViewListener {
         List<Integer> towerInfo = this.listener.getTowerInfo();
         if (towerInfo != null && towerInfo.size() >= 2) {
             this.currentRoomId = towerInfo.get(1);
-            this.visitedRooms.add(this.currentRoomId);
 			view.setFloorNumber(towerInfo.get(0));
             view.updatePlayerPosition(this.currentRoomId);
-            view.markVisitedRooms(visitedRooms);
+            view.markVisitedRooms(listener.getClearedRooms());
         }
     }
 
 	/**
 	 * Tries to select a room based on the player's click, checking if it's 
-	 * adjacent and not the current room. Once verified, it lauches the animation process and then accesses to the room.
+	 * adjacent and not the current room. Once verified, it launches the animation process and then accesses to the room.
 	 * 
 	 * @param targetRoomId the room ID corresponding to the clicked room
 	 */
@@ -78,7 +73,6 @@ public class FloorController implements FloorWindow.ViewListener {
             if (!success){
                 return;}
 
-            visitedRooms.add(targetRoomId);
             syncCurrentRoomFromServer();
         });
     }
@@ -130,5 +124,6 @@ public class FloorController implements FloorWindow.ViewListener {
 		boolean onRoomSelected(int roomId);
 		void onReturnFloorWindow();
 		List<Integer> getTowerInfo();
+        List<Integer> getClearedRooms();
     }
 }

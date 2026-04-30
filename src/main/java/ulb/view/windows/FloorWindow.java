@@ -8,8 +8,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class FloorWindow {
     public ViewListener viewListener;
@@ -23,7 +23,7 @@ public class FloorWindow {
      * @param col the GridPane column index for this room
      * @param row the GridPane row index for this room
      */
-    private record RoomUI(Button button, int col, int row) {};
+    private record RoomUI(Button button, int col, int row) {}
 
     private final Map<Integer, RoomUI> rooms = new HashMap<>();
 
@@ -217,7 +217,7 @@ public class FloorWindow {
      *
      * @param visitedRooms set containing the ids of the visited rooms
      */
-    public void markVisitedRooms(Set<Integer> visitedRooms) {
+    public void markVisitedRooms(List<Integer> visitedRooms) {
         String visitedRoomStyle = "-fx-background-color: #c0c0c0; -fx-font-size: 24px";
         for (Integer id : visitedRooms) {
             RoomUI roomUI = rooms.get(id);

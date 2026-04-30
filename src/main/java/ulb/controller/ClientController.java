@@ -1041,6 +1041,17 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		return null;
 	}
 
+    /**
+     * @return the list of the ids of the cleared rooms in the current floor
+     */
+	@Override
+	public List<Integer> getClearedRooms() {
+		if (getData(new GetTowerInfoMessage()) instanceof TowerInfoMessage towerInfo){
+			return towerInfo.getClearedRooms();
+		}
+		return List.of();
+	}
+
 	// Attack Replacement Controller Listener
 
 	/**

@@ -273,7 +273,8 @@ public class GameInfoHandler {
 		}
 		int towerFloorNumber = towerManager.getFloorNumber();
 		int towerRoomNumber = towerManager.getCurrentRoomId();
+		List<Integer> clearedRooms = towerManager.getCurrentFloorClearedRooms();
 
-		clientHandler.sendMessage(new TowerInfoMessage(towerFloorNumber, towerRoomNumber));
+		clientHandler.sendMessage(new TowerInfoMessage(towerFloorNumber, towerRoomNumber, clearedRooms));
 	}
 }

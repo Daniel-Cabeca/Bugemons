@@ -34,19 +34,8 @@ public class PlayerInfoHandler {
         this.clientHandler = clientHandler;
         this.accountService = accountService;
     }
-    
-    public void handle(GetPlayerMessage message) {
-        Player player = clientHandler.getPlayer();
-		if (message.getUsername().equals(player.getUsername())){
-			PlayerDTO playerDTO = PlayerMapper.toDTO(player);
-			clientHandler.sendMessage(new PlayerMessage(playerDTO));
-		}
-		else{
-			clientHandler.sendErrorMessage("Wrong Username");
-		}
-	}
 
-    public void handle(GetPlayerInventoryMessage message) {
+	public void handle(GetPlayerInventoryMessage message) {
         Player player = clientHandler.getPlayer();
 
 		if (message.getUserName().equals(player.getUsername())){
@@ -57,6 +46,17 @@ public class PlayerInfoHandler {
 				inventoryDTO.put(ItemMapper.toDTO(e.getKey()), e.getValue());
 			}
 			clientHandler.sendMessage(new PlayerInventoryMessage(inventoryDTO));
+		}
+		else{
+			clientHandler.sendErrorMessage("Wrong Username");
+		}
+	}
+    
+    public void handle(GetPlayerMessage message) {
+        Player player = clientHandler.getPlayer();
+		if (message.getUsername().equals(player.getUsername())){
+			PlayerDTO playerDTO = PlayerMapper.toDTO(player);
+			clientHandler.sendMessage(new PlayerMessage(playerDTO));
 		}
 		else{
 			clientHandler.sendErrorMessage("Wrong Username");

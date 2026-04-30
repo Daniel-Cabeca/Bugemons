@@ -9,9 +9,6 @@ import ulb.model.battle.Battle;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.reward.Reward;
 import ulb.model.team.Team;
-import ulb.model.tower.Room;
-import ulb.model.tower.RoomType;
-import ulb.repository.LoadException;
 import ulb.service.*;
 import ulb.model.tower.towerManager.TowerManager;
 
@@ -60,7 +57,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		this.towerSaveService = towerSaveService;
 
 		this.setupHandler = new SetupHandler(this, accountService, itemService, inventoryService, bugemonService);
-		this.gameInfoHandler = new GameInfoHandler(this);
+		this.gameInfoHandler = new GameInfoHandler(this, towerSaveService);
 		this.gameActionsHandler = new GameActionsHandler(this, inventoryService);
 		this.socialHandler = new SocialHandler(this, accountService, chatService);
 		this.playerInfoHandler = new PlayerInfoHandler(this, accountService);
@@ -212,6 +209,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	@Override public void handle(ChooseItemRewardMessage message) { gameActionsHandler.handle(message); }
 	@Override public void handle(ChooseLevelUpRewardMessage message) { gameActionsHandler.handle(message); }
 	@Override public void handle(ChooseStatRewardMessage message) { gameActionsHandler.handle(message); }
+	@Override public void handle(ChooseTowerRoomMessage message) { gameActionsHandler.handle(message); }
 	@Override public void handle(PickRandomActionMessage message) { gameActionsHandler.handle(message); }
 	@Override public void handle(RunMessage message) { gameActionsHandler.handle(message); }
 	@Override public void handle(SwapBugemonMessage message) { gameActionsHandler.handle(message); }
@@ -246,19 +244,4 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	@Override public void handle(GetSavedTeamsMessage message) { teamSaveHandler.handle(message); }
 	@Override public void handle(SaveTeamMessage message) { teamSaveHandler.handle(message); }
 
-	@Override
-	public void handle(ChooseTowerRoomMessage message){
-		if (!isGameTower){
-			sendErrorMessage("The game isn't in tower mode");
-			return;
-		}
-		int targetRoomId = message.getRoomId();
-		if (nextTowerRoom(targetRoomId)){
-			sendSuccessMessage();
-		}
-		else{
-			sendErrorMessage("Cannot move to the selected room");
-			return;
-		}
-	}
 }

@@ -23,6 +23,17 @@ public class TeamSaveHandler {
         this.teamService = teamService;
     }
 
+	public void handle(GetSavedTeamsMessage message) {
+		Player player = clientHandler.getPlayer();
+
+		List<TeamDTO> DTOTeams = new ArrayList<>();
+
+		for (Team team : teamService.getAllTeams(player.getUsername())){
+			DTOTeams.add(TeamMapper.toDTO(team));
+		}
+		clientHandler.sendMessage(new SavedTeamsMessage(DTOTeams));
+	}
+
 	public void handle(SaveTeamMessage message) {
         Player player = clientHandler.getPlayer();
         
@@ -49,14 +60,4 @@ public class TeamSaveHandler {
 		}
 	}
 
-	public void handle(GetSavedTeamsMessage message) {
-		Player player = clientHandler.getPlayer();
-
-		List<TeamDTO> DTOTeams = new ArrayList<>();
-
-		for (Team team : teamService.getAllTeams(player.getUsername())){
-			DTOTeams.add(TeamMapper.toDTO(team));
-		}
-		clientHandler.sendMessage(new SavedTeamsMessage(DTOTeams));
-	}
 }

@@ -36,12 +36,13 @@ import ulb.message.clientToServer.*;
 	 void handle(ChooseItemRewardMessage message);
 	 void handle(ChooseLevelUpRewardMessage message);
 	 void handle(ChooseStatRewardMessage message);
+	 void handle(ChooseTowerRoomMessage message);
 	 void handle(PickRandomActionMessage message);
 	 void handle(RunMessage message);
 	 void handle(SwapBugemonMessage message);
 	 void handle(UseAbilityMessage message);
 	 void handle(UseItemMessage message);
-	 void handle(ChooseTowerRoomMessage message);
+
 	// GAME DATA
 	 void handle(GetAllBugemonSpeciesMessage message);
 	 void handle(GetRandomAbilityMessage message);

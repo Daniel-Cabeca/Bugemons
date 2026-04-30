@@ -73,19 +73,6 @@ public class SetupHandler {
 		}
 	}
 
-    public void handle(SetUpTeamMessage message){
-		Team team = new Team();
-
-		for (BugemonDTO bugemonDTO : message.getTeam()){
-			if (!team.add(BugemonMapper.toEntity(bugemonDTO))){
-				clientHandler.sendErrorMessage("Invalid Team");
-			}
-		}
-
-		clientHandler.setTeam(team);
-		clientHandler.sendSuccessMessage();
-	}
-
     public void handle(SetUpNormalModeMessage message){
         Player player = clientHandler.getPlayer();
         Battle battle = clientHandler.getBattle();
@@ -121,6 +108,19 @@ public class SetupHandler {
 		opponentBot.start();
 		clientHandler.clearPendingLevelUpState();
 
+		clientHandler.sendSuccessMessage();
+	}
+
+	public void handle(SetUpTeamMessage message){
+		Team team = new Team();
+
+		for (BugemonDTO bugemonDTO : message.getTeam()){
+			if (!team.add(BugemonMapper.toEntity(bugemonDTO))){
+				clientHandler.sendErrorMessage("Invalid Team");
+			}
+		}
+
+		clientHandler.setTeam(team);
 		clientHandler.sendSuccessMessage();
 	}
 

@@ -81,6 +81,7 @@ public class SocialPanelController implements SocialPanel.ViewListener {
     public void onAcceptFriend(String sender) {
         if (listener.acceptFriendRequest(sender)) {
             refreshFriendRequests();
+            refreshFriends();
         }
     }
 
@@ -149,7 +150,7 @@ public class SocialPanelController implements SocialPanel.ViewListener {
         view.clearChatField();
         new Thread(() -> {
             listener.sendChatMessage(friend, content);
-            loadMessages(friend);
+            loadMessagesInCurrentThread(friend);
         }).start();
     }
 
@@ -170,15 +171,17 @@ public class SocialPanelController implements SocialPanel.ViewListener {
      * Load messages of a chat with a given friend.
      */
     private void loadMessages(String friend) {
+        new Thread(() -> loadMessagesInCurrentThread(friend)).start();
+    }
+
+    private void loadMessagesInCurrentThread(String friend) {
         String me = listener.getPlayerName();
-        new Thread(() -> {
-            List<ChatMessage> msgs = listener.getChatMessages(friend);
-            List<String> lines = new ArrayList<>();
-            for (ChatMessage msg : msgs) {
-                lines.add(msg.format(me));
-            }
-            Platform.runLater(() -> view.setMessages(lines));
-        }).start();
+        List<ChatMessage> msgs = listener.getChatMessages(friend);
+        List<String> lines = new ArrayList<>();
+        for (ChatMessage msg : msgs) {
+            lines.add(msg.format(me));
+        }
+        Platform.runLater(() -> view.setMessages(lines));
     }
 
     public interface Listener {

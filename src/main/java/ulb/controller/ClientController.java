@@ -1083,11 +1083,12 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 
 	@Override
 	public boolean onRoomSelected(int roomId) {
-		if (postData(new ChooseTowerRoomMessage(roomId))) {
-			nextRoom();
-			return true;
-		}
-		return false;
+        return postData(new ChooseTowerRoomMessage(roomId));
+    }
+
+	@Override
+	public void onRoomSelectionComplete() {
+		nextRoom();
 	}
 
 	@Override

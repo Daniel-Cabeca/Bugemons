@@ -16,6 +16,7 @@ public class FloorController implements FloorWindow.ViewListener {
     private FloorWindow view;
 	private final Floor floorGraph = new Floor(1, false);
 	private int currentRoomId = 4;
+    private int lastEnteredRoomId = 4; // needed for when the player flees a battle
 
     public FloorController(Stage stage, Listener listener){
         this.stage = stage;
@@ -38,6 +39,11 @@ public class FloorController implements FloorWindow.ViewListener {
             stage.getScene().setRoot(root);
         }
         this.stage.show();
+
+        // if the player fled a battle, they need to go back to the previous room
+        if (lastEnteredRoomId != currentRoomId){
+            playReturnAnimation();
+        }
     }
 
 	/**
@@ -65,15 +71,24 @@ public class FloorController implements FloorWindow.ViewListener {
 		if (targetRoomId == currentRoomId) return;
 
 		boolean isAdjacent = floorGraph.getAdjacentRoomsIds(currentRoomId).contains(targetRoomId);
-
 		if (!isAdjacent) return;
 
         view.translationAnimationHandler(targetRoomId, () -> {
             boolean success = this.listener.onRoomSelected(targetRoomId);
-            if (!success){
-                return;}
+            if (!success) return;
+            this.lastEnteredRoomId = targetRoomId;
+            this.listener.onRoomSelectionComplete();
+        });
+    }
 
-            syncCurrentRoomFromServer();
+    /**
+     * Plays the movement animation when the player fled a battle and goes back to the previous room
+     */
+    private void playReturnAnimation() {
+        view.updatePlayerPosition(lastEnteredRoomId);
+        view.translationAnimationHandler(currentRoomId, () -> {
+            view.updatePlayerPosition(currentRoomId);
+            lastEnteredRoomId = currentRoomId;
         });
     }
 
@@ -122,6 +137,7 @@ public class FloorController implements FloorWindow.ViewListener {
 
     interface Listener{
 		boolean onRoomSelected(int roomId);
+        void onRoomSelectionComplete();
 		void onReturnFloorWindow();
 		List<Integer> getTowerInfo();
         List<Integer> getClearedRooms();

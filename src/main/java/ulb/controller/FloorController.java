@@ -31,6 +31,7 @@ public class FloorController implements FloorWindow.ViewListener {
         loader.load();
         view = loader.getController();
         view.setViewListener(this);
+        view.setupRoomsMap();
 
 		syncCurrentRoomFromServer();
 
@@ -51,15 +52,15 @@ public class FloorController implements FloorWindow.ViewListener {
         if (towerInfo != null && towerInfo.size() >= 2) {
             this.currentRoomId = towerInfo.get(1);
             this.visitedRooms.add(this.currentRoomId);
-
 			view.setFloorNumber(towerInfo.get(0));
             view.updatePlayerPosition(this.currentRoomId);
+            view.markVisitedRooms(visitedRooms);
         }
     }
 
 	/**
 	 * Tries to select a room based on the player's click, checking if it's 
-	 * adjacent and not the current room.
+	 * adjacent and not the current room. Once verified, it lauches the animation process and then accesses to the room.
 	 * 
 	 * @param targetRoomId the room ID corresponding to the clicked room
 	 */
@@ -72,11 +73,14 @@ public class FloorController implements FloorWindow.ViewListener {
 
 		if (!isAdjacent) return;
 
-		boolean success = this.listener.onRoomSelected(targetRoomId);
-		if (!success) return;
+        view.translationAnimationHandler(targetRoomId, () -> {
+            boolean success = this.listener.onRoomSelected(targetRoomId);
+            if (!success){
+                return;}
 
-		syncCurrentRoomFromServer();
-		visitedRooms.add(targetRoomId);
+            visitedRooms.add(targetRoomId);
+            syncCurrentRoomFromServer();
+        });
     }
 
     @Override

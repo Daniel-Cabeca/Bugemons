@@ -64,6 +64,8 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	SocialPanelController socialPanelController;
 	WaitWindowController waitWindowController;
 
+	public Stage getStage() { return this.stage; }
+
     /**
      * Initializes network client from application launch parameters.
      */
@@ -299,7 +301,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	@Override
 	public void onOpenSocial() {
 		try {
-			this.socialPanelController = new SocialPanelController(stage, this);
+			this.socialPanelController = new SocialPanelController(this);
 			this.socialPanelController.show();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1080,10 +1082,10 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 
     // Wait Window
 
-    public void openWaitWindow(Stage stage) {
+    public void openWaitWindow() {
 		this.socialPanelController.close();
 
-		this.waitWindowController = new WaitWindowController(stage);
+		this.waitWindowController = new WaitWindowController(this.stage);
 		this.waitWindowController.show();
     }
 }

@@ -31,6 +31,7 @@ public class FloorController implements FloorWindow.ViewListener {
         loader.load();
         view = loader.getController();
         view.setViewListener(this);
+        view.setupRoomsMap();
 
 		syncCurrentRoomFromServer();
 
@@ -51,9 +52,9 @@ public class FloorController implements FloorWindow.ViewListener {
         if (towerInfo != null && towerInfo.size() >= 2) {
             this.currentRoomId = towerInfo.get(1);
             this.visitedRooms.add(this.currentRoomId);
-
 			view.setFloorNumber(towerInfo.get(0));
             view.updatePlayerPosition(this.currentRoomId);
+            view.markVisitedRooms(visitedRooms);
         }
     }
 
@@ -77,8 +78,8 @@ public class FloorController implements FloorWindow.ViewListener {
             if (!success){
                 return;}
 
-            syncCurrentRoomFromServer();
             visitedRooms.add(targetRoomId);
+            syncCurrentRoomFromServer();
         });
     }
 

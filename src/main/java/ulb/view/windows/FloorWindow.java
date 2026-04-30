@@ -1,6 +1,5 @@
 package ulb.view.windows;
 
-import javafx.animation.Transition;
 import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -8,11 +7,25 @@ import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 public class FloorWindow {
     public ViewListener viewListener;
     public void setViewListener(ViewListener viewlistener){
         this.viewListener = viewlistener;
     }
+
+    /**
+     * Links the room button with its coordinated in the grid
+     * @param button the button representing the room
+     * @param col the GridPane column index for this room
+     * @param row the GridPane row index for this room
+     */
+    private record RoomUI(Button button, int col, int row) {};
+
+    private final Map<Integer, RoomUI> rooms = new HashMap<>();
 
     public enum Direction {
         RIGHT,
@@ -41,6 +54,19 @@ public class FloorWindow {
 	Button returnFloorWindow;
     @FXML
     ImageView playerSprite;
+
+    /**
+     * Maps the room id to the RoomUI object 
+     */
+    public void setupRoomsMap() {
+        rooms.put(1, new RoomUI(bonusA, 0, 2));
+        rooms.put(2, new RoomUI(battleA2, 1, 2));
+        rooms.put(3, new RoomUI(battleA1, 2, 2));
+        rooms.put(4, new RoomUI(start, 3, 2));
+        rooms.put(5, new RoomUI(battleB, 3, 3));
+        rooms.put(6, new RoomUI(bonusB, 3, 4));
+        rooms.put(7, new RoomUI(boss, 3, 1));
+    }
 
     @FXML
     private void onBoss(){
@@ -181,31 +207,24 @@ public class FloorWindow {
         Integer row = GridPane.getRowIndex(playerSprite);
         int currentRow = (row==null) ? 0 : row;
 
-        Direction direction = null;
-        switch (targetRoomId) {
-            case 1: // BonusA
-                direction = directionPicker(currentCol, currentRow, 0, 2);
-                break;
-            case 2: // BattleA2
-                direction = directionPicker(currentCol, currentRow, 1, 2);
-                break;
-            case 3: // BattleA1
-                direction = directionPicker(currentCol, currentRow, 2, 2);
-                break;
-            case 4: // Start
-                direction = directionPicker(currentCol, currentRow, 3, 2);
-                break;
-            case 5: // BattleB
-                direction = directionPicker(currentCol, currentRow, 3, 3);
-                break;
-            case 6: // BonusB
-                direction = directionPicker(currentCol, currentRow, 3, 4);
-                break;
-            case 7: // Boss
-                direction = directionPicker(currentCol, currentRow, 3, 1);
-                break;
-        }
+        RoomUI roomUI = rooms.get(targetRoomId);
+        Direction direction = directionPicker(currentCol, currentRow, roomUI.col(), roomUI.row());
         playTranslationAnimation(direction, onFinished);
+    }
+
+    /**
+     * Makes the visited room buttons gray
+     *
+     * @param visitedRooms set containing the ids of the visited rooms
+     */
+    public void markVisitedRooms(Set<Integer> visitedRooms) {
+        String visitedRoomStyle = "-fx-background-color: #666666; -fx-font-size: 24px";
+        for (Integer id : visitedRooms) {
+            RoomUI roomUI = rooms.get(id);
+            if (roomUI != null) {
+                roomUI.button().setStyle(visitedRoomStyle);
+            }
+        }
     }
 
     /**
@@ -214,28 +233,9 @@ public class FloorWindow {
      * @param roomId the id of the current room
      */
     public void updatePlayerPosition(int roomId) {
-        switch (roomId) {
-            case 1: // BonusA
-                setIconLocation(0, 2);
-                break;
-            case 2: // BattleA2
-                setIconLocation(1, 2);
-                break;
-            case 3: // BattleA1
-                setIconLocation(2, 2);
-                break;
-            case 4: // Start
-                setIconLocation(3, 2);
-                break;
-            case 5: // BattleB
-                setIconLocation(3, 3);
-                break;
-            case 6: // BonusB
-                setIconLocation(3, 4);
-                break;
-            case 7: // Boss
-                setIconLocation(3, 1);
-                break;
+        RoomUI roomUI = rooms.get(roomId);
+        if (roomUI != null) {
+            setIconLocation(roomUI.col(), roomUI.row());
         }
     }
 

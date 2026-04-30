@@ -218,7 +218,7 @@ public class FloorWindow {
      * @param visitedRooms set containing the ids of the visited rooms
      */
     public void markVisitedRooms(Set<Integer> visitedRooms) {
-        String visitedRoomStyle = "-fx-background-color: #666666; -fx-font-size: 24px";
+        String visitedRoomStyle = "-fx-background-color: #c0c0c0; -fx-font-size: 24px";
         for (Integer id : visitedRooms) {
             RoomUI roomUI = rooms.get(id);
             if (roomUI != null) {

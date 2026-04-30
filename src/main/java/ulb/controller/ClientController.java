@@ -312,12 +312,8 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	 */
 	@Override
 	public void onOpenSocial() {
-		try {
-			this.socialPanelController = new SocialPanelController(this);
-			this.socialPanelController.show();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		this.socialPanelController = new SocialPanelController(this);
+		this.socialPanelController.show();
 	}
 
 	/**

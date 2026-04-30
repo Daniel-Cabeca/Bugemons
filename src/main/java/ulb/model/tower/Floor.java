@@ -6,49 +6,61 @@ import java.util.List;
 
 public class Floor {
 
-    private int id;
-    private boolean completed = false;
-    private List<Room> rooms;
+	private int id;
+	private boolean completed = false;
+	private List<Room> rooms;
 
-    public Floor(int id, boolean isFinalBoss) {
-        this.id = id;
-        this.rooms = new ArrayList<>();
+	public Floor(int id, boolean isFinalBoss) {
+		this.id = id;
+		this.rooms = new ArrayList<>();
 
-        if (isFinalBoss) {
-            Room room = new Room(1, RoomType.BOSS);
-            rooms.add(room);
-        } else {
-            rooms = new ArrayList<>();
-            buildFloor();
-        }
-    }
+		if (isFinalBoss) {
+			Room room = new Room(1, RoomType.BOSS);
+			rooms.add(room);
+		} else {
+			rooms = new ArrayList<>();
+			buildFloor();
+		}
+	}
 
-    /**
-     * Builds the floor with the correct room types
-     */
-    private void buildFloor() {
-        Room room1 = new Room(1, RoomType.REWARD);
-        Room room2 = new Room(2, RoomType.BATTLE);
-        Room room3 = new Room(3, RoomType.BATTLE);
-        Room room4 = new Room(4, RoomType.EMPTY);
-        Room room5 = new Room(5, RoomType.BATTLE);
-        Room room6 = new Room(6, RoomType.REWARD);
+	/**
+	 * Builds the floor with the correct room types
+	 */
+	private void buildFloor() {
+		Room room1 = new Room(1, RoomType.REWARD);
+		Room room2 = new Room(2, RoomType.BATTLE);
+		Room room3 = new Room(3, RoomType.BATTLE);
+		Room room4 = new Room(4, RoomType.EMPTY);
+		Room room5 = new Room(5, RoomType.BATTLE);
+		Room room6 = new Room(6, RoomType.REWARD);
 		Room room7 = new Room(7, RoomType.BOSS);
-        List<Room> roomList = Arrays.asList(room1, room2, room3, room4, room5, room6, room7);
-        rooms.addAll(roomList);
-    }
+		List<Room> roomList = Arrays.asList(
+			room1,
+			room2,
+			room3,
+			room4,
+			room5,
+			room6,
+			room7
+		);
+		rooms.addAll(roomList);
+	}
 
-    public int getId() {return id;}
+	public int getId() {
+		return id;
+	}
 
-    public List<Room> getRooms() {return rooms;}
+	public List<Room> getRooms() {
+		return rooms;
+	}
 
-    /**
-     * @return the start room id (4 for all floors except the final floor that only has one boss battle)
-     */
-    public int getStartRoomId() {
-        Room room4 = getRoomById(4);
-        return room4 != null ? 4 : rooms.getFirst().getId();
-    }
+	/**
+	 * @return the start room id (4 for all floors except the final floor that only has one boss battle)
+	 */
+	public int getStartRoomId() {
+		Room room4 = getRoomById(4);
+		return room4 != null ? 4 : rooms.getFirst().getId();
+	}
 
 	public Room getRoomById(int roomId) {
 		for (Room room : rooms) {
@@ -59,14 +71,14 @@ public class Floor {
 		return null;
 	}
 
-    public boolean isBossCompleted() {
-        for (Room room : rooms) {
-            if (room.getRoomType() == RoomType.BOSS) {
-                return room.isRoomCompleted();
-            }
-        }
-        return false;
-    }
+	public boolean isBossCompleted() {
+		for (Room room : rooms) {
+			if (room.getRoomType() == RoomType.BOSS) {
+				return room.isRoomCompleted();
+			}
+		}
+		return false;
+	}
 
 	public List<Integer> getAdjacentRoomsIds(int roomId) {
 		return switch (roomId) {
@@ -81,17 +93,27 @@ public class Floor {
 		};
 	}
 
-    public List<Integer> getCompletedRoomsId(){
-    	List<Integer> completedRoomsId = new ArrayList<>();
-     	for (Room room: this.rooms){
-      		if (room.isRoomCompleted()){
-      			completedRoomsId.add(room.getId());
-        	}
-      	}
-      	return completedRoomsId;
-    }
+	public List<Integer> getCompletedRoomsId() {
+		List<Integer> completedRoomsId = new ArrayList<>();
+		for (Room room : this.rooms) {
+			if (room.isRoomCompleted()) {
+				completedRoomsId.add(room.getId());
+			}
+		}
+		return completedRoomsId;
+	}
 
-    public boolean isFloorCompleted() {return completed;}
+	public boolean isFloorCompleted() {
+		return completed;
+	}
 
-    public void setFloorCompleted(boolean status) {this.completed = status;}
+	public void setFloorCompleted(boolean status) {
+		this.completed = status;
+	}
+
+	public void setRoomsCompleted(List<Integer> completedRoomsId) {
+		for (int completedRoomId: completedRoomsId){
+			this.rooms.get(completedRoomId-1).setRoomCompleted(true);
+		}
+	}
 }

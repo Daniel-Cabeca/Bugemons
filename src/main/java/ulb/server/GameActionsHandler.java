@@ -54,8 +54,31 @@ public class GameActionsHandler extends Thread{
 		clientHandler.sendSuccessMessage();
 	}
 
+	// public void handle(RunMessage message){
+    //     Player player = clientHandler.getPlayer();
+    //     Battle battle = clientHandler.getBattle();
+    //     ParticipantLabel teamLabel = clientHandler.getTeamLabel();
+    //     boolean isGameTower = clientHandler.isGameTower();
+    //     TowerManager towerManager = clientHandler.getTowerManager();
+
+	// 	battle.chooseAction(new Run(), teamLabel);
+
+	// 	if (isGameTower) {
+	// 		for (Bugemon bugemon : player.getTeam().getMembers()) {
+	// 			bugemon.getFightStats().setHp(bugemon.getBaseStats().getHp());
+	// 		}
+	// 		towerManager.getCurrentFloorManager().rewindRoom();
+	// 		battle = towerManager.getCurrentBattle();
+	// 	} else {
+    //         clientHandler.setBattle(null);
+	// 		clientHandler.clearPendingLevelUpState();
+	// 	}
+
+    //     clientHandler.sendSuccessMessage();
+	// }
+
 	public void handle(RunMessage message){
-        Player player = clientHandler.getPlayer();
+		Player player = clientHandler.getPlayer();
         Battle battle = clientHandler.getBattle();
         ParticipantLabel teamLabel = clientHandler.getTeamLabel();
         boolean isGameTower = clientHandler.isGameTower();
@@ -67,10 +90,16 @@ public class GameActionsHandler extends Thread{
 			for (Bugemon bugemon : player.getTeam().getMembers()) {
 				bugemon.getFightStats().setHp(bugemon.getBaseStats().getHp());
 			}
-			towerManager.getCurrentFloorManager().rewindRoom();
-			battle = towerManager.getCurrentBattle();
+			if (towerManager.isFinalFloor()) {
+				clientHandler.finishTower();
+			} else {
+				towerManager.getCurrentFloorManager().rewindRoom();
+				clientHandler.setBattle(towerManager.getCurrentBattle());
+				// this.battle = this.towerManager.getCurrentBattle();
+			}
 		} else {
-            clientHandler.setBattle(null);
+			clientHandler.setBattle(null);
+			// this.battle = null;
 			clientHandler.clearPendingLevelUpState();
 		}
 
@@ -143,7 +172,7 @@ public class GameActionsHandler extends Thread{
 		chosenBugemon.swapAbility(newAbility, oldAbility);
 
 		towerManager.getCurrentRoomManager().setRoomCompleted(true);
-		clientHandler.nextTowerRoom();
+		// clientHandler.nextTowerRoom();
 		clientHandler.sendSuccessMessage();
 	}
 
@@ -158,7 +187,7 @@ public class GameActionsHandler extends Thread{
 
 		towerManager.getCurrentRoomManager().setRoomCompleted(true);
 
-		clientHandler.nextTowerRoom();
+		// clientHandler.nextTowerRoom();
 		clientHandler.sendSuccessMessage();
 	}
 
@@ -181,7 +210,7 @@ public class GameActionsHandler extends Thread{
 		chosenBugemon.changeFightStats(reward.getStats());
 
 		towerManager.getCurrentRoomManager().setRoomCompleted(true);
-		clientHandler.nextTowerRoom();
+		// clientHandler.nextTowerRoom();
 		clientHandler.sendSuccessMessage();
 	}
 

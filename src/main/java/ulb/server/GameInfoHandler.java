@@ -61,6 +61,8 @@ import ulb.model.item.Inventory;
 import ulb.model.item.Item;
 import ulb.model.reward.Reward;
 import ulb.model.team.Team;
+import ulb.model.tower.Room;
+import ulb.model.tower.RoomType;
 import ulb.model.tower.towerManager.TowerManager;
 import ulb.service.BugemonService;
 
@@ -150,13 +152,75 @@ public class GameInfoHandler {
 			return;
 		}
 		int towerFloorNumber = towerManager.getFloorNumber();
-		int towerRoomNumber = towerManager.getCurrentRoomIndex();
+		// int towerRoomNumber = towerManager.getCurrentRoomIndex();
+		int towerRoomNumber = towerManager.getCurrentRoomId();
 
 		clientHandler.sendMessage(new TowerInfoMessage(towerFloorNumber, towerRoomNumber));
 	}
 
-    public void handle(GetNextWindowMessage message){
-        Player player = clientHandler.getPlayer();
+    // public void handle(GetNextWindowMessage message){
+    //     Player player = clientHandler.getPlayer();
+    //     Battle battle = clientHandler.getBattle();
+    //     TowerManager towerManager = clientHandler.getTowerManager();
+    //     boolean isGameTower = clientHandler.isGameTower();
+    //     ParticipantLabel teamLabel = clientHandler.getTeamLabel();
+
+	// 	WindowType nextWindow = WindowType.MAIN_MENU;
+
+	// 	if (player != null && player.getTeam().getLevelUpBugemonNumber() > 0){
+	// 		nextWindow = WindowType.LEVEL_UP;
+	// 		clientHandler.sendMessage(new NextWindowMessage(nextWindow));
+	// 		return;
+	// 	}
+
+	// 	if (isGameTower){
+	// 		if (battle != null && battle.isGameFinished()) {
+	// 			boolean won = battle.getState(teamLabel) == BattleState.WON;
+
+	// 			if (won) {
+	// 				towerManager.getCurrentRoomManager().setRoomCompleted(true);
+	// 				battle.resetFightStats();
+	// 				nextWindow = WindowType.NEXT_ROOM;
+	// 				clientHandler.nextTowerRoom();
+	// 			} else {
+	// 				clientHandler.finishTower();
+	// 				nextWindow = WindowType.MAIN_MENU;
+	// 			}
+
+	// 			clientHandler.sendMessage(new NextWindowMessage(nextWindow));
+	// 			return;
+	// 		}
+
+	// 		switch (towerManager.getCurrentRoomType()) {
+	// 			case BATTLE:
+	// 			case BOSS:
+	// 				nextWindow = WindowType.GAME;
+	// 				break;
+
+	// 			case REWARD:
+	// 				nextWindow = WindowType.REWARD;
+	// 				break;
+
+	// 			default:
+	// 				nextWindow = WindowType.MAIN_MENU;
+	// 				break;
+	// 		}
+
+	// 		clientHandler.sendMessage(new NextWindowMessage(nextWindow));
+	// 		return;
+	// 	}
+
+	// 	if (battle == null){
+	// 		clientHandler.sendMessage(new NextWindowMessage(nextWindow));
+	// 		return;
+	// 	}
+
+	// 	nextWindow = battle.isGameFinished() ? WindowType.MAIN_MENU : WindowType.GAME;
+	// 	clientHandler.sendMessage(new NextWindowMessage(nextWindow));
+	// }
+
+	public void handle(GetNextWindowMessage message){
+		Player player = clientHandler.getPlayer();
         Battle battle = clientHandler.getBattle();
         TowerManager towerManager = clientHandler.getTowerManager();
         boolean isGameTower = clientHandler.isGameTower();
@@ -177,48 +241,78 @@ public class GameInfoHandler {
 				if (won) {
 					towerManager.getCurrentRoomManager().setRoomCompleted(true);
 					battle.resetFightStats();
-					nextWindow = WindowType.NEXT_ROOM;
-					clientHandler.nextTowerRoom();
+					RoomType currentRoomType = towerManager.getCurrentRoomType();
+
+					if (currentRoomType == RoomType.BOSS) {
+						towerManager.nextFloor();
+						// towerSaveService.saveTowerInfo(towerManager.getTower(), player);
+
+						if (!towerManager.isTowerCompleted()) {
+							RoomType nextRoomType = towerManager.getCurrentRoomType();
+							clientHandler.setBattle(towerManager.getCurrentBattle());
+							// the final floor is just one boss battle
+							nextWindow = (nextRoomType == RoomType.BOSS) ? WindowType.GAME : WindowType.NEXT_ROOM;
+						}
+					} else {
+						nextWindow = WindowType.FLOOR;
+					}
 				} else {
 					clientHandler.finishTower();
-					nextWindow = WindowType.MAIN_MENU;
 				}
 
 				clientHandler.sendMessage(new NextWindowMessage(nextWindow));
 				return;
 			}
 
-			switch (towerManager.getCurrentRoomType()) {
-				case BATTLE:
-				case BOSS:
-					nextWindow = WindowType.GAME;
-					break;
-
-				case REWARD:
-					nextWindow = WindowType.REWARD;
-					break;
-
-				default:
-					nextWindow = WindowType.MAIN_MENU;
-					break;
+			Room currentRoom = towerManager.getCurrentRoomManager().getRoom();
+			if (currentRoom.isRoomCompleted()) { // to avoid redoing a completed room
+				nextWindow = WindowType.FLOOR;
+			} else {
+				switch (towerManager.getCurrentRoomType()) {
+					case BATTLE:
+					case BOSS:
+						nextWindow = WindowType.GAME;
+						break;
+					case REWARD:
+						nextWindow = WindowType.REWARD;
+						break;
+					case EMPTY:
+						nextWindow = WindowType.FLOOR;
+						break;
+					default:
+						break;
+				}
 			}
 
 			clientHandler.sendMessage(new NextWindowMessage(nextWindow));
 			return;
 		}
-
-		if (battle == null){
-			clientHandler.sendMessage(new NextWindowMessage(nextWindow));
-			return;
-		}
-
-		nextWindow = battle.isGameFinished() ? WindowType.MAIN_MENU : WindowType.GAME;
-		clientHandler.sendMessage(new NextWindowMessage(nextWindow));
 	}
 
-    public void handle(GetBattleEndInfoMessage message){
-        Battle battle = clientHandler.getBattle();
+    // public void handle(GetBattleEndInfoMessage message){
+    //     Battle battle = clientHandler.getBattle();
+    //     ParticipantLabel teamLabel = clientHandler.getTeamLabel();
+
+	// 	boolean isWin = battle != null && battle.getState(teamLabel) == BattleState.WON;
+	// 	int gainedXp = 0;
+
+	// 	if (isWin && battle != null){
+	// 		gainedXp = battle.computeTotalXP(battle.getTeam(battle.getOpponentTeamLabel(teamLabel)));
+	// 	}
+
+	// 	if (battle != null && battle.isGameFinished()){
+	// 		battle = null;
+	// 	}
+	// 	clientHandler.clearPendingLevelUpState();
+
+	// 	clientHandler.sendMessage(new BattleEndInfoMessage(isWin, gainedXp));
+	// }
+
+	public void handle(GetBattleEndInfoMessage message){
+		Battle battle = clientHandler.getBattle();
         ParticipantLabel teamLabel = clientHandler.getTeamLabel();
+		boolean isGameTower = clientHandler.isGameTower();
+		TowerManager towerManager = clientHandler.getTowerManager();
 
 		boolean isWin = battle != null && battle.getState(teamLabel) == BattleState.WON;
 		int gainedXp = 0;
@@ -228,10 +322,15 @@ public class GameInfoHandler {
 		}
 
 		if (battle != null && battle.isGameFinished()){
-			battle = null;
+			clientHandler.setBattle(null);
+			// this.battle = null;
 		}
-		clientHandler.clearPendingLevelUpState();
 
+		if (isGameTower && towerManager != null && towerManager.isTowerCompleted()) {
+			clientHandler.finishTower();
+		}
+
+		clientHandler.clearPendingLevelUpState();
 		clientHandler.sendMessage(new BattleEndInfoMessage(isWin, gainedXp));
 	}
 

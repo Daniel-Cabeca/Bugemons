@@ -38,6 +38,7 @@ FloorRewardController.Listener, AttackReplacementController.Listener, TeamContro
 LoadTeamPanelController.Listener, FloorController.Listener {
 
 	SocketClient client;
+	private final Object serverRequestLock = new Object();
     Stage stage;
 
 	PlayerDTO player;
@@ -116,12 +117,21 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	 * @return A boolean that tells if the request has been accepted
 	 */
 	public boolean postData(ClientToServerMessage message){
-		client.sendMessage(message);
-		if (client.receiveMessage() instanceof StatusMessage errorMessage && errorMessage.isFailure()){
-			System.err.println(errorMessage.getMessage());
+		synchronized (serverRequestLock) {
+			client.sendMessage(message);
+			Serializable response = client.receiveMessage();
+
+			if (response instanceof StatusMessage statusMessage) {
+				if (statusMessage.isFailure()) {
+					System.err.println(statusMessage.getMessage());
+					return false;
+				}
+				return true;
+			}
+
+			System.err.println("Réponse inattendue du serveur : " + response);
 			return false;
 		}
-		return true;
 	}
 
 
@@ -131,8 +141,10 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	 * @return The message received from the server and containing the data
 	 */
 	public Serializable getData(ClientToServerMessage message){
-		client.sendMessage(message);
-		return client.receiveMessage();
+		synchronized (serverRequestLock) {
+			client.sendMessage(message);
+			return client.receiveMessage();
+		}
 	}
 
 	/**

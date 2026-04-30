@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SocialPanelController implements SocialPanel.ViewListener {
-
 	private Stage WindowStage;
 	private SocialPanel view;
 	private final ClientController clientController;
@@ -88,6 +87,7 @@ public class SocialPanelController implements SocialPanel.ViewListener {
 	public void onAcceptFriend(String sender) {
 		if (this.clientController.acceptFriendRequest(sender)) {
 			refreshFriendRequests();
+            refreshFriends();
 		}
 	}
 
@@ -153,16 +153,16 @@ public class SocialPanelController implements SocialPanel.ViewListener {
 	}
 
 	/**
-	* Send given contents in form of a message to a given friend.
-	*/
-	@Override
-	public void onSendMessage(String friend, String content) {
-		view.clearChatField();
-		new Thread(() -> {
-			this.clientController.sendChatMessage(friend, content);
-			loadMessages(friend);
-		}).start();
-	}
+     * Send given contents in form of a message to a given friend.
+     */
+    @Override
+    public void onSendMessage(String friend, String content) {
+        view.clearChatField();
+        new Thread(() -> {
+            this.clientController.sendChatMessage(friend, content);
+            loadMessagesInCurrentThread(friend);
+        }).start();
+    }
 
 	@Override
 	public void refreshFriends() {
@@ -178,18 +178,20 @@ public class SocialPanelController implements SocialPanel.ViewListener {
 	}
 
 	/**
-	* Load messages of a chat with a given friend.
-	*/
-	private void loadMessages(String friend) {
-		String me = this.clientController.getPlayerName();
-		new Thread(() -> {
-			List<ChatMessage> msgs = this.clientController.getChatMessages(friend);
-			List<String> lines = new ArrayList<>();
-			for (ChatMessage msg : msgs) {
-				lines.add(msg.format(me));
-			}
-			Platform.runLater(() -> view.setMessages(lines));
-		}).start();
-	}
+     * Load messages of a chat with a given friend.
+     */
+    private void loadMessages(String friend) {
+        new Thread(() -> loadMessagesInCurrentThread(friend)).start();
+    }
+
+    private void loadMessagesInCurrentThread(String friend) {
+        String me = this.clientController.getPlayerName();
+        List<ChatMessage> msgs = this.clientController.getChatMessages(friend);
+        List<String> lines = new ArrayList<>();
+        for (ChatMessage msg : msgs) {
+            lines.add(msg.format(me));
+        }
+        Platform.runLater(() -> view.setMessages(lines));
+    }
 
 }

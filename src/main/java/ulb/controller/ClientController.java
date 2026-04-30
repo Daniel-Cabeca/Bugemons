@@ -61,6 +61,9 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener, FloorControlle
 	BugemonDTO pendingLevelUpBugemon;
 	List<RewardDTO> pendingLevelUpRewards;
 
+	SocialPanelController socialPanelController;
+	WaitWindowController waitWindowController;
+
     /**
      * Initializes network client from application launch parameters.
      */
@@ -332,8 +335,8 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener, FloorControlle
 	@Override
 	public void onOpenSocial() {
 		try {
-			SocialPanelController socialPanelController = new SocialPanelController(stage, this);
-			socialPanelController.show();
+			this.socialPanelController = new SocialPanelController(stage, this);
+			this.socialPanelController.show();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1109,5 +1112,15 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener, FloorControlle
 		}catch (Exception e){
 			e.printStackTrace();
 		}
+    }
+
+    // WaitWindowController
+
+    @Override
+    public void openWaitWindow(Stage stage) {
+		this.socialPanelController.close();
+
+		this.waitWindowController = new WaitWindowController(stage);
+		this.waitWindowController.show();
     }
 }

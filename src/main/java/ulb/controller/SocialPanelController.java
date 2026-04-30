@@ -15,7 +15,7 @@ import java.util.List;
 public class SocialPanelController implements SocialPanel.ViewListener {
 
     private final Stage stage;
-    private Stage popupStage;
+    private Stage WindowStage;
     private SocialPanel view;
     private final Listener listener;
 
@@ -37,16 +37,23 @@ public class SocialPanelController implements SocialPanel.ViewListener {
 
         view.setFriendsList(listener.getFriendsList());
 
-        popupStage = new Stage();
-        popupStage.initStyle(StageStyle.UNDECORATED);
-        popupStage.initOwner(stage);
+        WindowStage = new Stage();
+        WindowStage.initStyle(StageStyle.UNDECORATED);
+        WindowStage.initOwner(stage);
 
         Scene scene = new Scene(loader.getRoot());
         scene.getStylesheets().add(getClass().getResource("/styles/global.css").toExternalForm());
-        popupStage.setScene(scene);
-        popupStage.setX(stage.getX());
-        popupStage.setY(stage.getY());
-        popupStage.show();
+        WindowStage.setScene(scene);
+        WindowStage.setX(stage.getX());
+        WindowStage.setY(stage.getY());
+        WindowStage.show();
+    }
+
+    /**
+     * Closes the social panel screen.
+     */
+    public void close() {
+		this.WindowStage.close();
     }
 
     /**
@@ -54,7 +61,7 @@ public class SocialPanelController implements SocialPanel.ViewListener {
      */
     @Override
     public void onClose() {
-        popupStage.close();
+        this.close();
     }
 
     /**
@@ -139,6 +146,10 @@ public class SocialPanelController implements SocialPanel.ViewListener {
         }
         boolean ok = listener.sendBattleRequest(friend);
         view.setInviteStatus(ok ? "Défi envoyé !" : "Impossible d'envoyer le défi.");
+
+        System.out.println("Battle request sent.");
+        this.listener.openWaitWindow(this.stage);
+        System.out.println("Now waiting.");
     }
 
     /**
@@ -194,6 +205,7 @@ public class SocialPanelController implements SocialPanel.ViewListener {
         String getPlayerName();
         List<ChatMessage> getChatMessages(String friend);
         List<String> getFriendsList();
+        public void openWaitWindow(Stage stage);
     }
 
 }

@@ -35,7 +35,7 @@ import ulb.repository.LoadException;
 public class ClientController extends Application implements RegisterController.Listener, ModeController.Listener,
 BattleModeController.Listener,BattleEndController.Listener, BattleWindowController.Listener, NextRoomController.Listener, 
 FloorRewardController.Listener, AttackReplacementController.Listener, TeamController.Listener, LevelUpController.Listener,
-SocialPanelController.Listener, LoadTeamPanelController.Listener, FloorController.Listener {
+LoadTeamPanelController.Listener, FloorController.Listener {
 
 	SocketClient client;
     Stage stage;
@@ -177,93 +177,57 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener, FloorControlle
 
 	// Social Panel Controller
 
-	@Override
 	public boolean sendBattleRequest(String receiver) {
 
 		return postData(new SendBattleRequestMessage(player.getUsername(), receiver));
 	}
 
-	@Override
 	public List<String> getBattleRequests() {
 		if (getData(new GetBattleRequestsMessage(player.getUsername())) instanceof BattleRequestsMessage msg)
 			return msg.getRequests();
 		return List.of();
 	}
 
-	@Override
 	public boolean acceptBattleRequest(String sender) {
 		return postData(new AcceptBattleRequestMessage(player.getUsername(), sender));
 	}
 
-	@Override
 	public boolean declineBattleRequest(String sender) {
 		return postData(new DeclineBattleRequestMessage(player.getUsername(), sender));
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public boolean sendFriendRequest(String receiver) {
 		return postData(new SendFriendRequestMessage(player.getUsername(), receiver));
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public List<String> getFriendRequests() {
 		if (getData(new GetFriendRequestsMessage(player.getUsername())) instanceof FriendRequestsMessage msg)
 			return msg.getRequests();
 		return List.of();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public String getPlayerName() {
 		return player.getUsername();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public boolean acceptFriendRequest(String sender) {
 		return postData(new AcceptFriendRequestMessage(player.getUsername(), sender));
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public boolean declineFriendRequest(String sender) {
 		return postData(new DeclineFriendRequestMessage(player.getUsername(), sender));
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public void sendChatMessage(String receiver, String content) {
 		postData(new SendChatMessageMessage(player.getUsername(), receiver, content));
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public List<ChatMessage> getChatMessages(String friend) {
 		if (getData(new GetChatMessagesMessage(player.getUsername(), friend)) instanceof ChatMessagesMessage msg)
 			return msg.getMessages();
 		return List.of();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public List<String> getFriendsList() {
 		if (getData(new GetFriendsListMessage(player.getUsername())) instanceof FriendsListMessage msg)
 			return msg.getFriends();
@@ -1114,9 +1078,8 @@ SocialPanelController.Listener, LoadTeamPanelController.Listener, FloorControlle
 		}
     }
 
-    // WaitWindowController
+    // Wait Window
 
-    @Override
     public void openWaitWindow(Stage stage) {
 		this.socialPanelController.close();
 

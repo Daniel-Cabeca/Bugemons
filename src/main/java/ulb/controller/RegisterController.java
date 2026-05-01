@@ -4,9 +4,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import ulb.view.FxmlLoader;
 import ulb.view.WindowPath;
 import ulb.view.windows.RegisterWindow;
-
 
 public class RegisterController implements RegisterWindow.ViewListener {
 
@@ -21,12 +21,9 @@ public class RegisterController implements RegisterWindow.ViewListener {
 
     /**
      * Displays the register/login view.
-     *
-     * @throws Exception If the FXML cannot be loaded
      */
-    public void show() throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(WindowPath.REGISTER));
-        loader.load();
+    public void show() {
+        FXMLLoader loader = FxmlLoader.load(this, WindowPath.REGISTER);
         view = loader.getController();
         view.setViewListener(this);
 
@@ -62,7 +59,6 @@ public class RegisterController implements RegisterWindow.ViewListener {
     public void onSignUp(String username, String password) {
         this.listener.onSignUp(username, password);
     }
-
 
     public interface Listener{
         void onLogin(String username, String password);

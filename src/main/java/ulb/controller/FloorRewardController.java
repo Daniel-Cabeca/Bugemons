@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.item.ItemDTO;
+import ulb.view.FxmlLoader;
 import ulb.view.WindowPath;
 import ulb.view.windows.FloorRewardWindow;
 
@@ -32,9 +33,8 @@ public class FloorRewardController implements FloorRewardWindow.ViewListener, Ch
 		this.listener = listener;
 	}
 
-	public void show() throws Exception {
-		FXMLLoader loader = new FXMLLoader(getClass().getResource(WindowPath.FLOOR_REWARD));
-		loader.load();
+	public void show() {
+		FXMLLoader loader = FxmlLoader.load(this, WindowPath.FLOOR_REWARD);
 		view = loader.getController();
 		view.setViewListener(this);
 
@@ -44,7 +44,6 @@ public class FloorRewardController implements FloorRewardWindow.ViewListener, Ch
 		if (towerInfo != null){
 			view.initializeLabels(towerInfo.get(0), towerInfo.get(1), rewardItem.name());
 		}
-
 
 		Parent root = loader.getRoot();
 		if (stage.getScene() == null) {
@@ -98,7 +97,6 @@ public class FloorRewardController implements FloorRewardWindow.ViewListener, Ch
 	public void onReturnFloorRewardWindow() {
 		listener.onReturnFloorRewardWindow();
 	}
-
 
 	/**
 	 * Listener for floor reward actions.

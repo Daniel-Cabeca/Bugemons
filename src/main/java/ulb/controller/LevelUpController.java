@@ -11,13 +11,13 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.reward.RewardDTO;
+import ulb.view.FxmlLoader;
 import ulb.view.WindowPath;
 
 /**
  * Controller for the level up reward selection screen.
  */
 public class LevelUpController implements LevelUpWindow.ViewListener{
-
 
     private final Listener listener;
     private LevelUpWindow view;
@@ -36,12 +36,9 @@ public class LevelUpController implements LevelUpWindow.ViewListener{
 
     /**
      * Displays the level up screen with current rewards.
-     *
-     * @throws Exception If the FXML cannot be loaded
      */
-    public void show() throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(WindowPath.LEVEL_UP));
-        loader.load();
+    public void show() {
+        FXMLLoader loader = FxmlLoader.load(this, WindowPath.LEVEL_UP);
 
         view = loader.getController();
         view.setViewListener(this);

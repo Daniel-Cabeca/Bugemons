@@ -6,10 +6,9 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import ulb.model.chat.ChatMessage;
+import ulb.view.FxmlLoader;
 import ulb.view.WindowPath;
 import ulb.view.windows.SocialPanel;
-
-import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,28 +28,22 @@ public class SocialPanelController implements SocialPanel.ViewListener {
 	* Displays the Social panel screen.
 	*/
 	public void show() {
-		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource(WindowPath.SOCIAL_PANEL));
-			loader.load();
-			view = loader.getController();
-			view.setViewListener(this);
+		FXMLLoader loader = FxmlLoader.load(this, WindowPath.SOCIAL_PANEL);
+		view = loader.getController();
+		view.setViewListener(this);
 
-			view.setFriendsList(this.clientController.getFriendsList());
+		view.setFriendsList(this.clientController.getFriendsList());
 
-			WindowStage = new Stage();
-			WindowStage.initStyle(StageStyle.UNDECORATED);
-			WindowStage.initOwner(this.getParentStage());
+		WindowStage = new Stage();
+		WindowStage.initStyle(StageStyle.UNDECORATED);
+		WindowStage.initOwner(this.getParentStage());
 
-			Scene scene = new Scene(loader.getRoot());
-			scene.getStylesheets().add(getClass().getResource("/styles/global.css").toExternalForm());
-			WindowStage.setScene(scene);
-			WindowStage.setX(this.getParentStage().getX());
-			WindowStage.setY(this.getParentStage().getY());
-			WindowStage.show();
-		}
-		catch (IOException e) {
-			throw new RuntimeException("Failed to load social panel: "+ e.getMessage());
-		}
+		Scene scene = new Scene(loader.getRoot());
+		scene.getStylesheets().add(getClass().getResource("/styles/global.css").toExternalForm());
+		WindowStage.setScene(scene);
+		WindowStage.setX(this.getParentStage().getX());
+		WindowStage.setY(this.getParentStage().getY());
+		WindowStage.show();
 	}
 
 	/**

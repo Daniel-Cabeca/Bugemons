@@ -5,6 +5,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import ulb.DTO.team.TeamDTO;
+import ulb.view.FxmlLoader;
 import ulb.view.WindowPath;
 import ulb.view.windows.LoadTeamPanel;
 
@@ -24,12 +25,9 @@ public class LoadTeamPanelController implements LoadTeamPanel.ViewListener {
 
     /**
      * Displays the Load Team panel screen.
-     *
-     * @throws Exception If the FXML cannot be loaded
      */
-    public void show() throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(WindowPath.LOAD_TEAM_PANEL));
-        loader.load();
+    public void show() {
+        FXMLLoader loader = FxmlLoader.load(this, WindowPath.LOAD_TEAM_PANEL);
         view = loader.getController();
         view.setViewListener(this);
 

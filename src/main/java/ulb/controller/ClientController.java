@@ -28,7 +28,6 @@ import ulb.DTO.reward.RewardDTO;
 import ulb.model.chat.ChatMessage;
 import ulb.exceptions.LoadException;
 
-
 /**
  * Client-side application controller coordinating UI flow and server messaging.
  */
@@ -133,7 +132,6 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 			return false;
 		}
 	}
-
 
 	/**
 	 * Get data from the server
@@ -304,7 +302,6 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		}
 	}
 
-
 	// Mode Controller Listener :
 
 	/**
@@ -454,7 +451,6 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		setupTeamAndShowModeMenu();
 	}
 
-
 	// BattleEndController
 
 	/**
@@ -464,7 +460,6 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	public void onHandleReturn() {
 		switchToModeWindow();
 	}
-
 
 	// Battle Mode Controller Listener : 
 
@@ -585,7 +580,6 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 			System.err.println(e);
 		}
 	}
-
 
 	/**
 	 * Routes to the next window according to server-provided flow state.

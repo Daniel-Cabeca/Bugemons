@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import ulb.view.FxmlLoader;
 import ulb.view.WindowPath;
 import ulb.view.windows.BattleModeWindow;
 
@@ -29,12 +30,9 @@ public class BattleModeController implements BattleModeWindow.ViewListener {
 
     /**
      * Displays the battle mode selection view.
-     *
-     * @throws Exception If the FXML cannot be loaded
      */
-    public void show() throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(WindowPath.BATTLE_MODE));
-        loader.load();
+    public void show() {
+        FXMLLoader loader = FxmlLoader.load(this, WindowPath.BATTLE_MODE);
         view = loader.getController();
         view.setViewListener(this);
         view.displayTeam(playerTeam);

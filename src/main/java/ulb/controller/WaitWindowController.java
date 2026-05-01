@@ -3,9 +3,8 @@ package ulb.controller;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-
 import ulb.view.windows.WaitWindow;
+import ulb.view.FxmlLoader;
 import ulb.view.WindowPath;
 
 public class WaitWindowController implements WaitWindow.ViewListener {
@@ -21,16 +20,10 @@ public class WaitWindowController implements WaitWindow.ViewListener {
 	public Stage getStage() { return this.clientController.getStage(); }
 
 	public void show() {
-		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource(WindowPath.WAIT_WINDOW));
-			loader.load();
-			this.view = loader.getController();
-			this.view.setViewListener(this);
+		FXMLLoader loader = FxmlLoader.load(this, WindowPath.WAIT_WINDOW);
+		this.view = loader.getController();
+		this.view.setViewListener(this);
 
-			this.getStage().getScene().setRoot(loader.getRoot());
-		}
-		catch (IOException e) {
-			throw new RuntimeException("Failed to load wait pop-up FXML: "+ e.getMessage());
-		}
+		this.getStage().getScene().setRoot(loader.getRoot());
 	}
 }

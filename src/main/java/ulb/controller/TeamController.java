@@ -8,6 +8,7 @@ import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.DTO.team.TeamDTO;
+import ulb.view.FxmlLoader;
 import ulb.view.WindowPath;
 import ulb.view.windows.CreateTeamWindow;
 
@@ -35,12 +36,9 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 
 	/**
 	 * Displays the create team screen.
-	 *
-	 * @throws Exception If the FXML cannot be loaded
 	 */
-	public void show() throws Exception {
-		FXMLLoader loader = new FXMLLoader(getClass().getResource(WindowPath.CREATE_TEAM));
-		loader.load();
+	public void show() {
+		FXMLLoader loader = FxmlLoader.load(this, WindowPath.CREATE_TEAM);
 		view = loader.getController();
 		view.setViewListener(this);
 		view.populateAvailableBugemons();
@@ -89,7 +87,6 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 	public void onLoadTeam() {
 		listener.onLoadTeam();
 	}
-
 
     /**
 	 * Handles saving the team to the database

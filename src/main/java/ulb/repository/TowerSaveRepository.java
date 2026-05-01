@@ -1,5 +1,7 @@
 package ulb.repository;
 
+import ulb.exceptions.LoadException;
+
 import java.util.List;
 
 public interface TowerSaveRepository {

@@ -8,7 +8,7 @@ import ulb.model.bugemon.BugemonSpecies;
 import ulb.repository.BugemonSpeciesRepository;
 
 import java.util.NoSuchElementException;
-import ulb.repository.LoadException;
+import ulb.exceptions.LoadException;
 
 import ulb.repository.AbilityRepository;
 

@@ -4,7 +4,7 @@ import java.net.URL;
 import java.io.InputStream;
 import java.io.IOException;
 
-import ulb.repository.LoadException;
+import ulb.exceptions.LoadException;
 
 /**
  * Gives access to the mock json resource files.

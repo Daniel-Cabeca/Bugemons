@@ -4,6 +4,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import ulb.view.FxmlLoader;
 import ulb.view.WindowPath;
 import ulb.view.windows.NextRoomWindow;
 
@@ -29,12 +30,9 @@ public class NextRoomController implements NextRoomWindow.ViewListener {
 
     /**
      * Displays the next room screen.
-     *
-     * @throws Exception If the FXML cannot be loaded
      */
-    public void show() throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(WindowPath.NEXT_ROOM));
-        loader.load();
+    public void show() {
+        FXMLLoader loader = FxmlLoader.load(this, WindowPath.NEXT_ROOM);
         view = loader.getController();
         view.setViewListener(this);
 

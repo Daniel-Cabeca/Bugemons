@@ -1,7 +1,7 @@
 package ulb.repository.database;
 
 import ulb.repository.AccountRepository;
-import ulb.repository.LoadException;
+import ulb.exceptions.LoadException;
 import ulb.repository.database.sql.Database;
 
 import java.sql.PreparedStatement;

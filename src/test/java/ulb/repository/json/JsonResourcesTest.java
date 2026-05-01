@@ -3,7 +3,7 @@ package ulb.repository.json;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-import ulb.repository.LoadException;
+import ulb.exceptions.LoadException;
 
 public class JsonResourcesTest {
 	@Test

@@ -8,7 +8,7 @@ import ulb.model.ability.Ability;
 import ulb.model.type.Type;
 import ulb.model.effect.EffectList;
 
-import ulb.repository.LoadException;
+import ulb.exceptions.LoadException;
 
 /**
  * Json parser for abilities.

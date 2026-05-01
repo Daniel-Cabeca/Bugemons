@@ -10,7 +10,7 @@ import ulb.model.type.Type;
 import ulb.model.ability.AbilitySet;
 
 import ulb.repository.AbilityRepository;
-import ulb.repository.LoadException;
+import ulb.exceptions.LoadException;
 
 /**
  * Parser for Bugemon species

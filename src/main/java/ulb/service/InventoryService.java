@@ -3,7 +3,7 @@ package ulb.service;
 import ulb.model.item.Item;
 import ulb.model.item.Inventory;
 import ulb.repository.InventoryRepository;
-import ulb.repository.LoadException;
+import ulb.exceptions.LoadException;
 
 import java.util.NoSuchElementException;
 

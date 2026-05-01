@@ -3,7 +3,7 @@ package ulb.repository.json.parser;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import ulb.model.type.Type;
-import ulb.repository.LoadException;
+import ulb.exceptions.LoadException;
 
 /**
  * Object that parses types from json nodes.

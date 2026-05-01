@@ -9,7 +9,7 @@ import ulb.model.item.Inventory;
 
 import ulb.repository.ItemRepository;
 
-import ulb.repository.LoadException;
+import ulb.exceptions.LoadException;
 import java.util.NoSuchElementException;
 
 /**

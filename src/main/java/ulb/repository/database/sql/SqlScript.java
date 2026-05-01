@@ -10,7 +10,7 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.ArrayList;
 
-import ulb.repository.LoadException;
+import ulb.exceptions.LoadException;
 
 /**
  * SQL script that may contain multiple statements.

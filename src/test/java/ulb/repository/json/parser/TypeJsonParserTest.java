@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import ulb.model.type.Type;
-import ulb.repository.LoadException;
+import ulb.exceptions.LoadException;
 import ulb.repository.json.Json;
 
 public class TypeJsonParserTest {

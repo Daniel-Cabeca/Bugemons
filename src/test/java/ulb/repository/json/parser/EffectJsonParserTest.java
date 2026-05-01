@@ -16,7 +16,7 @@ import ulb.model.effect.EffectTarget;
 import ulb.model.effect.EffectStatDuration;
 import ulb.model.effect.EffectStatType;
 
-import ulb.repository.LoadException;
+import ulb.exceptions.LoadException;
 
 public class EffectJsonParserTest {
 	public static Effect parseEffectFromStr(String str) {

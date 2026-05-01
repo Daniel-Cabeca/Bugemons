@@ -26,7 +26,7 @@ import ulb.DTO.player.PlayerRegisterDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.DTO.reward.RewardDTO;
 import ulb.model.chat.ChatMessage;
-import ulb.repository.LoadException;
+import ulb.exceptions.LoadException;
 
 
 /**

@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import ulb.repository.LoadException;
+import ulb.exceptions.LoadException;
 
 public class JsonTest {
 	@Test

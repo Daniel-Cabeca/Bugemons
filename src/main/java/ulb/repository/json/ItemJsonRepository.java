@@ -10,7 +10,7 @@ import ulb.model.item.Item;
 import ulb.model.item.Inventory;
 
 import java.util.NoSuchElementException;
-import ulb.repository.LoadException;
+import ulb.exceptions.LoadException;
 
 /**
  * An item repository loaded from a json file.

@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.ByteArrayInputStream;
 import java.net.URL;
 
-import ulb.repository.LoadException;
+import ulb.exceptions.LoadException;
 
 /**
  * Utility class for parsing json inputs into json nodes.

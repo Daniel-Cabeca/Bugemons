@@ -237,7 +237,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	@Override public void handle(SendBattleRequestMessage message) { socialHandler.handle(message); }
 	@Override public void handle(SendChatMessageMessage message) { socialHandler.handle(message); }
 	@Override public void handle(SendFriendRequestMessage message) { socialHandler.handle(message); }
-
+	@Override public void handle(GetLeaderboardMessage message) {socialHandler.handle(message); }
 
 	// TEAM SAVE
 

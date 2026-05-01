@@ -7,6 +7,7 @@ import javafx.stage.Stage;
 
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -244,6 +245,12 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		if (getData(new GetFriendsListMessage(player.getUsername())) instanceof FriendsListMessage msg)
 			return msg.getFriends();
 		return List.of();
+	}
+
+	public Map<String, Integer> getLeaderboardList() {
+		if (getData(new GetLeaderboardMessage()) instanceof LeaderboardMessage msg)
+			return msg.getLeaderboard();
+		return Collections.<String, Integer>emptyMap();
 	}
 
 	// Register Controller :

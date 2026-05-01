@@ -4,6 +4,7 @@ import ulb.exceptions.LoadException;
 import ulb.repository.AccountRepository;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Service layer for account registration and authentication.
@@ -100,5 +101,12 @@ public class AccountService {
 
 	public void declineBattleRequest(int senderId, int receiverId) throws LoadException {
 		repository.declineBattleRequest(senderId, receiverId);
+	}
+	public void addPoints(int userId, int pointsToAdd) throws LoadException {
+		repository.addPoints(userId,pointsToAdd);
+	}
+
+	public  Map<String, Integer> getLeaderboard(){
+		return repository.getLeaderboard();
 	}
 }

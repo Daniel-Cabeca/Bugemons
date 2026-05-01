@@ -57,6 +57,7 @@ import ulb.message.clientToServer.*;
 	 void handle(GetChatMessagesMessage message);
 	 void handle(GetFriendRequestsMessage message);
 	 void handle(GetFriendsListMessage message);
+	 void handle(GetLeaderboardMessage message);
 	 void handle(SendBattleRequestMessage message);
 	 void handle(SendChatMessageMessage message);
 	 void handle(SendFriendRequestMessage message);

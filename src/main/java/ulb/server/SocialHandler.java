@@ -1,22 +1,10 @@
 package ulb.server;
 
 import java.util.List;
+import java.util.Map;
 
-import ulb.message.clientToServer.AcceptBattleRequestMessage;
-import ulb.message.clientToServer.AcceptFriendRequestMessage;
-import ulb.message.clientToServer.DeclineBattleRequestMessage;
-import ulb.message.clientToServer.DeclineFriendRequestMessage;
-import ulb.message.clientToServer.GetBattleRequestsMessage;
-import ulb.message.clientToServer.GetChatMessagesMessage;
-import ulb.message.clientToServer.GetFriendRequestsMessage;
-import ulb.message.clientToServer.GetFriendsListMessage;
-import ulb.message.clientToServer.SendBattleRequestMessage;
-import ulb.message.clientToServer.SendChatMessageMessage;
-import ulb.message.clientToServer.SendFriendRequestMessage;
-import ulb.message.serverToClient.BattleRequestsMessage;
-import ulb.message.serverToClient.ChatMessagesMessage;
-import ulb.message.serverToClient.FriendRequestsMessage;
-import ulb.message.serverToClient.FriendsListMessage;
+import ulb.message.clientToServer.*;
+import ulb.message.serverToClient.*;
 import ulb.service.AccountService;
 import ulb.service.ChatService;
 
@@ -79,6 +67,11 @@ public class SocialHandler {
 		int userId = accountService.getUserId(message.getUsername());
 		List<String> friends = accountService.getFriendsList(userId);
 		clientHandler.sendMessage(new FriendsListMessage(friends));
+	}
+
+	public void handle(GetLeaderboardMessage message){
+		Map<String, Integer> leaderboard = accountService.getLeaderboard();
+		clientHandler.sendMessage(new LeaderboardMessage(leaderboard));
 	}
 
 	public void handle(SendBattleRequestMessage message){

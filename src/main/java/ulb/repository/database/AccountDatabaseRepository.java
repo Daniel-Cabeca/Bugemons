@@ -8,7 +8,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Database-backed implementation of account operations.
@@ -242,5 +244,32 @@ public class AccountDatabaseRepository implements AccountRepository {
 		}
 	}
 
+	public void addPoints(int userId, int pointsToAdd) {
+		String sql = "UPDATE users SET points = points + ? WHERE id = ?";
+
+		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
+			stmt.setInt(1, pointsToAdd);
+			stmt.setInt(2, userId);
+			stmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			// Optionnel : throw new LoadException("Erreur lors de l'ajout des points");
+		}
+	}
+
+	public Map<String, Integer> getLeaderboard() {
+		Map<String, Integer> leaderboard = new LinkedHashMap<>();
+		String sql = "SELECT username, points FROM users ORDER BY points DESC LIMIT 10";
+
+		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				leaderboard.put(rs.getString("username"), rs.getInt("points"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return leaderboard;
+	}
 
 }

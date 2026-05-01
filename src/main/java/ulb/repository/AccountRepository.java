@@ -3,6 +3,7 @@ package ulb.repository;
 import ulb.exceptions.LoadException;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Repository for the user accounts.
@@ -99,4 +100,8 @@ public interface AccountRepository {
 	void declineFriendRequest(int senderId, int receiverId) throws LoadException;
 
 	void declineBattleRequest(int senderId, int receiverId) throws LoadException;
+
+	public void addPoints(int userId, int pointsToAdd);
+
+	Map<String, Integer> getLeaderboard();
 }

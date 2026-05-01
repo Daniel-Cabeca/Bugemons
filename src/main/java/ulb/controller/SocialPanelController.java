@@ -33,6 +33,7 @@ public class SocialPanelController implements SocialPanel.ViewListener {
 		view.setViewListener(this);
 
 		view.setFriendsList(this.clientController.getFriendsList());
+		view.setLeaderboardList(this.clientController.getLeaderboardList());
 
 		WindowStage = new Stage();
 		WindowStage.initStyle(StageStyle.UNDECORATED);
@@ -165,6 +166,12 @@ public class SocialPanelController implements SocialPanel.ViewListener {
 	@Override
 	public void refreshFriends() {
 		view.setFriendsList(this.clientController.getFriendsList());
+	}
+
+	@Override
+	public void refreshLeaderboard() {
+		System.out.println("leader" + this.clientController.getLeaderboardList());
+		view.setLeaderboardList(this.clientController.getLeaderboardList());
 	}
 
 	private void refreshFriendRequests() {

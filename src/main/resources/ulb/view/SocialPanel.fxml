@@ -40,6 +40,10 @@
                     style="-fx-background-color: #f8f8d8; -fx-text-fill: #000000;
                            -fx-border-color: #000000; -fx-border-width: 2;
                            -fx-padding: 4 10; -fx-cursor: hand;" />
+            <Button text="Leaderboard"  onAction="#showLeaderboard"
+                    style="-fx-background-color: #f8f8d8; -fx-text-fill: #000000;
+                           -fx-border-color: #000000; -fx-border-width: 2;
+                           -fx-padding: 4 10; -fx-cursor: hand;" />
 
             <Region HBox.hgrow="ALWAYS" />
 
@@ -155,6 +159,17 @@
                                    -fx-border-color: #000000; -fx-border-width: 3;
                                    -fx-padding: 6 18; -fx-cursor: hand;" />
                 </HBox>
+            </VBox>
+
+            <VBox fx:id="leaderboardPane" spacing="10"
+                  visible="false">
+                <Label text="▶ Leaderboard"
+                       style="-fx-text-fill: #000000; -fx-font-weight: bold;" />
+                <ListView fx:id="leaderboardView" VBox.vgrow="ALWAYS"
+                          style="-fx-background-color: white;
+                                 -fx-control-inner-background: white;
+                                 -fx-border-color: #000000; -fx-border-width: 3;
+                                 -fx-text-fill: #000000;" />
             </VBox>
 
         </StackPane>

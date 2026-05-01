@@ -2,6 +2,7 @@ package ulb.repository;
 
 import java.util.NoSuchElementException;
 
+import ulb.exceptions.LoadException;
 import ulb.model.item.Inventory;
 import ulb.model.item.Item;
 

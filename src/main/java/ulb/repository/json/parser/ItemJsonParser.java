@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import ulb.model.item.Item;
 import ulb.model.effect.Effect;
 
-import ulb.repository.LoadException;
+import ulb.exceptions.LoadException;
 
 /**
  * Object that parses items from json nodes.

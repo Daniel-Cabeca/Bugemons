@@ -3,7 +3,7 @@ package ulb.repository.database;
 import ulb.model.effect.*;
 import ulb.model.item.Item;
 import ulb.repository.ItemRepository;
-import ulb.repository.LoadException;
+import ulb.exceptions.LoadException;
 import ulb.repository.database.sql.Database;
 import ulb.utils.DuplicateElementException;
 

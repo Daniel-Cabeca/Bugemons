@@ -11,7 +11,7 @@ import ulb.message.serverToClient.SavedTeamsMessage;
 import ulb.model.Player;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.team.Team;
-import ulb.repository.LoadException;
+import ulb.exceptions.LoadException;
 import ulb.service.TeamService;
 
 public class TeamSaveHandler {

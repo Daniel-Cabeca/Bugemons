@@ -4,7 +4,7 @@ import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.BugemonSpecies;
 import ulb.model.bugemon.Stats;
 import ulb.model.team.Team;
-import ulb.repository.LoadException;
+import ulb.exceptions.LoadException;
 import ulb.repository.TeamRepository;
 import ulb.repository.database.sql.Database;
 

@@ -4,7 +4,7 @@ import ulb.model.item.Inventory;
 import ulb.model.item.Item;
 import ulb.repository.InventoryRepository;
 import ulb.repository.ItemRepository;
-import ulb.repository.LoadException;
+import ulb.exceptions.LoadException;
 import ulb.repository.database.sql.Database;
 
 import java.sql.*;

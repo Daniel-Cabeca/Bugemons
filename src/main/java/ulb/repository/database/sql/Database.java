@@ -1,6 +1,6 @@
 package ulb.repository.database.sql;
 
-import ulb.repository.LoadException;
+import ulb.exceptions.LoadException;
 
 import java.sql.*;
 

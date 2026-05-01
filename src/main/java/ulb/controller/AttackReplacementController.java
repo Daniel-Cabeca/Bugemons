@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.bugemon.BugemonDTO;
+import ulb.view.FxmlLoader;
 import ulb.view.WindowPath;
 import ulb.view.windows.AttackReplacementWindow;
 
@@ -32,12 +33,11 @@ public class AttackReplacementController implements AttackReplacementWindow.View
         this.listener = listener;
     }
 
-    public void show(BugemonDTO bugemon, AbilityDTO newAbility) throws Exception {
+    public void show(BugemonDTO bugemon, AbilityDTO newAbility) {
         currentBugemon = bugemon;
         currentNewAbility = newAbility;
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(WindowPath.ATTACK_REPLACEMENT));
-        loader.load();
+        FXMLLoader loader = FxmlLoader.load(this, WindowPath.ATTACK_REPLACEMENT);
         view = loader.getController();
         view.setViewListener(this);
         view.initializeReplacement(bugemon, newAbility);

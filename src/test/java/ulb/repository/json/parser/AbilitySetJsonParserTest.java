@@ -10,7 +10,7 @@ import ulb.model.ability.AbilitySet;
 
 import ulb.repository.AbilityRepository;
 import ulb.repository.mock.AbilityMockRepository;
-import ulb.repository.LoadException;
+import ulb.exceptions.LoadException;
 
 public class AbilitySetJsonParserTest {
 	public static AbilitySet getFromString(String str) {

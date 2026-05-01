@@ -14,6 +14,7 @@ import ulb.DTO.player.PlayerDTO;
 import ulb.communication.GameMode;
 import ulb.model.battle.BattleState;
 import ulb.model.type.Type;
+import ulb.view.FxmlLoader;
 import ulb.view.WindowPath;
 import ulb.view.windows.BattleWindow;
 import ulb.view.windows.BattleWindow.AbilityEntry;
@@ -52,12 +53,9 @@ public class BattleWindowController implements BattleWindow.ViewListener {
 
     /**
      * Displays the battle window and initializes its content.
-     *
-     * @throws Exception If the FXML cannot be loaded
      */
-    public void show() throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(WindowPath.BATTLE));
-        loader.load();
+    public void show() {
+        FXMLLoader loader = FxmlLoader.load(this, WindowPath.BATTLE);
         view = loader.getController();
         view.setViewListener(this);
         view.initializeContent();
@@ -388,8 +386,6 @@ public class BattleWindowController implements BattleWindow.ViewListener {
 
         List<InventoryEntry> entries = new ArrayList<>();
         Map<String, Boolean> itemMap = listener.checkItems(new ArrayList<ItemDTO>(inventory.keySet()));
-
-
 
         for (Map.Entry<ItemDTO, Integer> entry : inventory.entrySet()) {
             ItemDTO item = entry.getKey();

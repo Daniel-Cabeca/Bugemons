@@ -10,7 +10,7 @@ import ulb.model.ability.Ability;
 
 import java.util.NoSuchElementException;
 
-import ulb.repository.LoadException;
+import ulb.exceptions.LoadException;
 
 /**
  * An ability repository loaded from a json file.

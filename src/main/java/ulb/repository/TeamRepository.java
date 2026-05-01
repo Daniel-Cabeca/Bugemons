@@ -1,5 +1,6 @@
 package ulb.repository;
 
+import ulb.exceptions.LoadException;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.team.Team;
 

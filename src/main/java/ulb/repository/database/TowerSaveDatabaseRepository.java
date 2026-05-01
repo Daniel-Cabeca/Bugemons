@@ -5,10 +5,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.sql.Array;
 
-import ulb.repository.LoadException;
+import ulb.exceptions.LoadException;
 import ulb.repository.TowerSaveRepository;
 import ulb.repository.database.sql.Database;
 

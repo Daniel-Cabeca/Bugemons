@@ -2,7 +2,7 @@ package ulb.service;
 
 import ulb.model.bugemon.Bugemon;
 import ulb.model.team.Team;
-import ulb.repository.LoadException;
+import ulb.exceptions.LoadException;
 import ulb.repository.TeamRepository;
 
 import java.util.List;

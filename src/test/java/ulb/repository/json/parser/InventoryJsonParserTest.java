@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import ulb.repository.json.Json;
 
-import ulb.repository.LoadException;
+import ulb.exceptions.LoadException;
 import ulb.repository.ItemRepository;
 import ulb.repository.mock.ItemMockRepository;
 

@@ -7,6 +7,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import ulb.model.tower.Floor;
+import ulb.view.FxmlLoader;
 import ulb.view.WindowPath;
 import ulb.view.windows.FloorWindow;
 
@@ -23,9 +24,8 @@ public class FloorController implements FloorWindow.ViewListener {
         this.listener = listener;
     }
 
-    public void show() throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(WindowPath.FLOOR));
-        loader.load();
+    public void show() {
+        FXMLLoader loader = FxmlLoader.load(this, WindowPath.FLOOR);
         view = loader.getController();
         view.setViewListener(this);
         view.setupRoomsMap();

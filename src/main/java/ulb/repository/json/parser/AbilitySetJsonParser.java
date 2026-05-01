@@ -7,7 +7,7 @@ import ulb.model.ability.Ability;
 import ulb.model.ability.AbilitySet;
 
 import ulb.repository.AbilityRepository;
-import ulb.repository.LoadException;
+import ulb.exceptions.LoadException;
 
 /**
  * Object that parses ability sets from json nodes.

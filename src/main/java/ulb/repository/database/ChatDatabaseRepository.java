@@ -2,7 +2,7 @@ package ulb.repository.database;
 
 import ulb.model.chat.ChatMessage;
 import ulb.repository.ChatRepository;
-import ulb.repository.LoadException;
+import ulb.exceptions.LoadException;
 import ulb.repository.database.sql.Database;
 
 import java.sql.PreparedStatement;

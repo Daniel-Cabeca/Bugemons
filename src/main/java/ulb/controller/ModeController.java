@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import ulb.view.FxmlLoader;
 import ulb.view.WindowPath;
 import ulb.view.windows.ModeWindow;
 
@@ -30,12 +31,9 @@ public class ModeController implements ModeWindow.ViewListener {
 
     /**
      * Displays the mode selection screen.
-     *
-     * @throws Exception If FXML loading fails
      */
-    public void show() throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(WindowPath.MODE));
-        loader.load();
+    public void show() {
+        FXMLLoader loader = FxmlLoader.load(this, WindowPath.MODE);
         view = loader.getController();
         view.setViewListener(this);
 

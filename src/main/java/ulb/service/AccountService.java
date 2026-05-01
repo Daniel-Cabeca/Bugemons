@@ -1,7 +1,6 @@
 package ulb.service;
 
-import ulb.repository.LoadException;
-import ulb.model.Player;
+import ulb.exceptions.LoadException;
 import ulb.repository.AccountRepository;
 
 import java.util.List;

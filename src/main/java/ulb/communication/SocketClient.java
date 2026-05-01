@@ -1,9 +1,11 @@
 package ulb.communication;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.net.Socket;
 
 import ulb.communication.Messenger.SocketMessenger;
+import ulb.exceptions.CommunicationException;
 import ulb.message.ClientToServerMessage;
 
 public class SocketClient {
@@ -16,30 +18,44 @@ public class SocketClient {
             System.out.println("CONNECTED TO SERVER");
 
             messenger = new SocketMessenger(socket);
-            
-        } catch (Exception e){
-            System.err.println(e);
+
+        } catch (IOException e){
+            closeSocket();
+            throw new CommunicationException("Impossible to connext to server.", e);
+        } catch (CommunicationException e){
+            closeSocket();
+            throw e;
         }
     }
 
     public void sendMessage(ClientToServerMessage message){
-        try{
-            messenger.sendMessage(message);
-        } catch (Exception e){
-            System.err.println(e);
+        if (messenger == null) {
+            throw new CommunicationException("Network with client has not been initialized.");
         }
+
+        messenger.sendMessage(message);
     }
 
     public Serializable receiveMessage(){
-        try{
-            return messenger.receiveMessage();
-        } catch (Exception e){
-            System.err.println(e);
+        if (messenger == null) {
+            throw new CommunicationException("Network with client has not been initialized.");
         }
-        return null;
+
+        return messenger.receiveMessage();
     }
 
     public void closeSocket(){
-        messenger.close();
+        if (messenger != null) {
+            messenger.close();
+            return;
+        }
+
+        if (socket != null) {
+            try {
+                socket.close();
+            } catch (IOException ignored) {
+                // The client is already being closed
+            }
+        }
     }
-}   
+}

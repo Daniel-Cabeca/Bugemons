@@ -1,11 +1,14 @@
 package ulb.communication;
 
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
 import ulb.communication.Messenger.SocketMessenger;
+import ulb.exceptions.CommunicationException;
 import ulb.server.ClientHandler;
 import ulb.service.*;
 
@@ -13,15 +16,15 @@ public class SocketServer {
     private ServerSocket serverSocket;
     private boolean stopServer;
     private List<Thread> clients;
-    
+
     public SocketServer(int port){
         try{
             serverSocket = new ServerSocket(port);
             this.stopServer = false;
             clients = new ArrayList<Thread>();
             System.out.println("SERVER ON !");
-        } catch (Exception e){
-            System.err.println(e);
+        } catch (IOException e){
+            throw new CommunicationException("Impossible to start the server on port " + port + ".", e);
         }
     }
 
@@ -29,27 +32,27 @@ public class SocketServer {
         for (Thread thread : this.clients){
             try{
                 thread.join();
-            } catch (Exception e){
-                System.err.println(e);
+            } catch (InterruptedException e){
+                Thread.currentThread().interrupt();
+                close();
+                return;
             }
         }
-        return;
     }
 
     private Socket listenConnection(){
         try {
-            Socket clientSocket;
-
-            while ((clientSocket = serverSocket.accept()) == null) {
-                Thread.sleep(100);
+            return serverSocket.accept();
+        } catch (SocketException e) {
+            if (stopServer || serverSocket.isClosed()) {
+                return null;
             }
-            return clientSocket;
-
-        } catch (Exception e){
-            this.close();
-            System.err.println(e);
+            close();
+            throw new CommunicationException("The socket server has been interrupted.", e);
+        } catch (IOException e){
+            close();
+            throw new CommunicationException("Error while waiting for connection with client.", e);
         }
-        return null;
     }
 
     public void start(AbilityService abilityService, BugemonService bugemonService, ItemService itemService,
@@ -58,11 +61,16 @@ public class SocketServer {
             Socket clientSocket;
             if ((clientSocket = listenConnection()) != null){
                 System.out.println("CLIENT ACCEPTED");
-                SocketMessenger clientMessenger = new SocketMessenger(clientSocket);
 
-                ClientHandler controller = new ClientHandler(clientMessenger, abilityService, bugemonService, itemService, accountService, chatService, teamService, inventoryService, towerSaveService);
-                clients.add(controller);
-                controller.start();
+                try {
+                    SocketMessenger clientMessenger = new SocketMessenger(clientSocket);
+                    ClientHandler controller = new ClientHandler(clientMessenger, abilityService, bugemonService, itemService, accountService, chatService, teamService, inventoryService, towerSaveService);
+                    clients.add(controller);
+                    controller.start();
+                } catch (CommunicationException e) {
+                    System.err.println("Impossible to initialize communication with client : " + e.getMessage());
+                    closeClientSocket(clientSocket);
+                }
             }
         }
         waitAllThreads();
@@ -70,10 +78,28 @@ public class SocketServer {
     }
 
     public void close(){
+        stopServer = true;
+
+        if (serverSocket == null || serverSocket.isClosed()) {
+            return;
+        }
+
         try{
             serverSocket.close();
-        } catch (Exception e){
+        } catch (IOException e){
+            throw new CommunicationException("Impossible to close server.", e);
+        }
+    }
+
+    private void closeClientSocket(Socket socket) {
+        if (socket == null || socket.isClosed()) {
             return;
+        }
+
+        try {
+            socket.close();
+        } catch (IOException ignored) {
+            // The client socket is already unusable
         }
     }
 

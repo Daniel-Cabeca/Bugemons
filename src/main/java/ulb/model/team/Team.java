@@ -62,6 +62,10 @@ public class Team {
      * @return {@code true} if the Bugemon can be added, {@code false} if it cannot be added
      */
     public boolean add(Bugemon bugemon) {
+        if (bugemon == null) {
+            return false;
+        }
+
         if (this.members.size() >= MAX_PARTY_SIZE) {
             return false;
         }

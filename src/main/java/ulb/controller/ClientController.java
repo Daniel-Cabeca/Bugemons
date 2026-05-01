@@ -13,6 +13,7 @@ import java.util.Map;
 import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.DTO.team.TeamDTO;
 import ulb.communication.SocketClient;
+import ulb.exceptions.CommunicationException;
 import ulb.communication.GameMode;
 import ulb.message.ClientToServerMessage;
 import ulb.message.clientToServer.*;
@@ -117,18 +118,22 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	 */
 	public boolean postData(ClientToServerMessage message){
 		synchronized (serverRequestLock) {
-			client.sendMessage(message);
-			Serializable response = client.receiveMessage();
+			try {
+				client.sendMessage(message);
+				Serializable response = client.receiveMessage();
 
-			if (response instanceof StatusMessage statusMessage) {
-				if (statusMessage.isFailure()) {
-					System.err.println(statusMessage.getMessage());
-					return false;
+				if (response instanceof StatusMessage statusMessage) {
+					if (statusMessage.isFailure()) {
+						System.err.println(statusMessage.getMessage());
+						return false;
+					}
+					return true;
 				}
-				return true;
-			}
 
-			System.err.println("Réponse inattendue du serveur : " + response);
+				System.err.println("Réponse inattendue du serveur : " + response);
+			} catch (CommunicationException e) {
+				System.err.println("Erreur de communication avec le serveur : " + e.getMessage());
+			}
 			return false;
 		}
 	}
@@ -140,8 +145,13 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	 */
 	public Serializable getData(ClientToServerMessage message){
 		synchronized (serverRequestLock) {
-			client.sendMessage(message);
-			return client.receiveMessage();
+			try {
+				client.sendMessage(message);
+				return client.receiveMessage();
+			} catch (CommunicationException e) {
+				System.err.println("Erreur de communication avec le serveur : " + e.getMessage());
+				return new StatusMessage(false, "Connexion perdue avec le serveur.");
+			}
 		}
 	}
 

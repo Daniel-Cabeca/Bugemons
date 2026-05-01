@@ -11,9 +11,9 @@ public class OpponentTeamGenerator {
 	 * @param playerTeam the player's team based on which the opponent's is generated
 	 * @param bugemonService the service to get the list of possible Bugemons from
 	 * @return the randomly generated opponent team
-	 * @throws Exception if the player team is null, empty or not valid
+	 * @throws IllegalArgumentException if the player team is null, empty or not valid
 	 */
-	public static Team generateRandomOpponentTeam(Team playerTeam, BugemonService bugemonService) throws Exception {
+	public static Team generateRandomOpponentTeam(Team playerTeam, BugemonService bugemonService) {
 		if (playerTeam == null) {
 			throw new IllegalArgumentException("Player team cannot be null.");
 		}

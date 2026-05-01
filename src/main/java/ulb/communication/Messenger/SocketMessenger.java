@@ -1,56 +1,72 @@
 package ulb.communication.Messenger;
 
+import ulb.exceptions.CommunicationException;
+
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
 
 public class SocketMessenger implements Messenger {
-    private Socket socket;
+    private final Socket socket;
     private ObjectInputStream reader;
     private ObjectOutputStream writer;
 
     public SocketMessenger(Socket socket){
+        if (socket == null) {
+            throw new IllegalArgumentException("Socket cannot be null.");
+        }
+
         this.socket = socket;
         try{
-
             this.writer = new ObjectOutputStream(this.socket.getOutputStream());
+            this.writer.flush();
             this.reader = new ObjectInputStream(this.socket.getInputStream());
-            
-        } catch (Exception e){
+
+        } catch (IOException e){
             this.close();
-            System.err.println(e);
+            throw new CommunicationException("Impossible to open network's communication.", e);
         }
     }
-	
-    public void sendMessage(Serializable message) throws Exception{
+
+    @Override
+    public void sendMessage(Serializable message){
+        if (message == null) {
+            throw new IllegalArgumentException("Message cannot be null.");
+        }
+
         try{
             this.writer.writeObject(message);
             this.writer.reset();
-        } catch (Exception e){
+            this.writer.flush();
+        } catch (IOException e){
             this.close();
-            throw e;
+            throw new CommunicationException("Impossible to send network message.", e);
         }
     }
 
-    public Serializable receiveMessage() throws Exception{
-        Serializable message = null;
+    @Override
+    public Serializable receiveMessage(){
         try{
-            message = (Serializable) reader.readObject();
-        } catch (Exception e){
+            return (Serializable) reader.readObject();
+        } catch (IOException e){
             this.close();
-            throw e;
+            throw new CommunicationException("Impossible to receive network message.", e);
+        } catch (ClassNotFoundException e){
+            this.close();
+            throw new CommunicationException("Unrecognized network message.", e);
         }
-        return message;
     }
 
     public void close(){
         if (!socket.isClosed()){
             try{
-                this.socket.close();
                 this.reader.close();
                 this.writer.close();
-            } catch (Exception e){
+                this.socket.close();
+            } catch (IOException e) {
+                // The connection is already being closed
                 System.err.println(e);
             }
         }

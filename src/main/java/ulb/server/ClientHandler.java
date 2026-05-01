@@ -1,7 +1,10 @@
 package ulb.server;
 
 import ulb.communication.Messenger.SocketMessenger;
+import ulb.exceptions.CommunicationException;
 import ulb.message.ClientToServerMessage;
+import ulb.exceptions.DataAccessException;
+import ulb.exceptions.UserFacingException;
 import ulb.message.clientToServer.*;
 import ulb.message.serverToClient.*;
 import ulb.model.Player;
@@ -98,12 +101,20 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	 */
     private void handleMessage(){
         ClientToServerMessage message = receiveMessage();
-        
+
         if (message == null){
             return;
-        } 
-		
-		message.dispatch(this);
+        }
+
+		try {
+			message.dispatch(this);
+		} catch (UserFacingException e) {
+			sendErrorMessage(e.getMessage());
+		} catch (DataAccessException e) {
+			sendErrorMessage("A data access error occurred while handling a client message.");
+		} catch (RuntimeException e) {
+			sendErrorMessage("An unexpected server error occurred while handling a client message.");
+		}
     }
 
     public void stopProcess(){
@@ -119,7 +130,8 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 			}
 
             return null;
-        } catch (Exception e){
+        } catch (CommunicationException e){
+			sendErrorMessage("Communication with client has been interrupted");
             stopProcess();
         }
         return null;
@@ -128,7 +140,8 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
     public void sendMessage(Serializable message){
         try{
             this.socketMessenger.sendMessage(message);
-        } catch (Exception e){
+        } catch (CommunicationException e){
+			sendErrorMessage("Impossible to send messages to client.");
             stopProcess();
         }
     }

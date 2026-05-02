@@ -54,6 +54,8 @@ public class FloorWindow {
 	Button returnFloorWindow;
     @FXML
     ImageView playerSprite;
+    @FXML
+    GridPane gameGrid;
 
     /**
      * Maps the room id to the RoomUI object 
@@ -187,13 +189,55 @@ public class FloorWindow {
      * @param direction the direction of the translation right/left/up/down
      * @param onFinished to allow the animation to fully take place without being interrupted
      */
-    public void playTranslationAnimation(Direction direction, Runnable onFinished) {
-        if (direction == Direction.RIGHT || direction == Direction.LEFT) {
-            playHorizontalTranslationAnimation(direction, onFinished);
-        }
-        else {
-            playVerticalTranslationAnimation(direction, onFinished);
-        }
+    public void playTranslationAnimation(Direction direction, RoomUI targetRoom, int currentCol, int currentRow, int targetCol, int targetRow, Runnable onFinished) {
+        // if (direction == Direction.RIGHT || direction == Direction.LEFT) {
+        //     playHorizontalTranslationAnimation(direction, onFinished);
+        // }
+        // else {
+        //     playVerticalTranslationAnimation(direction, onFinished);
+        // }
+
+        // double cellWidth = gameGrid.getWidth() / gameGrid.getColumnCount();
+
+        // double cellHeight = gameGrid.getHeight() / gameGrid.getRowCount();
+
+        // double deltaX = (targetCol - currentCol) * cellWidth;
+
+        // double deltaY = (targetRow - currentRow) * cellHeight;
+
+        double currentX = playerSprite.localToScene(0, 0).getX();
+        double currentY = playerSprite.localToScene(0, 0).getY();
+
+        // double targetX = targetRoom.button().localToScene(targetRoom.button().getWidth() / 2,0).getX() - playerSprite.getBoundsInParent().getWidth() / 2;
+        double targetX = targetRoom.button().localToScene(0, 0).getX() + 35;
+        // double targetY = targetRoom.button().localToScene(0,0).getY() - 70;
+        double targetY = targetRoom.button().localToScene(0,0).getY() - 85;
+
+        double deltaX = targetX - currentX;
+        double deltaY = targetY - currentY;
+
+        TranslateTransition moveAnimation = new TranslateTransition(javafx.util.Duration.seconds(0.5), playerSprite);
+
+        moveAnimation.setByX(deltaX);
+
+        moveAnimation.setByY(deltaY);
+
+        moveAnimation.setOnFinished(e -> {
+
+            setIconLocation(targetCol, targetRow);
+
+            playerSprite.setTranslateX(0);
+            playerSprite.setTranslateY(-70);
+
+            if (onFinished != null) {
+
+                onFinished.run();
+
+            }
+
+        });
+
+        moveAnimation.play();
     }
 
     /**
@@ -209,7 +253,7 @@ public class FloorWindow {
 
         RoomUI roomUI = rooms.get(targetRoomId);
         Direction direction = directionPicker(currentCol, currentRow, roomUI.col(), roomUI.row());
-        playTranslationAnimation(direction, onFinished);
+        playTranslationAnimation(direction, roomUI, currentCol, currentRow, roomUI.col(), roomUI.row(), onFinished);
     }
 
     /**

@@ -100,7 +100,6 @@ public class FloorController implements FloorWindow.ViewListener {
     @Override
     public void onBattleA1() {
         trySelectRoom(3);
-
     }
 
     @Override
@@ -112,7 +111,6 @@ public class FloorController implements FloorWindow.ViewListener {
     @Override
     public void onBattleB() {
         trySelectRoom(5);
-
     }
 
     @Override

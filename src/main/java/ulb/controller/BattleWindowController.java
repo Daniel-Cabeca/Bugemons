@@ -135,6 +135,14 @@ public class BattleWindowController implements BattleWindow.ViewListener {
     }
 
     /**
+     * Notifies the listener to open the social menu or tab.
+     */
+    @Override
+    public void onOpenSocial() {
+        listener.onOpenSocial();
+    }
+
+    /**
      * Uses an inventory item and displays resulting battle logs.
      *
      * @param itemId The selected item id
@@ -564,6 +572,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         BattleState onSwapBugemon(BugemonDTO bugemon);
         BattleState onUseAbility(AbilityDTO ability);
 		void onRun();
+        void onOpenSocial();
         void onBattleStateChecked(BattleState state, ActionEvent event);
     }
 }

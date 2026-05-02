@@ -105,7 +105,6 @@ public class FloorController implements FloorWindow.ViewListener {
     @Override
     public void onBattleA2() {
         trySelectRoom(2);
-
     }
 
     @Override

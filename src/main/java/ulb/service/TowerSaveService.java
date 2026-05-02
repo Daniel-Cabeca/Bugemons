@@ -61,9 +61,14 @@ public class TowerSaveService {
 		}
 	}
 
-	public Tower getTowerSave(int userId) {
+	public Tower getTowerSave(Player player) {
+		Integer userId = player.getUserId();
+		if (!this.towerSaveRepository.isTowerSaved(userId)){
+			return new Tower();
+		}
 		List<Integer> completedRoomId =  this.towerSaveRepository.getCompletedRoomsId(userId);
 		int currentFloorId = this.towerSaveRepository.getCurrentFloorId(userId);
 		return new Tower(currentFloorId, completedRoomId);
+		
 	}
 }

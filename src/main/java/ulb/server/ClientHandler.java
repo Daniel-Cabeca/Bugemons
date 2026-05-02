@@ -56,7 +56,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		this.stop = false;
 		this.towerSaveService = towerSaveService;
 
-		this.setupHandler = new SetupHandler(this, accountService, itemService, inventoryService, bugemonService);
+		this.setupHandler = new SetupHandler(this, accountService, itemService, inventoryService, bugemonService, towerSaveService);
 		this.gameInfoHandler = new GameInfoHandler(this, towerSaveService);
 		this.gameActionsHandler = new GameActionsHandler(this, inventoryService);
 		this.socialHandler = new SocialHandler(this, accountService, chatService);

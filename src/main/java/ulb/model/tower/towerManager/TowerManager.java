@@ -21,19 +21,30 @@ public class TowerManager {
 	private final ItemService itemService;
 
 	/**
-	 * Creates a tower manager.
+	 * Creates a tower manager with an existing tower.
+	 * 
+	 * @param player Current player
+	 * @param bugemonService Bugemon service
+	 * @param itemService Item service
+	 */
+	public TowerManager(Player player, Tower tower, BugemonService bugemonService, ItemService itemService){
+		this.player = player;
+		this.tower = tower;
+		this.floorNumber = tower.getCurrentFloorId()-1;
+		this.bugemonService = bugemonService;
+		this.itemService = itemService;
+		this.currentFloorManager = new FloorManager(tower.getCurrentFloor(), this.player, this.getBugemonService(), this.getItemService());
+	}
+
+	/**
+	 * Creates a tower manager and a new tower.
 	 *
 	 * @param player Current player
 	 * @param bugemonService Bugemon service
 	 * @param itemService Item service
 	 */
 	public TowerManager(Player player, BugemonService bugemonService, ItemService itemService) {
-		this.player = player;
-		this.tower = new Tower();
-		this.floorNumber = 0;
-		this.bugemonService = bugemonService;
-		this.itemService = itemService;
-		this.currentFloorManager = new FloorManager(tower.getFloors().get(floorNumber), this.player, this.getBugemonService(), this.getItemService());
+		this(player, new Tower(), bugemonService, itemService);
 	}
 
 	/** Advances to the specified room and updates floor when needed. 

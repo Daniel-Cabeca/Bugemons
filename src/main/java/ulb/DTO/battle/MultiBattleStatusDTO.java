@@ -5,20 +5,29 @@ import ulb.model.battle.MultiBattle;
 import java.io.Serializable;
 
 public class MultiBattleStatusDTO implements Serializable {
-	private boolean created = true;
-	private boolean accepted = false;
+	public enum Status {
+		NOT_CREATED,
+		WAITING_ACCEPT,
+		PICKING_TEAMS,
+		BATTLE,
+		END,
+	}
+
+	private Status status;
 
 	public MultiBattleStatusDTO() {
-		this.created = false;
+		this.status = Status.NOT_CREATED;
 	}
 
 	public MultiBattleStatusDTO(MultiBattle battle) {
-		this.accepted = battle.isAccepted();
+		if (battle.isAccepted()) {
+			this.status = Status.PICKING_TEAMS;
+		}
+		else {
+			this.status = Status.WAITING_ACCEPT;
+		}
 	}
 
-	public boolean isCreated() { return this.created; }
-	public void setCreated(boolean created) { this.created = created; }
-
-	public boolean isAccepted() { return this.accepted; }
-	public void setAccepted(boolean accepted) { this.accepted = accepted; }
+	public Status getStatus() { return this.status; }
+	public void setStatus(Status status) { this.status = status; }
 }

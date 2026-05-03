@@ -70,16 +70,13 @@ public class SocialHandler {
 	}
 
 	public void handle(GetMultiBattleStatusMessage message) {
-		MultiBattleStatusDTO status;
+		MultiBattleStatusDTO status = new MultiBattleStatusDTO();
 
 		try {
 			MultiBattle multiBattle = multiBattleService.getMultiBattle(message.getUserId1(), message.getUserId2());
 			status = MultiBattleStatusMapper.toDTO(multiBattle);
 		}
-		catch (NoSuchElementException e) {
-			status = new MultiBattleStatusDTO();
-			status.setCreated(false);
-		}
+		catch (NoSuchElementException e) {}
 
 		MultiBattleStatusMessage response = new MultiBattleStatusMessage(status);
 		clientHandler.sendMessage(response);

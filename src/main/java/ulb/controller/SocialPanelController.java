@@ -149,22 +149,38 @@ public class SocialPanelController implements SocialPanel.ViewListener {
 			return;
 		}
 
-		PlayerDTO self = this.clientController.getPlayer();
 		PlayerDTO friend = this.clientController.getPlayer(friendName);
-
 		boolean ok = this.clientController.sendBattleRequest(friend.getUsername());
 		view.setInviteStatus(ok ? "Défi envoyé !" : "Impossible d'envoyer le défi.");
 
 		if (ok) {
 			this.clientController.openWaitWindow(e -> {
-				MultiBattleStatusDTO status = this.clientController.getMultiBattleStatus(self.getUserId(), friend.getUserId());
-
-				if (status.isAccepted()) {
-					this.clientController.switchToTeamSelectionForMulti(friend);
-				}
-
-				//TODO handle case when request is declined
+				this.waitForBattleRequestResponse(friend);
 			});
+		}
+	}
+
+	/**
+	 * Function playing in loop while waiting for the opponent to respond to a battle request.
+	 *
+	 * @param opponent The player the battle request has been sent to
+	 */
+	private void waitForBattleRequestResponse(PlayerDTO opponent) {
+		PlayerDTO self = this.clientController.getPlayer();
+		MultiBattleStatusDTO status = this.clientController.getMultiBattleStatus(self.getUserId(), opponent.getUserId());
+
+		switch(status.getStatus()) {
+			case PICKING_TEAMS:
+				this.clientController.switchToTeamSelectionForMulti(opponent);
+				break;
+
+			//TODO handle case when request is declined
+
+			case WAITING_ACCEPT:
+				break;
+
+			default:
+				this.clientController.switchToModeWindow();
 		}
 	}
 

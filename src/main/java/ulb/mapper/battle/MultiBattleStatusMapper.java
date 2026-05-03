@@ -1,6 +1,7 @@
 package ulb.mapper.battle;
 
 import ulb.DTO.battle.MultiBattleStatusDTO;
+import ulb.DTO.battle.MultiBattleStatusDTO.Status;
 import ulb.model.battle.MultiBattle;
 
 /**
@@ -11,11 +12,13 @@ public class MultiBattleStatusMapper {
 	private MultiBattleStatusMapper() {}
 
 	public static MultiBattleStatusDTO toDTO(MultiBattle battle) {
-		MultiBattleStatusDTO status = new MultiBattleStatusDTO();
+		MultiBattleStatusDTO dto = new MultiBattleStatusDTO();
 
-		status.setAccepted(battle.isAccepted());
+		if (battle.isAccepted()) {
+			dto.setStatus(Status.PICKING_TEAMS);
+		}
 
-		return status;
+		return dto;
 	}
 
 }

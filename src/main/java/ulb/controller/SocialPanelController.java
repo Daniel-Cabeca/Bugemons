@@ -6,7 +6,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import ulb.DTO.battle.MultiBattleStatusDTO;
-import ulb.message.serverToClient.MultiBattleStatusMessage;
+import ulb.DTO.player.PlayerDTO;
 import ulb.model.chat.ChatMessage;
 import ulb.view.FxmlLoader;
 import ulb.view.WindowPath;
@@ -95,7 +95,10 @@ public class SocialPanelController implements SocialPanel.ViewListener {
 	@Override
 	public void onAcceptBattle(String sender) {
 		if (this.clientController.acceptBattleRequest(sender)) {
-			refreshBattleRequests();
+			PlayerDTO opponent = this.clientController.getPlayer(sender);
+
+			this.clientController.closeSocialPanel();
+			this.clientController.switchToTeamSelectionForMulti(opponent);
 		}
 	}
 
@@ -141,24 +144,26 @@ public class SocialPanelController implements SocialPanel.ViewListener {
 	}
 
 	@Override
-	public void onChallengeFriend(String friend) {
-		if (friend == null || friend.isBlank()) {
+	public void onChallengeFriend(String friendName) {
+		if (friendName == null || friendName.isBlank()) {
 			return;
 		}
-		boolean ok = this.clientController.sendBattleRequest(friend);
+
+		PlayerDTO self = this.clientController.getPlayer();
+		PlayerDTO friend = this.clientController.getPlayer(friendName);
+
+		boolean ok = this.clientController.sendBattleRequest(friend.getUsername());
 		view.setInviteStatus(ok ? "Défi envoyé !" : "Impossible d'envoyer le défi.");
 
 		if (ok) {
-			int selfId = this.clientController.getPlayer().getUserId();
-			int friendId = this.clientController.getPlayer(friend).getUserId();
-
 			this.clientController.openWaitWindow(e -> {
-				MultiBattleStatusDTO status = this.clientController.getMultiBattleStatus(selfId, friendId);
+				MultiBattleStatusDTO status = this.clientController.getMultiBattleStatus(self.getUserId(), friend.getUserId());
 
-				if (status.isAccepted())
-					System.out.println("Status: accepted");
-				else
-					System.out.println("Status: pending");
+				if (status.isAccepted()) {
+					this.clientController.switchToTeamSelectionForMulti(friend);
+				}
+
+				//TODO handle case when request is declined
 			});
 		}
 	}

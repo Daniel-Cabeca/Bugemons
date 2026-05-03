@@ -20,6 +20,7 @@ import java.util.List;
  */
 public class TeamController implements CreateTeamWindow.ViewListener {
 	private PlayerDTO player;
+	private PlayerDTO opponent = null;
 
 	private final Listener listener;
 	private final Stage stage;
@@ -33,6 +34,10 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 	}
 
 	public CreateTeamWindow getView(){return this.view;}
+
+	public boolean hasOpponent() { return this.opponent != null; }
+	public PlayerDTO getOpponent() { return this.opponent; }
+	public void setOpponent(PlayerDTO opponent) { this.opponent = opponent; }
 
 	/**
 	 * Displays the create team screen.

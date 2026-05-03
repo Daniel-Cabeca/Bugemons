@@ -262,6 +262,18 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		return Collections.<String, Integer>emptyMap();
 	}
 
+	/**
+	 * Switches to the team selection window for a multiplayer battle.
+	 *
+	 * @param opponent The opponent for the battle
+	 */
+	public void switchToTeamSelectionForMulti(PlayerDTO opponent) {
+		this.teamController = new TeamController(this.stage, this, this.player);
+		this.teamController.setOpponent(opponent);
+
+		this.teamController.show();
+	}
+
 	// Register Controller :
 
 	/**
@@ -482,7 +494,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	/**
 	 * Shows the mode window.
 	 */
-	private void switchToModeWindow(){
+	public void switchToModeWindow(){
 		try {
 			this.modeController.show();
 		}catch (Exception e){
@@ -1110,12 +1122,24 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		}
     }
 
-    // Wait Window
+    // Miscellaneous
 
+	/**
+	 * Opens a waiting window.
+	 *
+	 * @param waitCycle The function to play in loop in the waiting window
+	 */
     public void openWaitWindow(EventHandler waitCycle) {
-		this.socialPanelController.close();
+		this.closeSocialPanel();
 
 		this.waitWindowController = new WaitWindowController(this, waitCycle);
 		this.waitWindowController.show();
     }
+
+	/**
+	 * Closes the social panel.
+	 */
+	public void closeSocialPanel() {
+		this.socialPanelController.close();
+	}
 }

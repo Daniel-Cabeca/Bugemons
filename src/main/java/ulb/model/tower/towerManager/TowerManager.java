@@ -6,6 +6,7 @@ import ulb.model.Player;
 import ulb.model.battle.Battle;
 import ulb.service.BugemonService;
 import ulb.service.ItemService;
+import ulb.service.TowerSaveService;
 
 import java.util.List;
 
@@ -17,34 +18,50 @@ public class TowerManager {
 	private Tower tower;
 	private int floorNumber;
 	private FloorManager currentFloorManager;
+
 	private final BugemonService bugemonService;
 	private final ItemService itemService;
+	private final TowerSaveService towerSaveService;
 
 	/**
-	 * Creates a tower manager with an existing tower.
+	 * Creates a tower manager and a new tower already saved depending on the setupNewTower boolean.
+	 *
+	 * @param player Current player
+	 * @param bugemonService Bugemon service
+	 * @param itemService Item service
+	 * @param setupNewTower tells if the tower saved or a new tower is used
+	 */
+	public TowerManager(Player player, boolean setupNewTower, BugemonService bugemonService, ItemService itemService, TowerSaveService towerSaveService) {
+		this.player = player;
+		this.bugemonService = bugemonService;
+		this.itemService = itemService;
+		this.towerSaveService = towerSaveService;
+		setupTower(setupNewTower);
+	}
+
+	/**
+	 * Creates a tower manager and create a new Tower.
 	 * 
 	 * @param player Current player
 	 * @param bugemonService Bugemon service
 	 * @param itemService Item service
 	 */
-	public TowerManager(Player player, Tower tower, BugemonService bugemonService, ItemService itemService){
-		this.player = player;
-		this.tower = tower;
-		this.floorNumber = tower.getCurrentFloorId()-1;
-		this.bugemonService = bugemonService;
-		this.itemService = itemService;
-		this.currentFloorManager = new FloorManager(tower.getCurrentFloor(), this.player, this.getBugemonService(), this.getItemService());
+	public TowerManager(Player player, BugemonService bugemonService, ItemService itemService, TowerSaveService towerSaveService){
+		this(player, true, bugemonService, itemService, towerSaveService);
 	}
 
-	/**
-	 * Creates a tower manager and a new tower.
-	 *
-	 * @param player Current player
-	 * @param bugemonService Bugemon service
-	 * @param itemService Item service
-	 */
-	public TowerManager(Player player, BugemonService bugemonService, ItemService itemService) {
-		this(player, new Tower(), bugemonService, itemService);
+	private void setupTower(boolean setupNewTower){
+		Tower tower;
+		if (setupNewTower){
+			tower = new Tower();
+		} else {
+			tower = towerSaveService.getTowerSave(player);
+		}
+		this.tower = tower;
+		this.floorNumber = this.tower.getCurrentFloorId() - 1;
+		this.currentFloorManager = new FloorManager(this.tower.getCurrentFloor(), this.player, this.getBugemonService(), this.getItemService());
+		
+		saveTowerInfo();
 	}
 
 	/** Advances to the specified room and updates floor when needed. 
@@ -66,6 +83,11 @@ public class TowerManager {
 			floorNumber++;
 			currentFloorManager = new FloorManager(tower.getFloors().get(floorNumber), this.player, this.getBugemonService(), this.getItemService());
 		}
+		saveTowerInfo();
+	}
+
+	public void saveTowerInfo(){
+		this.towerSaveService.saveTowerInfo(this.tower, this.player);
 	}
 
 	/**
@@ -86,6 +108,15 @@ public class TowerManager {
 
 	public boolean isFinalFloor() {
 		return floorNumber == 8;
+	}
+
+	/**
+	 * Sets current managed room completion status and save the tower.
+	 * @param status the status of the current room
+	 */
+	public void setCurrentRoomCompleted(boolean status){
+		this.getCurrentRoomManager().setRoomCompleted(status);
+		saveTowerInfo();
 	}
 
     /**

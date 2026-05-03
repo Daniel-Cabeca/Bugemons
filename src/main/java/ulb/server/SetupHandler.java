@@ -128,16 +128,6 @@ public class SetupHandler {
 		clientHandler.sendSuccessMessage();
 	}
 
-	private TowerManager setupTowerManager(Player player, boolean setupNewTower){
-		if (setupNewTower){
-			towerSaveService.deleteTowerInfo(player);
-		}
-		Tower tower = this.towerSaveService.getTowerSave(player);
-		System.out.println(tower.getCurrentFloorCompletedRoomsId());
-		return new TowerManager(player, tower, bugemonService, itemService);
-		
-	}
-
     public void handle(SetUpTowerModeMessage message){
 		boolean setupNewTower = message.isNewTower();
         Player player = clientHandler.getPlayer();
@@ -148,8 +138,7 @@ public class SetupHandler {
 		if (battle != null || towerManager != null || isGameTower) {
 			clientHandler.resetGameSessionState();
 		}
-
-		towerManager = setupTowerManager(player, setupNewTower);
+		towerManager = new TowerManager(player, setupNewTower, bugemonService, itemService, towerSaveService);
 		clientHandler.setTowerManager(towerManager);
 
 		clientHandler.setBattle(towerManager.getCurrentBattle());

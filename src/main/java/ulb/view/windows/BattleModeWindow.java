@@ -45,9 +45,10 @@ public class BattleModeWindow extends Window {
         viewListener.onControlledBattle();
     }
 
-	public void handleTowerBattle(ActionEvent event) {
-        viewListener.onTowerMode();
+	public void handleNewTowerBattle(){
+		viewListener.onTowerMode();
 	}
+	public void handleContinueTowerBattle(){}
 
     /**
      * Goes back to the Create Team Window

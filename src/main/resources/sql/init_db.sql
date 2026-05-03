@@ -60,8 +60,6 @@ CREATE TABLE IF NOT EXISTS effects (
                                        FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE CASCADE
 );
 
-
--- 4. Table des Espèces de Bugemons
 CREATE TABLE IF NOT EXISTS bugemon_species (
                                                id TEXT PRIMARY KEY,
                                                name TEXT NOT NULL,

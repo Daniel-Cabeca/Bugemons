@@ -10,6 +10,7 @@ import ulb.model.tower.Floor;
 import ulb.view.FxmlLoader;
 import ulb.view.WindowPath;
 import ulb.view.windows.FloorWindow;
+import javafx.application.Platform;
 
 public class FloorController implements FloorWindow.ViewListener {
     private Listener listener;
@@ -42,7 +43,8 @@ public class FloorController implements FloorWindow.ViewListener {
 
         // if the player fled a battle, they need to go back to the previous room
         if (lastEnteredRoomId != currentRoomId){
-            playReturnAnimation();
+            view.updatePlayerPosition(lastEnteredRoomId);
+            Platform.runLater(() -> playReturnAnimation());
         }
     }
 
@@ -85,7 +87,6 @@ public class FloorController implements FloorWindow.ViewListener {
      * Plays the movement animation when the player fled a battle and goes back to the previous room
      */
     private void playReturnAnimation() {
-        view.updatePlayerPosition(lastEnteredRoomId);
         view.translationAnimationHandler(currentRoomId, () -> {
             view.updatePlayerPosition(currentRoomId);
             lastEnteredRoomId = currentRoomId;
@@ -100,19 +101,16 @@ public class FloorController implements FloorWindow.ViewListener {
     @Override
     public void onBattleA1() {
         trySelectRoom(3);
-
     }
 
     @Override
     public void onBattleA2() {
         trySelectRoom(2);
-
     }
 
     @Override
     public void onBattleB() {
         trySelectRoom(5);
-
     }
 
     @Override

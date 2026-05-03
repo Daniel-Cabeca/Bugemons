@@ -28,10 +28,8 @@ public class FloorWindow {
     private final Map<Integer, RoomUI> rooms = new HashMap<>();
 
     public enum Direction {
-        RIGHT,
-        LEFT,
-        UP,
-        DOWN
+        HORIZONTAL,
+        VERTICAL
     }
 
     @FXML
@@ -114,23 +112,22 @@ public class FloorWindow {
      * @param futureRow row part of the coordinates of the destination room
      * @return the direction that needs to be taken to get to the right destination
      */
-    public Direction directionPicker(int currentCol, int currentRow, int futureCol, int futureRow) {
+    public Direction directionToTargetRoom(int futureCol, int futureRow) {
+        Integer col = GridPane.getColumnIndex(playerSprite);
+        int currentCol = (col==null) ? 0 : col;
+        Integer row = GridPane.getRowIndex(playerSprite);
+        int currentRow = (row==null) ? 0 : row;
+
+        if (currentCol == futureCol && currentRow == futureRow){
+            throw new IllegalArgumentException("Already in target room");
+        }
+
         if (currentRow == futureRow) {
-            if (currentCol < futureCol) {
-                return Direction.RIGHT;
-            }
-            else {
-                return Direction.LEFT;
-            }
+            return Direction.HORIZONTAL;
         }
         else {
-            if (currentRow > futureRow) {
-                return Direction.UP;
-            }
-            else {
-                return Direction.DOWN;
-            }
-        }
+            return Direction.VERTICAL;
+        }   
     }
 
     /**
@@ -138,17 +135,21 @@ public class FloorWindow {
      * @param direction the way the translation has to move, right/left
      * @param onFinished to allow the animation to fully take place without being interrupted
      */
-    public void playHorizontalTranslationAnimation(Direction direction, Runnable onFinished ) {
+    public void playHorizontalTranslationAnimation(Direction direction, RoomUI targetRoom, Runnable onFinished ) {
         TranslateTransition moveAnimation = new TranslateTransition(javafx.util.Duration.seconds(0.5), playerSprite);
 
-        if (direction == Direction.RIGHT) {
-            moveAnimation.setByX(450);
-        }
-        else if (direction == Direction.LEFT) {
-            moveAnimation.setByX(-450);
-        }
+        double currentX = playerSprite.localToScene(0, 0).getX();
+
+        double targetX = targetRoom.button().localToScene(0, 0).getX() + 40;
+
+        double deltaX = targetX - currentX;
+
+        moveAnimation.setByX(deltaX);
 
         moveAnimation.setOnFinished(e -> {
+            playerSprite.setTranslateX(0);
+            playerSprite.setTranslateY(-70);
+
             if (onFinished != null) {
                 onFinished.run();
             }
@@ -162,18 +163,21 @@ public class FloorWindow {
      * @param direction the way the translation has to move, up/down
      * @param onFinished to allow the animation to fully take place without being interrupted
      */
-    public void playVerticalTranslationAnimation(Direction direction, Runnable onFinished) {
+    public void playVerticalTranslationAnimation(Direction direction, RoomUI targetRoom, Runnable onFinished) {
         TranslateTransition moveAnimation = new TranslateTransition(javafx.util.Duration.seconds(0.5), playerSprite);
 
+        double currentY = playerSprite.localToScene(0, 0).getY();
 
-        if (direction == Direction.UP) {
-            moveAnimation.setByY(-225);
-        }
-        else if (direction == Direction.DOWN) {
-            moveAnimation.setByY(225);
-        }
+        double targetY = targetRoom.button().localToScene(0,0).getY() - 85;
+
+        double deltaY = targetY - currentY;
+
+        moveAnimation.setByY(deltaY);
 
         moveAnimation.setOnFinished(e -> {
+            playerSprite.setTranslateX(0);
+            playerSprite.setTranslateY(-70);
+
             if (onFinished != null) {
                 onFinished.run();
             }
@@ -187,12 +191,12 @@ public class FloorWindow {
      * @param direction the direction of the translation right/left/up/down
      * @param onFinished to allow the animation to fully take place without being interrupted
      */
-    public void playTranslationAnimation(Direction direction, Runnable onFinished) {
-        if (direction == Direction.RIGHT || direction == Direction.LEFT) {
-            playHorizontalTranslationAnimation(direction, onFinished);
+    public void playTranslationAnimation(Direction direction, RoomUI targetRoom, Runnable onFinished) {
+        if (direction == Direction.HORIZONTAL) {
+            playHorizontalTranslationAnimation(direction, targetRoom, onFinished);
         }
         else {
-            playVerticalTranslationAnimation(direction, onFinished);
+            playVerticalTranslationAnimation(direction, targetRoom, onFinished);
         }
     }
 
@@ -202,14 +206,9 @@ public class FloorWindow {
      * @param onFinished to allow the animation to fully take place without being interrupted
      */
     public void translationAnimationHandler(int targetRoomId, Runnable onFinished) {
-        Integer col = GridPane.getColumnIndex(playerSprite);
-        int currentCol = (col==null) ? 0 : col;
-        Integer row = GridPane.getRowIndex(playerSprite);
-        int currentRow = (row==null) ? 0 : row;
-
         RoomUI roomUI = rooms.get(targetRoomId);
-        Direction direction = directionPicker(currentCol, currentRow, roomUI.col(), roomUI.row());
-        playTranslationAnimation(direction, onFinished);
+        Direction direction = directionToTargetRoom(roomUI.col(), roomUI.row());
+        playTranslationAnimation(direction, roomUI, onFinished);
     }
 
     /**

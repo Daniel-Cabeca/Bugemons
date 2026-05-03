@@ -58,7 +58,7 @@ public class RoomManagerTest {
     }
 
 	@Test
-	void createBattleRoomInitializesBattleController() {
+	void createBattleRoomInitializesBattle() {
 		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
 		ItemService itemService = new ItemService(new ItemMockRepository(), new StartingInventoryMockRepository());
 

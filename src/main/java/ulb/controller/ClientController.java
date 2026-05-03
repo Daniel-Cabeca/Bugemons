@@ -190,7 +190,6 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	// Social Panel Controller
 
 	public boolean sendBattleRequest(String receiver) {
-
 		return postData(new SendBattleRequestMessage(player.getUsername(), receiver));
 	}
 

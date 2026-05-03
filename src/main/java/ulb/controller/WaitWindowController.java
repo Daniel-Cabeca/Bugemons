@@ -34,4 +34,8 @@ public class WaitWindowController {
 		this.getStage().getScene().setRoot(loader.getRoot());
 		this.timeline.play();
 	}
+
+	public void stop() {
+		this.timeline.stop();
+	}
 }

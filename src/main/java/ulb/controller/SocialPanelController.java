@@ -171,6 +171,7 @@ public class SocialPanelController implements SocialPanel.ViewListener {
 
 		switch(status.getStatus()) {
 			case PICKING_TEAMS:
+				this.clientController.stopWaitWindow();
 				this.clientController.switchToTeamSelectionForMulti(opponent);
 				break;
 

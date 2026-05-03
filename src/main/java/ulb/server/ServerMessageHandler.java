@@ -54,6 +54,7 @@ import ulb.message.clientToServer.*;
 	 void handle(DeclineBattleRequestMessage message);
 	 void handle(DeclineFriendRequestMessage message);
 	 void handle(GetBattleRequestsMessage message);
+	 void handle(GetMultiBattleStatusMessage message);
 	 void handle(GetChatMessagesMessage message);
 	 void handle(GetFriendRequestsMessage message);
 	 void handle(GetFriendsListMessage message);

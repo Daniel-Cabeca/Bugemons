@@ -2,6 +2,7 @@ package ulb.controller;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
@@ -11,10 +12,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import ulb.DTO.battle.MultiBattleStatusDTO;
 import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.DTO.team.TeamDTO;
 import ulb.communication.SocketClient;
 import ulb.communication.GameMode;
+import ulb.exceptions.CommunicationException;
 import ulb.message.ClientToServerMessage;
 import ulb.message.clientToServer.*;
 import ulb.message.serverToClient.*;
@@ -207,6 +210,13 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 
 	public boolean declineBattleRequest(String sender) {
 		return postData(new DeclineBattleRequestMessage(player.getUsername(), sender));
+	}
+
+	public MultiBattleStatusDTO getMultiBattleStatus(int userId1, int userId2) {
+		if (getData(new GetMultiBattleStatusMessage(userId1, userId2)) instanceof MultiBattleStatusMessage msg)
+			return msg.getStatus();
+
+		throw new CommunicationException("Failed to obtain multiplayer battle status.");
 	}
 
 	public boolean sendFriendRequest(String receiver) {
@@ -1103,10 +1113,10 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 
     // Wait Window
 
-    public void openWaitWindow() {
+    public void openWaitWindow(EventHandler waitCycle) {
 		this.socialPanelController.close();
 
-		this.waitWindowController = new WaitWindowController(this);
+		this.waitWindowController = new WaitWindowController(this, waitCycle);
 		this.waitWindowController.show();
     }
 }

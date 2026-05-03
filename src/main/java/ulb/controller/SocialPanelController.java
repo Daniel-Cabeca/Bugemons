@@ -5,6 +5,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import ulb.DTO.battle.MultiBattleStatusDTO;
+import ulb.message.serverToClient.MultiBattleStatusMessage;
 import ulb.model.chat.ChatMessage;
 import ulb.view.FxmlLoader;
 import ulb.view.WindowPath;
@@ -147,7 +149,17 @@ public class SocialPanelController implements SocialPanel.ViewListener {
 		view.setInviteStatus(ok ? "Défi envoyé !" : "Impossible d'envoyer le défi.");
 
 		if (ok) {
-			this.clientController.openWaitWindow();
+			int selfId = this.clientController.getPlayer().getUserId();
+			int friendId = this.clientController.getPlayer(friend).getUserId();
+
+			this.clientController.openWaitWindow(e -> {
+				MultiBattleStatusDTO status = this.clientController.getMultiBattleStatus(selfId, friendId);
+
+				if (status.isAccepted())
+					System.out.println("Status: accepted");
+				else
+					System.out.println("Status: pending");
+			});
 		}
 	}
 

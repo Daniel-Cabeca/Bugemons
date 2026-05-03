@@ -2,33 +2,46 @@ package ulb.server;
 
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
+import ulb.DTO.battle.MultiBattleStatusDTO;
+import ulb.mapper.battle.MultiBattleStatusMapper;
 import ulb.message.clientToServer.*;
 import ulb.message.serverToClient.*;
+import ulb.model.battle.MultiBattle;
 import ulb.service.AccountService;
 import ulb.service.ChatService;
+import ulb.service.MultiBattleService;
 
 public class SocialHandler {
     ClientHandler clientHandler;
     AccountService accountService;
     ChatService chatService;
+	MultiBattleService multiBattleService;
 
-    public SocialHandler(ClientHandler clientHandler, AccountService accountService, ChatService chatService) {
+    public SocialHandler(ClientHandler clientHandler, AccountService accountService, ChatService chatService, MultiBattleService multiBattleService) {
         this.clientHandler = clientHandler;
         this.accountService = accountService;
         this.chatService = chatService;
+		this.multiBattleService = multiBattleService;
     }
 
 	public void handle(AcceptBattleRequestMessage message){
 		int senderId = accountService.getUserId(message.getSenderUsername());
 		int receiverId = accountService.getUserId(message.getReceiverUsername());
+
 		accountService.acceptBattleRequest(senderId, receiverId);
+
+		MultiBattle multiBattle = multiBattleService.getMultiBattle(senderId, receiverId);
+		multiBattle.getParticipant(receiverId).accept();
+
 		clientHandler.sendSuccessMessage();
 	}
 
 	public void handle(AcceptFriendRequestMessage message){
 		int senderId = accountService.getUserId(message.getSenderUsername());
 		int receiverId = accountService.getUserId(message.getReceiverUsername());
+
 		accountService.acceptFriendRequest(senderId, receiverId);
 		clientHandler.sendSuccessMessage();
 	}
@@ -36,8 +49,11 @@ public class SocialHandler {
 	public void handle(DeclineBattleRequestMessage message){
 		int senderId = accountService.getUserId(message.getSenderUsername());
 		int receiverId = accountService.getUserId(message.getReceiverUsername());
+
 		accountService.declineBattleRequest(senderId, receiverId);
 		clientHandler.sendSuccessMessage();
+
+		//TODO delete multi battle instance to signal it's been declined
 	}
 
 	public void handle(DeclineFriendRequestMessage message){
@@ -51,6 +67,22 @@ public class SocialHandler {
 		int userId = accountService.getUserId(message.getUsername());
 		List<String> requests = accountService.getPendingBattleRequests(userId);
 		clientHandler.sendMessage(new BattleRequestsMessage(requests));
+	}
+
+	public void handle(GetMultiBattleStatusMessage message) {
+		MultiBattleStatusDTO status;
+
+		try {
+			MultiBattle multiBattle = multiBattleService.getMultiBattle(message.getUserId1(), message.getUserId2());
+			status = MultiBattleStatusMapper.toDTO(multiBattle);
+		}
+		catch (NoSuchElementException e) {
+			status = new MultiBattleStatusDTO();
+			status.setCreated(false);
+		}
+
+		MultiBattleStatusMessage response = new MultiBattleStatusMessage(status);
+		clientHandler.sendMessage(response);
 	}
 
 	public void handle(GetChatMessagesMessage message){
@@ -85,6 +117,10 @@ public class SocialHandler {
 			clientHandler.sendErrorMessage("Un défi est déjà en attente avec cet ami");
 			return;
 		}
+
+		MultiBattle multiBattle = multiBattleService.createMultiBattle(senderId, receiverId);
+		multiBattle.getParticipant(senderId).accept();
+
 		accountService.sendBattleRequest(senderId, receiverId);
 		clientHandler.sendSuccessMessage();
 	}

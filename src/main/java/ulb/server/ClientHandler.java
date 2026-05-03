@@ -51,7 +51,8 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
     public ClientHandler(SocketMessenger messenger,
                          AbilityService abilityService, BugemonService bugemonService, ItemService itemService,
-                         AccountService accountService, ChatService chatService, TeamService teamService, InventoryService inventoryService, TowerSaveService towerSaveService) {
+                         AccountService accountService, ChatService chatService, TeamService teamService, InventoryService inventoryService, TowerSaveService towerSaveService,
+						 MultiBattleService multiBattleService) {
         this.socketMessenger = messenger;
 		this.stop = false;
 		this.towerSaveService = towerSaveService;
@@ -59,7 +60,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		this.setupHandler = new SetupHandler(this, accountService, itemService, inventoryService, bugemonService);
 		this.gameInfoHandler = new GameInfoHandler(this, towerSaveService);
 		this.gameActionsHandler = new GameActionsHandler(this, inventoryService);
-		this.socialHandler = new SocialHandler(this, accountService, chatService);
+		this.socialHandler = new SocialHandler(this, accountService, chatService, multiBattleService);
 		this.playerInfoHandler = new PlayerInfoHandler(this, accountService);
 		this.gameDataHandler = new GameDataHandler(this, bugemonService, abilityService, itemService);
 		this.teamSaveHandler = new TeamSaveHandler(this, teamService);
@@ -230,7 +231,8 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	@Override public void handle(AcceptFriendRequestMessage message) { socialHandler.handle(message); }
 	@Override public void handle(DeclineBattleRequestMessage message) { socialHandler.handle(message); }
 	@Override public void handle(DeclineFriendRequestMessage message) { socialHandler.handle(message); }
-	@Override public void handle(GetBattleRequestsMessage message) { socialHandler.handle(message); } 
+	@Override public void handle(GetBattleRequestsMessage message) { socialHandler.handle(message); }
+	@Override public void handle(GetMultiBattleStatusMessage message) { socialHandler.handle(message); }
 	@Override public void handle(GetChatMessagesMessage message) { socialHandler.handle(message); }
 	@Override public void handle(GetFriendRequestsMessage message) { socialHandler.handle(message); }
 	@Override public void handle(GetFriendsListMessage message) { socialHandler.handle(message); }

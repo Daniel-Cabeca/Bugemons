@@ -13,22 +13,19 @@ import ulb.DTO.item.ItemDTO;
  * Transferable Player, used on the vue side.
  */
 public class PlayerDTO implements Serializable {
+	private final int userId;
     private final String userName;
 	private List<BugemonDTO> team;
 	private Map<ItemDTO, Integer> inventory;
 
-	public PlayerDTO(String userName, List<BugemonDTO> team, Map<ItemDTO, Integer> inventory){
+	public PlayerDTO(int userId, String userName, List<BugemonDTO> team, Map<ItemDTO, Integer> inventory){
+		this.userId = userId;
 		this.userName = userName;
 		this.team = team;
 		this.inventory = inventory;
 	}
 
-	public PlayerDTO(String userName) {
-		this.userName = userName;
-		this.team = new ArrayList<>();
-		this.inventory = new HashMap<>();
-	}
-
+	public int getUserId() { return this.userId; }
 	public String getUsername() {return userName;}
 	public List<BugemonDTO> getTeam() {return team;}
 	public Map<ItemDTO, Integer> getInventory() {return inventory;}

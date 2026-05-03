@@ -1,5 +1,6 @@
 package ulb.repository.database;
 
+import ulb.exceptions.DataAccessException;
 import ulb.repository.AccountRepository;
 import ulb.exceptions.LoadException;
 import ulb.repository.database.sql.Database;
@@ -7,10 +8,7 @@ import ulb.repository.database.sql.Database;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Database-backed implementation of account operations.
@@ -61,7 +59,7 @@ public class AccountDatabaseRepository implements AccountRepository {
 	/**
 	 * {@inheritDoc}
 	 */
-	public int getUserId(String username) throws LoadException {
+	public int getUserId(String username) throws NoSuchElementException {
 		String sql = "SELECT id FROM users WHERE username = ?";
 		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
 			stmt.setString(1, username);
@@ -69,7 +67,7 @@ public class AccountDatabaseRepository implements AccountRepository {
 			if (rs.next()) return rs.getInt("id");
 			return -1;
 		} catch (SQLException e) {
-			throw new LoadException("Failed to fetch user id: " + e.getMessage());
+			throw new NoSuchElementException("Failed to fetch user id: " + e.getMessage());
 		}
 	}
 

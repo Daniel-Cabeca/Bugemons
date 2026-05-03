@@ -1,9 +1,11 @@
 package ulb.repository;
 
+import ulb.exceptions.DataAccessException;
 import ulb.exceptions.LoadException;
 
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 /**
  * Repository for the user accounts.
@@ -36,9 +38,9 @@ public interface AccountRepository {
 	 *
 	 * @param username The account username
 	 * @return The user id, or -1 if not found
-	 * @throws LoadException If the lookup fails
+	 * @throws NoSuchElementException If the lookup fails
 	 */
-	public int getUserId(String username) throws LoadException;
+	public int getUserId(String username) throws NoSuchElementException;
 
 	/**
 	 * Gives a list of all the users added as friends for a given user.

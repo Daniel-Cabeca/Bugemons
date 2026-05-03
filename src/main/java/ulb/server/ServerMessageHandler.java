@@ -64,6 +64,7 @@ import ulb.message.clientToServer.*;
 	 void handle(SendFriendRequestMessage message);
 
 	 // TEAM SAVE
-	 void handle(GetSavedTeamsMessage getSavedTeamsMessage);
-	 void handle(SaveTeamMessage saveTeamMessage);
+	 void handle(GetSavedTeamsMessage message);
+	 void handle(SaveTeamMessage message);
+	 void handle(ConfirmTeamMultiMessage message);
 }

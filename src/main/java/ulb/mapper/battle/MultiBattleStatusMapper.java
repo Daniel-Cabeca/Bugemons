@@ -14,7 +14,10 @@ public class MultiBattleStatusMapper {
 	public static MultiBattleStatusDTO toDTO(MultiBattle battle) {
 		MultiBattleStatusDTO dto = new MultiBattleStatusDTO();
 
-		if (battle.isAccepted()) {
+		if (battle.isReady()) {
+			dto.setStatus(Status.BATTLE);
+		}
+		else if (battle.isAccepted()) {
 			dto.setStatus(Status.PICKING_TEAMS);
 		}
 		else {

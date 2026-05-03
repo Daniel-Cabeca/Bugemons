@@ -347,11 +347,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	@Override
 	public void onSolo() {
 		this.teamController = new TeamController(this);
-		try {
-			this.teamController.show();
-		} catch (Exception e){
-			e.printStackTrace();
-		}
+		this.teamController.show();
 	}
 
 	/**
@@ -368,12 +364,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	@Override
 	public void onLogOut() {
 		this.player = null;
-
-		try {
-			this.registerController.show();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		this.registerController.show();
 	}
 
 	// Team Controller :
@@ -403,20 +394,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		}
 
 		this.battleModeController = new BattleModeController(this.stage, this, team);
-		try {
-			battleModeController.show();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Confirms the player's team for a multiplayer battle.
-	 *
-	 * @param opponent The opponent
-	 */
-	private void setTeamForMulti(PlayerDTO opponent) {
-		;
+		battleModeController.show();
 	}
 
 	/**
@@ -425,7 +403,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	 * @param opponent The view's player's opponent
 	 */
 	public void confirmTeamMulti(PlayerDTO opponent) {
-		this.setTeamForMulti(opponent);
+		this.postData(new ConfirmTeamMultiMessage(opponent, this.getPlayer().getTeam()));
 
 		this.openWaitWindow(e -> {
 			this.waitForOpponentTeam(opponent);

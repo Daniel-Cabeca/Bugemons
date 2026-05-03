@@ -49,6 +49,15 @@ public class MultiBattle {
 	}
 
 	/**
+	 * Whether both players have picked their team and are ready for the battle.
+	 *
+	 * @return True if both players have picked a team, false otherwise
+	 */
+	public boolean isReady() {
+		return this.participants.a().hasTeam() && this.participants.b().hasTeam();
+	}
+
+	/**
 	 * Creates an ordered pair of ids.
 	 *
 	 * @param id1 An id

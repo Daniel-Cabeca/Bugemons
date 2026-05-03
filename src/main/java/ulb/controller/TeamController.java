@@ -63,6 +63,7 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 		this.getSelfPlayer().setTeam(members);
 
 		if (this.hasOpponent()) {
+			this.clientController.confirmTeamMulti(this.getOpponent());
 		}
 	}
 

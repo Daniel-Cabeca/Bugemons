@@ -63,7 +63,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		this.socialHandler = new SocialHandler(this, accountService, chatService, multiBattleService);
 		this.playerInfoHandler = new PlayerInfoHandler(this, accountService);
 		this.gameDataHandler = new GameDataHandler(this, bugemonService, abilityService, itemService);
-		this.teamSaveHandler = new TeamSaveHandler(this, teamService);
+		this.teamSaveHandler = new TeamSaveHandler(this, teamService, multiBattleService);
     }
 
 	public Player getPlayer() { return this.player; }
@@ -245,5 +245,6 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
 	@Override public void handle(GetSavedTeamsMessage message) { teamSaveHandler.handle(message); }
 	@Override public void handle(SaveTeamMessage message) { teamSaveHandler.handle(message); }
+	@Override public void handle(ConfirmTeamMultiMessage message) { teamSaveHandler.handle(message); }
 
 }

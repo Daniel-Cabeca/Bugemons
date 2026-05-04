@@ -1,6 +1,6 @@
 package ulb.DTO.battle;
 
-import ulb.model.battle.MultiBattle;
+import ulb.model.battle.MultiBattleSession;
 
 import java.io.Serializable;
 
@@ -19,7 +19,7 @@ public class MultiBattleStatusDTO implements Serializable {
 		this.status = Status.NOT_CREATED;
 	}
 
-	public MultiBattleStatusDTO(MultiBattle battle) {
+	public MultiBattleStatusDTO(MultiBattleSession battle) {
 		if (battle.isAccepted()) {
 			this.status = Status.PICKING_TEAMS;
 		}

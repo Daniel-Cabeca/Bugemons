@@ -13,7 +13,7 @@ import ulb.message.clientToServer.GetSavedTeamsMessage;
 import ulb.message.clientToServer.SaveTeamMessage;
 import ulb.message.serverToClient.SavedTeamsMessage;
 import ulb.model.Player;
-import ulb.model.battle.MultiBattle;
+import ulb.model.battle.MultiBattleSession;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.team.Team;
 import ulb.exceptions.LoadException;
@@ -73,8 +73,12 @@ public class TeamSaveHandler {
 		PlayerDTO opponent = message.getOpponent();
 		Team team = this.makeTeam(message.getTeam());
 
-		MultiBattle battle = this.multiBattleService.getMultiBattle(player.getUserId(), opponent.getUserId());
+		MultiBattleSession battle = this.multiBattleService.getMultiBattle(player.getUserId(), opponent.getUserId());
 		battle.getParticipant(player.getUserId()).setTeam(team);
+
+		if (battle.isReady()) {
+			battle.start();
+		}
 
 		clientHandler.sendSuccessMessage();
 	}

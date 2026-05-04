@@ -1,6 +1,6 @@
 package ulb.service;
 
-import ulb.model.battle.MultiBattle;
+import ulb.model.battle.MultiBattleSession;
 import ulb.repository.MultiBattleRepository;
 
 import java.util.NoSuchElementException;
@@ -22,8 +22,8 @@ public class MultiBattleService {
 	 * @param userId2 The id of the other player
 	 * @return The created multiplayer battle session
 	 */
-	public MultiBattle createMultiBattle(int userId1, int userId2) {
-		MultiBattle battle = this.repository.create(userId1, userId2);
+	public MultiBattleSession createMultiBattle(int userId1, int userId2) {
+		MultiBattleSession battle = this.repository.create(userId1, userId2);
 		return battle;
 	}
 
@@ -35,7 +35,7 @@ public class MultiBattleService {
 	 * @return The corresponding battle session
 	 * @throws NoSuchElementException If no session exists for the given players
 	 */
-	public MultiBattle getMultiBattle(int userId1, int userId2) throws NoSuchElementException {
+	public MultiBattleSession getMultiBattle(int userId1, int userId2) throws NoSuchElementException {
 		return this.repository.findByIds(userId1, userId2);
 	}
 }

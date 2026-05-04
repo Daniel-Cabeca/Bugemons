@@ -61,10 +61,6 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 	public void setTeam(List<String> selectedBugemonIds) {
 		List<BugemonDTO> members = setupTeamMembers(selectedBugemonIds);
 		this.getSelfPlayer().setTeam(members);
-
-		if (this.hasOpponent()) {
-			this.clientController.confirmTeamMulti(this.getOpponent());
-		}
 	}
 
 	/**

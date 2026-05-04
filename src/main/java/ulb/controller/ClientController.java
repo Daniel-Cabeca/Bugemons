@@ -422,16 +422,29 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		switch(status.getStatus()) {
 			case BATTLE:
 				this.stopWaitWindow();
-				System.out.println("Battle commence!");
+				this.startMultiBattle(opponent);
 				break;
 
 			case PICKING_TEAMS:
-				System.out.println("Waiting for opponent to pick his team...");
 				break;
 
 			default:
+				this.stopWaitWindow();
 				this.switchToModeWindow();
 		}
+	}
+
+	/**
+	 * Starts a multiplayer battle. To be called once both teams have been picked.
+	 *
+	 * @param opponent The opponent
+	 */
+	private void startMultiBattle(PlayerDTO opponent) {
+		List<BugemonDTO> team = player.getTeam();
+		this.postData(new SetUpTeamMessage(team));
+
+		this.postData(new StartMultiBattleMessage(opponent));
+		this.switchToBattleWindow();
 	}
 
 	/**
@@ -494,11 +507,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	 * Shows the mode window.
 	 */
 	public void switchToModeWindow(){
-		try {
-			this.modeController.show();
-		}catch (Exception e){
-			e.printStackTrace();
-		}
+		this.modeController.show();
 	}
 
 	/**
@@ -506,12 +515,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	 */
 	private void switchToNextRoomWindow(){
 		this.nextRoomController = new NextRoomController(stage, this);
-		try{
-			this.nextRoomController.show();
-		} catch (Exception e){
-			System.err.println(e);
-		}
-		
+		this.nextRoomController.show();
 	}
 
 	/**
@@ -535,23 +539,15 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 				towerRoomNumber
 		);
 
-		try {
-			battleWindowController.show();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		battleWindowController.show();
 	}
 
 	private void switchToFloorWindow(){
 		if (this.floorController == null) {
 			this.floorController = new FloorController(this.stage, this);
 		}
-		try {
-			this.floorController.show();
-		}catch (Exception e){
-			e.printStackTrace();
-		}
 
+		this.floorController.show();
 	}
 
 	/**
@@ -560,21 +556,16 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	private void switchToBattleEndWindow(){
 		Serializable message = getData(new GetBattleEndInfoMessage());
 		boolean victory = false;
-		int totaleXp = 0;
+		int totalXp = 0;
 		if (message instanceof BattleEndInfoMessage battleInfo){
 			victory = battleInfo.isVictory();
-			totaleXp = battleInfo.getTotalXp();
+			totalXp = battleInfo.getTotalXp();
 		} else {
 			return;
 		}
 
 		this.battleEndController = new BattleEndController(stage, this);
-		try {
-			battleEndController.show(victory, totaleXp);
-		}
-		catch (Exception e){
-			e.printStackTrace();
-		}
+		battleEndController.show(victory, totalXp);
 	}
 
 	/**
@@ -589,11 +580,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		this.pendingLevelUpBugemon = levelUpInfo.getBugemon();
 		this.pendingLevelUpRewards = levelUpInfo.getRewards();
 		this.levelUpController = new LevelUpController(stage, this);
-		try {
-			this.levelUpController.show();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		this.levelUpController.show();
 	}
 
 	/**
@@ -601,11 +588,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	 */
 	private void switchToTowerRewardWindow(){
 		this.floorRewardController = new FloorRewardController(stage, this);
-		try{
-			floorRewardController.show();
-		} catch (Exception e){
-			System.err.println(e);
-		}
+		floorRewardController.show();
 	}
 
 	/**

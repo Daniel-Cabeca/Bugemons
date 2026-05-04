@@ -2,7 +2,7 @@ package ulb.mapper.battle;
 
 import ulb.DTO.battle.MultiBattleStatusDTO;
 import ulb.DTO.battle.MultiBattleStatusDTO.Status;
-import ulb.model.battle.MultiBattle;
+import ulb.model.battle.MultiBattleSession;
 
 /**
  * Used to create a status DTO for a multiplayer battle session.
@@ -11,7 +11,7 @@ public class MultiBattleStatusMapper {
 
 	private MultiBattleStatusMapper() {}
 
-	public static MultiBattleStatusDTO toDTO(MultiBattle battle) {
+	public static MultiBattleStatusDTO toDTO(MultiBattleSession battle) {
 		MultiBattleStatusDTO dto = new MultiBattleStatusDTO();
 
 		if (battle.isReady()) {

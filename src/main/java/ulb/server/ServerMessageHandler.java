@@ -39,6 +39,7 @@ import ulb.message.clientToServer.*;
 	 void handle(ChooseTowerRoomMessage message);
 	 void handle(PickRandomActionMessage message);
 	 void handle(RunMessage message);
+	 void handle(StartMultiBattleMessage message);
 	 void handle(SwapBugemonMessage message);
 	 void handle(UseAbilityMessage message);
 	 void handle(UseItemMessage message);
@@ -64,7 +65,7 @@ import ulb.message.clientToServer.*;
 	 void handle(SendFriendRequestMessage message);
 
 	 // TEAM SAVE
+	 void handle(ConfirmTeamMultiMessage message);
 	 void handle(GetSavedTeamsMessage message);
 	 void handle(SaveTeamMessage message);
-	 void handle(ConfirmTeamMultiMessage message);
 }

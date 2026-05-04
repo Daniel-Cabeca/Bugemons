@@ -3,21 +3,12 @@ package ulb.server;
 import java.util.List;
 
 import ulb.DTO.bugemon.BugemonDTO;
+import ulb.DTO.player.PlayerDTO;
 import ulb.DTO.reward.RewardDTO;
 import ulb.mapper.ability.AbilityMapper;
 import ulb.mapper.item.ItemMapper;
 import ulb.mapper.reward.RewardMapper;
-import ulb.message.clientToServer.AbandonTowerMessage;
-import ulb.message.clientToServer.ChooseAbilityRewardMessage;
-import ulb.message.clientToServer.ChooseItemRewardMessage;
-import ulb.message.clientToServer.ChooseLevelUpRewardMessage;
-import ulb.message.clientToServer.ChooseStatRewardMessage;
-import ulb.message.clientToServer.ChooseTowerRoomMessage;
-import ulb.message.clientToServer.PickRandomActionMessage;
-import ulb.message.clientToServer.RunMessage;
-import ulb.message.clientToServer.SwapBugemonMessage;
-import ulb.message.clientToServer.UseAbilityMessage;
-import ulb.message.clientToServer.UseItemMessage;
+import ulb.message.clientToServer.*;
 import ulb.model.Player;
 import ulb.model.ability.Ability;
 import ulb.model.action.Action;
@@ -27,21 +18,26 @@ import ulb.model.action.UseAbility;
 import ulb.model.action.UseItem;
 import ulb.model.battle.Battle;
 import ulb.model.battle.Battle.ParticipantLabel;
+import ulb.model.battle.MultiBattleParticipant;
+import ulb.model.battle.MultiBattleSession;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.item.Item;
 import ulb.model.reward.Reward;
 import ulb.model.reward.RewardType;
 import ulb.model.tower.towerManager.TowerManager;
 import ulb.service.InventoryService;
+import ulb.service.MultiBattleService;
 import ulb.service.strategy.StrategyRandom;
 
 public class GameActionsHandler extends Thread{
     ClientHandler clientHandler;
     InventoryService inventoryService;
+	MultiBattleService multiBattleService;
 
-    public GameActionsHandler(ClientHandler clientHandler, InventoryService inventoryService) {
+    public GameActionsHandler(ClientHandler clientHandler, InventoryService inventoryService, MultiBattleService multiBattleService) {
         this.clientHandler = clientHandler;
         this.inventoryService = inventoryService;
+		this.multiBattleService = multiBattleService;
     }
 
 	public void handle(AbandonTowerMessage message){
@@ -202,6 +198,21 @@ public class GameActionsHandler extends Thread{
 		}
 
         clientHandler.sendSuccessMessage();
+	}
+
+	public void handle(StartMultiBattleMessage message) {
+		Player self = this.clientHandler.getPlayer();
+		PlayerDTO opponent = message.getOpponent();
+
+		MultiBattleSession session = this.multiBattleService.getMultiBattle(self.getUserId(), opponent.getUserId());
+		Battle battle = session.getBattle();
+		MultiBattleParticipant participant = session.getParticipant(self.getUserId());
+
+		this.clientHandler.setBattle(battle);
+		this.clientHandler.setMultiBattleSession(session);
+		this.clientHandler.setTeamLabel(participant.getParticipantLabel());
+
+		clientHandler.sendSuccessMessage();
 	}
 
 	public void handle(SwapBugemonMessage message){

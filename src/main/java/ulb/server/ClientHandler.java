@@ -6,6 +6,7 @@ import ulb.message.clientToServer.*;
 import ulb.message.serverToClient.*;
 import ulb.model.Player;
 import ulb.model.battle.Battle;
+import ulb.model.battle.MultiBattleSession;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.reward.Reward;
 import ulb.model.team.Team;
@@ -24,6 +25,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
     private Battle battle;
     private Battle.ParticipantLabel teamLabel;
     private Thread opponentBot;
+	private MultiBattleSession multiBattleSession = null;
 
 	private TowerManager towerManager;
 	private boolean isGameTower;
@@ -59,7 +61,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
 		this.setupHandler = new SetupHandler(this, accountService, itemService, inventoryService, bugemonService);
 		this.gameInfoHandler = new GameInfoHandler(this, towerSaveService);
-		this.gameActionsHandler = new GameActionsHandler(this, inventoryService);
+		this.gameActionsHandler = new GameActionsHandler(this, inventoryService, multiBattleService);
 		this.socialHandler = new SocialHandler(this, accountService, chatService, multiBattleService);
 		this.playerInfoHandler = new PlayerInfoHandler(this, accountService);
 		this.gameDataHandler = new GameDataHandler(this, bugemonService, abilityService, itemService);
@@ -70,6 +72,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	public Battle getBattle() { return this.battle; }
 	public TowerManager getTowerManager() { return this.towerManager; }
 	public boolean isGameTower() { return this.isGameTower; }
+	public boolean isMultiPlayer() { return this.multiBattleSession != null; }
 	public Battle.ParticipantLabel getTeamLabel() { return this.teamLabel; }
 	public Thread getOpponentBot() { return this.opponentBot; }
 	public Bugemon getPendingLevelUpBugemon() { return this.pendingLevelUpBugemon; }
@@ -78,6 +81,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	public void setPlayer(Player player) { this.player = player; }
 	public void setTeam(Team team) { this.player.setTeam(team); }
 	public void setBattle(Battle battle) { this.battle = battle; }
+	public void setMultiBattleSession(MultiBattleSession multiBattleSession) { this.multiBattleSession = multiBattleSession; }
 	public void setTowerManager(TowerManager towerManager) { this.towerManager = towerManager; }
 	public void setGameMode(boolean isGameTower) { this.isGameTower = isGameTower; }
 	public void setTeamLabel(Battle.ParticipantLabel label) { this.teamLabel = label; }
@@ -213,6 +217,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	@Override public void handle(ChooseTowerRoomMessage message) { gameActionsHandler.handle(message); }
 	@Override public void handle(PickRandomActionMessage message) { gameActionsHandler.handle(message); }
 	@Override public void handle(RunMessage message) { gameActionsHandler.handle(message); }
+	@Override public void handle(StartMultiBattleMessage message) { gameActionsHandler.handle(message); }
 	@Override public void handle(SwapBugemonMessage message) { gameActionsHandler.handle(message); }
 	@Override public void handle(UseAbilityMessage message) { gameActionsHandler.handle(message); }
 	@Override public void handle(UseItemMessage message) { gameActionsHandler.handle(message); }
@@ -243,8 +248,8 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
 	// TEAM SAVE
 
+	@Override public void handle(ConfirmTeamMultiMessage message) { teamSaveHandler.handle(message); }
 	@Override public void handle(GetSavedTeamsMessage message) { teamSaveHandler.handle(message); }
 	@Override public void handle(SaveTeamMessage message) { teamSaveHandler.handle(message); }
-	@Override public void handle(ConfirmTeamMultiMessage message) { teamSaveHandler.handle(message); }
 
 }

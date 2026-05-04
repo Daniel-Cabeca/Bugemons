@@ -1,25 +1,30 @@
 package ulb.model.battle;
 
+import ulb.model.Player;
+
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
 /**
  * Holds data pertaining to a multiplayer battle between two players.
  */
-public class MultiBattle {
+public class MultiBattleSession {
 	public record IdPair(int a, int b) {}
 	private record ParticipantPair(MultiBattleParticipant a, MultiBattleParticipant b) {}
 
 	private final ParticipantPair participants;
+	private Battle battle = null;
 
-	public MultiBattle(int userId1, int userId2) {
+	public MultiBattleSession(int userId1, int userId2) {
 		IdPair ids = makeSortedIdPair(userId1, userId2);
 
 		this.participants = new ParticipantPair(
-				new MultiBattleParticipant(ids.a()),
-				new MultiBattleParticipant(ids.b())
+				new MultiBattleParticipant(ids.a(), Battle.ParticipantLabel.TEAM_A),
+				new MultiBattleParticipant(ids.b(), Battle.ParticipantLabel.TEAM_B)
 		);
 	}
+
+	public Battle getBattle() { return this.battle; }
 
 	/**
 	 * Gets the MultiBattleParticipant instance corresponding to a given id.
@@ -58,6 +63,18 @@ public class MultiBattle {
 	}
 
 	/**
+	 * Creates a Battle instance for the session. To be called once both players are ready.
+	 */
+	public void start() {
+		this.battle = new Battle(
+			this.participants.a().getTeam(),
+			this.participants.b().getTeam(),
+			new Player("Player A", this.participants.a().getUserId()),
+			new Player("Player B", this.participants.b().getUserId())
+		);
+	}
+
+	/**
 	 * Creates an ordered pair of ids.
 	 *
 	 * @param id1 An id
@@ -74,7 +91,7 @@ public class MultiBattle {
 	public boolean equals(Object o) {
 		if (this == o) return true;
 
-		if (o instanceof MultiBattle other) {
+		if (o instanceof MultiBattleSession other) {
 			return this.participants.a().getUserId() == other.participants.a().getUserId()
 				&& this.participants.b().getUserId() == other.participants.b().getUserId();
 		}

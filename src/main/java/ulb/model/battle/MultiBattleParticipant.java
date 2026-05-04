@@ -6,12 +6,15 @@ public class MultiBattleParticipant {
 	private final int userId;
 	private boolean accepted = false;
 	private Team team = null;
+	private Battle.ParticipantLabel participantLabel;
 
-	public MultiBattleParticipant(int userId) {
+	public MultiBattleParticipant(int userId, Battle.ParticipantLabel participantLabel) {
 		this.userId = userId;
+		this.participantLabel = participantLabel;
 	}
 
 	public int getUserId() { return this.userId; }
+	public Battle.ParticipantLabel getParticipantLabel() { return this.participantLabel; }
 
 	public boolean hasAccepted() { return this.accepted; }
 	public void accept() { this.accepted = true; }

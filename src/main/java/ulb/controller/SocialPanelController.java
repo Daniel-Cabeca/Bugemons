@@ -175,12 +175,11 @@ public class SocialPanelController implements SocialPanel.ViewListener {
 				this.clientController.switchToTeamSelectionForMulti(opponent);
 				break;
 
-			//TODO handle case when request is declined
-
 			case WAITING_ACCEPT:
 				break;
 
 			default:
+				this.clientController.stopWaitWindow();
 				this.clientController.switchToModeWindow();
 		}
 	}

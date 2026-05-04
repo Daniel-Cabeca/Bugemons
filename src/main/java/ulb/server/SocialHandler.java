@@ -8,7 +8,7 @@ import ulb.DTO.battle.MultiBattleStatusDTO;
 import ulb.mapper.battle.MultiBattleStatusMapper;
 import ulb.message.clientToServer.*;
 import ulb.message.serverToClient.*;
-import ulb.model.battle.MultiBattle;
+import ulb.model.battle.MultiBattleSession;
 import ulb.service.AccountService;
 import ulb.service.ChatService;
 import ulb.service.MultiBattleService;
@@ -32,7 +32,7 @@ public class SocialHandler {
 
 		accountService.acceptBattleRequest(senderId, receiverId);
 
-		MultiBattle multiBattle = multiBattleService.getMultiBattle(senderId, receiverId);
+		MultiBattleSession multiBattle = multiBattleService.getMultiBattle(senderId, receiverId);
 		multiBattle.getParticipant(receiverId).accept();
 
 		clientHandler.sendSuccessMessage();
@@ -73,7 +73,7 @@ public class SocialHandler {
 		MultiBattleStatusDTO status = new MultiBattleStatusDTO();
 
 		try {
-			MultiBattle multiBattle = multiBattleService.getMultiBattle(message.getUserId1(), message.getUserId2());
+			MultiBattleSession multiBattle = multiBattleService.getMultiBattle(message.getUserId1(), message.getUserId2());
 			status = MultiBattleStatusMapper.toDTO(multiBattle);
 		}
 		catch (NoSuchElementException e) {}
@@ -115,7 +115,7 @@ public class SocialHandler {
 			return;
 		}
 
-		MultiBattle multiBattle = multiBattleService.createMultiBattle(senderId, receiverId);
+		MultiBattleSession multiBattle = multiBattleService.createMultiBattle(senderId, receiverId);
 		multiBattle.getParticipant(senderId).accept();
 
 		accountService.sendBattleRequest(senderId, receiverId);

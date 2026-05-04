@@ -13,11 +13,13 @@ import ulb.model.battle.Battle;
 import ulb.model.item.Inventory;
 import ulb.model.team.OpponentTeamGenerator;
 import ulb.model.team.Team;
+import ulb.model.tower.Tower;
 import ulb.model.tower.towerManager.TowerManager;
 import ulb.service.AccountService;
 import ulb.service.BugemonService;
 import ulb.service.InventoryService;
 import ulb.service.ItemService;
+import ulb.service.TowerSaveService;
 import ulb.service.strategy.AI;
 import ulb.service.strategy.StrategyRandom;
 
@@ -27,13 +29,15 @@ public class SetupHandler {
     private final ItemService itemService;
     private final InventoryService inventoryService;
     private final BugemonService bugemonService;
+	private final TowerSaveService towerSaveService;
 
-    public SetupHandler(ClientHandler clientHandler, AccountService accountService, ItemService itemService, InventoryService inventoryService, BugemonService bugemonService) {
+    public SetupHandler(ClientHandler clientHandler, AccountService accountService, ItemService itemService, InventoryService inventoryService, BugemonService bugemonService, TowerSaveService towerSaveService) {
         this.clientHandler = clientHandler;
         this.accountService = accountService;
         this.itemService = itemService;
         this.inventoryService = inventoryService;
         this.bugemonService = bugemonService;
+		this.towerSaveService = towerSaveService;
     }
 
 
@@ -125,6 +129,7 @@ public class SetupHandler {
 	}
 
     public void handle(SetUpTowerModeMessage message){
+		boolean setupNewTower = message.isNewTower();
         Player player = clientHandler.getPlayer();
         Battle battle = clientHandler.getBattle();
         TowerManager towerManager = clientHandler.getTowerManager();
@@ -133,8 +138,9 @@ public class SetupHandler {
 		if (battle != null || towerManager != null || isGameTower) {
 			clientHandler.resetGameSessionState();
 		}
-        towerManager = new TowerManager(player, bugemonService, itemService);
+		towerManager = new TowerManager(player, setupNewTower, bugemonService, itemService, towerSaveService);
 		clientHandler.setTowerManager(towerManager);
+
 		clientHandler.setBattle(towerManager.getCurrentBattle());
 		clientHandler.setTeamLabel(Battle.ParticipantLabel.TEAM_A);
 		clientHandler.setGameMode(true);

@@ -205,14 +205,13 @@ public class GameInfoHandler {
 				boolean won = battle.getState(teamLabel) == BattleState.WON;
 
 				if (won) {
-					towerManager.getCurrentRoomManager().setRoomCompleted(true);
+					towerManager.setCurrentRoomCompleted(true);
 					battle.resetFightStats();
 					RoomType currentRoomType = towerManager.getCurrentRoomType();
 
 					if (currentRoomType == RoomType.BOSS) {
 						towerManager.nextFloor();
-						towerSaveService.saveTowerInfo(towerManager.getTower(), player);
-
+	
 						if (!towerManager.isTowerCompleted()) {
 							RoomType nextRoomType = towerManager.getCurrentRoomType();
 							clientHandler.setBattle(towerManager.getCurrentBattle());

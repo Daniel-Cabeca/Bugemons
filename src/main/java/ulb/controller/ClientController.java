@@ -654,10 +654,10 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void onTowerMode() {
+	public void onTowerMode(boolean newTower) {
 		this.gameMode = GameMode.TOWER;
 		this.floorController = null;
-		if (this.postData(new SetUpTowerModeMessage())){
+		if (this.postData(new SetUpTowerModeMessage(newTower))){
 			switchToFloorWindow();
 		}
 	}

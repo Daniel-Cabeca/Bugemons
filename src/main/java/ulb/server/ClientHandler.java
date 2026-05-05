@@ -59,7 +59,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		this.stop = false;
 		this.towerSaveService = towerSaveService;
 
-		this.setupHandler = new SetupHandler(this, accountService, itemService, inventoryService, bugemonService);
+		this.setupHandler = new SetupHandler(this, accountService, itemService, inventoryService, bugemonService, towerSaveService);
 		this.gameInfoHandler = new GameInfoHandler(this, towerSaveService);
 		this.gameActionsHandler = new GameActionsHandler(this, inventoryService, multiBattleService);
 		this.socialHandler = new SocialHandler(this, accountService, chatService, multiBattleService);
@@ -159,7 +159,6 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		}
 		if (this.towerManager.moveToRoom(targetRoomId)){
 			this.battle = this.towerManager.getCurrentBattle();
-			this.towerSaveService.saveTowerInfo(this.towerManager.getTower(), this.player);
 			return true;
 		}
 		return false;

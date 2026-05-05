@@ -72,7 +72,7 @@ public class GameActionsHandler extends Thread{
 
 		chosenBugemon.swapAbility(newAbility, oldAbility);
 
-		towerManager.getCurrentRoomManager().setRoomCompleted(true);
+		towerManager.setCurrentRoomCompleted(true);
 		clientHandler.sendSuccessMessage();
 	}
 
@@ -85,7 +85,7 @@ public class GameActionsHandler extends Thread{
 
 		inventoryService.insertItem(item, 1, player.getUsername());
 
-		towerManager.getCurrentRoomManager().setRoomCompleted(true);
+		towerManager.setCurrentRoomCompleted(true);
 
 		clientHandler.sendSuccessMessage();
 	}
@@ -141,7 +141,7 @@ public class GameActionsHandler extends Thread{
 		chosenBugemon.changeBaseStats(reward.getStats());
 		chosenBugemon.changeFightStats(reward.getStats());
 
-		towerManager.getCurrentRoomManager().setRoomCompleted(true);
+		towerManager.setCurrentRoomCompleted(true);
 		clientHandler.sendSuccessMessage();
 	}
 

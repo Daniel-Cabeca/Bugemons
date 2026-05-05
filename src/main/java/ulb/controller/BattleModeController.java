@@ -66,8 +66,8 @@ public class BattleModeController implements BattleModeWindow.ViewListener {
      * Handles tower mode selection.
      */
     @Override
-    public void onTowerMode() {
-        listener.onTowerMode();
+    public void onTowerMode(boolean newTower) {
+        listener.onTowerMode(newTower);
     }
 
     /**
@@ -87,7 +87,7 @@ public class BattleModeController implements BattleModeWindow.ViewListener {
         /** Called when controlled-battle mode is selected. */
         void onControlledBattle();
         /** Called when tower mode is selected. */
-        void onTowerMode();
+        void onTowerMode(boolean newTower);
         /** Called when returning to the create team screen. */
         void onReturnToCreateTeamWindow();
     }

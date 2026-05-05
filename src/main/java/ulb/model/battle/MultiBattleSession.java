@@ -3,28 +3,25 @@ package ulb.model.battle;
 import ulb.model.Player;
 
 import java.util.NoSuchElementException;
-import java.util.Objects;
 
 /**
  * Holds data pertaining to a multiplayer battle between two players.
  */
 public class MultiBattleSession {
-	public record IdPair(int a, int b) {}
-	private record ParticipantPair(MultiBattleParticipant a, MultiBattleParticipant b) {}
+	public record ParticipantPair(MultiBattleParticipant a, MultiBattleParticipant b) {}
 
 	private final ParticipantPair participants;
 	private Battle battle = null;
 
 	public MultiBattleSession(int userId1, int userId2) {
-		IdPair ids = makeSortedIdPair(userId1, userId2);
-
 		this.participants = new ParticipantPair(
-				new MultiBattleParticipant(ids.a(), Battle.ParticipantLabel.TEAM_A),
-				new MultiBattleParticipant(ids.b(), Battle.ParticipantLabel.TEAM_B)
+				new MultiBattleParticipant(userId1, Battle.ParticipantLabel.TEAM_A),
+				new MultiBattleParticipant(userId2, Battle.ParticipantLabel.TEAM_B)
 		);
 	}
 
 	public Battle getBattle() { return this.battle; }
+	public ParticipantPair getParticipants() { return this.participants; }
 
 	/**
 	 * Gets the MultiBattleParticipant instance corresponding to a given id.
@@ -72,35 +69,5 @@ public class MultiBattleSession {
 			new Player("Player A", this.participants.a().getUserId()),
 			new Player("Player B", this.participants.b().getUserId())
 		);
-	}
-
-	/**
-	 * Creates an ordered pair of ids.
-	 *
-	 * @param id1 An id
-	 * @param id2 An id
-	 * @return A sorted pair of ids
-	*/
-	public static IdPair makeSortedIdPair(int id1, int id2) {
-		return new IdPair(Math.min(id1, id2), Math.max(id1, id2));
-	}
-
-	public IdPair getUserIds() { return new IdPair(this.participants.a().getUserId(), this.participants.b().getUserId()); }
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-
-		if (o instanceof MultiBattleSession other) {
-			return this.participants.a().getUserId() == other.participants.a().getUserId()
-				&& this.participants.b().getUserId() == other.participants.b().getUserId();
-		}
-
-		return false;
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(this.participants.a().getUserId(), this.participants.b().getUserId());
 	}
 }

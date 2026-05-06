@@ -1,41 +1,34 @@
 package ulb.controller;
 
-import java.util.List;
-
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import ulb.view.FxmlLoader;
 import ulb.view.WindowPath;
-import ulb.view.windows.BattleModeWindow;
+import ulb.view.windows.GameModeWindow;
 
-import ulb.DTO.bugemon.BugemonDTO;
 
-/**
- * Controller for the battle mode selection screen.
- */
-public class BattleModeController implements BattleModeWindow.ViewListener {
+public class GameModeController implements GameModeWindow.ViewListener {
 
     private final Listener listener;
-    private BattleModeWindow view;
+    private GameModeWindow view;
     private Stage stage;
-    private List<BugemonDTO> playerTeam;
 
-    public BattleModeController(Stage stage, Listener listener, List<BugemonDTO> playerTeam) {
+    public GameModeController(Stage stage, Listener listener) {
         this.stage = stage;
         this.listener = listener;
-        this.playerTeam = playerTeam;
     }
 
     /**
      * Displays the battle mode selection view.
      */
     public void show() {
-        FXMLLoader loader = FxmlLoader.load(this, WindowPath.BATTLE_MODE);
+        FXMLLoader loader = FxmlLoader.load(this, WindowPath.GAME_MODE);
         view = loader.getController();
         view.setViewListener(this);
-        view.displayTeam(playerTeam);
+        view.activateContinueTowerButton(listener.isTowerSaved());
+
 
         Parent root = loader.getRoot();
         if (stage.getScene() == null) {
@@ -75,12 +68,9 @@ public class BattleModeController implements BattleModeWindow.ViewListener {
      */
     @Override
     public void onReturn() {
-        listener.onReturnToCreateTeamWindow();
+        listener.onReturnToModeWindow();
     }
 
-    /**
-     * Listener for battle mode selection events.
-     */
     public interface Listener {
         /** Called when auto-battle mode is selected. */
         void onAutoBattle();
@@ -88,7 +78,8 @@ public class BattleModeController implements BattleModeWindow.ViewListener {
         void onControlledBattle();
         /** Called when tower mode is selected. */
         void onTowerMode(boolean newTower);
-        /** Called when returning to the create team screen. */
-        void onReturnToCreateTeamWindow();
+        void onReturnToModeWindow();
+        boolean isTowerSaved();
     }
+
 }

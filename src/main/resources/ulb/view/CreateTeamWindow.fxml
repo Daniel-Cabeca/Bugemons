@@ -56,7 +56,7 @@
 
                 <Button onAction="#handleReturn"
                         prefHeight="50" prefWidth="250"
-                        text="Menu Principal" />
+                        text="Retour" />
             </HBox>
 
         </VBox>

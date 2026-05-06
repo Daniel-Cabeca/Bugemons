@@ -84,7 +84,7 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 	 * Handles return action from the team creation screen.
 	 */
 	public void onReturn() {
-		this.clientController.switchToModeWindow();
+		this.clientController.switchToGameModeWindow();
 	}
 
 	/**

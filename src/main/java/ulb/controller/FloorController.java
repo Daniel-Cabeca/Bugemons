@@ -130,13 +130,13 @@ public class FloorController implements FloorWindow.ViewListener {
 
 	@Override
     public void onReturnFloorWindow() {
-        this.listener.onReturnFloorWindow();
+        this.listener.onReturnToGameModeWindow();
     }
 
     interface Listener{
 		boolean onRoomSelected(int roomId);
         void onRoomSelectionComplete();
-		void onReturnFloorWindow();
+		void onReturnToGameModeWindow();
 		List<Integer> getTowerInfo();
         List<Integer> getClearedRooms();
     }

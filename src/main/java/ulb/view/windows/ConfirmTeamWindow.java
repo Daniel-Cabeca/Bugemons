@@ -1,6 +1,5 @@
 package ulb.view.windows;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -8,6 +7,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import java.util.List;
+
+import ulb.communication.GameMode;
 import ulb.utils.Scaling;
 
 import ulb.DTO.bugemon.BugemonDTO;
@@ -16,12 +17,14 @@ import ulb.DTO.bugemon.BugemonDTO;
  * Window responsible for selecting a game mode (Classic, Automatic, Tower).
  * Displays the player's team and provides options to start different game modes
  */
-public class BattleModeWindow extends Window {
+public class ConfirmTeamWindow extends Window {
 
     @FXML
     private GridPane playerTeamGrid;
     @FXML
     private VBox content;
+    @FXML
+    private Label gameModeLabel;
 
     private ViewListener viewListener;
 
@@ -37,20 +40,23 @@ public class BattleModeWindow extends Window {
         this.viewListener = viewListener;
     }
 
-    public void handleAutomaticBattle() {
-        viewListener.onAutoBattle();
+    public void setGameModeLabel(GameMode gameMode) {
+        String message = "";
+        switch (gameMode) {
+            case AUTO:
+                message = "Mode de jeu : automatique";
+                break;
+            case CONTROLLED:
+                message = "Mode de jeu : classique";
+                break;
+            case TOWER:
+                message = "Mode de jeu : Tour NO";
+                break;
+            default:
+                message = "Mode de jeu inconnu";
+        }
+        gameModeLabel.setText(message);
     }
-
-    public void handleControlledBattle() {
-        viewListener.onControlledBattle();
-    }
-
-	public void handleNewTowerBattle(){
-		viewListener.onTowerMode(true);
-	}
-	public void handleContinueTowerBattle(){
-		viewListener.onTowerMode(false);
-	}
 
     /**
      * Goes back to the Create Team Window
@@ -59,6 +65,9 @@ public class BattleModeWindow extends Window {
 	private void handleReturn(){
         viewListener.onReturn();
 	}
+
+    @FXML
+    private void handleConfirm(){ viewListener.onConfirm(); }
 
     /**
      * Displays the player's team with corresponding stats
@@ -101,9 +110,7 @@ public class BattleModeWindow extends Window {
     }
 
     public interface ViewListener {
-        void onAutoBattle();
-        void onControlledBattle();
-        void onTowerMode(boolean newTower);
+        void onConfirm();
         void onReturn();
     }
 }

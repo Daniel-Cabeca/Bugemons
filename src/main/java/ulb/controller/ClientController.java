@@ -411,7 +411,11 @@ LoadTeamPanelController.Listener, FloorController.Listener, GameModeController.L
 
 	@Override
 	public boolean isTowerSaved() {
-		return true;
+		Serializable message = getData(new GetTowerSavedInfoMessage());
+		if (message instanceof TowerSavedInfoMessage towerInfoMessage){
+			return towerInfoMessage.isTowerSaved();
+		} 
+		return false;
 	}
 
 	@Override

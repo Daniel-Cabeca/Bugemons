@@ -54,13 +54,7 @@ public class TeamSaveHandler {
 				return;
 			}
 
-			// inserts the member bugemons in bugemons so they can be referenced in team_members
-			for (Bugemon b : team.getMembers()) {
-				teamService.insertUserBugemon(b, player.getUsername());
-			}
-
 			teamService.insertTeam(player.getUsername(), team);
-			teamService.insertAllBugemonsInTeam(team, team.getId());
 			clientHandler.sendSuccessMessage();
 
 		} catch (LoadException e) {

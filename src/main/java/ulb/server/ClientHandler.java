@@ -34,6 +34,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	private List<Reward> pendingLevelUpRewards;
 
 	private final TowerSaveService towerSaveService;
+	private final TeamService teamService;
 
 	private SetupHandler setupHandler;
 	private PlayerInfoHandler playerInfoHandler;
@@ -58,8 +59,9 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
         this.socketMessenger = messenger;
 		this.stop = false;
 		this.towerSaveService = towerSaveService;
+		this.teamService = teamService;
 
-		this.setupHandler = new SetupHandler(this, accountService, itemService, inventoryService, bugemonService, towerSaveService);
+		this.setupHandler = new SetupHandler(this, accountService, itemService, inventoryService, bugemonService, teamService, towerSaveService);
 		this.gameInfoHandler = new GameInfoHandler(this, towerSaveService);
 		this.gameActionsHandler = new GameActionsHandler(this, inventoryService, multiBattleService);
 		this.socialHandler = new SocialHandler(this, accountService, chatService, multiBattleService);
@@ -168,6 +170,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	void finishTower(){
 		if (!isGameTower){return;}
 		this.towerSaveService.deleteTowerInfo(player);
+		this.teamService.deleteTowerTeam(player);
 		this.resetGameSessionState();
 	}
 
@@ -204,7 +207,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	@Override public void handle(GetLogsMessage message) { gameInfoHandler.handle(message); }
 	@Override public void handle(GetNextWindowMessage message) { gameInfoHandler.handle(message); }
 	@Override public void handle(GetTowerInfoMessage message) { gameInfoHandler.handle(message); }
-
+	@Override public void handle(GetTowerSavedInfoMessage message) { gameInfoHandler.handle(message, this.player); }
 
 	// GAME ACTIONS
 

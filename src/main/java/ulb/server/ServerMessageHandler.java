@@ -29,6 +29,7 @@ import ulb.message.clientToServer.*;
 	 void handle(GetLogsMessage message);
 	 void handle(GetNextWindowMessage message);
 	 void handle(GetTowerInfoMessage message);
+	 void handle(GetTowerSavedInfoMessage message);
 
 	// GAME ACTIONS
 	 void handle(AbandonTowerMessage message);

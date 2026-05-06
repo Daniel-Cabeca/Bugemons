@@ -148,6 +148,7 @@ CREATE TABLE IF NOT EXISTS teams (
                                 team_id INTEGER PRIMARY KEY AUTOINCREMENT,
                                 user_id INTEGER NOT NULL,
                                 team_name TEXT NOT NULL,
+								tower_team BOOLEAN DEFAULT 0,
                                 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 

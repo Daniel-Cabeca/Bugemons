@@ -27,7 +27,8 @@ public class GameModeController implements GameModeWindow.ViewListener {
         FXMLLoader loader = FxmlLoader.load(this, WindowPath.GAME_MODE);
         view = loader.getController();
         view.setViewListener(this);
-        view.activateContinueTowerButton(listener.isTowerSaved());
+		boolean activateButton = listener.isTowerSaved();
+        view.activateContinueTowerButton(activateButton);
 
 
         Parent root = loader.getRoot();

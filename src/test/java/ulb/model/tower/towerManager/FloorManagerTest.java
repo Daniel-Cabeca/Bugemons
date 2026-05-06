@@ -62,5 +62,40 @@ public class FloorManagerTest {
         assertTrue(manager.isFloorCompleted());
         assertTrue(floor.isFloorCompleted());
     }
+
+	@Test 
+	void doesntMoveToNextRoomIfPreviousNotCompleted() {
+		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
+		ItemService itemService = new ItemService(new ItemMockRepository(), new StartingInventoryMockRepository());
+
+		Player player = new Player();
+        Floor floor = new Floor(1, false);
+		Bugemon a = makeBugemon();
+		Team teamA = new Team(List.of(a));
+		player.setTeam(teamA);
+        FloorManager manager = new FloorManager(floor, player, bugemonService, itemService);
+		// move to allowed room first
+		manager.moveToRoom(5);
+		// try to move to next room while previous is not completed (5 and 6 are adjacent)
+		assertFalse(manager.moveToRoom(6));	
+
+	}
+
+	@Test 
+	void doesntMoveToNextRoomIfPreviousNotAdjacent() {
+		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
+		ItemService itemService = new ItemService(new ItemMockRepository(), new StartingInventoryMockRepository());
+
+		Player player = new Player();
+        Floor floor = new Floor(1, false);
+		Bugemon a = makeBugemon();
+		Team teamA = new Team(List.of(a));
+		player.setTeam(teamA);
+        FloorManager manager = new FloorManager(floor, player, bugemonService, itemService);
+		manager.moveToRoom(5);
+		manager.getRoom().setRoomCompleted(true);
+		// rooms 5 and 7 aren't adjacent
+		assertFalse(manager.moveToRoom(7));
+	}
 }
 

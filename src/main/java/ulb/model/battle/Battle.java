@@ -81,6 +81,8 @@ public class Battle {
 
 	public boolean isTeamKO(ParticipantLabel team){ return getTeam(team).checkTeamKO(); }
 
+	public boolean isBossBattle(){ return this.isBossBattle; }
+
 	public void setFloorNumber(int floorNumber){ this.floorNumber = floorNumber; }
 
 	public void enableBossBattle() { this.isBossBattle = true; }

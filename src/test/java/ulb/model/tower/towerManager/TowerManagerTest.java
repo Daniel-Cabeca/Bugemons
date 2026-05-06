@@ -12,7 +12,6 @@ import ulb.model.tower.Floor;
 import ulb.model.tower.Room;
 import  ulb.model.tower.Tower;
 import ulb.repository.BugemonSpeciesRepository;
-import ulb.repository.TowerSaveRepository;
 import ulb.repository.database.TowerSaveDatabaseRepository;
 import ulb.repository.database.sql.DatabaseMock;
 import ulb.repository.mock.BugemonSpeciesMockRepository;
@@ -88,8 +87,6 @@ public class TowerManagerTest {
 				manager.getCurrentFloorManager().getFloor().getId(),
 				"Current floor manager should now point to the next floor");
 	}
-
-
 
 	@Test
 	void doesNotAdvanceFloorWhenTowerIsCompleted() throws Exception {

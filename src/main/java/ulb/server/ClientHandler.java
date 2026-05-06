@@ -61,7 +61,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
 		this.setupHandler = new SetupHandler(this, accountService, itemService, inventoryService, bugemonService, towerSaveService);
 		this.gameInfoHandler = new GameInfoHandler(this, towerSaveService);
-		this.gameActionsHandler = new GameActionsHandler(this, inventoryService, multiBattleService);
+		this.gameActionsHandler = new GameActionsHandler(this, inventoryService, multiBattleService, accountService);
 		this.socialHandler = new SocialHandler(this, accountService, chatService, multiBattleService);
 		this.playerInfoHandler = new PlayerInfoHandler(this, accountService);
 		this.gameDataHandler = new GameDataHandler(this, bugemonService, abilityService, itemService);
@@ -209,6 +209,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	// GAME ACTIONS
 
 	@Override public void handle(AbandonTowerMessage message) { gameActionsHandler.handle(message); }
+	@Override public void handle(AddBattleEndResuts message) { gameActionsHandler.handle(message); }
 	@Override public void handle(ChooseAbilityRewardMessage message) { gameActionsHandler.handle(message); }
 	@Override public void handle(ChooseItemRewardMessage message) { gameActionsHandler.handle(message); }
 	@Override public void handle(ChooseLevelUpRewardMessage message) { gameActionsHandler.handle(message); }

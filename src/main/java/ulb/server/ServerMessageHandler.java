@@ -32,6 +32,7 @@ import ulb.message.clientToServer.*;
 
 	// GAME ACTIONS
 	 void handle(AbandonTowerMessage message);
+	 void handle(AddBattleEndResuts message);
 	 void handle(ChooseAbilityRewardMessage message);
 	 void handle(ChooseItemRewardMessage message);
 	 void handle(ChooseLevelUpRewardMessage message);

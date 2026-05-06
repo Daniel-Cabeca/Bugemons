@@ -18,6 +18,7 @@ import ulb.model.action.UseAbility;
 import ulb.model.action.UseItem;
 import ulb.model.battle.Battle;
 import ulb.model.battle.Battle.ParticipantLabel;
+import ulb.model.battle.BattleState;
 import ulb.model.battle.MultiBattleParticipant;
 import ulb.model.battle.MultiBattleSession;
 import ulb.model.bugemon.Bugemon;
@@ -25,6 +26,7 @@ import ulb.model.item.Item;
 import ulb.model.reward.Reward;
 import ulb.model.reward.RewardType;
 import ulb.model.tower.towerManager.TowerManager;
+import ulb.service.AccountService;
 import ulb.service.InventoryService;
 import ulb.service.MultiBattleService;
 import ulb.service.strategy.StrategyRandom;
@@ -33,11 +35,13 @@ public class GameActionsHandler extends Thread{
     ClientHandler clientHandler;
     InventoryService inventoryService;
 	MultiBattleService multiBattleService;
+	AccountService accountService;
 
-    public GameActionsHandler(ClientHandler clientHandler, InventoryService inventoryService, MultiBattleService multiBattleService) {
+    public GameActionsHandler(ClientHandler clientHandler, InventoryService inventoryService, MultiBattleService multiBattleService, AccountService accountService) {
         this.clientHandler = clientHandler;
         this.inventoryService = inventoryService;
 		this.multiBattleService = multiBattleService;
+		this.accountService = accountService;
     }
 
 	public void handle(AbandonTowerMessage message){
@@ -48,6 +52,16 @@ public class GameActionsHandler extends Thread{
 			return;
 		}
 		clientHandler.finishTower();
+		clientHandler.sendSuccessMessage();
+	}
+
+	public void handle(AddBattleEndResuts message){
+		Player player = clientHandler.getPlayer();
+
+		BattleState battleEndState = message.getBattleState();
+		if (battleEndState == BattleState.WON) {
+			accountService.addPoints(player.getUserId(), 1);
+		}
 		clientHandler.sendSuccessMessage();
 	}
 

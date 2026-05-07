@@ -364,7 +364,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         return new BugemonDisplay(
                 bugemon.getName(),
                 bugemon.getSpritePath(),
-                getTypeColor(bugemon.getType()),
+                bugemon.getType(),
                 bugemon.getLevel(),
                 bugemon.getHp(),
                 bugemon.getBaseStats().hp()
@@ -472,7 +472,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
                         ability.id(),
                         ability.name(),
                         ability.description() + "\n Puissance:  " + ability.power(),
-                        getTypeColor(ability.type()),
+                        ability.type(),
                         effectiveness
                 ));
             }
@@ -536,22 +536,6 @@ public class BattleWindowController implements BattleWindow.ViewListener {
 
     private Map<ItemDTO, Integer> getPlayerInventory() {
         return player != null ? player.getInventory() : null;
-    }
-
-    /**
-     * Maps a bugemon type to a UI color code.
-     *
-     * @param type The bugemon type
-     * @return The corresponding hex color string
-     */
-    private String getTypeColor(Type type) {
-        return switch (type) {
-            case PYRO -> "#ED2424";
-            case FLORA -> "#50A346";
-            case AQUA -> "#51B0F0";
-            case LITHO -> "#807979";
-            default -> "#ced4da";
-        };
     }
 
     /**

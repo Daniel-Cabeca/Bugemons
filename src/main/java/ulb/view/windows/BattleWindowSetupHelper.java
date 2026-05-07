@@ -9,6 +9,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.util.Callback;
+import ulb.view.TypeColor;
 import ulb.view.windows.BattleWindow.AbilityEntry;
 import ulb.view.windows.BattleWindow.BugemonEntry;
 import ulb.view.windows.BattleWindow.InventoryEntry;
@@ -216,7 +217,7 @@ public class BattleWindowSetupHelper {
                     label.setText(entry.abilityName());
 
                     hbox.setStyle(
-                            "-fx-background-color: " + entry.color() + ";" +
+                            "-fx-background-color: " + TypeColor.getTypeColor(entry.abilityType()) + ";" +
                                     "-fx-padding: 6;" +
                                     "-fx-background-radius: 6;"
                     );

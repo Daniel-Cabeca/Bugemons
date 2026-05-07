@@ -8,6 +8,7 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
+import ulb.view.TypeColor;
 import ulb.view.windows.BattleWindow.BattleSnapshot;
 import ulb.view.windows.BattleWindow.BugemonDisplay;
 
@@ -320,7 +321,7 @@ public class BattleWindowGraphicsHelper {
 
         ui.playerBugemonLabel().setText(playerBugemon.name());
         ui.playerLevelLabel().setText("Lv." + playerBugemon.level());
-        ui.playerBugemonLabel().setStyle("-fx-text-fill: " + playerBugemon.color() + ";");
+        ui.playerBugemonLabel().setStyle("-fx-text-fill: " + TypeColor.getTypeColor(playerBugemon.bugemonType()) + ";");
         double playerRatio = (double) playerBugemon.hp() / playerBugemon.maxHp();
         ui.playerBugemonHPBar().setProgress(playerRatio);
         updateHPBarColor(ui.playerBugemonHPBar(), playerRatio);
@@ -335,7 +336,7 @@ public class BattleWindowGraphicsHelper {
 
         ui.opponentBugemonLabel().setText(opponentBugemon.name());
         ui.opponentLevelLabel().setText("Lv." + opponentBugemon.level());
-        ui.opponentBugemonLabel().setStyle("-fx-text-fill: " + opponentBugemon.color() + ";");
+        ui.opponentBugemonLabel().setStyle("-fx-text-fill: " + TypeColor.getTypeColor(opponentBugemon.bugemonType()) + ";");
         double opponentRatio = (double) opponentBugemon.hp() / opponentBugemon.maxHp();
         ui.opponentHPBar().setProgress(opponentRatio);
         updateHPBarColor(ui.opponentHPBar(), opponentRatio);

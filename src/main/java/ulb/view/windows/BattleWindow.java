@@ -10,6 +10,7 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import ulb.model.type.Type;
 
 import java.util.List;
 
@@ -416,12 +417,12 @@ public class BattleWindow extends Window {
      *
      * @param name the Bugemon's name
      * @param spritePath path to the Bugemon's sprite image resource
-     * @param color the color associated with this Bugemon's type
+     * @param bugemonType the Bugemon's type
      * @param level the Bugemon's current level
      * @param hp the Bugemon's current HP
      * @param maxHp the Bugemon's maximum HP
      */
-    public record BugemonDisplay(String name, String spritePath, String color, int level, int hp, int maxHp) {
+    public record BugemonDisplay(String name, String spritePath, Type bugemonType, int level, int hp, int maxHp) {
     }
 
     /**
@@ -457,10 +458,10 @@ public class BattleWindow extends Window {
      * @param abilityId the unique identifier of the ability
      * @param abilityName the display name of the ability
      * @param abilityDescription a short description of what the ability does
-     * @param color the color associated with the ability's type
+     * @param abilityType the ability's type
      * @param effectiveness a label describing the ability's effectiveness against the current opponent
      */
-    public record AbilityEntry(String abilityId, String abilityName, String abilityDescription, String color, String effectiveness) {
+    public record AbilityEntry(String abilityId, String abilityName, String abilityDescription, Type abilityType, String effectiveness) {
     }
 
     public interface ViewListener {

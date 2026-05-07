@@ -313,7 +313,8 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 
 	@Override
 	public PlayerDTO onGetPlayer(String userName) {
-		return this.getPlayer(userName);
+		this.player = this.getPlayer(userName);
+		return this.player;
 	}
 
 

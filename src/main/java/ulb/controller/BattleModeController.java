@@ -22,6 +22,13 @@ public class BattleModeController implements BattleModeWindow.ViewListener {
     private Stage stage;
     private List<BugemonDTO> playerTeam;
 
+    /**
+     * Creates the battle mode controller.
+     *
+     * @param stage The application stage
+     * @param listener The listener notified of user actions
+     * @param playerTeam The list of bugemons in the player's team
+     */
     public BattleModeController(Stage stage, Listener listener, List<BugemonDTO> playerTeam) {
         this.stage = stage;
         this.listener = listener;
@@ -36,7 +43,6 @@ public class BattleModeController implements BattleModeWindow.ViewListener {
         view = loader.getController();
         view.setViewListener(this);
         view.displayTeam(playerTeam);
-
         Parent root = loader.getRoot();
         if (stage.getScene() == null) {
             stage.setScene(new Scene(root));
@@ -47,7 +53,7 @@ public class BattleModeController implements BattleModeWindow.ViewListener {
     }
 
     /**
-     * Handles auto-battle mode selection.
+     * {@inheritDoc}
      */
     @Override
     public void onAutoBattle() {
@@ -55,7 +61,7 @@ public class BattleModeController implements BattleModeWindow.ViewListener {
     }
 
     /**
-     * Handles controlled-battle mode selection.
+     * {@inheritDoc}
      */
     @Override
     public void onControlledBattle() {
@@ -63,7 +69,7 @@ public class BattleModeController implements BattleModeWindow.ViewListener {
     }
 
     /**
-     * Handles tower mode selection.
+     * {@inheritDoc}
      */
     @Override
     public void onTowerMode(boolean newTower) {
@@ -71,12 +77,13 @@ public class BattleModeController implements BattleModeWindow.ViewListener {
     }
 
     /**
-     * Handles returning to the previous screen.
+     * {@inheritDoc}
      */
     @Override
     public void onReturn() {
         listener.onReturnToCreateTeamWindow();
     }
+
 
     /**
      * Listener for battle mode selection events.

@@ -42,6 +42,16 @@ public class BattleWindowController implements BattleWindow.ViewListener {
     private BattleWindow view;
     private boolean waitingForOpponentAction = false;
 
+    /**
+     * Creates the battle window controller.
+     *
+     * @param stage The application stage
+     * @param listener The listener notified of battle actions
+     * @param player The current player data
+     * @param gameMode The active game mode
+     * @param towerFloorNumber The current tower floor number
+     * @param towerRoomNumber The current tower room number
+     */
     public BattleWindowController(Stage stage, Listener listener, PlayerDTO player, GameMode gameMode, int towerFloorNumber, int towerRoomNumber){
         this.stage = stage;
         this.listener = listener;
@@ -74,7 +84,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
     }
 
     /**
-     * Opens the inventory menu.
+     * {@inheritDoc}
      */
     @Override
     public void onItemMenu() {
@@ -82,7 +92,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
     }
 
     /**
-     * Opens the bugemon switch menu.
+     * {@inheritDoc}
      */
     @Override
     public void onBugemonsMenu() {
@@ -90,9 +100,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
     }
 
     /**
-     * Executes an automatic turn.
-     *
-     * @param event The triggering action event
+     * {@inheritDoc}
      */
     @Override
     public void onAuto(ActionEvent event) {
@@ -109,7 +117,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
     }
 
     /**
-     * Opens the abilities menu.
+     * {@inheritDoc}
      */
     @Override
     public void onAttack() {
@@ -117,7 +125,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
     }
 
     /**
-     * Returns to the battle main menu.
+     * {@inheritDoc}
      */
     @Override
     public void onBackToMenu() {
@@ -125,9 +133,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
     }
 
     /**
-     * Handles return/flee action from the battle window.
-     *
-     * @param event The triggering action event
+     * {@inheritDoc}
      */
     @Override
     public void onReturn(ActionEvent event) {
@@ -135,7 +141,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
     }
 
     /**
-     * Notifies the listener to open the social menu or tab.
+     * {@inheritDoc}
      */
     @Override
     public void onOpenSocial() {
@@ -143,10 +149,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
     }
 
     /**
-     * Uses an inventory item and displays resulting battle logs.
-     *
-     * @param itemId The selected item id
-     * @param event The triggering action event
+     * {@inheritDoc}
      */
     @Override
     public void onUseItem(String itemId, ActionEvent event) {
@@ -162,10 +165,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
     }
 
     /**
-     * Swaps active bugemon and displays resulting battle logs.
-     *
-     * @param bugemonId The selected bugemon id
-     * @param event The triggering action event
+     * {@inheritDoc}
      */
     @Override
     public void onSwapBugemon(String bugemonId, ActionEvent event) {
@@ -190,10 +190,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
     }
 
     /**
-     * Uses an ability and displays resulting battle logs.
-     *
-     * @param abilityId The selected ability id
-     * @param event The triggering action event
+     * {@inheritDoc}
      */
     @Override
     public void onUseAbility(String abilityId, ActionEvent event) {
@@ -352,7 +349,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
     private BattleSnapshot buildBattleSnapshot() {
         List<BugemonDTO> activeBugemons = this.listener.getActiveBugemons();
         BugemonDTO playerBugemon = activeBugemons.get(0);
-		BugemonDTO opponentBugemon = activeBugemons.get(1);
+        BugemonDTO opponentBugemon = activeBugemons.get(1);
         if (playerBugemon == null || opponentBugemon == null) {
             return null;
         }
@@ -360,6 +357,12 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         return new BattleSnapshot(toBugemonDisplay(playerBugemon), toBugemonDisplay(opponentBugemon));
     }
 
+    /**
+     * Converts a bugemon DTO into a display model for the battle view.
+     *
+     * @param bugemon The bugemon to convert
+     * @return The corresponding DTO
+     */
     private BugemonDisplay toBugemonDisplay(BugemonDTO bugemon) {
         return new BugemonDisplay(
                 bugemon.getName(),
@@ -480,6 +483,12 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         return entries;
     }
 
+    /**
+     * Finds an inventory item by its id.
+     *
+     * @param itemId The id of the item to find
+     * @return The matching item DTO, or null if not found
+     */
     private ItemDTO findInventoryItemById(String itemId) {
         if (itemId == null) {
             return null;
@@ -498,6 +507,12 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         return null;
     }
 
+    /**
+     * Finds a Bugemon by its id.
+     *
+     * @param bugemonId The id of the Bugemon to find
+     * @return The matching Bugemon DTO, or null if not found
+     */
     private BugemonDTO findTeamBugemonById(String bugemonId) {
         if (bugemonId == null) {
             return null;
@@ -516,6 +531,12 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         return null;
     }
 
+    /**
+     * Finds the active Bugemon's ability by its id.
+     *
+     * @param abilityId The id of the ability to find
+     * @return The matching ability DTO, or null if not found
+     */
     private AbilityDTO findActiveAbilityById(String abilityId) {
         BugemonDTO activeBugemon = listener.getActiveBugemons().get(0);
         if (activeBugemon == null){
@@ -530,10 +551,20 @@ public class BattleWindowController implements BattleWindow.ViewListener {
         return null;
     }
 
+    /**
+     * Returns the player's team, or null if no player is set.
+     *
+     * @return The list of bugemons in the player's team
+     */
     private List<BugemonDTO> getPlayerTeam() {
         return player != null ? player.getTeam() : null;
     }
 
+    /**
+     * Returns the player's inventory, or null if no player is set.
+     *
+     * @return The player's inventory
+     */
     private Map<ItemDTO, Integer> getPlayerInventory() {
         return player != null ? player.getInventory() : null;
     }
@@ -558,21 +589,37 @@ public class BattleWindowController implements BattleWindow.ViewListener {
      * Listener for battle actions requested from the view.
      */
     public interface Listener {
+        /** Updates the player's inventory for the given username. */
         void updatePlayerInventory(String userName);
+        /** Returns the currently active bugemons in the battle. */
         List<BugemonDTO> getActiveBugemons();
+        /** Returns the player's team. */
         List<BugemonDTO> getPlayerTeam();
+        /** Returns the effectiveness of each ability against the given opponent bugemon. */
         Map<AbilityDTO, String> getAbilityEffectiveness(List<AbilityDTO> ability, BugemonDTO bugemon);
+        /** Returns the HP values of both sides after the first action of the turn. */
         List<Integer> getHpAfterFirstAction();
+        /** Returns the current battle state. */
         BattleState getState();
+        /** Returns the accumulated battle log messages. */
         List<String> getLogs();
+        /** Checks which items in the list are currently usable. */
         Map<String, Boolean> checkItems(List<ItemDTO> items);
+        /** Returns whether the game has finished. */
         boolean isGameFinished();
+        /** Executes an automatic turn and returns the resulting battle state. */
         BattleState onAutoTurn();
+        /** Uses the given item and returns the resulting battle state. */
         BattleState onUseItem(ItemDTO item);
+        /** Swaps the active bugemon and returns the resulting battle state. */
         BattleState onSwapBugemon(BugemonDTO bugemon);
+        /** Uses the given ability and returns the resulting battle state. */
         BattleState onUseAbility(AbilityDTO ability);
-		void onRun();
+        /** Handles the player fleeing the battle. */
+        void onRun();
+        /** Handles opening the social menu. */
         void onOpenSocial();
+        /** Handles the logic after a battle state check. */
         void onBattleStateChecked(BattleState state, ActionEvent event);
     }
 }

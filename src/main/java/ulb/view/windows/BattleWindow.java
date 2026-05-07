@@ -76,6 +76,11 @@ public class BattleWindow extends Window {
     private boolean forcedSwitch;
     private BattleSnapshot currentSnapshot;
 
+    /**
+     * Sets the listener to be notified of battle view events.
+     *
+     * @param viewListener The view listener to be notified
+     */
     public void setViewListener(ViewListener viewListener) {
         this.viewListener = viewListener;
     }
@@ -132,9 +137,14 @@ public class BattleWindow extends Window {
         updateBackButtonsState();
     }
 
-	public void setCurrentSnapshot(BattleSnapshot snapshot){
-		this.currentSnapshot = snapshot;
-	}
+    /**
+     * Sets the current battle snapshot to be used.
+     *
+     * @param snapshot The snapshot to be set
+     */
+    public void setCurrentSnapshot(BattleSnapshot snapshot) {
+        this.currentSnapshot = snapshot;
+    }
 
     /**
      * Renders the battle UI to reflect the given snapshot.
@@ -147,6 +157,9 @@ public class BattleWindow extends Window {
         graphicsHelper.renderBattle(snapshot);
     }
 
+    /**
+     * Handles the item menu button click and notifies the view listener.
+     */
     @FXML
     public void handleItemMenu() {
         if (viewListener != null) {
@@ -154,6 +167,9 @@ public class BattleWindow extends Window {
         }
     }
 
+    /**
+     * Handles the Bugemon menu button click and notifies the view listener.
+     */
     @FXML
     public void handleBugemonsMenu() {
         if (viewListener != null) {
@@ -161,6 +177,11 @@ public class BattleWindow extends Window {
         }
     }
 
+    /**
+     * Handles the auto button click and notifies the view listener.
+     *
+     * @param event The action event
+     */
     @FXML
     public void handleAuto(ActionEvent event) {
         if (viewListener != null) {
@@ -168,6 +189,9 @@ public class BattleWindow extends Window {
         }
     }
 
+    /**
+     * Handles the attack button click and notifies the view listener.
+     */
     @FXML
     public void handleAttack() {
         if (viewListener != null) {
@@ -175,6 +199,9 @@ public class BattleWindow extends Window {
         }
     }
 
+    /**
+     * Handles the back to menu button click and notifies the view listener.
+     */
     @FXML
     public void handleBackToMenu() {
         if (viewListener != null) {
@@ -182,6 +209,11 @@ public class BattleWindow extends Window {
         }
     }
 
+    /**
+     * Handles the return/flee button click and notifies the view listener.
+     *
+     * @param event The action event
+     */
     @FXML
     public void handleReturn(ActionEvent event) {
         if (viewListener != null) {
@@ -189,6 +221,9 @@ public class BattleWindow extends Window {
         }
     }
 
+    /**
+     * Handles the social panel button click and notifies the view listener.
+     */
     @FXML
     public void openSocialPanel() {
         if (viewListener != null) {
@@ -269,6 +304,11 @@ public class BattleWindow extends Window {
         updateBackButtonsState();
     }
 
+    /**
+     * Sets the visibility of the auto button.
+     *
+     * @param visible {@code true} to show the button, {@code false} to hide it
+     */
     public void setAutoButtonVisible(boolean visible) {
         autoButton.setVisible(visible);
         autoButton.setManaged(visible);
@@ -291,6 +331,11 @@ public class BattleWindow extends Window {
         abilitiesView.setDisable(disabled);
     }
 
+    /**
+     * Displays the given log messages in battle.
+     *
+     * @param logs The list of messages to display
+     */
     public void showLogMessages(List<String> logs) {
         graphicsHelper.showLogMessages(logs);
     }
@@ -349,14 +394,23 @@ public class BattleWindow extends Window {
         }
     }
 
+    /**
+     * Configures the inventory list cell factory.
+     */
     private void setupInventoryList() {
         setupHelper.setupInventoryList(inventoryList, viewListener);
     }
 
+    /**
+     * Configures the Bugemon list cell factory.
+     */
     private void setupBugemonsList() {
         setupHelper.setupBugemonsList(bugemonsList, viewListener);
     }
 
+    /**
+     * Configures the abilities list cell factory.
+     */
     private void setupAbilitiesList() {
         setupHelper.setupAbilitiesList(abilitiesList, viewListener);
     }
@@ -394,13 +448,14 @@ public class BattleWindow extends Window {
         roomLabel.setText("");
     }
 
-	/**
-	 * Plays the attack animation for the correct Bugemon
-	 * @param isPlayer is or is not the player
-	 */
-	public void playAttackAnimation(boolean isPlayer) {
-		graphicsHelper.playAttackAnimation(isPlayer ? PlayerBugemon : OpponentBugemon, isPlayer);
-	}
+    /**
+     * Plays the attack animation for the correct Bugemon.
+     *
+     * @param isPlayer {@code true} animate the player's Bugemon, {@code false} the opponent's Bugemon
+     */
+    public void playAttackAnimation(boolean isPlayer) {
+        graphicsHelper.playAttackAnimation(isPlayer ? PlayerBugemon : OpponentBugemon, isPlayer);
+    }
 
     /**
      * Immutable snapshot of the current battle state for both the player and opponent Bugemons.
@@ -463,16 +518,29 @@ public class BattleWindow extends Window {
     public record AbilityEntry(String abilityId, String abilityName, String abilityDescription, String color, String effectiveness) {
     }
 
+    /**
+     * Listener for battle view events triggered by user interaction.
+     */
     public interface ViewListener {
+        /** Handles the item menu being opened. */
         void onItemMenu();
+        /** Handles the Bugemon menu being opened. */
         void onBugemonsMenu();
+        /** Handles the auto battle button being pressed. */
         void onAuto(ActionEvent event);
+        /** Handles the attack button being pressed. */
         void onAttack();
+        /** Handles the back to menu button being pressed. */
         void onBackToMenu();
+        /** Handles the return/flee button being pressed. */
         void onReturn(ActionEvent event);
+        /** Handles the social panel being opened. */
         void onOpenSocial();
+        /** Handles an item being selected for use. */
         void onUseItem(String itemId, ActionEvent event);
+        /** Handles a Bugemon being selected for a swap. */
         void onSwapBugemon(String bugemonId, ActionEvent event);
+        /** Handles an ability being selected for use. */
         void onUseAbility(String abilityId, ActionEvent event);
     }
 }

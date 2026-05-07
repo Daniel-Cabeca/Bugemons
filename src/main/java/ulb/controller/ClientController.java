@@ -300,6 +300,7 @@ LoadTeamPanelController.Listener, FloorController.Listener, GameModeController.L
 
 	@Override
 	public PlayerDTO onGetPlayer(String userName) {
+		this.player = this.getPlayer(userName);
 		return this.getPlayer(userName);
 	}
 

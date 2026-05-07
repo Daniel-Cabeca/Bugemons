@@ -33,33 +33,33 @@ import ulb.DTO.player.PlayerRegisterDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.DTO.reward.RewardDTO;
 import ulb.model.chat.ChatMessage;
+import ulb.exceptions.LoadException;
 import ulb.controller.windows.RegisterController;
 import ulb.view.WindowPath;
 
 /**
- * Client-side application controller coordinating UI flow and server messaging.
+ * Client-side application controller coordinating server messaging.
  */
 public class ClientController extends Application implements RegisterController.Listener, ModeController.Listener, GameModeController.Listener,
-ConfirmTeamController.Listener,BattleEndController.Listener, BattleWindowController.Listener, NextRoomController.Listener,
-FloorRewardController.Listener, AttackReplacementController.Listener, LevelUpController.Listener,
-LoadTeamPanelController.Listener, FloorController.Listener {
+		ConfirmTeamController.Listener,BattleEndController.Listener, BattleWindowController.Listener, NextRoomController.Listener,
+		FloorRewardController.Listener, AttackReplacementController.Listener, LevelUpController.Listener,
+		LoadTeamPanelController.Listener, FloorController.Listener {
 
 	private static final Logger LOGGER = Logger.getLogger(ClientController.class.getName());
 
 	SocketClient client;
 	private final Object serverRequestLock = new Object();
-    Stage stage;
+	Stage stage;
 
 	PlayerDTO player;
 	GameMode gameMode;
 
 	RegisterController registerController;
-    ModeController modeController;
+	ModeController modeController;
 	GameModeController gameModeController;
 	TeamController teamController;
 	ConfirmTeamController confirmTeamController;
 	BattleWindowController battleWindowController;
-
 
 	BattleEndController battleEndController;
 	LevelUpController levelUpController;
@@ -76,6 +76,11 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	SocialPanelController socialPanelController;
 	WaitWindowController waitWindowController;
 
+	/**
+	 * Returns the application stage.
+	 *
+	 * @return The application stage
+	 */
 	public Stage getStage() { return this.stage; }
 
 	private void logViewLoadFailure(String errorMessage, ViewLoadException e) {
@@ -89,26 +94,26 @@ LoadTeamPanelController.Listener, FloorController.Listener {
     public void init() throws CommunicationException {
         List<String> params = getParameters().getRaw();
 
-        String serverIp = params.get(0);
-        Integer serverPort = Integer.parseInt(params.get(1));
-        
-        this.client = new SocketClient(serverIp, serverPort);
-    }
+		String serverIp = params.get(0);
+		Integer serverPort = Integer.parseInt(params.get(1));
 
-    /**
-     * Initializes the main stage and displays the register screen.
-     *
-     * @param primaryStage The JavaFX primary stage
-     * @throws Exception If UI initialization fails
-     */
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-		
+		this.client = new SocketClient(serverIp, serverPort);
+	}
+
+	/**
+	 * Initializes the main stage and displays the register screen.
+	 *
+	 * @param primaryStage The primary stage
+	 * @throws Exception If UI initialization fails
+	 */
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+
 		this.stage = primaryStage;
 
 		InputStream font = getClass().getResourceAsStream("/fonts/pokemon-emerald-pro.otf");
 
-        Font.loadFont(font, 14);
+		Font.loadFont(font, 14);
 		primaryStage.setTitle("INFO-F307 Groupe 10");
 		primaryStage.setFullScreen(true);
 		primaryStage.setFullScreenExitHint("");
@@ -116,7 +121,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		this.registerController = new RegisterController(this.stage, WindowPath.REGISTER,this);
 		this.registerController.show();
 
-		this.modeController = new ModeController(this.stage, this); // TODO: put other where
+		this.modeController = new ModeController(this.stage, this);
 
 		if (primaryStage.getScene() != null) {
 			String stylesheet = getClass().getResource("/styles/global.css").toExternalForm();
@@ -126,12 +131,13 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		}
 
 		primaryStage.show();
-    }
+	}
 
 	/**
-	 * Send data to the server and return a boolean depending on the StatusMessage received
+	 * Sends data to the server and returns whether the request was accepted.
+	 *
 	 * @param message The message sent to the server
-	 * @return A boolean that tells if the request has been accepted
+	 * @return True if the request was accepted by the server
 	 */
 	public boolean postData(ClientToServerMessage message){
 		synchronized (serverRequestLock) {
@@ -156,9 +162,10 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	}
 
 	/**
-	 * Get data from the server
-	 * @param message The messenge sent to the server
-	 * @return The message received from the server and containing the data
+	 * Sends a request to the server and returns the response.
+	 *
+	 * @param message The message sent to the server
+	 * @return The response received from the server
 	 */
 	public Serializable getData(ClientToServerMessage message){
 		synchronized (serverRequestLock) {
@@ -187,11 +194,11 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	 * @param username Username to retrieve
 	 * @return Matching player DTO or null if unavailable
 	 */
-	public PlayerDTO getPlayer(String username) { 
+	public PlayerDTO getPlayer(String username) {
 		if (getData(new GetPlayerMessage(username)) instanceof PlayerMessage msg) {
 			return msg.getPlayer();
 		}
-		return null; 
+		return null;
 	}
 
 	/**
@@ -205,7 +212,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	}
 
 	/**
-	 * Sends a login request for a player.
+	 * Sends a login request
 	 *
 	 * @param player Player credentials DTO
 	 * @return True if accepted by server
@@ -216,24 +223,54 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 
 	// Social Panel Controller
 
+	/**
+	 * Sends a battle request to the chosen player
+	 *
+	 * @param receiver The username of the player to challenge
+	 * @return True if the request was accepted by the server
+	 */
 	public boolean sendBattleRequest(String receiver) {
 		return postData(new SendBattleRequestMessage(player.getUsername(), receiver));
 	}
 
+	/**
+	 * Returns the list of pending incoming battle requests.
+	 *
+	 * @return The list of player usernames who sent a battle request
+	 */
 	public List<String> getBattleRequests() {
 		if (getData(new GetBattleRequestsMessage(player.getUsername())) instanceof BattleRequestsMessage msg)
 			return msg.getRequests();
 		return List.of();
 	}
 
+	/**
+	 * Accepts a battle request from the given player.
+	 *
+	 * @param sender The username of the player who sent the request
+	 * @return True if the acceptance was accepted by the server
+	 */
 	public boolean acceptBattleRequest(String sender) {
 		return postData(new AcceptBattleRequestMessage(player.getUsername(), sender));
 	}
 
+	/**
+	 * Declines a battle request from the given player.
+	 *
+	 * @param sender The username of the player who sent the request
+	 * @return True if the decline was accepted by the server
+	 */
 	public boolean declineBattleRequest(String sender) {
 		return postData(new DeclineBattleRequestMessage(player.getUsername(), sender));
 	}
 
+	/**
+	 * Returns the current multiplayer battle status between two players.
+	 *
+	 * @param userId1 The first player's id
+	 * @param userId2 The second player's id
+	 * @return The multiplayer battle status DTO
+	 */
 	public MultiBattleStatusDTO getMultiBattleStatus(int userId1, int userId2) {
 		if (getData(new GetMultiBattleStatusMessage(userId1, userId2)) instanceof MultiBattleStatusMessage msg)
 			return msg.getStatus();
@@ -242,44 +279,94 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		return new MultiBattleStatusDTO();
 	}
 
+	/**
+	 * Sends a friend request to the given player.
+	 *
+	 * @param receiver The username of the player to add as a friend
+	 * @return True if the request was acknowledged by the server
+	 */
 	public boolean sendFriendRequest(String receiver) {
 		return postData(new SendFriendRequestMessage(player.getUsername(), receiver));
 	}
 
+	/**
+	 * Returns the list of pending friend requests.
+	 *
+	 * @return The list of usernames who sent a friend request
+	 */
 	public List<String> getFriendRequests() {
 		if (getData(new GetFriendRequestsMessage(player.getUsername())) instanceof FriendRequestsMessage msg)
 			return msg.getRequests();
 		return List.of();
 	}
 
+	/**
+	 * Returns the current player's username.
+	 *
+	 * @return The player's username
+	 */
 	public String getPlayerName() {
 		return player.getUsername();
 	}
 
+	/**
+	 * Accepts a friend request from the given player.
+	 *
+	 * @param sender The username of the player who sent the request
+	 * @return True if the acceptance was acknowledged by the server
+	 */
 	public boolean acceptFriendRequest(String sender) {
 		return postData(new AcceptFriendRequestMessage(player.getUsername(), sender));
 	}
 
+	/**
+	 * Declines a friend request from the given player.
+	 *
+	 * @param sender The username of the player who sent the request
+	 * @return True if the decline was acknowledged by the server
+	 */
 	public boolean declineFriendRequest(String sender) {
 		return postData(new DeclineFriendRequestMessage(player.getUsername(), sender));
 	}
 
+	/**
+	 * Sends a chat message to the given player.
+	 *
+	 * @param receiver The username of the message recipient
+	 * @param content The content of the message
+	 */
 	public void sendChatMessage(String receiver, String content) {
 		postData(new SendChatMessageMessage(player.getUsername(), receiver, content));
 	}
 
+	/**
+	 * Returns the chat message history with the given friend.
+	 *
+	 * @param friend The username of the friend
+	 * @return The list of chat messages exchanged with that friend
+	 */
 	public List<ChatMessage> getChatMessages(String friend) {
 		if (getData(new GetChatMessagesMessage(player.getUsername(), friend)) instanceof ChatMessagesMessage msg)
 			return msg.getMessages();
 		return List.of();
 	}
 
+	/**
+	 * Returns the current player's friends list.
+	 *
+	 * @return The friends list
+	 */
 	public List<String> getFriendsList() {
 		if (getData(new GetFriendsListMessage(player.getUsername())) instanceof FriendsListMessage msg)
 			return msg.getFriends();
 		return List.of();
 	}
 
+	/**
+	 * Returns the leaderboard of the best players.
+	 *
+	 * @return The leaderboard map, or an empty map if unavailable
+	 */
 	public Map<String, Integer> getLeaderboardList() {
 		if (getData(new GetLeaderboardMessage()) instanceof LeaderboardMessage msg)
 			return msg.getLeaderboard();
@@ -304,29 +391,38 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 
 	// Register Controller :
 
-
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean onSignUp(PlayerRegisterDTO playerDTO) {
 		return this.signUp(playerDTO);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean onLogin(PlayerRegisterDTO playerRegisterDTO) {
 		return this.logIn(playerRegisterDTO);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void showModeWindow() throws ViewLoadException {
 		this.modeController.show();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public PlayerDTO onGetPlayer(String userName) {
 		this.player = this.getPlayer(userName);
 		return this.player;
 	}
-
-
 
 	// Mode Controller Listener :
 
@@ -370,6 +466,9 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 
 	// Game Mode Controller :
 
+	/**
+	 * Switches to the create team window.
+	 */
 	private void switchToCreateTeamWindow() {
 		this.teamController = new TeamController(this);
 		try {
@@ -413,15 +512,21 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean isTowerSaved() {
 		Serializable message = getData(new GetTowerSavedInfoMessage());
 		if (message instanceof TowerSavedInfoMessage towerInfoMessage){
 			return towerInfoMessage.isTowerSaved();
-		} 
+		}
 		return false;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onReturnToModeWindow() {
 		switchToModeWindow();
@@ -432,7 +537,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	/**
 	 * Returns the list of all the Bugemon species.
 	 *
-	 * @return A list of BugemonSpeciesDTO with all the species in the game's data
+	 * @return A list of all the species of Bugemon
 	 */
 	public List<BugemonSpeciesDTO> getAllSpecies(){
 		Serializable message = this.getData(new GetAllBugemonSpeciesMessage());
@@ -443,9 +548,9 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		return null;
 	}
 
-    /**
-     * Sends the player's team to the server and switches to the battle mode window
-     */
+	/**
+	 * Sends the player's team to the server and switches to the battle mode window.
+	 */
 	public void setupTeamAndShowModeMenu() {
 		List<BugemonDTO> team = player.getTeam();
 
@@ -462,9 +567,9 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	}
 
 	/**
-	 * Confirms the team for a multiplayer battle and starts waiting for the battle to start.
+	 * Confirms the team for a multiplayer battle and waits for the battle to start.
 	 *
-	 * @param opponent The view's player's opponent
+	 * @param opponent The opponent
 	 */
 	public void confirmTeamMulti(PlayerDTO opponent) {
 		this.postData(new ConfirmTeamMultiMessage(opponent, this.getPlayer().getTeam()));
@@ -475,9 +580,9 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	}
 
 	/**
-	 * Function called in a loop while waiting for the opponent to pick his team.
+	 * Called in a loop while waiting for the opponent to pick his team.
 	 *
-	 * @param opponent This view's player's opponent
+	 * @param opponent The opponent
 	 */
 	private void waitForOpponentTeam(PlayerDTO opponent) {
 		PlayerDTO self = this.getPlayer();
@@ -499,7 +604,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	}
 
 	/**
-	 * Starts a multiplayer battle. To be called once both teams have been picked.
+	 * Starts a battle once both teams have been picked.
 	 *
 	 * @param opponent The opponent
 	 */
@@ -512,7 +617,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	}
 
 	/**
-	 * Shows the Load team panel when the load a team button is clicked in create team window
+	 * Shows the load team panel when the load a team button is clicked.
 	 */
 	public void loadTeam() {
 		LoadTeamPanelController loadTeamPanelController = new LoadTeamPanelController(stage, this);
@@ -524,9 +629,9 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	}
 
 	/**
-	 * Returns the player's saved teams from the database
+	 * Returns the player's saved teams from the database.
 	 *
-	 * @return the player's saved teams
+	 * @return The player's saved teams
 	 */
 	@Override
 	public List<TeamDTO> getSavedTeams() {
@@ -539,8 +644,9 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	}
 
 	/**
-	 * Saves the team to the database
-	 * @param teamDTO the DTO of the team to be saved
+	 * Saves the team to the database.
+	 *
+	 * @param teamDTO The DTO of the team to be saved
 	 */
 	public void saveTeam(TeamDTO teamDTO) {
 		boolean success = postData(new SaveTeamMessage(teamDTO));
@@ -550,8 +656,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	}
 
 	/**
-	 * Loads the selected team from the load team panel
-	 * @param selectedTeam the selected team
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void onTeamLoaded(TeamDTO selectedTeam) {
@@ -561,6 +666,9 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 
 	// Confirm Team Controller
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onConfirm() {
 		switch (this.gameMode) {
@@ -590,7 +698,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		switchToModeWindow();
 	}
 
-	// Battle Mode Controller Listener : 
+	// Battle Mode Controller Listener :
 
 	/**
 	 * Shows the mode window.
@@ -603,6 +711,9 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		}
 	}
 
+	/**
+	 * Switches to the game mode selection window.
+	 */
 	public void switchToGameModeWindow() {
 		if (this.gameModeController == null) {
 			this.gameModeController = new GameModeController(stage, this);
@@ -615,7 +726,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	}
 
 	/**
-	 * Shows the next room window.
+	 * Switches to the next room window.
 	 */
 	private void switchToNextRoomWindow(){
 		this.nextRoomController = new NextRoomController(stage, this);
@@ -627,7 +738,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	}
 
 	/**
-	 * Shows the battle window using current mode context.
+	 * Switches to the battle window according to game mode (and tower floor and room number if Tower mode)
 	 */
 	private void switchToBattleWindow() {
 		int towerFloorNumber = 0, towerRoomNumber = 0;
@@ -654,6 +765,9 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		}
 	}
 
+	/**
+	 * Switches to the floor window and creates the controller if needed.
+	 */
 	private void switchToFloorWindow(){
 		if (this.floorController == null) {
 			this.floorController = new FloorController(this.stage, this);
@@ -667,7 +781,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	}
 
 	/**
-	 * Shows the battle end window with current result payload.
+	 * Switches to the battle end window with battle result.
 	 */
 	private void switchToBattleEndWindow(){
 		Serializable message = getData(new GetBattleEndInfoMessage());
@@ -689,7 +803,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	}
 
 	/**
-	 * Shows the level-up window.
+	 * Switches to the level-up window.
 	 */
 	private void switchToLevelUpWindow(){
 		Serializable message = getData(new GetLevelUpInfoMessage());
@@ -708,7 +822,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	}
 
 	/**
-	 * Shows the tower reward window.
+	 * Switches to the tower reward window.
 	 */
 	private void switchToTowerRewardWindow(){
 		this.floorRewardController = new FloorRewardController(stage, this);
@@ -720,7 +834,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	}
 
 	/**
-	 * Routes to the next window according to server-provided flow state.
+	 * Switches to the next window according to info gotten from the server.
 	 */
 	public void nextRoom(){
 		WindowType nextWindow = this.getWindowType();
@@ -733,15 +847,15 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 			case GAME:
 				switchToBattleWindow();
 				break;
-			
+
 			case LEVEL_UP:
 				switchToLevelUpWindow();
 				break;
-			
+
 			case REWARD:
 				switchToTowerRewardWindow();
 				break;
-			
+
 			case MAIN_MENU:
 				switchToBattleEndWindow();
 				break;
@@ -753,10 +867,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 			default:
 				break;
 		}
-		
 	}
-
-
 
 	/**
 	 * {@inheritDoc}
@@ -770,18 +881,17 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		}
 	}
 
-	// Battle Window Controller Listener : 
+	// Battle Window Controller Listener :
 
 	/**
-	 * Updates the inventory of the player.
-	 * @param userName the userName of the player used to confirm the player identity on the server side
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void updatePlayerInventory(String userName){
 		Serializable message = getData(new GetPlayerInventoryMessage(userName));
 		if (message instanceof PlayerInventoryMessage playerInventory){
 			this.player.setInventory(playerInventory.getInventory());
-			
+
 		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
 			System.err.println(errorMessage.getMessage());
 		}
@@ -797,7 +907,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		}
 		nextRoom();
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -806,7 +916,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		Serializable message = getData(new GetActiveBugemonsMessage());
 		if (message instanceof ActiveBugemonsMessage activeBugemons){
 			return List.of(activeBugemons.getSelfActiveBugemon(), activeBugemons.getOpponentActiveBugemon());
-			
+
 		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
 			System.err.println(errorMessage.getMessage());
 		}
@@ -871,7 +981,6 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 			System.err.println(errorMessage.getMessage());
 		}
 		return null;
-
 	}
 
 	/**
@@ -993,13 +1102,12 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	 */
 	@Override
 	public List<RewardDTO> getLevelUpRewards() {
-
 		Serializable message = getData(new GetLevelUpInfoMessage());
 		List<RewardDTO> rewards = null;
 
 		if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
 			System.err.println(errorMessage.getMessage());
-			
+
 		} else if (message instanceof LevelUpInfoMessage levelUpInfo){
 			rewards = levelUpInfo.getRewards();
 		}
@@ -1016,7 +1124,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		}
 	}
 
-	// Next Room Listener 
+	// Next Room Listener
 
 	/**
 	 * {@inheritDoc}
@@ -1083,7 +1191,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		Serializable message = getData(new GetRandomAbilityMessage(bugemon));
 		if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
 			System.err.println(errorMessage.getMessage());
-			return; 
+			return;
 
 		}else if (message instanceof RandomAbilityMessage randomAbility){
 			newAbility = randomAbility.getAbility();
@@ -1141,9 +1249,11 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		return null;
 	}
 
-    /**
-     * @return the list of the ids of the cleared rooms in the current floor
-     */
+	/**
+	 * Returns the list of ids of the cleared rooms in the current floor.
+	 *
+	 * @return The list of cleared room ids
+	 */
 	@Override
 	public List<Integer> getClearedRooms() {
 		if (getData(new GetTowerInfoMessage()) instanceof TowerInfoMessage towerInfo){
@@ -1164,10 +1274,10 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		}
 	}
 
-    /**
+	/**
 	 * {@inheritDoc}
 	 */
-    @Override
+	@Override
 	public void onReturnToChooseBugemon() {
 		if (chooseBugemonController == null) {
 			return;
@@ -1181,29 +1291,38 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 
 	// FloorController
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean onRoomSelected(int roomId) {
-        return postData(new ChooseTowerRoomMessage(roomId));
-    }
+		return postData(new ChooseTowerRoomMessage(roomId));
+	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onRoomSelectionComplete() {
 		nextRoom();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-    public void onReturnToGameModeWindow() {
+	public void onReturnToGameModeWindow() {
 		switchToGameModeWindow();
-    }
+	}
 
-    // Miscellaneous
+	// Miscellaneous
 
 	/**
 	 * Opens a waiting window.
 	 *
-	 * @param waitCycle The function to play in loop in the waiting window
+	 * @param waitCycle The event handler to play in a loop
 	 */
-    public void openWaitWindow(EventHandler waitCycle) {
+	public void openWaitWindow(EventHandler waitCycle) {
 		this.closeSocialPanel();
 
 		this.waitWindowController = new WaitWindowController(this, waitCycle);
@@ -1215,7 +1334,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
     }
 
 	/**
-	 * Stops the main loop of a waiting window. To call before closing it.
+	 * Stops the main loop of the waiting window.
 	 */
 	public void stopWaitWindow() {
 		this.waitWindowController.stop();

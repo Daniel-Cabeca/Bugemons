@@ -1,5 +1,4 @@
 package ulb.controller;
-
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -15,13 +14,18 @@ import ulb.view.windows.ChooseBugemonWindow;
  * Controller for selecting a bugemon for a reward action.
  */
 public class ChooseBugemonController implements ChooseBugemonWindow.ViewListener {
-
     private final Listener listener;
     private final Stage stage;
     private final PlayerDTO player;
-
     private ChooseBugemonWindow view;
 
+    /**
+     * Creates the choose bugemon controller.
+     *
+     * @param stage The application stage
+     * @param listener The listener notified of user actions
+     * @param player The current player data
+     */
     public ChooseBugemonController(Stage stage, Listener listener, PlayerDTO player) {
         this.stage = stage;
         this.listener = listener;
@@ -36,7 +40,6 @@ public class ChooseBugemonController implements ChooseBugemonWindow.ViewListener
         view = loader.getController();
         view.setViewListener(this);
         view.populatePlayerBugemons(player.getTeam());
-
         Parent root = loader.getRoot();
         if (stage.getScene() == null) {
             stage.setScene(new Scene(root));
@@ -47,9 +50,7 @@ public class ChooseBugemonController implements ChooseBugemonWindow.ViewListener
     }
 
     /**
-     * Handles bugemon selection.
-     *
-     * @param bugemon The chosen bugemon
+     * {@inheritDoc}
      */
     @Override
     public void onBugemonChosen(BugemonDTO bugemon) {
@@ -57,7 +58,7 @@ public class ChooseBugemonController implements ChooseBugemonWindow.ViewListener
     }
 
     /**
-     * Handles returning to the floor reward window.
+     * {@inheritDoc}
      */
     @Override
     public void onReturnFloorRewardWindow() {
@@ -67,8 +68,10 @@ public class ChooseBugemonController implements ChooseBugemonWindow.ViewListener
     /**
      * Listener for choose bugemon actions.
      */
-	public interface Listener {
-		void onBugemonChosen(BugemonDTO bugemon);
-		void onReturnFloorRewardWindow();
+    public interface Listener {
+        /** Handles the selection of a bugemon as a reward. */
+        void onBugemonChosen(BugemonDTO bugemon);
+        /** Handles returning to the floor reward window. */
+        void onReturnFloorRewardWindow();
     }
 }

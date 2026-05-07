@@ -11,17 +11,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * View for the tower floor navigation window.
+ */
 public class FloorWindow {
     public ViewListener viewListener;
+
+    /**
+     * Sets the listener to be notified of floor navigation events.
+     *
+     * @param viewlistener The view listener to register
+     */
     public void setViewListener(ViewListener viewlistener){
         this.viewListener = viewlistener;
     }
 
     /**
-     * Links the room button with its coordinated in the grid
-     * @param button the button representing the room
-     * @param col the GridPane column index for this room
-     * @param row the GridPane row index for this room
+     * Links the room button with its coordinates in the grid.
+     *
+     * @param button The button representing the room
+     * @param col The GridPane column index
+     * @param row The GridPane row index
      */
     private record RoomUI(Button button, int col, int row) {}
 
@@ -48,13 +58,13 @@ public class FloorWindow {
     Button bonusB;
     @FXML
     Button start;
-	@FXML
-	Button returnFloorWindow;
+    @FXML
+    Button returnFloorWindow;
     @FXML
     ImageView playerSprite;
 
     /**
-     * Maps the room id to the RoomUI object 
+     * Maps each room id to its corresponding RoomUI object.
      */
     public void setupRoomsMap() {
         rooms.put(1, new RoomUI(bonusA, 0, 2));
@@ -66,51 +76,86 @@ public class FloorWindow {
         rooms.put(7, new RoomUI(boss, 3, 1));
     }
 
+    /**
+     * Handles the boss room button click.
+     */
     @FXML
     private void onBoss(){
         this.viewListener.onBoss();
     }
+
+    /**
+     * Handles the battle A1 room button click.
+     */
     @FXML
     private void onBattleA1(){
         this.viewListener.onBattleA1();
     }
+
+    /**
+     * Handles the battle A2 room button click.
+     */
     @FXML
     private void onBattleA2(){
         this.viewListener.onBattleA2();
     }
+
+    /**
+     * Handles the battle B room button click.
+     */
     @FXML
     private void onBattleB(){
         this.viewListener.onBattleB();
     }
+
+    /**
+     * Handles the bonus A room button click.
+     */
     @FXML
     private void onBonusA(){
         this.viewListener.onBonusA();
     }
+
+    /**
+     * Handles the bonus B room button click.
+     */
     @FXML
     private void onBonusB(){
         this.viewListener.onBonusB();
     }
+
+    /**
+     * Handles the start room button click.
+     */
     @FXML
     private void onStart(){
         this.viewListener.onStart();
     }
-	@FXML
+
+    /**
+     * Handles the return button click.
+     */
+    @FXML
     private void onReturnFloorWindow(){
         this.viewListener.onReturnFloorWindow();
     }
 
-	public void setFloorNumber(int floorNumber) {
+    /**
+     * Sets the floor label to show the current floor number.
+     *
+     * @param floorNumber The current floor number
+     */
+    public void setFloorNumber(int floorNumber) {
         floor.setText("Étage : NO" + floorNumber);
     }
 
     /**
-     * Gives the direction to take based on the current coordinates of the player
-     * and the coordinates of the room he wants to go to.
-     * @param currentCol collum part of the current coordinates of the player
-     * @param currentRow row part of the current coordinates of the player
-     * @param futureCol collum part of the coordinates of the destination room
-     * @param futureRow row part of the coordinates of the destination room
-     * @return the direction that needs to be taken to get to the right destination
+     * Returns the direction to take based on the current coordinates of the player
+     * and the coordinates of the room they want to go to.
+     *
+     * @param futureCol Column index of the destination room
+     * @param futureRow Row index of the destination room
+     * @return The direction to take
      */
     public Direction directionToTargetRoom(int futureCol, int futureRow) {
         Integer col = GridPane.getColumnIndex(playerSprite);
@@ -127,21 +172,21 @@ public class FloorWindow {
         }
         else {
             return Direction.VERTICAL;
-        }   
+        }
     }
 
     /**
-     * Makes a horizontal translation animation based on the given direction.
-     * @param direction the way the translation has to move, right/left
-     * @param onFinished to allow the animation to fully take place without being interrupted
+     * Plays a horizontal translation animation toward the target room.
+     *
+     * @param direction The horizontal direction of the translation
+     * @param targetRoom The destination room UI
+     * @param onFinished (@code true) if animation finished, (@code false) if it didn't
      */
-    public void playHorizontalTranslationAnimation(Direction direction, RoomUI targetRoom, Runnable onFinished ) {
+    public void playHorizontalTranslationAnimation(Direction direction, RoomUI targetRoom, Runnable onFinished) {
         TranslateTransition moveAnimation = new TranslateTransition(javafx.util.Duration.seconds(0.5), playerSprite);
 
         double currentX = playerSprite.localToScene(0, 0).getX();
-
         double targetX = targetRoom.button().localToScene(0, 0).getX() + 40;
-
         double deltaX = targetX - currentX;
 
         moveAnimation.setByX(deltaX);
@@ -159,17 +204,17 @@ public class FloorWindow {
     }
 
     /**
-     * Makes a vertical translation animation based on the given direction.
-     * @param direction the way the translation has to move, up/down
-     * @param onFinished to allow the animation to fully take place without being interrupted
+     * Plays a vertical translation animation toward the target room.
+     *
+     * @param direction The vertical direction of the translation
+     * @param targetRoom The destination room UI
+     * @param onFinished (@code true) if animation finished, (@code false) if it didn't
      */
     public void playVerticalTranslationAnimation(Direction direction, RoomUI targetRoom, Runnable onFinished) {
         TranslateTransition moveAnimation = new TranslateTransition(javafx.util.Duration.seconds(0.5), playerSprite);
 
         double currentY = playerSprite.localToScene(0, 0).getY();
-
         double targetY = targetRoom.button().localToScene(0,0).getY() - 85;
-
         double deltaY = targetY - currentY;
 
         moveAnimation.setByY(deltaY);
@@ -187,9 +232,11 @@ public class FloorWindow {
     }
 
     /**
-     * Decides which type of translation to do based on the given direction.
-     * @param direction the direction of the translation right/left/up/down
-     * @param onFinished to allow the animation to fully take place without being interrupted
+     * Plays the correct translation animation based on the given direction.
+     *
+     * @param direction The direction of the translation
+     * @param targetRoom The destination room UI
+     * @param onFinished (@code true) if animation finished, (@code false) if it didn't
      */
     public void playTranslationAnimation(Direction direction, RoomUI targetRoom, Runnable onFinished) {
         if (direction == Direction.HORIZONTAL) {
@@ -201,9 +248,10 @@ public class FloorWindow {
     }
 
     /**
-     * Initiates the animation to the given target room.
-     * @param targetRoomId the destination room
-     * @param onFinished to allow the animation to fully take place without being interrupted
+     * Initiates the animation toward the target room.
+     *
+     * @param targetRoomId The id of the target room
+     * @param onFinished (@code true) if animation finished, (@code false) if it didn't
      */
     public void translationAnimationHandler(int targetRoomId, Runnable onFinished) {
         RoomUI roomUI = rooms.get(targetRoomId);
@@ -212,9 +260,9 @@ public class FloorWindow {
     }
 
     /**
-     * Makes the visited room buttons gray
+     * Marks the visited room buttons.
      *
-     * @param visitedRooms set containing the ids of the visited rooms
+     * @param visitedRooms The list of visited rooms
      */
     public void markVisitedRooms(List<Integer> visitedRooms) {
         String visitedRoomStyle = "-fx-background-color: #c0c0c0; -fx-font-size: 24px";
@@ -227,9 +275,9 @@ public class FloorWindow {
     }
 
     /**
-     * Updates the player's sprite position to the correct cell based on the current room id.
+     * Updates the player's sprite position based on the current room.
      *
-     * @param roomId the id of the current room
+     * @param roomId The id of the current room
      */
     public void updatePlayerPosition(int roomId) {
         RoomUI roomUI = rooms.get(roomId);
@@ -239,10 +287,10 @@ public class FloorWindow {
     }
 
     /**
-     * Sets the location of the player icon to a specific cell.
+     * Sets the location of the player icon.
      *
-     * @param col the column of the cell
-     * @param row the row of the cell
+     * @param col The column
+     * @param row The row
      */
     private void setIconLocation(int col, int row) {
         GridPane.setColumnIndex(playerSprite, col);
@@ -253,15 +301,25 @@ public class FloorWindow {
         playerSprite.toFront();
     }
 
+    /**
+     * Listener for floor navigation view events.
+     */
     public interface ViewListener{
+        /** Handles the boss room being selected. */
         void onBoss();
+        /** Handles the battle A1 room being selected. */
         void onBattleA1();
+        /** Handles the battle A2 room being selected. */
         void onBattleA2();
+        /** Handles the battle B room being selected. */
         void onBattleB();
+        /** Handles the bonus A room being selected. */
         void onBonusA();
+        /** Handles the bonus B room being selected. */
         void onBonusB();
+        /** Handles the start room being selected. */
         void onStart();
-		void onReturnFloorWindow();
+        /** Handles the return button being pressed. */
+        void onReturnFloorWindow();
     }
-
 }

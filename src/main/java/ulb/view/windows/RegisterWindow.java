@@ -47,7 +47,7 @@ public class RegisterWindow extends Window {
 
     /**
      * Displays an error message in the UI.
-     * @param String the error that needs to be shown.
+     * @param error the error that needs to be shown.
      */
     public void setErrorLabel(String error) {
         errorLabel.setText(error);
@@ -66,7 +66,7 @@ public class RegisterWindow extends Window {
             return;
         }
 
-        viewListener.onLogin(username, password);
+        this.viewListener.onLogin(username, password);
     }
 
     public interface ViewListener {

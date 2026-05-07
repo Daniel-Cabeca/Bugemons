@@ -1,5 +1,4 @@
 package ulb.controller;
-
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -14,10 +13,8 @@ import ulb.view.windows.AttackReplacementWindow;
  * Controller handling the attack replacement flow after learning a new ability.
  */
 public class AttackReplacementController implements AttackReplacementWindow.ViewListener {
-
     private final Stage stage;
     private final Listener listener;
-
     private AttackReplacementWindow view;
     private BugemonDTO currentBugemon;
     private AbilityDTO currentNewAbility;
@@ -33,15 +30,19 @@ public class AttackReplacementController implements AttackReplacementWindow.View
         this.listener = listener;
     }
 
+    /**
+     * Displays the attack replacement screen for the given bugemon and new ability.
+     *
+     * @param bugemon The bugemon learning a new ability
+     * @param newAbility The new ability to be learned
+     */
     public void show(BugemonDTO bugemon, AbilityDTO newAbility) {
         currentBugemon = bugemon;
         currentNewAbility = newAbility;
-
         FXMLLoader loader = FxmlLoader.load(this, WindowPath.ATTACK_REPLACEMENT);
         view = loader.getController();
         view.setViewListener(this);
         view.initializeReplacement(bugemon, newAbility);
-
         Parent root = loader.getRoot();
         if (stage.getScene() == null) {
             stage.setScene(new Scene(root));
@@ -52,9 +53,7 @@ public class AttackReplacementController implements AttackReplacementWindow.View
     }
 
     /**
-     * Handles the selection of the ability to replace.
-     *
-     * @param oldAbility The ability chosen for replacement
+     * {@inheritDoc}
      */
     @Override
     public void onReplaceAbility(AbilityDTO oldAbility) {
@@ -62,7 +61,7 @@ public class AttackReplacementController implements AttackReplacementWindow.View
     }
 
     /**
-     * Handles returning to the choose bugemon screen.
+     * {@inheritDoc}
      */
     @Override
     public void onReturnToChooseBugemon() {
@@ -73,7 +72,9 @@ public class AttackReplacementController implements AttackReplacementWindow.View
      * Listener for attack replacement events.
      */
     public interface Listener {
+        /** Handles the replacement of an old ability by a new one for a given bugemon. */
         void onAttackReplaced(BugemonDTO bugemon, AbilityDTO newAbility, AbilityDTO oldAbility);
+        /** Handles returning to the choose bugemon screen. */
         void onReturnToChooseBugemon();
     }
 }

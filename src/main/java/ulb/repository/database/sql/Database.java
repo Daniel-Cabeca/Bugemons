@@ -29,7 +29,11 @@ public abstract class Database {
 	 */
 	static Connection connect(String url) {
 		try {
-			return DriverManager.getConnection(url);
+			Connection connection =  DriverManager.getConnection(url);
+			try (Statement stmt = connection.createStatement()) {
+    			stmt.execute("PRAGMA foreign_keys = ON"); // activate the foreign key constraint
+			}
+			return connection;
 		} catch (SQLException e) {
 			throw new LoadException("Failed to connect to database '"+ url +"': "+ e.getMessage());
 		}

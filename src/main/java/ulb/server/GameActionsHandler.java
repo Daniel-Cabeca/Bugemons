@@ -84,7 +84,7 @@ public class GameActionsHandler extends Thread{
 		Item item = ItemMapper.toEntity(message.getItem());
 		player.getInventory().addItem(item, 1);
 
-		inventoryService.insertItem(item, 1, player.getUsername());
+		inventoryService.insertItem(item, 1, player);
 
 		towerManager.setCurrentRoomCompleted(true);
 
@@ -245,7 +245,7 @@ public class GameActionsHandler extends Thread{
 
 		Item item = ItemMapper.toEntity(message.getItem());
 		battle.chooseAction(new UseItem(item), teamLabel);
-		inventoryService.deleteItem(item, 1, player.getUsername());
+		inventoryService.deleteItem(item, 1, player);
 		clientHandler.sendSuccessMessage();
 	}
 }

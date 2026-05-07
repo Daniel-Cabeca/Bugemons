@@ -36,15 +36,15 @@ public class InventoryDatabaseRepository implements InventoryRepository {
      * {@inheritDoc}
      */
     @Override
-    public void insertItem(Item item, int quantity, String username) throws LoadException {
+    public void insertItem(Item item, int quantity, int userId) throws LoadException {
         String sql = """
                     INSERT INTO inventory (user_id, item_id, quantity)
-                    VALUES ((SELECT id FROM users WHERE username = ?), ?, ?)
+                    VALUES (?, ?, ?)
                     ON CONFLICT(user_id, item_id)
                     DO UPDATE SET quantity = quantity + excluded.quantity
                 """;
         try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
-            stmt.setString(1, username);
+            stmt.setInt(1, userId);
             stmt.setString(2, item.getId());
             stmt.setInt(3, quantity);
             stmt.executeUpdate();
@@ -57,10 +57,10 @@ public class InventoryDatabaseRepository implements InventoryRepository {
      * {@inheritDoc}
      */
     @Override
-    public void insertInventory(Inventory inventory, String username) throws LoadException {
+    public void insertInventory(Inventory inventory, int userId) throws LoadException {
         for (Item item : inventory.getItems().keySet()) {
             int quantity = inventory.getQuantity(item);
-            this.insertItem(item, quantity, username);
+            this.insertItem(item, quantity, userId);
         }
     }
 
@@ -68,16 +68,16 @@ public class InventoryDatabaseRepository implements InventoryRepository {
      * {@inheritDoc}
      */
     @Override 
-    public void deleteItem(Item item, int quantity, String username) throws LoadException {
+    public void deleteItem(Item item, int quantity, int userId) throws LoadException {
         String sql1 = """
                 UPDATE inventory
                 SET quantity = quantity - ?
-                WHERE user_id = (SELECT id FROM users WHERE username = ?) 
+                WHERE user_id = ? 
                 AND item_id = ?
                 """;
         try (PreparedStatement stmt = this.database.prepareStatement(sql1)) {
             stmt.setInt(1, quantity);
-            stmt.setString(2, username);
+            stmt.setInt(2, userId);
             stmt.setString(3, item.getId());
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -87,10 +87,10 @@ public class InventoryDatabaseRepository implements InventoryRepository {
         String sql2 = """
                 DELETE FROM inventory
                 WHERE quantity <= 0
-                AND user_id = (SELECT id FROM users WHERE username = ?)
+                AND user_id = ?
                 """;
         try (PreparedStatement stmt = this.database.prepareStatement(sql2)) {
-            stmt.setString(1, username);
+            stmt.setInt(1, userId);
             stmt.executeUpdate();
         } catch (SQLException e) {
             throw new LoadException("Failed to clean inventory: " + e.getMessage());
@@ -102,22 +102,22 @@ public class InventoryDatabaseRepository implements InventoryRepository {
      * {@inheritDoc}
      */
     @Override
-    public void updateInventory(Inventory inventory, String username) throws LoadException {
+    public void updateInventory(Inventory inventory, int userId) throws LoadException {
         try {
             Connection conn = database.getConnection();
             conn.setAutoCommit(false);
 
             String sql = """
                     DELETE FROM inventory
-                    WHERE user_id = (SELECT id FROM users WHERE username = ?)
+                    WHERE user_id = ?
                     """;
 
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                stmt.setString(1, username);
+                stmt.setInt(1, userId);
                 stmt.executeUpdate();
             }
 
-            this.insertInventory(inventory, username);
+            this.insertInventory(inventory, userId);
 
             conn.commit();
             conn.setAutoCommit(true);
@@ -133,19 +133,18 @@ public class InventoryDatabaseRepository implements InventoryRepository {
      * {@inheritDoc}
      */
     @Override
-    public Inventory getInventory(String username) throws NoSuchElementException {
+    public Inventory getInventory(int userId) throws NoSuchElementException {
         Inventory inventory = new Inventory();
 
         String sql = """
                 SELECT i.id, inv.quantity
                 FROM items i
                 JOIN inventory inv ON i.id = inv.item_id
-                JOIN users u ON u.id = inv.user_id
-                WHERE u.username = ?
+                WHERE inv.user_id = ?
                 """;
 
         try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
-			stmt.setString(1, username);
+			stmt.setInt(1, userId);
 			ResultSet rs = stmt.executeQuery();
 
 			while (rs.next()) {
@@ -156,7 +155,7 @@ public class InventoryDatabaseRepository implements InventoryRepository {
 				inventory.addItem(item, quantity);
 			}
 		} catch (SQLException e) {
-			LOGGER.log(Level.WARNING, "Failed to load inventory for user: " + username, e);
+			LOGGER.log(Level.WARNING, "Failed to load inventory for user with id: " + userId, e);
 		}
 
         return inventory;

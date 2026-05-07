@@ -26,58 +26,64 @@ public class TeamService {
 
     /**
      * Saves a new team
-     * @param username the name of the user who saves the team
+     * @param player the user who saves the team
      * @param team the team to be saved
      * @throws LoadException if the saving fails
      */
-    public void insertTeam(String username, Team team) throws LoadException {
+    public void insertTeam(Player player, Team team) throws LoadException {
+		int userId = player.getUserId();
 		for (Bugemon b : team.getMembers()) {
-			insertUserBugemon(b, username);
+			insertUserBugemon(b, player);
 		}
-        repository.insertTeam(username, team, false);
+        repository.insertTeam(userId, team, false);
 		insertAllBugemonsInTeam(team);
     }
 
 	/**
      * Saves a new team as the team used for the tower
-     * @param username the name of the user who saves the team
-     * @param team the team to be saved
+     * @param player the user who saves the team
      * @throws LoadException if the saving fails
      */
-    public void insertTowerTeam(String username, Team team) throws LoadException {
-		if (repository.hasTowerTeam(username)){
+    public void insertTowerTeam(Player player) throws LoadException {
+		int userId = player.getUserId();
+		Team team = player.getTeam();
+		if (repository.hasTowerTeam(userId)){
 			for (Bugemon b : team.getMembers()) {
-				updateUserBugemon(b, username);
+				updateUserBugemon(b, player);
 			}
-			repository.updateTowerTeam(username, team);
+			repository.updateTowerTeam(userId, team);
 		} else {
 			for (Bugemon b : team.getMembers()) {
-				insertUserBugemon(b, username);
+				insertUserBugemon(b, player);
 			}
-        	repository.insertTeam(username, team, true);
+        	repository.insertTeam(userId, team, true);
 			insertAllBugemonsInTeam(team);
 		}
     }
 
+	/**
+     * deletes the team used for the tower
+     * @param player the user whose team is deleted
+     * @throws LoadException if the deleting fails
+     */
 	public void deleteTowerTeam(Player player) throws LoadException {
-		String username = player.getUsername();
+		int userId = player.getUserId();
 
-		if (repository.hasTowerTeam(username)){
-			Team team = getTowerTeam(username);
+		if (repository.hasTowerTeam(userId)){
+			Team team = getTowerTeam(player);
 
 			for (Bugemon b : team.getMembers()) {
-				repository.deleteUserBugemon(b, username);
+				repository.deleteUserBugemon(b, userId);
 				repository.deleteBugemonInTeam(b, team.getId());
 			}
 
-			repository.deleteTowerTeam(username);
+			repository.deleteTowerTeam(userId);
 		}
 	}
 
     /**
      * Saves all the bugemons in the team
      * @param team the team containing the bugemons to be saved
-     * @param teamId the id of the team
      * @throws LoadException if the saving fails
      */
     public void insertAllBugemonsInTeam(Team team) throws LoadException {
@@ -90,26 +96,35 @@ public class TeamService {
      * Checks if a team with the same name for the same user already exists in the database
      *
      * @param teamName the name of the team
-     * @param username the name of the user
+     * @param player the user
      * @return true if a team with the same name already exists, false otherwise
      * @throws LoadException if the operation fails
      */
-    public boolean teamExists(String teamName, String username) throws LoadException {
-        return repository.teamExists(teamName, username);
+    public boolean teamExists(String teamName, Player player) throws LoadException {
+		int userId = player.getUserId();
+        return repository.teamExists(teamName, userId);
     }
 
     /**
      * Inserts a user-specific bugemon in the database
      *
      * @param bugemon the bugemon to insert
-     * @param username the user's name
+     * @param player the user
      */
-	public void insertUserBugemon(Bugemon bugemon, String username){
-		repository.insertUserBugemon(bugemon, username);
+	public void insertUserBugemon(Bugemon bugemon, Player player){
+		int userId = player.getUserId();
+		repository.insertUserBugemon(bugemon, userId);
 	}
 
-	public void updateUserBugemon(Bugemon bugemon, String username){
-		repository.updateUserBugemon(bugemon, username);
+	/**
+     * Updates a user-specific bugemon in the database
+     *
+     * @param bugemon the bugemon to insert
+     * @param player the user
+     */
+	public void updateUserBugemon(Bugemon bugemon, Player player){
+		int userId = player.getUserId();
+		repository.updateUserBugemon(bugemon, userId);
 	}
 
     /**
@@ -118,11 +133,18 @@ public class TeamService {
      * @param username the user's name
      * @return the list of the user's saved teams
      */
-	public List<Team> getAllTeams(String username) {
-		return repository.findAll(username);
+	public List<Team> getAllTeams(Player player) {
+		int userId = player.getUserId();
+		return repository.findAll(userId);
 	}
 
-	public Team getTowerTeam(String username){
-		return repository.getTowerTeam(username);
+	/**
+	 * Get the team saved as the tower team for a player
+	 * @param player the user
+	 * @return the team saved
+	 */
+	public Team getTowerTeam(Player player){
+		int userId = player.getUserId();
+		return repository.getTowerTeam(userId);
 	}
 }

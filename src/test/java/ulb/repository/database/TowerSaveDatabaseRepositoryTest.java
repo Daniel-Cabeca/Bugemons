@@ -18,10 +18,12 @@ public class TowerSaveDatabaseRepositoryTest {
 	private Team insertUserAndTeam(DatabaseInMemory database, String username, String teamName) {
         AccountDatabaseRepository accountRepository = new AccountDatabaseRepository(database);
         accountRepository.register(username, "password");
+		int userId = accountRepository.getUserId(username);
+
 		TeamDatabaseRepository teamRepository = new TeamDatabaseRepository(database);
 		Team team = new Team();
 		team.setTeamName(teamName);
-		teamRepository.insertTeam(username, team, true);
+		teamRepository.insertTeam(userId, team, true);
 		return team;
     }
 

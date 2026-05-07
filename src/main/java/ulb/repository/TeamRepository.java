@@ -10,17 +10,35 @@ import java.util.NoSuchElementException;
 public interface TeamRepository {
 
     /**
-     * Saves the team in the database
+     * Saves the team of a user in the database
+	 * @param userId the user 
+     * @param team the team to be saved
+	 * @param isTowerTeam tells if the team saved is the tower team of the user
+     * @throws LoadException if the operation fails
+     */
+    void insertTeam(int userId, Team team, boolean isTowerTeam) throws LoadException;
+
+	/**
+     * Updates the team of a user in the database
+	 * @param userId the user
      * @param team the team to be saved
      * @throws LoadException if the operation fails
      */
-    void insertTeam(String username, Team team, boolean isTowerTeam) throws LoadException;
+	void updateTowerTeam(int userId, Team team);
 
-	void updateTowerTeam(String username, Team team);
+	/**
+     * Delete the tower team of a user in the database
+	 * @param userId the user
+     * @throws LoadException if the operation fails
+     */
+	void deleteTowerTeam(int userId);
 
-	void deleteTowerTeam(String username);
-
-	boolean hasTowerTeam(String username);
+	/**
+	 * Tells if a tower team is saved for a user
+	 * @param userId the user
+	 * @return a boolean depending on if a tower team is saved
+	 */
+	boolean hasTowerTeam(int userId);
 
     /**
      * Inserts a bugemon in the team into the database
@@ -30,30 +48,50 @@ public interface TeamRepository {
      */
     void insertBugemonInTeam(Bugemon bugemon, int teamId) throws LoadException;
 
+	/**
+     * delete a bugemon in the team from the database
+     * @param bugemon the bugemon to be deleted
+     * @param teamId the id of the team
+     * @throws LoadException if the operation fails
+     */
 	void deleteBugemonInTeam(Bugemon bugemon, int teamId) throws LoadException;
 
     /**
      * Checks if the user already has a team with the same name
      *
      * @param teamName the name of the team
-     * @param username the name of the user
+     * @param userId the id of the user
      * @return true if the team name already exists, false otherwise
      * @throws LoadException if the operation fails
      */
-    boolean teamExists(String teamName, String username) throws LoadException;
+    boolean teamExists(String teamName, int userId) throws LoadException;
 
     /**
      * Inserts a bugemon into the bugemons table
      *
      * @param bugemon the bugemon to insert
-     * @param username the name of the user who has the bugemon
+     * @param userId the id of the user who has the bugemon
      * @throws LoadException if the operation fails
      */
-	void insertUserBugemon(Bugemon bugemon, String username) throws LoadException;
+	void insertUserBugemon(Bugemon bugemon, int userId) throws LoadException;
 
-	void updateUserBugemon(Bugemon bugemon, String username) throws LoadException;
+	/**
+     * Updates a bugemon into the bugemons table
+     *
+     * @param bugemon the bugemon to update
+     * @param userId the id of the user who has the bugemon
+     * @throws LoadException if the operation fails
+     */
+	void updateUserBugemon(Bugemon bugemon, int userId) throws LoadException;
 	
-	void deleteUserBugemon(Bugemon bugemon, String username) throws LoadException;
+	/**
+     * Deletes a bugemon from the bugemons table
+     *
+     * @param bugemon the bugemon to delete
+     * @param userId the id of the user who has the bugemon
+     * @throws LoadException if the operation fails
+     */
+	void deleteUserBugemon(Bugemon bugemon, int userId) throws LoadException;
 
     /**
      * Finds a bugemon in the bugemons table based on its id
@@ -79,7 +117,12 @@ public interface TeamRepository {
      * @param username the name of the user whose teams are to be retrieved
      * @return the list of Team objects
      */
-	List<Team> findAll(String username);
+	List<Team> findAll(int userId);
 
-	Team getTowerTeam(String username);
+	/**
+	 * Get the tower team of a user saved in the database 
+	 * @param userId the user
+	 * @return the tower team saved
+	 */
+	Team getTowerTeam(int userId);
 }

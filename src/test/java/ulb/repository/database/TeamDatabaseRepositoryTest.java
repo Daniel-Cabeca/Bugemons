@@ -10,10 +10,18 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TeamDatabaseRepositoryTest {
+	int userId1 = -1;
+	int userId2 = -1;
 
-    private void insertUser(DatabaseInMemory database, String username) {
+    private void insertUser(DatabaseInMemory database, String username, boolean isUser1) {
         AccountDatabaseRepository accountRepository = new AccountDatabaseRepository(database);
         accountRepository.register(username, "password");
+		if (isUser1){
+			this.userId1 = accountRepository.getUserId(username);
+		} else {
+			this.userId2 = accountRepository.getUserId(username);
+		}
+		
     }
 
     @Test
@@ -23,11 +31,11 @@ public class TeamDatabaseRepositoryTest {
         databaseInitializer.createTables();
 
         TeamDatabaseRepository repository = new TeamDatabaseRepository(database);
-        insertUser(database, "player");
+        insertUser(database, "player", true);
 
         Team team = new Team();
         team.setTeamName("Team_Alpha");
-        repository.insertTeam("player", team, false);
+        repository.insertTeam(this.userId1, team, false);
 
         Team obtained = repository.findById(team.getId());
 
@@ -40,12 +48,12 @@ public class TeamDatabaseRepositoryTest {
         DatabaseInitializer databaseInitializer = new DatabaseInitializer(database);
         databaseInitializer.createTables();
         TeamDatabaseRepository repository = new TeamDatabaseRepository(database);
-        insertUser(database, "player");
+        insertUser(database, "player", true);
         Team team = new Team();
         team.setTeamName("Team_Alpha");
-
+		
         assertThrows(Exception.class,
-                () -> repository.insertTeam("ghost", team, false));
+                () -> repository.insertTeam(this.userId2, team, false));
     }
 
 	@Test
@@ -57,17 +65,17 @@ public class TeamDatabaseRepositoryTest {
 
 		TeamDatabaseRepository repository = new TeamDatabaseRepository(database);
 
-		insertUser(database,  "player");
+		insertUser(database,  "player", true);
 
         Team teamA = new Team();
         teamA.setTeamName("Team_Alpha");
         Team teamB = new Team();
         teamB.setTeamName("Team_Beta");
 
-		repository.insertTeam("player", teamA, false);
-		repository.insertTeam("player", teamB, false);
+		repository.insertTeam(this.userId1, teamA, false);
+		repository.insertTeam(this.userId1, teamB, false);
 
-		List<Team> obtained = repository.findAll("player");
+		List<Team> obtained = repository.findAll(this.userId1);
 
 		assertEquals(2, obtained.size());
 		assertNotNull(obtained.get(0));
@@ -83,18 +91,18 @@ public class TeamDatabaseRepositoryTest {
 
         TeamDatabaseRepository repository = new TeamDatabaseRepository(database);
 
-        insertUser(database, "player");
+        insertUser(database, "player", true);
 
         Team teamA = new Team();
         teamA.setTeamName("Team_Alpha");
         Team teamB = new Team();
         teamB.setTeamName("Team_Beta");
 
-        repository.insertTeam("player", teamA, false);
-        repository.insertTeam("player", teamB, false);
+        repository.insertTeam(this.userId1, teamA, false);
+        repository.insertTeam(this.userId1, teamB, false);
 
 
-        List<Team> obtained = repository.findAll("player");
+        List<Team> obtained = repository.findAll(this.userId1);
 
         assertEquals("Team_Alpha", obtained.getFirst().getTeamName());
         assertEquals("Team_Beta", obtained.get(1).getTeamName());
@@ -109,8 +117,8 @@ public class TeamDatabaseRepositoryTest {
 
         TeamDatabaseRepository repository = new TeamDatabaseRepository(database);
 
-        insertUser(database,  "player");
-        insertUser(database,  "player2");
+        insertUser(database,  "player", true);
+        insertUser(database,  "player2", false);
 
         Team teamA = new Team();
         teamA.setTeamName("Team_Alpha");
@@ -119,10 +127,10 @@ public class TeamDatabaseRepositoryTest {
         Team teamC = new Team();
         teamC.setTeamName("Team_Alpha");
 
-        repository.insertTeam("player", teamA, false);
-        repository.insertTeam("player", teamB, false);
-        repository.insertTeam("player2", teamC, false);
+        repository.insertTeam(this.userId1, teamA, false);
+        repository.insertTeam(this.userId1, teamB, false);
+        repository.insertTeam(this.userId2, teamC, false);
 
-        assertEquals(2, repository.findAll("player").size());
+        assertEquals(2, repository.findAll(this.userId1).size());
     }
 }

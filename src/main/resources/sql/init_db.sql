@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS tower_saves (
 									current_team_id INTEGER,
 
 									FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-									FOREIGN KEY (current_team_id) REFERENCES teams(id) ON DELETE CASCADE
+									FOREIGN KEY (current_team_id) REFERENCES teams(team_id) ON DELETE CASCADE
 
 );
 

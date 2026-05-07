@@ -57,14 +57,13 @@ public class SetupHandler {
         String username = dto.username();
 
         Inventory inventory;
+		int userId = accountService.getUserId(username);
         if (isLogin) {
-            inventory = inventoryService.getInventoryFromDatabase(username);
+            inventory = inventoryService.getInventoryFromDatabase(userId);
         } else {
             inventory = itemService.createStarterInventory();
-            inventoryService.insertInventory(inventory, username);
+            inventoryService.insertInventory(inventory, userId);
         }
-
-        int userId = accountService.getUserId(username);
 
         return PlayerMapper.toEntity(dto, inventory, userId);
     }
@@ -176,7 +175,7 @@ public class SetupHandler {
         Player player = clientHandler.getPlayer();
 
 		if (!setupNewTower){
-			player.setTeam(teamService.getTowerTeam(player.getUsername()));
+			player.setTeam(teamService.getTowerTeam(player));
 		}
 
         Battle battle = clientHandler.getBattle();

@@ -92,7 +92,7 @@ public class TowerManager {
 	}
 
 	public void saveTowerInfo(){
-		this.teamService.insertTowerTeam(this.player.getUsername(), this.player.getTeam());
+		this.teamService.insertTowerTeam(this.player);
 		this.towerSaveService.saveTowerInfo(this.tower, this.player);
 	}
 

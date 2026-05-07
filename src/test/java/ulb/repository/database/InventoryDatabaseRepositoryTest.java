@@ -24,12 +24,14 @@ public class InventoryDatabaseRepositoryTest {
     ItemDatabaseRepository itemRepository;
     InventoryDatabaseRepository inventoryRepository;
     String username;
+	int userId;
     Item item1;
     Item item2;
 
     private void insertUser(String username, Database database) throws LoadException {
         AccountDatabaseRepository accountRepository = new AccountDatabaseRepository(database);
         accountRepository.register(username, "password");
+		this.userId = accountRepository.getUserId(username);
     }
 
     private void initiateDatabaseAndRepositories() throws LoadException, DuplicateElementException {
@@ -55,10 +57,10 @@ public class InventoryDatabaseRepositoryTest {
     public void testInsertItemAndGetInventory() throws DuplicateElementException, LoadException, NoSuchElementException {
         initiateDatabaseAndRepositories();
 
-        this.inventoryRepository.insertItem(this.item1, 1, this.username);
-        this.inventoryRepository.insertItem(this.item2, 1, this.username);
+        this.inventoryRepository.insertItem(this.item1, 1, this.userId);
+        this.inventoryRepository.insertItem(this.item2, 1, this.userId);
 
-        Inventory inventoryFromDatabase = this.inventoryRepository.getInventory(this.username);
+        Inventory inventoryFromDatabase = this.inventoryRepository.getInventory(this.userId);
 
         assertEquals(2, inventoryFromDatabase.getItems().size());
     }
@@ -71,9 +73,9 @@ public class InventoryDatabaseRepositoryTest {
         inventoryToAdd.addItem(this.item1, 1);
         inventoryToAdd.addItem(this.item2, 1);
 
-        this.inventoryRepository.insertInventory(inventoryToAdd, this.username);
+        this.inventoryRepository.insertInventory(inventoryToAdd, this.userId);
 
-        Inventory inventoryFromDatabase = this.inventoryRepository.getInventory(this.username);
+        Inventory inventoryFromDatabase = this.inventoryRepository.getInventory(this.userId);
 
         assertEquals(2, inventoryFromDatabase.getItems().size());
        
@@ -83,12 +85,12 @@ public class InventoryDatabaseRepositoryTest {
     public void testDeleteItem() throws DuplicateElementException, LoadException, NoSuchElementException {
         initiateDatabaseAndRepositories();
 
-        this.inventoryRepository.insertItem(this.item1, 1, this.username);
-        this.inventoryRepository.insertItem(this.item2, 1, this.username);
+        this.inventoryRepository.insertItem(this.item1, 1, this.userId);
+        this.inventoryRepository.insertItem(this.item2, 1, this.userId);
 
-        this.inventoryRepository.deleteItem(this.item2, 1, this.username);
+        this.inventoryRepository.deleteItem(this.item2, 1, this.userId);
 
-        Inventory inventoryFromDatabase = this.inventoryRepository.getInventory(this.username);
+        Inventory inventoryFromDatabase = this.inventoryRepository.getInventory(this.userId);
 
         assertEquals(1, inventoryFromDatabase.getItems().size());
     }
@@ -97,15 +99,15 @@ public class InventoryDatabaseRepositoryTest {
     public void updateInventory() throws DuplicateElementException, LoadException, NoSuchElementException {
         initiateDatabaseAndRepositories();
         
-        this.inventoryRepository.insertItem(this.item1, 1, this.username);
+        this.inventoryRepository.insertItem(this.item1, 1, this.userId);
 
         Inventory updatedInventory = new Inventory();
         updatedInventory.addItem(this.item1, 2);
         updatedInventory.addItem(item2, 1);
 
-        this.inventoryRepository.updateInventory(updatedInventory, this.username);
+        this.inventoryRepository.updateInventory(updatedInventory, this.userId);
 
-        Inventory inventoryFromDatabase = this.inventoryRepository.getInventory(this.username);
+        Inventory inventoryFromDatabase = this.inventoryRepository.getInventory(this.userId);
 
         assertEquals(2, inventoryFromDatabase.getItems().size());
         assertEquals(2, inventoryFromDatabase.getQuantity(item1));

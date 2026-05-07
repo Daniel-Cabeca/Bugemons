@@ -28,7 +28,7 @@ public class TeamSaveHandler {
 
 		List<TeamDTO> DTOTeams = new ArrayList<>();
 
-		for (Team team : teamService.getAllTeams(player.getUsername())){
+		for (Team team : teamService.getAllTeams(player)){
 			DTOTeams.add(TeamMapper.toDTO(team));
 		}
 		clientHandler.sendMessage(new SavedTeamsMessage(DTOTeams));
@@ -41,12 +41,12 @@ public class TeamSaveHandler {
 		Team team = TeamMapper.toEntity(teamDTO);
 
 		try {
-			if (teamService.teamExists(team.getTeamName(), player.getUsername())) {
+			if (teamService.teamExists(team.getTeamName(), player)) {
 				clientHandler.sendErrorMessage("A team with this name already exists.");
 				return;
 			}
 
-			teamService.insertTeam(player.getUsername(), team);
+			teamService.insertTeam(player, team);
 			clientHandler.sendSuccessMessage();
 
 		} catch (LoadException e) {

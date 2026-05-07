@@ -23,6 +23,7 @@ import ulb.message.clientToServer.GetLevelUpInfoMessage;
 import ulb.message.clientToServer.GetLogsMessage;
 import ulb.message.clientToServer.GetNextWindowMessage;
 import ulb.message.clientToServer.GetTowerInfoMessage;
+import ulb.message.clientToServer.GetTowerSavedInfoMessage;
 import ulb.message.serverToClient.AbilityEffectivenessMessage;
 import ulb.message.serverToClient.ActiveBugemonsMessage;
 import ulb.message.serverToClient.BattleEndInfoMessage;
@@ -32,6 +33,7 @@ import ulb.message.serverToClient.LevelUpInfoMessage;
 import ulb.message.serverToClient.LogsMessage;
 import ulb.message.serverToClient.NextWindowMessage;
 import ulb.message.serverToClient.TowerInfoMessage;
+import ulb.message.serverToClient.TowerSavedInfoMessage;
 import ulb.message.serverToClient.UsableItemsMessage;
 import ulb.model.Player;
 import ulb.model.ability.Ability;
@@ -44,12 +46,15 @@ import ulb.model.reward.Reward;
 import ulb.model.tower.Room;
 import ulb.model.tower.RoomType;
 import ulb.model.tower.towerManager.TowerManager;
+import ulb.service.TowerSaveService;
 
 public class GameInfoHandler {
     ClientHandler clientHandler;
+	TowerSaveService towerSaveService;
 
-    public GameInfoHandler(ClientHandler clientHandler) {
-        this.clientHandler = clientHandler;
+    public GameInfoHandler(ClientHandler clientHandler, TowerSaveService towerSaveService) {
+		this.clientHandler = clientHandler;
+		this.towerSaveService = towerSaveService;
     }
 
     public void handle(CheckGameFinishedMessage message){
@@ -271,5 +276,10 @@ public class GameInfoHandler {
 		List<Integer> clearedRooms = towerManager.getCurrentFloorClearedRooms();
 
 		clientHandler.sendMessage(new TowerInfoMessage(towerFloorNumber, towerRoomNumber, clearedRooms));
+	}
+
+	public void handle(GetTowerSavedInfoMessage message, Player player){
+		boolean isTowerSaved = this.towerSaveService.isTowerSaved(player);
+		clientHandler.sendMessage(new TowerSavedInfoMessage(isTowerSaved));
 	}
 }

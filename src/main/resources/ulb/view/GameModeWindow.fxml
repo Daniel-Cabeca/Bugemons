@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Button?>
+
+<StackPane style="-fx-background-image: url(backgrounds/BattleModeBackground.png); -fx-background-size: stretch"
+           xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="ulb.view.windows.GameModeWindow">
+
+    <VBox fx:id="content" alignment="CENTER" spacing="20">
+        <children>
+            <HBox alignment="CENTER" spacing="20">
+                <children>
+                    <Button onAction="#handleControlledBattle" prefHeight="50.0" prefWidth="200.0" style="-fx-background-color: #8D89BA" text="Combat Classique" />
+                    <Button onAction="#handleAutomaticBattle" prefHeight="50" prefWidth="200" style="-fx-background-color: #97B35F" text="Combat Automatique" />
+                </children>
+            </HBox>
+            <HBox alignment="CENTER" spacing="20">
+                <children>
+                    <Button alignment="CENTER" onAction="#handleNewTowerBattle" prefHeight="50" prefWidth="200" style="-fx-background-color: #9B3E62" text="Nouvelle Tour NO" />
+                    <Button fx:id="continueTowerButton" alignment="CENTER" onAction="#handleContinueTowerBattle" prefHeight="50" prefWidth="200" style="-fx-background-color: #EB9D52;" text="Continuer Tour NO" />
+                </children>
+            </HBox>
+            <Button onAction="#handleReturn" prefHeight="50" prefWidth="200" style="-fx-background-color: #777777;" text="Retour" />
+        </children>
+    </VBox>
+
+</StackPane>

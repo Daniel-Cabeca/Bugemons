@@ -1,5 +1,6 @@
 package ulb.service;
 
+import ulb.model.Player;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.team.Team;
 import ulb.exceptions.LoadException;
@@ -30,8 +31,48 @@ public class TeamService {
      * @throws LoadException if the saving fails
      */
     public void insertTeam(String username, Team team) throws LoadException {
-        repository.insertTeam(username, team);
+		for (Bugemon b : team.getMembers()) {
+			insertUserBugemon(b, username);
+		}
+        repository.insertTeam(username, team, false);
+		insertAllBugemonsInTeam(team);
     }
+
+	/**
+     * Saves a new team as the team used for the tower
+     * @param username the name of the user who saves the team
+     * @param team the team to be saved
+     * @throws LoadException if the saving fails
+     */
+    public void insertTowerTeam(String username, Team team) throws LoadException {
+		if (repository.hasTowerTeam(username)){
+			for (Bugemon b : team.getMembers()) {
+				updateUserBugemon(b, username);
+			}
+			repository.updateTowerTeam(username, team);
+		} else {
+			for (Bugemon b : team.getMembers()) {
+				insertUserBugemon(b, username);
+			}
+        	repository.insertTeam(username, team, true);
+			insertAllBugemonsInTeam(team);
+		}
+    }
+
+	public void deleteTowerTeam(Player player) throws LoadException {
+		String username = player.getUsername();
+
+		if (repository.hasTowerTeam(username)){
+			Team team = getTowerTeam(username);
+
+			for (Bugemon b : team.getMembers()) {
+				repository.deleteUserBugemon(b, username);
+				repository.deleteBugemonInTeam(b, team.getId());
+			}
+
+			repository.deleteTowerTeam(username);
+		}
+	}
 
     /**
      * Saves all the bugemons in the team
@@ -39,9 +80,9 @@ public class TeamService {
      * @param teamId the id of the team
      * @throws LoadException if the saving fails
      */
-    public void insertAllBugemonsInTeam(Team team, int teamId) throws LoadException {
+    public void insertAllBugemonsInTeam(Team team) throws LoadException {
         for (Bugemon bugemon : team.getMembers()) {
-            repository.insertBugemonInTeam(bugemon, teamId);
+            repository.insertBugemonInTeam(bugemon, team.getId());
         }
     }
 
@@ -67,6 +108,10 @@ public class TeamService {
 		repository.insertUserBugemon(bugemon, username);
 	}
 
+	public void updateUserBugemon(Bugemon bugemon, String username){
+		repository.updateUserBugemon(bugemon, username);
+	}
+
     /**
      * Returns a list of all the teams belonging to a user
      *
@@ -75,5 +120,9 @@ public class TeamService {
      */
 	public List<Team> getAllTeams(String username) {
 		return repository.findAll(username);
+	}
+
+	public Team getTowerTeam(String username){
+		return repository.getTowerTeam(username);
 	}
 }

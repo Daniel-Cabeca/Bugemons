@@ -6,6 +6,7 @@ import ulb.model.Player;
 import ulb.model.battle.Battle;
 import ulb.service.BugemonService;
 import ulb.service.ItemService;
+import ulb.service.TeamService;
 import ulb.service.TowerSaveService;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class TowerManager {
 
 	private final BugemonService bugemonService;
 	private final ItemService itemService;
+	private final TeamService teamService;
 	private final TowerSaveService towerSaveService;
 
 	/**
@@ -31,10 +33,11 @@ public class TowerManager {
 	 * @param itemService Item service
 	 * @param setupNewTower tells if the tower saved or a new tower is used
 	 */
-	public TowerManager(Player player, boolean setupNewTower, BugemonService bugemonService, ItemService itemService, TowerSaveService towerSaveService) {
+	public TowerManager(Player player, boolean setupNewTower, BugemonService bugemonService, ItemService itemService, TeamService teamService, TowerSaveService towerSaveService) {
 		this.player = player;
 		this.bugemonService = bugemonService;
 		this.itemService = itemService;
+		this.teamService = teamService;
 		this.towerSaveService = towerSaveService;
 		setupTower(setupNewTower);
 	}
@@ -46,14 +49,16 @@ public class TowerManager {
 	 * @param bugemonService Bugemon service
 	 * @param itemService Item service
 	 */
-	public TowerManager(Player player, BugemonService bugemonService, ItemService itemService, TowerSaveService towerSaveService){
-		this(player, true, bugemonService, itemService, towerSaveService);
+	public TowerManager(Player player, BugemonService bugemonService, ItemService itemService, TeamService teamService, TowerSaveService towerSaveService){
+		this(player, true, bugemonService, itemService, teamService, towerSaveService);
 	}
 
 	private void setupTower(boolean setupNewTower){
 		Tower tower;
 		if (setupNewTower){
 			tower = new Tower();
+			towerSaveService.deleteTowerInfo(player);
+			teamService.deleteTowerTeam(player);
 		} else {
 			tower = towerSaveService.getTowerSave(player);
 		}
@@ -87,6 +92,7 @@ public class TowerManager {
 	}
 
 	public void saveTowerInfo(){
+		this.teamService.insertTowerTeam(this.player.getUsername(), this.player.getTeam());
 		this.towerSaveService.saveTowerInfo(this.tower, this.player);
 	}
 

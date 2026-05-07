@@ -14,7 +14,13 @@ public interface TeamRepository {
      * @param team the team to be saved
      * @throws LoadException if the operation fails
      */
-    void insertTeam(String username, Team team) throws LoadException;
+    void insertTeam(String username, Team team, boolean isTowerTeam) throws LoadException;
+
+	void updateTowerTeam(String username, Team team);
+
+	void deleteTowerTeam(String username);
+
+	boolean hasTowerTeam(String username);
 
     /**
      * Inserts a bugemon in the team into the database
@@ -24,6 +30,7 @@ public interface TeamRepository {
      */
     void insertBugemonInTeam(Bugemon bugemon, int teamId) throws LoadException;
 
+	void deleteBugemonInTeam(Bugemon bugemon, int teamId) throws LoadException;
 
     /**
      * Checks if the user already has a team with the same name
@@ -43,6 +50,10 @@ public interface TeamRepository {
      * @throws LoadException if the operation fails
      */
 	void insertUserBugemon(Bugemon bugemon, String username) throws LoadException;
+
+	void updateUserBugemon(Bugemon bugemon, String username) throws LoadException;
+	
+	void deleteUserBugemon(Bugemon bugemon, String username) throws LoadException;
 
     /**
      * Finds a bugemon in the bugemons table based on its id
@@ -69,4 +80,6 @@ public interface TeamRepository {
      * @return the list of Team objects
      */
 	List<Team> findAll(String username);
+
+	Team getTowerTeam(String username);
 }

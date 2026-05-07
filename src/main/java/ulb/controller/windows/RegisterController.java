@@ -1,64 +1,81 @@
 package ulb.controller.windows;
 
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
-import ulb.view.FxmlLoader;
-import ulb.view.WindowPath;
+import ulb.DTO.player.PlayerDTO;
+import ulb.DTO.player.PlayerRegisterDTO;
+import ulb.exceptions.LoadException;
 import ulb.view.windows.RegisterWindow;
 
 public class RegisterController extends WindowController<RegisterWindow> implements RegisterWindow.ViewListener {
-    private Listener listener;
+    private final Listener listener;
 
     public RegisterController(Stage stage, String windowPath, Listener listener){
         super(stage, windowPath);
+        this.view.setViewListener(this);
         this.listener = listener;
+
     }
-
-    /**
-     * Displays the register/login view.
-     */
-    public void show() {
-        FXMLLoader loader = FxmlLoader.load(this, WindowPath.REGISTER);
-        view = loader.getController();
-        view.setViewListener(this);
-
-        Parent root = loader.getRoot();
-        if (stage.getScene() == null) {
-            stage.setScene(new Scene(root));
-        } else {
-            stage.getScene().setRoot(root);
-        }
-        this.stage.show();
-    }
-
-    public RegisterWindow getView(){return this.view;}
 
     /**
      * Handles login form submission.
      *
-     * @param username The entered username
+     * @param userName The entered username
      * @param password The entered password
      */
     @Override
-    public void onLogin(String username, String password) {
-        listener.onLogin(username,password);
+    public void onLogin(String userName, String password){
+        try {
+            PlayerRegisterDTO playerDTO = new PlayerRegisterDTO(userName, password);
+            boolean success = this.listener.onLogin(playerDTO);
+            if (success){
+                if (this.listener.onGetPlayer(userName) == null) {
+                    throw new RuntimeException("Player is null after login"); // TODO
+                }
+                try {
+                    this.listener.showModeWindow();
+                }catch (Exception e){
+                    e.printStackTrace(); // TODO
+                }
+            } else {
+                this.view.setErrorLabel("Nom d'utilisateur ou mot de passe incorrect.");
+            }
+        } catch (LoadException e) {
+            this.view.setErrorLabel("Erreur de connexion à la base de données.");
+        }
     }
 
     /**
      * Handles sign-up form submission.
      *
-     * @param username The entered username
+     * @param userName The entered username
      * @param password The entered password
      */
     @Override
-    public void onSignUp(String username, String password) {
-        this.listener.onSignUp(username, password);
+    public void onSignUp(String userName, String password){
+        try {
+            PlayerRegisterDTO playerDTO = new PlayerRegisterDTO(userName, password);
+            boolean success = this.listener.onSignUp(playerDTO);
+            if (success) {
+                if (this.listener.onGetPlayer(userName) == null) {
+                    throw new RuntimeException("Player is null after login"); // TODO:
+                }
+                try {
+                    this.listener.showModeWindow();
+                }catch (Exception e){
+                    e.printStackTrace(); // TODO:
+                }
+            } else {
+                this.view.setErrorLabel("Ce nom d'utilisateur est déjà pris.");
+            }
+        } catch (LoadException e) {
+            this.view.setErrorLabel("Erreur de connexion à la base de données.");
+        }
     }
 
     public interface Listener{
-        void onLogin(String username, String password);
-        void onSignUp(String username, String password);
+        boolean onLogin(PlayerRegisterDTO playerRegisterDTO);
+        void showModeWindow();
+        PlayerDTO onGetPlayer(String userName);
+        boolean onSignUp(PlayerRegisterDTO playerDTO);
     }
 }

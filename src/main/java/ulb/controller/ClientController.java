@@ -106,6 +106,8 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		this.registerController = new RegisterController(this.stage, WindowPath.REGISTER,this);
 		this.registerController.show();
 
+		this.modeController = new ModeController(this.stage, this); // TODO: put other where
+
 		if (primaryStage.getScene() != null) {
 			String stylesheet = getClass().getResource("/styles/global.css").toExternalForm();
 			if (!primaryStage.getScene().getStylesheets().contains(stylesheet)) {
@@ -278,59 +280,28 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 
 	// Register Controller :
 
-	/**
-	 * {@inheritDoc}
-	 */
+
 	@Override
-	public void onLogin(String userName, String password){
-		try {
-			PlayerRegisterDTO playerDTO = new PlayerRegisterDTO(userName, password);
-			boolean success = logIn(playerDTO);
-			if (success) {
-				this.player = getPlayer(userName);
-				if (this.player == null) {
-					throw new RuntimeException("Player is null after login");
-				}
-				this.modeController = new ModeController(this.stage, this);
-				try {
-					this.modeController.show();
-				}catch (Exception e){
-					e.printStackTrace();
-				}
-			} else {
-				this.registerController.getView().setErrorLabel("Nom d'utilisateur ou mot de passe incorrect.");
-			}
-		} catch (LoadException e) {
-			this.registerController.getView().setErrorLabel("Erreur de connexion à la base de données.");
-		}
+	public boolean onSignUp(PlayerRegisterDTO playerDTO) {
+		return this.signUp(playerDTO);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
-	public void onSignUp(String userName, String password){
-		try {
-			PlayerRegisterDTO playerDTO = new PlayerRegisterDTO(userName, password);
-			boolean success = this.signUp(playerDTO);
-			if (success) {
-				this.player = getPlayer(userName);
-				if (this.player == null) {
-					throw new RuntimeException("Player is null after login");
-				}
-				this.modeController = new ModeController(this.stage, this);
-				try {
-					this.modeController.show();
-				}catch (Exception e){
-					e.printStackTrace();
-				}
-			} else {
-				this.registerController.getView().setErrorLabel("Ce nom d'utilisateur est déjà pris.");
-			}
-		} catch (LoadException e) {
-			this.registerController.getView().setErrorLabel("Erreur de connexion à la base de données.");
-		}
+	public boolean onLogin(PlayerRegisterDTO playerRegisterDTO) {
+		return this.logIn(playerRegisterDTO);
 	}
+
+	@Override
+	public void showModeWindow() {
+		this.modeController.show();
+	}
+
+	@Override
+	public PlayerDTO onGetPlayer(String userName) {
+		return this.getPlayer(userName);
+	}
+
+
 
 	// Mode Controller Listener :
 

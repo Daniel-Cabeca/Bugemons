@@ -1,24 +1,31 @@
 package ulb.server;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ulb.DTO.bugemon.BugemonDTO;
+import ulb.DTO.player.PlayerDTO;
 import ulb.DTO.player.PlayerRegisterDTO;
 import ulb.mapper.bugemon.BugemonMapper;
 import ulb.mapper.player.PlayerMapper;
+import ulb.message.clientToServer.ConfirmTeamMultiMessage;
 import ulb.message.clientToServer.RegisterMessage;
 import ulb.message.clientToServer.SetUpNormalModeMessage;
 import ulb.message.clientToServer.SetUpTeamMessage;
 import ulb.message.clientToServer.SetUpTowerModeMessage;
 import ulb.model.Player;
 import ulb.model.battle.Battle;
+import ulb.model.battle.MultiBattleSession;
+import ulb.model.bugemon.Bugemon;
 import ulb.model.item.Inventory;
 import ulb.model.team.OpponentTeamGenerator;
 import ulb.model.team.Team;
-import ulb.model.tower.Tower;
 import ulb.model.tower.towerManager.TowerManager;
 import ulb.service.AccountService;
 import ulb.service.BugemonService;
 import ulb.service.InventoryService;
 import ulb.service.ItemService;
+import ulb.service.MultiBattleService;
 import ulb.service.TeamService;
 import ulb.service.TowerSaveService;
 import ulb.service.strategy.AI;
@@ -32,8 +39,9 @@ public class SetupHandler {
     private final BugemonService bugemonService;
 	private final TeamService teamService;
 	private final TowerSaveService towerSaveService;
+	private final MultiBattleService multiBattleService;
 
-    public SetupHandler(ClientHandler clientHandler, AccountService accountService, ItemService itemService, InventoryService inventoryService, BugemonService bugemonService, TeamService teamService, TowerSaveService towerSaveService) {
+    public SetupHandler(ClientHandler clientHandler, AccountService accountService, ItemService itemService, InventoryService inventoryService, BugemonService bugemonService, TeamService teamService, TowerSaveService towerSaveService, MultiBattleService multiBattleService) {
         this.clientHandler = clientHandler;
         this.accountService = accountService;
         this.itemService = itemService;
@@ -41,6 +49,7 @@ public class SetupHandler {
         this.bugemonService = bugemonService;
 		this.teamService = teamService;
 		this.towerSaveService = towerSaveService;
+		this.multiBattleService = multiBattleService;
     }
 
 
@@ -59,6 +68,37 @@ public class SetupHandler {
 
         return PlayerMapper.toEntity(dto, inventory, userId);
     }
+
+	public void handle(ConfirmTeamMultiMessage message) {
+		Player player = clientHandler.getPlayer();
+		PlayerDTO opponent = message.getOpponent();
+		Team team = makeTeam(message.getTeam());
+
+		MultiBattleSession battle = this.multiBattleService.getMultiBattle(player.getUserId(), opponent.getUserId());
+		battle.getParticipant(player.getUserId()).setTeam(team);
+
+		if (battle.isReady()) {
+			battle.start(accountService);
+		}
+
+		clientHandler.sendSuccessMessage();
+	}
+
+	/**
+	 * Creates a Team instance from a list of BugemonDTO instances.
+	 *
+	 * @param bugemons The Bugemons of the team
+	 * @return The Team instance
+	 */
+	private static Team makeTeam(List<BugemonDTO> bugemons) {
+		List<Bugemon> entities = new ArrayList<>();
+		for (BugemonDTO dto: bugemons) {
+			Bugemon entity = BugemonMapper.toEntity(dto);
+			entities.add(entity);
+		}
+
+		return new Team(entities);
+	}
 
 	public void handle(RegisterMessage message){
 		boolean success;

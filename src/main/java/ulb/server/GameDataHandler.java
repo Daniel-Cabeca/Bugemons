@@ -24,9 +24,9 @@ import ulb.service.ItemService;
 
 public class GameDataHandler {
     ClientHandler clientHandler;
-    BugemonService bugemonService;
-    AbilityService abilityService;
-    ItemService itemService;
+    private final BugemonService bugemonService;
+    private final AbilityService abilityService;
+    private final ItemService itemService;
 
     public GameDataHandler(ClientHandler clientHandler, BugemonService bugemonService, AbilityService abilityService, ItemService itemService) {
         this.clientHandler = clientHandler;

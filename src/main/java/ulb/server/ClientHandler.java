@@ -61,13 +61,13 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		this.towerSaveService = towerSaveService;
 		this.teamService = teamService;
 
-		this.setupHandler = new SetupHandler(this, accountService, itemService, inventoryService, bugemonService, teamService, towerSaveService);
-		this.gameInfoHandler = new GameInfoHandler(this, towerSaveService);
+		this.setupHandler = new SetupHandler(this, accountService, itemService, inventoryService, bugemonService, teamService, towerSaveService, multiBattleService);
+		this.gameInfoHandler = new GameInfoHandler(this);
 		this.gameActionsHandler = new GameActionsHandler(this, inventoryService, multiBattleService);
 		this.socialHandler = new SocialHandler(this, accountService, chatService, multiBattleService);
 		this.playerInfoHandler = new PlayerInfoHandler(this, accountService);
 		this.gameDataHandler = new GameDataHandler(this, bugemonService, abilityService, itemService);
-		this.teamSaveHandler = new TeamSaveHandler(this, teamService, multiBattleService);
+		this.teamSaveHandler = new TeamSaveHandler(this, teamService);
     }
 
 	public Player getPlayer() { return this.player; }
@@ -181,6 +181,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
 	// SETUP
 
+	@Override public void handle(ConfirmTeamMultiMessage message) { setupHandler.handle(message); }
 	@Override public void handle(RegisterMessage message) { setupHandler.handle(message); }
 	@Override public void handle(SetUpNormalModeMessage message) { setupHandler.handle(message); }
 	@Override public void handle(SetUpTeamMessage message) { setupHandler.handle(message); }
@@ -248,10 +249,11 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	@Override public void handle(SendFriendRequestMessage message) { socialHandler.handle(message); }
 	@Override public void handle(GetLeaderboardMessage message) {socialHandler.handle(message); }
 
+
 	// TEAM SAVE
 
-	@Override public void handle(ConfirmTeamMultiMessage message) { teamSaveHandler.handle(message); }
 	@Override public void handle(GetSavedTeamsMessage message) { teamSaveHandler.handle(message); }
 	@Override public void handle(SaveTeamMessage message) { teamSaveHandler.handle(message); }
+
 
 }

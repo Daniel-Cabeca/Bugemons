@@ -20,7 +20,7 @@ public class MultiBattleInMemoryRepository implements MultiBattleRepository {
 	 */
 	@Override
 	public MultiBattleSession findByIds(int userId1, int userId2) throws NoSuchElementException {
-		SessionKey key = this.makeSessionKey(userId1, userId2);
+		SessionKey key = makeSessionKey(userId1, userId2);
 		MultiBattleSession session = this.sessions.get(key);
 
 		if (session == null) {
@@ -36,7 +36,7 @@ public class MultiBattleInMemoryRepository implements MultiBattleRepository {
 	@Override
 	public MultiBattleSession create(int userId1, int userId2) {
 		MultiBattleSession session = new MultiBattleSession(userId1, userId2);
-		SessionKey key = this.makeSessionKey(session);
+		SessionKey key = makeSessionKey(session);
 
 		this.sessions.put(key, session);
 		return session;

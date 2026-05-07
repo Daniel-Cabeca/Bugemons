@@ -101,8 +101,6 @@ public class TowerManagerTest {
 				"Current floor manager should now point to the next floor");
 	}
 
-
-
 	@Test
 	void doesNotAdvanceFloorWhenTowerIsCompleted() throws Exception {
 		

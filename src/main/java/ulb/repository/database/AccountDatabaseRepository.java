@@ -1,6 +1,5 @@
 package ulb.repository.database;
 
-import ulb.exceptions.DataAccessException;
 import ulb.repository.AccountRepository;
 import ulb.exceptions.LoadException;
 import ulb.repository.database.sql.Database;

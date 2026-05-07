@@ -1,6 +1,5 @@
 package ulb.repository;
 
-import ulb.exceptions.DataAccessException;
 import ulb.exceptions.LoadException;
 
 import java.util.List;

@@ -31,8 +31,8 @@ import ulb.service.strategy.StrategyRandom;
 
 public class GameActionsHandler extends Thread{
     ClientHandler clientHandler;
-    InventoryService inventoryService;
-	MultiBattleService multiBattleService;
+    private final InventoryService inventoryService;
+	private final MultiBattleService multiBattleService;
 
     public GameActionsHandler(ClientHandler clientHandler, InventoryService inventoryService, MultiBattleService multiBattleService) {
         this.clientHandler = clientHandler;
@@ -50,6 +50,7 @@ public class GameActionsHandler extends Thread{
 		clientHandler.finishTower();
 		clientHandler.sendSuccessMessage();
 	}
+
 
 	public void handle(ChooseAbilityRewardMessage message){
         Player player = clientHandler.getPlayer();

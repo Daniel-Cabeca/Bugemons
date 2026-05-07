@@ -27,7 +27,7 @@ public class TeamDatabaseRepositoryTest {
 
         Team team = new Team();
         team.setTeamName("Team_Alpha");
-        repository.insertTeam("player", team);
+        repository.insertTeam("player", team, false);
 
         Team obtained = repository.findById(team.getId());
 
@@ -45,7 +45,7 @@ public class TeamDatabaseRepositoryTest {
         team.setTeamName("Team_Alpha");
 
         assertThrows(Exception.class,
-                () -> repository.insertTeam("ghost", team));
+                () -> repository.insertTeam("ghost", team, false));
     }
 
 	@Test
@@ -64,8 +64,8 @@ public class TeamDatabaseRepositoryTest {
         Team teamB = new Team();
         teamB.setTeamName("Team_Beta");
 
-		repository.insertTeam("player", teamA);
-		repository.insertTeam("player", teamB);
+		repository.insertTeam("player", teamA, false);
+		repository.insertTeam("player", teamB, false);
 
 		List<Team> obtained = repository.findAll("player");
 
@@ -90,8 +90,8 @@ public class TeamDatabaseRepositoryTest {
         Team teamB = new Team();
         teamB.setTeamName("Team_Beta");
 
-        repository.insertTeam("player", teamA);
-        repository.insertTeam("player", teamB);
+        repository.insertTeam("player", teamA, false);
+        repository.insertTeam("player", teamB, false);
 
 
         List<Team> obtained = repository.findAll("player");
@@ -119,9 +119,9 @@ public class TeamDatabaseRepositoryTest {
         Team teamC = new Team();
         teamC.setTeamName("Team_Alpha");
 
-        repository.insertTeam("player", teamA);
-        repository.insertTeam("player", teamB);
-        repository.insertTeam("player2", teamC);
+        repository.insertTeam("player", teamA, false);
+        repository.insertTeam("player", teamB, false);
+        repository.insertTeam("player2", teamC, false);
 
         assertEquals(2, repository.findAll("player").size());
     }

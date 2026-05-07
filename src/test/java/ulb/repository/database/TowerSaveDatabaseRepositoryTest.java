@@ -21,7 +21,7 @@ public class TowerSaveDatabaseRepositoryTest {
 		TeamDatabaseRepository teamRepository = new TeamDatabaseRepository(database);
 		Team team = new Team();
 		team.setTeamName(teamName);
-		teamRepository.insertTeam(username, team);
+		teamRepository.insertTeam(username, team, true);
 		return team;
     }
 

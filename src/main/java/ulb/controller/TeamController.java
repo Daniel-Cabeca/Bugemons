@@ -59,8 +59,14 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 	 * Creates a new Team for the player and adds his selected bugémons.
 	 */
 	public void setTeam(List<String> selectedBugemonIds) {
+		PlayerDTO selfPlayer = this.getSelfPlayer();
+
+		if (selfPlayer == null) {
+			throw new IllegalStateException("Impossible de confirmer l'équipe : aucun joueur connecté côté client.");
+		}
+
 		List<BugemonDTO> members = setupTeamMembers(selectedBugemonIds);
-		this.getSelfPlayer().setTeam(members);
+		selfPlayer.setTeam(members);
 	}
 
 	/**

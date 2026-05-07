@@ -71,4 +71,8 @@ public class TowerSaveService {
 		return new Tower(currentFloorId, completedRoomId);
 		
 	}
+
+	public boolean isTowerSaved(Player player){
+		return this.towerSaveRepository.isTowerSaved(player.getUserId());
+	}
 }

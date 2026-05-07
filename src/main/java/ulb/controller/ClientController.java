@@ -36,9 +36,9 @@ import ulb.exceptions.LoadException;
  * Client-side application controller coordinating UI flow and server messaging.
  */
 public class ClientController extends Application implements RegisterController.Listener, ModeController.Listener,
-BattleModeController.Listener,BattleEndController.Listener, BattleWindowController.Listener, NextRoomController.Listener, 
+ConfirmTeamController.Listener,BattleEndController.Listener, BattleWindowController.Listener, NextRoomController.Listener,
 FloorRewardController.Listener, AttackReplacementController.Listener, LevelUpController.Listener,
-LoadTeamPanelController.Listener, FloorController.Listener {
+LoadTeamPanelController.Listener, FloorController.Listener, GameModeController.Listener {
 
 	SocketClient client;
 	private final Object serverRequestLock = new Object();
@@ -49,9 +49,11 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 
 	RegisterController registerController;
     ModeController modeController;
+	GameModeController gameModeController;
 	TeamController teamController;
-	BattleModeController battleModeController;
+	ConfirmTeamController confirmTeamController;
 	BattleWindowController battleWindowController;
+
 
 	BattleEndController battleEndController;
 	LevelUpController levelUpController;
@@ -346,8 +348,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	 */
 	@Override
 	public void onSolo() {
-		this.teamController = new TeamController(this);
-		this.teamController.show();
+		switchToGameModeWindow();
 	}
 
 	/**
@@ -365,6 +366,61 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	public void onLogOut() {
 		this.player = null;
 		this.registerController.show();
+	}
+
+	// Game Mode Controller :
+
+	private void switchToCreateTeamWindow() {
+		this.teamController = new TeamController(this);
+		this.teamController.show();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void onAutoBattle() {
+		this.gameMode = GameMode.AUTO;
+		switchToCreateTeamWindow();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void onControlledBattle() {
+		this.gameMode = GameMode.CONTROLLED;
+		switchToCreateTeamWindow();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void onTowerMode(boolean newTower) {
+		this.gameMode = GameMode.TOWER;
+		this.floorController = null;
+		if (newTower) {
+			switchToCreateTeamWindow();
+		} else {
+			if (this.postData(new SetUpTowerModeMessage(newTower))){
+				switchToFloorWindow();
+			}
+		}
+	}
+
+	@Override
+	public boolean isTowerSaved() {
+		Serializable message = getData(new GetTowerSavedInfoMessage());
+		if (message instanceof TowerSavedInfoMessage towerInfoMessage){
+			return towerInfoMessage.isTowerSaved();
+		} 
+		return false;
+	}
+
+	@Override
+	public void onReturnToModeWindow() {
+		switchToModeWindow();
 	}
 
 	// Team Controller :
@@ -393,8 +449,8 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 			return;
 		}
 
-		this.battleModeController = new BattleModeController(this.stage, this, team);
-		battleModeController.show();
+		this.confirmTeamController = new ConfirmTeamController(this.stage, this, team, this.gameMode);
+		confirmTeamController.show();
 	}
 
 	/**
@@ -491,6 +547,27 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		setupTeamAndShowModeMenu();
 	}
 
+	// Confirm Team Controller
+
+	@Override
+	public void onConfirm() {
+		switch (this.gameMode) {
+			case AUTO, CONTROLLED :
+				if (this.postData(new SetUpNormalModeMessage())){
+					switchToBattleWindow();
+				}
+				break;
+			case TOWER:
+				if (this.postData(new SetUpTowerModeMessage(true))){
+					switchToFloorWindow();
+				}
+				break;
+			default:
+				switchToModeWindow();
+				break;
+		}
+	}
+
 	// BattleEndController
 
 	/**
@@ -508,6 +585,13 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	 */
 	public void switchToModeWindow(){
 		this.modeController.show();
+	}
+
+	public void switchToGameModeWindow() {
+		if (this.gameModeController == null) {
+			this.gameModeController = new GameModeController(stage, this);
+		}
+		this.gameModeController.show();
 	}
 
 	/**
@@ -628,39 +712,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onAutoBattle() {
-		this.gameMode = GameMode.AUTO;
-		if (this.postData(new SetUpNormalModeMessage())){
-			switchToBattleWindow();
-		}
-	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onControlledBattle() {
-		this.gameMode = GameMode.CONTROLLED;
-		if (this.postData(new SetUpNormalModeMessage())){
-			switchToBattleWindow();
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onTowerMode(boolean newTower) {
-		this.gameMode = GameMode.TOWER;
-		this.floorController = null;
-		if (this.postData(new SetUpTowerModeMessage(newTower))){
-			switchToFloorWindow();
-		}
-	}
 
 	/**
 	 * {@inheritDoc}
@@ -1096,12 +1148,8 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	}
 
 	@Override
-    public void onReturnFloorWindow() {
-        try {
-			this.battleModeController.show();
-		}catch (Exception e){
-			e.printStackTrace();
-		}
+    public void onReturnToGameModeWindow() {
+		switchToGameModeWindow();
     }
 
     // Miscellaneous

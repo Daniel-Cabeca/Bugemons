@@ -12,32 +12,45 @@ import ulb.model.tower.Floor;
 import ulb.model.tower.Room;
 import  ulb.model.tower.Tower;
 import ulb.repository.BugemonSpeciesRepository;
+import ulb.repository.ItemRepository;
+import ulb.repository.StartingInventoryRepository;
+import ulb.repository.TowerSaveRepository;
+import ulb.repository.database.AccountDatabaseRepository;
+import ulb.repository.database.BugemonSpeciesDatabaseRepository;
+import ulb.repository.database.ItemDatabaseRepository;
+import ulb.repository.database.TeamDatabaseRepository;
 import ulb.repository.database.TowerSaveDatabaseRepository;
 import ulb.repository.database.sql.DatabaseMock;
+import ulb.repository.json.ItemJsonRepository;
+import ulb.repository.json.StartingInventoryJsonRepository;
 import ulb.repository.mock.BugemonSpeciesMockRepository;
-import ulb.repository.mock.StartingInventoryMockRepository;import ulb.repository.mock.ItemMockRepository;import ulb.service.BugemonService;import ulb.service.ItemService;
+import ulb.repository.mock.StartingInventoryMockRepository;import ulb.repository.mock.ItemMockRepository;
+import ulb.service.AccountService;
+import ulb.service.BugemonService;import ulb.service.ItemService;
+import ulb.service.TeamService;
 import ulb.service.TowerSaveService;
 
 public class TowerManagerTest {
 
-	private Bugemon makeBugemon() {
-		BugemonSpeciesRepository bugemonRepository = new BugemonSpeciesMockRepository();
-		BugemonService bugemonService = new BugemonService(bugemonRepository);
-
+	private Bugemon makeBugemon(BugemonService bugemonService) {
 		return bugemonService.spawnBugemon("florachu");
 	}
 
 	private TowerManager setTowerManager(){
-		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
-		ItemService itemService = new ItemService(new ItemMockRepository(), new StartingInventoryMockRepository());
-		TowerSaveService towerSaveService = new TowerSaveService(new TowerSaveDatabaseRepository(new DatabaseMock()));
-
-		Player player = new Player();
-		Bugemon a = makeBugemon();
+		DatabaseMock database = new DatabaseMock();
+		BugemonService bugemonService = new BugemonService(new BugemonSpeciesDatabaseRepository(database));
+		ItemService itemService = new ItemService(new ItemDatabaseRepository(database), new StartingInventoryJsonRepository(new ItemJsonRepository()));
+		TowerSaveService towerSaveService = new TowerSaveService(new TowerSaveDatabaseRepository(database));
+		TeamService teamService = new TeamService(new TeamDatabaseRepository(database));
+		AccountService accountService = new AccountService(new AccountDatabaseRepository(database));
+		
+		accountService.register("player", "pwd");
+		Player player = new Player("player", accountService.getUserId("player"));
+		Bugemon a = makeBugemon(bugemonService);
 		Team teamA = new Team(List.of(a));
 		player.setTeam(teamA);
 
-		return new TowerManager(player, bugemonService, itemService, towerSaveService);
+		return new TowerManager(player, bugemonService, itemService, teamService, towerSaveService);
 	}
 
 	@Test

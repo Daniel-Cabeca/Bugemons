@@ -22,11 +22,11 @@ public class FloorRewardController implements FloorRewardWindow.ViewListener, Ch
 		ATTACK
 	}
 
-    private final Listener listener;
+	private final Listener listener;
 	private final Stage stage;
 	private FloorRewardWindow view;
 	private RewardChoice pendingChoice;
-    private ItemDTO rewardItem;
+	private ItemDTO rewardItem;
 
 	public FloorRewardController(Stage stage, Listener listener) {
 		this.stage = stage;
@@ -38,7 +38,7 @@ public class FloorRewardController implements FloorRewardWindow.ViewListener, Ch
 		view = loader.getController();
 		view.setViewListener(this);
 
-        rewardItem = listener.getRandomItem();
+		rewardItem = listener.getRandomItem();
 
 		List<Integer> towerInfo = listener.getTowerInfo();
 		if (towerInfo != null){

@@ -14,8 +14,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class TeamDatabaseRepository implements TeamRepository {
+	private static final Logger LOGGER = Logger.getLogger(TeamDatabaseRepository.class.getName());
+
 
     private final Database database;
 
@@ -137,7 +141,7 @@ public class TeamDatabaseRepository implements TeamRepository {
 			}
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "Failed to load bugemon with id: " + id, e);
 		}
 		return bugemon;
 	}
@@ -175,7 +179,7 @@ public class TeamDatabaseRepository implements TeamRepository {
 				}
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "Failed to load team with id: " + id, e);
 		}
 
 		Team team = new Team(bugemons);
@@ -210,7 +214,7 @@ public class TeamDatabaseRepository implements TeamRepository {
 				}
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "Failed to load teams for user: " + username, e);
 		}
 
 		return teams;

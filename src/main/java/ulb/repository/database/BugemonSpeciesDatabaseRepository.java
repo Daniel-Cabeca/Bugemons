@@ -15,11 +15,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Database-backed implementation for Bugemon species persistence.
  */
 public class BugemonSpeciesDatabaseRepository implements BugemonSpeciesRepository {
+	private static final Logger LOGGER = Logger.getLogger(BugemonSpeciesDatabaseRepository.class.getName());
+
 	private final Database database;
 
 	/**
@@ -183,7 +187,7 @@ public class BugemonSpeciesDatabaseRepository implements BugemonSpeciesRepositor
 				}
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "Failed to load Bugémon species from database.", e);
 		}
 
 		return abilities;

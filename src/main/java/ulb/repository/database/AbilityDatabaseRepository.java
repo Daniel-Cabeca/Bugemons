@@ -12,11 +12,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Database-backed implementation of the ability repository.
  */
 public class AbilityDatabaseRepository implements AbilityRepository {
+	private static final Logger LOGGER = Logger.getLogger(AbilityDatabaseRepository.class.getName());
+
 	private final Database database;
 
 	/**
@@ -167,7 +171,7 @@ public class AbilityDatabaseRepository implements AbilityRepository {
 				}
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "Failed to load abilities from database.", e);
 		}
 
 		return abilities;

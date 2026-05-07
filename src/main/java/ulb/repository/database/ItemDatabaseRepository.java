@@ -9,11 +9,15 @@ import ulb.utils.DuplicateElementException;
 
 import java.sql.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Items repository connected to the SQL database.
  */
 public class ItemDatabaseRepository implements ItemRepository {
+	private static final Logger LOGGER = Logger.getLogger(ItemDatabaseRepository.class.getName());
+
 	private final Database database;
 
 	/**
@@ -117,7 +121,7 @@ public class ItemDatabaseRepository implements ItemRepository {
 				);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "Failed to load item with id: " + id, e);
 		}
 		return null;
 	}
@@ -148,7 +152,7 @@ public class ItemDatabaseRepository implements ItemRepository {
 				}
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "Failed to load items from database.", e);
 		}
 
 		return items;

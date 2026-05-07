@@ -11,6 +11,8 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import ulb.DTO.battle.MultiBattleStatusDTO;
 import ulb.DTO.bugemon.BugemonSpeciesDTO;
@@ -40,6 +42,8 @@ public class ClientController extends Application implements RegisterController.
 BattleModeController.Listener,BattleEndController.Listener, BattleWindowController.Listener, NextRoomController.Listener, 
 FloorRewardController.Listener, AttackReplacementController.Listener, LevelUpController.Listener,
 LoadTeamPanelController.Listener, FloorController.Listener {
+
+	private static final Logger LOGGER = Logger.getLogger(ClientController.class.getName());
 
 	SocketClient client;
 	private final Object serverRequestLock = new Object();
@@ -303,7 +307,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 				try {
 					this.modeController.show();
 				}catch (Exception e){
-					e.printStackTrace();
+					LOGGER.log(Level.WARNING, "Impossible d'afficher l'écran de sélection du mode après connexion.", e);
 				}
 			} else {
 				this.registerController.getView().setErrorLabel("Nom d'utilisateur ou mot de passe incorrect.");
@@ -330,7 +334,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 				try {
 					this.modeController.show();
 				}catch (Exception e){
-					e.printStackTrace();
+					LOGGER.log(Level.WARNING, "Impossible d'afficher l'écran de sélection du mode après inscription.", e);
 				}
 			} else {
 				this.registerController.getView().setErrorLabel("Ce nom d'utilisateur est déjà pris.");
@@ -680,7 +684,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		try {
 			teamController.show();
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "Impossible de retourner à l'écran de constitution d'équipe.", e);
 		}
 	}
 
@@ -950,7 +954,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 				this.modeController.show();
 			}
 		}catch (Exception e){
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "Impossible de retourner au menu après abandon de la tour.", e);
 		}
 	}
 
@@ -978,7 +982,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		try {
 			chooseBugemonController.show();
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "Impossible d'afficher l'écran de choix du Bugémon pour la récompense.", e);
 		}
 	}
 
@@ -1014,7 +1018,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		try {
 			attackReplacementController.show(bugemon, newAbility);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "Impossible d'afficher l'écran de remplacement d'attaque.", e);
 		}
 	}
 
@@ -1029,7 +1033,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		try {
 			floorRewardController.show();
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "Impossible d'afficher l'écran de récompense d'étage.", e);
 		}
 	}
 
@@ -1089,7 +1093,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		try {
 			chooseBugemonController.show();
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "Impossible de retourner à l'écran de choix du Bugémon.", e);
 		}
 	}
 
@@ -1110,7 +1114,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
         try {
 			this.battleModeController.show();
 		}catch (Exception e){
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "Impossible de retourner à l'écran de sélection du mode de combat.", e);
 		}
     }
 

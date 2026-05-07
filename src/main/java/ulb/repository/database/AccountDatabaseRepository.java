@@ -8,11 +8,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Database-backed implementation of account operations.
  */
 public class AccountDatabaseRepository implements AccountRepository {
+	private static final Logger LOGGER = Logger.getLogger(AccountDatabaseRepository.class.getName());
+
 	private final Database database;
 
 	/**
@@ -249,7 +253,7 @@ public class AccountDatabaseRepository implements AccountRepository {
 			stmt.setInt(2, userId);
 			stmt.executeUpdate();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "Failed to add leaderboard points for user id: " + userId, e);
 			// Optionnel : throw new LoadException("Erreur lors de l'ajout des points");
 		}
 	}
@@ -264,7 +268,7 @@ public class AccountDatabaseRepository implements AccountRepository {
 				leaderboard.put(rs.getString("username"), rs.getInt("points"));
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "Failed to load leaderboard from database.", e);
 		}
 		return leaderboard;
 	}

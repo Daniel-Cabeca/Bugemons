@@ -9,11 +9,15 @@ import ulb.repository.database.sql.Database;
 
 import java.sql.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Inventory repository connected to the database
  */
 public class InventoryDatabaseRepository implements InventoryRepository {
+	private static final Logger LOGGER = Logger.getLogger(InventoryDatabaseRepository.class.getName());
+
     private final Database database;
     private ItemRepository itemRepository;
 
@@ -152,7 +156,7 @@ public class InventoryDatabaseRepository implements InventoryRepository {
 				inventory.addItem(item, quantity);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "Failed to load inventory for user: " + username, e);
 		}
 
         return inventory;

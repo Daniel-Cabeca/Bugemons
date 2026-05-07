@@ -1,6 +1,7 @@
 package ulb.model.battle;
 
 import ulb.model.Player;
+import ulb.service.AccountService;
 
 import java.util.NoSuchElementException;
 
@@ -62,12 +63,14 @@ public class MultiBattleSession {
 	/**
 	 * Creates a Battle instance for the session. To be called once both players are ready.
 	 */
-	public void start() {
+	public void start(AccountService accountService) {
 		this.battle = new Battle(
 			this.participants.a().getTeam(),
 			this.participants.b().getTeam(),
 			new Player("Player A", this.participants.a().getUserId()),
-			new Player("Player B", this.participants.b().getUserId())
+			new Player("Player B", this.participants.b().getUserId()),
+			true,
+			accountService
 		);
 	}
 }

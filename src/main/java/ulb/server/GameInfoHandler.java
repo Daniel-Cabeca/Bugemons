@@ -44,15 +44,12 @@ import ulb.model.reward.Reward;
 import ulb.model.tower.Room;
 import ulb.model.tower.RoomType;
 import ulb.model.tower.towerManager.TowerManager;
-import ulb.service.TowerSaveService;
 
 public class GameInfoHandler {
     ClientHandler clientHandler;
-	TowerSaveService towerSaveService;
 
-    public GameInfoHandler(ClientHandler clientHandler, TowerSaveService towerSaveService) {
+    public GameInfoHandler(ClientHandler clientHandler) {
         this.clientHandler = clientHandler;
-		this.towerSaveService = towerSaveService;
     }
 
     public void handle(CheckGameFinishedMessage message){
@@ -124,7 +121,6 @@ public class GameInfoHandler {
 		}
 
 		clientHandler.clearPendingLevelUpState();
-		System.out.println("IN THE GOOD FUNCTION");
 		clientHandler.sendMessage(new BattleEndInfoMessage(isWin, gainedXp));
 	}
 

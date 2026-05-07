@@ -15,9 +15,9 @@ import ulb.service.MultiBattleService;
 
 public class SocialHandler {
     ClientHandler clientHandler;
-    AccountService accountService;
-    ChatService chatService;
-	MultiBattleService multiBattleService;
+    private final AccountService accountService;
+    private final ChatService chatService;
+	private final MultiBattleService multiBattleService;
 
     public SocialHandler(ClientHandler clientHandler, AccountService accountService, ChatService chatService, MultiBattleService multiBattleService) {
         this.clientHandler = clientHandler;

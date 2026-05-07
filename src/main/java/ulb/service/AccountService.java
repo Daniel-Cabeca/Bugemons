@@ -1,6 +1,5 @@
 package ulb.service;
 
-import ulb.exceptions.DataAccessException;
 import ulb.exceptions.LoadException;
 import ulb.repository.AccountRepository;
 

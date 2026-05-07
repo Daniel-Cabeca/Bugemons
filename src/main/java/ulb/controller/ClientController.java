@@ -677,14 +677,6 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	// Battle Window Controller Listener : 
 
 	/**
-	 * Adds battle end results depending on the end state.
-	 * @param state the given state (WON OR LOST)
-	 */
-	public void addBattleEndResults(BattleState state) {
-		postData(new AddBattleEndResuts(state));
-	}
-
-	/**
 	 * Updates the inventory of the player.
 	 * @param userName the userName of the player used to confirm the player identity on the server side
 	 */
@@ -707,7 +699,6 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		if (state != BattleState.WON && state != BattleState.LOST){
 			return;
 		}
-		addBattleEndResults(state);
 		nextRoom();
 	}
 	

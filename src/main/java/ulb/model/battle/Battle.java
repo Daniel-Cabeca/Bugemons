@@ -1,6 +1,7 @@
 package ulb.model.battle;
 
 import ulb.model.team.Team;
+import ulb.service.AccountService;
 import ulb.model.Player;
 import ulb.model.action.*;
 import ulb.model.bugemon.Bugemon;
@@ -17,6 +18,9 @@ import ulb.model.reward.RewardType;
 
 
 public class Battle {
+	private AccountService accountService;
+
+	private boolean multiplayerBattle;
 	private final int XP_COEF = 30;
 
 	private BattleParticipant participantA;
@@ -40,6 +44,13 @@ public class Battle {
 		this.participantB = new BattleParticipant(playerB, teamB);
 		this.logMsg = new ArrayList<>();
 		this.activeEffects = new ArrayList<>();
+		this.multiplayerBattle = false;
+	}
+
+	public Battle(Team teamA, Team teamB, Player playerA, Player playerB, boolean multiplayerBattle, AccountService accountService) {
+		this(teamA, teamB, playerA, playerB);
+		this.accountService = accountService;
+		this.multiplayerBattle = multiplayerBattle;
 	}
 
 	public BattleParticipant getParticipant(ParticipantLabel team) {
@@ -373,16 +384,24 @@ public class Battle {
 	 * Handles the end of the battle
 	 */
 	private void handleBattleEnd(){
-		List<Bugemon> winners = this.participantA.getParticipatingBugemons();
-		Team losers = this.getTeam(ParticipantLabel.TEAM_B);
-		if (this.getState(ParticipantLabel.TEAM_B) == BattleState.WON){
-			winners = this.participantB.getParticipatingBugemons();
-			losers = this.getTeam(ParticipantLabel.TEAM_A);
+		BattleParticipant winner = this.participantA;
+		BattleParticipant loser = this.participantB;
+		if (this.getState(ParticipantLabel.TEAM_B) == BattleState.WON) {
+			winner = this.participantB;
+			loser = this.participantA;
 		}
 
-		int gainedXP = computeTotalXP(losers);
-		for (Bugemon b : winners){
-			b.gainXp(gainedXP / winners.size());
+		List<Bugemon> bugemonsOfWinner = winner.getParticipatingBugemons();
+		Team teamOfLoser = loser.getTeam();
+
+		int gainedXP = computeTotalXP(teamOfLoser);
+		for (Bugemon b : bugemonsOfWinner){
+			b.gainXp(gainedXP / bugemonsOfWinner.size());
+		}
+
+		if (this.multiplayerBattle) {
+			Player winnerPlayer = winner.getPlayer();
+			accountService.addPoints(winnerPlayer.getUserId(), 1);
 		}
 
 	}

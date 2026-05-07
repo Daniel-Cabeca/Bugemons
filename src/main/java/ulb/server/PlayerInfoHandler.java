@@ -8,7 +8,6 @@ import java.util.NoSuchElementException;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.DTO.player.PlayerDTO;
-import ulb.exceptions.DataAccessException;
 import ulb.mapper.bugemon.BugemonMapper;
 import ulb.mapper.item.ItemMapper;
 import ulb.mapper.player.PlayerMapper;
@@ -30,7 +29,7 @@ import ulb.service.AccountService;
 
 public class PlayerInfoHandler {
     ClientHandler clientHandler;
-    AccountService accountService;
+    private final AccountService accountService;
 
     public PlayerInfoHandler(ClientHandler clientHandler, AccountService accountService) {
         this.clientHandler = clientHandler;

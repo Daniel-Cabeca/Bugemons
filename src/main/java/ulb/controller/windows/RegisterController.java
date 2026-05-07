@@ -1,4 +1,4 @@
-package ulb.controller;
+package ulb.controller.windows;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -8,14 +8,11 @@ import ulb.view.FxmlLoader;
 import ulb.view.WindowPath;
 import ulb.view.windows.RegisterWindow;
 
-public class RegisterController implements RegisterWindow.ViewListener {
-
+public class RegisterController extends WindowController<RegisterWindow> implements RegisterWindow.ViewListener {
     private Listener listener;
-    private RegisterWindow view;
-    private Stage stage;
 
-    public RegisterController(Stage stage, Listener listener) {
-        this.stage = stage;
+    public RegisterController(Stage stage, String windowPath, Listener listener){
+        super(stage, windowPath);
         this.listener = listener;
     }
 

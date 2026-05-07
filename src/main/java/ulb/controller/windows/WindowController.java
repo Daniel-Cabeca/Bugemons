@@ -13,17 +13,19 @@ import ulb.view.FxmlLoader;
  * @param <T> Window of the windowController
  */
 abstract class WindowController<T> {
-    private Stage stage;
-    private String windowPath;
+    protected Stage stage;
+    protected T view;
+    protected String windowPath;
     private FXMLLoader loader;
-    private T view;
 
+    protected WindowController(Stage stage, String windowPath){
+        this.stage = stage;
+        this.windowPath = windowPath;
+        this.init();
+    }
 
-    public void setStage(Stage stage){ this.stage = stage; }
-    protected void setWindowPath(String windowPath) { this.windowPath = windowPath; }
     protected T getView() { return this.view; }
     protected Stage getStage(){ return this.stage; }
-
     /**
      * Used to initiate a WindowController object
      */

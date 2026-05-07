@@ -31,6 +31,8 @@ import ulb.DTO.item.ItemDTO;
 import ulb.DTO.reward.RewardDTO;
 import ulb.model.chat.ChatMessage;
 import ulb.exceptions.LoadException;
+import ulb.controller.windows.RegisterController;
+import ulb.view.WindowPath;
 
 /**
  * Client-side application controller coordinating UI flow and server messaging.
@@ -101,7 +103,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		primaryStage.setFullScreen(true);
 		primaryStage.setFullScreenExitHint("");
 
-		this.registerController = new RegisterController(this.stage, this);
+		this.registerController = new RegisterController(this.stage, WindowPath.REGISTER,this);
 		this.registerController.show();
 
 		if (primaryStage.getScene() != null) {

@@ -9,6 +9,7 @@ import ulb.message.clientToServer.*;
 import ulb.message.serverToClient.*;
 import ulb.model.Player;
 import ulb.model.battle.Battle;
+import ulb.model.battle.MultiBattleSession;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.reward.Reward;
 import ulb.model.team.Team;
@@ -27,6 +28,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
     private Battle battle;
     private Battle.ParticipantLabel teamLabel;
     private Thread opponentBot;
+	private MultiBattleSession multiBattleSession = null;
 
 	private TowerManager towerManager;
 	private boolean isGameTower;
@@ -54,15 +56,16 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
     public ClientHandler(SocketMessenger messenger,
                          AbilityService abilityService, BugemonService bugemonService, ItemService itemService,
-                         AccountService accountService, ChatService chatService, TeamService teamService, InventoryService inventoryService, TowerSaveService towerSaveService) {
+                         AccountService accountService, ChatService chatService, TeamService teamService, InventoryService inventoryService, TowerSaveService towerSaveService,
+						 MultiBattleService multiBattleService) {
         this.socketMessenger = messenger;
 		this.stop = false;
 		this.towerSaveService = towerSaveService;
 
-		this.setupHandler = new SetupHandler(this, accountService, itemService, inventoryService, bugemonService);
-		this.gameInfoHandler = new GameInfoHandler(this, towerSaveService);
-		this.gameActionsHandler = new GameActionsHandler(this, inventoryService);
-		this.socialHandler = new SocialHandler(this, accountService, chatService);
+		this.setupHandler = new SetupHandler(this, accountService, itemService, inventoryService, bugemonService, towerSaveService, multiBattleService);
+		this.gameInfoHandler = new GameInfoHandler(this);
+		this.gameActionsHandler = new GameActionsHandler(this, inventoryService, multiBattleService);
+		this.socialHandler = new SocialHandler(this, accountService, chatService, multiBattleService);
 		this.playerInfoHandler = new PlayerInfoHandler(this, accountService);
 		this.gameDataHandler = new GameDataHandler(this, bugemonService, abilityService, itemService);
 		this.teamSaveHandler = new TeamSaveHandler(this, teamService);
@@ -72,6 +75,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	public Battle getBattle() { return this.battle; }
 	public TowerManager getTowerManager() { return this.towerManager; }
 	public boolean isGameTower() { return this.isGameTower; }
+	public boolean isMultiPlayer() { return this.multiBattleSession != null; }
 	public Battle.ParticipantLabel getTeamLabel() { return this.teamLabel; }
 	public Thread getOpponentBot() { return this.opponentBot; }
 	public Bugemon getPendingLevelUpBugemon() { return this.pendingLevelUpBugemon; }
@@ -80,6 +84,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	public void setPlayer(Player player) { this.player = player; }
 	public void setTeam(Team team) { this.player.setTeam(team); }
 	public void setBattle(Battle battle) { this.battle = battle; }
+	public void setMultiBattleSession(MultiBattleSession multiBattleSession) { this.multiBattleSession = multiBattleSession; }
 	public void setTowerManager(TowerManager towerManager) { this.towerManager = towerManager; }
 	public void setGameMode(boolean isGameTower) { this.isGameTower = isGameTower; }
 	public void setTeamLabel(Battle.ParticipantLabel label) { this.teamLabel = label; }
@@ -167,7 +172,6 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		}
 		if (this.towerManager.moveToRoom(targetRoomId)){
 			this.battle = this.towerManager.getCurrentBattle();
-			this.towerSaveService.saveTowerInfo(this.towerManager.getTower(), this.player);
 			return true;
 		}
 		return false;
@@ -187,6 +191,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
 	// SETUP
 
+	@Override public void handle(ConfirmTeamMultiMessage message) { setupHandler.handle(message); }
 	@Override public void handle(RegisterMessage message) { setupHandler.handle(message); }
 	@Override public void handle(SetUpNormalModeMessage message) { setupHandler.handle(message); }
 	@Override public void handle(SetUpTeamMessage message) { setupHandler.handle(message); }
@@ -225,6 +230,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	@Override public void handle(ChooseTowerRoomMessage message) { gameActionsHandler.handle(message); }
 	@Override public void handle(PickRandomActionMessage message) { gameActionsHandler.handle(message); }
 	@Override public void handle(RunMessage message) { gameActionsHandler.handle(message); }
+	@Override public void handle(StartMultiBattleMessage message) { gameActionsHandler.handle(message); }
 	@Override public void handle(SwapBugemonMessage message) { gameActionsHandler.handle(message); }
 	@Override public void handle(UseAbilityMessage message) { gameActionsHandler.handle(message); }
 	@Override public void handle(UseItemMessage message) { gameActionsHandler.handle(message); }
@@ -243,18 +249,21 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	@Override public void handle(AcceptFriendRequestMessage message) { socialHandler.handle(message); }
 	@Override public void handle(DeclineBattleRequestMessage message) { socialHandler.handle(message); }
 	@Override public void handle(DeclineFriendRequestMessage message) { socialHandler.handle(message); }
-	@Override public void handle(GetBattleRequestsMessage message) { socialHandler.handle(message); } 
+	@Override public void handle(GetBattleRequestsMessage message) { socialHandler.handle(message); }
+	@Override public void handle(GetMultiBattleStatusMessage message) { socialHandler.handle(message); }
 	@Override public void handle(GetChatMessagesMessage message) { socialHandler.handle(message); }
 	@Override public void handle(GetFriendRequestsMessage message) { socialHandler.handle(message); }
 	@Override public void handle(GetFriendsListMessage message) { socialHandler.handle(message); }
 	@Override public void handle(SendBattleRequestMessage message) { socialHandler.handle(message); }
 	@Override public void handle(SendChatMessageMessage message) { socialHandler.handle(message); }
 	@Override public void handle(SendFriendRequestMessage message) { socialHandler.handle(message); }
+	@Override public void handle(GetLeaderboardMessage message) {socialHandler.handle(message); }
 
 
 	// TEAM SAVE
 
 	@Override public void handle(GetSavedTeamsMessage message) { teamSaveHandler.handle(message); }
 	@Override public void handle(SaveTeamMessage message) { teamSaveHandler.handle(message); }
+
 
 }

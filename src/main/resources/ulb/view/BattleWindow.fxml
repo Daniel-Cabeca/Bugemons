@@ -35,6 +35,7 @@
                 <javafx.geometry.Insets top="10" left="10"/>
             </padding>
             <children>
+                <Button text="👥" onAction="#openSocialPanel"/>
                 <Label fx:id="floorLabel" style="-fx-font-size: 30px"/>
                 <Label fx:id="roomLabel" style="-fx-font-size: 30px"/>
             </children>

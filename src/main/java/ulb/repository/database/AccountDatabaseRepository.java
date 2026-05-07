@@ -7,8 +7,7 @@ import ulb.repository.database.sql.Database;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Database-backed implementation of account operations.
@@ -59,7 +58,7 @@ public class AccountDatabaseRepository implements AccountRepository {
 	/**
 	 * {@inheritDoc}
 	 */
-	public int getUserId(String username) throws LoadException {
+	public int getUserId(String username) throws NoSuchElementException {
 		String sql = "SELECT id FROM users WHERE username = ?";
 		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
 			stmt.setString(1, username);
@@ -67,7 +66,7 @@ public class AccountDatabaseRepository implements AccountRepository {
 			if (rs.next()) return rs.getInt("id");
 			return -1;
 		} catch (SQLException e) {
-			throw new LoadException("Failed to fetch user id: " + e.getMessage());
+			throw new NoSuchElementException("Failed to fetch user id: " + e.getMessage());
 		}
 	}
 
@@ -242,5 +241,32 @@ public class AccountDatabaseRepository implements AccountRepository {
 		}
 	}
 
+	public void addPoints(int userId, int pointsToAdd) {
+		String sql = "UPDATE users SET points = points + ? WHERE id = ?";
+
+		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
+			stmt.setInt(1, pointsToAdd);
+			stmt.setInt(2, userId);
+			stmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			// Optionnel : throw new LoadException("Erreur lors de l'ajout des points");
+		}
+	}
+
+	public Map<String, Integer> getLeaderboard() {
+		Map<String, Integer> leaderboard = new LinkedHashMap<>();
+		String sql = "SELECT username, points FROM users ORDER BY points DESC LIMIT 10";
+
+		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				leaderboard.put(rs.getString("username"), rs.getInt("points"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return leaderboard;
+	}
 
 }

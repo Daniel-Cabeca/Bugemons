@@ -45,8 +45,11 @@ public class BattleModeWindow extends Window {
         viewListener.onControlledBattle();
     }
 
-	public void handleTowerBattle(ActionEvent event) {
-        viewListener.onTowerMode();
+	public void handleNewTowerBattle(){
+		viewListener.onTowerMode(true);
+	}
+	public void handleContinueTowerBattle(){
+		viewListener.onTowerMode(false);
 	}
 
     /**
@@ -100,7 +103,7 @@ public class BattleModeWindow extends Window {
     public interface ViewListener {
         void onAutoBattle();
         void onControlledBattle();
-        void onTowerMode();
+        void onTowerMode(boolean newTower);
         void onReturn();
     }
 }

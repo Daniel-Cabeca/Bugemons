@@ -7,6 +7,7 @@ import ulb.message.clientToServer.*;
  */
  public interface ServerMessageHandler {
 	// SETUP 
+	 void handle(ConfirmTeamMultiMessage message);
 	 void handle(RegisterMessage message);
 	 void handle(SetUpNormalModeMessage message);
 	 void handle(SetUpTeamMessage message);
@@ -39,6 +40,7 @@ import ulb.message.clientToServer.*;
 	 void handle(ChooseTowerRoomMessage message);
 	 void handle(PickRandomActionMessage message);
 	 void handle(RunMessage message);
+	 void handle(StartMultiBattleMessage message);
 	 void handle(SwapBugemonMessage message);
 	 void handle(UseAbilityMessage message);
 	 void handle(UseItemMessage message);
@@ -54,14 +56,16 @@ import ulb.message.clientToServer.*;
 	 void handle(DeclineBattleRequestMessage message);
 	 void handle(DeclineFriendRequestMessage message);
 	 void handle(GetBattleRequestsMessage message);
+	 void handle(GetMultiBattleStatusMessage message);
 	 void handle(GetChatMessagesMessage message);
 	 void handle(GetFriendRequestsMessage message);
 	 void handle(GetFriendsListMessage message);
+	 void handle(GetLeaderboardMessage message);
 	 void handle(SendBattleRequestMessage message);
 	 void handle(SendChatMessageMessage message);
 	 void handle(SendFriendRequestMessage message);
 
 	 // TEAM SAVE
-	 void handle(GetSavedTeamsMessage getSavedTeamsMessage);
-	 void handle(SaveTeamMessage saveTeamMessage);
+	 void handle(GetSavedTeamsMessage message);
+	 void handle(SaveTeamMessage message);
 }

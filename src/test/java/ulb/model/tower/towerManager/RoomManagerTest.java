@@ -58,7 +58,7 @@ public class RoomManagerTest {
     }
 
 	@Test
-	void createBattleRoomInitializesBattleController() {
+	void createBattleRoomInitializesBattle() {
 		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
 		ItemService itemService = new ItemService(new ItemMockRepository(), new StartingInventoryMockRepository());
 
@@ -72,6 +72,24 @@ public class RoomManagerTest {
 
 		assertNotNull(manager.getBattle(),
 				"Battle controller should be initialized for a BATTLE room");
+	}
+
+	@Test
+	void createBossRoomInitializesBossBattle() {
+		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
+		ItemService itemService = new ItemService(new ItemMockRepository(), new StartingInventoryMockRepository());
+
+		Player player = new Player();
+		// give the player a minimal valid team
+		Team team = new Team(List.of(makeBugemon()));
+		player.setTeam(team);
+
+		Room room = new Room(1, RoomType.BOSS);
+		RoomManager manager = new RoomManager(room, 1, player, bugemonService, itemService);
+
+		assertNotNull(manager.getBattle(),
+				"Battle controller should be initialized for a BATTLE room");
+		assertTrue(manager.getBattle().isBossBattle());
 	}
 }
 

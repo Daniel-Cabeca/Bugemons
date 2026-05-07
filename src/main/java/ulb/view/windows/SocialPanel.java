@@ -13,7 +13,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class SocialPanel {
 
@@ -27,6 +29,8 @@ public class SocialPanel {
     private VBox friendRequestsPane;
 	@FXML
 	private VBox battleRequestsPane;
+	@FXML
+	private VBox leaderboardPane;
     @FXML
     private TextField inviteField;
     @FXML
@@ -43,6 +47,8 @@ public class SocialPanel {
     private ListView<String> friendRequestsListView;
 	@FXML
     private ListView<String> battleRequestsListView;
+	@FXML
+	private ListView<Map.Entry<String, Integer>> leaderboardView;
 
     private ViewListener viewListener;
     private String selectedChatFriend;
@@ -106,6 +112,30 @@ public class SocialPanel {
             }
         });
 
+		leaderboardView.setCellFactory(lv -> new ListCell<Map.Entry<String, Integer>>() {
+			@Override
+			protected void updateItem(Map.Entry<String, Integer> item, boolean empty) {
+				super.updateItem(item, empty);
+				if (empty || item == null) {
+					setText(null);
+					setGraphic(null);
+					return;
+				}
+
+				Label nameLabel = new Label(item.getKey());
+				nameLabel.setStyle("-fx-text-fill: #000000; -fx-font-weight: bold;");
+
+				Label scoreLabel = new Label(item.getValue().toString());
+				scoreLabel.setStyle("-fx-text-fill: #000000; -fx-font-weight: bold;");
+
+				HBox row = new HBox(12, nameLabel, scoreLabel);
+				row.setAlignment(Pos.CENTER_LEFT);
+
+				setText(null);
+				setGraphic(row);
+			}
+		});
+
         chatFriendsList.setOnMouseClicked(e -> {
             String selected = chatFriendsList.getSelectionModel().getSelectedItem();
             if (selected != null) {
@@ -130,9 +160,16 @@ public class SocialPanel {
         }
     }
 
-	public void setBattleRequests(List<String> battleRequests) {
-        battleRequestsListView.getItems().setAll(battleRequests);
+	/**
+	 * Updates the leaderboard list.
+	 * @param List<String> the list of accounts that need to be shown.
+	 */
+	public void setLeaderboardList(Map<String, Integer> leaderboard) {
+		List<Map.Entry<String, Integer>> items = new ArrayList<>(leaderboard.entrySet());
+		leaderboardView.getItems().setAll(items);
 	}
+
+	public void setBattleRequests(List<String> battleRequests) { battleRequestsListView.getItems().setAll(battleRequests);}
 
 	/**
      * Updates the list of incoming friend requests.
@@ -162,7 +199,7 @@ public class SocialPanel {
     @FXML
     private void showInvite() {
         chatRefresh.stop();
-        show(invitePane, friendsPane, chatPane, friendRequestsPane, battleRequestsPane);
+        show(invitePane, friendsPane, chatPane, friendRequestsPane, battleRequestsPane, leaderboardPane);
     }
 
     /**
@@ -171,16 +208,26 @@ public class SocialPanel {
     @FXML
     private void showFriends() {
         chatRefresh.stop();
-        show(friendsPane, invitePane, chatPane, friendRequestsPane, battleRequestsPane);
+        show(friendsPane, invitePane, chatPane, friendRequestsPane, battleRequestsPane, leaderboardPane);
         viewListener.refreshFriends();
     }
+
+	/**
+	 * Displays the leaderboard panel and refreshes the leaderboard list.
+	 */
+	@FXML
+	private void showLeaderboard() {
+		chatRefresh.stop();
+		show(leaderboardPane, invitePane, friendsPane, chatPane, friendRequestsPane, battleRequestsPane);
+		viewListener.refreshLeaderboard();
+	}
 
     /**
      * Displays the chat panel and starts chat refresh.
      */
     @FXML
     private void showChat() {
-        show(chatPane, invitePane, friendsPane, friendRequestsPane, battleRequestsPane);
+        show(chatPane, invitePane, friendsPane, friendRequestsPane, battleRequestsPane, leaderboardPane);
         chatRefresh.play();
         viewListener.refreshFriends();
     }
@@ -191,14 +238,14 @@ public class SocialPanel {
     @FXML
     private void showFriendRequests() {
         chatRefresh.stop();
-        show(friendRequestsPane, invitePane, friendsPane, chatPane, battleRequestsPane);
+        show(friendRequestsPane, invitePane, friendsPane, chatPane, battleRequestsPane, leaderboardPane);
         viewListener.onFriendRequestsOpened();
     }
 
 	@FXML
     private void showBattleRequests() {
         chatRefresh.stop();
-        show(battleRequestsPane, friendRequestsPane, invitePane, friendsPane, chatPane);
+        show(battleRequestsPane, friendRequestsPane, invitePane, friendsPane, chatPane, leaderboardPane);
         viewListener.onBattleRequestsOpened();
     }
 
@@ -247,6 +294,9 @@ public class SocialPanel {
         }
     }
 
+	/**
+	 * Handles accepting a battle invite
+	 */
 	@FXML
     private void handleAcceptBattle() {
         String sender = battleRequestsListView.getSelectionModel().getSelectedItem();
@@ -255,6 +305,9 @@ public class SocialPanel {
         }
     }
 
+	/**
+	 * Handles declining a battle invite
+	 */
     @FXML
     private void handleDeclineBattle() {
         String sender = battleRequestsListView.getSelectionModel().getSelectedItem();
@@ -294,6 +347,7 @@ public class SocialPanel {
         void onBattleRequestsOpened();
         void onChallengeFriend(String friend);
         void refreshFriends();
+		void refreshLeaderboard();
         void onSendMessage(String friend, String content);
     }
 }

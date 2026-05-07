@@ -2,19 +2,23 @@ package ulb.controller;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import ulb.DTO.battle.MultiBattleStatusDTO;
 import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.DTO.team.TeamDTO;
 import ulb.communication.SocketClient;
 import ulb.exceptions.CommunicationException;
 import ulb.communication.GameMode;
+import ulb.exceptions.CommunicationException;
 import ulb.message.ClientToServerMessage;
 import ulb.message.clientToServer.*;
 import ulb.message.serverToClient.*;
@@ -34,7 +38,7 @@ import ulb.exceptions.LoadException;
  */
 public class ClientController extends Application implements RegisterController.Listener, ModeController.Listener,
 BattleModeController.Listener,BattleEndController.Listener, BattleWindowController.Listener, NextRoomController.Listener, 
-FloorRewardController.Listener, AttackReplacementController.Listener, TeamController.Listener, LevelUpController.Listener,
+FloorRewardController.Listener, AttackReplacementController.Listener, LevelUpController.Listener,
 LoadTeamPanelController.Listener, FloorController.Listener {
 
 	SocketClient client;
@@ -200,7 +204,6 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	// Social Panel Controller
 
 	public boolean sendBattleRequest(String receiver) {
-
 		return postData(new SendBattleRequestMessage(player.getUsername(), receiver));
 	}
 
@@ -216,6 +219,13 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 
 	public boolean declineBattleRequest(String sender) {
 		return postData(new DeclineBattleRequestMessage(player.getUsername(), sender));
+	}
+
+	public MultiBattleStatusDTO getMultiBattleStatus(int userId1, int userId2) {
+		if (getData(new GetMultiBattleStatusMessage(userId1, userId2)) instanceof MultiBattleStatusMessage msg)
+			return msg.getStatus();
+
+		throw new CommunicationException("Failed to obtain multiplayer battle status.");
 	}
 
 	public boolean sendFriendRequest(String receiver) {
@@ -254,6 +264,24 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		if (getData(new GetFriendsListMessage(player.getUsername())) instanceof FriendsListMessage msg)
 			return msg.getFriends();
 		return List.of();
+	}
+
+	public Map<String, Integer> getLeaderboardList() {
+		if (getData(new GetLeaderboardMessage()) instanceof LeaderboardMessage msg)
+			return msg.getLeaderboard();
+		return Collections.<String, Integer>emptyMap();
+	}
+
+	/**
+	 * Switches to the team selection window for a multiplayer battle.
+	 *
+	 * @param opponent The opponent for the battle
+	 */
+	public void switchToTeamSelectionForMulti(PlayerDTO opponent) {
+		this.teamController = new TeamController(this);
+		this.teamController.setOpponent(opponent);
+
+		this.teamController.show();
 	}
 
 	// Register Controller :
@@ -328,12 +356,8 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	 */
 	@Override
 	public void onSolo() {
-		this.teamController = new TeamController(this.stage, this, this.player);
-		try {
-			this.teamController.show();
-		} catch (Exception e){
-			e.printStackTrace();
-		}
+		this.teamController = new TeamController(this);
+		this.teamController.show();
 	}
 
 	/**
@@ -350,32 +374,16 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	@Override
 	public void onLogOut() {
 		this.player = null;
-
-		try {
-			this.registerController.show();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		this.registerController.show();
 	}
 
-	// Team Controller Listener :
+	// Team Controller :
 
 	/**
-	 * {@inheritDoc}
+	 * Returns the list of all the Bugemon species.
+	 *
+	 * @return A list of BugemonSpeciesDTO with all the species in the game's data
 	 */
-	@Override
-	public void onReturnToMode() {
-		try {
-			modeController.show();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public List<BugemonSpeciesDTO> getAllSpecies(){
 		Serializable message = this.getData(new GetAllBugemonSpeciesMessage());
 
@@ -388,7 +396,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
     /**
      * Sends the player's team to the server and switches to the battle mode window
      */
-	private void setupTeamAndShowModeMenu() {
+	public void setupTeamAndShowModeMenu() {
 		List<BugemonDTO> team = player.getTeam();
 
 		if (!this.postData(new SetUpTeamMessage(team))){
@@ -396,32 +404,65 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		}
 
 		this.battleModeController = new BattleModeController(this.stage, this, team);
-		try {
-			battleModeController.show();
-		} catch (Exception e) {
-			e.printStackTrace();
+		battleModeController.show();
+	}
+
+	/**
+	 * Confirms the team for a multiplayer battle and starts waiting for the battle to start.
+	 *
+	 * @param opponent The view's player's opponent
+	 */
+	public void confirmTeamMulti(PlayerDTO opponent) {
+		this.postData(new ConfirmTeamMultiMessage(opponent, this.getPlayer().getTeam()));
+
+		this.openWaitWindow(e -> {
+			this.waitForOpponentTeam(opponent);
+		});
+	}
+
+	/**
+	 * Function called in a loop while waiting for the opponent to pick his team.
+	 *
+	 * @param opponent This view's player's opponent
+	 */
+	private void waitForOpponentTeam(PlayerDTO opponent) {
+		PlayerDTO self = this.getPlayer();
+		MultiBattleStatusDTO status = this.getMultiBattleStatus(self.getUserId(), opponent.getUserId());
+
+		switch(status.getStatus()) {
+			case BATTLE:
+				this.stopWaitWindow();
+				this.startMultiBattle(opponent);
+				break;
+
+			case PICKING_TEAMS:
+				break;
+
+			default:
+				this.stopWaitWindow();
+				this.switchToModeWindow();
 		}
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Starts a multiplayer battle. To be called once both teams have been picked.
+	 *
+	 * @param opponent The opponent
 	 */
-	@Override
-	public void onTeamConfirmed() {
-		setupTeamAndShowModeMenu();
+	private void startMultiBattle(PlayerDTO opponent) {
+		List<BugemonDTO> team = player.getTeam();
+		this.postData(new SetUpTeamMessage(team));
+
+		this.postData(new StartMultiBattleMessage(opponent));
+		this.switchToBattleWindow();
 	}
 
 	/**
 	 * Shows the Load team panel when the load a team button is clicked in create team window
 	 */
-	@Override
-	public void onLoadTeam() {
-		try {
-			LoadTeamPanelController loadTeamPanelController = new LoadTeamPanelController(stage, this);
-			loadTeamPanelController.show();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public void loadTeam() {
+		LoadTeamPanelController loadTeamPanelController = new LoadTeamPanelController(stage, this);
+		loadTeamPanelController.show();
 	}
 
 	/**
@@ -443,8 +484,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	 * Saves the team to the database
 	 * @param teamDTO the DTO of the team to be saved
 	 */
-	@Override
-	public void onTeamSaved(TeamDTO teamDTO) {
+	public void saveTeam(TeamDTO teamDTO) {
 		boolean success = postData(new SaveTeamMessage(teamDTO));
 		if (!success) {
 			teamController.getView().showInvalidSaveAlert("Tu as déjà une équipe avec ce nom!");
@@ -476,12 +516,8 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	/**
 	 * Shows the mode window.
 	 */
-	private void switchToModeWindow(){
-		try {
-			this.modeController.show();
-		}catch (Exception e){
-			e.printStackTrace();
-		}
+	public void switchToModeWindow(){
+		this.modeController.show();
 	}
 
 	/**
@@ -489,12 +525,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	 */
 	private void switchToNextRoomWindow(){
 		this.nextRoomController = new NextRoomController(stage, this);
-		try{
-			this.nextRoomController.show();
-		} catch (Exception e){
-			System.err.println(e);
-		}
-		
+		this.nextRoomController.show();
 	}
 
 	/**
@@ -518,23 +549,15 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 				towerRoomNumber
 		);
 
-		try {
-			battleWindowController.show();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		battleWindowController.show();
 	}
 
 	private void switchToFloorWindow(){
 		if (this.floorController == null) {
 			this.floorController = new FloorController(this.stage, this);
 		}
-		try {
-			this.floorController.show();
-		}catch (Exception e){
-			e.printStackTrace();
-		}
 
+		this.floorController.show();
 	}
 
 	/**
@@ -543,21 +566,16 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	private void switchToBattleEndWindow(){
 		Serializable message = getData(new GetBattleEndInfoMessage());
 		boolean victory = false;
-		int totaleXp = 0;
+		int totalXp = 0;
 		if (message instanceof BattleEndInfoMessage battleInfo){
 			victory = battleInfo.isVictory();
-			totaleXp = battleInfo.getTotalXp();
+			totalXp = battleInfo.getTotalXp();
 		} else {
 			return;
 		}
 
 		this.battleEndController = new BattleEndController(stage, this);
-		try {
-			battleEndController.show(victory, totaleXp);
-		}
-		catch (Exception e){
-			e.printStackTrace();
-		}
+		battleEndController.show(victory, totalXp);
 	}
 
 	/**
@@ -572,11 +590,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		this.pendingLevelUpBugemon = levelUpInfo.getBugemon();
 		this.pendingLevelUpRewards = levelUpInfo.getRewards();
 		this.levelUpController = new LevelUpController(stage, this);
-		try {
-			this.levelUpController.show();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		this.levelUpController.show();
 	}
 
 	/**
@@ -584,11 +598,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	 */
 	private void switchToTowerRewardWindow(){
 		this.floorRewardController = new FloorRewardController(stage, this);
-		try{
-			floorRewardController.show();
-		} catch (Exception e){
-			System.err.println(e);
-		}
+		floorRewardController.show();
 	}
 
 	/**
@@ -654,10 +664,10 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void onTowerMode() {
+	public void onTowerMode(boolean newTower) {
 		this.gameMode = GameMode.TOWER;
 		this.floorController = null;
-		if (this.postData(new SetUpTowerModeMessage())){
+		if (this.postData(new SetUpTowerModeMessage(newTower))){
 			switchToFloorWindow();
 		}
 	}
@@ -1104,12 +1114,31 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		}
     }
 
-    // Wait Window
+    // Miscellaneous
 
-    public void openWaitWindow() {
-		this.socialPanelController.close();
+	/**
+	 * Opens a waiting window.
+	 *
+	 * @param waitCycle The function to play in loop in the waiting window
+	 */
+    public void openWaitWindow(EventHandler waitCycle) {
+		this.closeSocialPanel();
 
-		this.waitWindowController = new WaitWindowController(this);
+		this.waitWindowController = new WaitWindowController(this, waitCycle);
 		this.waitWindowController.show();
     }
+
+	/**
+	 * Stops the main loop of a waiting window. To call before closing it.
+	 */
+	public void stopWaitWindow() {
+		this.waitWindowController.stop();
+	}
+
+	/**
+	 * Closes the social panel.
+	 */
+	public void closeSocialPanel() {
+		this.socialPanelController.close();
+	}
 }

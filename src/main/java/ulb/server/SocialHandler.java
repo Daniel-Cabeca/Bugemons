@@ -1,46 +1,47 @@
 package ulb.server;
 
 import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
-import ulb.message.clientToServer.AcceptBattleRequestMessage;
-import ulb.message.clientToServer.AcceptFriendRequestMessage;
-import ulb.message.clientToServer.DeclineBattleRequestMessage;
-import ulb.message.clientToServer.DeclineFriendRequestMessage;
-import ulb.message.clientToServer.GetBattleRequestsMessage;
-import ulb.message.clientToServer.GetChatMessagesMessage;
-import ulb.message.clientToServer.GetFriendRequestsMessage;
-import ulb.message.clientToServer.GetFriendsListMessage;
-import ulb.message.clientToServer.SendBattleRequestMessage;
-import ulb.message.clientToServer.SendChatMessageMessage;
-import ulb.message.clientToServer.SendFriendRequestMessage;
-import ulb.message.serverToClient.BattleRequestsMessage;
-import ulb.message.serverToClient.ChatMessagesMessage;
-import ulb.message.serverToClient.FriendRequestsMessage;
-import ulb.message.serverToClient.FriendsListMessage;
+import ulb.DTO.battle.MultiBattleStatusDTO;
+import ulb.mapper.battle.MultiBattleStatusMapper;
+import ulb.message.clientToServer.*;
+import ulb.message.serverToClient.*;
+import ulb.model.battle.MultiBattleSession;
 import ulb.service.AccountService;
 import ulb.service.ChatService;
+import ulb.service.MultiBattleService;
 
 public class SocialHandler {
     ClientHandler clientHandler;
-    AccountService accountService;
-    ChatService chatService;
+    private final AccountService accountService;
+    private final ChatService chatService;
+	private final MultiBattleService multiBattleService;
 
-    public SocialHandler(ClientHandler clientHandler, AccountService accountService, ChatService chatService) {
+    public SocialHandler(ClientHandler clientHandler, AccountService accountService, ChatService chatService, MultiBattleService multiBattleService) {
         this.clientHandler = clientHandler;
         this.accountService = accountService;
         this.chatService = chatService;
+		this.multiBattleService = multiBattleService;
     }
 
 	public void handle(AcceptBattleRequestMessage message){
 		int senderId = accountService.getUserId(message.getSenderUsername());
 		int receiverId = accountService.getUserId(message.getReceiverUsername());
+
 		accountService.acceptBattleRequest(senderId, receiverId);
+
+		MultiBattleSession multiBattle = multiBattleService.getMultiBattle(senderId, receiverId);
+		multiBattle.getParticipant(receiverId).accept();
+
 		clientHandler.sendSuccessMessage();
 	}
 
 	public void handle(AcceptFriendRequestMessage message){
 		int senderId = accountService.getUserId(message.getSenderUsername());
 		int receiverId = accountService.getUserId(message.getReceiverUsername());
+
 		accountService.acceptFriendRequest(senderId, receiverId);
 		clientHandler.sendSuccessMessage();
 	}
@@ -48,8 +49,11 @@ public class SocialHandler {
 	public void handle(DeclineBattleRequestMessage message){
 		int senderId = accountService.getUserId(message.getSenderUsername());
 		int receiverId = accountService.getUserId(message.getReceiverUsername());
+
 		accountService.declineBattleRequest(senderId, receiverId);
 		clientHandler.sendSuccessMessage();
+
+		//TODO delete multi battle instance to signal it's been declined
 	}
 
 	public void handle(DeclineFriendRequestMessage message){
@@ -63,6 +67,19 @@ public class SocialHandler {
 		int userId = accountService.getUserId(message.getUsername());
 		List<String> requests = accountService.getPendingBattleRequests(userId);
 		clientHandler.sendMessage(new BattleRequestsMessage(requests));
+	}
+
+	public void handle(GetMultiBattleStatusMessage message) {
+		MultiBattleStatusDTO status = new MultiBattleStatusDTO();
+
+		try {
+			MultiBattleSession multiBattle = multiBattleService.getMultiBattle(message.getUserId1(), message.getUserId2());
+			status = MultiBattleStatusMapper.toDTO(multiBattle);
+		}
+		catch (NoSuchElementException e) {}
+
+		MultiBattleStatusMessage response = new MultiBattleStatusMessage(status);
+		clientHandler.sendMessage(response);
 	}
 
 	public void handle(GetChatMessagesMessage message){
@@ -81,6 +98,11 @@ public class SocialHandler {
 		clientHandler.sendMessage(new FriendsListMessage(friends));
 	}
 
+	public void handle(GetLeaderboardMessage message){
+		Map<String, Integer> leaderboard = accountService.getLeaderboard();
+		clientHandler.sendMessage(new LeaderboardMessage(leaderboard));
+	}
+
 	public void handle(SendBattleRequestMessage message){
 		int senderId = accountService.getUserId(message.getSenderUsername());
 		int receiverId = accountService.getUserId(message.getReceiverUsername());
@@ -92,6 +114,10 @@ public class SocialHandler {
 			clientHandler.sendErrorMessage("Un défi est déjà en attente avec cet ami");
 			return;
 		}
+
+		MultiBattleSession multiBattle = multiBattleService.createMultiBattle(senderId, receiverId);
+		multiBattle.getParticipant(senderId).accept();
+
 		accountService.sendBattleRequest(senderId, receiverId);
 		clientHandler.sendSuccessMessage();
 	}

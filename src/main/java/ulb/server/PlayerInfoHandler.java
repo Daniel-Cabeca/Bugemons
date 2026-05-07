@@ -3,6 +3,7 @@ package ulb.server;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.item.ItemDTO;
@@ -28,7 +29,7 @@ import ulb.service.AccountService;
 
 public class PlayerInfoHandler {
     ClientHandler clientHandler;
-    AccountService accountService;
+    private final AccountService accountService;
 
     public PlayerInfoHandler(ClientHandler clientHandler, AccountService accountService) {
         this.clientHandler = clientHandler;
@@ -53,12 +54,16 @@ public class PlayerInfoHandler {
 	}
     
     public void handle(GetPlayerMessage message) {
-        Player player = clientHandler.getPlayer();
-		if (message.getUsername().equals(player.getUsername())){
+		String username = message.getUsername();
+
+		try {
+			int id = this.accountService.getUserId(username);
+
+			Player player = new Player(username, id);
 			PlayerDTO playerDTO = PlayerMapper.toDTO(player);
 			clientHandler.sendMessage(new PlayerMessage(playerDTO));
 		}
-		else{
+		catch (NoSuchElementException e) {
 			clientHandler.sendErrorMessage("Wrong Username");
 		}
 	}

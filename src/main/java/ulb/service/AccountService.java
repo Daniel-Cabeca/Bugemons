@@ -4,6 +4,8 @@ import ulb.exceptions.LoadException;
 import ulb.repository.AccountRepository;
 
 import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 /**
  * Service layer for account registration and authentication.
@@ -52,9 +54,9 @@ public class AccountService {
      *
      * @param username The account username
      * @return The user id, or -1 if the user does not exist
-     * @throws LoadException If the lookup fails
+     * @throws NoSuchElementException If the lookup fails
      */
-    public int getUserId(String username) throws LoadException {
+    public int getUserId(String username) throws NoSuchElementException {
         return repository.getUserId(username);
     }
 
@@ -100,5 +102,12 @@ public class AccountService {
 
 	public void declineBattleRequest(int senderId, int receiverId) throws LoadException {
 		repository.declineBattleRequest(senderId, receiverId);
+	}
+	public void addPoints(int userId, int pointsToAdd) throws LoadException {
+		repository.addPoints(userId,pointsToAdd);
+	}
+
+	public  Map<String, Integer> getLeaderboard(){
+		return repository.getLeaderboard();
 	}
 }

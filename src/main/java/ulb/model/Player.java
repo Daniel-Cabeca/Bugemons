@@ -15,21 +15,16 @@ public class Player {
 	/**
 	 * Creates a default player named "Player".
 	 * Used for tests.
-	 *
-	 * @param itemService Item service for starter inventory
 	 */
 	public Player() {
-		this.username = "Player";
-		this.userId = -1;
-		this.team = new Team();
-		this.inventory = new Inventory();
-
+		this("Player", -1);
 	}
 
 	/**
 	 * Creates a player from fully specified state.
 	 *
 	 * @param username Player name
+	 * @param userId Player id
 	 * @param inventory Player inventory
 	 */
 	public Player(String username, int userId, Inventory inventory) {
@@ -37,6 +32,16 @@ public class Player {
 		this.userId = userId;
 		this.team = new Team();
 		this.inventory = inventory;
+	}
+
+	/**
+	 * Creates a player with an empty inventory from its username and id.
+	 *
+	 * @param username Player name
+	 * @param userId Player id
+	 */
+	public Player(String username, int userId) {
+		this(username, userId, new Inventory());
 	}
 
 	/** Returns User ID. */

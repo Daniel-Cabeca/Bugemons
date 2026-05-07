@@ -7,6 +7,7 @@ import ulb.controller.ClientController;
 import ulb.repository.*;
 import ulb.repository.database.*;
 import ulb.repository.database.sql.*;
+import ulb.repository.inmemory.MultiBattleInMemoryRepository;
 import ulb.repository.json.ItemJsonRepository;
 import ulb.repository.json.StartingInventoryJsonRepository;
 import ulb.service.*;
@@ -60,6 +61,9 @@ public class Main{
 		TowerSaveRepository towerSaveRepository = new TowerSaveDatabaseRepository(database);
 		TowerSaveService towerSaveService = new TowerSaveService(towerSaveRepository);
 
-		server.start(abilityService, bugemonService, itemService, accountService, chatService, teamService, inventoryService, towerSaveService);
+		MultiBattleRepository multiBattleRepository = new MultiBattleInMemoryRepository();
+		MultiBattleService multiBattleService = new MultiBattleService(multiBattleRepository);
+
+		server.start(abilityService, bugemonService, itemService, accountService, chatService, teamService, inventoryService, towerSaveService, multiBattleService);
 	}
 }

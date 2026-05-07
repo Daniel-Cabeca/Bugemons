@@ -189,6 +189,13 @@ public class BattleWindow extends Window {
         }
     }
 
+    @FXML
+    public void openSocialPanel() {
+        if (viewListener != null) {
+            viewListener.onOpenSocial();
+        }
+    }
+
     /**
      * Switches the view to the inventory menu and populates it with the given entries.
      * Hides the main button grid and all other sub-menus.
@@ -389,7 +396,7 @@ public class BattleWindow extends Window {
 
 	/**
 	 * Plays the attack animation for the correct Bugemon
-	 * @param isPlayer
+	 * @param isPlayer is or is not the player
 	 */
 	public void playAttackAnimation(boolean isPlayer) {
 		graphicsHelper.playAttackAnimation(isPlayer ? PlayerBugemon : OpponentBugemon, isPlayer);
@@ -463,6 +470,7 @@ public class BattleWindow extends Window {
         void onAttack();
         void onBackToMenu();
         void onReturn(ActionEvent event);
+        void onOpenSocial();
         void onUseItem(String itemId, ActionEvent event);
         void onSwapBugemon(String bugemonId, ActionEvent event);
         void onUseAbility(String abilityId, ActionEvent event);

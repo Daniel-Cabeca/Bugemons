@@ -44,15 +44,12 @@ import ulb.model.reward.Reward;
 import ulb.model.tower.Room;
 import ulb.model.tower.RoomType;
 import ulb.model.tower.towerManager.TowerManager;
-import ulb.service.TowerSaveService;
 
 public class GameInfoHandler {
     ClientHandler clientHandler;
-	TowerSaveService towerSaveService;
 
-    public GameInfoHandler(ClientHandler clientHandler, TowerSaveService towerSaveService) {
+    public GameInfoHandler(ClientHandler clientHandler) {
         this.clientHandler = clientHandler;
-		this.towerSaveService = towerSaveService;
     }
 
     public void handle(CheckGameFinishedMessage message){
@@ -124,7 +121,6 @@ public class GameInfoHandler {
 		}
 
 		clientHandler.clearPendingLevelUpState();
-		System.out.println("IN THE GOOD FUNCTION");
 		clientHandler.sendMessage(new BattleEndInfoMessage(isWin, gainedXp));
 	}
 
@@ -205,14 +201,13 @@ public class GameInfoHandler {
 				boolean won = battle.getState(teamLabel) == BattleState.WON;
 
 				if (won) {
-					towerManager.getCurrentRoomManager().setRoomCompleted(true);
+					towerManager.setCurrentRoomCompleted(true);
 					battle.resetFightStats();
 					RoomType currentRoomType = towerManager.getCurrentRoomType();
 
 					if (currentRoomType == RoomType.BOSS) {
 						towerManager.nextFloor();
-						towerSaveService.saveTowerInfo(towerManager.getTower(), player);
-
+	
 						if (!towerManager.isTowerCompleted()) {
 							RoomType nextRoomType = towerManager.getCurrentRoomType();
 							clientHandler.setBattle(towerManager.getCurrentBattle());

@@ -93,20 +93,18 @@ public class FloorManager {
 	}
 
 	/** Returns current player. */
-	public Player getPlayer() {return player;}
+	public Player getPlayer() { return player; }
 
 	/** Sets current player. */
-	public void setPlayer(Player player) {this.player = player;}
+	public void setPlayer(Player player) { this.player = player; }
 
 	/** Returns current battle instance. */
-	public Battle getCurrentBattle() {return getCurrentRoomManager().getBattle();}
+	public Battle getCurrentBattle() { return getCurrentRoomManager().getBattle(); }
 
 	/** Returns current room. */
-	public Room getRoom(){return this.getCurrentRoomManager().getRoom();}
+	public Room getRoom() { return this.getCurrentRoomManager().getRoom(); }
 
 	/** Returns current room id. */
-	public int getCurrentRoomId() {
-        return getRoom().getId();
-    }
+	public int getCurrentRoomId() { return getRoom().getId(); }
 
 }

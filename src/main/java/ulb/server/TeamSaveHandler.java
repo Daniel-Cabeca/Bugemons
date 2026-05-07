@@ -16,7 +16,7 @@ import ulb.service.TeamService;
 
 public class TeamSaveHandler {
     ClientHandler clientHandler;
-    TeamService teamService;
+    private final TeamService teamService;
 
     public TeamSaveHandler(ClientHandler clientHandler, TeamService teamService) {
         this.clientHandler = clientHandler;

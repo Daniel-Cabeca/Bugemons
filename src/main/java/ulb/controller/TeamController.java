@@ -19,20 +19,22 @@ import java.util.List;
  * Controller for creating and validating the player's starting team.
  */
 public class TeamController implements CreateTeamWindow.ViewListener {
-	private PlayerDTO player;
-
-	private final Listener listener;
-	private final Stage stage;
-
+	private ClientController clientController;
 	private CreateTeamWindow view;
 
-	public TeamController(Stage stage, Listener listener, PlayerDTO player) {
-		this.stage = stage;
-		this.listener = listener;
-		this.player = player;
+	private PlayerDTO opponent = null;
+
+	public TeamController(ClientController clientController) {
+		this.clientController = clientController;
 	}
 
 	public CreateTeamWindow getView(){return this.view;}
+	public Stage getStage() { return this.clientController.getStage(); }
+	public PlayerDTO getSelfPlayer() { return this.clientController.getPlayer(); }
+
+	public boolean hasOpponent() { return this.opponent != null; }
+	public PlayerDTO getOpponent() { return this.opponent; }
+	public void setOpponent(PlayerDTO opponent) { this.opponent = opponent; }
 
 	/**
 	 * Displays the create team screen.
@@ -44,13 +46,13 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 		view.populateAvailableBugemons();
 
 		Parent root = loader.getRoot();
-		if (stage.getScene() == null) {
-			stage.setScene(new Scene(root));
+		if (this.getStage().getScene() == null) {
+			this.getStage().setScene(new Scene(root));
 		} else {
-			stage.getScene().setRoot(root);
+			this.getStage().getScene().setRoot(root);
 		}
 		view.populateAvailableBugemons();
-		this.stage.show();
+		this.getStage().show();
 	}
 
 	/**
@@ -58,7 +60,7 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 	 */
 	public void setTeam(List<String> selectedBugemonIds) {
 		List<BugemonDTO> members = setupTeamMembers(selectedBugemonIds);
-		player.setTeam(members);
+		this.getSelfPlayer().setTeam(members);
 	}
 
 	/**
@@ -69,15 +71,20 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 	@Override
 	public void onConfirmTeam(List<String> selectedBugemonIds) {
 		setTeam(selectedBugemonIds);
-		listener.onTeamConfirmed();
+
+		if (this.hasOpponent()) {
+			this.clientController.confirmTeamMulti(this.getOpponent());
+		}
+		else {
+			this.clientController.setupTeamAndShowModeMenu();
+		}
 	}
 
 	/**
 	 * Handles return action from the team creation screen.
 	 */
-	@Override
 	public void onReturn() {
-		listener.onReturnToMode();
+		this.clientController.switchToModeWindow();
 	}
 
 	/**
@@ -85,7 +92,7 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 	 */
 	@Override
 	public void onLoadTeam() {
-		listener.onLoadTeam();
+		this.clientController.loadTeam();
 	}
 
     /**
@@ -97,7 +104,7 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 	public void onSaveTeam(List<String> selectedBugemonIds, String teamName) {
 		List<BugemonDTO> members = setupTeamMembers(selectedBugemonIds);
 		TeamDTO team = new TeamDTO(-1, teamName, members);
-		listener.onTeamSaved(team);
+		this.clientController.saveTeam(team);
 	}
 
     /**
@@ -121,18 +128,6 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 
 	@Override
 	public List<BugemonSpeciesDTO> getAllSpecies(){
-		return listener.getAllSpecies();
-	}
-
-	/**
-	 * Listener for team creation flow events.
-	 */
-	public interface Listener {
-		/** Called when team selection is confirmed. */
-		void onTeamConfirmed();
-		void onTeamSaved(TeamDTO teamDTO);
-		void onReturnToMode();
-		void onLoadTeam();
-		List<BugemonSpeciesDTO> getAllSpecies();
+		return this.clientController.getAllSpecies();
 	}
 }

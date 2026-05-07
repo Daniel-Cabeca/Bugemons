@@ -5,6 +5,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import ulb.DTO.battle.MultiBattleStatusDTO;
+import ulb.DTO.player.PlayerDTO;
 import ulb.model.chat.ChatMessage;
 import ulb.view.FxmlLoader;
 import ulb.view.WindowPath;
@@ -33,6 +35,7 @@ public class SocialPanelController implements SocialPanel.ViewListener {
 		view.setViewListener(this);
 
 		view.setFriendsList(this.clientController.getFriendsList());
+		view.setLeaderboardList(this.clientController.getLeaderboardList());
 
 		WindowStage = new Stage();
 		WindowStage.initStyle(StageStyle.UNDECORATED);
@@ -92,7 +95,10 @@ public class SocialPanelController implements SocialPanel.ViewListener {
 	@Override
 	public void onAcceptBattle(String sender) {
 		if (this.clientController.acceptBattleRequest(sender)) {
-			refreshBattleRequests();
+			PlayerDTO opponent = this.clientController.getPlayer(sender);
+
+			this.clientController.closeSocialPanel();
+			this.clientController.switchToTeamSelectionForMulti(opponent);
 		}
 	}
 
@@ -138,15 +144,43 @@ public class SocialPanelController implements SocialPanel.ViewListener {
 	}
 
 	@Override
-	public void onChallengeFriend(String friend) {
-		if (friend == null || friend.isBlank()) {
+	public void onChallengeFriend(String friendName) {
+		if (friendName == null || friendName.isBlank()) {
 			return;
 		}
-		boolean ok = this.clientController.sendBattleRequest(friend);
+
+		PlayerDTO friend = this.clientController.getPlayer(friendName);
+		boolean ok = this.clientController.sendBattleRequest(friend.getUsername());
 		view.setInviteStatus(ok ? "Défi envoyé !" : "Impossible d'envoyer le défi.");
 
 		if (ok) {
-			this.clientController.openWaitWindow();
+			this.clientController.openWaitWindow(e -> {
+				this.waitForBattleRequestResponse(friend);
+			});
+		}
+	}
+
+	/**
+	 * Function playing in loop while waiting for the opponent to respond to a battle request.
+	 *
+	 * @param opponent The player the battle request has been sent to
+	 */
+	private void waitForBattleRequestResponse(PlayerDTO opponent) {
+		PlayerDTO self = this.clientController.getPlayer();
+		MultiBattleStatusDTO status = this.clientController.getMultiBattleStatus(self.getUserId(), opponent.getUserId());
+
+		switch(status.getStatus()) {
+			case PICKING_TEAMS:
+				this.clientController.stopWaitWindow();
+				this.clientController.switchToTeamSelectionForMulti(opponent);
+				break;
+
+			case WAITING_ACCEPT:
+				break;
+
+			default:
+				this.clientController.stopWaitWindow();
+				this.clientController.switchToModeWindow();
 		}
 	}
 
@@ -165,6 +199,12 @@ public class SocialPanelController implements SocialPanel.ViewListener {
 	@Override
 	public void refreshFriends() {
 		view.setFriendsList(this.clientController.getFriendsList());
+	}
+
+	@Override
+	public void refreshLeaderboard() {
+		System.out.println("leader" + this.clientController.getLeaderboardList());
+		view.setLeaderboardList(this.clientController.getLeaderboardList());
 	}
 
 	private void refreshFriendRequests() {

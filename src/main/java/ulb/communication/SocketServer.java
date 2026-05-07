@@ -56,7 +56,8 @@ public class SocketServer {
     }
 
     public void start(AbilityService abilityService, BugemonService bugemonService, ItemService itemService,
-    		AccountService accountService, ChatService chatService, TeamService teamService, InventoryService inventoryService, TowerSaveService towerSaveService){
+    		AccountService accountService, ChatService chatService, TeamService teamService, InventoryService inventoryService, TowerSaveService towerSaveService,
+            MultiBattleService multiBattleService){
         while (!stopServer) {
             Socket clientSocket;
             if ((clientSocket = listenConnection()) != null){
@@ -64,7 +65,7 @@ public class SocketServer {
 
                 try {
                     SocketMessenger clientMessenger = new SocketMessenger(clientSocket);
-                    ClientHandler controller = new ClientHandler(clientMessenger, abilityService, bugemonService, itemService, accountService, chatService, teamService, inventoryService, towerSaveService);
+                    ClientHandler controller = new ClientHandler(clientMessenger, abilityService, bugemonService, itemService, accountService, chatService, teamService, inventoryService, towerSaveService, multiBattleService);
                     clients.add(controller);
                     controller.start();
                 } catch (CommunicationException e) {

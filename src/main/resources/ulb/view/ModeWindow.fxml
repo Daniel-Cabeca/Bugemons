@@ -17,9 +17,7 @@
       <Label style="-fx-text-fill: #e6ffff; -fx-font-size: 50; -fx-font-weight: bold;" text="BUGÉMON" />
 
       <HBox alignment="CENTER" spacing="80">
-         <Button fx:id="SoloMode" onAction="#goSoloMode" prefHeight="100" prefWidth="200" style="-fx-background-color: #6699ff; -fx-border-color: black; -fx-font-size: 20px;" text="SOLO" />
-
-         <Button onAction="#goMultiplayer" prefHeight="100" prefWidth="200" style="-fx-background-color: #ff9933; -fx-border-color: black; -fx-font-size: 20px;" text="MULTIPLAYER" />
+         <Button fx:id="SoloMode" onAction="#goSoloMode" prefHeight="100" prefWidth="200" style="-fx-background-color: #6699ff; -fx-border-color: black; -fx-font-size: 20px;" text="START" />
       </HBox>
 
       <VBox alignment="CENTER" spacing="10">

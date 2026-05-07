@@ -1,5 +1,7 @@
 package ulb.service;
 
+import ulb.exceptions.LoadException;
+
 import ulb.model.chat.ChatMessage;
 import ulb.repository.ChatRepository;
 import ulb.service.chat.InappropriateWordFilter;
@@ -20,12 +22,12 @@ public class ChatService {
         this.inappropriateWordFilter = inappropriateWordFilter;
     }
 
-    public void sendMessage(String sender, String receiver, String content) {
+    public void sendMessage(String sender, String receiver, String content) throws LoadException {
         String censoredContent = this.inappropriateWordFilter.censor(content);
         repository.insert(new ChatMessage(sender, receiver, censoredContent, LocalDateTime.now()));
     }
 
-    public List<ChatMessage> getMessages(String userA, String userB) {
+    public List<ChatMessage> getMessages(String userA, String userB) throws LoadException {
         return repository.getMessages(userA, userB);
     }
 }

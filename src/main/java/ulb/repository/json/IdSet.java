@@ -3,6 +3,8 @@ package ulb.repository.json;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
+
+import ulb.exceptions.EntityNotFoundException;
 import java.util.Iterator;
 
 import ulb.model.HasId;
@@ -25,7 +27,7 @@ public class IdSet<T extends HasId> implements Iterable<T> {
 		 T entry = this.entries.get(id);
 
 		 if (entry == null) {
-			throw new NoSuchElementException("Entry not found: "+ id);
+			throw new EntityNotFoundException("Entry", id);
 		 }
 
 		 return entry;

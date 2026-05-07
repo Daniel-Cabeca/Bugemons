@@ -1,4 +1,6 @@
 package ulb.message.clientToServer;
+import ulb.exceptions.DataAccessException;
+import ulb.exceptions.UserFacingException;
 
 import ulb.DTO.team.TeamDTO;
 import ulb.message.ClientToServerMessage;
@@ -15,5 +17,5 @@ public class SaveTeamMessage implements ClientToServerMessage {
     public TeamDTO getTeam() { return team; }
 
     @Override
-    public void dispatch(ServerMessageHandler handler) { handler.handle(this); }
+    public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException { handler.handle(this); }
 }

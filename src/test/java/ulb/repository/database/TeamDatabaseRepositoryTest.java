@@ -13,7 +13,7 @@ public class TeamDatabaseRepositoryTest {
 	int userId1 = -1;
 	int userId2 = -1;
 
-    private void insertUser(DatabaseInMemory database, String username, boolean isUser1) {
+    private void insertUser(DatabaseInMemory database, String username, boolean isUser1) throws Exception {
         AccountDatabaseRepository accountRepository = new AccountDatabaseRepository(database);
         accountRepository.register(username, "password");
 		if (isUser1){
@@ -25,7 +25,7 @@ public class TeamDatabaseRepositoryTest {
     }
 
     @Test
-    public void findByIdGivesCorrectTeamName() {
+    public void findByIdGivesCorrectTeamName() throws Exception {
         DatabaseInMemory database = new DatabaseInMemory();
         DatabaseInitializer databaseInitializer = new DatabaseInitializer(database);
         databaseInitializer.createTables();
@@ -43,7 +43,7 @@ public class TeamDatabaseRepositoryTest {
     }
 
     @Test
-    public void insertTeamThrowsExceptionWithUnknownPlayer() {
+    public void insertTeamThrowsExceptionWithUnknownPlayer() throws Exception {
         DatabaseInMemory database = new DatabaseInMemory();
         DatabaseInitializer databaseInitializer = new DatabaseInitializer(database);
         databaseInitializer.createTables();
@@ -57,7 +57,7 @@ public class TeamDatabaseRepositoryTest {
     }
 
 	@Test
-	public void findAllGivesCorrectTeamNumber() {
+	public void findAllGivesCorrectTeamNumber() throws Exception {
 
 		DatabaseInMemory database = new DatabaseInMemory();
 		DatabaseInitializer databaseInitializer = new DatabaseInitializer(database);
@@ -83,7 +83,7 @@ public class TeamDatabaseRepositoryTest {
 	}
 
     @Test
-    public void findAllGivesCorrectTeamNames() {
+    public void findAllGivesCorrectTeamNames() throws Exception {
 
         DatabaseInMemory database = new DatabaseInMemory();
         DatabaseInitializer databaseInitializer = new DatabaseInitializer(database);
@@ -109,7 +109,7 @@ public class TeamDatabaseRepositoryTest {
     }
 
     @Test
-    public void findAllReturnsOnlyTeamsOfGivenPlayer() {
+    public void findAllReturnsOnlyTeamsOfGivenPlayer() throws Exception {
 
         DatabaseInMemory database = new DatabaseInMemory();
         DatabaseInitializer databaseInitializer = new DatabaseInitializer(database);

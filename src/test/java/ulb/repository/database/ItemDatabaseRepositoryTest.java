@@ -16,7 +16,7 @@ import java.util.stream.StreamSupport;
 
 public class ItemDatabaseRepositoryTest {
 	@Test
-	public void findByIdGivesCorrectItem() {
+	public void findByIdGivesCorrectItem() throws Exception {
 		ItemDatabaseRepository repository = new ItemDatabaseRepository(new DatabaseMock());
 
 		String id = "baie_revigorante";
@@ -25,7 +25,7 @@ public class ItemDatabaseRepositoryTest {
 	}
 
 	@Test
-    	public void findAllGivesCorrectItems() throws DuplicateElementException {
+	public void findAllGivesCorrectItems() throws Exception {
     		Database database = new DatabaseInMemory();
     		DatabaseInitializer databaseInitializer = new DatabaseInitializer(database);
     		databaseInitializer.createTables();

@@ -1,4 +1,6 @@
 package ulb.message.clientToServer;
+import ulb.exceptions.DataAccessException;
+import ulb.exceptions.UserFacingException;
 
 import ulb.DTO.player.PlayerRegisterDTO;
 import ulb.message.ClientToServerMessage;
@@ -14,7 +16,7 @@ public class RegisterMessage implements ClientToServerMessage {
     }
 
     @Override
-	public void dispatch(ServerMessageHandler handler) {
+	public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
 		handler.handle(this);
 	}
 

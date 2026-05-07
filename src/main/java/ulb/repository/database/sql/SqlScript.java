@@ -34,11 +34,11 @@ public class SqlScript {
 	 *
 	 * @param path The classpath path to the SQL script
 	 */
-	public SqlScript(String path) {
+	public SqlScript(String path) throws LoadException {
 		this.url = SqlScript.class.getResource(path);
 
 		if (this.url == null) {
-			throw new RuntimeException("SQL script not found: "+ path);
+			throw new LoadException("SQL script not found: " + path);
 		}
 	}
 
@@ -54,13 +54,13 @@ public class SqlScript {
 	 *
 	 * @return The script's content
 	 */
-	public String getSql() {
+	public String getSql() throws LoadException {
 		try {
 			InputStream stream = this.getUrl().openStream();
 			byte[] bytes = stream.readAllBytes();
 			return new String(bytes);
 		} catch (IOException e) {
-			throw new LoadException("Failed to read SQL script '"+ this.getUrl() +"': "+ e.getMessage());
+			throw new LoadException("Failed to read SQL script '" + this.getUrl() + "'.", e);
 		}
 	}
 
@@ -69,9 +69,9 @@ public class SqlScript {
 	 *
 	 * @return The list of statements
 	 */
-	public Iterable<String> getStatements() {
+	public Iterable<String> getStatements() throws LoadException {
 		String[] statements = this.getSql().split(QUERY_SEPARATOR);
-		List<String> res = new ArrayList();
+		List<String> res = new ArrayList<>();
 
 		for (String statement: statements) {
 			statement = statement.trim();
@@ -89,7 +89,7 @@ public class SqlScript {
 	 *
 	 * @param database The database to run the script on
 	 */
-	public void execute(Database database) throws SQLException {
+	public void execute(Database database) throws SQLException, LoadException {
 		Statement statement = database.createStatement();
 
 		for (String statementStr: this.getStatements()) {
@@ -105,7 +105,7 @@ public class SqlScript {
 	 * @deprecated Should call with a Database instance instead
 	 */
 	@Deprecated
-	public void execute(Connection connection) throws SQLException {
+	public void execute(Connection connection) throws SQLException, LoadException {
 		Statement statement = connection.createStatement();
 
 		for(String statementStr: this.getSql().split(";")) {

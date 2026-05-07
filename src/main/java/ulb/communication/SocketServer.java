@@ -17,7 +17,7 @@ public class SocketServer {
     private boolean stopServer;
     private List<Thread> clients;
 
-    public SocketServer(int port){
+    public SocketServer(int port) throws CommunicationException {
         try{
             serverSocket = new ServerSocket(port);
             this.stopServer = false;
@@ -40,7 +40,7 @@ public class SocketServer {
         }
     }
 
-    private Socket listenConnection(){
+    private Socket listenConnection() throws CommunicationException {
         try {
             return serverSocket.accept();
         } catch (SocketException e) {
@@ -57,7 +57,7 @@ public class SocketServer {
 
     public void start(AbilityService abilityService, BugemonService bugemonService, ItemService itemService,
     		AccountService accountService, ChatService chatService, TeamService teamService, InventoryService inventoryService, TowerSaveService towerSaveService,
-            MultiBattleService multiBattleService){
+            MultiBattleService multiBattleService) throws CommunicationException {
         while (!stopServer) {
             Socket clientSocket;
             if ((clientSocket = listenConnection()) != null){
@@ -88,7 +88,7 @@ public class SocketServer {
         try{
             serverSocket.close();
         } catch (IOException e){
-            throw new CommunicationException("Impossible to close server.", e);
+            System.err.println("Impossible to close server: " + e.getMessage());
         }
     }
 

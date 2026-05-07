@@ -1,6 +1,7 @@
 package ulb.mapper.bugemon;
 
 import ulb.DTO.bugemon.BugemonDTO;
+import ulb.exceptions.MappingException;
 import ulb.mapper.stats.StatsMapper;
 import ulb.model.bugemon.Bugemon;
 
@@ -22,7 +23,7 @@ public class BugemonMapper {
         );
     }
 
-    public static Bugemon toEntity(BugemonDTO dto) {
+    public static Bugemon toEntity(BugemonDTO dto) throws MappingException {
         if (dto == null) return null;
         Bugemon bugemon = new Bugemon(
                 BugemonSpeciesMapper.toEntity(dto.getSpecies()));

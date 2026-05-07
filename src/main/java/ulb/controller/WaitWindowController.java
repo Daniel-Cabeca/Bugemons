@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import ulb.view.windows.WaitWindow;
 import ulb.view.FxmlLoader;
+import ulb.exceptions.ViewLoadException;
 import ulb.view.WindowPath;
 
 public class WaitWindowController {
@@ -27,7 +28,7 @@ public class WaitWindowController {
 
 	public Stage getStage() { return this.clientController.getStage(); }
 
-	public void show() {
+	public void show() throws ViewLoadException {
 		FXMLLoader loader = FxmlLoader.load(this, WindowPath.WAIT_WINDOW);
 		this.view = loader.getController();
 

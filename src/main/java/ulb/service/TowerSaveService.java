@@ -1,5 +1,6 @@
 package ulb.service;
 
+import ulb.exceptions.LoadException;
 import java.util.List;
 import ulb.model.Player;
 import ulb.model.tower.Tower;
@@ -26,7 +27,7 @@ public class TowerSaveService {
 	 * @param tower current tower played by the player
 	 * @param player player who played in the tower
 	 */
-	public void saveTowerInfo(Tower tower, Player player) {
+	public void saveTowerInfo(Tower tower, Player player) throws LoadException {
 		Integer userId = player.getUserId();
 		Integer currentFloorId = tower.getCurrentFloorId();
 		List<Integer> completedRoomsId =
@@ -54,14 +55,14 @@ public class TowerSaveService {
 	 * Delete tower save
 	 * @param player the player who played in the tower
 	 */
-	public void deleteTowerInfo(Player player) {
+	public void deleteTowerInfo(Player player) throws LoadException {
 		Integer userId = player.getUserId();
 		if (this.towerSaveRepository.isTowerSaved(userId)) {
 			this.towerSaveRepository.deleteTowerInfo(userId);
 		}
 	}
 
-	public Tower getTowerSave(Player player) {
+	public Tower getTowerSave(Player player) throws LoadException {
 		Integer userId = player.getUserId();
 		if (!this.towerSaveRepository.isTowerSaved(userId)){
 			return new Tower();
@@ -72,7 +73,7 @@ public class TowerSaveService {
 		
 	}
 
-	public boolean isTowerSaved(Player player){
+	public boolean isTowerSaved(Player player) throws LoadException {
 		return this.towerSaveRepository.isTowerSaved(player.getUserId());
 	}
 }

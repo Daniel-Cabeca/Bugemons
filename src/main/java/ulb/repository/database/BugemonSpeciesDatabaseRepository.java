@@ -5,6 +5,7 @@ import ulb.model.bugemon.BugemonSpecies;
 import ulb.model.bugemon.Stats;
 import ulb.model.type.Type;
 import ulb.repository.BugemonSpeciesRepository;
+import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
 import ulb.repository.database.sql.Database;
 import ulb.utils.DuplicateElementException;
@@ -30,9 +31,8 @@ public class BugemonSpeciesDatabaseRepository implements BugemonSpeciesRepositor
 	 * Creates a species repository using the provided database.
 	 *
 	 * @param database The database connection wrapper
-	 * @throws LoadException If the repository cannot be initialized
 	 */
-	public BugemonSpeciesDatabaseRepository(Database database) throws LoadException {
+	public BugemonSpeciesDatabaseRepository(Database database) {
 		this.database = database;
 	}
 
@@ -151,7 +151,7 @@ public class BugemonSpeciesDatabaseRepository implements BugemonSpeciesRepositor
 			}
 
 			if (species == null) {
-				throw new NoSuchElementException("Espèce Bugemon non trouvée : " + id);
+				throw new EntityNotFoundException("Bugemon species", id);
 			}
 
 			return species;

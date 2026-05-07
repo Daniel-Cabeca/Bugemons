@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import ulb.communication.GameMode;
 import ulb.view.FxmlLoader;
+import ulb.exceptions.ViewLoadException;
 import ulb.view.WindowPath;
 import ulb.view.windows.ConfirmTeamWindow;
 
@@ -34,7 +35,7 @@ public class ConfirmTeamController implements ConfirmTeamWindow.ViewListener {
     /**
      * Displays the battle mode selection view.
      */
-    public void show() {
+    public void show() throws ViewLoadException {
         FXMLLoader loader = FxmlLoader.load(this, WindowPath.CONFIRM_TEAM);
         view = loader.getController();
         view.setViewListener(this);

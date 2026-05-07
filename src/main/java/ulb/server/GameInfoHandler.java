@@ -1,5 +1,7 @@
 package ulb.server;
 
+import ulb.exceptions.DataAccessException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -57,13 +59,13 @@ public class GameInfoHandler {
 		this.towerSaveService = towerSaveService;
     }
 
-    public void handle(CheckGameFinishedMessage message){
+    public void handle(CheckGameFinishedMessage message) throws DataAccessException{
         Battle battle = clientHandler.getBattle();
 
 		clientHandler.sendMessage(new GameFinishedMessage(battle.isGameFinished()));
 	}
 
-	public void handle(CheckUsableItemMessage message){
+	public void handle(CheckUsableItemMessage message) throws DataAccessException{
         Battle battle = clientHandler.getBattle();
         ParticipantLabel teamLabel = clientHandler.getTeamLabel();
 
@@ -77,7 +79,7 @@ public class GameInfoHandler {
         clientHandler.sendMessage(new UsableItemsMessage(usableItems));
 	}
 
-	public void handle(GetAbilityEffectivenessMessage message){
+	public void handle(GetAbilityEffectivenessMessage message) throws DataAccessException{
 		Map<AbilityDTO, String> effectiveness = new HashMap<AbilityDTO, String>();
 		Bugemon bugemonTarget = BugemonMapper.toEntity(message.getBugemonTarget());
 		
@@ -90,7 +92,7 @@ public class GameInfoHandler {
 		clientHandler.sendMessage(new AbilityEffectivenessMessage(effectiveness));
 	}
 
-    public void handle(GetActiveBugemonsMessage message){
+    public void handle(GetActiveBugemonsMessage message) throws DataAccessException{
         Battle battle = clientHandler.getBattle();
         ParticipantLabel teamLabel = clientHandler.getTeamLabel();
 
@@ -104,7 +106,7 @@ public class GameInfoHandler {
 		clientHandler.sendMessage(new ActiveBugemonsMessage(BugemonMapper.toDTO(selfActive), BugemonMapper.toDTO(opponentActive)));
 	}
 
-	public void handle(GetBattleEndInfoMessage message){
+	public void handle(GetBattleEndInfoMessage message) throws DataAccessException{
 		Battle battle = clientHandler.getBattle();
         ParticipantLabel teamLabel = clientHandler.getTeamLabel();
 		boolean isGameTower = clientHandler.isGameTower();
@@ -129,14 +131,14 @@ public class GameInfoHandler {
 		clientHandler.sendMessage(new BattleEndInfoMessage(isWin, gainedXp));
 	}
 
-	public void handle(GetBattleStateMessage message){
+	public void handle(GetBattleStateMessage message) throws DataAccessException{
         Battle battle = clientHandler.getBattle();
         ParticipantLabel teamLabel = clientHandler.getTeamLabel();
 
 		clientHandler.sendMessage(new BattleStateMessage(battle.getState(teamLabel)));
 	}
 
-	public void handle(GetLevelUpInfoMessage message){
+	public void handle(GetLevelUpInfoMessage message) throws DataAccessException{
         Player player = clientHandler.getPlayer();
         Battle battle = clientHandler.getBattle();
         Bugemon pendingLevelUpBugemon = clientHandler.getPendingLevelUpBugemon();
@@ -170,7 +172,7 @@ public class GameInfoHandler {
 		clientHandler.sendMessage(new LevelUpInfoMessage(BugemonMapper.toDTO(currentBugemon), rewardDTOs));
 	}
 
-    public void handle(GetLogsMessage message){
+    public void handle(GetLogsMessage message) throws DataAccessException{
         Battle battle = clientHandler.getBattle();
         ParticipantLabel teamLabel = clientHandler.getTeamLabel();
 
@@ -186,7 +188,7 @@ public class GameInfoHandler {
 		clientHandler.sendMessage(new LogsMessage(List.of(selfHpAfterFirstAction, opponentHpAfterFirstAction), logs));
 	}
 
-	public void handle(GetNextWindowMessage message){
+	public void handle(GetNextWindowMessage message) throws DataAccessException{
 		Player player = clientHandler.getPlayer();
         Battle battle = clientHandler.getBattle();
         TowerManager towerManager = clientHandler.getTowerManager();
@@ -263,7 +265,7 @@ public class GameInfoHandler {
 		clientHandler.sendMessage(new NextWindowMessage(nextWindow));
 	}
 
-	public void handle(GetTowerInfoMessage message){
+	public void handle(GetTowerInfoMessage message) throws DataAccessException{
         TowerManager towerManager = clientHandler.getTowerManager();
         boolean isGameTower = clientHandler.isGameTower();
 
@@ -278,7 +280,7 @@ public class GameInfoHandler {
 		clientHandler.sendMessage(new TowerInfoMessage(towerFloorNumber, towerRoomNumber, clearedRooms));
 	}
 
-	public void handle(GetTowerSavedInfoMessage message, Player player){
+	public void handle(GetTowerSavedInfoMessage message, Player player) throws DataAccessException{
 		boolean isTowerSaved = this.towerSaveService.isTowerSaved(player);
 		clientHandler.sendMessage(new TowerSavedInfoMessage(isTowerSaved));
 	}

@@ -1,5 +1,7 @@
 package ulb.server;
 
+import ulb.exceptions.DataAccessException;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +38,7 @@ public class PlayerInfoHandler {
         this.accountService = accountService;
     }
 
-	public void handle(GetPlayerInventoryMessage message) {
+	public void handle(GetPlayerInventoryMessage message) throws DataAccessException {
         Player player = clientHandler.getPlayer();
 
 		if (message.getUserName().equals(player.getUsername())){
@@ -53,7 +55,7 @@ public class PlayerInfoHandler {
 		}
 	}
     
-    public void handle(GetPlayerMessage message) {
+    public void handle(GetPlayerMessage message) throws DataAccessException {
 		String username = message.getUsername();
 
 		try {
@@ -68,7 +70,7 @@ public class PlayerInfoHandler {
 		}
 	}
 
-    public void handle(GetPlayerTeamMessage message) {
+    public void handle(GetPlayerTeamMessage message) throws DataAccessException {
         Battle battle = clientHandler.getBattle();
         ParticipantLabel teamLabel = clientHandler.getTeamLabel();
 
@@ -85,7 +87,7 @@ public class PlayerInfoHandler {
 		clientHandler.sendMessage(new PlayerTeamMessage(teamDTO));
 	}
 
-    public void handle(GetUserIdFromNameMessage message) {
+    public void handle(GetUserIdFromNameMessage message) throws DataAccessException {
 		String name = message.getName();
 		int id = accountService.getUserId(name);
 		UserIdMessage response = new UserIdMessage(id);

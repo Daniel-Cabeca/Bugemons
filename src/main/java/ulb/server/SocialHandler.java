@@ -1,5 +1,7 @@
 package ulb.server;
 
+import ulb.exceptions.DataAccessException;
+
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -26,7 +28,7 @@ public class SocialHandler {
 		this.multiBattleService = multiBattleService;
     }
 
-	public void handle(AcceptBattleRequestMessage message){
+	public void handle(AcceptBattleRequestMessage message) throws DataAccessException{
 		int senderId = accountService.getUserId(message.getSenderUsername());
 		int receiverId = accountService.getUserId(message.getReceiverUsername());
 
@@ -38,7 +40,7 @@ public class SocialHandler {
 		clientHandler.sendSuccessMessage();
 	}
 
-	public void handle(AcceptFriendRequestMessage message){
+	public void handle(AcceptFriendRequestMessage message) throws DataAccessException{
 		int senderId = accountService.getUserId(message.getSenderUsername());
 		int receiverId = accountService.getUserId(message.getReceiverUsername());
 
@@ -46,7 +48,7 @@ public class SocialHandler {
 		clientHandler.sendSuccessMessage();
 	}
 
-	public void handle(DeclineBattleRequestMessage message){
+	public void handle(DeclineBattleRequestMessage message) throws DataAccessException{
 		int senderId = accountService.getUserId(message.getSenderUsername());
 		int receiverId = accountService.getUserId(message.getReceiverUsername());
 
@@ -56,20 +58,20 @@ public class SocialHandler {
 		//TODO delete multi battle instance to signal it's been declined
 	}
 
-	public void handle(DeclineFriendRequestMessage message){
+	public void handle(DeclineFriendRequestMessage message) throws DataAccessException{
 		int senderId = accountService.getUserId(message.getSenderUsername());
 		int receiverId = accountService.getUserId(message.getReceiverUsername());
 		accountService.declineFriendRequest(senderId, receiverId);
 		clientHandler.sendSuccessMessage();
 	}
 
-	public void handle(GetBattleRequestsMessage message){
+	public void handle(GetBattleRequestsMessage message) throws DataAccessException{
 		int userId = accountService.getUserId(message.getUsername());
 		List<String> requests = accountService.getPendingBattleRequests(userId);
 		clientHandler.sendMessage(new BattleRequestsMessage(requests));
 	}
 
-	public void handle(GetMultiBattleStatusMessage message) {
+	public void handle(GetMultiBattleStatusMessage message) throws DataAccessException {
 		MultiBattleStatusDTO status = new MultiBattleStatusDTO();
 
 		try {
@@ -82,28 +84,28 @@ public class SocialHandler {
 		clientHandler.sendMessage(response);
 	}
 
-	public void handle(GetChatMessagesMessage message){
+	public void handle(GetChatMessagesMessage message) throws DataAccessException{
 		clientHandler.sendMessage(new ChatMessagesMessage(chatService.getMessages(message.getUsernameA(), message.getUsernameB())));
 	}
 
-	public void handle(GetFriendRequestsMessage message){
+	public void handle(GetFriendRequestsMessage message) throws DataAccessException{
 		int userId = accountService.getUserId(message.getUsername());
 		List<String> requests = accountService.getPendingFriendRequests(userId);
 		clientHandler.sendMessage(new FriendRequestsMessage(requests));
 	}
 
-	public void handle(GetFriendsListMessage message){
+	public void handle(GetFriendsListMessage message) throws DataAccessException{
 		int userId = accountService.getUserId(message.getUsername());
 		List<String> friends = accountService.getFriendsList(userId);
 		clientHandler.sendMessage(new FriendsListMessage(friends));
 	}
 
-	public void handle(GetLeaderboardMessage message){
+	public void handle(GetLeaderboardMessage message) throws DataAccessException{
 		Map<String, Integer> leaderboard = accountService.getLeaderboard();
 		clientHandler.sendMessage(new LeaderboardMessage(leaderboard));
 	}
 
-	public void handle(SendBattleRequestMessage message){
+	public void handle(SendBattleRequestMessage message) throws DataAccessException{
 		int senderId = accountService.getUserId(message.getSenderUsername());
 		int receiverId = accountService.getUserId(message.getReceiverUsername());
 		if (senderId == -1 || receiverId == -1){
@@ -122,12 +124,12 @@ public class SocialHandler {
 		clientHandler.sendSuccessMessage();
 	}
 
-	public void handle(SendChatMessageMessage message){
+	public void handle(SendChatMessageMessage message) throws DataAccessException{
 		chatService.sendMessage(message.getSenderUsername(), message.getReceiverUsername(), message.getContent());
 		clientHandler.sendSuccessMessage();
 	}
 
-	public void handle(SendFriendRequestMessage message){
+	public void handle(SendFriendRequestMessage message) throws DataAccessException{
 		int senderId = accountService.getUserId(message.getSenderUsername());
 		int receiverId = accountService.getUserId(message.getReceiverUsername());
 		if (senderId == -1 || receiverId == -1){

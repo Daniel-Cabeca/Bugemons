@@ -5,6 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import ulb.view.FxmlLoader;
+import ulb.exceptions.ViewLoadException;
 import ulb.view.WindowPath;
 import ulb.view.windows.GameModeWindow;
 
@@ -23,7 +24,7 @@ public class GameModeController implements GameModeWindow.ViewListener {
     /**
      * Displays the battle mode selection view.
      */
-    public void show() {
+    public void show() throws ViewLoadException {
         FXMLLoader loader = FxmlLoader.load(this, WindowPath.GAME_MODE);
         view = loader.getController();
         view.setViewListener(this);

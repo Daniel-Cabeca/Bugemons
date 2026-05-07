@@ -24,21 +24,21 @@ public interface TeamRepository {
      * @param team the team to be saved
      * @throws LoadException if the operation fails
      */
-	void updateTowerTeam(int userId, Team team);
+	void updateTowerTeam(int userId, Team team) throws LoadException;
 
 	/**
      * Delete the tower team of a user in the database
 	 * @param userId the user
      * @throws LoadException if the operation fails
      */
-	void deleteTowerTeam(int userId);
+	void deleteTowerTeam(int userId) throws LoadException;
 
 	/**
 	 * Tells if a tower team is saved for a user
 	 * @param userId the user
 	 * @return a boolean depending on if a tower team is saved
 	 */
-	boolean hasTowerTeam(int userId);
+	boolean hasTowerTeam(int userId) throws LoadException;
 
     /**
      * Inserts a bugemon in the team into the database
@@ -117,12 +117,12 @@ public interface TeamRepository {
      * @param username the name of the user whose teams are to be retrieved
      * @return the list of Team objects
      */
-	List<Team> findAll(int userId);
+	List<Team> findAll(int userId) throws LoadException;
 
 	/**
 	 * Get the tower team of a user saved in the database 
 	 * @param userId the user
 	 * @return the tower team saved
 	 */
-	Team getTowerTeam(int userId);
+	Team getTowerTeam(int userId) throws LoadException;
 }

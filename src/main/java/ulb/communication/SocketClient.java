@@ -12,7 +12,7 @@ public class SocketClient {
     private Socket socket;
     private SocketMessenger messenger;
 
-    public SocketClient(String serverIP, int serverPort){
+    public SocketClient(String serverIP, int serverPort) throws CommunicationException {
         try{
             socket = new Socket(serverIP, serverPort);
             System.out.println("CONNECTED TO SERVER");
@@ -28,7 +28,7 @@ public class SocketClient {
         }
     }
 
-    public void sendMessage(ClientToServerMessage message){
+    public void sendMessage(ClientToServerMessage message) throws CommunicationException {
         if (messenger == null) {
             throw new CommunicationException("Network with client has not been initialized.");
         }
@@ -36,7 +36,7 @@ public class SocketClient {
         messenger.sendMessage(message);
     }
 
-    public Serializable receiveMessage(){
+    public Serializable receiveMessage() throws CommunicationException {
         if (messenger == null) {
             throw new CommunicationException("Network with client has not been initialized.");
         }

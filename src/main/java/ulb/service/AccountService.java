@@ -103,7 +103,7 @@ public class AccountService {
 	public void declineBattleRequest(int senderId, int receiverId) throws LoadException {
 		repository.declineBattleRequest(senderId, receiverId);
 	}
-	public void addPoints(int userId, int pointsToAdd) throws LoadException {
+	public void addPoints(int userId, int pointsToAdd) {
 		repository.addPoints(userId,pointsToAdd);
 	}
 

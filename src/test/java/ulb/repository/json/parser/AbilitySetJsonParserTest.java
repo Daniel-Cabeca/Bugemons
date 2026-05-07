@@ -13,7 +13,7 @@ import ulb.repository.mock.AbilityMockRepository;
 import ulb.exceptions.LoadException;
 
 public class AbilitySetJsonParserTest {
-	public static AbilitySet getFromString(String str) {
+	public static AbilitySet getFromString(String str) throws LoadException {
 		AbilityRepository abilityRepository = new AbilityMockRepository();
 		AbilitySetJsonParser parser = new AbilitySetJsonParser(abilityRepository);
 
@@ -22,7 +22,7 @@ public class AbilitySetJsonParserTest {
 	}
 
 	@Test
-	public void testTooFew() {
+	public void testTooFew() throws Exception {
 		String str = """
 			["fouet_liane", "pollen_sournois"]
 			""";
@@ -31,7 +31,7 @@ public class AbilitySetJsonParserTest {
 	}
 
 	@Test
-	public void testTooMany() {
+	public void testTooMany() throws Exception {
 		String str = """
 			["fouet_liane", "pollen_sournois", "racines_vives", "racines_vives"]
 			""";
@@ -40,7 +40,7 @@ public class AbilitySetJsonParserTest {
 	}
 
 	@Test
-	public void testJsonCorrect() {
+	public void testJsonCorrect() throws Exception {
 		String str = """
 			["fouet_liane", "pollen_sournois", "racines_vives"]
 			""";
@@ -53,7 +53,7 @@ public class AbilitySetJsonParserTest {
 	}
 
 	@Test
-	public void testJsonFakeAbility() {
+	public void testJsonFakeAbility() throws Exception {
 		String str = """
 			["fouet_liane", "pollen_sournois", "doesnotexist"]
 			""";

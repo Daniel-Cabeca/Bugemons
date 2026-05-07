@@ -1,5 +1,7 @@
 package ulb.repository.mock;
 
+import ulb.exceptions.LoadException;
+
 import java.util.NoSuchElementException;
 
 import ulb.model.bugemon.BugemonSpecies;
@@ -23,10 +25,14 @@ public class BugemonSpeciesMockRepository implements BugemonSpeciesRepository {
 	}
 
 	private static void load() {
-		AbilityRepository abilityRepository = new AbilityMockRepository();
+		try {
+			AbilityRepository abilityRepository = new AbilityMockRepository();
 
-		speciesRepository = new BugemonSpeciesJsonRepository(abilityRepository);
-		mockData = new BugemonSpeciesJsonRepository(MockResources.getStream(MockResources.PATH_BUGEMON_SPECIES), abilityRepository);
+			speciesRepository = new BugemonSpeciesJsonRepository(abilityRepository);
+			mockData = new BugemonSpeciesJsonRepository(MockResources.getStream(MockResources.PATH_BUGEMON_SPECIES), abilityRepository);
+		} catch (LoadException e) {
+			throw new IllegalStateException("Failed to load Bugemon species mock data.", e);
+		}
 	}
 
 	public static void reload() {

@@ -19,6 +19,7 @@ import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.DTO.team.TeamDTO;
 import ulb.communication.SocketClient;
 import ulb.exceptions.CommunicationException;
+import ulb.exceptions.ViewLoadException;
 import ulb.communication.GameMode;
 import ulb.message.ClientToServerMessage;
 import ulb.message.clientToServer.*;
@@ -32,7 +33,6 @@ import ulb.DTO.player.PlayerRegisterDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.DTO.reward.RewardDTO;
 import ulb.model.chat.ChatMessage;
-import ulb.exceptions.LoadException;
 import ulb.controller.windows.RegisterController;
 import ulb.view.WindowPath;
 
@@ -78,11 +78,15 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 
 	public Stage getStage() { return this.stage; }
 
+	private void logViewLoadFailure(String errorMessage, ViewLoadException e) {
+		LOGGER.log(Level.WARNING, errorMessage, e);
+	}
+
     /**
      * Initializes network client from application launch parameters.
      */
     @Override
-    public void init(){
+    public void init() throws CommunicationException {
         List<String> params = getParameters().getRaw();
 
         String serverIp = params.get(0);
@@ -234,7 +238,8 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		if (getData(new GetMultiBattleStatusMessage(userId1, userId2)) instanceof MultiBattleStatusMessage msg)
 			return msg.getStatus();
 
-		throw new CommunicationException("Failed to obtain multiplayer battle status.");
+		LOGGER.warning("Failed to obtain multiplayer battle status.");
+		return new MultiBattleStatusDTO();
 	}
 
 	public boolean sendFriendRequest(String receiver) {
@@ -290,7 +295,11 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		this.teamController = new TeamController(this);
 		this.teamController.setOpponent(opponent);
 
-		this.teamController.show();
+		try {
+			this.teamController.show();
+		} catch (ViewLoadException e) {
+			logViewLoadFailure("Impossible d'afficher l'écran de sélection d'équipe.", e);
+		}
 	}
 
 	// Register Controller :
@@ -307,7 +316,7 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	}
 
 	@Override
-	public void showModeWindow() {
+	public void showModeWindow() throws ViewLoadException {
 		this.modeController.show();
 	}
 
@@ -327,7 +336,11 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	@Override
 	public void onOpenSocial() {
 		this.socialPanelController = new SocialPanelController(this);
-		this.socialPanelController.show();
+		try {
+			this.socialPanelController.show();
+		} catch (ViewLoadException e) {
+			logViewLoadFailure("Impossible d'afficher le panneau social.", e);
+		}
 	}
 
 	/**
@@ -359,7 +372,11 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 
 	private void switchToCreateTeamWindow() {
 		this.teamController = new TeamController(this);
-		this.teamController.show();
+		try {
+			this.teamController.show();
+		} catch (ViewLoadException e) {
+			logViewLoadFailure("Impossible d'afficher l'écran de sélection d'équipe.", e);
+		}
 	}
 
 	/**
@@ -437,7 +454,11 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		}
 
 		this.confirmTeamController = new ConfirmTeamController(this.stage, this, team, this.gameMode);
-		confirmTeamController.show();
+		try {
+			confirmTeamController.show();
+		} catch (ViewLoadException e) {
+			logViewLoadFailure("Impossible d'afficher l'écran de confirmation d'équipe.", e);
+		}
 	}
 
 	/**
@@ -495,7 +516,11 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	 */
 	public void loadTeam() {
 		LoadTeamPanelController loadTeamPanelController = new LoadTeamPanelController(stage, this);
-		loadTeamPanelController.show();
+		try {
+			loadTeamPanelController.show();
+		} catch (ViewLoadException e) {
+			logViewLoadFailure("Impossible d'afficher le panneau de chargement d'équipe.", e);
+		}
 	}
 
 	/**
@@ -571,17 +596,21 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	 * Shows the mode window.
 	 */
 	public void switchToModeWindow(){
-		this.modeController.show();
+		try {
+			this.modeController.show();
+		} catch (ViewLoadException e) {
+			logViewLoadFailure("Impossible d'afficher le menu principal.", e);
+		}
 	}
 
 	public void switchToGameModeWindow() {
 		if (this.gameModeController == null) {
 			this.gameModeController = new GameModeController(stage, this);
 		}
-		try{
+		try {
 			this.gameModeController.show();
-		} catch (Exception e) {
-			LOGGER.log(Level.WARNING, "Impossible de retourner à l'écran de mode de jeu.", e);
+		} catch (ViewLoadException e) {
+			logViewLoadFailure("Impossible de retourner à l'écran de mode de jeu.", e);
 		}
 	}
 
@@ -590,7 +619,11 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	 */
 	private void switchToNextRoomWindow(){
 		this.nextRoomController = new NextRoomController(stage, this);
-		this.nextRoomController.show();
+		try {
+			this.nextRoomController.show();
+		} catch (ViewLoadException e) {
+			logViewLoadFailure("Impossible d'afficher l'écran de salle suivante.", e);
+		}
 	}
 
 	/**
@@ -614,7 +647,11 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 				towerRoomNumber
 		);
 
-		battleWindowController.show();
+		try {
+			battleWindowController.show();
+		} catch (ViewLoadException e) {
+			logViewLoadFailure("Impossible d'afficher l'écran de combat.", e);
+		}
 	}
 
 	private void switchToFloorWindow(){
@@ -622,7 +659,11 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 			this.floorController = new FloorController(this.stage, this);
 		}
 
-		this.floorController.show();
+		try {
+			this.floorController.show();
+		} catch (ViewLoadException e) {
+			logViewLoadFailure("Impossible d'afficher l'étage de la tour.", e);
+		}
 	}
 
 	/**
@@ -640,7 +681,11 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		}
 
 		this.battleEndController = new BattleEndController(stage, this);
-		battleEndController.show(victory, totalXp);
+		try {
+			battleEndController.show(victory, totalXp);
+		} catch (ViewLoadException e) {
+			logViewLoadFailure("Impossible d'afficher l'écran de fin de combat.", e);
+		}
 	}
 
 	/**
@@ -655,7 +700,11 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		this.pendingLevelUpBugemon = levelUpInfo.getBugemon();
 		this.pendingLevelUpRewards = levelUpInfo.getRewards();
 		this.levelUpController = new LevelUpController(stage, this);
-		this.levelUpController.show();
+		try {
+			this.levelUpController.show();
+		} catch (ViewLoadException e) {
+			logViewLoadFailure("Impossible d'afficher l'écran de montée de niveau.", e);
+		}
 	}
 
 	/**
@@ -663,7 +712,11 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	 */
 	private void switchToTowerRewardWindow(){
 		this.floorRewardController = new FloorRewardController(stage, this);
-		floorRewardController.show();
+		try {
+			floorRewardController.show();
+		} catch (ViewLoadException e) {
+			logViewLoadFailure("Impossible d'afficher l'écran de récompense d'étage.", e);
+		}
 	}
 
 	/**
@@ -712,8 +765,8 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	public void onReturnToCreateTeamWindow() {
 		try {
 			teamController.show();
-		} catch (Exception e) {
-			LOGGER.log(Level.WARNING, "Impossible de retourner à l'écran de constitution d'équipe.", e);
+		} catch (ViewLoadException e) {
+			logViewLoadFailure("Impossible de retourner à l'écran de constitution d'équipe.", e);
 		}
 	}
 
@@ -978,12 +1031,12 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 	 */
 	@Override
 	public void onReturn() {
-		try {
-			if (this.postData(new AbandonTowerMessage())){
+		if (this.postData(new AbandonTowerMessage())){
+			try {
 				this.modeController.show();
+			} catch (ViewLoadException e) {
+				logViewLoadFailure("Impossible de retourner au menu après abandon de la tour.", e);
 			}
-		}catch (Exception e){
-			LOGGER.log(Level.WARNING, "Impossible de retourner au menu après abandon de la tour.", e);
 		}
 	}
 
@@ -1010,8 +1063,8 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		}
 		try {
 			chooseBugemonController.show();
-		} catch (Exception e) {
-			LOGGER.log(Level.WARNING, "Impossible d'afficher l'écran de choix du Bugémon pour la récompense.", e);
+		} catch (ViewLoadException e) {
+			logViewLoadFailure("Impossible d'afficher l'écran de choix du Bugémon pour la récompense.", e);
 		}
 	}
 
@@ -1046,8 +1099,8 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		}
 		try {
 			attackReplacementController.show(bugemon, newAbility);
-		} catch (Exception e) {
-			LOGGER.log(Level.WARNING, "Impossible d'afficher l'écran de remplacement d'attaque.", e);
+		} catch (ViewLoadException e) {
+			logViewLoadFailure("Impossible d'afficher l'écran de remplacement d'attaque.", e);
 		}
 	}
 
@@ -1061,8 +1114,8 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		}
 		try {
 			floorRewardController.show();
-		} catch (Exception e) {
-			LOGGER.log(Level.WARNING, "Impossible d'afficher l'écran de récompense d'étage.", e);
+		} catch (ViewLoadException e) {
+			logViewLoadFailure("Impossible d'afficher l'écran de récompense d'étage.", e);
 		}
 	}
 
@@ -1121,8 +1174,8 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		}
 		try {
 			chooseBugemonController.show();
-		} catch (Exception e) {
-			LOGGER.log(Level.WARNING, "Impossible de retourner à l'écran de choix du Bugémon.", e);
+		} catch (ViewLoadException e) {
+			logViewLoadFailure("Impossible de retourner à l'écran de choix du Bugémon.", e);
 		}
 	}
 
@@ -1154,7 +1207,11 @@ LoadTeamPanelController.Listener, FloorController.Listener {
 		this.closeSocialPanel();
 
 		this.waitWindowController = new WaitWindowController(this, waitCycle);
-		this.waitWindowController.show();
+		try {
+			this.waitWindowController.show();
+		} catch (ViewLoadException e) {
+			logViewLoadFailure("Impossible d'afficher l'écran d'attente.", e);
+		}
     }
 
 	/**

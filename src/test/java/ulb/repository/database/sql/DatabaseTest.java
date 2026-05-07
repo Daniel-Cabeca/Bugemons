@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class DatabaseTest {
 	@Test
-	public void testTableIsEmptyTrue() {
+	public void testTableIsEmptyTrue() throws Exception {
 		Database db = new DatabaseInMemory();
 		DatabaseInitializer initializer = new DatabaseInitializer(db);
 		initializer.createTables();
@@ -13,7 +13,7 @@ public class DatabaseTest {
 	}
 
 	@Test
-	public void testTableIsEmptyFalse() {
+	public void testTableIsEmptyFalse() throws Exception {
 		Database db = new DatabaseMock();
 		assertFalse(db.isTableEmpty("items"));
 	}

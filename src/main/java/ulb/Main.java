@@ -31,7 +31,7 @@ public class Main{
         }
     }
 
-	private static void startServer(Integer serverPort) {
+	private static void startServer(Integer serverPort) throws Exception {
 		SocketServer server = new SocketServer(serverPort);
 
 		Database database = DatabaseInitializer.prepareDefaultDatabase();

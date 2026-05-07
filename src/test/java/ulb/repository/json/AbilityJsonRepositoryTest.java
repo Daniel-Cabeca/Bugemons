@@ -8,7 +8,7 @@ import java.io.ByteArrayInputStream;
 
 class AbilityJsonRespositoryTest {
 	@Test
-	public void testLoadOne() {
+	public void testLoadOne() throws Exception {
 		String str = """
 			{
 				"attaques": [
@@ -39,7 +39,7 @@ class AbilityJsonRespositoryTest {
 	}
 
 	@Test
-	public void testDefaultDoesNotThrow() {
+	public void testDefaultDoesNotThrow() throws Exception {
 		assertDoesNotThrow(() -> { new AbilityJsonRepository(); });
 	}
 }

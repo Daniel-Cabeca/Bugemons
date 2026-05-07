@@ -6,18 +6,20 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import ulb.repository.json.Json;
 
+import ulb.exceptions.LoadException;
+
 import ulb.model.ability.Ability;
 import ulb.model.type.Type;
 
 public class AbilityJsonParserTest {
-	public static Ability parseAbilityFromString(String str) {
+	public static Ability parseAbilityFromString(String str) throws LoadException {
 		AbilityJsonParser parser = new AbilityJsonParser();
 		JsonNode node = Json.getNode(str);
 		return parser.parseOne(node);
 	}
 
 	@Test
-	public void testOneCorrect() {
+	public void testOneCorrect() throws Exception {
 		String str = """
 			{
 				"id": "fouet_liane",

@@ -23,7 +23,7 @@ public class TeamDatabaseRepository implements TeamRepository {
 
     private final Database database;
 
-    public TeamDatabaseRepository(Database database) throws LoadException {
+    public TeamDatabaseRepository(Database database) {
         this.database = database;
     }
 
@@ -335,7 +335,7 @@ public class TeamDatabaseRepository implements TeamRepository {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Team getTowerTeam(int userId){
+	public Team getTowerTeam(int userId) throws LoadException {
 		String sql = """
 				SELECT team_id FROM teams WHERE user_id = ? AND tower_team = 1
 				""";

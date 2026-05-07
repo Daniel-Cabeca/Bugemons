@@ -2,7 +2,7 @@ package ulb.repository.database;
 
 import org.junit.jupiter.api.Test;
 
-import javafx.fxml.LoadException;
+import ulb.exceptions.LoadException;
 import ulb.model.effect.Effect;
 import ulb.model.effect.EffectHeal;
 import ulb.model.effect.EffectTarget;
@@ -54,7 +54,7 @@ public class InventoryDatabaseRepositoryTest {
     }
 
     @Test
-    public void testInsertItemAndGetInventory() throws DuplicateElementException, LoadException, NoSuchElementException {
+    public void testInsertItemAndGetInventory() throws Exception {
         initiateDatabaseAndRepositories();
 
         this.inventoryRepository.insertItem(this.item1, 1, this.userId);
@@ -66,7 +66,7 @@ public class InventoryDatabaseRepositoryTest {
     }
 
     @Test
-    public void testInsertInventoryAndGetInventory() throws DuplicateElementException, LoadException, NoSuchElementException {
+    public void testInsertInventoryAndGetInventory() throws Exception {
         initiateDatabaseAndRepositories();
 
         Inventory inventoryToAdd = new Inventory();
@@ -82,7 +82,7 @@ public class InventoryDatabaseRepositoryTest {
     }
 
     @Test 
-    public void testDeleteItem() throws DuplicateElementException, LoadException, NoSuchElementException {
+    public void testDeleteItem() throws Exception {
         initiateDatabaseAndRepositories();
 
         this.inventoryRepository.insertItem(this.item1, 1, this.userId);
@@ -96,7 +96,7 @@ public class InventoryDatabaseRepositoryTest {
     }
 
     @Test
-    public void updateInventory() throws DuplicateElementException, LoadException, NoSuchElementException {
+    public void updateInventory() throws Exception {
         initiateDatabaseAndRepositories();
         
         this.inventoryRepository.insertItem(this.item1, 1, this.userId);

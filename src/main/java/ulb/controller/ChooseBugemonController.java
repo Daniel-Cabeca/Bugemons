@@ -7,6 +7,7 @@ import javafx.stage.Stage;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.view.FxmlLoader;
+import ulb.exceptions.ViewLoadException;
 import ulb.view.WindowPath;
 import ulb.view.windows.ChooseBugemonWindow;
 
@@ -30,7 +31,7 @@ public class ChooseBugemonController implements ChooseBugemonWindow.ViewListener
     /**
      * Displays the choose bugemon screen.
      */
-    public void show() {
+    public void show() throws ViewLoadException {
         FXMLLoader loader = FxmlLoader.load(this, WindowPath.CHOOSE_BUGEMON);
         view = loader.getController();
         view.setViewListener(this);

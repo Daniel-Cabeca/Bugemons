@@ -1,5 +1,7 @@
 package ulb.repository.database.sql;
 
+import ulb.exceptions.LoadException;
+
 import java.sql.SQLException;
 
 import ulb.model.ability.Ability;
@@ -43,13 +45,13 @@ public class DatabaseInitializer {
 	/**
 	 * Creates the tables for the database.
 	 */
-	public void createTables() {
+	public void createTables() throws LoadException {
 		SqlScript script = new SqlScript(SCRIPT_CREATE_TABLES);
 
 		try {
 			script.execute(this.getDatabase());
 		} catch (SQLException e) {
-			throw new RuntimeException("Failed to create tables for the database '"+ this.getDatabase().getUrl() +"': "+ e.getMessage());
+			throw new LoadException("Failed to create tables for the database '" + this.getDatabase().getUrl() + "'.", e);
 		}
 	}
 
@@ -60,7 +62,7 @@ public class DatabaseInitializer {
 	 * @param abilities The list of abilities
 	 * @param species The list of species
 	 */
-	void populate(Iterable<Item> items, Iterable<Ability> abilities, Iterable<BugemonSpecies> species) {
+	void populate(Iterable<Item> items, Iterable<Ability> abilities, Iterable<BugemonSpecies> species) throws LoadException {
 		ItemDatabaseRepository itemRepository = new ItemDatabaseRepository(this.getDatabase());
 		AbilityDatabaseRepository abilityRepository = new AbilityDatabaseRepository(this.getDatabase());
 		BugemonSpeciesDatabaseRepository bugemonSpeciesDatabaseRepository = new BugemonSpeciesDatabaseRepository(this.database);
@@ -69,14 +71,14 @@ public class DatabaseInitializer {
 			abilityRepository.insertAbilities(abilities);
 			bugemonSpeciesDatabaseRepository.insertSpecies(species);
 		} catch(DuplicateElementException e) {
-			throw new RuntimeException("The game data the database is populated with contains duplicate elements.");
+			throw new LoadException("The game data the database is populated with contains duplicate elements.", e);
 		}
 	}
 
 	/**
 	 * Populates the database with the default game data.
 	 */
-	void populate() {
+	void populate() throws LoadException {
 		ItemRepository itemRepository = new ItemJsonRepository();
 		AbilityRepository abilityRepository = new AbilityJsonRepository();
 		BugemonSpeciesJsonRepository bugemonSpeciesJsonRepository = new BugemonSpeciesJsonRepository();
@@ -89,7 +91,7 @@ public class DatabaseInitializer {
 	 *
 	 * @throws IllegalStateException If the database's connection is already open.
 	 */
-	public void initialize() {
+	public void initialize() throws LoadException {
 		this.createTables();
 		this.populate();
 	}
@@ -99,7 +101,7 @@ public class DatabaseInitializer {
 	 *
 	 * @return The default database, initialized and connected.
 	 */
-	public static Database prepareDefaultDatabase() {
+	public static Database prepareDefaultDatabase() throws LoadException {
 		Database database = DatabaseInFile.get(DatabaseInFile.NAME_DEFAULT);
 		DatabaseInitializer initializer = new DatabaseInitializer(database);
 

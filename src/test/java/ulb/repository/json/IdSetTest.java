@@ -41,13 +41,13 @@ public class IdSetTest {
 	}
 
 	@Test
-	public void testGetNotPresent() {
+	public void testGetNotPresent() throws Exception {
 		IdSet<Entry> set = new IdSet<>();
 		assertThrows(NoSuchElementException.class, () -> { set.get("doesnotexist"); });
 	}
 
 	@Test
-	public void testAdd() {
+	public void testAdd() throws Exception {
 		IdSet<Entry> set = new IdSet<>();
 		Entry a = new Entry("a");
 
@@ -56,7 +56,7 @@ public class IdSetTest {
 	}
 
 	@Test
-	public void testAddAlreadyPresent() {
+	public void testAddAlreadyPresent() throws Exception {
 		IdSet<Entry> set = new IdSet<>();
 		Entry a1 = new Entry("a");
 		Entry a2 = new Entry("a");
@@ -66,7 +66,7 @@ public class IdSetTest {
 	}
 
 	@Test
-	public void testIterateEmpty() {
+	public void testIterateEmpty() throws Exception {
 		IdSet<Entry> set = new IdSet<>();
 
 		for (Entry entry: set) {
@@ -75,7 +75,7 @@ public class IdSetTest {
 	}
 
 	@Test
-	public void testIteratorWithEntries() {
+	public void testIteratorWithEntries() throws Exception {
 		IdSet<Entry> set = new IdSet<>();
 		Entry a = new Entry("a");
 		Entry b = new Entry("b");

@@ -1,5 +1,6 @@
 package ulb.message.clientToServer;
-
+import ulb.exceptions.DataAccessException;
+import ulb.exceptions.UserFacingException;
 import ulb.DTO.player.PlayerDTO;
 import ulb.message.ClientToServerMessage;
 import ulb.server.ServerMessageHandler;
@@ -14,5 +15,5 @@ public class StartMultiBattleMessage implements ClientToServerMessage {
 	public PlayerDTO getOpponent() { return this.opponent; }
 
 	@Override
-	public void dispatch(ServerMessageHandler handler) { handler.handle(this); }
+	public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException { handler.handle(this); }
 }

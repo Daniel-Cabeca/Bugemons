@@ -5,6 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import ulb.view.FxmlLoader;
+import ulb.exceptions.ViewLoadException;
 import ulb.view.WindowPath;
 import ulb.view.windows.NextRoomWindow;
 
@@ -31,7 +32,7 @@ public class NextRoomController implements NextRoomWindow.ViewListener {
     /**
      * Displays the next room screen.
      */
-    public void show() {
+    public void show() throws ViewLoadException {
         FXMLLoader loader = FxmlLoader.load(this, WindowPath.NEXT_ROOM);
         view = loader.getController();
         view.setViewListener(this);

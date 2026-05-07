@@ -9,6 +9,7 @@ import ulb.DTO.battle.MultiBattleStatusDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.model.chat.ChatMessage;
 import ulb.view.FxmlLoader;
+import ulb.exceptions.ViewLoadException;
 import ulb.view.WindowPath;
 import ulb.view.windows.SocialPanel;
 
@@ -29,7 +30,7 @@ public class SocialPanelController implements SocialPanel.ViewListener {
 	/**
 	* Displays the Social panel screen.
 	*/
-	public void show() {
+	public void show() throws ViewLoadException {
 		FXMLLoader loader = FxmlLoader.load(this, WindowPath.SOCIAL_PANEL);
 		view = loader.getController();
 		view.setViewListener(this);

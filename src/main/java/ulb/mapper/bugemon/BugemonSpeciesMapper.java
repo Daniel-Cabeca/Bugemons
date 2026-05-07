@@ -5,6 +5,7 @@ import java.util.List;
 import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.DTO.ability.AbilityDTO;
 
+import ulb.exceptions.MappingException;
 import ulb.model.bugemon.BugemonSpecies;
 import ulb.model.bugemon.Stats;
 import ulb.model.ability.AbilitySet;
@@ -19,7 +20,7 @@ public class BugemonSpeciesMapper {
 
     private BugemonSpeciesMapper(){}
 
-    public static BugemonSpecies toEntity(BugemonSpeciesDTO dto){
+    public static BugemonSpecies toEntity(BugemonSpeciesDTO dto) throws MappingException{
         if(dto == null) return null;
 
         Stats stats = StatsMapper.toEntity(dto.getBaseStats());

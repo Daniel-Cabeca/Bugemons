@@ -3,6 +3,7 @@ package ulb.mapper.effect;
 import ulb.DTO.effect.EffectDTO;
 import ulb.DTO.effect.EffectHealDTO;
 import ulb.DTO.effect.EffectStatModifierDTO;
+import ulb.exceptions.MappingException;
 import ulb.model.effect.Effect;
 import ulb.model.effect.EffectHeal;
 import ulb.model.effect.EffectResetMalus;
@@ -18,41 +19,41 @@ public class EffectMapper {
 
     private EffectMapper(){}
 
-    public static Effect toEntity(EffectDTO dto){
+    public static Effect toEntity(EffectDTO dto) throws MappingException{
         if(dto == null) return null;
-        Effect effect = null;
+
+        if (dto.getType() == null) {
+            throw new MappingException("Effect DTO has no type.");
+        }
+
         switch (dto.getType()) {
             case SWITCH:
-                effect = new EffectSwitch(dto.getTarget()) {
+                return new EffectSwitch(dto.getTarget()) {
                     @Override
                     public void apply(Battle battle, Battle.ParticipantLabel team){}
                 };
-                break;
-            
+
             case RESET_MALUS:
-                effect = new EffectResetMalus(dto.getTarget()) {
+                return new EffectResetMalus(dto.getTarget()) {
                     @Override
                     public void apply(Battle battle, Battle.ParticipantLabel team){}
                 };
-                break;
 
             case STAT_MODIFIER:
                 if (dto instanceof EffectStatModifierDTO effectStat){
-                    effect = toEntity(effectStat);
+                    return toEntity(effectStat);
                 }
-                break;
+                throw new MappingException("STAT_MODIFIER effect has invalid DTO type: " + dto.getClass().getSimpleName());
 
             case HEAL:
                 if (dto instanceof EffectHealDTO effectHeal){
-                    effect = toEntity(effectHeal);
+                    return toEntity(effectHeal);
                 }
-                break;
-                
-            default:
-                throw new RuntimeException("Effect Type not known !");
-        }
+                throw new MappingException("HEAL effect has invalid DTO type: " + dto.getClass().getSimpleName());
 
-        return effect;
+            default:
+                throw new MappingException("Unknown effect type: " + dto.getType());
+        }
     }
 
     public static EffectHeal toEntity(EffectHealDTO dto){

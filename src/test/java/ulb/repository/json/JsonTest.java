@@ -9,7 +9,7 @@ import ulb.exceptions.LoadException;
 
 public class JsonTest {
 	@Test
-	public void testGetNodeCorrect() {
+	public void testGetNodeCorrect() throws Exception {
 		String str = """
 			{ "property": "value" }
 			""";
@@ -19,7 +19,7 @@ public class JsonTest {
 	}
 
 	@Test
-	public void testGetNodeException() {
+	public void testGetNodeException() throws Exception {
 		String str = """
 			{ property": "value" }
 			""";

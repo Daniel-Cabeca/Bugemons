@@ -19,31 +19,31 @@ import ulb.model.effect.EffectStatType;
 import ulb.exceptions.LoadException;
 
 public class EffectJsonParserTest {
-	public static Effect parseEffectFromStr(String str) {
+	public static Effect parseEffectFromStr(String str) throws LoadException {
 		EffectJsonParser parser = new EffectJsonParser();
 		JsonNode node = Json.getNode(str);
 		return parser.parseOne(node);
 	}
 
-	public static EffectTarget parseEffectTargetFromStr(String str) {
+	public static EffectTarget parseEffectTargetFromStr(String str) throws LoadException {
 		EffectJsonParser parser = new EffectJsonParser();
 		JsonNode node = Json.getNode("\""+ str +"\"");
 		return parser.parseTarget(node);
 	}
 
-	public static EffectStatDuration parseEffectStatDurationFromStr(String str) {
+	public static EffectStatDuration parseEffectStatDurationFromStr(String str) throws LoadException {
 		EffectJsonParser parser = new EffectJsonParser();
 		JsonNode node = Json.getNode("\""+ str +"\"");
 		return parser.parseDuration(node);
 	}
 
-	public static EffectStatType parseEffectStatTypeFromStr(String str) {
+	public static EffectStatType parseEffectStatTypeFromStr(String str) throws LoadException {
 		EffectJsonParser parser = new EffectJsonParser();
 		JsonNode node = Json.getNode("\""+ str +"\"");
 		return parser.parseEffectStatType(node);
 	}
 
-	public static EffectList parseEffectListFromStr(String str) {
+	public static EffectList parseEffectListFromStr(String str) throws LoadException {
 		EffectJsonParser parser = new EffectJsonParser();
 		JsonNode node = Json.getNode(str);
 		return parser.parseList(node);
@@ -52,39 +52,39 @@ public class EffectJsonParserTest {
 	// Target
 
 	@Test
-	public void testParseTargetError() {
+	public void testParseTargetError() throws Exception {
 		assertThrows(LoadException.class, () -> { parseEffectTargetFromStr("doesnotexist"); });
 	}
 
 	@Test
-	public void testParseTargetLanceur() {
+	public void testParseTargetLanceur() throws Exception {
 		assertEquals(EffectTarget.OWN_BUGEMON, parseEffectTargetFromStr("lanceur"));
 	}
 
 	@Test
-	public void testParseTargetAdversaire() {
+	public void testParseTargetAdversaire() throws Exception {
 		assertEquals(EffectTarget.OPPOSITE_BUGEMON, parseEffectTargetFromStr("adversaire"));
 	}
 
 	@Test
-	public void testParseTargetEquipe() {
+	public void testParseTargetEquipe() throws Exception {
 		assertEquals(EffectTarget.OWN_TEAM, parseEffectTargetFromStr("equipe"));
 	}
 
 	// Duration
 
 	@Test
-	public void testParseDurationError() {
+	public void testParseDurationError() throws Exception {
 		assertThrows(LoadException.class, () -> { parseEffectStatDurationFromStr("doesnotexist"); });
 	}
 
 	@Test
-	public void testParseDurationPermanent() {
+	public void testParseDurationPermanent() throws Exception {
 		assertEquals(EffectStatDuration.PERMANENT, parseEffectStatDurationFromStr("permanent"));
 	}
 
 	@Test
-	public void testParseDurationOneTurn() {
+	public void testParseDurationOneTurn() throws Exception {
 		assertEquals(EffectStatDuration.ROUND, parseEffectStatDurationFromStr("tour"));
 		assertEquals(EffectStatDuration.ROUND, parseEffectStatDurationFromStr("1_tour"));
 	}
@@ -92,34 +92,34 @@ public class EffectJsonParserTest {
 	// Stat type
 
 	@Test
-	public void testParseEffectStatTypeError() {
+	public void testParseEffectStatTypeError() throws Exception {
 		assertThrows(LoadException.class, () -> { parseEffectStatTypeFromStr("doesnotexist"); });
 	}
 
 	@Test
-	public void testParseEffectStatTypeHp() {
+	public void testParseEffectStatTypeHp() throws Exception {
 		assertEquals(EffectStatType.HP, parseEffectStatTypeFromStr("pv"));
 	}
 
 	@Test
-	public void testParseEffectStatTypeAttack() {
+	public void testParseEffectStatTypeAttack() throws Exception {
 		assertEquals(EffectStatType.ATTACK, parseEffectStatTypeFromStr("attaque"));
 	}
 
 	@Test
-	public void testParseEffectStatTypeDefense() {
+	public void testParseEffectStatTypeDefense() throws Exception {
 		assertEquals(EffectStatType.DEFENSE, parseEffectStatTypeFromStr("defense"));
 	}
 
 	@Test
-	public void testParseEffectStatTypeInitiative() {
+	public void testParseEffectStatTypeInitiative() throws Exception {
 		assertEquals(EffectStatType.INITIATIVE, parseEffectStatTypeFromStr("initiative"));
 	}
 
 	// ParseOne
 
 	@Test
-	public void testParseOneUnknownType() {
+	public void testParseOneUnknownType() throws Exception {
 		String str = """
 			{
 				"type": "doesnotexist"
@@ -130,7 +130,7 @@ public class EffectJsonParserTest {
 	}
 
 	@Test
-	public void testParseOneHeal() {
+	public void testParseOneHeal() throws Exception {
 		String str = """
 			{
 				"type": "soin",
@@ -146,7 +146,7 @@ public class EffectJsonParserTest {
 	}
 
 	@Test
-	public void testParseOneStatModifier() {
+	public void testParseOneStatModifier() throws Exception {
 		String str = """
 			{
 				"type": "stat_modifier",
@@ -166,7 +166,7 @@ public class EffectJsonParserTest {
 	}
 
 	@Test
-	public void testParseOneStatModifierMultiple() {
+	public void testParseOneStatModifierMultiple() throws Exception {
 		String str = """
 			{
 				"type": "stat_modifier_multiple",
@@ -189,7 +189,7 @@ public class EffectJsonParserTest {
 	}
 
 	@Test
-	public void testParseOneResetMalus() {
+	public void testParseOneResetMalus() throws Exception {
 		String str = """
 			{
 				"type": "reset_malus",
@@ -204,7 +204,7 @@ public class EffectJsonParserTest {
 	}
 
 	@Test
-	public void testParseOneSwitch() {
+	public void testParseOneSwitch() throws Exception {
 		String str = """
 			{
 				"type": "switch",
@@ -221,7 +221,7 @@ public class EffectJsonParserTest {
 	// ParseList
 
 	@Test
-	public void parseListCorrectSize() {
+	public void parseListCorrectSize() throws Exception {
 		String str = """
 			[
 				{

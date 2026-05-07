@@ -1,5 +1,7 @@
 package ulb.server;
 
+import ulb.exceptions.DataAccessException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,7 +55,7 @@ public class SetupHandler {
     }
 
 
-    private Player buildPlayer(PlayerRegisterDTO dto, boolean isLogin) {
+    private Player buildPlayer(PlayerRegisterDTO dto, boolean isLogin) throws DataAccessException {
         String username = dto.username();
 
         Inventory inventory;
@@ -68,7 +70,7 @@ public class SetupHandler {
         return PlayerMapper.toEntity(dto, inventory, userId);
     }
 
-	public void handle(ConfirmTeamMultiMessage message) {
+	public void handle(ConfirmTeamMultiMessage message) throws DataAccessException {
 		Player player = clientHandler.getPlayer();
 		PlayerDTO opponent = message.getOpponent();
 		Team team = makeTeam(message.getTeam());
@@ -89,7 +91,7 @@ public class SetupHandler {
 	 * @param bugemons The Bugemons of the team
 	 * @return The Team instance
 	 */
-	private static Team makeTeam(List<BugemonDTO> bugemons) {
+	private static Team makeTeam(List<BugemonDTO> bugemons) throws DataAccessException {
 		List<Bugemon> entities = new ArrayList<>();
 		for (BugemonDTO dto: bugemons) {
 			Bugemon entity = BugemonMapper.toEntity(dto);
@@ -99,7 +101,7 @@ public class SetupHandler {
 		return new Team(entities);
 	}
 
-	public void handle(RegisterMessage message){
+	public void handle(RegisterMessage message) throws DataAccessException{
 		boolean success;
 		String username = message.getPlayer().username();
 		String password = message.getPlayer().password();
@@ -119,7 +121,7 @@ public class SetupHandler {
 		}
 	}
 
-    public void handle(SetUpNormalModeMessage message){
+    public void handle(SetUpNormalModeMessage message) throws DataAccessException{
         Player player = clientHandler.getPlayer();
         Battle battle = clientHandler.getBattle();
         TowerManager towerManager = clientHandler.getTowerManager();
@@ -157,7 +159,7 @@ public class SetupHandler {
 		clientHandler.sendSuccessMessage();
 	}
 
-	public void handle(SetUpTeamMessage message){
+	public void handle(SetUpTeamMessage message) throws DataAccessException{
 		Team team = new Team();
 
 		for (BugemonDTO bugemonDTO : message.getTeam()){
@@ -170,7 +172,7 @@ public class SetupHandler {
 		clientHandler.sendSuccessMessage();
 	}
 
-    public void handle(SetUpTowerModeMessage message){
+    public void handle(SetUpTowerModeMessage message) throws DataAccessException{
 		boolean setupNewTower = message.isNewTower();
         Player player = clientHandler.getPlayer();
 

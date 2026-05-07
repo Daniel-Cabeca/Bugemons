@@ -19,7 +19,7 @@ public final class FxmlLoader {
 	 * @param path FXML resource path
 	 * @return Loaded FXMLLoader
 	 */
-	public static FXMLLoader load(Object owner, String path) {
+	public static FXMLLoader load(Object owner, String path) throws ViewLoadException {
 		if (owner == null) {
 			throw new IllegalArgumentException("Owner cannot be null.");
 		}

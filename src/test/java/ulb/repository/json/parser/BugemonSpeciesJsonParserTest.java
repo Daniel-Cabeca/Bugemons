@@ -11,6 +11,8 @@ import ulb.model.bugemon.BugemonSpecies;
 import ulb.repository.AbilityRepository;
 import ulb.repository.mock.AbilityMockRepository;
 
+import ulb.exceptions.LoadException;
+
 public class BugemonSpeciesJsonParserTest {
 	public static BugemonSpeciesJsonParser getParser() {
 		AbilityRepository abilityRepository = new AbilityMockRepository();
@@ -18,7 +20,7 @@ public class BugemonSpeciesJsonParserTest {
 		return new BugemonSpeciesJsonParser(abilityRepository);
 	}
 
-	public static BugemonSpecies parseOneFromString(String str) {
+	public static BugemonSpecies parseOneFromString(String str) throws LoadException {
 		BugemonSpeciesJsonParser parser = getParser();
 
 		JsonNode node = Json.getNode(str);
@@ -26,7 +28,7 @@ public class BugemonSpeciesJsonParserTest {
 	}
 
 	@Test
-	public void testFromJsonCorrect() {
+	public void testFromJsonCorrect() throws Exception {
 		String str = """
 			{
 				"id": "florachu",

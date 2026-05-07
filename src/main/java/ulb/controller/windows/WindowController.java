@@ -5,6 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import ulb.view.FxmlLoader;
+import ulb.exceptions.ViewLoadException;
 
 
 /**
@@ -18,7 +19,7 @@ abstract class WindowController<T> {
     protected String windowPath;
     private FXMLLoader loader;
 
-    protected WindowController(Stage stage, String windowPath){
+    protected WindowController(Stage stage, String windowPath) throws ViewLoadException {
         this.stage = stage;
         this.windowPath = windowPath;
         this.init();
@@ -29,7 +30,7 @@ abstract class WindowController<T> {
     /**
      * Used to initiate a WindowController object
      */
-    protected void init(){
+    protected void init() throws ViewLoadException {
         loader = FxmlLoader.load(this, this.windowPath);
         view = loader.getController();
     }

@@ -14,13 +14,13 @@ class SqlScriptTest {
 	}
 
 	@Test
-	public void readsSqlFile() {
+	public void readsSqlFile() throws Exception {
 		SqlScript script = getScript("select1");
 		assertEquals("SELECT 1;\n", script.getSql());
 	}
 
 	@Test
-	public void testGetStatementsWithOneQuery() {
+	public void testGetStatementsWithOneQuery() throws Exception {
 		SqlScript script = getScript("select1");
 
 		Iterable<String> queries = script.getStatements();
@@ -31,7 +31,7 @@ class SqlScriptTest {
 	}
 
 	@Test
-	public void testGetStatementsWithTwoStatements() {
+	public void testGetStatementsWithTwoStatements() throws Exception {
 		SqlScript script = getScript("select1_select2");
 
 		Iterable<String> queries = script.getStatements();
@@ -45,7 +45,7 @@ class SqlScriptTest {
 	}
 
 	@Test
-	public void testGetStatementsDoesNotIncludePadding() {
+	public void testGetStatementsDoesNotIncludePadding() throws Exception {
 		SqlScript script = getScript("select1_select2_padded");
 
 		Iterable<String> queries = script.getStatements();

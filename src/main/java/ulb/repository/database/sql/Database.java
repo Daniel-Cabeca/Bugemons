@@ -16,7 +16,7 @@ public abstract class Database {
 	 *
 	 * @param url The JDBC URL
 	 */
-	public Database(String url) {
+	public Database(String url) throws LoadException {
 		this.url = url;
 		this.connection = connect(this.getUrl());
 	}
@@ -27,7 +27,7 @@ public abstract class Database {
 	 * @param url The JDBC URL
 	 * @return The opened connection
 	 */
-	static Connection connect(String url) {
+	static Connection connect(String url) throws LoadException {
 		try {
 			Connection connection =  DriverManager.getConnection(url);
 			try (Statement stmt = connection.createStatement()) {
@@ -35,7 +35,7 @@ public abstract class Database {
 			}
 			return connection;
 		} catch (SQLException e) {
-			throw new LoadException("Failed to connect to database '"+ url +"': "+ e.getMessage());
+			throw new LoadException("Failed to connect to database '"+ url +"'.", e);
 		}
 	}
 

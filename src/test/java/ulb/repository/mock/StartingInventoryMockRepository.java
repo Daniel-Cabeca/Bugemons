@@ -1,5 +1,7 @@
 package ulb.repository.mock;
 
+import ulb.exceptions.LoadException;
+
 import ulb.repository.StartingInventoryRepository;
 import ulb.repository.json.StartingInventoryJsonRepository;
 import ulb.repository.json.ItemJsonRepository;
@@ -15,7 +17,11 @@ public class StartingInventoryMockRepository implements StartingInventoryReposit
 	}
 
 	private static void load() {
-		inventoryRepository = new StartingInventoryJsonRepository(new ItemJsonRepository());
+		try {
+			inventoryRepository = new StartingInventoryJsonRepository(new ItemJsonRepository());
+		} catch (LoadException e) {
+			throw new IllegalStateException("Failed to load starting inventory mock data.", e);
+		}
 	}
 
 	public static void reload() {

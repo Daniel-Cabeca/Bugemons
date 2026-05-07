@@ -11,7 +11,7 @@ import ulb.model.item.Inventory;
 
 class StartingInventoryJsonRespositoryTest {
 	@Test
-	public void testStartingInventoryWasCloned() {
+	public void testStartingInventoryWasCloned() throws Exception {
 		String str = """
 			{
 				"objets": [

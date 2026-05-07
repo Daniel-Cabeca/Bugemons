@@ -111,7 +111,7 @@ public class TeamService {
      * @param bugemon the bugemon to insert
      * @param player the user
      */
-	public void insertUserBugemon(Bugemon bugemon, Player player){
+	public void insertUserBugemon(Bugemon bugemon, Player player) throws LoadException {
 		int userId = player.getUserId();
 		repository.insertUserBugemon(bugemon, userId);
 	}
@@ -122,7 +122,7 @@ public class TeamService {
      * @param bugemon the bugemon to insert
      * @param player the user
      */
-	public void updateUserBugemon(Bugemon bugemon, Player player){
+	public void updateUserBugemon(Bugemon bugemon, Player player) throws LoadException {
 		int userId = player.getUserId();
 		repository.updateUserBugemon(bugemon, userId);
 	}
@@ -133,7 +133,7 @@ public class TeamService {
      * @param username the user's name
      * @return the list of the user's saved teams
      */
-	public List<Team> getAllTeams(Player player) {
+	public List<Team> getAllTeams(Player player) throws LoadException {
 		int userId = player.getUserId();
 		return repository.findAll(userId);
 	}
@@ -143,7 +143,7 @@ public class TeamService {
 	 * @param player the user
 	 * @return the team saved
 	 */
-	public Team getTowerTeam(Player player){
+	public Team getTowerTeam(Player player) throws LoadException {
 		int userId = player.getUserId();
 		return repository.getTowerTeam(userId);
 	}

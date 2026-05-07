@@ -6,7 +6,7 @@ package ulb.exceptions;
  * Use this exception, or one of its subclasses, when an expected game
  * situation prevents the requested action from continuing.
  */
-public class GameException extends RuntimeException {
+public class GameException extends Exception {
 	public GameException(String message) {
 		super(message);
 	}

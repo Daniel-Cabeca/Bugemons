@@ -1,6 +1,7 @@
 package ulb.mapper.item;
 
 import ulb.DTO.item.ItemDTO;
+import ulb.exceptions.MappingException;
 import ulb.mapper.effect.EffectMapper;
 import ulb.model.item.Item;
 
@@ -10,7 +11,7 @@ import ulb.model.item.Item;
 public class ItemMapper {
     private ItemMapper() {}
 
-    public static Item toEntity(ItemDTO dto) {
+    public static Item toEntity(ItemDTO dto) throws MappingException {
         if (dto == null) return null;
         return new Item(
                 dto.id(),

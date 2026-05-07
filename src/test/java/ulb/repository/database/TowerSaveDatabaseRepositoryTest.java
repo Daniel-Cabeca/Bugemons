@@ -15,7 +15,7 @@ import ulb.repository.database.sql.DatabaseInitializer;
 
 public class TowerSaveDatabaseRepositoryTest {
 
-	private Team insertUserAndTeam(DatabaseInMemory database, String username, String teamName) {
+	private Team insertUserAndTeam(DatabaseInMemory database, String username, String teamName) throws Exception {
         AccountDatabaseRepository accountRepository = new AccountDatabaseRepository(database);
         accountRepository.register(username, "password");
 		int userId = accountRepository.getUserId(username);
@@ -28,7 +28,7 @@ public class TowerSaveDatabaseRepositoryTest {
     }
 
 	@Test
-	void addListInDatabase(){
+	void addListInDatabase() throws Exception {
 		DatabaseInMemory database = new DatabaseInMemory();
         DatabaseInitializer databaseInitializer = new DatabaseInitializer(database);
         databaseInitializer.createTables();
@@ -47,7 +47,7 @@ public class TowerSaveDatabaseRepositoryTest {
 		
 	}
 	@Test
-	void updateInfo(){
+	void updateInfo() throws Exception {
 		DatabaseInMemory database = new DatabaseInMemory();
 		DatabaseInitializer databaseInitializer = new DatabaseInitializer(database);
 		databaseInitializer.createTables();
@@ -70,7 +70,7 @@ public class TowerSaveDatabaseRepositoryTest {
 	}
 
 	@Test
-	void deleteInfo(){
+	void deleteInfo() throws Exception {
 		DatabaseInMemory database = new DatabaseInMemory();
 		DatabaseInitializer databaseInitializer = new DatabaseInitializer(database);
 		databaseInitializer.createTables();

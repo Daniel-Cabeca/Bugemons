@@ -5,6 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import ulb.view.FxmlLoader;
+import ulb.exceptions.ViewLoadException;
 import ulb.view.WindowPath;
 import ulb.view.windows.BattleEndWindow;
 
@@ -33,7 +34,7 @@ public class BattleEndController implements BattleEndWindow.ViewListener {
      * @param victory Whether the battle was won
      * @param totalXP Total experience gained
      */
-    public void show(boolean victory, int totalXP) {
+    public void show(boolean victory, int totalXP) throws ViewLoadException {
         FXMLLoader loader = FxmlLoader.load(this, WindowPath.BATTLE_END);
         view = loader.getController();
         this.view.setViewListener(this);

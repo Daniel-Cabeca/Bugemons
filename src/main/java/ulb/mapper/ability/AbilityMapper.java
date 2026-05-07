@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.effect.EffectDTO;
 
+import ulb.exceptions.MappingException;
 import ulb.model.ability.Ability;
 import ulb.model.effect.EffectList;
 
@@ -18,16 +19,15 @@ public class AbilityMapper {
 
     private AbilityMapper() {}
 
-    public static Ability toEntity(AbilityDTO dto) {
+    public static Ability toEntity(AbilityDTO dto) throws MappingException {
         if (dto == null) return null;
 
         EffectList effectList = new EffectList();
 
         if (dto.effects() != null) {
-            dto.effects().forEach(effectDTO -> {
-                    effectList.add(EffectMapper.toEntity(effectDTO));
-                }
-            );
+            for (EffectDTO effectDTO : dto.effects()) {
+                effectList.add(EffectMapper.toEntity(effectDTO));
+            }
         }
 
         return new Ability(

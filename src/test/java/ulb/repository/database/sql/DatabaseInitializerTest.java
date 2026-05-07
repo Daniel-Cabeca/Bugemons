@@ -5,14 +5,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class DatabaseInitializerTest {
 	@Test
-	public void createTablesScriptDoesNotThrow() {
+	public void createTablesScriptDoesNotThrow() throws Exception {
 		Database db = new DatabaseInMemory();
 		DatabaseInitializer dbInitializer = new DatabaseInitializer(db);
 		assertDoesNotThrow(() -> { dbInitializer.createTables(); });
 	}
 
 	@Test
-	public void populateWithDefaultDataDoesNotThrow() {
+	public void populateWithDefaultDataDoesNotThrow() throws Exception {
 		Database db = new DatabaseInMemory();
 		DatabaseInitializer dbInitializer = new DatabaseInitializer(db);
 		dbInitializer.createTables();
@@ -20,7 +20,7 @@ class DatabaseInitializerTest {
 	}
 
 	@Test
-	public void prepareDefaultDatabaseDoesNotThrow() {
+	public void prepareDefaultDatabaseDoesNotThrow() throws Exception {
 		assertDoesNotThrow(() -> { DatabaseInitializer.prepareDefaultDatabase(); });
 	}
 }

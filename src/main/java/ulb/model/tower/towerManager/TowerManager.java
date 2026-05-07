@@ -1,4 +1,6 @@
 package ulb.model.tower.towerManager;
+
+import ulb.exceptions.LoadException;
 import ulb.model.tower.Floor;
 import ulb.model.tower.RoomType;
 import  ulb.model.tower.Tower;
@@ -33,7 +35,7 @@ public class TowerManager {
 	 * @param itemService Item service
 	 * @param setupNewTower tells if the tower saved or a new tower is used
 	 */
-	public TowerManager(Player player, boolean setupNewTower, BugemonService bugemonService, ItemService itemService, TeamService teamService, TowerSaveService towerSaveService) {
+	public TowerManager(Player player, boolean setupNewTower, BugemonService bugemonService, ItemService itemService, TeamService teamService, TowerSaveService towerSaveService) throws LoadException {
 		this.player = player;
 		this.bugemonService = bugemonService;
 		this.itemService = itemService;
@@ -49,11 +51,11 @@ public class TowerManager {
 	 * @param bugemonService Bugemon service
 	 * @param itemService Item service
 	 */
-	public TowerManager(Player player, BugemonService bugemonService, ItemService itemService, TeamService teamService, TowerSaveService towerSaveService){
+	public TowerManager(Player player, BugemonService bugemonService, ItemService itemService, TeamService teamService, TowerSaveService towerSaveService) throws LoadException {
 		this(player, true, bugemonService, itemService, teamService, towerSaveService);
 	}
 
-	private void setupTower(boolean setupNewTower){
+	private void setupTower(boolean setupNewTower) throws LoadException {
 		Tower tower;
 		if (setupNewTower){
 			tower = new Tower();
@@ -74,7 +76,7 @@ public class TowerManager {
 	 * @param targetRoomId ID of the room to move to
 	 * @return True if move was successful, false otherwise
 	*/
-	public boolean moveToRoom(int targetRoomId){
+	public boolean moveToRoom(int targetRoomId) throws LoadException {
 		if(!this.currentFloorManager.moveToRoom(targetRoomId)){
 			return false;
 		}
@@ -83,7 +85,7 @@ public class TowerManager {
 	}
 
 	/** Advances to next floor if current floor is completed. */
-	public void nextFloor(){
+	public void nextFloor() throws LoadException {
 		if (currentFloorManager.isFloorCompleted() && !isTowerCompleted()) {
 			floorNumber++;
 			currentFloorManager = new FloorManager(tower.getFloors().get(floorNumber), this.player, this.getBugemonService(), this.getItemService());
@@ -91,7 +93,7 @@ public class TowerManager {
 		saveTowerInfo();
 	}
 
-	public void saveTowerInfo(){
+	public void saveTowerInfo() throws LoadException {
 		this.teamService.insertTowerTeam(this.player);
 		this.towerSaveService.saveTowerInfo(this.tower, this.player);
 	}
@@ -120,7 +122,7 @@ public class TowerManager {
 	 * Sets current managed room completion status and save the tower.
 	 * @param status the status of the current room
 	 */
-	public void setCurrentRoomCompleted(boolean status){
+	public void setCurrentRoomCompleted(boolean status) throws LoadException {
 		this.getCurrentRoomManager().setRoomCompleted(status);
 		saveTowerInfo();
 	}

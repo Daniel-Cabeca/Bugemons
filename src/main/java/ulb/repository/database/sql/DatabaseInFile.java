@@ -1,5 +1,7 @@
 package ulb.repository.database.sql;
 
+import ulb.exceptions.LoadException;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -24,7 +26,7 @@ public class DatabaseInFile extends Database {
 	 * @param name The database base filename
 	 * @param isNew Whether the database file is newly created
 	 */
-	DatabaseInFile(String name, boolean isNew) {
+	DatabaseInFile(String name, boolean isNew) throws LoadException {
 		super("jdbc:sqlite:"+ name +".db");
 		this.name = name;
 		this.isNew = isNew;
@@ -35,7 +37,7 @@ public class DatabaseInFile extends Database {
 	 *
 	 * @param name The database base filename
 	 */
-	DatabaseInFile(String name) {
+	DatabaseInFile(String name) throws LoadException {
 		this(name, !Files.exists(getPath(name)));
 	}
 
@@ -45,7 +47,7 @@ public class DatabaseInFile extends Database {
 	 * @param name The database's name
 	 * @return The corresponding Database instance
 	 */
-	public static DatabaseInFile get(String name) {
+	public static DatabaseInFile get(String name) throws LoadException {
 		DatabaseInFile db = instances.get(name);
 
 		if (db == null) {

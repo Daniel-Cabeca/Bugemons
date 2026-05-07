@@ -1,5 +1,7 @@
 package ulb.server;
 
+import ulb.exceptions.DataAccessException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +36,7 @@ public class GameDataHandler {
         this.abilityService = abilityService;
         this.itemService = itemService;
     }
-    public void handle(GetAllBugemonSpeciesMessage message){
+    public void handle(GetAllBugemonSpeciesMessage message) throws DataAccessException{
 		List<BugemonSpeciesDTO> DTOSpeciesList = new ArrayList<BugemonSpeciesDTO>();
 
 		for (BugemonSpecies species : bugemonService.getAllSpecies()){
@@ -43,7 +45,7 @@ public class GameDataHandler {
 		clientHandler.sendMessage(new BugemonSpeciesMessage(DTOSpeciesList));
 	}
 
-	public void handle(GetRandomAbilityMessage message){
+	public void handle(GetRandomAbilityMessage message) throws DataAccessException{
 		Bugemon bugemon = BugemonMapper.toEntity(message.getBugemon());
 
 		Ability RandomAbility = abilityService.getRandomAbility(bugemon.getType(), bugemon.getAbilities());
@@ -51,7 +53,7 @@ public class GameDataHandler {
 		clientHandler.sendMessage(new RandomAbilityMessage(AbilityMapper.toDTO(RandomAbility)));
 	}
 
-	public void handle(GetRandomItemMessage message){
+	public void handle(GetRandomItemMessage message) throws DataAccessException{
 		Item randomItem = itemService.getRandomItem();
 
 		clientHandler.sendMessage(new RandomItemMessage(ItemMapper.toDTO(randomItem)));

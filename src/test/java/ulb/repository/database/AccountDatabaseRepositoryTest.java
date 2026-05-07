@@ -15,7 +15,7 @@ import java.util.List;
 public class AccountDatabaseRepositoryTest {
 
 	@Test
-	public void testLeaderboardSimple() {
+	public void testLeaderboardSimple() throws Exception {
 		Database database = new DatabaseInMemory();
 		new DatabaseInitializer(database).createTables();
 		AccountDatabaseRepository repo = new AccountDatabaseRepository(database);
@@ -37,40 +37,40 @@ public class AccountDatabaseRepositoryTest {
 		assertEquals(250, lb.get("Bob"));
 	}
 
-	private AccountDatabaseRepository newRepository() {
+	private AccountDatabaseRepository newRepository() throws Exception {
 		Database database = new DatabaseInMemory();
 		new DatabaseInitializer(database).createTables();
 		return new AccountDatabaseRepository(database);
 	}
 
 	@Test
-	void registerReturnsTrueForNewUser() throws LoadException {
+	void registerReturnsTrueForNewUser() throws Exception {
 		AccountDatabaseRepository repo = newRepository();
 		assertTrue(repo.register("alice", "hash1"));
 	}
 
 	@Test
-	void registerReturnsFalseWhenUsernameAlreadyTaken() throws LoadException {
+	void registerReturnsFalseWhenUsernameAlreadyTaken() throws Exception {
 		AccountDatabaseRepository repo = newRepository();
 		assertTrue(repo.register("alice", "hash1"));
 		assertFalse(repo.register("alice", "hash2"));
 	}
 
 	@Test
-	void getPasswordHashReturnsStoredHash() throws LoadException {
+	void getPasswordHashReturnsStoredHash() throws Exception {
 		AccountDatabaseRepository repo = newRepository();
 		repo.register("alice", "secret_hash");
 		assertEquals("secret_hash", repo.getPasswordHash("alice"));
 	}
 
 	@Test
-	void getPasswordHashReturnsNullWhenUserMissing() throws LoadException {
+	void getPasswordHashReturnsNullWhenUserMissing() throws Exception {
 		AccountDatabaseRepository repo = newRepository();
 		assertNull(repo.getPasswordHash("nobody"));
 	}
 
 	@Test
-	void getUserIdReturnsAssignedIdAndMinusOneWhenMissing() throws LoadException {
+	void getUserIdReturnsAssignedIdAndMinusOneWhenMissing() throws Exception {
 		AccountDatabaseRepository repo = newRepository();
 		repo.register("first", "a");
 		repo.register("second", "b");
@@ -80,7 +80,7 @@ public class AccountDatabaseRepositoryTest {
 	}
 
 	@Test
-	void addFriendInsertsSymmetricRows() throws LoadException {
+	void addFriendInsertsSymmetricRows() throws Exception {
 		AccountDatabaseRepository repo = newRepository();
 		repo.register("a", "1");
 		repo.register("b", "2");
@@ -93,7 +93,7 @@ public class AccountDatabaseRepositoryTest {
 	}
 
 	@Test
-	void sendFriendRequestAndGetPendingFriendRequests() throws LoadException {
+	void sendFriendRequestAndGetPendingFriendRequests() throws Exception {
 		AccountDatabaseRepository repo = newRepository();
 		repo.register("sender", "1");
 		repo.register("receiver", "2");
@@ -103,7 +103,7 @@ public class AccountDatabaseRepositoryTest {
 	}
 
 	@Test
-	void declineFriendRequestRemovesRequestWithoutFriendship() throws LoadException {
+	void declineFriendRequestRemovesRequestWithoutFriendship() throws Exception {
 		AccountDatabaseRepository repo = newRepository();
 		repo.register("s", "1");
 		repo.register("r", "2");
@@ -117,7 +117,7 @@ public class AccountDatabaseRepositoryTest {
 	}
 
 	@Test
-	void acceptFriendRequestRemovesRequestAndAddsFriends() throws LoadException {
+	void acceptFriendRequestRemovesRequestAndAddsFriends() throws Exception {
 		AccountDatabaseRepository repo = newRepository();
 		repo.register("s", "1");
 		repo.register("r", "2");
@@ -131,7 +131,7 @@ public class AccountDatabaseRepositoryTest {
 	}
 
 	@Test
-	void sendBattleRequestAndHasPendingBetweenBothDirections() throws LoadException {
+	void sendBattleRequestAndHasPendingBetweenBothDirections() throws Exception {
 		AccountDatabaseRepository repo = newRepository();
 		repo.register("p1", "1");
 		repo.register("p2", "2");
@@ -143,7 +143,7 @@ public class AccountDatabaseRepositoryTest {
 	}
 
 	@Test
-	void hasPendingBattleRequestBetweenFalseWhenNone() throws LoadException {
+	void hasPendingBattleRequestBetweenFalseWhenNone() throws Exception {
 		AccountDatabaseRepository repo = newRepository();
 		repo.register("p1", "1");
 		repo.register("p2", "2");
@@ -152,7 +152,7 @@ public class AccountDatabaseRepositoryTest {
 	}
 
 	@Test
-	void getPendingBattleRequestsListsSenderUsernames() throws LoadException {
+	void getPendingBattleRequestsListsSenderUsernames() throws Exception {
 		AccountDatabaseRepository repo = newRepository();
 		repo.register("attacker", "1");
 		repo.register("defender", "2");
@@ -162,7 +162,7 @@ public class AccountDatabaseRepositoryTest {
 	}
 
 	@Test
-	void acceptBattleRequestRemovesPendingBattle() throws LoadException {
+	void acceptBattleRequestRemovesPendingBattle() throws Exception {
 		AccountDatabaseRepository repo = newRepository();
 		repo.register("a", "1");
 		repo.register("b", "2");
@@ -175,7 +175,7 @@ public class AccountDatabaseRepositoryTest {
 	}
 
 	@Test
-	void declineBattleRequestRemovesPendingBattle() throws LoadException {
+	void declineBattleRequestRemovesPendingBattle() throws Exception {
 		AccountDatabaseRepository repo = newRepository();
 		repo.register("a", "1");
 		repo.register("b", "2");

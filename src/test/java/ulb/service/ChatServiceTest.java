@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import ulb.model.chat.ChatMessage;
 import ulb.repository.ChatRepository;
 import ulb.service.chat.InappropriateWordFilter;
+import ulb.exceptions.LoadException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,7 @@ class ChatServiceTest {
     }
     
     @Test
-    void sendMessageStoresCensoredMessage() {
+    void sendMessageStoresCensoredMessage() throws LoadException {
         InMemoryChatRepository repository = new InMemoryChatRepository();
         ChatService chatService = new ChatService(repository, new InappropriateWordFilter(Set.of("idiot")));
 

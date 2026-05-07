@@ -18,7 +18,7 @@ import java.util.stream.StreamSupport;
 public class BugemonSpeciesDatabaseRepositoryTest {
 
 	@Test
-	public void findByIdGivesCorrectSpecies() {
+	public void findByIdGivesCorrectSpecies() throws Exception {
 		BugemonSpeciesDatabaseRepository repository = new BugemonSpeciesDatabaseRepository(new DatabaseMock());
 
 		String id = "florachu";
@@ -29,7 +29,7 @@ public class BugemonSpeciesDatabaseRepositoryTest {
 	}
 
 	@Test
-	public void findAllGivesCorrectAbilities() throws DuplicateElementException {
+	public void findAllGivesCorrectAbilities() throws Exception {
 		Database database = new DatabaseInMemory();
 		DatabaseInitializer databaseInitializer = new DatabaseInitializer(database);
 		databaseInitializer.createTables();

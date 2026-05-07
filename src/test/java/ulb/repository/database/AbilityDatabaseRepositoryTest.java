@@ -17,7 +17,7 @@ public class AbilityDatabaseRepositoryTest {
 
 
 	@Test
-	public void findByIdGivesCorrectAbility() {
+	public void findByIdGivesCorrectAbility() throws Exception {
 		AbilityDatabaseRepository repository = new AbilityDatabaseRepository(new DatabaseMock());
 
 		String id = "surchauffe";
@@ -26,7 +26,7 @@ public class AbilityDatabaseRepositoryTest {
 	}
 
 	@Test
-	public void findAllGivesCorrectAbilities() throws DuplicateElementException {
+	public void findAllGivesCorrectAbilities() throws Exception {
 		Database database = new DatabaseInMemory();
 		DatabaseInitializer databaseInitializer = new DatabaseInitializer(database);
 		databaseInitializer.createTables();

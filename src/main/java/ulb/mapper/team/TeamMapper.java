@@ -2,6 +2,7 @@ package ulb.mapper.team;
 
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.team.TeamDTO;
+import ulb.exceptions.MappingException;
 import ulb.mapper.bugemon.BugemonMapper;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.team.Team;
@@ -28,7 +29,7 @@ public class TeamMapper {
         return teamDTO;
     }
 
-    public static Team toEntity(TeamDTO dto) {
+    public static Team toEntity(TeamDTO dto) throws MappingException {
         if (dto == null) return null;
         List<Bugemon> members = new ArrayList<>();
 

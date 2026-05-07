@@ -37,7 +37,7 @@ public interface TowerSaveRepository {
      * @param userId the id of the user
      * @return true if the information is already saved else false
      */
-	boolean isTowerSaved(Integer userId);
+	boolean isTowerSaved(Integer userId) throws LoadException;
 
 	/**
 	 * get the id of all the rooms completed by the user in the current floor

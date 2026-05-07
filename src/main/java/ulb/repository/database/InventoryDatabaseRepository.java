@@ -25,9 +25,8 @@ public class InventoryDatabaseRepository implements InventoryRepository {
      * Creates an inventory repository using the given database
      * @param database the database used
      * @param itemRepository used to acces the items in the database
-     * @throws LoadException
      */
-	public InventoryDatabaseRepository(Database database, ItemRepository itemRepository) throws LoadException {
+	public InventoryDatabaseRepository(Database database, ItemRepository itemRepository) {
 		this.database = database;
         this.itemRepository = itemRepository;
 	}

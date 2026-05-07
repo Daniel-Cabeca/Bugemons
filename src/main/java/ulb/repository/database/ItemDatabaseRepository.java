@@ -24,9 +24,8 @@ public class ItemDatabaseRepository implements ItemRepository {
 	 * Creates an item repository using the provided database.
 	 *
 	 * @param database The database connection wrapper
-	 * @throws LoadException If the repository cannot be initialized
 	 */
-	public ItemDatabaseRepository(Database database) throws LoadException {
+	public ItemDatabaseRepository(Database database) {
 		this.database = database;
 	}
 

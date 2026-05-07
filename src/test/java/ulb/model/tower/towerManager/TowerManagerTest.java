@@ -36,7 +36,7 @@ public class TowerManagerTest {
 		return bugemonService.spawnBugemon("florachu");
 	}
 
-	private TowerManager setTowerManager(){
+	private TowerManager setTowerManager() throws Exception {
 		DatabaseMock database = new DatabaseMock();
 		BugemonService bugemonService = new BugemonService(new BugemonSpeciesDatabaseRepository(database));
 		ItemService itemService = new ItemService(new ItemDatabaseRepository(database), new StartingInventoryJsonRepository(new ItemJsonRepository()));
@@ -54,7 +54,7 @@ public class TowerManagerTest {
 	}
 
 	@Test
-	void towerIsNotCompletedOnInitialisation() {
+	void towerIsNotCompletedOnInitialisation() throws Exception {
 
 		TowerManager manager = setTowerManager();
 
@@ -66,7 +66,7 @@ public class TowerManagerTest {
 	}
 
 	@Test
-	void towerIsCompletedWhenAllFloorsCompleted() {
+	void towerIsCompletedWhenAllFloorsCompleted() throws Exception {
 
 		TowerManager manager = setTowerManager();
 

@@ -13,7 +13,7 @@ public class SocketMessenger implements Messenger {
     private ObjectInputStream reader;
     private ObjectOutputStream writer;
 
-    public SocketMessenger(Socket socket){
+    public SocketMessenger(Socket socket) throws CommunicationException {
         if (socket == null) {
             throw new IllegalArgumentException("Socket cannot be null.");
         }
@@ -31,7 +31,7 @@ public class SocketMessenger implements Messenger {
     }
 
     @Override
-    public void sendMessage(Serializable message){
+    public void sendMessage(Serializable message) throws CommunicationException {
         if (message == null) {
             throw new IllegalArgumentException("Message cannot be null.");
         }
@@ -47,7 +47,7 @@ public class SocketMessenger implements Messenger {
     }
 
     @Override
-    public Serializable receiveMessage(){
+    public Serializable receiveMessage() throws CommunicationException {
         try{
             return (Serializable) reader.readObject();
         } catch (IOException e){

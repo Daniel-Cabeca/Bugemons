@@ -11,7 +11,7 @@ import ulb.repository.mock.AbilityMockRepository;
 
 class BugemonSpeciesJsonRespositoryTest {
 	@Test
-	public void testLoadOne() {
+	public void testLoadOne() throws Exception {
 		String str = """
 			{
 				"bugemons": [
@@ -41,7 +41,7 @@ class BugemonSpeciesJsonRespositoryTest {
 	}
 
 	@Test
-	public void testDefaultDoesNotThrow() {
+	public void testDefaultDoesNotThrow() throws Exception {
 		AbilityRepository abilityRepository = new AbilityMockRepository();
 		assertDoesNotThrow(() -> { new BugemonSpeciesJsonRepository(abilityRepository); });
 	}

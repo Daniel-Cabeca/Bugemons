@@ -1,5 +1,7 @@
 package ulb.server;
 
+import ulb.exceptions.DataAccessException;
+
 import java.util.List;
 
 import ulb.DTO.bugemon.BugemonDTO;
@@ -40,7 +42,7 @@ public class GameActionsHandler extends Thread{
 		this.multiBattleService = multiBattleService;
     }
 
-	public void handle(AbandonTowerMessage message){
+	public void handle(AbandonTowerMessage message) throws DataAccessException{
         boolean isGameTower = clientHandler.isGameTower();
 
 		if (!isGameTower){
@@ -52,7 +54,7 @@ public class GameActionsHandler extends Thread{
 	}
 
 
-	public void handle(ChooseAbilityRewardMessage message){
+	public void handle(ChooseAbilityRewardMessage message) throws DataAccessException{
         Player player = clientHandler.getPlayer();
         TowerManager towerManager = clientHandler.getTowerManager();
 
@@ -77,7 +79,7 @@ public class GameActionsHandler extends Thread{
 		clientHandler.sendSuccessMessage();
 	}
 
-	public void handle(ChooseItemRewardMessage message){
+	public void handle(ChooseItemRewardMessage message) throws DataAccessException{
         Player player = clientHandler.getPlayer();
         TowerManager towerManager = clientHandler.getTowerManager();
 
@@ -91,7 +93,7 @@ public class GameActionsHandler extends Thread{
 		clientHandler.sendSuccessMessage();
 	}
 
-	public void handle(ChooseLevelUpRewardMessage message){
+	public void handle(ChooseLevelUpRewardMessage message) throws DataAccessException{
         List<Reward> pendingLevelUpRewards = clientHandler.getPendingLevelUpRewards();
         
 		if (pendingLevelUpRewards == null || pendingLevelUpRewards.isEmpty()) {
@@ -124,7 +126,7 @@ public class GameActionsHandler extends Thread{
 		clientHandler.sendSuccessMessage();
 	}
 
-	public void handle(ChooseStatRewardMessage message){
+	public void handle(ChooseStatRewardMessage message) throws DataAccessException{
         Player player = clientHandler.getPlayer();
         TowerManager towerManager = clientHandler.getTowerManager();
 
@@ -146,7 +148,7 @@ public class GameActionsHandler extends Thread{
 		clientHandler.sendSuccessMessage();
 	}
 
-	public void handle(ChooseTowerRoomMessage message){
+	public void handle(ChooseTowerRoomMessage message) throws DataAccessException{
 		boolean isGameTower = clientHandler.isGameTower();
 
 		if (!isGameTower){
@@ -163,7 +165,7 @@ public class GameActionsHandler extends Thread{
 		}
 	}
 
-	public void handle(PickRandomActionMessage message){
+	public void handle(PickRandomActionMessage message) throws DataAccessException{
         Battle battle = clientHandler.getBattle();
         ParticipantLabel teamLabel = clientHandler.getTeamLabel();
 
@@ -174,7 +176,7 @@ public class GameActionsHandler extends Thread{
 		clientHandler.sendSuccessMessage();
 	}
 
-	public void handle(RunMessage message){
+	public void handle(RunMessage message) throws DataAccessException{
 		Player player = clientHandler.getPlayer();
         Battle battle = clientHandler.getBattle();
         ParticipantLabel teamLabel = clientHandler.getTeamLabel();
@@ -201,7 +203,7 @@ public class GameActionsHandler extends Thread{
         clientHandler.sendSuccessMessage();
 	}
 
-	public void handle(StartMultiBattleMessage message) {
+	public void handle(StartMultiBattleMessage message) throws DataAccessException {
 		Player self = this.clientHandler.getPlayer();
 		PlayerDTO opponent = message.getOpponent();
 
@@ -216,7 +218,7 @@ public class GameActionsHandler extends Thread{
 		clientHandler.sendSuccessMessage();
 	}
 
-	public void handle(SwapBugemonMessage message){
+	public void handle(SwapBugemonMessage message) throws DataAccessException{
         Player player = clientHandler.getPlayer();
         Battle battle = clientHandler.getBattle();
         ParticipantLabel teamLabel = clientHandler.getTeamLabel();
@@ -228,7 +230,7 @@ public class GameActionsHandler extends Thread{
 		clientHandler.sendSuccessMessage();
 	}
 
-	public void handle(UseAbilityMessage message){
+	public void handle(UseAbilityMessage message) throws DataAccessException{
         Battle battle = clientHandler.getBattle();
         ParticipantLabel teamLabel = clientHandler.getTeamLabel();
 
@@ -238,7 +240,7 @@ public class GameActionsHandler extends Thread{
 		clientHandler.sendSuccessMessage();
 	}
 
-	public void handle(UseItemMessage message){
+	public void handle(UseItemMessage message) throws DataAccessException{
         Player player = clientHandler.getPlayer();
         Battle battle = clientHandler.getBattle();
         ParticipantLabel teamLabel = clientHandler.getTeamLabel();

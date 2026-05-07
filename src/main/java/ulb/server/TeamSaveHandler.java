@@ -1,5 +1,7 @@
 package ulb.server;
 
+import ulb.exceptions.DataAccessException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +25,7 @@ public class TeamSaveHandler {
         this.teamService = teamService;
     }
 
-	public void handle(GetSavedTeamsMessage message) {
+	public void handle(GetSavedTeamsMessage message) throws DataAccessException {
 		Player player = clientHandler.getPlayer();
 
 		List<TeamDTO> DTOTeams = new ArrayList<>();
@@ -34,7 +36,7 @@ public class TeamSaveHandler {
 		clientHandler.sendMessage(new SavedTeamsMessage(DTOTeams));
 	}
 
-	public void handle(SaveTeamMessage message) {
+	public void handle(SaveTeamMessage message) throws DataAccessException {
         Player player = clientHandler.getPlayer();
         
 		TeamDTO teamDTO = message.getTeam();

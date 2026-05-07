@@ -4,6 +4,7 @@ import ulb.model.ability.Ability;
 import ulb.model.effect.*;
 import ulb.model.type.Type;
 import ulb.repository.AbilityRepository;
+import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
 import ulb.repository.database.sql.Database;
 import ulb.utils.DuplicateElementException;
@@ -27,9 +28,8 @@ public class AbilityDatabaseRepository implements AbilityRepository {
 	 * Creates an ability repository using the provided database.
 	 *
 	 * @param database The database connection wrapper
-	 * @throws LoadException If the repository cannot be initialized
 	 */
-	public AbilityDatabaseRepository(Database database) throws LoadException {
+	public AbilityDatabaseRepository(Database database) {
 		this.database = database;
 	}
 
@@ -135,7 +135,7 @@ public class AbilityDatabaseRepository implements AbilityRepository {
 			}
 
 			if (ability == null) {
-				throw new NoSuchElementException("Ability non trouvée : " + id);
+				throw new EntityNotFoundException("Ability", id);
 			}
 
 			return ability;

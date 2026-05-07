@@ -6,16 +6,18 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import ulb.repository.json.Json;
 
+import ulb.exceptions.LoadException;
+
 import ulb.model.item.Item;
 
 public class ItemJsonParserTest {
-	public static Item parseItemFromString(String str) {
+	public static Item parseItemFromString(String str) throws LoadException {
 		ItemJsonParser parser = new ItemJsonParser();
 		JsonNode node = Json.getNode(str);
 		return parser.parseOne(node);
 	}
 
-	private static Item getMockItemA() {
+	private static Item getMockItemA() throws LoadException {
 		String str = """
 			{
 				"id": "baie_revigorante",
@@ -37,31 +39,31 @@ public class ItemJsonParserTest {
 	// ParseOne
 
 	@Test
-	public void parsesId() {
+	public void parsesId() throws Exception {
 		Item item = getMockItemA();
 		assertEquals("baie_revigorante", item.getId());
 	}
 
 	@Test
-	public void parsesName() {
+	public void parsesName() throws Exception {
 		Item item = getMockItemA();
 		assertEquals("Baie Revigorante", item.getName());
 	}
 
 	@Test
-	public void parsesDescription() {
+	public void parsesDescription() throws Exception {
 		Item item = getMockItemA();
 		assertEquals("Restaure 20 PV au Bugémon actif.", item.getDescription());
 	}
 
 	@Test
-	public void parsesCategory() {
+	public void parsesCategory() throws Exception {
 		Item item = getMockItemA();
 		assertEquals("soin", item.getCategory());
 	}
 
 	@Test
-	public void parsesSprite() {
+	public void parsesSprite() throws Exception {
 		Item item = getMockItemA();
 		assertEquals("baie_revigorante.png", item.getSprite());
 	}

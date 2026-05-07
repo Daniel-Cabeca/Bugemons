@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import ulb.view.FxmlLoader;
+import ulb.exceptions.ViewLoadException;
 import ulb.view.WindowPath;
 import ulb.view.windows.ModeWindow;
 
@@ -32,7 +33,7 @@ public class ModeController implements ModeWindow.ViewListener {
     /**
      * Displays the mode selection screen.
      */
-    public void show() {
+    public void show() throws ViewLoadException {
         FXMLLoader loader = FxmlLoader.load(this, WindowPath.MODE);
         view = loader.getController();
         view.setViewListener(this);

@@ -1,6 +1,7 @@
 package ulb.mapper.reward;
 
 import ulb.DTO.reward.RewardDTO;
+import ulb.exceptions.MappingException;
 import ulb.mapper.bugemon.BugemonMapper;
 import ulb.mapper.stats.StatsMapper;
 import ulb.model.reward.Reward;
@@ -19,7 +20,7 @@ public class RewardMapper {
         );
     }
 
-    public static Reward toEntity(RewardDTO dto) {
+    public static Reward toEntity(RewardDTO dto) throws MappingException {
         if (dto == null) return null;
         Reward reward = new Reward(BugemonMapper.toEntity(dto.bugemon()));
         reward.setStats(StatsMapper.toEntity(dto.stats()));

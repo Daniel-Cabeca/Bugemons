@@ -7,25 +7,25 @@ import ulb.exceptions.LoadException;
 
 public class JsonResourcesTest {
 	@Test
-	public void testGetUrlCorrect() {
+	public void testGetUrlCorrect() throws Exception {
 		String path = JsonResources.PATH_ITEMS;
 		assertDoesNotThrow(() -> { JsonResources.getUrl(path); });
 	}
 
 	@Test
-	public void testGetUrlIncorrect() {
+	public void testGetUrlIncorrect() throws Exception {
 		String path = "doesnotexist";
 		assertThrows(LoadException.class, () -> { JsonResources.getUrl(path); });
 	}
 
 	@Test
-	public void testGetStreamCorrect() {
+	public void testGetStreamCorrect() throws Exception {
 		String path = JsonResources.PATH_ITEMS;
 		assertDoesNotThrow(() -> { JsonResources.getStream(path); });
 	}
 
 	@Test
-	public void testGetStreamIncorrect() {
+	public void testGetStreamIncorrect() throws Exception {
 		String path = "doesnotexist";
 		assertThrows(LoadException.class, () -> { JsonResources.getStream(path); });
 	}

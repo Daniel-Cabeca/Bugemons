@@ -10,7 +10,7 @@ import ulb.model.item.Inventory;
 
 class ItemJsonRespositoryTest {
 	@Test
-	public void testLoadOneItem() {
+	public void testLoadOneItem() throws Exception {
 		String str = """
 			{
 				"objets": [
@@ -40,7 +40,7 @@ class ItemJsonRespositoryTest {
 	}
 
 	@Test
-	public void testLoadStartingInventory() {
+	public void testLoadStartingInventory() throws Exception {
 		String str = """
 			{
 				"objets": [
@@ -71,7 +71,7 @@ class ItemJsonRespositoryTest {
 	}
 
 	@Test
-	public void testDefaultDoesNotThrow() {
+	public void testDefaultDoesNotThrow() throws Exception {
 		assertDoesNotThrow(() -> { new AbilityJsonRepository(); });
 	}
 }

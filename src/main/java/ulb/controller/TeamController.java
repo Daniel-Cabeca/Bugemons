@@ -9,6 +9,7 @@ import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.DTO.team.TeamDTO;
 import ulb.view.FxmlLoader;
+import ulb.exceptions.ViewLoadException;
 import ulb.view.WindowPath;
 import ulb.view.windows.CreateTeamWindow;
 
@@ -39,7 +40,7 @@ public class TeamController implements CreateTeamWindow.ViewListener {
 	/**
 	 * Displays the create team screen.
 	 */
-	public void show() {
+	public void show() throws ViewLoadException {
 		FXMLLoader loader = FxmlLoader.load(this, WindowPath.CREATE_TEAM);
 		view = loader.getController();
 		view.setViewListener(this);

@@ -5,6 +5,8 @@ import java.util.List;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.message.ClientToServerMessage;
 import ulb.server.ServerMessageHandler;
+import ulb.exceptions.DataAccessException;
+import ulb.exceptions.UserFacingException;
 
 public class SetUpTeamMessage implements ClientToServerMessage {
     private List<BugemonDTO> team;
@@ -14,7 +16,7 @@ public class SetUpTeamMessage implements ClientToServerMessage {
     }
 
     @Override
-	public void dispatch(ServerMessageHandler handler) {
+	public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
 		handler.handle(this);
 	}
 

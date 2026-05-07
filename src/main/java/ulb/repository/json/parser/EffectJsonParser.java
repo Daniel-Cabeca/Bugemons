@@ -188,12 +188,16 @@ public class EffectJsonParser {
 
 		JsonNode modifiersNode = node.get("modificateurs");
 		Map<EffectStatType, Integer> modifiers = new HashMap<>();
-		modifiersNode.fields().forEachRemaining(entry -> modifiers.put(
-				this.parseEffectStatType(entry.getKey()),
-				entry.getValue().asInt()
-			));
+		for (Map.Entry<String, JsonNode> entry : iterableFields(modifiersNode)) {
+			EffectStatType statType = this.parseEffectStatType(entry.getKey());
+			modifiers.put(statType, entry.getValue().asInt());
+		}
 
 		return new EffectStatModifier(target, duration, modifiers);
+	}
+
+	private Iterable<Map.Entry<String, JsonNode>> iterableFields(JsonNode node) {
+		return () -> node.fields();
 	}
 
 	/**

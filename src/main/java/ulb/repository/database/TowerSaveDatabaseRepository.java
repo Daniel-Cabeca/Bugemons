@@ -18,7 +18,7 @@ public class TowerSaveDatabaseRepository implements TowerSaveRepository {
 	 *
 	 * @param database The database connection wrapper
 	 */
-	public TowerSaveDatabaseRepository(Database database){
+	public TowerSaveDatabaseRepository(Database database) {
 		this.database = database;
 	}
 
@@ -76,7 +76,7 @@ public class TowerSaveDatabaseRepository implements TowerSaveRepository {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean isTowerSaved(Integer userId){
+	public boolean isTowerSaved(Integer userId) throws LoadException {
 		String sql = "SELECT COUNT(1) AS present FROM tower_saves WHERE user_id=?";
 		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
 			stmt.setInt(1, userId);

@@ -15,6 +15,7 @@ import ulb.communication.GameMode;
 import ulb.model.battle.BattleState;
 import ulb.model.type.Type;
 import ulb.view.FxmlLoader;
+import ulb.exceptions.ViewLoadException;
 import ulb.view.WindowPath;
 import ulb.view.windows.BattleWindow;
 import ulb.view.windows.BattleWindow.AbilityEntry;
@@ -64,7 +65,7 @@ public class BattleWindowController implements BattleWindow.ViewListener {
     /**
      * Displays the battle window and initializes its content.
      */
-    public void show() {
+    public void show() throws ViewLoadException {
         FXMLLoader loader = FxmlLoader.load(this, WindowPath.BATTLE);
         view = loader.getController();
         view.setViewListener(this);

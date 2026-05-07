@@ -1,7 +1,8 @@
 package ulb.message.clientToServer;
-
 import ulb.message.ClientToServerMessage;
 import ulb.server.ServerMessageHandler;
+import ulb.exceptions.DataAccessException;
+import ulb.exceptions.UserFacingException;
 
 public class SendChatMessageMessage implements ClientToServerMessage {
     private final String senderUsername;
@@ -19,5 +20,5 @@ public class SendChatMessageMessage implements ClientToServerMessage {
     public String getContent() { return content; }
 
     @Override
-    public void dispatch(ServerMessageHandler handler) { handler.handle(this); }
+    public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException { handler.handle(this); }
 }

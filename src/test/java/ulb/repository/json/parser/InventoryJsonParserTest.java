@@ -22,7 +22,7 @@ public class InventoryJsonParserTest {
 	}
 
 	@Test
-	public void testParseUnknownItemThrows() {
+	public void testParseUnknownItemThrows() throws Exception {
 		String str = """
 			{
 				"doesnotexist": 3
@@ -32,7 +32,7 @@ public class InventoryJsonParserTest {
 	}
 
 	@Test
-	public void testParseCorrect() {
+	public void testParseCorrect() throws Exception {
 		String str = """
 			{
 				"baie_revigorante": 3,

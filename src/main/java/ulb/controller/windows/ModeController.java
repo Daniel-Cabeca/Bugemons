@@ -1,75 +1,48 @@
-package ulb.controller;
+package ulb.controller.windows;
 
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import ulb.view.FxmlLoader;
 import ulb.exceptions.ViewLoadException;
+import ulb.view.FxmlLoader;
 import ulb.view.WindowPath;
 import ulb.view.windows.ModeWindow;
 
 /**
  * Controller for main mode selection actions.
  */
-public class ModeController implements ModeWindow.ViewListener {
-
+public class ModeController extends WindowController<ModeWindow> implements ModeWindow.ViewListener {
     private Listener listener;
-    private Stage stage;
-    private ModeWindow view;
-
     /**
      * Creates the mode controller.
      *
      * @param stage The application stage
      * @param listener Listener handling mode actions
      */
-    public ModeController(Stage stage, Listener listener) {
-        this.stage = stage;
+    public ModeController(Stage stage, Listener listener) throws ViewLoadException {
+        super(stage,WindowPath.MODE);
+        this.view.setViewListener(this);
         this.listener = listener;
     }
-
-    /**
-     * Displays the mode selection screen.
-     */
-    public void show() throws ViewLoadException {
-        FXMLLoader loader = FxmlLoader.load(this, WindowPath.MODE);
-        view = loader.getController();
-        view.setViewListener(this);
-
-        Parent root = loader.getRoot();
-        if (stage.getScene() == null) {
-            stage.setScene(new Scene(root));
-        } else {
-            stage.getScene().setRoot(root);
-        }
-        this.stage.show();
-    }
-
     /**
      * Notifies the listener to open the social menu or tab.
      */
     @Override
     public void onOpenSocial() {
-        listener.onOpenSocial();
+        listener.onShowSocialPanel();
     }
+
 
     /**
      * Notifies the listener to initiate the solo (single-player) game mode.
      */
     @Override
     public void onSolo() {
-        listener.onSolo();
+        listener.onShowGameModeWindow();
     }
 
-    /**
-     * Notifies the listener to initiate the multiplayer game mode.
-     */
-    @Override
-    public void onMultiplayer() {
-        listener.onMultiplayer();
-    }
 
     /**
      * Shuts down the JavaFX platform and terminates the application process.
@@ -93,11 +66,9 @@ public class ModeController implements ModeWindow.ViewListener {
      */
     public interface Listener {
         /** Opens the social panel. */
-        void onOpenSocial();
+        void onShowSocialPanel();
         /** Starts solo flow. */
-        void onSolo();
-        /** Starts multiplayer flow. */
-        void onMultiplayer();
+        void onShowGameModeWindow();
         /** Logs out the current user. */
         void onLogOut();
     }

@@ -33,9 +33,8 @@ import ulb.DTO.player.PlayerRegisterDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.DTO.reward.RewardDTO;
 import ulb.model.chat.ChatMessage;
-import ulb.exceptions.LoadException;
 import ulb.controller.windows.RegisterController;
-import ulb.view.WindowPath;
+import ulb.controller.windows.ModeController;
 
 /**
  * Client-side application controller coordinating server messaging.
@@ -118,10 +117,15 @@ public class ClientController extends Application implements RegisterController.
 		primaryStage.setFullScreen(true);
 		primaryStage.setFullScreenExitHint("");
 
-		this.registerController = new RegisterController(this.stage, WindowPath.REGISTER,this);
+		try {//TODO: check where to put
+			this.registerController = new RegisterController(this.stage,this);
+			this.modeController = new ModeController(this.stage, this);
+			this.socialPanelController = new SocialPanelController(this);
+			this.gameModeController = new GameModeController(this.stage, this);
+		} catch (ViewLoadException e) {
+			logViewLoadFailure("Impossible de charger les windows", e);
+		}
 		this.registerController.show();
-
-		this.modeController = new ModeController(this.stage, this);
 
 		if (primaryStage.getScene() != null) {
 			String stylesheet = getClass().getResource("/styles/global.css").toExternalForm();
@@ -411,8 +415,21 @@ public class ClientController extends Application implements RegisterController.
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void showModeWindow() throws ViewLoadException {
+	public void onShowModeWindow() {
 		this.modeController.show();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void onShowGameModeWindow() {
+		try {
+			this.gameModeController.show();
+		} catch (ViewLoadException e) {
+			logViewLoadFailure("Impossible de retourner à l'écran de mode de jeu.", e);
+		}
+
 	}
 
 	/**
@@ -430,29 +447,21 @@ public class ClientController extends Application implements RegisterController.
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void onOpenSocial() {
-		this.socialPanelController = new SocialPanelController(this);
-		try {
+	public void onShowSocialPanel() {
+		try { //TODO: change error handeling
 			this.socialPanelController.show();
 		} catch (ViewLoadException e) {
 			logViewLoadFailure("Impossible d'afficher le panneau social.", e);
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
-	public void onSolo() {
-		switchToGameModeWindow();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onMultiplayer() {
-
+	public void onOpenSocial() {
+		try {
+			this.socialPanelController.show();
+		} catch (ViewLoadException e) {
+			logViewLoadFailure("Impossible d'afficher le panneau social.", e);
+		}
 	}
 
 	/**
@@ -704,11 +713,7 @@ public class ClientController extends Application implements RegisterController.
 	 * Shows the mode window.
 	 */
 	public void switchToModeWindow(){
-		try {
-			this.modeController.show();
-		} catch (ViewLoadException e) {
-			logViewLoadFailure("Impossible d'afficher le menu principal.", e);
-		}
+		this.modeController.show();
 	}
 
 	/**
@@ -1140,11 +1145,7 @@ public class ClientController extends Application implements RegisterController.
 	@Override
 	public void onReturn() {
 		if (this.postData(new AbandonTowerMessage())){
-			try {
 				this.modeController.show();
-			} catch (ViewLoadException e) {
-				logViewLoadFailure("Impossible de retourner au menu après abandon de la tour.", e);
-			}
 		}
 	}
 

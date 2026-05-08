@@ -6,6 +6,7 @@ import ulb.DTO.player.PlayerDTO;
 import ulb.DTO.player.PlayerRegisterDTO;
 import ulb.exceptions.LoadException;
 import ulb.exceptions.ViewLoadException;
+import ulb.view.WindowPath;
 import ulb.view.windows.RegisterWindow;
 
 /**
@@ -19,12 +20,11 @@ public class RegisterController extends WindowController<RegisterWindow> impleme
      * Creates the register controller and attaches it to the view.
      *
      * @param stage The application stage
-     * @param windowPath The path to the register window
      * @param listener The listener notified of user actions
      * @throws ViewLoadException
      */
-    public RegisterController(Stage stage, String windowPath, Listener listener) throws ViewLoadException {
-        super(stage, windowPath);
+    public RegisterController(Stage stage,Listener listener) throws ViewLoadException {
+        super(stage, WindowPath.REGISTER);
         this.view.setViewListener(this);
         this.listener = listener;
     }
@@ -43,7 +43,7 @@ public class RegisterController extends WindowController<RegisterWindow> impleme
                     this.view.setErrorLabel("Connexion réussie, mais profil joueur introuvable.");
                     return;
                 }
-                this.listener.showModeWindow();
+                this.listener.onShowModeWindow();
             } else {
                 this.view.setErrorLabel("Nom d'utilisateur ou mot de passe incorrect.");
             }
@@ -69,7 +69,7 @@ public class RegisterController extends WindowController<RegisterWindow> impleme
                     this.view.setErrorLabel("Inscription réussie, mais profil joueur introuvable.");
                     return;
                 }
-                this.listener.showModeWindow();
+                this.listener.onShowModeWindow();
             } else {
                 this.view.setErrorLabel("Ce nom d'utilisateur est déjà pris.");
             }
@@ -86,7 +86,7 @@ public class RegisterController extends WindowController<RegisterWindow> impleme
         /** Handles the login attempt with the given credentials. */
         boolean onLogin(PlayerRegisterDTO playerRegisterDTO) throws LoadException;
         /** Handles switch to the mode selection window. */
-        void showModeWindow() throws ViewLoadException;
+        void onShowModeWindow() throws ViewLoadException;
         /** Retrieves the player DTO for the given username. */
         PlayerDTO onGetPlayer(String userName);
         /** Handles the sign-up attempt with the given credentials. */

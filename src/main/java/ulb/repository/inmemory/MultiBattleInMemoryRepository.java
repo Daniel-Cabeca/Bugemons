@@ -1,5 +1,6 @@
 package ulb.repository.inmemory;
 
+import ulb.model.Player;
 import ulb.model.battle.MultiBattleSession;
 import ulb.repository.MultiBattleRepository;
 
@@ -34,8 +35,8 @@ public class MultiBattleInMemoryRepository implements MultiBattleRepository {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public MultiBattleSession create(int userId1, int userId2) {
-		MultiBattleSession session = new MultiBattleSession(userId1, userId2);
+	public MultiBattleSession create(Player player1, Player player2) {
+		MultiBattleSession session = new MultiBattleSession(player1, player2);
 		SessionKey key = makeSessionKey(session);
 
 		this.sessions.put(key, session);

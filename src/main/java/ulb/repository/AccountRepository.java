@@ -1,5 +1,6 @@
 package ulb.repository;
 
+import ulb.exceptions.DataAccessException;
 import ulb.exceptions.LoadException;
 
 import java.util.List;
@@ -42,6 +43,16 @@ public interface AccountRepository {
 	public int getUserId(String username) throws NoSuchElementException;
 
 	/**
+	 * Returns the username of the player specified by a given id.
+	 *
+	 * @param userId The user's id
+	 * @return The user's name
+	 * @throws NoSuchElementException If no user has the given id
+	 * @throws DataAccessException If some unexpected SQL error occurs
+	 */
+	public String getUsername(int userId) throws NoSuchElementException, DataAccessException;
+
+	/**
 	 * Gives a list of all the users added as friends for a given user.
 	 *
 	 * @param userId The id of the user whose friends to fetch
@@ -54,7 +65,7 @@ public interface AccountRepository {
 	 * Registers a user as another user's friend.
 	 *
 	 * @param userId The user for whom to add the friend
-	 * @param receiverId The user to register as friend
+	 * @param friendId The user to register as friend
 	 * @throws LoadException If the operation failed
 	 */
 	void addFriend(int userId, int friendId) throws LoadException;

@@ -1,5 +1,6 @@
 package ulb.repository.database;
 
+import ulb.exceptions.DataAccessException;
 import ulb.repository.AccountRepository;
 import ulb.exceptions.LoadException;
 import ulb.repository.database.sql.Database;
@@ -72,6 +73,27 @@ public class AccountDatabaseRepository implements AccountRepository {
 		} catch (SQLException e) {
 			throw new NoSuchElementException("Failed to fetch user id: " + e.getMessage());
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public String getUsername(int userId) throws NoSuchElementException, DataAccessException {
+		String sql = "SELECT username FROM  users WHERE id = ?";
+
+		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
+			stmt.setInt(1, userId);
+			ResultSet rs = stmt.executeQuery();
+
+			if (rs.next()) {
+				return rs.getString("username");
+			}
+		}
+		catch (SQLException e) {
+			throw new DataAccessException("Failed to parse SQL query");
+		}
+
+		throw new NoSuchElementException("Player not found for this id: "+ userId);
 	}
 
 	/**

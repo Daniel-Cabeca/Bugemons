@@ -62,7 +62,7 @@ public class Main{
 		TowerSaveService towerSaveService = new TowerSaveService(towerSaveRepository);
 
 		MultiBattleRepository multiBattleRepository = new MultiBattleInMemoryRepository();
-		MultiBattleService multiBattleService = new MultiBattleService(multiBattleRepository);
+		MultiBattleService multiBattleService = new MultiBattleService(multiBattleRepository, accountService);
 
 		server.start(abilityService, bugemonService, itemService, accountService, chatService, teamService, inventoryService, towerSaveService, multiBattleService);
 	}

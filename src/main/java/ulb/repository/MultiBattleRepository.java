@@ -18,7 +18,7 @@ public interface MultiBattleRepository {
 	 * @return A corresponding MultiBattleSession instance
 	 * @throws NoSuchElementException If no corresponding MultiBattleSession was found
 	 */
-	public MultiBattleSession findByIds(int userId1, int userId2) throws NoSuchElementException;
+	MultiBattleSession findByIds(int userId1, int userId2) throws NoSuchElementException;
 
 	/**
 	 * Creates a multiplayer battle session for the specific players.
@@ -28,5 +28,5 @@ public interface MultiBattleRepository {
 	 * @param player2 The other player
 	 * @return The created battle session
 	 */
-	public MultiBattleSession create(Player player1, Player player2);
+	MultiBattleSession create(Player player1, Player player2);
 }

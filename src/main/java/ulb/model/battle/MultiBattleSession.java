@@ -52,6 +52,15 @@ public class MultiBattleSession {
 	}
 
 	/**
+	 * Whether a participant has declined the battle.
+	 *
+	 * @return True if at least one participant has declined the battle, false otherwise
+	 */
+	public boolean isDeclined() {
+		return this.participants.a().hasDeclined() || this.participants.b().hasDeclined();
+	}
+
+	/**
 	 * Whether both players have picked their team and are ready for the battle.
 	 *
 	 * @return True if both players have picked a team, false otherwise

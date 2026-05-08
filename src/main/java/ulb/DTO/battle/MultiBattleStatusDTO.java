@@ -1,7 +1,5 @@
 package ulb.DTO.battle;
 
-import ulb.model.battle.MultiBattleSession;
-
 import java.io.Serializable;
 
 public class MultiBattleStatusDTO implements Serializable {
@@ -11,21 +9,13 @@ public class MultiBattleStatusDTO implements Serializable {
 		PICKING_TEAMS,
 		BATTLE,
 		END,
+		DECLINED,
 	}
 
 	private Status status;
 
 	public MultiBattleStatusDTO() {
 		this.status = Status.NOT_CREATED;
-	}
-
-	public MultiBattleStatusDTO(MultiBattleSession battle) {
-		if (battle.isAccepted()) {
-			this.status = Status.PICKING_TEAMS;
-		}
-		else {
-			this.status = Status.WAITING_ACCEPT;
-		}
 	}
 
 	public Status getStatus() { return this.status; }

@@ -5,6 +5,7 @@ import ulb.model.team.Team;
 public class MultiBattleParticipant {
 	private final int userId;
 	private boolean accepted = false;
+	private boolean declined = false;
 	private Team team = null;
 	private Battle.ParticipantLabel participantLabel;
 
@@ -18,6 +19,9 @@ public class MultiBattleParticipant {
 
 	public boolean hasAccepted() { return this.accepted; }
 	public void accept() { this.accepted = true; }
+
+	public boolean hasDeclined() { return this.declined; }
+	public void decline() { this.declined = true; }
 
 	public boolean hasTeam() { return this.team != null; }
 	public Team getTeam() { return this.team; }

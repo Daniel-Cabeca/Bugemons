@@ -10,6 +10,7 @@ import ulb.DTO.battle.MultiBattleStatusDTO;
 import ulb.mapper.battle.MultiBattleStatusMapper;
 import ulb.message.clientToServer.*;
 import ulb.message.serverToClient.*;
+import ulb.model.battle.MultiBattleParticipant;
 import ulb.model.battle.MultiBattleSession;
 import ulb.service.AccountService;
 import ulb.service.ChatService;
@@ -52,10 +53,12 @@ public class SocialHandler {
 		int senderId = accountService.getUserId(message.getSenderUsername());
 		int receiverId = accountService.getUserId(message.getReceiverUsername());
 
+		MultiBattleSession session = multiBattleService.getMultiBattle(senderId, receiverId);
+		MultiBattleParticipant multiSessionParticipant = session.getParticipant(receiverId);
+		multiSessionParticipant.decline();
+
 		accountService.declineBattleRequest(senderId, receiverId);
 		clientHandler.sendSuccessMessage();
-
-		//TODO delete multi battle instance to signal it's been declined
 	}
 
 	public void handle(DeclineFriendRequestMessage message) throws DataAccessException{

@@ -12,7 +12,7 @@ import ulb.view.windows.GameModeWindow;
  * Controller for the game mode selection.
  */
 public class GameModeController implements GameModeWindow.ViewListener {
-    private final Listener listener;
+    private final ClientController clientController;
     private GameModeWindow view;
     private Stage stage;
 
@@ -20,11 +20,11 @@ public class GameModeController implements GameModeWindow.ViewListener {
      * Creates the game mode controller.
      *
      * @param stage The application stage
-     * @param listener The listener notified of user actions
+     * @param clientController The application controller
      */
-    public GameModeController(Stage stage, Listener listener) {
+    public GameModeController(Stage stage, ClientController clientController) {
         this.stage = stage;
-        this.listener = listener;
+        this.clientController = clientController;
     }
 
     /**
@@ -34,7 +34,7 @@ public class GameModeController implements GameModeWindow.ViewListener {
         FXMLLoader loader = FxmlLoader.load(this, WindowPath.GAME_MODE);
         view = loader.getController();
         view.setViewListener(this);
-        boolean activateButton = listener.isTowerSaved();
+        boolean activateButton = clientController.isTowerSaved();
         view.activateContinueTowerButton(activateButton);
         Parent root = loader.getRoot();
         if (stage.getScene() == null) {
@@ -50,7 +50,7 @@ public class GameModeController implements GameModeWindow.ViewListener {
      */
     @Override
     public void onAutoBattle() {
-        listener.onAutoBattle();
+        clientController.onAutoBattle();
     }
 
     /**
@@ -58,7 +58,7 @@ public class GameModeController implements GameModeWindow.ViewListener {
      */
     @Override
     public void onControlledBattle() {
-        listener.onControlledBattle();
+        clientController.onControlledBattle();
     }
 
     /**
@@ -66,7 +66,7 @@ public class GameModeController implements GameModeWindow.ViewListener {
      */
     @Override
     public void onTowerMode(boolean newTower) {
-        listener.onTowerMode(newTower);
+        clientController.onTowerMode(newTower);
     }
 
     /**
@@ -74,22 +74,6 @@ public class GameModeController implements GameModeWindow.ViewListener {
      */
     @Override
     public void onReturn() {
-        listener.onReturnToModeWindow();
-    }
-
-    /**
-     * Listener for game mode selection events.
-     */
-    public interface Listener {
-        /** Called when auto-battle mode is selected. */
-        void onAutoBattle();
-        /** Called when controlled-battle mode is selected. */
-        void onControlledBattle();
-        /** Called when tower mode is selected. */
-        void onTowerMode(boolean newTower);
-        /** Called when returning to the mode selection window. */
-        void onReturnToModeWindow();
-        /** Returns whether a saved tower run exists for the current player. */
-        boolean isTowerSaved();
+        clientController.switchToModeWindow();
     }
 }

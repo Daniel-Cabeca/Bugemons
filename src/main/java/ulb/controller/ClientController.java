@@ -39,8 +39,8 @@ import ulb.controller.windows.ModeController;
 /**
  * Client-side application controller coordinating server messaging.
  */
-public class ClientController extends Application implements RegisterController.Listener, ModeController.Listener, GameModeController.Listener,
-		ConfirmTeamController.Listener,BattleEndController.Listener, BattleWindowController.Listener, NextRoomController.Listener,
+public class ClientController extends Application implements ModeController.Listener,
+		BattleEndController.Listener, BattleWindowController.Listener, NextRoomController.Listener,
 		FloorRewardController.Listener, AttackReplacementController.Listener, LevelUpController.Listener,
 		LoadTeamPanelController.Listener, FloorController.Listener {
 
@@ -118,7 +118,7 @@ public class ClientController extends Application implements RegisterController.
 		primaryStage.setFullScreenExitHint("");
 
 		try {//TODO: check where to put
-			this.registerController = new RegisterController(this.stage,this);
+			this.registerController = new RegisterController(this.stage, this);
 			this.modeController = new ModeController(this.stage, this);
 			this.socialPanelController = new SocialPanelController(this);
 			this.gameModeController = new GameModeController(this.stage, this);
@@ -396,27 +396,14 @@ public class ClientController extends Application implements RegisterController.
 	// Register Controller :
 
 	/**
-	 * {@inheritDoc}
+	 * Loads a player by username, stores it as the current player, and returns it.
+	 *
+	 * @param userName The username to look up
+	 * @return The player DTO, or null if not found
 	 */
-	@Override
-	public boolean onSignUp(PlayerRegisterDTO playerDTO) {
-		return this.signUp(playerDTO);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean onLogin(PlayerRegisterDTO playerRegisterDTO) {
-		return this.logIn(playerRegisterDTO);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onShowModeWindow() {
-		this.modeController.show();
+	public PlayerDTO loadPlayer(String userName) {
+		this.player = this.getPlayer(userName);
+		return this.player;
 	}
 
 	/**
@@ -430,15 +417,6 @@ public class ClientController extends Application implements RegisterController.
 			logViewLoadFailure("Impossible de retourner à l'écran de mode de jeu.", e);
 		}
 
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public PlayerDTO onGetPlayer(String userName) {
-		this.player = this.getPlayer(userName);
-		return this.player;
 	}
 
 	// Mode Controller Listener :
@@ -487,28 +465,16 @@ public class ClientController extends Application implements RegisterController.
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public void onAutoBattle() {
 		this.gameMode = GameMode.AUTO;
 		switchToCreateTeamWindow();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public void onControlledBattle() {
 		this.gameMode = GameMode.CONTROLLED;
 		switchToCreateTeamWindow();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public void onTowerMode(boolean newTower) {
 		this.gameMode = GameMode.TOWER;
 		this.floorController = null;
@@ -521,24 +487,12 @@ public class ClientController extends Application implements RegisterController.
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public boolean isTowerSaved() {
 		Serializable message = getData(new GetTowerSavedInfoMessage());
 		if (message instanceof TowerSavedInfoMessage towerInfoMessage){
 			return towerInfoMessage.isTowerSaved();
 		}
 		return false;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onReturnToModeWindow() {
-		switchToModeWindow();
 	}
 
 	// Team Controller :
@@ -675,10 +629,6 @@ public class ClientController extends Application implements RegisterController.
 
 	// Confirm Team Controller
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public void onConfirm() {
 		switch (this.gameMode) {
 			case AUTO, CONTROLLED :
@@ -874,10 +824,6 @@ public class ClientController extends Application implements RegisterController.
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public void onReturnToCreateTeamWindow() {
 		try {
 			teamController.show();
@@ -1168,7 +1114,7 @@ public class ClientController extends Application implements RegisterController.
 	public void onChooseBugemonReward(FloorRewardController.RewardChoice rewardChoice) {
 		pendingFloorRewardChoice = rewardChoice;
 		if (chooseBugemonController == null) {
-			chooseBugemonController = new ChooseBugemonController(this.stage, this.floorRewardController, this.player);
+			chooseBugemonController = new ChooseBugemonController(this.stage, this, this.player);
 		}
 		try {
 			chooseBugemonController.show();

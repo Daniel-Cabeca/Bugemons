@@ -13,7 +13,7 @@ import ulb.exceptions.ViewLoadException;
 import ulb.view.WindowPath;
 import ulb.view.windows.FloorRewardWindow;
 
-public class FloorRewardController implements FloorRewardWindow.ViewListener, ChooseBugemonController.Listener {
+public class FloorRewardController implements FloorRewardWindow.ViewListener {
 
 	/**
 	 * Represents the type of bugemon reward selected by the player.
@@ -79,24 +79,6 @@ public class FloorRewardController implements FloorRewardWindow.ViewListener, Ch
 	public void onStatReward() {
 		pendingChoice = RewardChoice.STAT;
 		listener.onChooseBugemonReward(pendingChoice);
-	}
-
-	/**
-	 * Handles bugemon selection for the pending reward.
-	 *
-	 * @param bugemon The selected bugemon
-	 */
-	@Override
-	public void onBugemonChosen(BugemonDTO bugemon) {
-		listener.onBugemonChosen(bugemon);
-	}
-
-	/**
-	 * Handles return action from the choose bugemon screen.
-	 */
-	@Override
-	public void onReturnFloorRewardWindow() {
-		listener.onReturnFloorRewardWindow();
 	}
 
 	/**

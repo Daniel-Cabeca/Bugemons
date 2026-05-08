@@ -14,7 +14,7 @@ import ulb.view.windows.ChooseBugemonWindow;
  * Controller for selecting a bugemon for a reward action.
  */
 public class ChooseBugemonController implements ChooseBugemonWindow.ViewListener {
-    private final Listener listener;
+    private final ClientController clientController;
     private final Stage stage;
     private final PlayerDTO player;
     private ChooseBugemonWindow view;
@@ -23,12 +23,12 @@ public class ChooseBugemonController implements ChooseBugemonWindow.ViewListener
      * Creates the choose bugemon controller.
      *
      * @param stage The application stage
-     * @param listener The listener notified of user actions
+     * @param clientController The application controller
      * @param player The current player data
      */
-    public ChooseBugemonController(Stage stage, Listener listener, PlayerDTO player) {
+    public ChooseBugemonController(Stage stage, ClientController clientController, PlayerDTO player) {
         this.stage = stage;
-        this.listener = listener;
+        this.clientController = clientController;
         this.player = player;
     }
 
@@ -54,7 +54,7 @@ public class ChooseBugemonController implements ChooseBugemonWindow.ViewListener
      */
     @Override
     public void onBugemonChosen(BugemonDTO bugemon) {
-        listener.onBugemonChosen(bugemon);
+        clientController.onBugemonChosen(bugemon);
     }
 
     /**
@@ -62,16 +62,6 @@ public class ChooseBugemonController implements ChooseBugemonWindow.ViewListener
      */
     @Override
     public void onReturnFloorRewardWindow() {
-        listener.onReturnFloorRewardWindow();
-    }
-
-    /**
-     * Listener for choose bugemon actions.
-     */
-    public interface Listener {
-        /** Handles the selection of a bugemon as a reward. */
-        void onBugemonChosen(BugemonDTO bugemon);
-        /** Handles returning to the floor reward window. */
-        void onReturnFloorRewardWindow();
+        clientController.onReturnFloorRewardWindow();
     }
 }

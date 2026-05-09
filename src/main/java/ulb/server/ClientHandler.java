@@ -24,8 +24,12 @@ import ulb.model.tower.towerManager.TowerManager;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ClientHandler extends Thread implements ServerMessageHandler{
+	private static final Logger LOGGER = Logger.getLogger(ClientHandler.class.getName());
+
     private SocketMessenger socketMessenger;
     private boolean stop;
 
@@ -112,23 +116,23 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	/**
 	 * Reads the socket and handle the received message
 	 */
-    private void handleMessage(){
-        ClientToServerMessage message = receiveMessage();
-
-        if (message == null){
-            return;
-        }
-
+	private void handleMessage(){
+		ClientToServerMessage message = receiveMessage();
+		if (message == null){
+			return;
+		}
 		try {
 			message.dispatch(this);
 		} catch (UserFacingException e) {
 			sendErrorMessage(e.getMessage());
 		} catch (DataAccessException e) {
+			LOGGER.log(Level.SEVERE, "Data access error while handling a client message.", e);
 			sendErrorMessage("A data access error occurred while handling a client message.");
 		} catch (RuntimeException e) {
-			sendErrorMessage("An unexpected server error occurred while handling a client message. Error : " + e.getMessage());
+			LOGGER.log(Level.SEVERE, "Unexpected error while handling a client message.", e);
+			sendErrorMessage("An unexpected server error occurred while handling a client message.");
 		}
-    }
+	}
 
     public void stopProcess(){
         this.stop = true;

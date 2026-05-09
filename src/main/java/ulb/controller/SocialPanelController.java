@@ -204,7 +204,6 @@ public class SocialPanelController implements SocialPanel.ViewListener {
 
 	@Override
 	public void refreshLeaderboard() {
-		System.out.println("leader" + this.clientController.getLeaderboardList());
 		view.setLeaderboardList(this.clientController.getLeaderboardList());
 	}
 

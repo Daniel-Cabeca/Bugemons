@@ -153,18 +153,14 @@ public class ClientController extends Application implements RegisterController.
 			try {
 				client.sendMessage(message);
 				Serializable response = client.receiveMessage();
-
 				if (response instanceof StatusMessage statusMessage) {
 					if (statusMessage.isFailure()) {
-						System.err.println(statusMessage.getMessage());
 						return false;
 					}
 					return true;
 				}
-
-				System.err.println("Réponse inattendue du serveur : " + response);
 			} catch (CommunicationException e) {
-				System.err.println("Erreur de communication avec le serveur : " + e.getMessage());
+				LOGGER.log(Level.WARNING, "Communication error with server.", e);
 			}
 			return false;
 		}
@@ -182,7 +178,6 @@ public class ClientController extends Application implements RegisterController.
 				client.sendMessage(message);
 				return client.receiveMessage();
 			} catch (CommunicationException e) {
-				System.err.println("Erreur de communication avec le serveur : " + e.getMessage());
 				return new StatusMessage(false, "Connexion perdue avec le serveur.");
 			}
 		}
@@ -900,9 +895,8 @@ public class ClientController extends Application implements RegisterController.
 		Serializable message = getData(new GetPlayerInventoryMessage(userName));
 		if (message instanceof PlayerInventoryMessage playerInventory){
 			this.player.setInventory(playerInventory.getInventory());
-
 		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
-			System.err.println(errorMessage.getMessage());
+			LOGGER.log(Level.WARNING, "Failed to update player inventory: " + errorMessage.getMessage());
 		}
 	}
 
@@ -925,9 +919,8 @@ public class ClientController extends Application implements RegisterController.
 		Serializable message = getData(new GetActiveBugemonsMessage());
 		if (message instanceof ActiveBugemonsMessage activeBugemons){
 			return List.of(activeBugemons.getSelfActiveBugemon(), activeBugemons.getOpponentActiveBugemon());
-
 		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
-			System.err.println(errorMessage.getMessage());
+			LOGGER.log(Level.WARNING, "Failed to get active bugemons: " + errorMessage.getMessage());
 		}
 		return null;
 	}
@@ -940,99 +933,74 @@ public class ClientController extends Application implements RegisterController.
 		Serializable message = getData(new GetPlayerTeamMessage());
 		if (message instanceof PlayerTeamMessage playerTeam){
 			return playerTeam.getBugemons();
-
 		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
-			System.err.println(errorMessage.getMessage());
+			LOGGER.log(Level.WARNING, "Failed to get player team: " + errorMessage.getMessage());
 		}
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Map<AbilityDTO, String> getAbilityEffectiveness(List<AbilityDTO> abilities, BugemonDTO bugemonTarget){
 		Serializable message = getData(new GetAbilityEffectivenessMessage(abilities, bugemonTarget));
-
 		if (message instanceof AbilityEffectivenessMessage effectivenessMessage){
 			return effectivenessMessage.getEffectiveness();
 		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
-			System.err.println(errorMessage.getMessage());
+			LOGGER.log(Level.WARNING, "Failed to get ability effectiveness: " + errorMessage.getMessage());
 		}
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public List<Integer> getHpAfterFirstAction(){
 		Serializable message = getData(new GetLogsMessage(false));
-
 		if (message instanceof LogsMessage logs){
 			return logs.getHpsAfterFirstAction();
 		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
-			System.err.println(errorMessage.getMessage());
+			LOGGER.log(Level.WARNING, "Failed to get HP after first action: " + errorMessage.getMessage());
 		}
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public BattleState getState(){
 		Serializable message = getData(new GetBattleStateMessage());
-
 		if (message instanceof BattleStateMessage battleState){
 			return battleState.getBattleState();
 		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
-			System.err.println(errorMessage.getMessage());
+			LOGGER.log(Level.WARNING, "Failed to get battle state: " + errorMessage.getMessage());
 		}
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public List<String> getLogs(){
 		Serializable message = getData(new GetLogsMessage(true));
-
 		if (message instanceof LogsMessage logs){
 			return logs.getLogs();
 		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
-			System.err.println(errorMessage.getMessage());
+			LOGGER.log(Level.WARNING, "Failed to get logs: " + errorMessage.getMessage());
 		}
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Map<String, Boolean> checkItems(List<ItemDTO> items){
 		Serializable message = getData(new CheckUsableItemMessage(items));
-
 		if (message instanceof UsableItemsMessage usableItems){
 			return usableItems.getItemMap();
 		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
-			System.err.println(errorMessage.getMessage());
+			LOGGER.log(Level.WARNING, "Failed to check usable items: " + errorMessage.getMessage());
 		}
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean isGameFinished(){
 		Serializable message = getData(new CheckGameFinishedMessage());
-
 		if (message instanceof GameFinishedMessage gameFinished){
 			return gameFinished.isGameFinished();
 		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
-			System.err.println(errorMessage.getMessage());
+			LOGGER.log(Level.WARNING, "Failed to check if game is finished: " + errorMessage.getMessage());
 		}
 		return true;
 	}
@@ -1115,11 +1083,11 @@ public class ClientController extends Application implements RegisterController.
 		List<RewardDTO> rewards = null;
 
 		if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
-			System.err.println(errorMessage.getMessage());
-
+			LOGGER.log(Level.WARNING, "Failed to get level up rewards: " + errorMessage.getMessage());
 		} else if (message instanceof LevelUpInfoMessage levelUpInfo){
 			rewards = levelUpInfo.getRewards();
 		}
+
 		return rewards;
 	}
 
@@ -1196,13 +1164,15 @@ public class ClientController extends Application implements RegisterController.
 			}
 			return;
 		}
+
 		AbilityDTO newAbility = null;
 		Serializable message = getData(new GetRandomAbilityMessage(bugemon));
+
 		if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
-			System.err.println(errorMessage.getMessage());
+			LOGGER.log(Level.WARNING, "Failed to get random ability: " + errorMessage.getMessage());
 			return;
 
-		}else if (message instanceof RandomAbilityMessage randomAbility){
+		} else if (message instanceof RandomAbilityMessage randomAbility){
 			newAbility = randomAbility.getAbility();
 		}
 
@@ -1214,6 +1184,7 @@ public class ClientController extends Application implements RegisterController.
 		if (attackReplacementController == null) {
 			attackReplacementController = new AttackReplacementController(stage, this);
 		}
+
 		try {
 			attackReplacementController.show(bugemon, newAbility);
 		} catch (ViewLoadException e) {

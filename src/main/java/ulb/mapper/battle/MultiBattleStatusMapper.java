@@ -20,6 +20,9 @@ public class MultiBattleStatusMapper {
 		else if (battle.isAccepted()) {
 			dto.setStatus(Status.PICKING_TEAMS);
 		}
+		else if (battle.isDeclined()) {
+			dto.setStatus(Status.DECLINED);
+		}
 		else {
 			dto.setStatus(Status.WAITING_ACCEPT);
 		}

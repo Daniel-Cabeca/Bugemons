@@ -1,5 +1,6 @@
 package ulb.service;
 
+import ulb.exceptions.DataAccessException;
 import ulb.exceptions.LoadException;
 import ulb.repository.AccountRepository;
 
@@ -59,6 +60,18 @@ public class AccountService {
     public int getUserId(String username) throws NoSuchElementException {
         return repository.getUserId(username);
     }
+
+	/**
+	 * Returns the username of the player specified by a given id.
+	 *
+	 * @param userId The user's id
+	 * @return The user's name
+	 * @throws NoSuchElementException If no user has the given id
+	 * @throws DataAccessException If some unexpected error occurs with the repository
+	 */
+	public String getUsername(int userId) throws NoSuchElementException, DataAccessException {
+		return this.repository.getUsername(userId);
+	}
 
 	public List<String> getFriendsList(int userId) throws LoadException {
 		return repository.getFriendsList(userId);

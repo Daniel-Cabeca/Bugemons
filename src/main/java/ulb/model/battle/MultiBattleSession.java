@@ -14,10 +14,10 @@ public class MultiBattleSession {
 	private final ParticipantPair participants;
 	private Battle battle = null;
 
-	public MultiBattleSession(int userId1, int userId2) {
+	public MultiBattleSession(Player player1, Player player2) {
 		this.participants = new ParticipantPair(
-				new MultiBattleParticipant(userId1, Battle.ParticipantLabel.TEAM_A),
-				new MultiBattleParticipant(userId2, Battle.ParticipantLabel.TEAM_B)
+				new MultiBattleParticipant(player1, Battle.ParticipantLabel.TEAM_A),
+				new MultiBattleParticipant(player2, Battle.ParticipantLabel.TEAM_B)
 		);
 	}
 
@@ -52,6 +52,15 @@ public class MultiBattleSession {
 	}
 
 	/**
+	 * Whether a participant has declined the battle.
+	 *
+	 * @return True if at least one participant has declined the battle, false otherwise
+	 */
+	public boolean isDeclined() {
+		return this.participants.a().hasDeclined() || this.participants.b().hasDeclined();
+	}
+
+	/**
 	 * Whether both players have picked their team and are ready for the battle.
 	 *
 	 * @return True if both players have picked a team, false otherwise
@@ -67,8 +76,10 @@ public class MultiBattleSession {
 		this.battle = new Battle(
 			this.participants.a().getTeam(),
 			this.participants.b().getTeam(),
-			new Player("Player A", this.participants.a().getUserId()),
-			new Player("Player B", this.participants.b().getUserId()),
+
+			this.participants.a().getPlayer(),
+			this.participants.b().getPlayer(),
+
 			true,
 			accountService
 		);

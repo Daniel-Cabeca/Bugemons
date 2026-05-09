@@ -3,7 +3,6 @@ package ulb.repository.database;
 import ulb.model.effect.*;
 import ulb.model.item.Item;
 import ulb.repository.ItemRepository;
-import ulb.exceptions.LoadException;
 import ulb.repository.database.sql.Database;
 import ulb.utils.DuplicateElementException;
 
@@ -71,7 +70,7 @@ public class ItemDatabaseRepository implements ItemRepository {
 	public Item findById(String id) {
 		// La grosse requête qui rassemble tout (Outer Join pour ne rien perdre)
 		String sql = """
-        SELECT i.*, e.id AS effect_id, e.type AS effect_type, e.target, e.value, 
+        SELECT i.*, e.id AS effect_id, e.type AS effect_type, e.target, e.value,
                esm.hp, esm.attack, esm.defense, esm.initiative, esm.duration
         FROM items i
         LEFT JOIN effects e ON i.id = e.item_id
@@ -132,28 +131,22 @@ public class ItemDatabaseRepository implements ItemRepository {
 	public Iterable<Item> findAll() {
 		List<Item> items = new ArrayList<>();
 		String sql = "SELECT id FROM items";
-
-
 		try (PreparedStatement pstmt = this.database.prepareStatement(sql)) {
 			ResultSet rs = pstmt.executeQuery();
-
 			while (rs.next()) {
 				String itemId = rs.getString("id");
 				try {
-
 					Item item = findById(itemId);
 					if (item != null) {
 						items.add(item);
 					}
 				} catch (NoSuchElementException e) {
-
-					System.err.println("Erreur : ID trouvé mais item non chargeable : " + itemId);
+					LOGGER.log(Level.WARNING, "ID found but item could not be loaded: " + itemId, e);
 				}
 			}
 		} catch (SQLException e) {
 			LOGGER.log(Level.WARNING, "Failed to load items from database.", e);
 		}
-
 		return items;
 	}
 

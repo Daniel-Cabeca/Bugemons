@@ -15,6 +15,8 @@
     <maven.compiler.source>18</maven.compiler.source>
     <maven.compiler.target>18</maven.compiler.target>
     <javafx.version>23.0.2</javafx.version>
+
+    <!-- <javafx.platform>mac-aarch64</javafx.platform> -->
   </properties>
 
   <dependencies>
@@ -30,24 +32,28 @@
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-graphics</artifactId>
       <version>${javafx.version}</version>
+      <classifier>${javafx.platform}</classifier>
     </dependency>
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-fxml</artifactId>
       <version>${javafx.version}</version>
+      <classifier>${javafx.platform}</classifier>
     </dependency>
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-controls</artifactId>
       <version>${javafx.version}</version>
+      <classifier>${javafx.platform}</classifier>
     </dependency>
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-media</artifactId>
       <version>${javafx.version}</version>
+      <classifier>${javafx.platform}</classifier>
     </dependency>
 
-    <!-- ===== Natives JavaFX Linux ===== -->
+    <!-- ===== Natives JavaFX Linux ===== 
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-graphics</artifactId>
@@ -71,9 +77,9 @@
       <artifactId>javafx-media</artifactId>
       <version>${javafx.version}</version>
       <classifier>linux</classifier>
-    </dependency>
+    </dependency> -->
 
-    <!-- ===== Natives JavaFX Windows ===== -->
+    <!-- ===== Natives JavaFX Windows ===== 
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-graphics</artifactId>
@@ -97,9 +103,9 @@
       <artifactId>javafx-media</artifactId>
       <version>${javafx.version}</version>
       <classifier>win</classifier>
-    </dependency>
+    </dependency> -->
 
-    <!-- ===== Natives JavaFX macOS ===== -->
+    <!-- ===== Natives JavaFX macOS ===== 
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-graphics</artifactId>
@@ -123,7 +129,7 @@
       <artifactId>javafx-media</artifactId>
       <version>${javafx.version}</version>
       <classifier>mac</classifier>
-    </dependency>
+    </dependency> -->
 
     <!-- ===== Autres dépendances ===== -->
     <dependency>
@@ -200,6 +206,68 @@
   </build>
 
   <profiles>
+
+    <!-- macOS Apple Silicon -->
+    <profile>
+      <id>mac-aarch64</id>
+
+      <activation>
+        <os>
+          <family>mac</family>
+          <arch>aarch64</arch>
+        </os>
+      </activation>
+
+      <properties>
+        <javafx.platform>mac-aarch64</javafx.platform>
+      </properties>
+    </profile>
+
+    <!-- macOS Intel -->
+    <profile>
+      <id>mac</id>
+
+      <activation>
+        <os>
+          <family>mac</family>
+          <arch>x86_64</arch>
+        </os>
+      </activation>
+
+      <properties>
+        <javafx.platform>mac</javafx.platform>
+      </properties>
+    </profile>
+
+    <!-- Linux -->
+    <profile>
+      <id>linux</id>
+
+      <activation>
+        <os>
+          <family>linux</family>
+        </os>
+      </activation>
+
+      <properties>
+        <javafx.platform>linux</javafx.platform>
+      </properties>
+    </profile>
+
+    <!-- Windows -->
+    <profile>
+      <id>windows</id>
+
+      <activation>
+        <os>
+          <family>windows</family>
+        </os>
+      </activation>
+
+      <properties>
+        <javafx.platform>win</javafx.platform>
+      </properties>
+    </profile>
 
     <!-- ==================== PROFIL CLIENT ==================== -->
     <profile>

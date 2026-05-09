@@ -7,8 +7,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SocketMessenger implements Messenger {
+    private final Logger LOGGER = Logger.getLogger(SocketMessenger.class.getName());
+
     private final Socket socket;
     private ObjectInputStream reader;
     private ObjectOutputStream writer;
@@ -66,8 +70,7 @@ public class SocketMessenger implements Messenger {
                 this.writer.close();
                 this.socket.close();
             } catch (IOException e) {
-                // The connection is already being closed
-                System.err.println(e);
+                LOGGER.log(Level.WARNING, "Error while closing socket connection.", e);
             }
         }
     }

@@ -421,7 +421,7 @@ public class Battle {
 
 	/**
 	 * Returns the available Bugemons
-	 * @param team the team whose available Bugemons are returned
+	 * @param teamLabel the team whose available Bugemons are returned
 	 * @return the available Bugemons
 	 */
 	public List<Bugemon> getAvailableBugemons(ParticipantLabel teamLabel){
@@ -469,7 +469,6 @@ public class Battle {
 	 * @return true if the Bugemon is available, false otherwise
 	 */
 	public boolean checkSwappableBugemon(Bugemon bugemon, ParticipantLabel team){
-		System.out.println(this.getTeam(team).isBugemonOK(bugemon));
 		return this.getTeam(team).isBugemonOK(bugemon);
 	}
 

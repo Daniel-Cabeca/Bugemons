@@ -11,11 +11,16 @@ import ulb.service.strategy.StrategyRandom;
 import ulb.service.BugemonService;
 import ulb.service.ItemService;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 
 /**
  * Manages one tower room lifecycle and its generated content.
  */
 public class RoomManager {
+	private final Logger LOGGER = Logger.getLogger(RoomManager.class.getName());
+
 	private Room room;
 	private final int floorNumber;
 	private Player player;
@@ -83,21 +88,18 @@ public class RoomManager {
 	public void initializeBattleRoom(boolean isBossBattle){
 		Team playerTeam = player.getTeam();
 		Team opponentTeam = new Team();
-
 		try{
 			opponentTeam = OpponentTeamGenerator.generateRandomOpponentTeam(playerTeam, this.getBugemonService());
-		}catch(Exception e){
-			System.err.println(e);
+		} catch(Exception e){
+			LOGGER.log(Level.WARNING, "Failed to generate random opponent team, defaulting to empty team.", e);
 		}
-
 		Inventory playerBInventory = this.getItemService().createStarterInventory();
 		this.battle = new Battle(playerTeam, opponentTeam, player, new Player("PlayerB", -1, playerBInventory));
 		battle.setFloorNumber(floorNumber);
-		
+
 		if (isBossBattle) {
 			battle.enableBossBattle();
 		}
-
 		Thread botPlayer = new AI(battle, new StrategyRandom());
 		botPlayer.setDaemon(true);
 		botPlayer.start();

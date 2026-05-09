@@ -6,12 +6,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.io.Serializable;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.junit.jupiter.api.Test;
 
 import ulb.message.serverToClient.StatusMessage;
 
 public class SocketMessengerTest {
+    private final Logger LOGGER = Logger.getLogger(SocketMessengerTest.class.getName());
+
     private SocketActor server;
     private SocketActor client;
 
@@ -26,6 +30,7 @@ public class SocketMessengerTest {
             this.connection = connectionSocket;
             this.isClient = isClient;
         }
+
         public void run(){
             try{
                 if (isClient){
@@ -33,10 +38,9 @@ public class SocketMessengerTest {
                 } else{
                     this.socket = this.connection.accept();
                 }
-                
                 this.messenger = new SocketMessenger(socket);
             } catch (Exception e){
-                System.err.println(e);
+                LOGGER.log(Level.SEVERE, "Failed to establish socket connection.", e);
             }
         }
 
@@ -48,7 +52,7 @@ public class SocketMessengerTest {
             try{
                 this.messenger.sendMessage(message);
             } catch (Exception e){
-                System.err.println(e);
+                LOGGER.log(Level.WARNING, "Failed to send message.", e);
             }
         }
 
@@ -56,7 +60,6 @@ public class SocketMessengerTest {
             try{
                 return this.messenger.receiveMessage();
             } catch (Exception e){
-                System.err.println(e);
                 return null;
             }
             
@@ -71,16 +74,16 @@ public class SocketMessengerTest {
             this.client = new SocketActor(true, connectionSocket);
 
             this.server.start();
+
             this.client.start();
 
             Thread.sleep(100);
 
             connectionSocket.close();
-
         } catch (Exception e){
-            System.err.println(e);
+            LOGGER.log(Level.SEVERE, "Failed to create socket actors.", e);
         }
-    } 
+    }
 
     @Test
     public void testSendingMessage(){

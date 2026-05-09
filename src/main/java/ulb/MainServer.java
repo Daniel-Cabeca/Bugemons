@@ -34,19 +34,24 @@ import ulb.service.MultiBattleService;
 import ulb.service.TeamService;
 import ulb.service.TowerSaveService;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class MainServer {
+	private static final Logger LOGGER = Logger.getLogger(MainServer.class.getName());
+
 	private static final String SERVER_IP = "127.0.0.1";
     private static final int SERVER_PORT = 8080;
 
-    public static void main(String[] args){
-        String serverIp = SERVER_IP;
-        Integer serverPort = SERVER_PORT;
-        try{
+	public static void main(String[] args){
+		String serverIp = SERVER_IP;
+		Integer serverPort = SERVER_PORT;
+		try{
 			startServer(serverPort);
-        } catch (Exception e){
-            System.err.println(e);
-        }
-    }
+		} catch (Exception e){
+			LOGGER.log(Level.SEVERE, "Failed to start server.", e);
+		}
+	}
 
 	private static void startServer(Integer serverPort) throws Exception {
 		SocketServer server = new SocketServer(serverPort);

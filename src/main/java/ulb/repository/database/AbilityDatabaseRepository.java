@@ -5,7 +5,6 @@ import ulb.model.effect.*;
 import ulb.model.type.Type;
 import ulb.repository.AbilityRepository;
 import ulb.exceptions.EntityNotFoundException;
-import ulb.exceptions.LoadException;
 import ulb.repository.database.sql.Database;
 import ulb.utils.DuplicateElementException;
 
@@ -78,7 +77,7 @@ public class AbilityDatabaseRepository implements AbilityRepository {
 	@Override
 	public Ability findById(String id) throws NoSuchElementException {
 		String sql = """
-				   SELECT a.*, e.id AS effect_id, e.type AS effect_type, e.target, e.value, 
+				   SELECT a.*, e.id AS effect_id, e.type AS effect_type, e.target, e.value,
 				          esm.hp, esm.attack, esm.defense, esm.initiative, esm.duration
 				   FROM abilities a
 				   LEFT JOIN effects e ON a.id = e.ability_id

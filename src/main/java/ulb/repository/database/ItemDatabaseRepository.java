@@ -3,7 +3,6 @@ package ulb.repository.database;
 import ulb.model.effect.*;
 import ulb.model.item.Item;
 import ulb.repository.ItemRepository;
-import ulb.exceptions.LoadException;
 import ulb.repository.database.sql.Database;
 import ulb.utils.DuplicateElementException;
 
@@ -71,7 +70,7 @@ public class ItemDatabaseRepository implements ItemRepository {
 	public Item findById(String id) {
 		// La grosse requête qui rassemble tout (Outer Join pour ne rien perdre)
 		String sql = """
-        SELECT i.*, e.id AS effect_id, e.type AS effect_type, e.target, e.value, 
+        SELECT i.*, e.id AS effect_id, e.type AS effect_type, e.target, e.value,
                esm.hp, esm.attack, esm.defense, esm.initiative, esm.duration
         FROM items i
         LEFT JOIN effects e ON i.id = e.item_id

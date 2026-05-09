@@ -175,7 +175,7 @@ public class TeamDatabaseRepository implements TeamRepository {
 	@Override
 	public void insertUserBugemon(Bugemon bugemon, int userId) throws LoadException {
 		String sql = """
-        INSERT INTO bugemons (species_id, user_id, level, xp, remaining_rewards, hp, attack, defense, initiative) 
+        INSERT INTO bugemons (species_id, user_id, level, xp, remaining_rewards, hp, attack, defense, initiative)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     	""";
 		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
@@ -191,8 +191,8 @@ public class TeamDatabaseRepository implements TeamRepository {
 	@Override
 	public void updateUserBugemon(Bugemon bugemon, int userId) throws LoadException {
 		String sql = """
-        UPDATE bugemons SET species_id = ?, user_id = ?, 
-							level = ?, xp = ?, remaining_rewards = ?, hp = ?, attack = ?, 
+        UPDATE bugemons SET species_id = ?, user_id = ?,
+							level = ?, xp = ?, remaining_rewards = ?, hp = ?, attack = ?,
 							defense = ?, initiative = ? WHERE id = ?
 		""";
 		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {

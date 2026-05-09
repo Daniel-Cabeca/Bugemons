@@ -18,6 +18,7 @@ import ulb.DTO.battle.MultiBattleStatusDTO;
 import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.DTO.team.TeamDTO;
 import ulb.communication.SocketClient;
+import ulb.controller.windows.GameModeController;
 import ulb.exceptions.CommunicationException;
 import ulb.exceptions.ViewLoadException;
 import ulb.communication.GameMode;
@@ -123,6 +124,8 @@ public class ClientController extends Application implements
 		this.modeController = new ModeController(this.stage, this);
 		this.socialPanelController = new SocialPanelController(this);
 		this.gameModeController = new GameModeController(this.stage, this);
+		this.teamController = new TeamController(this);
+		this.floorController = new FloorController(this.stage, this);
 
 		this.registerController.show();
 
@@ -142,7 +145,7 @@ public class ClientController extends Application implements
 	 * @param message The message sent to the server
 	 * @return True if the request was accepted by the server
 	 */
-	public boolean postData(ClientToServerMessage message){
+	private boolean postData(ClientToServerMessage message){
 		synchronized (serverRequestLock) {
 			try {
 				client.sendMessage(message);
@@ -170,7 +173,7 @@ public class ClientController extends Application implements
 	 * @param message The message sent to the server
 	 * @return The response received from the server
 	 */
-	public Serializable getData(ClientToServerMessage message){
+	private Serializable getData(ClientToServerMessage message){
 		synchronized (serverRequestLock) {
 			try {
 				client.sendMessage(message);
@@ -382,7 +385,7 @@ public class ClientController extends Application implements
 	 * @param userName The username to look up
 	 * @return The player DTO, or null if not found
 	 */
-	public PlayerDTO loadPlayer(String userName) {
+	private PlayerDTO loadPlayer(String userName) {
 		this.player = this.getPlayer(userName);
 		return this.player;
 	}
@@ -402,7 +405,7 @@ public class ClientController extends Application implements
 	}
 
 
-	public void logOut() {
+	private void logOut() {
 		this.player = null;
 		this.registerController.show();
 	}
@@ -420,16 +423,8 @@ public class ClientController extends Application implements
 			logViewLoadFailure("Impossible d'afficher l'écran de sélection d'équipe.", e);
 		}
 	}
+	private void setGameMode(GameMode gameMode){this.gameMode = gameMode;}
 
-	public void onAutoBattle() {
-		this.gameMode = GameMode.AUTO;
-		switchToCreateTeamWindow();
-	}
-
-	public void onControlledBattle() {
-		this.gameMode = GameMode.CONTROLLED;
-		switchToCreateTeamWindow();
-	}
 
 	public void onTowerMode(boolean newTower) {
 		this.gameMode = GameMode.TOWER;
@@ -618,7 +613,7 @@ public class ClientController extends Application implements
 	/**
 	 * Shows the mode window.
 	 */
-	public void switchToModeWindow(){
+	public void switchToModeWindow(){ // TODO: DEL
 		this.modeController.show();
 	}
 
@@ -626,14 +621,7 @@ public class ClientController extends Application implements
 	 * Switches to the game mode selection window.
 	 */
 	public void switchToGameModeWindow() {
-		if (this.gameModeController == null) {
-			this.gameModeController = new GameModeController(stage, this);
-		}
-		try {
-			this.gameModeController.show();
-		} catch (ViewLoadException e) {
-			logViewLoadFailure("Impossible de retourner à l'écran de mode de jeu.", e);
-		}
+		this.gameModeController.show();
 	}
 
 	/**
@@ -1278,22 +1266,32 @@ public class ClientController extends Application implements
 			case SOCIAL_PANEL -> {
 				try {
 					this.socialPanelController.show();
-				} catch (ViewLoadException e) {
-
-				}
+				} catch (ViewLoadException e) {}
 			}
-			case GAME_MODE -> {
+			case GAME_MODE -> this.gameModeController.show();
+			case TEAM -> {
 				try {
-					this.gameModeController.show();
-				} catch (ViewLoadException e) {
-
-				}
+					this.teamController.show();
+				}catch (ViewLoadException e){}
 			}
+
+			case FLOOR ->{
+				try{
+				this.floorController.show();
+				}catch (ViewLoadException e){}
+
+			}
+
 		}
 	}
 
 	@Override
 	public void onLogOut() {
 		this.logOut();
+	}
+
+	@Override
+	public void onSetGameMode(GameMode gameMode) {
+		this.setGameMode(gameMode);
 	}
 }

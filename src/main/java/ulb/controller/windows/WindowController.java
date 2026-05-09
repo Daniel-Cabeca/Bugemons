@@ -5,6 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import ulb.DTO.player.PlayerDTO;
+import ulb.communication.GameMode;
 import ulb.message.ClientToServerMessage;
 import ulb.view.FxmlLoader;
 import ulb.exceptions.ViewLoadException;
@@ -39,7 +40,7 @@ public abstract class WindowController<T> {
         try {
             this.loadView();
         } catch (ViewLoadException e){
-            LOGGER.log(Level.WARNING, "Impossible d'afficher l'écran de " + this.getClass().getName(), e);
+            LOGGER.log(Level.WARNING, "\u001B[31m" + "Impossible d'afficher l'écran de " + this.getClass().getName() + "\u001B[0m", e);
         }
         this.clientListener = clientListener;
     }
@@ -77,6 +78,7 @@ public abstract class WindowController<T> {
         PlayerDTO onLoadPlayer(String userName);
         void onLogOut();
         void onShowWindow(WindowName window);
+        void onSetGameMode(GameMode gameMode);
     }
 
     /**

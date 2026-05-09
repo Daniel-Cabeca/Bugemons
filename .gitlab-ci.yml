@@ -18,10 +18,12 @@ build:
   rules:
     - if: $CI_COMMIT_TAG
   script:
-    - mvn clean package
+    - mvn clean package -P server
+    - mvn package -P client
   artifacts:
     paths:
-      - target/*.jar
+      - target/server.jar
+      - targer/client.jar
 
 release:
   stage: release

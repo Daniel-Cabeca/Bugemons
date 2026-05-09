@@ -16,7 +16,6 @@ import ulb.mapper.bugemon.BugemonMapper;
 import ulb.mapper.item.ItemMapper;
 import ulb.mapper.reward.RewardMapper;
 import ulb.message.serverToClient.gameInfo.*;
-import ulb.message.serverToClient.gameInfo.NextWindowMessage.WindowType;
 import ulb.model.Player;
 import ulb.model.ability.Ability;
 import ulb.model.battle.Battle;

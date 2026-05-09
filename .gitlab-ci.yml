@@ -19,11 +19,11 @@ build:
     - if: $CI_COMMIT_TAG
   script:
     - mvn clean package -P server
-    - mvn package -P client
+    - mvn clean package -P client
   artifacts:
     paths:
       - target/server.jar
-      - targer/client.jar
+      - target/client.jar
 
 release:
   stage: release
@@ -35,3 +35,9 @@ release:
   release:
     tag_name: $CI_COMMIT_TAG
     description: "Release $CI_COMMIT_TAG"
+    assets:
+      links:
+        - name: "server.jar"
+          url: "$CI_PROJECT_URL/-/jobs/artifacts/$CI_COMMIT_TAG/raw/target/server.jar?job=build"
+        - name: "client.jar"
+          url: "$CI_PROJECT_URL/-/jobs/artifacts/$CI_COMMIT_TAG/raw/target/client.jar?job=build"

@@ -39,7 +39,6 @@ public class Swap implements Action {
     /** {@inheritDoc} */
     @Override
     public boolean executeAction(Battle battle, ParticipantLabel team) {
-        System.out.println("SWAP ACTION TRIGGERD");
         return battle.performSwap(this.toSwap, team);
     }
 

@@ -65,19 +65,6 @@ public class SetupHandler {
         return PlayerMapper.toEntity(dto, inventory, userId);
     }
 
-	// public void setupTeam(List<BugemonDTO> bugemons) throws DataAccessException{
-	// 	Team team = new Team();
-
-	// 	for (BugemonDTO bugemonDTO : bugemons){
-	// 		if (!team.add(BugemonMapper.toEntity(bugemonDTO))){
-	// 			clientHandler.sendErrorMessage("Invalid Team");
-	// 		}
-	// 	}
-
-	// 	clientHandler.setTeam(team);
-	// 	clientHandler.sendSuccessMessage();
-	// }
-
 	public void setupMultiBattle(PlayerDTO opponent, List<BugemonDTO> bugemons) throws DataAccessException {
 		Player player = clientHandler.getPlayer();
 		Team team = makeTeam(bugemons);

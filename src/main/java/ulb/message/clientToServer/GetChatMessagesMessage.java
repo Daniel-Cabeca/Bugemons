@@ -14,9 +14,8 @@ public class GetChatMessagesMessage implements ClientToServerMessage {
         this.usernameB = usernameB;
     }
 
-    public String getUsernameA() { return usernameA; }
-    public String getUsernameB() { return usernameB; }
-
     @Override
-    public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException { handler.handle(this); }
+    public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
+        handler.getChatMessages(usernameA, usernameB);
+    }
 }

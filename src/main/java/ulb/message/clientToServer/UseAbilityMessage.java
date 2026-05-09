@@ -15,8 +15,6 @@ public class UseAbilityMessage implements ClientToServerMessage{
 
     @Override
 	public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
-		handler.handle(this);
+		handler.chooseUseAbilityAction(ability);
 	}
-
-    public AbilityDTO getAbility(){return this.ability;}
 }

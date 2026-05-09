@@ -14,10 +14,9 @@ public class AcceptBattleRequestMessage implements ClientToServerMessage {
         this.senderUsername = senderUsername;
     }
 
-    public String getReceiverUsername() { return receiverUsername; }
-    public String getSenderUsername() { return senderUsername; }
-
     @Override
-    public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException { handler.handle(this); } 
+    public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
+        handler.acceptBattleRequest(senderUsername, receiverUsername);
+    }
 
 }

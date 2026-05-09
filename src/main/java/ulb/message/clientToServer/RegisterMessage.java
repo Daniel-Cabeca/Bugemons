@@ -17,9 +17,6 @@ public class RegisterMessage implements ClientToServerMessage {
 
     @Override
 	public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
-		handler.handle(this);
+		handler.registerPlayer(playerDTO, login);
 	}
-
-    public PlayerRegisterDTO getPlayer() {return this.playerDTO;}
-    public boolean isLogin() {return this.login;}
 }

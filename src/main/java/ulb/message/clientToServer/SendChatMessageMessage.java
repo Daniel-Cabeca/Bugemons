@@ -15,10 +15,8 @@ public class SendChatMessageMessage implements ClientToServerMessage {
         this.content = content;
     }
 
-    public String getSenderUsername() { return senderUsername; }
-    public String getReceiverUsername() { return receiverUsername; }
-    public String getContent() { return content; }
-
     @Override
-    public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException { handler.handle(this); }
+    public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
+        handler.sendChatMessage(senderUsername, receiverUsername, content);
+    }
 }

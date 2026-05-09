@@ -17,8 +17,6 @@ public class SetUpTeamMessage implements ClientToServerMessage {
 
     @Override
 	public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
-		handler.handle(this);
+		handler.setupTeam(team);
 	}
-
-    public List<BugemonDTO> getTeam(){return this.team;}
 }

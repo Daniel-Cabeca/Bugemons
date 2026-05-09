@@ -17,9 +17,8 @@ public class GetMultiBattleStatusMessage implements ClientToServerMessage {
 		this.userId2 = userId2;
 	}
 
-	public int getUserId1() { return this.userId1; }
-	public int getUserId2() { return this.userId2; }
-
 	@Override
-	public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException { handler.handle(this); }
+	public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
+		handler.getMultiBattleStatus(userId1, userId2);
+	}
 }

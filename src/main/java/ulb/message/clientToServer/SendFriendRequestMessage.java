@@ -13,9 +13,8 @@ public class SendFriendRequestMessage implements ClientToServerMessage {
         this.receiverUsername = receiverUsername;
     }
 
-    public String getSenderUsername() { return senderUsername; }
-    public String getReceiverUsername() { return receiverUsername; }
-
     @Override
-    public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException { handler.handle(this); }
+    public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
+        handler.sendFriendRequest(senderUsername, receiverUsername);
+    }
 }

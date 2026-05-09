@@ -13,14 +13,9 @@ import ulb.DTO.player.PlayerDTO;
 import ulb.mapper.bugemon.BugemonMapper;
 import ulb.mapper.item.ItemMapper;
 import ulb.mapper.player.PlayerMapper;
-import ulb.message.clientToServer.GetPlayerInventoryMessage;
-import ulb.message.clientToServer.GetPlayerMessage;
-import ulb.message.clientToServer.GetPlayerTeamMessage;
-import ulb.message.clientToServer.GetUserIdFromNameMessage;
 import ulb.message.serverToClient.PlayerInventoryMessage;
 import ulb.message.serverToClient.PlayerMessage;
 import ulb.message.serverToClient.PlayerTeamMessage;
-import ulb.message.serverToClient.UserIdMessage;
 import ulb.model.Player;
 import ulb.model.battle.Battle;
 import ulb.model.battle.Battle.ParticipantLabel;
@@ -38,26 +33,7 @@ public class PlayerInfoHandler {
         this.accountService = accountService;
     }
 
-	public void handle(GetPlayerInventoryMessage message) throws DataAccessException {
-        Player player = clientHandler.getPlayer();
-
-		if (message.getUserName().equals(player.getUsername())){
-			Inventory inventory = player.getInventory();
-			Map<ItemDTO, Integer> inventoryDTO = new HashMap<>();
-			
-			for (Map.Entry<Item, Integer> e : inventory.getItems().entrySet()) {
-				inventoryDTO.put(ItemMapper.toDTO(e.getKey()), e.getValue());
-			}
-			clientHandler.sendMessage(new PlayerInventoryMessage(inventoryDTO));
-		}
-		else{
-			clientHandler.sendErrorMessage("Wrong Username");
-		}
-	}
-    
-    public void handle(GetPlayerMessage message) throws DataAccessException {
-		String username = message.getUsername();
-
+	public void getPlayerInfo(String username) throws DataAccessException {
 		try {
 			int id = this.accountService.getUserId(username);
 
@@ -70,7 +46,24 @@ public class PlayerInfoHandler {
 		}
 	}
 
-    public void handle(GetPlayerTeamMessage message) throws DataAccessException {
+	public void getPlayerInventory(String username) throws DataAccessException {
+        Player player = clientHandler.getPlayer();
+
+		if (username.equals(player.getUsername())){
+			Inventory inventory = player.getInventory();
+			Map<ItemDTO, Integer> inventoryDTO = new HashMap<>();
+			
+			for (Map.Entry<Item, Integer> e : inventory.getItems().entrySet()) {
+				inventoryDTO.put(ItemMapper.toDTO(e.getKey()), e.getValue());
+			}
+			clientHandler.sendMessage(new PlayerInventoryMessage(inventoryDTO));
+		}
+		else{
+			clientHandler.sendErrorMessage("Wrong Username");
+		}
+	}
+
+    public void getPlayerTeam() throws DataAccessException {
         Battle battle = clientHandler.getBattle();
         ParticipantLabel teamLabel = clientHandler.getTeamLabel();
 
@@ -85,12 +78,5 @@ public class PlayerInfoHandler {
 				.toList();
 
 		clientHandler.sendMessage(new PlayerTeamMessage(teamDTO));
-	}
-
-    public void handle(GetUserIdFromNameMessage message) throws DataAccessException {
-		String name = message.getName();
-		int id = accountService.getUserId(name);
-		UserIdMessage response = new UserIdMessage(id);
-		clientHandler.sendMessage(response);
 	}
 }

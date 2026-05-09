@@ -15,8 +15,6 @@ public class ChooseItemRewardMessage implements ClientToServerMessage{
 
 	@Override
 	public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
-		handler.handle(this);
+		handler.chooseItemReward(item);
 	}
-
-	public ItemDTO getItem(){return this.item;}
 }

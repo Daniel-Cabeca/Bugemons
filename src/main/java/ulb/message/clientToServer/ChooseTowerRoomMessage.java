@@ -12,11 +12,9 @@ public class ChooseTowerRoomMessage implements ClientToServerMessage {
 		this.roomId = roomId;
 	}
 
-	public int getRoomId() {return roomId;}
-
 	@Override
 	public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
-		handler.handle(this);
+		handler.chooseTowerRoom(roomId);
 	}
 	
 }

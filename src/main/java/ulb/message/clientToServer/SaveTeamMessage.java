@@ -14,8 +14,8 @@ public class SaveTeamMessage implements ClientToServerMessage {
         this.team = team;
     }
 
-    public TeamDTO getTeam() { return team; }
-
     @Override
-    public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException { handler.handle(this); }
+    public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
+        handler.saveTeam(team);
+    }
 }

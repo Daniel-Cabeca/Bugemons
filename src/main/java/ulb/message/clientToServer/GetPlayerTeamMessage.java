@@ -9,6 +9,6 @@ public class GetPlayerTeamMessage implements ClientToServerMessage {
 
     @Override
     public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
-        handler.handle(this);
+        handler.getPlayerTeam();
     }
 }

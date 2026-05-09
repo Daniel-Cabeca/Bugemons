@@ -15,8 +15,6 @@ public class ChooseStatRewardMessage implements ClientToServerMessage{
 
 	@Override
 	public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
-		handler.handle(this);
+		handler.chooseStatReward(bugemon);
 	}
-
-	public BugemonDTO getBugemon(){return this.bugemon;}
 }

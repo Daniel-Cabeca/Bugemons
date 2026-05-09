@@ -33,7 +33,6 @@ import ulb.DTO.player.PlayerRegisterDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.DTO.reward.RewardDTO;
 import ulb.model.chat.ChatMessage;
-import ulb.exceptions.LoadException;
 import ulb.controller.windows.RegisterController;
 import ulb.view.WindowPath;
 
@@ -1033,7 +1032,7 @@ public class ClientController extends Application implements RegisterController.
 	 */
 	@Override
 	public BattleState onAutoTurn() {
-		if (!postData(new PickRandomActionMessage())){
+		if (!postData(new ChooseRandomActionMessage())){
 			return null;
 		}
 		return getState();

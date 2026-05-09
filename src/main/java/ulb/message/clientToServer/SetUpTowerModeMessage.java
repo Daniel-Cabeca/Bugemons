@@ -14,8 +14,6 @@ public class SetUpTowerModeMessage implements ClientToServerMessage {
 
     @Override
 	public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
-		handler.handle(this);
+		handler.setupTowerMode(newTower);
 	}
-
-	public boolean isNewTower(){ return this.newTower; }
-}  
+}

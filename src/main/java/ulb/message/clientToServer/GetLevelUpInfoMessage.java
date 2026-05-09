@@ -8,6 +8,6 @@ import ulb.server.ServerMessageHandler;
 public class GetLevelUpInfoMessage implements ClientToServerMessage {
     @Override
     public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
-        handler.handle(this);
+        handler.getLevelUpInfo();
     }
 }

@@ -20,9 +20,6 @@ public class GetAbilityEffectivenessMessage implements ClientToServerMessage {
 
     @Override
 	public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
-		handler.handle(this);
+		handler.getAbilityEffectiveness(bugemonTarget, abilities);
 	}
-
-    public List<AbilityDTO> getAbilities(){return this.abilities;}
-    public BugemonDTO getBugemonTarget(){return this.bugemonTarget;}
 }

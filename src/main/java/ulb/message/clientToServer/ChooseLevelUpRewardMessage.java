@@ -13,12 +13,8 @@ public class ChooseLevelUpRewardMessage implements ClientToServerMessage {
         this.reward = reward;
     }
 
-    public RewardDTO getReward() {
-        return reward;
-    }
-
     @Override
     public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
-        handler.handle(this);
+        handler.chooseLevelUpReward(reward);
     }
 }

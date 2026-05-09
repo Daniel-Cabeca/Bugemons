@@ -20,10 +20,6 @@ public class ChooseAbilityRewardMessage implements ClientToServerMessage{
 
 	@Override
 	public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
-		handler.handle(this);
+		handler.chooseAbilityReward(bugemon, oldAbility, newAbility);
 	}
-
-	public BugemonDTO getBugemon(){return this.bugemon;}
-	public AbilityDTO getOldAbility(){return this.oldAbility;}
-	public AbilityDTO getNewAbility(){return this.newAbility;}
 }

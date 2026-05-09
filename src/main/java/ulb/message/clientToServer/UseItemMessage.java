@@ -15,8 +15,6 @@ public class UseItemMessage implements ClientToServerMessage{
 
     @Override
 	public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
-		handler.handle(this);
+		handler.chooseUseItemAction(item);
 	}
-
-    public ItemDTO getItem(){return this.item;}
 }

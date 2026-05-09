@@ -20,9 +20,6 @@ public class ConfirmTeamMultiMessage implements ClientToServerMessage {
 
 	@Override
 	public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
-		handler.handle(this);
+		handler.setupMultiBattle(opponent, team);
 	}
-
-	public PlayerDTO getOpponent() { return this.opponent; }
-	public List<BugemonDTO> getTeam() { return this.team; }
 }

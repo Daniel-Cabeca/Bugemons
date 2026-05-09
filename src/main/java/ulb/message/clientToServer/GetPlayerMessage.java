@@ -12,8 +12,6 @@ public class GetPlayerMessage implements ClientToServerMessage{
         this.username = username;
     }
 
-    public String getUsername(){return this.username;}
-
     @Override
-    public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException { handler.handle(this); }
+    public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException { handler.getPlayerInfo(username); }
 }

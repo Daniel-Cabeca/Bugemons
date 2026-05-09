@@ -14,8 +14,6 @@ public class GetLogsMessage implements ClientToServerMessage {
 
     @Override
 	public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
-		handler.handle(this);
+		handler.getLogs(clearLogs);
 	}
-
-    public boolean clearLogs(){return this.clearLogs;}
 }

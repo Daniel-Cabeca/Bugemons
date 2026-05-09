@@ -6,8 +6,9 @@ import ulb.message.ClientToServerMessage;
 import ulb.server.ServerMessageHandler;
 
 public class GetBattleStateMessage implements ClientToServerMessage {
-    @Override
+
+	@Override
 	public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
-		handler.handle(this);
+		handler.getBattleState();
 	}
 }

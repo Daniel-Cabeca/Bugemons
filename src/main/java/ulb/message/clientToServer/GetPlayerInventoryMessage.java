@@ -6,18 +6,14 @@ import ulb.message.ClientToServerMessage;
 import ulb.server.ServerMessageHandler;
 
 public class GetPlayerInventoryMessage implements ClientToServerMessage {
-    private String userName;
+    private String username;
 
-    public GetPlayerInventoryMessage(String userName) {
-        this.userName = userName;
-    }
-
-    public String getUserName() {
-        return this.userName;
+    public GetPlayerInventoryMessage(String username) {
+        this.username = username;
     }
 
     @Override
     public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
-        handler.handle(this);
+        handler.getPlayerInventory(username);
     }
 }

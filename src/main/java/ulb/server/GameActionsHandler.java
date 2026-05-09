@@ -1,5 +1,7 @@
 package ulb.server;
 
+import ulb.DTO.ability.AbilityDTO;
+import ulb.DTO.item.ItemDTO;
 import ulb.exceptions.DataAccessException;
 
 import java.util.List;
@@ -42,7 +44,7 @@ public class GameActionsHandler extends Thread{
 		this.multiBattleService = multiBattleService;
     }
 
-	public void handle(AbandonTowerMessage message) throws DataAccessException{
+	public void abandonTower() throws DataAccessException{
         boolean isGameTower = clientHandler.isGameTower();
 
 		if (!isGameTower){
@@ -54,11 +56,10 @@ public class GameActionsHandler extends Thread{
 	}
 
 
-	public void handle(ChooseAbilityRewardMessage message) throws DataAccessException{
+	public void chooseAbilityReward(BugemonDTO bugemonDTO, AbilityDTO oldAbilityDTO, AbilityDTO newAbilityDTO) throws DataAccessException{
         Player player = clientHandler.getPlayer();
         TowerManager towerManager = clientHandler.getTowerManager();
 
-		BugemonDTO bugemonDTO = message.getBugemon();
 		Bugemon chosenBugemon = player.getTeam().getBugemonById(bugemonDTO.getId());
 
 		if (chosenBugemon == null){
@@ -66,12 +67,12 @@ public class GameActionsHandler extends Thread{
 			return;
 		}
 
-		Ability oldAbility = chosenBugemon.getAbilities().getAbilityById(message.getOldAbility().id());
+		Ability oldAbility = chosenBugemon.getAbilities().getAbilityById(oldAbilityDTO.id());
 		if (oldAbility == null){
 			clientHandler.sendErrorMessage("Ability not learned");
 			return;
 		}
-		Ability newAbility = AbilityMapper.toEntity(message.getNewAbility());
+		Ability newAbility = AbilityMapper.toEntity(newAbilityDTO);
 
 		chosenBugemon.swapAbility(newAbility, oldAbility);
 
@@ -79,11 +80,11 @@ public class GameActionsHandler extends Thread{
 		clientHandler.sendSuccessMessage();
 	}
 
-	public void handle(ChooseItemRewardMessage message) throws DataAccessException{
+	public void chooseItemReward(ItemDTO itemDTO) throws DataAccessException{
         Player player = clientHandler.getPlayer();
         TowerManager towerManager = clientHandler.getTowerManager();
 
-		Item item = ItemMapper.toEntity(message.getItem());
+		Item item = ItemMapper.toEntity(itemDTO);
 		player.getInventory().addItem(item, 1);
 
 		inventoryService.insertItem(item, 1, player);
@@ -93,7 +94,7 @@ public class GameActionsHandler extends Thread{
 		clientHandler.sendSuccessMessage();
 	}
 
-	public void handle(ChooseLevelUpRewardMessage message) throws DataAccessException{
+	public void chooseLevelUpReward(RewardDTO rewardDTO) throws DataAccessException{
         List<Reward> pendingLevelUpRewards = clientHandler.getPendingLevelUpRewards();
         
 		if (pendingLevelUpRewards == null || pendingLevelUpRewards.isEmpty()) {
@@ -101,7 +102,6 @@ public class GameActionsHandler extends Thread{
 			return;
 		}
 
-		RewardDTO rewardDTO = message.getReward();
 		if (rewardDTO == null) {
 			clientHandler.sendErrorMessage("Invalid reward");
 			return;
@@ -126,11 +126,10 @@ public class GameActionsHandler extends Thread{
 		clientHandler.sendSuccessMessage();
 	}
 
-	public void handle(ChooseStatRewardMessage message) throws DataAccessException{
+	public void chooseStatReward(BugemonDTO bugemonDTO) throws DataAccessException{
         Player player = clientHandler.getPlayer();
         TowerManager towerManager = clientHandler.getTowerManager();
 
-		BugemonDTO bugemonDTO = message.getBugemon();
 		Bugemon chosenBugemon = player.getTeam().getBugemonById(bugemonDTO.getId());
 
 		if (chosenBugemon == null){
@@ -148,15 +147,14 @@ public class GameActionsHandler extends Thread{
 		clientHandler.sendSuccessMessage();
 	}
 
-	public void handle(ChooseTowerRoomMessage message) throws DataAccessException{
+	public void chooseTowerRoom(int roomId) throws DataAccessException{
 		boolean isGameTower = clientHandler.isGameTower();
 
 		if (!isGameTower){
 			clientHandler.sendErrorMessage("The game isn't in tower mode");
 			return;
 		}
-		int targetRoomId = message.getRoomId();
-		if (clientHandler.nextTowerRoom(targetRoomId)){
+		if (clientHandler.nextTowerRoom(roomId)){
 			clientHandler.sendSuccessMessage();
 		}
 		else{
@@ -165,7 +163,7 @@ public class GameActionsHandler extends Thread{
 		}
 	}
 
-	public void handle(PickRandomActionMessage message) throws DataAccessException{
+	public void chooseRandomAction() throws DataAccessException{
         Battle battle = clientHandler.getBattle();
         ParticipantLabel teamLabel = clientHandler.getTeamLabel();
 
@@ -176,7 +174,7 @@ public class GameActionsHandler extends Thread{
 		clientHandler.sendSuccessMessage();
 	}
 
-	public void handle(RunMessage message) throws DataAccessException{
+	public void chooseRunAction() throws DataAccessException{
 		Player player = clientHandler.getPlayer();
         Battle battle = clientHandler.getBattle();
         ParticipantLabel teamLabel = clientHandler.getTeamLabel();
@@ -203,11 +201,10 @@ public class GameActionsHandler extends Thread{
         clientHandler.sendSuccessMessage();
 	}
 
-	public void handle(StartMultiBattleMessage message) throws DataAccessException {
+	public void startMultiBattle(PlayerDTO opponentDTO) throws DataAccessException {
 		Player self = this.clientHandler.getPlayer();
-		PlayerDTO opponent = message.getOpponent();
 
-		MultiBattleSession session = this.multiBattleService.getMultiBattle(self.getUserId(), opponent.getUserId());
+		MultiBattleSession session = this.multiBattleService.getMultiBattle(self.getUserId(), opponentDTO.getUserId());
 		Battle battle = session.getBattle();
 		MultiBattleParticipant participant = session.getParticipant(self.getUserId());
 
@@ -218,34 +215,33 @@ public class GameActionsHandler extends Thread{
 		clientHandler.sendSuccessMessage();
 	}
 
-	public void handle(SwapBugemonMessage message) throws DataAccessException{
+	public void chooseSwapBugemonAction(BugemonDTO bugemonDTOToSwap) throws DataAccessException{
         Player player = clientHandler.getPlayer();
         Battle battle = clientHandler.getBattle();
         ParticipantLabel teamLabel = clientHandler.getTeamLabel();
 
-		BugemonDTO bugemonDTOToSwap = message.getBugemonToSwap();
 		Bugemon bugemonToSwap = player.getTeam().getBugemonById(bugemonDTOToSwap.getId());
 		battle.chooseAction(new Swap(bugemonToSwap), teamLabel);
 
 		clientHandler.sendSuccessMessage();
 	}
 
-	public void handle(UseAbilityMessage message) throws DataAccessException{
+	public void chooseUseAbilityAction(AbilityDTO abilityDTO) throws DataAccessException{
         Battle battle = clientHandler.getBattle();
         ParticipantLabel teamLabel = clientHandler.getTeamLabel();
 
-		Ability ability = AbilityMapper.toEntity(message.getAbility());
+		Ability ability = AbilityMapper.toEntity(abilityDTO);
 		battle.chooseAction(new UseAbility(ability), teamLabel);
 
 		clientHandler.sendSuccessMessage();
 	}
 
-	public void handle(UseItemMessage message) throws DataAccessException{
+	public void chooseUseItemAction(ItemDTO itemDTO) throws DataAccessException{
         Player player = clientHandler.getPlayer();
         Battle battle = clientHandler.getBattle();
         ParticipantLabel teamLabel = clientHandler.getTeamLabel();
 
-		Item item = ItemMapper.toEntity(message.getItem());
+		Item item = ItemMapper.toEntity(itemDTO);
 		battle.chooseAction(new UseItem(item), teamLabel);
 		inventoryService.deleteItem(item, 1, player);
 		clientHandler.sendSuccessMessage();

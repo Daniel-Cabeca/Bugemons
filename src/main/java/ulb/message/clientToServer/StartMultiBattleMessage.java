@@ -12,8 +12,8 @@ public class StartMultiBattleMessage implements ClientToServerMessage {
 		this.opponent = opponent;
 	}
 
-	public PlayerDTO getOpponent() { return this.opponent; }
-
 	@Override
-	public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException { handler.handle(this); }
+	public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
+		handler.startMultiBattle(opponent);
+	}
 }

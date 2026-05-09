@@ -7,7 +7,8 @@ import ulb.exceptions.UserFacingException;
 
 public class GetSavedTeamsMessage implements ClientToServerMessage {
 
-
     @Override
-    public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException { handler.handle(this); }
+    public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
+        handler.getSavedTeams();
+    }
 }

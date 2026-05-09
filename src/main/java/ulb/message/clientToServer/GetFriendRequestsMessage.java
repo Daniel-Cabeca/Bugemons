@@ -10,8 +10,8 @@ public class GetFriendRequestsMessage implements ClientToServerMessage {
 
     public GetFriendRequestsMessage(String username) { this.username = username; }
 
-    public String getUsername() { return username; }
-
     @Override
-    public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException { handler.handle(this); }
+    public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
+        handler.getFriendRequests(username);
+    }
 }

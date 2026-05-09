@@ -126,7 +126,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		} catch (DataAccessException e) {
 			sendErrorMessage("A data access error occurred while handling a client message.");
 		} catch (RuntimeException e) {
-			sendErrorMessage("An unexpected server error occurred while handling a client message.");
+			sendErrorMessage("An unexpected server error occurred while handling a client message. Error : " + e.getMessage());
 		}
     }
 

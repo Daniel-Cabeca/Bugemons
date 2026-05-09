@@ -14,6 +14,7 @@ import java.util.HashMap;
  */
 public class DatabaseInFile extends Database {
 	public static final String NAME_DEFAULT = "bugemon";
+	public static final String directory = System.getProperty("user.home") + "/.infof307/";
 
 	private static final Map<String, DatabaseInFile> instances = new HashMap<>();
 
@@ -27,7 +28,7 @@ public class DatabaseInFile extends Database {
 	 * @param isNew Whether the database file is newly created
 	 */
 	DatabaseInFile(String name, boolean isNew) throws LoadException {
-		super("jdbc:sqlite:"+ name +".db");
+		super("jdbc:sqlite:"+ name);
 		this.name = name;
 		this.isNew = isNew;
 	}
@@ -51,7 +52,9 @@ public class DatabaseInFile extends Database {
 		DatabaseInFile db = instances.get(name);
 
 		if (db == null) {
-			db = new DatabaseInFile(name);
+			new java.io.File(directory).mkdirs();
+
+			db = new DatabaseInFile(getPath(name).toString());
 			instances.put(name, db);
 		}
 
@@ -76,5 +79,8 @@ public class DatabaseInFile extends Database {
 	 * @param name The database base filename
 	 * @return The corresponding file path
 	 */
-	static Path getPath(String name) { return Path.of(name +".db"); }
+	static Path getPath(String name) { 
+        String dbPath = directory + name;
+		return Path.of(dbPath + ".db"); 
+	}
 }

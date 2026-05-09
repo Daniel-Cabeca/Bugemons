@@ -26,8 +26,11 @@ Pour démarrer l'application, il faut lancer le serveur avant de lancer le clien
 
 ### Démarrage via commande
 - Pour compiler: `mvn compile`
-- Pour lancer l'application côté client : mvn javafx:run
-- Pour lancer l'application côté serveur : mvn clean javafx:run -Djavafx.args="--server"
+- Pour lancer l'application côté client : `mvn javafx:run -P client`
+- Pour lancer l'application côté serveur : `mvn exec:java -P server`
+
+### Supprimer la base de donnée
+`mvn clean`
 
 ## Auteurs
 - Abdalrahman El Hussein - @aelh0063

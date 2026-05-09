@@ -613,8 +613,6 @@ public class ClientController extends Application implements RegisterController.
 	 * @param opponent The opponent
 	 */
 	private void startMultiBattle(PlayerDTO opponent) {
-		List<BugemonDTO> team = player.getTeam();
-		this.postData(new SetUpTeamMessage(team));
 
 		this.postData(new StartMultiBattleMessage(opponent));
 		this.switchToBattleWindow();

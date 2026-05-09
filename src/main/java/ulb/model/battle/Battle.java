@@ -12,7 +12,9 @@ import ulb.model.reward.Reward;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import ulb.model.reward.RewardType;
 
@@ -21,6 +23,7 @@ public class Battle {
 	private AccountService accountService;
 
 	private boolean multiplayerBattle;
+	Map<ParticipantLabel, Action> pendingActions;
 	private final int XP_COEF = 30;
 
 	private BattleParticipant participantA;
@@ -45,6 +48,7 @@ public class Battle {
 		this.logMsg = new ArrayList<>();
 		this.activeEffects = new ArrayList<>();
 		this.multiplayerBattle = false;
+		this.pendingActions = new HashMap<>();
 	}
 
 	public Battle(Team teamA, Team teamB, Player playerA, Player playerB, boolean multiplayerBattle, AccountService accountService) {
@@ -155,6 +159,7 @@ public class Battle {
 	 */
 	public boolean performSwap(Bugemon target, ParticipantLabel team){
 		if (!checkSwappableBugemon(target, team)){
+			System.out.println("SWAP EXECUTED (FAIL): " + team + " -> " + target.getName());
 			return false;
 		}
 
@@ -164,6 +169,7 @@ public class Battle {
 		} else {
 			logMsg.add("L'adversaire a envoyé " + target.getName() + "!");
 		}
+		System.out.println("SWAP EXECUTED (SUCCES): " + team + " -> " + target.getName());
 		return true;
 	}
 
@@ -215,6 +221,20 @@ public class Battle {
 		return actions;
 	}
 
+	private synchronized void tryResolveRound() {
+
+    if (pendingActions.size() < 2) return;
+
+    if (getState(ParticipantLabel.TEAM_A) != BattleState.WAITING) return;
+
+    if (getState(ParticipantLabel.TEAM_B) != BattleState.WAITING) return;
+
+    handleRound();
+
+    pendingActions.clear();
+
+}
+
 	/**
 	 * Applies an action on a team
 	 * @param action the action being applied
@@ -237,6 +257,7 @@ public class Battle {
 			case INGAME:
 				setAction(action, ownTeam);
 				setState(BattleState.WAITING, ownTeam);
+				// pendingActions.put(ownTeam, action);
 				break;
 
 			case SWAPPING:
@@ -245,11 +266,13 @@ public class Battle {
 					setState(BattleState.INGAME, ownTeam);
 					setState(BattleState.INGAME, oppositeTeam);
 				}
+				// pendingActions.put(ownTeam, action);
 				break;
 
 			default:
 				break;
 		}
+		// tryResolveRound();
 		if (this.getState(ownTeam) == BattleState.WAITING && this.getState(oppositeTeam) == BattleState.WAITING){
 			handleRound();
 		}
@@ -469,6 +492,7 @@ public class Battle {
 	 * @return true if the Bugemon is available, false otherwise
 	 */
 	public boolean checkSwappableBugemon(Bugemon bugemon, ParticipantLabel team){
+		System.out.println(this.getTeam(team).isBugemonOK(bugemon));
 		return this.getTeam(team).isBugemonOK(bugemon);
 	}
 

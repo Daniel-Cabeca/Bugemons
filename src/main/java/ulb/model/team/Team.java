@@ -202,6 +202,8 @@ public class Team {
     }
 
     public boolean isBugemonOK(Bugemon bugemon) {
+        System.out.println("BUGEMON CONTAINED ? : " + this.contains(bugemon));
+        System.out.println("BUGEMON KO ? : " + bugemon.isKO());
         return this.contains(bugemon) && !bugemon.isKO();
     }
 

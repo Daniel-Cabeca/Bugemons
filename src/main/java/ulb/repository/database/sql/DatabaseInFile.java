@@ -14,7 +14,7 @@ import java.util.HashMap;
  */
 public class DatabaseInFile extends Database {
 	public static final String NAME_DEFAULT = "bugemon";
-	public static final String directory = System.getProperty("user.home") + "/.infof307/";
+	public static final Path DIRECTORY = resolveDataDirectory("infof307");
 
 	private static final Map<String, DatabaseInFile> instances = new HashMap<>();
 
@@ -28,7 +28,7 @@ public class DatabaseInFile extends Database {
 	 * @param isNew Whether the database file is newly created
 	 */
 	DatabaseInFile(String name, boolean isNew) throws LoadException {
-		super("jdbc:sqlite:"+ name);
+		super("jdbc:sqlite:" + getPath(name).toString());
 		this.name = name;
 		this.isNew = isNew;
 	}
@@ -52,13 +52,36 @@ public class DatabaseInFile extends Database {
 		DatabaseInFile db = instances.get(name);
 
 		if (db == null) {
-			new java.io.File(directory).mkdirs();
-
-			db = new DatabaseInFile(getPath(name).toString());
+			DIRECTORY.toFile().mkdirs();
+			db = new DatabaseInFile(name);
 			instances.put(name, db);
+
 		}
 
 		return db;
+	}
+
+	private static Path resolveDataDirectory(String appName) {
+		String os = System.getProperty("os.name").toLowerCase();
+
+		if (os.contains("win")) {
+			// Windows : %APPDATA%\appName
+			String appData = System.getenv("APPDATA");
+			if (appData != null) return Path.of(appData, appName);
+
+		} else if (os.contains("mac")) {
+			// macOS : ~/Library/Application Support/appName
+			return Path.of(System.getProperty("user.home"), "Library", "Application Support", appName);
+
+		} else {
+			// Linux/Unix : $XDG_DATA_HOME/appName ou ~/.local/share/appName
+			String xdg = System.getenv("XDG_DATA_HOME");
+			if (xdg != null && !xdg.isBlank()) return Path.of(xdg, appName);
+			return Path.of(System.getProperty("user.home"), ".local", "share", appName);
+		}
+
+		// Fallback universel
+		return Path.of(System.getProperty("user.home"), "." + appName);
 	}
 
 	/**
@@ -80,7 +103,6 @@ public class DatabaseInFile extends Database {
 	 * @return The corresponding file path
 	 */
 	static Path getPath(String name) { 
-        String dbPath = directory + name;
-		return Path.of(dbPath + ".db"); 
+        return DIRECTORY.resolve(name + ".db");
 	}
 }

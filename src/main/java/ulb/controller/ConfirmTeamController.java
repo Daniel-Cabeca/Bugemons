@@ -26,13 +26,17 @@ public class ConfirmTeamController implements ConfirmTeamWindow.ViewListener {
      *
      * @param stage The application stage
      * @param clientController The application controller
-     * @param playerTeam The list of bugemons in the player's team
-     * @param gameMode The selected game mode
      */
-    public ConfirmTeamController(Stage stage, ClientController clientController, List<BugemonDTO> playerTeam, GameMode gameMode) {
+    public ConfirmTeamController(Stage stage, ClientController clientController) {
         this.stage = stage;
         this.clientController = clientController;
+    }
+
+    public void setPlayerTeam(List<BugemonDTO> playerTeam) {
         this.playerTeam = playerTeam;
+    }
+
+    public void setGameMode(GameMode gameMode) {
         this.gameMode = gameMode;
     }
 
@@ -43,6 +47,7 @@ public class ConfirmTeamController implements ConfirmTeamWindow.ViewListener {
         FXMLLoader loader = FxmlLoader.load(this, WindowPath.CONFIRM_TEAM);
         view = loader.getController();
         view.setViewListener(this);
+        //TODO: May throw error if null
         view.setGameModeLabel(gameMode);
         view.displayTeam(playerTeam);
         Parent root = loader.getRoot();

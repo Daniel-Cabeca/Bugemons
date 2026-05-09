@@ -1,9 +1,11 @@
 package ulb.controller.windows;
 
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.communication.GameMode;
 import ulb.message.ClientToServerMessage;
@@ -11,6 +13,7 @@ import ulb.view.FxmlLoader;
 import ulb.exceptions.ViewLoadException;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,7 +26,6 @@ import java.util.logging.Logger;
 public abstract class WindowController<T> {
     protected Stage stage;
     protected T view;
-    protected String windowPath;
     private FXMLLoader loader;
     protected final Logger LOGGER = Logger.getLogger(this.getClass().getName());
     protected ClientListener clientListener;
@@ -36,13 +38,12 @@ public abstract class WindowController<T> {
      */
     protected WindowController(Stage stage, String windowPath, ClientListener clientListener){
         this.stage = stage;
-        this.windowPath = windowPath;
+        this.clientListener = clientListener;
         try {
-            this.loadView();
+            this.loadView(windowPath);
         } catch (ViewLoadException e){
             LOGGER.log(Level.WARNING, "\u001B[31m" + "Impossible d'afficher l'écran de " + this.getClass().getName() + "\u001B[0m", e);
         }
-        this.clientListener = clientListener;
     }
 
     protected T getView() { return this.view; }
@@ -50,8 +51,8 @@ public abstract class WindowController<T> {
     /**
      * Read the fxml file and load the view window
      */
-    protected void loadView() throws ViewLoadException {
-        loader = FxmlLoader.load(this, this.windowPath);
+    protected void loadView(String windowPath) throws ViewLoadException {
+        loader = FxmlLoader.load(this, windowPath);
         view = loader.getController();
     }
 
@@ -65,6 +66,7 @@ public abstract class WindowController<T> {
         } else {
             stage.getScene().setRoot(root);
         }
+        this.stage.centerOnScreen(); //keeps UI neat
         this.stage.show();
     }
 
@@ -74,11 +76,19 @@ public abstract class WindowController<T> {
     public interface ClientListener{
         Serializable onGetData(ClientToServerMessage message);
         boolean onPostData(ClientToServerMessage message);
-        PlayerDTO onGetPlayerDTO(String userName);
+        PlayerDTO onGetPlayer();
+        void onSetPlayer(PlayerDTO player);
         PlayerDTO onLoadPlayer(String userName);
-        void onLogOut();
         void onShowWindow(WindowName window);
         void onSetGameMode(GameMode gameMode);
+        void onCloseSocialPanel();
+        /**
+         * Set newTimeLine in WaitWindow
+         * @param waitCycle
+         */
+        void onSetNewTimeLine(EventHandler waitCycle);
+        void onStopWaitWindow();
+        void onConfirmTeamSetter(List<BugemonDTO> team);
     }
 
     /**
@@ -87,7 +97,7 @@ public abstract class WindowController<T> {
      */
     public enum WindowName{
         REGISTER, MODE,GAME_MODE, ATTACK_REPLACEMENT, BATTLE, BATTLE_END,
-        CHOOSE_BUGEMEON,CONFIRM_TEAM,FLOOR, FLOOR_REWARD, LEVEL_UP, LOAD_TEAM,
+        CHOOSE_BUGEMEON,CONFIRM_TEAM,FLOOR, FLOOR_REWARD, LEVEL_UP, LOAD_TEAM_PANEL,
         NEXT_ROOM, SOCIAL_PANEL, TEAM, WAIT
     }
 }

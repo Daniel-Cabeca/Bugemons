@@ -1,15 +1,9 @@
 package ulb.controller.windows;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 import ulb.communication.GameMode;
-import ulb.controller.ClientController;
 import ulb.message.clientToServer.GetTowerSavedInfoMessage;
 import ulb.message.clientToServer.SetUpTowerModeMessage;
 import ulb.message.serverToClient.TowerSavedInfoMessage;
-import ulb.view.FxmlLoader;
-import ulb.exceptions.ViewLoadException;
 import ulb.view.WindowPath;
 import ulb.view.windows.GameModeWindow;
 
@@ -30,6 +24,10 @@ public class GameModeController extends WindowController<GameModeWindow> impleme
         super(stage, WindowPath.GAME_MODE, clientListener);
         this.view.setViewListener(this);
     }
+
+    /**
+     * show GameModeWindow and enable or disable TowerButton
+     */
     @Override
     public void show(){
         super.show();
@@ -37,6 +35,10 @@ public class GameModeController extends WindowController<GameModeWindow> impleme
         this.view.activateContinueTowerButton(activateButton);
     }
 
+    /**
+     * Helper function that checks towerSave in database
+     * @return true if there is a tower Saving database else false
+     */
     private boolean isTowerSaved() {
         Serializable message = this.clientListener.onGetData(new GetTowerSavedInfoMessage());
         if (message instanceof TowerSavedInfoMessage towerInfoMessage){
@@ -70,11 +72,16 @@ public class GameModeController extends WindowController<GameModeWindow> impleme
         if (newTower) {
             this.setModeAndShowTeamWindow(GameMode.TOWER);
         }else{
-            if (this.clientListener.onPostData(new SetUpTowerModeMessage(newTower))){
+            if (this.clientListener.onPostData(new SetUpTowerModeMessage(false))){
                 this.clientListener.onShowWindow(WindowName.FLOOR);
             }
         }
     }
+
+    /**
+     * Helper function that choose the gameMode and Show teamCreateWindow
+     * @param gameMode indicate which game mode is chosen
+     */
     private void setModeAndShowTeamWindow(GameMode gameMode){
         this.clientListener.onSetGameMode(gameMode);
         this.clientListener.onShowWindow(WindowName.TEAM);

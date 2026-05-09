@@ -1,12 +1,7 @@
 package ulb.controller.windows;
 
 import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
-import ulb.exceptions.ViewLoadException;
-import ulb.view.FxmlLoader;
 import ulb.view.WindowPath;
 import ulb.view.windows.ModeWindow;
 
@@ -57,6 +52,7 @@ public class ModeController extends WindowController<ModeWindow> implements Mode
      */
     @Override
     public void onLogOut() {
-        this.clientListener.onLogOut();
+        this.clientListener.onSetPlayer(null);
+        this.clientListener.onShowWindow(WindowName.REGISTER);
     }
 }

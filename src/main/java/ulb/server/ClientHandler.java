@@ -132,10 +132,6 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
     }
 
     public ClientToServerMessage receiveMessage(){
-        if (this.stop) {
-			return null;
-		}
-
 		try {
 			Serializable received = this.socketMessenger.receiveMessage();
 
@@ -143,26 +139,27 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 				return message;
 			}
 
-            return null;
-        } catch (CommunicationException e) {
+			return null;
+		} catch (CommunicationException e) {
 			handleCommunicationFailure("Communication with client has been interrupted.", e);
-        }
-        return null;
-    }
+		}
 
-    public void sendMessage(Serializable message){
-        if (this.stop) {
+		return null;
+	}
+
+	public void sendMessage(Serializable message) {
+		if (this.stop) {
 			return;
 		}
 
 		try {
-            this.socketMessenger.sendMessage(message);
-        } catch (CommunicationException e) {
-			handleCommunicationFailure("Impossible to send messages.", e);
-        }
-    }
+			this.socketMessenger.sendMessage(message);
+		} catch (CommunicationException e) {
+			handleCommunicationFailure("Impossible to send message to client.", e);
+		}
+	}
 
-    public void sendErrorMessage(String errorMessage) {
+	public void sendErrorMessage(String errorMessage) {
 		if (this.stop) {
 			return;
 		}
@@ -170,13 +167,12 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		try {
 			this.socketMessenger.sendMessage(new StatusMessage(false, errorMessage));
 		} catch (CommunicationException e) {
-			handleCommunicationFailure("Impossible to send error messages to client.", e);
+			handleCommunicationFailure("Impossible to send error message to client.", e);
 		}
+	}
 
-    }
-
-	public void handleCommunicationFailure(String message, CommunicationException e) {
-		LOGGER.log(Level.INFO, message, e);
+	private void handleCommunicationFailure(String message, CommunicationException e) {
+		LOGGER.log(Level.INFO, message);
 		stopProcess();
 	}
 

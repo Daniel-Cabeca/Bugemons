@@ -8,7 +8,7 @@ import java.util.NoSuchElementException;
 
 import ulb.DTO.battle.MultiBattleStatusDTO;
 import ulb.mapper.battle.MultiBattleStatusMapper;
-import ulb.message.serverToClient.*;
+import ulb.message.serverToClient.social.*;
 import ulb.model.battle.MultiBattleParticipant;
 import ulb.model.battle.MultiBattleSession;
 import ulb.service.AccountService;

@@ -6,7 +6,7 @@ import java.net.Socket;
 
 import ulb.communication.Messenger.SocketMessenger;
 import ulb.exceptions.CommunicationException;
-import ulb.message.ClientToServerMessage;
+import ulb.message.clientToServer.ClientToServerMessage;
 
 public class SocketClient {
     private Socket socket;

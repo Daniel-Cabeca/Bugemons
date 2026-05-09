@@ -152,28 +152,22 @@ public class AbilityDatabaseRepository implements AbilityRepository {
 	public Iterable<Ability> findAll() {
 		List<Ability> abilities = new ArrayList<>();
 		String sql = "SELECT id FROM abilities";
-
-
 		try (PreparedStatement pstmt = this.database.prepareStatement(sql)) {
 			ResultSet rs = pstmt.executeQuery();
-
 			while (rs.next()) {
 				String AbilityId = rs.getString("id");
 				try {
-
 					Ability ability = findById(AbilityId);
 					if (ability != null) {
 						abilities.add(ability);
 					}
 				} catch (NoSuchElementException e) {
-
-					System.err.println("Erreur : ID trouvé mais item non chargeable : " + AbilityId);
+					LOGGER.log(Level.WARNING, "ID found but ability could not be loaded: " + AbilityId, e);
 				}
 			}
 		} catch (SQLException e) {
 			LOGGER.log(Level.WARNING, "Failed to load abilities from database.", e);
 		}
-
 		return abilities;
 	}
 }

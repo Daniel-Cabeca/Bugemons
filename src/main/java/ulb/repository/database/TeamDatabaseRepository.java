@@ -269,14 +269,11 @@ public class TeamDatabaseRepository implements TeamRepository {
         LEFT JOIN team_members tm ON t.team_id = tm.team_id
         WHERE t.team_id = ?
     """;
-
 		List<Bugemon> bugemons = new ArrayList<>();
 		String teamName = "";
-
 		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
 			stmt.setInt(1, id);
 			ResultSet rs = stmt.executeQuery();
-
 			while (rs.next()) {
 				if (teamName.isEmpty()) {
 					teamName = rs.getString("team_name");
@@ -286,14 +283,13 @@ public class TeamDatabaseRepository implements TeamRepository {
 					try {
 						bugemons.add(findBugemon(bugemonId));
 					} catch (NoSuchElementException e) {
-						System.err.println("Erreur : ID trouvé mais item non chargeable : " + bugemonId);
+						LOGGER.log(Level.WARNING, "ID found but Bugemon could not be loaded: " + bugemonId, e);
 					}
 				}
 			}
 		} catch (SQLException e) {
 			LOGGER.log(Level.WARNING, "Failed to load team with id: " + id, e);
 		}
-
 		Team team = new Team(bugemons);
 		team.setTeamName(teamName);
 		team.setId(id);
@@ -314,22 +310,20 @@ public class TeamDatabaseRepository implements TeamRepository {
 		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
 			stmt.setInt(1, userId);
 			ResultSet rs = stmt.executeQuery();
-
 			while (rs.next()) {
 				int teamId = rs.getInt("team_id");
 				try {
 					Team team = findById(teamId);
 					teams.add(team);
 				} catch (NoSuchElementException e) {
-					System.err.println("Erreur : ID trouvé mais item non chargeable : " + teamId);
+					LOGGER.log(Level.WARNING, "ID found but team could not be loaded: " + teamId, e);
 				}
 			}
 		} catch (SQLException e) {
 			LOGGER.log(Level.WARNING, "Failed to load teams for user with id: " + userId, e);
 		}
-
 		return teams;
-	}	
+	}
 
 	/**
 	 * {@inheritDoc}

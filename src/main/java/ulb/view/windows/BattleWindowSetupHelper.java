@@ -9,11 +9,15 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.util.Callback;
+
 import ulb.view.TypeColor;
 import ulb.view.windows.BattleWindow.AbilityEntry;
 import ulb.view.windows.BattleWindow.BugemonEntry;
 import ulb.view.windows.BattleWindow.InventoryEntry;
 import ulb.view.windows.BattleWindow.ViewListener;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Configures the cell factories for the three ListView components used in the battle window.
@@ -21,6 +25,7 @@ import ulb.view.windows.BattleWindow.ViewListener;
  * a descriptive label, and an action button connected to the provided {@link ViewListener}.
  */
 public class BattleWindowSetupHelper {
+    private static final Logger LOGGER = Logger.getLogger(BattleWindowSetupHelper.class.getName());
 
     /**
      * Installs a cell factory on the inventory {@link ListView} that renders each
@@ -117,7 +122,8 @@ public class BattleWindowSetupHelper {
                         Image image = new Image(getClass().getResourceAsStream(entry.itemSpritePath()));
                         imageView.setImage(image);
                     } catch (Exception e) {
-                        System.err.println("Failed to load item image: " + e.getMessage());
+                        LOGGER.log(Level.WARNING, "Failed to load item image: " + entry.itemSpritePath(), e);
+                        imageView.setImage(null);
                     }
                     label.setText(entry.itemName() + " x" + entry.quantity());
                     button.setDisable(!entry.usable());
@@ -170,7 +176,8 @@ public class BattleWindowSetupHelper {
                         Image image = new Image(getClass().getResourceAsStream(entry.bugemonSpritePath()));
                         imageView.setImage(image);
                     } catch (Exception e) {
-                        System.err.println("Failed to load bugemon image: " + e.getMessage());
+                        LOGGER.log(Level.WARNING, "Failed to load Bugemon image: " + entry.bugemonSpritePath(), e);
+                        imageView.setImage(null);
                     }
                     label.setText(entry.ko() ? entry.bugemonName() + " (KO)" : entry.bugemonName());
                     button.setDisable(!entry.selectable());

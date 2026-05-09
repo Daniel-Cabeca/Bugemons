@@ -85,9 +85,7 @@ public class AbilitySet implements Iterable<Ability> {
 	}
 
 	public Ability getAbilityById(String id){
-		System.out.println(id);
 		for (Ability ability : this.abilities){
-			System.out.println(ability.getId());
 			if (ability.getId().equals(id)){
 				return ability;
 			}

@@ -6,13 +6,18 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import ulb.communication.Messenger.SocketMessenger;
 import ulb.exceptions.CommunicationException;
+
 import ulb.server.ClientHandler;
 import ulb.service.*;
 
 public class SocketServer {
+    private static final Logger LOGGER = Logger.getLogger(SocketServer.class.getName());
+
     private ServerSocket serverSocket;
     private boolean stopServer;
     private List<Thread> clients;
@@ -22,7 +27,6 @@ public class SocketServer {
             serverSocket = new ServerSocket(port);
             this.stopServer = false;
             clients = new ArrayList<Thread>();
-            System.out.println("SERVER ON !");
         } catch (IOException e){
             throw new CommunicationException("Impossible to start the server on port " + port + ".", e);
         }
@@ -61,21 +65,18 @@ public class SocketServer {
         while (!stopServer) {
             Socket clientSocket;
             if ((clientSocket = listenConnection()) != null){
-                System.out.println("CLIENT ACCEPTED");
-
                 try {
                     SocketMessenger clientMessenger = new SocketMessenger(clientSocket);
                     ClientHandler controller = new ClientHandler(clientMessenger, abilityService, bugemonService, itemService, accountService, chatService, teamService, inventoryService, towerSaveService, multiBattleService);
                     clients.add(controller);
                     controller.start();
                 } catch (CommunicationException e) {
-                    System.err.println("Impossible to initialize communication with client : " + e.getMessage());
+                    LOGGER.log(Level.WARNING, "Impossible to initialize communication with client.", e);
                     closeClientSocket(clientSocket);
                 }
             }
         }
         waitAllThreads();
-        System.out.println("SERVER CLOSED !");
     }
 
     public void close(){
@@ -88,7 +89,7 @@ public class SocketServer {
         try{
             serverSocket.close();
         } catch (IOException e){
-            System.err.println("Impossible to close server: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Impossible to close server.", e);
         }
     }
 

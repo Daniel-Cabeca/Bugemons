@@ -132,28 +132,22 @@ public class ItemDatabaseRepository implements ItemRepository {
 	public Iterable<Item> findAll() {
 		List<Item> items = new ArrayList<>();
 		String sql = "SELECT id FROM items";
-
-
 		try (PreparedStatement pstmt = this.database.prepareStatement(sql)) {
 			ResultSet rs = pstmt.executeQuery();
-
 			while (rs.next()) {
 				String itemId = rs.getString("id");
 				try {
-
 					Item item = findById(itemId);
 					if (item != null) {
 						items.add(item);
 					}
 				} catch (NoSuchElementException e) {
-
-					System.err.println("Erreur : ID trouvé mais item non chargeable : " + itemId);
+					LOGGER.log(Level.WARNING, "ID found but item could not be loaded: " + itemId, e);
 				}
 			}
 		} catch (SQLException e) {
 			LOGGER.log(Level.WARNING, "Failed to load items from database.", e);
 		}
-
 		return items;
 	}
 

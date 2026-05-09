@@ -19,7 +19,7 @@ build:
     - if: $CI_COMMIT_TAG
   script:
     - mvn clean package -P server
-    - mvn clean package -P client
+    - mvn package -P client
   artifacts:
     paths:
       - target/server.jar

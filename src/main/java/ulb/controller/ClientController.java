@@ -29,7 +29,6 @@ import ulb.model.battle.BattleState;
 import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.player.PlayerDTO;
-import ulb.DTO.player.PlayerRegisterDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.DTO.reward.RewardDTO;
 import ulb.model.chat.ChatMessage;
@@ -41,7 +40,7 @@ import ulb.controller.windows.WindowController;
 /**
  * Client-side application controller coordinating server messaging.
  */
-public class ClientController extends Application implements ModeController.Listener,
+public class ClientController extends Application implements
 		BattleEndController.Listener, BattleWindowController.Listener, NextRoomController.Listener,
 		FloorRewardController.Listener, AttackReplacementController.Listener, LevelUpController.Listener,
 		LoadTeamPanelController.Listener, FloorController.Listener, WindowController.ClientListener{
@@ -96,7 +95,7 @@ public class ClientController extends Application implements ModeController.List
         List<String> params = getParameters().getRaw();
 
 		String serverIp = params.get(0);
-		Integer serverPort = Integer.parseInt(params.get(1));
+		int serverPort = Integer.parseInt(params.get(1));
 
 		this.client = new SocketClient(serverIp, serverPort);
 	}
@@ -119,14 +118,12 @@ public class ClientController extends Application implements ModeController.List
 		primaryStage.setFullScreen(true);
 		primaryStage.setFullScreenExitHint("");
 
-		try {//TODO: check where to put
-			this.registerController = new RegisterController(this.stage, this);
-			this.modeController = new ModeController(this.stage, this);
-			this.socialPanelController = new SocialPanelController(this);
-			this.gameModeController = new GameModeController(this.stage, this);
-		} catch (ViewLoadException e) {
-			logViewLoadFailure("Impossible de charger les windows", e);
-		}
+		//TODO: check where to put
+		this.registerController = new RegisterController(this.stage, this);
+		this.modeController = new ModeController(this.stage, this);
+		this.socialPanelController = new SocialPanelController(this);
+		this.gameModeController = new GameModeController(this.stage, this);
+
 		this.registerController.show();
 
 		if (primaryStage.getScene() != null) {
@@ -207,25 +204,7 @@ public class ClientController extends Application implements ModeController.List
 		return null;
 	}
 
-	/**
-	 * Sends a sign-up request for a player.
-	 *
-	 * @param player Player registration DTO
-	 * @return True if account creation succeeded
-	 */
-	public boolean signUp(PlayerRegisterDTO player){
-		return postData(new RegisterMessage(player, false));
-	}
 
-	/**
-	 * Sends a login request
-	 *
-	 * @param player Player credentials DTO
-	 * @return True if accepted by server
-	 */
-	public boolean logIn(PlayerRegisterDTO player){
-		return postData(new RegisterMessage(player, true));
-	}
 
 	// Social Panel Controller
 
@@ -408,32 +387,10 @@ public class ClientController extends Application implements ModeController.List
 		return this.player;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onShowGameModeWindow() {
-		try {
-			this.gameModeController.show();
-		} catch (ViewLoadException e) {
-			logViewLoadFailure("Impossible de retourner à l'écran de mode de jeu.", e);
-		}
 
-	}
 
 	// Mode Controller Listener :
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onShowSocialPanel() {
-		try { //TODO: change error handeling
-			this.socialPanelController.show();
-		} catch (ViewLoadException e) {
-			logViewLoadFailure("Impossible d'afficher le panneau social.", e);
-		}
-	}
 
 	@Override
 	public void onOpenSocial() {
@@ -444,11 +401,8 @@ public class ClientController extends Application implements ModeController.List
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onLogOut() {
+
+	public void logOut() {
 		this.player = null;
 		this.registerController.show();
 	}
@@ -1307,8 +1261,8 @@ public class ClientController extends Application implements ModeController.List
 	}
 
 	@Override
-	public PlayerDTO onGetPlayerDTO() {
-		return null;
+	public PlayerDTO onGetPlayerDTO(String userName) {
+		return this.getPlayer(userName);
 	}
 
 	@Override
@@ -1318,9 +1272,28 @@ public class ClientController extends Application implements ModeController.List
 
 	@Override
 	public void onShowWindow(WindowController.WindowName window) {
-		switch (window){
+		switch (window) {
 			case REGISTER -> this.registerController.show();
 			case MODE -> this.modeController.show();
+			case SOCIAL_PANEL -> {
+				try {
+					this.socialPanelController.show();
+				} catch (ViewLoadException e) {
+
+				}
+			}
+			case GAME_MODE -> {
+				try {
+					this.gameModeController.show();
+				} catch (ViewLoadException e) {
+
+				}
+			}
 		}
+	}
+
+	@Override
+	public void onLogOut() {
+		this.logOut();
 	}
 }

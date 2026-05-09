@@ -1,9 +1,8 @@
 package ulb.controller.windows;
 import javafx.stage.Stage;
-import java.util.logging.Logger;
 import ulb.DTO.player.PlayerRegisterDTO;
-import ulb.controller.ClientController;
 import ulb.exceptions.ViewLoadException;
+import ulb.message.clientToServer.RegisterMessage;
 import ulb.view.WindowPath;
 import ulb.view.windows.RegisterWindow;
 
@@ -11,20 +10,16 @@ import ulb.view.windows.RegisterWindow;
  * Controller for the register and login screen.
  */
 public class RegisterController extends WindowController<RegisterWindow> implements RegisterWindow.ViewListener {
-    private final ClientController clientController;
-    private static final Logger LOGGER = Logger.getLogger(RegisterController.class.getName());
 
     /**
      * Creates the register controller and attaches it to the view.
      *
      * @param stage The application stage
-     * @param clientController The application controller
-     * @throws ViewLoadException
+     * @param  clientListener represent the client controller listener
      */
-    public RegisterController(Stage stage, ClientController clientController) throws ViewLoadException {
-        super(stage, WindowPath.REGISTER);
+    public RegisterController(Stage stage, ClientListener clientListener){
+        super(stage, WindowPath.REGISTER, clientListener);
         this.view.setViewListener(this);
-        this.clientController = clientController;
     }
 
     /**
@@ -33,18 +28,29 @@ public class RegisterController extends WindowController<RegisterWindow> impleme
     @Override
     public void onLogin(String userName, String password){
         PlayerRegisterDTO playerDTO = new PlayerRegisterDTO(userName, password);
-        boolean success = this.clientController.logIn(playerDTO);
+        boolean success = this.logIn(playerDTO);
         if (success){
-            if (this.clientController.loadPlayer(userName) == null) {
+            if (this.clientListener.onLoadPlayer(userName) == null) {
                 LOGGER.warning("Player is null after login for username: " + userName);
                 this.view.setErrorLabel("Connexion réussie, mais profil joueur introuvable.");
                 return;
             }
-            this.clientController.switchToModeWindow();
+            this.clientListener.onShowWindow(WindowName.MODE);
         } else {
             this.view.setErrorLabel("Nom d'utilisateur ou mot de passe incorrect.");
         }
     }
+
+    /**
+     * Sends a login request
+     *
+     * @param player Player credentials DTO
+     * @return True if accepted by server
+     */
+    public boolean logIn(PlayerRegisterDTO player){
+        return this.clientListener.onPostData(new RegisterMessage(player, true));
+    }
+
 
     /**
      * {@inheritDoc}
@@ -52,16 +58,26 @@ public class RegisterController extends WindowController<RegisterWindow> impleme
     @Override
     public void onSignUp(String userName, String password){
         PlayerRegisterDTO playerDTO = new PlayerRegisterDTO(userName, password);
-        boolean success = this.clientController.signUp(playerDTO);
+        boolean success = this.signUp(playerDTO);
         if (success) {
-            if (this.clientController.loadPlayer(userName) == null) {
+            if (this.clientListener.onLoadPlayer(userName) == null) {
                 LOGGER.warning("Player is null after sign-up for username: " + userName);
                 this.view.setErrorLabel("Inscription réussie, mais profil joueur introuvable.");
                 return;
             }
-            this.clientController.switchToModeWindow();
+            this.clientListener.onShowWindow(WindowName.MODE);
         } else {
             this.view.setErrorLabel("Ce nom d'utilisateur est déjà pris.");
         }
+    }
+
+    /**
+     * Sends a sign-up request for a player.
+     *
+     * @param player Player registration DTO
+     * @return True if account creation succeeded
+     */
+    public boolean signUp(PlayerRegisterDTO player){
+        return this.clientListener.onPostData(new RegisterMessage(player, false));
     }
 }

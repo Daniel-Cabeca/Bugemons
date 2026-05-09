@@ -14,24 +14,23 @@ import ulb.view.windows.ModeWindow;
  * Controller for main mode selection actions.
  */
 public class ModeController extends WindowController<ModeWindow> implements ModeWindow.ViewListener {
-    private Listener listener;
     /**
      * Creates the mode controller.
      *
      * @param stage The application stage
-     * @param listener Listener handling mode actions
+     * @param clientListener listener to communicate with the clientController
      */
-    public ModeController(Stage stage, Listener listener) throws ViewLoadException {
-        super(stage,WindowPath.MODE);
+    public ModeController(Stage stage, ClientListener clientListener) {
+        super(stage, WindowPath.MODE, clientListener);
         this.view.setViewListener(this);
-        this.listener = listener;
     }
+
     /**
      * Notifies the listener to open the social menu or tab.
      */
     @Override
     public void onOpenSocial() {
-        listener.onShowSocialPanel();
+        this.clientListener.onShowWindow(WindowName.SOCIAL_PANEL);
     }
 
 
@@ -40,7 +39,7 @@ public class ModeController extends WindowController<ModeWindow> implements Mode
      */
     @Override
     public void onSolo() {
-        listener.onShowGameModeWindow();
+        this.clientListener.onShowWindow(WindowName.GAME_MODE);
     }
 
 
@@ -58,18 +57,6 @@ public class ModeController extends WindowController<ModeWindow> implements Mode
      */
     @Override
     public void onLogOut() {
-        listener.onLogOut();
-    }
-
-    /**
-     * Listener for mode screen actions.
-     */
-    public interface Listener {
-        /** Opens the social panel. */
-        void onShowSocialPanel();
-        /** Starts solo flow. */
-        void onShowGameModeWindow();
-        /** Logs out the current user. */
-        void onLogOut();
+        this.clientListener.onLogOut();
     }
 }

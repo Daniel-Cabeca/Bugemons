@@ -10,6 +10,7 @@ import ulb.view.FxmlLoader;
 import ulb.exceptions.ViewLoadException;
 
 import java.io.Serializable;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
@@ -23,20 +24,32 @@ public abstract class WindowController<T> {
     protected T view;
     protected String windowPath;
     private FXMLLoader loader;
-    private final Logger LOGGER = Logger.getLogger(this.getClass().getName());
+    protected final Logger LOGGER = Logger.getLogger(this.getClass().getName());
+    protected ClientListener clientListener;
 
-    protected WindowController(Stage stage, String windowPath) throws ViewLoadException {
+    /**
+     * A super constructor for all windowControlls
+     * @param stage used to show fxml windows
+     * @param windowPath the fxml path of the viewWindow
+     * @param clientListener attribute that communicate with the clientContoller
+     */
+    protected WindowController(Stage stage, String windowPath, ClientListener clientListener){
         this.stage = stage;
         this.windowPath = windowPath;
-        this.init();
+        try {
+            this.loadView();
+        } catch (ViewLoadException e){
+            LOGGER.log(Level.WARNING, "Impossible d'afficher l'écran de " + this.getClass().getName(), e);
+        }
+        this.clientListener = clientListener;
     }
 
     protected T getView() { return this.view; }
     protected Stage getStage(){ return this.stage; }
     /**
-     * Used to initiate a WindowController object
+     * Read the fxml file and load the view window
      */
-    protected void init() throws ViewLoadException {
+    protected void loadView() throws ViewLoadException {
         loader = FxmlLoader.load(this, this.windowPath);
         view = loader.getController();
     }
@@ -54,13 +67,22 @@ public abstract class WindowController<T> {
         this.stage.show();
     }
 
+    /**
+     * ClientListener is a way to communicate between WindowControllers and the ClientController
+     */
     public interface ClientListener{
         Serializable onGetData(ClientToServerMessage message);
         boolean onPostData(ClientToServerMessage message);
-        PlayerDTO onGetPlayerDTO();
+        PlayerDTO onGetPlayerDTO(String userName);
         PlayerDTO onLoadPlayer(String userName);
+        void onLogOut();
         void onShowWindow(WindowName window);
     }
+
+    /**
+     * WindowName enum is used by showWindow function to show the right window
+     * Each name represent an FXML ViewWindow to show
+     */
     public enum WindowName{
         REGISTER, MODE,GAME_MODE, ATTACK_REPLACEMENT, BATTLE, BATTLE_END,
         CHOOSE_BUGEMEON,CONFIRM_TEAM,FLOOR, FLOOR_REWARD, LEVEL_UP, LOAD_TEAM,

@@ -35,6 +35,8 @@ import ulb.DTO.reward.RewardDTO;
 import ulb.model.chat.ChatMessage;
 import ulb.controller.windows.RegisterController;
 import ulb.controller.windows.ModeController;
+import ulb.controller.windows.WindowController;
+
 
 /**
  * Client-side application controller coordinating server messaging.
@@ -42,7 +44,7 @@ import ulb.controller.windows.ModeController;
 public class ClientController extends Application implements ModeController.Listener,
 		BattleEndController.Listener, BattleWindowController.Listener, NextRoomController.Listener,
 		FloorRewardController.Listener, AttackReplacementController.Listener, LevelUpController.Listener,
-		LoadTeamPanelController.Listener, FloorController.Listener {
+		LoadTeamPanelController.Listener, FloorController.Listener, WindowController.ClientListener{
 
 	private static final Logger LOGGER = Logger.getLogger(ClientController.class.getName());
 
@@ -1292,5 +1294,33 @@ public class ClientController extends Application implements ModeController.List
 	 */
 	public void closeSocialPanel() {
 		this.socialPanelController.close();
+	}
+
+	@Override
+	public Serializable onGetData(ClientToServerMessage message) {
+		return this.getData(message);
+	}
+
+	@Override
+	public boolean onPostData(ClientToServerMessage message) {
+		return this.postData(message);
+	}
+
+	@Override
+	public PlayerDTO onGetPlayerDTO() {
+		return null;
+	}
+
+	@Override
+	public PlayerDTO onLoadPlayer(String userName) {
+		return this.loadPlayer(userName);
+	}
+
+	@Override
+	public void onShowWindow(WindowController.WindowName window) {
+		switch (window){
+			case REGISTER -> this.registerController.show();
+			case MODE -> this.modeController.show();
+		}
 	}
 }

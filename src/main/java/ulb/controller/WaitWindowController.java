@@ -18,10 +18,17 @@ public class WaitWindowController {
 	private final ClientController clientController;
 	private WaitWindow view;
 	private Timeline timeline;
+	public WaitWindowController(ClientController clientController){
+		this.clientController = clientController;
+	}
 
 	public WaitWindowController(ClientController clientController, EventHandler waitCycle) {
 		this.clientController = clientController;
 
+		this.timeline = new Timeline(new KeyFrame(CYCLE_DURATION, waitCycle));
+		this.timeline.setCycleCount(Timeline.INDEFINITE);
+	}
+	public void setNewTimeLine(EventHandler waitCycle){
 		this.timeline = new Timeline(new KeyFrame(CYCLE_DURATION, waitCycle));
 		this.timeline.setCycleCount(Timeline.INDEFINITE);
 	}

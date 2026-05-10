@@ -33,11 +33,6 @@ public class ModeWindow {
 		viewListener.onSolo();
 	}
 	/**
-	 * Notifies the action to start the multiplayer game mode.
-	 */
-	@FXML
-	private void goMultiplayer() {	viewListener.onMultiplayer(); }
-	/**
 	 * Notifies the action to quit the application.
 	 */
 	@FXML
@@ -57,7 +52,6 @@ public class ModeWindow {
 	public interface ViewListener {
 		void onOpenSocial();
 		void onSolo();
-		void onMultiplayer();
 		void onQuit();
 		void onLogOut();
 	}

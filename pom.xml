@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>ulb</groupId>
   <artifactId>infof307</artifactId>
   <version>3.0</version>
-
   <name>infof307</name>
 
   <properties>
@@ -15,8 +14,8 @@
     <maven.compiler.source>18</maven.compiler.source>
     <maven.compiler.target>18</maven.compiler.target>
     <javafx.version>23.0.2</javafx.version>
-
-    <!-- <javafx.platform>mac-aarch64</javafx.platform> -->
+    <!-- Default fallback path for data.path if no profile activates -->
+    <data.path>${project.basedir}/data</data.path>
   </properties>
 
   <dependencies>
@@ -27,7 +26,7 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- ===== JavaFX (sans classifier = JARs Java purs) ===== -->
+    <!-- JavaFX Dependencies -->
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-graphics</artifactId>
@@ -53,7 +52,6 @@
       <classifier>${javafx.platform}</classifier>
     </dependency>
 
-    <!-- ===== Autres dépendances ===== -->
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
@@ -68,11 +66,12 @@
 
   <build>
     <finalName>info-F307-Groupe-10</finalName>
+
     <pluginManagement>
       <plugins>
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>3.3.2</version>
         </plugin>
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
@@ -89,37 +88,21 @@
             <useModulePath>false</useModulePath>
           </configuration>
         </plugin>
-        <plugin>
-          <artifactId>maven-install-plugin</artifactId>
-          <version>2.5.2</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-deploy-plugin</artifactId>
-          <version>2.8.2</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-site-plugin</artifactId>
-          <version>3.7.1</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-project-info-reports-plugin</artifactId>
-          <version>3.0.0</version>
-        </plugin>
       </plugins>
     </pluginManagement>
 
     <plugins>
-      <!-- Supprime aussi les .db à chaque clean -->
+      <!-- Custom Clean Configuration -->
       <plugin>
         <artifactId>maven-clean-plugin</artifactId>
-        <version>3.3.2</version>
         <configuration>
           <filesets>
             <fileset>
-              <directory>${user.home}/.infof307</directory>
+              <directory>${data.path}</directory>
               <includes>
                 <include>*.db</include>
               </includes>
+              <followSymlinks>false</followSymlinks>
             </fileset>
           </filesets>
         </configuration>
@@ -128,70 +111,79 @@
   </build>
 
   <profiles>
+    <!-- OS DATA PATH PROFILES -->
+    <profile>
+      <id>unix-data-path</id>
+      <activation>
+        <os><family>unix</family></os>
+      </activation>
+      <properties>
+        <!-- Defaults to ~/.local/share/infof307 but respects XDG_DATA_HOME if set -->
+        <data.path>${user.home}/.local/share/infof307</data.path>
+      </properties>
+    </profile>
 
-    <!-- macOS Apple Silicon -->
+    <profile>
+      <id>unix-xdg-override</id>
+      <activation>
+        <property>
+          <name>env.XDG_DATA_HOME</name>
+        </property>
+      </activation>
+      <properties>
+        <data.path>${env.XDG_DATA_HOME}/infof307</data.path>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>windows-data-path</id>
+      <activation>
+        <os><family>windows</family></os>
+      </activation>
+      <properties>
+        <data.path>${user.home}/AppData/Local/infof307</data.path>
+      </properties>
+    </profile>
+
+    <!-- JAVAFX PLATFORM PROFILES -->
     <profile>
       <id>mac-aarch64</id>
-
       <activation>
-        <os>
-          <family>mac</family>
-          <arch>aarch64</arch>
-        </os>
+        <os><family>mac</family><arch>aarch64</arch></os>
       </activation>
-
       <properties>
         <javafx.platform>mac-aarch64</javafx.platform>
       </properties>
     </profile>
-
-    <!-- macOS Intel -->
     <profile>
-      <id>mac</id>
-
+      <id>mac-x86_64</id>
       <activation>
-        <os>
-          <family>mac</family>
-          <arch>x86_64</arch>
-        </os>
+        <os><family>mac</family><arch>x86_64</arch></os>
       </activation>
-
       <properties>
         <javafx.platform>mac</javafx.platform>
       </properties>
     </profile>
-
-    <!-- Linux -->
     <profile>
-      <id>linux</id>
-
+      <id>linux-profile</id>
       <activation>
-        <os>
-          <family>linux</family>
-        </os>
+        <os><family>linux</family></os>
       </activation>
-
       <properties>
         <javafx.platform>linux</javafx.platform>
       </properties>
     </profile>
-
-    <!-- Windows -->
     <profile>
-      <id>windows</id>
-
+      <id>windows-profile</id>
       <activation>
-        <os>
-          <family>windows</family>
-        </os>
+        <os><family>windows</family></os>
       </activation>
-
       <properties>
         <javafx.platform>win</javafx.platform>
       </properties>
     </profile>
 
-    <!-- ==================== PROFIL CLIENT ==================== -->
+    <!-- EXECUTION PROFILES (Client/Server) -->
     <profile>
       <id>client</id>
       <build>
@@ -219,9 +211,7 @@
             <executions>
               <execution>
                 <phase>package</phase>
-                <goals>
-                  <goal>shade</goal>
-                </goals>
+                <goals><goal>shade</goal></goals>
                 <configuration>
                   <outputFile>${project.build.directory}/client.jar</outputFile>
                   <transformers>
@@ -230,17 +220,6 @@
                     </transformer>
                     <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                   </transformers>
-                  <filters>
-                    <filter>
-                      <artifact>*:*</artifact>
-                      <excludes>
-                        <exclude>META-INF/*.SF</exclude>
-                        <exclude>META-INF/*.DSA</exclude>
-                        <exclude>META-INF/*.RSA</exclude>
-                        <exclude>module-info.class</exclude>
-                      </excludes>
-                    </filter>
-                  </filters>
                 </configuration>
               </execution>
             </executions>
@@ -249,7 +228,6 @@
       </build>
     </profile>
 
-    <!-- ==================== PROFIL SERVEUR ==================== -->
     <profile>
       <id>server</id>
       <build>
@@ -269,9 +247,7 @@
             <executions>
               <execution>
                 <phase>package</phase>
-                <goals>
-                  <goal>shade</goal>
-                </goals>
+                <goals><goal>shade</goal></goals>
                 <configuration>
                   <outputFile>${project.build.directory}/server.jar</outputFile>
                   <transformers>
@@ -280,17 +256,6 @@
                     </transformer>
                     <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                   </transformers>
-                  <filters>
-                    <filter>
-                      <artifact>*:*</artifact>
-                      <excludes>
-                        <exclude>META-INF/*.SF</exclude>
-                        <exclude>META-INF/*.DSA</exclude>
-                        <exclude>META-INF/*.RSA</exclude>
-                        <exclude>module-info.class</exclude>
-                      </excludes>
-                    </filter>
-                  </filters>
                 </configuration>
               </execution>
             </executions>
@@ -298,6 +263,5 @@
         </plugins>
       </build>
     </profile>
-
   </profiles>
 </project>

@@ -1,32 +1,24 @@
 package ulb.controller.windows;
 import javafx.stage.Stage;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import ulb.DTO.player.PlayerDTO;
 import ulb.DTO.player.PlayerRegisterDTO;
-import ulb.exceptions.LoadException;
-import ulb.exceptions.ViewLoadException;
+import ulb.message.clientToServer.setup.RegisterMessage;
+import ulb.view.WindowPath;
 import ulb.view.windows.RegisterWindow;
 
 /**
  * Controller for the register and login screen.
  */
 public class RegisterController extends WindowController<RegisterWindow> implements RegisterWindow.ViewListener {
-    private final Listener listener;
-    private static final Logger LOGGER = Logger.getLogger(RegisterController.class.getName());
 
     /**
      * Creates the register controller and attaches it to the view.
      *
      * @param stage The application stage
-     * @param windowPath The path to the register window
-     * @param listener The listener notified of user actions
-     * @throws ViewLoadException
+     * @param  clientListener listener to communicate with the clientController
      */
-    public RegisterController(Stage stage, String windowPath, Listener listener) throws ViewLoadException {
-        super(stage, windowPath);
+    public RegisterController(Stage stage, ClientListener clientListener){
+        super(stage, WindowPath.REGISTER, clientListener);
         this.view.setViewListener(this);
-        this.listener = listener;
     }
 
     /**
@@ -34,62 +26,57 @@ public class RegisterController extends WindowController<RegisterWindow> impleme
      */
     @Override
     public void onLogin(String userName, String password){
-        try {
-            PlayerRegisterDTO playerDTO = new PlayerRegisterDTO(userName, password);
-            boolean success = this.listener.onLogin(playerDTO);
-            if (success){
-                if (this.listener.onGetPlayer(userName) == null) {
-                    LOGGER.warning("Player is null after login for username: " + userName);
-                    this.view.setErrorLabel("Connexion réussie, mais profil joueur introuvable.");
-                    return;
-                }
-                this.listener.showModeWindow();
-            } else {
-                this.view.setErrorLabel("Nom d'utilisateur ou mot de passe incorrect.");
+        PlayerRegisterDTO playerDTO = new PlayerRegisterDTO(userName, password);
+        boolean success = this.logIn(playerDTO);
+        if (success){
+            if (this.clientListener.onLoadPlayer(userName) == null) {
+                LOGGER.warning("Player is null after login for username: " + userName);
+                this.view.setErrorLabel("Connexion réussie, mais profil joueur introuvable.");
+                return;
             }
-        } catch (LoadException e) {
-            this.view.setErrorLabel("Erreur de connexion à la base de données.");
-        } catch (ViewLoadException e) {
-            LOGGER.log(Level.WARNING, "Impossible d'afficher l'écran de sélection du mode après connexion.", e);
-            this.view.setErrorLabel("Impossible d'afficher l'écran suivant.");
+            this.clientListener.onShowWindow(WindowName.MODE);
+        } else {
+            this.view.setErrorLabel("Nom d'utilisateur ou mot de passe incorrect.");
         }
     }
+
+    /**
+     * Sends a login request
+     *
+     * @param player Player credentials DTO
+     * @return True if accepted by server
+     */
+    public boolean logIn(PlayerRegisterDTO player){
+        return this.clientListener.onPostData(new RegisterMessage(player, true));
+    }
+
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void onSignUp(String userName, String password){
-        try {
-            PlayerRegisterDTO playerDTO = new PlayerRegisterDTO(userName, password);
-            boolean success = this.listener.onSignUp(playerDTO);
-            if (success) {
-                if (this.listener.onGetPlayer(userName) == null) {
-                    LOGGER.warning("Player is null after sign-up for username: " + userName);
-                    this.view.setErrorLabel("Inscription réussie, mais profil joueur introuvable.");
-                    return;
-                }
-                this.listener.showModeWindow();
-            } else {
-                this.view.setErrorLabel("Ce nom d'utilisateur est déjà pris.");
+        PlayerRegisterDTO playerDTO = new PlayerRegisterDTO(userName, password);
+        boolean success = this.signUp(playerDTO);
+        if (success) {
+            if (this.clientListener.onLoadPlayer(userName) == null) {
+                LOGGER.warning("Player is null after sign-up for username: " + userName);
+                this.view.setErrorLabel("Inscription réussie, mais profil joueur introuvable.");
+                return;
             }
-        } catch (ViewLoadException e) {
-            LOGGER.log(Level.WARNING, "Impossible d'afficher l'écran de sélection du mode après inscription.", e);
-            this.view.setErrorLabel("Impossible d'afficher l'écran suivant.");
+            this.clientListener.onShowWindow(WindowName.MODE);
+        } else {
+            this.view.setErrorLabel("Ce nom d'utilisateur est déjà pris.");
         }
     }
 
     /**
-     * Listener for register and login actions.
+     * Sends a sign-up request for a player.
+     *
+     * @param player Player registration DTO
+     * @return True if account creation succeeded
      */
-    public interface Listener{
-        /** Handles the login attempt with the given credentials. */
-        boolean onLogin(PlayerRegisterDTO playerRegisterDTO) throws LoadException;
-        /** Handles switch to the mode selection window. */
-        void showModeWindow() throws ViewLoadException;
-        /** Retrieves the player DTO for the given username. */
-        PlayerDTO onGetPlayer(String userName);
-        /** Handles the sign-up attempt with the given credentials. */
-        boolean onSignUp(PlayerRegisterDTO playerDTO);
+    public boolean signUp(PlayerRegisterDTO player){
+        return this.clientListener.onPostData(new RegisterMessage(player, false));
     }
 }

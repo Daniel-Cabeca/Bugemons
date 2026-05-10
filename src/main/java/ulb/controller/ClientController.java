@@ -15,9 +15,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import ulb.DTO.battle.MultiBattleStatusDTO;
-import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.DTO.team.TeamDTO;
 import ulb.communication.SocketClient;
+import ulb.controller.windows.*;
 import ulb.exceptions.CommunicationException;
 import ulb.exceptions.ViewLoadException;
 import ulb.communication.GameMode;
@@ -39,7 +39,6 @@ import ulb.model.battle.BattleState;
 import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.player.PlayerDTO;
-import ulb.DTO.player.PlayerRegisterDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.DTO.reward.RewardDTO;
 import ulb.model.chat.ChatMessage;
@@ -49,10 +48,10 @@ import ulb.view.WindowPath;
 /**
  * Client-side application controller coordinating server messaging.
  */
-public class ClientController extends Application implements RegisterController.Listener, ModeController.Listener, GameModeController.Listener,
-		ConfirmTeamController.Listener,BattleEndController.Listener, BattleWindowController.Listener, NextRoomController.Listener,
+public class ClientController extends Application implements
+		BattleEndController.Listener, BattleWindowController.Listener, NextRoomController.Listener,
 		FloorRewardController.Listener, AttackReplacementController.Listener, LevelUpController.Listener,
-		LoadTeamPanelController.Listener, FloorController.Listener {
+		FloorController.Listener, WindowController.ClientListener{
 
 	private static final Logger LOGGER = Logger.getLogger(ClientController.class.getName());
 
@@ -76,6 +75,7 @@ public class ClientController extends Application implements RegisterController.
 	FloorRewardController floorRewardController;
 	ChooseBugemonController chooseBugemonController;
 	AttackReplacementController attackReplacementController;
+	LoadTeamPanelController loadTeamPanelController;
 
 	FloorRewardController.RewardChoice pendingFloorRewardChoice;
 	FloorController floorController;
@@ -85,12 +85,7 @@ public class ClientController extends Application implements RegisterController.
 	SocialPanelController socialPanelController;
 	WaitWindowController waitWindowController;
 
-	/**
-	 * Returns the application stage.
-	 *
-	 * @return The application stage
-	 */
-	public Stage getStage() { return this.stage; }
+	public Stage getStage() { return stage; }
 
 	private void logViewLoadFailure(String errorMessage, ViewLoadException e) {
 		LOGGER.log(Level.WARNING, errorMessage, e);
@@ -104,7 +99,7 @@ public class ClientController extends Application implements RegisterController.
         List<String> params = getParameters().getRaw();
 
 		String serverIp = params.get(0);
-		Integer serverPort = Integer.parseInt(params.get(1));
+		int serverPort = Integer.parseInt(params.get(1));
 
 		this.client = new SocketClient(serverIp, serverPort);
 	}
@@ -127,10 +122,19 @@ public class ClientController extends Application implements RegisterController.
 		primaryStage.setFullScreen(true);
 		primaryStage.setFullScreenExitHint("");
 
-		this.registerController = new RegisterController(this.stage, WindowPath.REGISTER,this);
-		this.registerController.show();
-
+		//TODO: check where to put
+		this.registerController = new RegisterController(this.stage, this);
 		this.modeController = new ModeController(this.stage, this);
+		this.socialPanelController = new SocialPanelController(this);
+		this.gameModeController = new GameModeController(this.stage, this);
+		this.teamController = new TeamController(this.stage, this);
+		this.floorController = new FloorController(this.stage, this);
+		this.waitWindowController = new WaitWindowController(this);
+		this.confirmTeamController = new ConfirmTeamController(this.stage, this);
+		this.loadTeamPanelController = new LoadTeamPanelController(this.stage, this);
+		//TODO: implement battleWindow differently
+
+		this.registerController.show();
 
 		if (primaryStage.getScene() != null) {
 			String stylesheet = getClass().getResource("/styles/global.css").toExternalForm();
@@ -148,7 +152,7 @@ public class ClientController extends Application implements RegisterController.
 	 * @param message The message sent to the server
 	 * @return True if the request was accepted by the server
 	 */
-	public boolean postData(ClientToServerMessage message){
+	private boolean postData(ClientToServerMessage message){
 		synchronized (serverRequestLock) {
 			try {
 				client.sendMessage(message);
@@ -172,7 +176,7 @@ public class ClientController extends Application implements RegisterController.
 	 * @param message The message sent to the server
 	 * @return The response received from the server
 	 */
-	public Serializable getData(ClientToServerMessage message){
+	private Serializable getData(ClientToServerMessage message){
 		synchronized (serverRequestLock) {
 			try {
 				client.sendMessage(message);
@@ -205,25 +209,7 @@ public class ClientController extends Application implements RegisterController.
 		return null;
 	}
 
-	/**
-	 * Sends a sign-up request for a player.
-	 *
-	 * @param player Player registration DTO
-	 * @return True if account creation succeeded
-	 */
-	public boolean signUp(PlayerRegisterDTO player){
-		return postData(new RegisterMessage(player, false));
-	}
 
-	/**
-	 * Sends a login request
-	 *
-	 * @param player Player credentials DTO
-	 * @return True if accepted by server
-	 */
-	public boolean logIn(PlayerRegisterDTO player){
-		return postData(new RegisterMessage(player, true));
-	}
 
 	// Social Panel Controller
 
@@ -383,59 +369,30 @@ public class ClientController extends Application implements RegisterController.
 	 * @param opponent The opponent for the battle
 	 */
 	public void switchToTeamSelectionForMulti(PlayerDTO opponent) {
-		this.teamController = new TeamController(this);
 		this.teamController.setOpponent(opponent);
-
-		try {
-			this.teamController.show();
-		} catch (ViewLoadException e) {
-			logViewLoadFailure("Impossible d'afficher l'écran de sélection d'équipe.", e);
-		}
+		this.teamController.show();
 	}
 
 	// Register Controller :
 
 	/**
-	 * {@inheritDoc}
+	 * Loads a player by username, stores it as the current player, and returns it.
+	 *
+	 * @param userName The username to look up
+	 * @return The player DTO, or null if not found
 	 */
-	@Override
-	public boolean onSignUp(PlayerRegisterDTO playerDTO) {
-		return this.signUp(playerDTO);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean onLogin(PlayerRegisterDTO playerRegisterDTO) {
-		return this.logIn(playerRegisterDTO);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void showModeWindow() throws ViewLoadException {
-		this.modeController.show();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public PlayerDTO onGetPlayer(String userName) {
+	private PlayerDTO loadPlayer(String userName) {
 		this.player = this.getPlayer(userName);
 		return this.player;
 	}
 
+
+
 	// Mode Controller Listener :
 
-	/**
-	 * {@inheritDoc}
-	 */
+
 	@Override
 	public void onOpenSocial() {
-		this.socialPanelController = new SocialPanelController(this);
 		try {
 			this.socialPanelController.show();
 		} catch (ViewLoadException e) {
@@ -443,252 +400,15 @@ public class ClientController extends Application implements RegisterController.
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onSolo() {
-		switchToGameModeWindow();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onMultiplayer() {
-
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onLogOut() {
-		this.player = null;
-		this.registerController.show();
-	}
 
 	// Game Mode Controller :
 
-	/**
-	 * Switches to the create team window.
-	 */
-	private void switchToCreateTeamWindow() {
-		this.teamController = new TeamController(this);
-		try {
-			this.teamController.show();
-		} catch (ViewLoadException e) {
-			logViewLoadFailure("Impossible d'afficher l'écran de sélection d'équipe.", e);
-		}
-	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onAutoBattle() {
-		this.gameMode = GameMode.AUTO;
-		switchToCreateTeamWindow();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onControlledBattle() {
-		this.gameMode = GameMode.CONTROLLED;
-		switchToCreateTeamWindow();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onTowerMode(boolean newTower) {
-		this.gameMode = GameMode.TOWER;
-		this.floorController = null;
-		if (newTower) {
-			switchToCreateTeamWindow();
-		} else {
-			if (this.postData(new SetUpTowerModeMessage(newTower))){
-				switchToFloorWindow();
-			}
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean isTowerSaved() {
-		Serializable message = getData(new GetTowerSavedInfoMessage());
-		if (message instanceof TowerSavedInfoMessage towerInfoMessage){
-			return towerInfoMessage.isTowerSaved();
-		}
-		return false;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onReturnToModeWindow() {
-		switchToModeWindow();
-	}
-
-	// Team Controller :
-
-	/**
-	 * Returns the list of all the Bugemon species.
-	 *
-	 * @return A list of all the species of Bugemon
-	 */
-	public List<BugemonSpeciesDTO> getAllSpecies(){
-		Serializable message = this.getData(new GetAllBugemonSpeciesMessage());
-
-		if (message instanceof BugemonSpeciesMessage speciesMessage){
-			return speciesMessage.getSpecies();
-		}
-		return null;
-	}
-
-	/**
-	 * Sends the player's team to the server and switches to the battle mode window.
-	 */
-	public void setupTeamAndShowModeMenu() {
-		List<BugemonDTO> team = player.getTeam();
-
-		if (!this.postData(new SetUpTeamMessage(team))){
-			return;
-		}
-
-		this.confirmTeamController = new ConfirmTeamController(this.stage, this, team, this.gameMode);
-		try {
-			confirmTeamController.show();
-		} catch (ViewLoadException e) {
-			logViewLoadFailure("Impossible d'afficher l'écran de confirmation d'équipe.", e);
-		}
-	}
-
-	/**
-	 * Confirms the team for a multiplayer battle and waits for the battle to start.
-	 *
-	 * @param opponent The opponent
-	 */
-	public void confirmTeamMulti(PlayerDTO opponent) {
-		this.postData(new ConfirmTeamMultiMessage(opponent, this.getPlayer().getTeam()));
-
-		this.openWaitWindow(e -> {
-			this.waitForOpponentTeam(opponent);
-		});
-	}
-
-	/**
-	 * Called in a loop while waiting for the opponent to pick his team.
-	 *
-	 * @param opponent The opponent
-	 */
-	private void waitForOpponentTeam(PlayerDTO opponent) {
-		PlayerDTO self = this.getPlayer();
-		MultiBattleStatusDTO status = this.getMultiBattleStatus(self.getUserId(), opponent.getUserId());
-
-		switch(status.getStatus()) {
-			case BATTLE:
-				this.stopWaitWindow();
-				this.startMultiBattle(opponent);
-				break;
-
-			case PICKING_TEAMS:
-				break;
-
-			default:
-				this.stopWaitWindow();
-				this.switchToModeWindow();
-		}
-	}
-
-	/**
-	 * Starts a battle once both teams have been picked.
-	 *
-	 * @param opponent The opponent
-	 */
-	private void startMultiBattle(PlayerDTO opponent) {
-
-		this.postData(new StartMultiBattleMessage(opponent));
-		this.switchToBattleWindow();
-	}
-
-	/**
-	 * Shows the load team panel when the load a team button is clicked.
-	 */
-	public void loadTeam() {
-		LoadTeamPanelController loadTeamPanelController = new LoadTeamPanelController(stage, this);
-		try {
-			loadTeamPanelController.show();
-		} catch (ViewLoadException e) {
-			logViewLoadFailure("Impossible d'afficher le panneau de chargement d'équipe.", e);
-		}
-	}
-
-	/**
-	 * Returns the player's saved teams from the database.
-	 *
-	 * @return The player's saved teams
-	 */
-	@Override
-	public List<TeamDTO> getSavedTeams() {
-		Serializable message = this.getData(new GetSavedTeamsMessage());
-
-		if (message instanceof SavedTeamsMessage teamsMessage){
-			return teamsMessage.getTeams();
-		}
-		return null;
-	}
-
-	/**
-	 * Saves the team to the database.
-	 *
-	 * @param teamDTO The DTO of the team to be saved
-	 */
-	public void saveTeam(TeamDTO teamDTO) {
-		boolean success = postData(new SaveTeamMessage(teamDTO));
-		if (!success) {
-			teamController.getView().showInvalidSaveAlert("Tu as déjà une équipe avec ce nom!");
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onTeamLoaded(TeamDTO selectedTeam) {
-		player.setTeam(selectedTeam.members());
-		setupTeamAndShowModeMenu();
-	}
+	private void setGameMode(GameMode gameMode){this.gameMode = gameMode;}
 
 	// Confirm Team Controller
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onConfirm() {
-		switch (this.gameMode) {
-			case AUTO, CONTROLLED :
-				if (this.postData(new SetUpNormalModeMessage())){
-					switchToBattleWindow();
-				}
-				break;
-			case TOWER:
-				if (this.postData(new SetUpTowerModeMessage(true))){
-					switchToFloorWindow();
-				}
-				break;
-			default:
-				switchToModeWindow();
-				break;
-		}
-	}
+	
 
 	// BattleEndController
 
@@ -705,26 +425,15 @@ public class ClientController extends Application implements RegisterController.
 	/**
 	 * Shows the mode window.
 	 */
-	public void switchToModeWindow(){
-		try {
-			this.modeController.show();
-		} catch (ViewLoadException e) {
-			logViewLoadFailure("Impossible d'afficher le menu principal.", e);
-		}
+	public void switchToModeWindow(){ // TODO: DEL
+		this.modeController.show();
 	}
 
 	/**
 	 * Switches to the game mode selection window.
 	 */
 	public void switchToGameModeWindow() {
-		if (this.gameModeController == null) {
-			this.gameModeController = new GameModeController(stage, this);
-		}
-		try {
-			this.gameModeController.show();
-		} catch (ViewLoadException e) {
-			logViewLoadFailure("Impossible de retourner à l'écran de mode de jeu.", e);
-		}
+		this.gameModeController.show();
 	}
 
 	/**
@@ -787,8 +496,8 @@ public class ClientController extends Application implements RegisterController.
 	 */
 	private void switchToBattleEndWindow(){
 		Serializable message = getData(new GetBattleEndInfoMessage());
-		boolean victory = false;
-		int totalXp = 0;
+		boolean victory;
+		int totalXp;
 		if (message instanceof BattleEndInfoMessage battleInfo){
 			victory = battleInfo.isVictory();
 			totalXp = battleInfo.getTotalXp();
@@ -871,16 +580,8 @@ public class ClientController extends Application implements RegisterController.
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public void onReturnToCreateTeamWindow() {
-		try {
-			teamController.show();
-		} catch (ViewLoadException e) {
-			logViewLoadFailure("Impossible de retourner à l'écran de constitution d'équipe.", e);
-		}
+		teamController.show();
 	}
 
 	// Battle Window Controller Listener :
@@ -1115,11 +816,7 @@ public class ClientController extends Application implements RegisterController.
 	@Override
 	public void onReturn() {
 		if (this.postData(new AbandonTowerMessage())){
-			try {
 				this.modeController.show();
-			} catch (ViewLoadException e) {
-				logViewLoadFailure("Impossible de retourner au menu après abandon de la tour.", e);
-			}
 		}
 	}
 
@@ -1142,7 +839,7 @@ public class ClientController extends Application implements RegisterController.
 	public void onChooseBugemonReward(FloorRewardController.RewardChoice rewardChoice) {
 		pendingFloorRewardChoice = rewardChoice;
 		if (chooseBugemonController == null) {
-			chooseBugemonController = new ChooseBugemonController(this.stage, this.floorRewardController, this.player);
+			chooseBugemonController = new ChooseBugemonController(this.stage, this, this.player);
 		}
 		try {
 			chooseBugemonController.show();
@@ -1323,5 +1020,98 @@ public class ClientController extends Application implements RegisterController.
 	 */
 	public void closeSocialPanel() {
 		this.socialPanelController.close();
+	}
+
+	@Override
+	public Serializable onGetData(ClientToServerMessage message) {
+		return this.getData(message);
+	}
+
+	@Override
+	public boolean onPostData(ClientToServerMessage message) {
+		return this.postData(message);
+	}
+
+	@Override
+	public PlayerDTO onLoadPlayer(String userName) {
+		return this.loadPlayer(userName);
+	}
+
+	@Override
+	public void onShowWindow(WindowController.WindowName window) {
+		switch (window) {
+			case REGISTER -> this.registerController.show();
+			case MODE -> this.modeController.show();
+			case SOCIAL_PANEL -> {
+				try {
+					this.socialPanelController.show();
+				} catch (ViewLoadException e) {}
+			}
+			case GAME_MODE -> this.gameModeController.show();
+			case TEAM -> this.teamController.show();
+			case FLOOR ->{
+				try{
+					this.floorController.show();
+				}catch (ViewLoadException e){}
+
+			}
+			case WAIT -> {
+				try {
+					this.waitWindowController.show();
+				} catch (ViewLoadException e){}
+			}
+			case CONFIRM_TEAM -> this.confirmTeamController.show();
+			case BATTLE -> {
+				this.switchToBattleWindow(); //TODO: implement battleWindowDifferently
+			}
+			case LOAD_TEAM_PANEL -> this.loadTeamPanelController.show();
+
+		}
+	}
+
+	@Override
+	public void onSetGameMode(GameMode gameMode) {
+		this.setGameMode(gameMode);
+	}
+
+	@Override
+	public PlayerDTO onGetPlayer() {
+		return this.getPlayer();
+	}
+	@Override
+	public void onCloseSocialPanel(){ this.socialPanelController.close(); }
+
+	@Override
+	public void onSetNewTimeLine(EventHandler waitCycle) { this.waitWindowController.setNewTimeLine(waitCycle); }
+
+	@Override
+	public void onStopWaitWindow() { this.waitWindowController.stop(); }
+
+	@Override
+	public void onConfirmTeamSetter(List<BugemonDTO> team) {
+		this.confirmTeamController.setPlayerTeam(team);
+		this.confirmTeamController.setGameMode(this.gameMode);
+	}
+
+	@Override
+	public void onSetPlayer(PlayerDTO player) { this.player = player; }
+
+	@Override
+	public GameMode onGetGameMode() { return this.gameMode; }
+
+	/**
+	 * Sends the player's team to the server and switches to the battle mode window.
+	 */
+	@Override
+	public void setupTeamAndShowConfirmTeam(List<BugemonDTO> teamDTO) {
+		this.player.setTeam(teamDTO);
+		if (!this.postData(new SetUpTeamMessage(teamDTO))){
+			return;
+		}
+		this.confirmTeamController.setGameMode(this.gameMode);
+		this.confirmTeamController.setPlayerTeam(teamDTO);
+	
+		this.confirmTeamController.show();
+		
 	}
 }

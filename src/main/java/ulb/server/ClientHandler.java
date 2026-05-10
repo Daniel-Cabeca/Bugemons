@@ -11,6 +11,8 @@ import ulb.communication.Messenger.SocketMessenger;
 import ulb.exceptions.CommunicationException;
 import ulb.exceptions.DataAccessException;
 import ulb.exceptions.UserFacingException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import ulb.message.clientToServer.ClientToServerMessage;
 import ulb.message.serverToClient.*;
 import ulb.model.Player;
@@ -139,33 +141,49 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
     }
 
     public ClientToServerMessage receiveMessage(){
-        try{
+		try {
 			Serializable received = this.socketMessenger.receiveMessage();
 
 			if (received instanceof ClientToServerMessage message) {
 				return message;
 			}
 
-            return null;
-        } catch (CommunicationException e){
-			sendErrorMessage("Communication with client has been interrupted");
-            stopProcess();
-        }
-        return null;
-    }
+			return null;
+		} catch (CommunicationException e) {
+			handleCommunicationFailure("Communication with client has been interrupted.", e);
+		}
 
-    public void sendMessage(Serializable message){
-        try{
-            this.socketMessenger.sendMessage(message);
-        } catch (CommunicationException e){
-			sendErrorMessage("Impossible to send messages to client.");
-            stopProcess();
-        }
-    }
+		return null;
+	}
 
-    public void sendErrorMessage(String errorMessage){
-        sendMessage(new StatusMessage(false, errorMessage));
-    }
+	public void sendMessage(Serializable message) {
+		if (this.stop) {
+			return;
+		}
+
+		try {
+			this.socketMessenger.sendMessage(message);
+		} catch (CommunicationException e) {
+			handleCommunicationFailure("Impossible to send message to client.", e);
+		}
+	}
+
+	public void sendErrorMessage(String errorMessage) {
+		if (this.stop) {
+			return;
+		}
+
+		try {
+			this.socketMessenger.sendMessage(new StatusMessage(false, errorMessage));
+		} catch (CommunicationException e) {
+			handleCommunicationFailure("Impossible to send error message to client.", e);
+		}
+	}
+
+	private void handleCommunicationFailure(String message, CommunicationException e) {
+		LOGGER.log(Level.INFO, message);
+		stopProcess();
+	}
 
     public void sendSuccessMessage(){
         sendMessage(new StatusMessage(true));

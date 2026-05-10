@@ -30,6 +30,7 @@ public class BattleWindowGraphicsHelper {
     private static final Logger LOGGER = Logger.getLogger(BattleWindowGraphicsHelper.class.getName());
 
     private BattleUIComponents ui;
+    private Boolean firstAttackWasPlayer;
 
     /**
      * Binds this helper to the live JavaFX components of the battle window.
@@ -103,6 +104,7 @@ public class BattleWindowGraphicsHelper {
     public void displayMessagesSequentially(List<String> rawLogs, Integer hpAfterFirstActionSelf, Integer hpAfterFirstActionOpponent,
                                             BattleSnapshot finalSnapshot, Supplier<BattleSnapshot> currentSnapshotSupplier, Consumer<BattleSnapshot> battleRenderer,
                                             Runnable onComplete) {
+        firstAttackWasPlayer = null;
         List<String> logs = rawLogs == null ? List.of() : new ArrayList<>(rawLogs);
         List<List<String>> phases = splitPhases(logs);
 
@@ -122,6 +124,7 @@ public class BattleWindowGraphicsHelper {
         List<BattlePhaseStep> phaseSteps = buildPhaseSteps(phases, currentSnapshot, finalSnapshot, hpAfterFirstActionSelf, hpAfterFirstActionOpponent);
 
         Runnable closeAndComplete = () -> {
+            firstAttackWasPlayer = null;
             clearMessages();
             onComplete.run();
         };
@@ -509,22 +512,89 @@ public class BattleWindowGraphicsHelper {
             return;
         }
 
-        BattleSnapshot snapshot = visual.snapshot() != null ? visual.snapshot() : currentSnapshotSupplier.get();
-        if (snapshot == null) {
+        BattleSnapshot displayedSnapshot = visual.snapshot() != null ? visual.snapshot() : currentSnapshotSupplier.get();
+        BattleSnapshot previousSnapshot = currentSnapshotSupplier.get();
+        if (displayedSnapshot == null) {
             return;
         }
 
         String attackerName = message.substring(0, message.indexOf(" a utilisé "));
 
-        if (snapshot.playerBugemon() != null && attackerName.equals(snapshot.playerBugemon().name())) {
-            playAttackAnimation(ui.playerBugemon, true);
+        boolean playerMatches = displayedSnapshot.playerBugemon() != null && attackerName.equals(displayedSnapshot.playerBugemon().name());
+        boolean opponentMatches = displayedSnapshot.opponentBugemon() != null && attackerName.equals(displayedSnapshot.opponentBugemon().name());
+
+        if (playerMatches && opponentMatches) {
+            playAmbiguousAttackAnimation(visual, previousSnapshot);
             return;
         }
 
-        if (snapshot.opponentBugemon() != null && attackerName.equals(snapshot.opponentBugemon().name())) {
-            playAttackAnimation(ui.opponentBugemon, false);
+        if (playerMatches) {
+            playAttackAnimation(ui.playerBugemon(), true);
+        }
+
+        if (opponentMatches) {
+            playAttackAnimation(ui.opponentBugemon(), false);
+        }
+
+    }
+
+    /**
+     * Resolves attack animations when both active Bugemons have the same name.
+     * The first ambiguous attacked is inferred from the HP side that changed. The next ambiguous attack in the same
+     * action sequence must belong to the other side because each side can act once per round.
+     * 
+     * @param visual the visual state necessary to detect attack animation sequence
+     * @param previousSnapshot the battle state before the current action sequence started
+     */
+    private void playAmbiguousAttackAnimation(BattlePhaseVisual visual, BattleSnapshot previousSnapshot) {
+        if (firstAttackWasPlayer != null) {
+            boolean secondAttackerIsPlayer = !firstAttackWasPlayer;
+            playAttackAnimation(secondAttackerIsPlayer ? ui.playerBugemon() : ui.opponentBugemon(), secondAttackerIsPlayer);
             return;
         }
+
+        Boolean attackerIsPlayer = inferAttackerFromHPChange(visual, previousSnapshot);
+        if (attackerIsPlayer == null) {
+            return;
+        }
+
+        firstAttackWasPlayer = attackerIsPlayer;
+        playAttackAnimation(attackerIsPlayer ? ui.playerBugemon() : ui.opponentBugemon(), attackerIsPlayer);
+
+    }
+
+    /**
+     * Infers the attacking side by comparing HP before and after the action being displayed.
+     * If the player lost HP, the opponent attacked. If the opponent attacked, the player attacked.
+     * 
+     * @param visual the visual state after the action
+     * @param previousSnapshot the battle state before the action sequence started
+     * @return {@code true} if the player attacked first, {@code false} if the opponent attacked first, or {@code null} if unknown
+     */
+    private Boolean inferAttackerFromHPChange(BattlePhaseVisual visual, BattleSnapshot previousSnapshot) {
+        if (visual == null || previousSnapshot == null || visual.snapshot() == null || previousSnapshot.playerBugemon() == null
+                || previousSnapshot.opponentBugemon() == null || visual.snapshot().playerBugemon() == null
+                || visual.snapshot().opponentBugemon() == null) {
+            return null;
+        }
+
+        int previousPlayerHP = previousSnapshot.playerBugemon().hp();
+        int previousOpponentHP = previousSnapshot.opponentBugemon().hp();
+        int displayedPlayerHP = visual.playerHp() != null ? visual.playerHp() : visual.snapshot().playerBugemon().hp();
+        int displayedOpponentHP = visual.opponentHp() != null ? visual.opponentHp() : visual.snapshot().opponentBugemon().hp();
+
+        boolean playerLostHP = displayedPlayerHP < previousPlayerHP;
+        boolean opponentLostHP = displayedOpponentHP < previousOpponentHP;
+
+        if (playerLostHP && !opponentLostHP) {
+            return false;
+        }
+
+        if (opponentLostHP && !playerLostHP) {
+            return true;
+        }
+
+        return null;
     }
 
     /**

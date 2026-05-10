@@ -1,0 +1,20 @@
+package ulb.message.request.gameActions;
+
+import ulb.exceptions.DataAccessException;
+import ulb.exceptions.UserFacingException;
+import ulb.message.request.Request;
+import ulb.DTO.player.PlayerDTO;
+import ulb.server.ServerMessageHandler;
+
+public class StartMultiBattleRequest implements Request {
+	private final PlayerDTO opponent;
+
+	public StartMultiBattleRequest(PlayerDTO opponent) {
+		this.opponent = opponent;
+	}
+
+	@Override
+	public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
+		handler.startMultiBattle(opponent);
+	}
+}

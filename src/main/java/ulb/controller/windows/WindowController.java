@@ -11,7 +11,7 @@ import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.DTO.reward.RewardDTO;
 import ulb.communication.GameMode;
-import ulb.message.clientToServer.ClientToServerMessage;
+import ulb.message.request.Request;
 import ulb.view.FxmlLoader;
 import ulb.exceptions.ViewLoadException;
 
@@ -75,8 +75,8 @@ public abstract class WindowController<T> {
      * ClientListener is a way to communicate between WindowControllers and the ClientController
      */
     public interface ClientListener{
-        Serializable onGetData(ClientToServerMessage message);
-        boolean onPostData(ClientToServerMessage message);
+        Serializable onGetData(Request message);
+        boolean onPostData(Request message);
         PlayerDTO onGetPlayer();
         void onSetPlayer(PlayerDTO player);
         PlayerDTO onLoadPlayer(String userName);

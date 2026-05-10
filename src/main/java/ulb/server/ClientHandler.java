@@ -13,8 +13,8 @@ import ulb.exceptions.DataAccessException;
 import ulb.exceptions.UserFacingException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import ulb.message.clientToServer.ClientToServerMessage;
-import ulb.message.serverToClient.*;
+import ulb.message.request.Request;
+import ulb.message.response.*;
 import ulb.model.Player;
 import ulb.model.battle.Battle;
 import ulb.model.battle.MultiBattleSession;
@@ -115,7 +115,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	 * Reads the socket and handle the received message
 	 */
 	private void handleMessage(){
-		ClientToServerMessage message = receiveMessage();
+		Request message = receiveMessage();
 		if (message == null){
 			return;
 		}
@@ -136,11 +136,11 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
         this.stop = true;
     }
 
-    public ClientToServerMessage receiveMessage(){
+    public Request receiveMessage(){
 		try {
 			Serializable received = this.socketMessenger.receiveMessage();
 
-			if (received instanceof ClientToServerMessage message) {
+			if (received instanceof Request message) {
 				return message;
 			}
 
@@ -170,7 +170,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		}
 
 		try {
-			this.socketMessenger.sendMessage(new StatusMessage(false, errorMessage));
+			this.socketMessenger.sendMessage(new StatusResponse(false, errorMessage));
 		} catch (CommunicationException e) {
 			handleCommunicationFailure("Impossible to send error message to client.");
 		}
@@ -182,7 +182,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	}
 
     public void sendSuccessMessage(){
-        sendMessage(new StatusMessage(true));
+        sendMessage(new StatusResponse(true));
     }
 
     public void end(){

@@ -1,13 +1,11 @@
 package ulb.controller.windows;
 
-import java.util.List;
-
 import javafx.application.Platform;
 import javafx.stage.Stage;
 import ulb.model.tower.Floor;
-import ulb.message.clientToServer.gameActions.ChooseTowerRoomMessage;
-import ulb.message.clientToServer.gameInfo.GetTowerInfoMessage;
-import ulb.message.serverToClient.gameInfo.TowerInfoMessage;
+import ulb.message.request.gameActions.ChooseTowerRoomRequest;
+import ulb.message.request.gameInfo.GetTowerInfoRequest;
+import ulb.message.response.gameInfo.TowerInfoResponse;
 import ulb.view.WindowPath;
 import ulb.view.windows.FloorWindow;
 
@@ -51,7 +49,7 @@ public class FloorController extends WindowController<FloorWindow> implements Fl
      * Resets the fled-detection state when the floor number changes.
      */
     private void syncCurrentRoomFromServer() {
-        if (!(clientListener.onGetData(new GetTowerInfoMessage()) instanceof TowerInfoMessage info)) return;
+        if (!(clientListener.onGetData(new GetTowerInfoRequest()) instanceof TowerInfoResponse info)) return;
         int serverFloor = info.getFloorNumber();
         this.currentRoomId = info.getRoomNumber();
         if (serverFloor != this.currentFloorNumber) {
@@ -74,7 +72,7 @@ public class FloorController extends WindowController<FloorWindow> implements Fl
         boolean isAdjacent = floorGraph.getAdjacentRoomsIds(currentRoomId).contains(targetRoomId);
         if (!isAdjacent) return;
         view.translationAnimationHandler(targetRoomId, () -> {
-            boolean success = clientListener.onPostData(new ChooseTowerRoomMessage(targetRoomId));
+            boolean success = clientListener.onPostData(new ChooseTowerRoomRequest(targetRoomId));
             if (!success) return;
             this.lastEnteredRoomId = targetRoomId;
             clientListener.onRoomSelectionComplete();

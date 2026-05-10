@@ -5,8 +5,8 @@ import java.util.List;
 import javafx.stage.Stage;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.communication.GameMode;
-import ulb.message.clientToServer.setup.SetUpNormalModeMessage;
-import ulb.message.clientToServer.setup.SetUpTowerModeMessage;
+import ulb.message.request.setup.SetUpNormalModeRequest;
+import ulb.message.request.setup.SetUpTowerModeRequest;
 import ulb.view.WindowPath;
 import ulb.view.windows.ConfirmTeamWindow;
 
@@ -59,7 +59,7 @@ public class ConfirmTeamController extends WindowController<ConfirmTeamWindow> i
 	 * Tell the server to setup the Battle and switch to battle window if the setup is succeded
 	 */
 	private void switchToBattle(){
-		if (this.clientListener.onPostData(new SetUpNormalModeMessage())){
+		if (this.clientListener.onPostData(new SetUpNormalModeRequest())){
 			this.clientListener.onShowWindow(WindowName.BATTLE);
 		}
 	}
@@ -68,7 +68,7 @@ public class ConfirmTeamController extends WindowController<ConfirmTeamWindow> i
 	 * Tell the server to setup the Tower and switch to floor window if the setup is succeded
 	 */
 	private void switchToTower(){
-		if (this.clientListener.onPostData(new SetUpTowerModeMessage(true))){
+		if (this.clientListener.onPostData(new SetUpTowerModeRequest(true))){
 			this.clientListener.onShowWindow(WindowName.FLOOR);
 		}
 	}

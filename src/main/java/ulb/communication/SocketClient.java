@@ -6,7 +6,7 @@ import java.net.Socket;
 
 import ulb.communication.Messenger.SocketMessenger;
 import ulb.exceptions.CommunicationException;
-import ulb.message.clientToServer.ClientToServerMessage;
+import ulb.message.request.Request;
 
 public class SocketClient {
     private final Socket socket;
@@ -25,7 +25,7 @@ public class SocketClient {
         }
     }
 
-    public void sendMessage(ClientToServerMessage message) throws CommunicationException {
+    public void sendMessage(Request message) throws CommunicationException {
         if (messenger == null) {
             throw new CommunicationException("Network with client has not been initialized.");
         }

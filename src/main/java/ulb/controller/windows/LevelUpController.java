@@ -6,8 +6,8 @@ import javafx.event.ActionEvent;
 import javafx.stage.Stage;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.reward.RewardDTO;
-import ulb.message.clientToServer.gameInfo.GetLevelUpInfoMessage;
-import ulb.message.serverToClient.gameInfo.LevelUpInfoMessage;
+import ulb.message.request.gameInfo.GetLevelUpInfoRequest;
+import ulb.message.response.gameInfo.LevelUpInfoResponse;
 import ulb.view.WindowPath;
 import ulb.view.windows.LevelUpWindow;
 
@@ -32,7 +32,7 @@ public class LevelUpController extends WindowController<LevelUpWindow> implement
      */
     @Override
     public void show() {
-        if (!(clientListener.onGetData(new GetLevelUpInfoMessage()) instanceof LevelUpInfoMessage info)) return;
+        if (!(clientListener.onGetData(new GetLevelUpInfoRequest()) instanceof LevelUpInfoResponse info)) return;
         List<RewardDTO> rewards = info.getRewards();
         if (rewards == null || rewards.isEmpty()) return;
         BugemonDTO bugemon = rewards.get(0).bugemon();

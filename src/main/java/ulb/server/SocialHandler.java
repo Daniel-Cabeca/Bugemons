@@ -8,7 +8,7 @@ import java.util.NoSuchElementException;
 
 import ulb.DTO.battle.MultiBattleStatusDTO;
 import ulb.mapper.battle.MultiBattleStatusMapper;
-import ulb.message.serverToClient.social.*;
+import ulb.message.response.social.*;
 import ulb.model.battle.MultiBattleParticipant;
 import ulb.model.battle.MultiBattleSession;
 import ulb.service.AccountService;
@@ -70,7 +70,7 @@ public class SocialHandler {
 	public void getBattleRequests(String username) throws DataAccessException{
 		int userId = accountService.getUserId(username);
 		List<String> requests = accountService.getPendingBattleRequests(userId);
-		clientHandler.sendMessage(new BattleRequestsMessage(requests));
+		clientHandler.sendMessage(new BattleRequestsResponse(requests));
 	}
 
 	public void getMultiBattleStatus(int userId1, int userId2) {
@@ -82,29 +82,29 @@ public class SocialHandler {
 		}
 		catch (NoSuchElementException e) {}
 
-		MultiBattleStatusMessage response = new MultiBattleStatusMessage(status);
+		MultiBattleStatusResponse response = new MultiBattleStatusResponse(status);
 		clientHandler.sendMessage(response);
 	}
 
 	public void getChatMessages(String usernameA, String usernameB) throws DataAccessException{
-		clientHandler.sendMessage(new ChatMessagesMessage(chatService.getMessages(usernameA, usernameB)));
+		clientHandler.sendMessage(new ChatMessagesResponse(chatService.getMessages(usernameA, usernameB)));
 	}
 
 	public void getFriendRequests(String username) throws DataAccessException{
 		int userId = accountService.getUserId(username);
 		List<String> requests = accountService.getPendingFriendRequests(userId);
-		clientHandler.sendMessage(new FriendRequestsMessage(requests));
+		clientHandler.sendMessage(new FriendRequestsResponse(requests));
 	}
 
 	public void getFriendsList(String username) throws DataAccessException{
 		int userId = accountService.getUserId(username);
 		List<String> friends = accountService.getFriendsList(userId);
-		clientHandler.sendMessage(new FriendsListMessage(friends));
+		clientHandler.sendMessage(new FriendsListResponse(friends));
 	}
 
 	public void getLeaderboard() throws DataAccessException{
 		Map<String, Integer> leaderboard = accountService.getLeaderboard();
-		clientHandler.sendMessage(new LeaderboardMessage(leaderboard));
+		clientHandler.sendMessage(new LeaderboardResponse(leaderboard));
 	}
 
 	public void sendBattleRequest(String senderUsername, String receiverUsername) throws DataAccessException{

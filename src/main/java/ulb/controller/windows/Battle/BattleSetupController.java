@@ -1,7 +1,6 @@
 package ulb.controller.windows.Battle;
 
 import java.io.Serializable;
-import java.sql.ClientInfoStatus;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,19 +14,19 @@ import ulb.DTO.item.ItemDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.communication.GameMode;
 import ulb.controller.windows.WindowController.ClientListener;
-import ulb.message.clientToServer.gameInfo.CheckUsableItemMessage;
-import ulb.message.clientToServer.gameInfo.GetAbilityEffectivenessMessage;
-import ulb.message.clientToServer.gameInfo.GetActiveBugemonsMessage;
-import ulb.message.clientToServer.gameInfo.GetBattleStateMessage;
-import ulb.message.clientToServer.gameInfo.GetLogsMessage;
-import ulb.message.clientToServer.playerInfo.GetPlayerInventoryMessage;
-import ulb.message.serverToClient.StatusMessage;
-import ulb.message.serverToClient.gameInfo.AbilityEffectivenessMessage;
-import ulb.message.serverToClient.gameInfo.ActiveBugemonsMessage;
-import ulb.message.serverToClient.gameInfo.BattleStateMessage;
-import ulb.message.serverToClient.gameInfo.LogsMessage;
-import ulb.message.serverToClient.gameInfo.UsableItemsMessage;
-import ulb.message.serverToClient.playerInfo.PlayerInventoryMessage;
+import ulb.message.request.gameInfo.CheckUsableItemRequest;
+import ulb.message.request.gameInfo.GetAbilityEffectivenessRequest;
+import ulb.message.request.gameInfo.GetActiveBugemonsRequest;
+import ulb.message.request.gameInfo.GetBattleStateRequest;
+import ulb.message.request.gameInfo.GetLogsRequest;
+import ulb.message.request.playerInfo.GetPlayerInventoryRequest;
+import ulb.message.response.StatusResponse;
+import ulb.message.response.gameInfo.AbilityEffectivenessResponse;
+import ulb.message.response.gameInfo.ActiveBugemonsResponse;
+import ulb.message.response.gameInfo.BattleStateResponse;
+import ulb.message.response.gameInfo.LogsResponse;
+import ulb.message.response.gameInfo.UsableItemsResponse;
+import ulb.message.response.playerInfo.PlayerInventoryResponse;
 import ulb.model.battle.BattleState;
 import ulb.view.windows.BattleWindow;
 import ulb.view.windows.BattleWindow.AbilityEntry;
@@ -48,49 +47,49 @@ public class BattleSetupController {
 	public void setView(BattleWindow view) { this.view = view; }
 
 	public void updateInventory(PlayerDTO player){
-		Serializable message = this.clientListener.onGetData(new GetPlayerInventoryMessage(player.getUsername()));
-		if (message instanceof PlayerInventoryMessage playerInventory){
+		Serializable message = this.clientListener.onGetData(new GetPlayerInventoryRequest(player.getUsername()));
+		if (message instanceof PlayerInventoryResponse playerInventory){
 			player.setInventory(playerInventory.getInventory());
-		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
+		} else if (message instanceof StatusResponse errorMessage && errorMessage.isFailure()){
 			LOGGER.log(Level.WARNING, "Failed to update player inventory: " + errorMessage.getMessage());
 		}
 	}
 
 	public Map<String, Boolean> checkItems(List<ItemDTO> items){
-		Serializable message = this.clientListener.onGetData(new CheckUsableItemMessage(items));
-		if (message instanceof UsableItemsMessage usableItems){
+		Serializable message = this.clientListener.onGetData(new CheckUsableItemRequest(items));
+		if (message instanceof UsableItemsResponse usableItems){
 			return usableItems.getItemMap();
-		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
+		} else if (message instanceof StatusResponse errorMessage && errorMessage.isFailure()){
 			LOGGER.log(Level.WARNING, "Failed to check usable items: " + errorMessage.getMessage());
 		}
 		return null;
 	}
 
 	public List<BugemonDTO> getActiveBugemons(){
-		Serializable message = clientListener.onGetData(new GetActiveBugemonsMessage());
-		if (message instanceof ActiveBugemonsMessage activeBugemons){
+		Serializable message = clientListener.onGetData(new GetActiveBugemonsRequest());
+		if (message instanceof ActiveBugemonsResponse activeBugemons){
 			return List.of(activeBugemons.getSelfActiveBugemon(), activeBugemons.getOpponentActiveBugemon());
-		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
+		} else if (message instanceof StatusResponse errorMessage && errorMessage.isFailure()){
 			LOGGER.log(Level.WARNING, "Failed to get active bugemons: " + errorMessage.getMessage());
 		}
 		return null;
 	}
 
 	public BattleState getState(){
-		Serializable message = this.clientListener.onGetData(new GetBattleStateMessage());
-		if (message instanceof BattleStateMessage battleState){
+		Serializable message = this.clientListener.onGetData(new GetBattleStateRequest());
+		if (message instanceof BattleStateResponse battleState){
 			return battleState.getBattleState();
-		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
+		} else if (message instanceof StatusResponse errorMessage && errorMessage.isFailure()){
 			LOGGER.log(Level.WARNING, "Failed to get battle state: " + errorMessage.getMessage());
 		}
 		return null;
 	}
 
 	public Map<AbilityDTO, String> getAbilityEffectiveness(List<AbilityDTO> abilities, BugemonDTO bugemonTarget){
-		Serializable message = this.clientListener.onGetData(new GetAbilityEffectivenessMessage(abilities, bugemonTarget));
-		if (message instanceof AbilityEffectivenessMessage effectivenessMessage){
+		Serializable message = this.clientListener.onGetData(new GetAbilityEffectivenessRequest(abilities, bugemonTarget));
+		if (message instanceof AbilityEffectivenessResponse effectivenessMessage){
 			return effectivenessMessage.getEffectiveness();
-		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
+		} else if (message instanceof StatusResponse errorMessage && errorMessage.isFailure()){
 			LOGGER.log(Level.WARNING, "Failed to get ability effectiveness: " + errorMessage.getMessage());
 		}
 		return null;
@@ -255,10 +254,10 @@ public class BattleSetupController {
      * @return The current list of log messages
      */
     public List<String> consumeLogMessages() {
-        Serializable message = this.clientListener.onGetData(new GetLogsMessage(true));
-		if (message instanceof LogsMessage logs){
+        Serializable message = this.clientListener.onGetData(new GetLogsRequest(true));
+		if (message instanceof LogsResponse logs){
 			return logs.getLogs();
-		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
+		} else if (message instanceof StatusResponse errorMessage && errorMessage.isFailure()){
 			LOGGER.log(Level.WARNING, "Failed to get logs: " + errorMessage.getMessage());
 		}
 		return null;

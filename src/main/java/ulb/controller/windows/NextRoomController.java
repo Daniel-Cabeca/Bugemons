@@ -1,17 +1,9 @@
 package ulb.controller.windows;
 
 import javafx.stage.Stage;
-import ulb.exceptions.ViewLoadException;
-import ulb.message.clientToServer.gameActions.AbandonTowerMessage;
-import ulb.message.clientToServer.gameInfo.GetBattleEndInfoMessage;
-import ulb.message.clientToServer.gameInfo.GetNextWindowMessage;
-import ulb.message.serverToClient.gameInfo.BattleEndInfoMessage;
-import ulb.message.serverToClient.gameInfo.NextWindowMessage;
-import ulb.message.serverToClient.gameInfo.WindowType;
+import ulb.message.request.gameActions.AbandonTowerRequest;
 import ulb.view.WindowPath;
 import ulb.view.windows.NextRoomWindow;
-
-import java.io.Serializable;
 
 /**
  * Controller for the transition screen between tower rooms.
@@ -41,8 +33,8 @@ public class NextRoomController extends WindowController<NextRoomWindow> impleme
 //     * @return The next window type, or null if unavailable
 //     */
 //    public WindowType getWindowType(){
-//        Serializable message = this.clientListener.onGetData(new GetNextWindowMessage());
-//        if (message instanceof NextWindowMessage nextWindow){
+//        Serializable message = this.clientListener.onGetData(new GetNextWindowRequest());
+//        if (message instanceof NextWindowResponse nextWindow){
 //            return nextWindow.getNextWindow();
 //        }
 //        return null;
@@ -81,11 +73,11 @@ public class NextRoomController extends WindowController<NextRoomWindow> impleme
 //     * Switches to the battle end window with battle result.
 //     */
 //    private void switchToBattleEndWindow(){
-//        Serializable message = this.clientListener.onGetData(new GetBattleEndInfoMessage());
+//        Serializable message = this.clientListener.onGetData(new GetBattleEndInfoRequest());
 //        boolean victory;
 //        int totalXp;
 //        String opponent;
-//        if (message instanceof BattleEndInfoMessage battleInfo){
+//        if (message instanceof BattleEndInfoResponse battleInfo){
 //            victory = battleInfo.isVictory();
 //            totalXp = battleInfo.getTotalXp();
 //            opponent = battleInfo.getOpponent();
@@ -101,7 +93,7 @@ public class NextRoomController extends WindowController<NextRoomWindow> impleme
      */
     @Override
     public void onReturn() {
-        if (this.clientListener.onPostData(new AbandonTowerMessage())){
+        if (this.clientListener.onPostData(new AbandonTowerRequest())){
             this.clientListener.onShowWindow(WindowName.MODE);
         }
     }

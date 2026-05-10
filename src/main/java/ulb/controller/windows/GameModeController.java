@@ -1,9 +1,9 @@
 package ulb.controller.windows;
 import javafx.stage.Stage;
 import ulb.communication.GameMode;
-import ulb.message.clientToServer.gameInfo.GetTowerSavedInfoMessage;
-import ulb.message.clientToServer.setup.SetUpTowerModeMessage;
-import ulb.message.serverToClient.gameInfo.TowerSavedInfoMessage;
+import ulb.message.request.gameInfo.GetTowerSavedInfoRequest;
+import ulb.message.request.setup.SetUpTowerModeRequest;
+import ulb.message.response.gameInfo.TowerSavedInfoResponse;
 import ulb.view.WindowPath;
 import ulb.view.windows.GameModeWindow;
 
@@ -40,8 +40,8 @@ public class GameModeController extends WindowController<GameModeWindow> impleme
      * @return true if there is a tower Saving database else false
      */
     private boolean isTowerSaved() {
-        Serializable message = this.clientListener.onGetData(new GetTowerSavedInfoMessage());
-        if (message instanceof TowerSavedInfoMessage towerInfoMessage){
+        Serializable message = this.clientListener.onGetData(new GetTowerSavedInfoRequest());
+        if (message instanceof TowerSavedInfoResponse towerInfoMessage){
             return towerInfoMessage.isTowerSaved();
         }
         return false;
@@ -72,7 +72,7 @@ public class GameModeController extends WindowController<GameModeWindow> impleme
         if (newTower) {
             this.setModeAndShowTeamWindow(GameMode.TOWER);
         }else{
-            if (this.clientListener.onPostData(new SetUpTowerModeMessage(false))){
+            if (this.clientListener.onPostData(new SetUpTowerModeRequest(false))){
                 this.clientListener.onShowWindow(WindowName.FLOOR);
             }
         }

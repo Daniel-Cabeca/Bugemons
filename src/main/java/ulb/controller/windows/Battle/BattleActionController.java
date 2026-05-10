@@ -1,6 +1,5 @@
 package ulb.controller.windows.Battle;
 
-import java.beans.EventHandler;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -14,18 +13,17 @@ import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.communication.GameMode;
-import ulb.controller.windows.WindowController;
 import ulb.controller.windows.WindowController.ClientListener;
-import ulb.message.clientToServer.gameActions.ChooseRandomActionMessage;
-import ulb.message.clientToServer.gameActions.RunMessage;
-import ulb.message.clientToServer.gameActions.SwapBugemonMessage;
-import ulb.message.clientToServer.gameActions.UseAbilityMessage;
-import ulb.message.clientToServer.gameActions.UseItemMessage;
-import ulb.message.clientToServer.gameInfo.CheckGameFinishedMessage;
-import ulb.message.clientToServer.gameInfo.GetLogsMessage;
-import ulb.message.serverToClient.StatusMessage;
-import ulb.message.serverToClient.gameInfo.GameFinishedMessage;
-import ulb.message.serverToClient.gameInfo.LogsMessage;
+import ulb.message.request.gameActions.ChooseRandomActionRequest;
+import ulb.message.request.gameActions.RunRequest;
+import ulb.message.request.gameActions.SwapBugemonRequest;
+import ulb.message.request.gameActions.UseAbilityRequest;
+import ulb.message.request.gameActions.UseItemRequest;
+import ulb.message.request.gameInfo.CheckGameFinishedRequest;
+import ulb.message.request.gameInfo.GetLogsRequest;
+import ulb.message.response.StatusResponse;
+import ulb.message.response.gameInfo.GameFinishedResponse;
+import ulb.message.response.gameInfo.LogsResponse;
 import ulb.model.battle.BattleState;
 import ulb.view.windows.BattleWindow;
 import ulb.view.windows.BattleWindow.BattleSnapshot;
@@ -108,20 +106,20 @@ public class BattleActionController {
     }
 
 	public boolean isGameFinished(){
-		Serializable message = this.clientListener.onGetData(new CheckGameFinishedMessage());
-		if (message instanceof GameFinishedMessage gameFinished){
+		Serializable message = this.clientListener.onGetData(new CheckGameFinishedRequest());
+		if (message instanceof GameFinishedResponse gameFinished){
 			return gameFinished.isGameFinished();
-		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
+		} else if (message instanceof StatusResponse errorMessage && errorMessage.isFailure()){
 			LOGGER.log(Level.WARNING, "Failed to check if game is finished: " + errorMessage.getMessage());
 		}
 		return true;
 	}
 
 	public List<Integer> getHpAfterFirstAction(){
-		Serializable message = this.clientListener.onGetData(new GetLogsMessage(false));
-		if (message instanceof LogsMessage logs){
+		Serializable message = this.clientListener.onGetData(new GetLogsRequest(false));
+		if (message instanceof LogsResponse logs){
 			return logs.getHpsAfterFirstAction();
-		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
+		} else if (message instanceof StatusResponse errorMessage && errorMessage.isFailure()){
 			LOGGER.log(Level.WARNING, "Failed to get HP after first action: " + errorMessage.getMessage());
 		}
 		return null;
@@ -214,7 +212,7 @@ public class BattleActionController {
 	public void useItem(String itemId, PlayerDTO player, ActionEvent event){
 		ItemDTO item = findInventoryItemById(itemId, player);
 
-		if (!this.clientListener.onPostData(new UseItemMessage(item))){
+		if (!this.clientListener.onPostData(new UseItemRequest(item))){
 			return;
 		}
 
@@ -232,7 +230,7 @@ public class BattleActionController {
 	public void useAbility(String abilityId, PlayerDTO player, ActionEvent event){
 		AbilityDTO ability = findActiveAbilityById(abilityId);
 
-		if (!this.clientListener.onPostData(new UseAbilityMessage(ability))){
+		if (!this.clientListener.onPostData(new UseAbilityRequest(ability))){
 			return;
 		}
 
@@ -252,7 +250,7 @@ public class BattleActionController {
             view.setCurrentSnapshot(snapshotBeforeAction);
         }
 
-		if (!this.clientListener.onPostData(new SwapBugemonMessage(bugemon))){
+		if (!this.clientListener.onPostData(new SwapBugemonRequest(bugemon))){
 			return;
 		}
 
@@ -274,7 +272,7 @@ public class BattleActionController {
 	public void autoAction(PlayerDTO player, ActionEvent event){
         view.setAutoButtonVisible(false);
 
-		if (!this.clientListener.onPostData(new ChooseRandomActionMessage())){
+		if (!this.clientListener.onPostData(new ChooseRandomActionRequest())){
 			return;
 		}
 
@@ -287,7 +285,7 @@ public class BattleActionController {
 	}
 
 	public void run(){
-		if (this.clientListener.onPostData(new RunMessage())){
+		if (this.clientListener.onPostData(new RunRequest())){
 			this.clientListener.onNextRoom();
 		}
 	}

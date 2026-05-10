@@ -1,14 +1,12 @@
 package ulb.controller.windows;
 
-import java.util.List;
-
 import javafx.stage.Stage;
 import ulb.DTO.item.ItemDTO;
-import ulb.message.clientToServer.gameActions.ChooseItemRewardMessage;
-import ulb.message.clientToServer.gameData.GetRandomItemMessage;
-import ulb.message.serverToClient.gameData.RandomItemMessage;
-import ulb.message.clientToServer.gameInfo.GetTowerInfoMessage;
-import ulb.message.serverToClient.gameInfo.TowerInfoMessage;
+import ulb.message.request.gameActions.ChooseItemRewardRequest;
+import ulb.message.request.gameData.GetRandomItemRequest;
+import ulb.message.response.gameData.RandomItemResponse;
+import ulb.message.request.gameInfo.GetTowerInfoRequest;
+import ulb.message.response.gameInfo.TowerInfoResponse;
 import ulb.view.WindowPath;
 import ulb.view.windows.FloorRewardWindow;
 
@@ -33,10 +31,10 @@ public class FloorRewardController extends WindowController<FloorRewardWindow> i
      */
     @Override
     public void show() {
-        if (clientListener.onGetData(new GetRandomItemMessage()) instanceof RandomItemMessage r) {
+        if (clientListener.onGetData(new GetRandomItemRequest()) instanceof RandomItemResponse r) {
             rewardItem = r.getItem();
         }
-        if (clientListener.onGetData(new GetTowerInfoMessage()) instanceof TowerInfoMessage info) {
+        if (clientListener.onGetData(new GetTowerInfoRequest()) instanceof TowerInfoResponse info) {
             view.initializeLabels(info.getFloorNumber(), info.getRoomNumber(), rewardItem != null ? rewardItem.name() : "");
         }
         super.show();
@@ -45,7 +43,7 @@ public class FloorRewardController extends WindowController<FloorRewardWindow> i
     /** {@inheritDoc} */
     @Override
     public void onObjectReward() {
-        if (clientListener.onPostData(new ChooseItemRewardMessage(rewardItem))) {
+        if (clientListener.onPostData(new ChooseItemRewardRequest(rewardItem))) {
             clientListener.onShowWindow(WindowName.FLOOR);
         }
     }

@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 
 import org.junit.jupiter.api.Test;
 
-import ulb.message.serverToClient.StatusMessage;
+import ulb.message.response.StatusResponse;
 
 public class SocketMessengerTest {
     private final Logger LOGGER = Logger.getLogger(SocketMessengerTest.class.getName());
@@ -89,10 +89,10 @@ public class SocketMessengerTest {
     public void testSendingMessage(){
         this.createActors();
 
-        StatusMessage sendingMessage = new StatusMessage(false,"Test de la communication");
+        StatusResponse sendingMessage = new StatusResponse(false,"Test de la communication");
 
         this.client.sendMessage(sendingMessage);
-        StatusMessage receivingMessage = (StatusMessage) this.server.receiveMessage();
+        StatusResponse receivingMessage = (StatusResponse) this.server.receiveMessage();
 
         assertNotNull(receivingMessage);
         assertEquals(sendingMessage.getMessage(), receivingMessage.getMessage());
@@ -101,18 +101,18 @@ public class SocketMessengerTest {
     @Test
     public void testTwoWaysSendingMessage(){
         this.createActors();
-        StatusMessage sendingMessage1 = new StatusMessage(false,"Test de la communication 1");
+        StatusResponse sendingMessage1 = new StatusResponse(false,"Test de la communication 1");
 
         this.client.sendMessage(sendingMessage1);
-        StatusMessage receivingMessage1 = (StatusMessage) this.server.receiveMessage();
+        StatusResponse receivingMessage1 = (StatusResponse) this.server.receiveMessage();
         
         assertNotNull(receivingMessage1);
         assertEquals(sendingMessage1.getMessage(), receivingMessage1.getMessage());
 
-        StatusMessage sendingMessage2 = new StatusMessage(false,"Test de la communication 2");
+        StatusResponse sendingMessage2 = new StatusResponse(false,"Test de la communication 2");
 
         this.server.sendMessage(sendingMessage2);
-        StatusMessage receivingMessage2 = (StatusMessage) this.client.receiveMessage();
+        StatusResponse receivingMessage2 = (StatusResponse) this.client.receiveMessage();
         
         assertNotNull(receivingMessage2);
         assertEquals(sendingMessage2.getMessage(), receivingMessage2.getMessage());

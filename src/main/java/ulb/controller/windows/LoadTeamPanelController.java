@@ -7,8 +7,8 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import ulb.DTO.team.TeamDTO;
-import ulb.message.clientToServer.teamSave.*;
-import ulb.message.serverToClient.teamSave.*;
+import ulb.message.request.teamSave.*;
+import ulb.message.response.teamSave.*;
 import ulb.view.WindowPath;
 import ulb.view.windows.LoadTeamPanel;
 
@@ -40,9 +40,9 @@ public class LoadTeamPanelController extends WindowController<LoadTeamPanel> imp
     }
 
 	private List<TeamDTO> getSavedTeams() {
-		Serializable message = this.clientListener.onGetData(new GetSavedTeamsMessage());
+		Serializable message = this.clientListener.onGetData(new GetSavedTeamsRequest());
 
-		if (message instanceof SavedTeamsMessage teamsMessage){
+		if (message instanceof SavedTeamsResponse teamsMessage){
 			return teamsMessage.getTeams();
 		}
 		return null;

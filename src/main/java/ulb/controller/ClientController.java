@@ -9,7 +9,6 @@ import javafx.stage.Stage;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,21 +18,17 @@ import ulb.controller.windows.Battle.BattleWindowController;
 import ulb.exceptions.CommunicationException;
 import ulb.exceptions.ViewLoadException;
 import ulb.communication.GameMode;
-import ulb.message.clientToServer.*;
-import ulb.message.serverToClient.*;
-import ulb.message.clientToServer.gameActions.*;
-import ulb.message.clientToServer.gameData.*;
-import ulb.message.clientToServer.gameInfo.*;
-import ulb.message.clientToServer.playerInfo.*;
-import ulb.message.clientToServer.setup.*;
-import ulb.message.serverToClient.gameData.*;
-import ulb.message.serverToClient.gameInfo.*;
-import ulb.message.serverToClient.playerInfo.*;
-import ulb.model.battle.BattleState;
+import ulb.message.request.*;
+import ulb.message.response.*;
+import ulb.message.request.gameActions.*;
+import ulb.message.request.gameInfo.*;
+import ulb.message.request.playerInfo.*;
+import ulb.message.request.setup.*;
+import ulb.message.response.gameInfo.*;
+import ulb.message.response.playerInfo.*;
 import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.player.PlayerDTO;
-import ulb.DTO.item.ItemDTO;
 import ulb.DTO.reward.RewardDTO;
 
 /**
@@ -144,13 +139,13 @@ public class ClientController extends Application implements WindowController.Cl
 	 * @param message The message sent to the server
 	 * @return True if the request was accepted by the server
 	 */
-	private boolean postData(ClientToServerMessage message){
+	private boolean postData(Request message){
 		synchronized (serverRequestLock) {
 			try {
 				client.sendMessage(message);
 				Serializable response = client.receiveMessage();
-				if (response instanceof StatusMessage statusMessage) {
-                    return !statusMessage.isFailure();
+				if (response instanceof StatusResponse statusResponse) {
+                    return !statusResponse.isFailure();
                 }
 			} catch (CommunicationException e) {
 				LOGGER.log(Level.WARNING, "Communication error with server.", e);
@@ -165,13 +160,13 @@ public class ClientController extends Application implements WindowController.Cl
 	 * @param message The message sent to the server
 	 * @return The response received from the server
 	 */
-	private Serializable getData(ClientToServerMessage message){
+	private Serializable getData(Request message){
 		synchronized (serverRequestLock) {
 			try {
 				client.sendMessage(message);
 				return client.receiveMessage();
 			} catch (CommunicationException e) {
-				return new StatusMessage(false, "Connexion perdue avec le serveur.");
+				return new StatusResponse(false, "Connexion perdue avec le serveur.");
 			}
 		}
 	}
@@ -192,7 +187,7 @@ public class ClientController extends Application implements WindowController.Cl
 	 * @return Matching player DTO or null if unavailable
 	 */
 	public PlayerDTO getPlayer(String username) {
-		if (getData(new GetPlayerMessage(username)) instanceof PlayerMessage msg) {
+		if (getData(new GetPlayerRequest(username)) instanceof PlayerResponse msg) {
 			return msg.getPlayer();
 		}
 		return null;
@@ -231,12 +226,12 @@ public class ClientController extends Application implements WindowController.Cl
 	 * Switches to the battle end window with battle result.
 	 */
 	private void switchToBattleEndWindow(){
-		Serializable message = getData(new GetBattleEndInfoMessage());
+		Serializable message = getData(new GetBattleEndInfoRequest());
 		boolean victory;
 		int totalXp;
 		String opponent;
 		boolean multiplayerBattle;
-		if (message instanceof BattleEndInfoMessage battleInfo){
+		if (message instanceof BattleEndInfoResponse battleInfo){
 			victory = battleInfo.isVictory();
 			totalXp = battleInfo.getTotalXp();
 			multiplayerBattle = battleInfo.isMultiplayerBattle();
@@ -300,11 +295,11 @@ public class ClientController extends Application implements WindowController.Cl
 	 * @return The next window type, or null if unavailable
 	 */
 	public WindowType getWindowType(){
-		Serializable message = getData(new GetNextWindowMessage());
+		Serializable message = getData(new GetNextWindowRequest());
 
-		if (message instanceof NextWindowMessage nextWindow){
+		if (message instanceof NextWindowResponse nextWindow){
 			return nextWindow.getNextWindow();
-		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()) {
+		} else if (message instanceof StatusResponse errorMessage && errorMessage.isFailure()) {
 			LOGGER.warning("Failed to get next window: " + errorMessage.getMessage());
 		}
 
@@ -316,7 +311,7 @@ public class ClientController extends Application implements WindowController.Cl
 	 */
 	@Override
 	public void onRewardChosen(RewardDTO reward, ActionEvent event) {
-		if (postData(new ChooseLevelUpRewardMessage(reward))) {
+		if (postData(new ChooseLevelUpRewardRequest(reward))) {
 			nextRoom();
 		}
 	}
@@ -339,7 +334,7 @@ public class ClientController extends Application implements WindowController.Cl
 	 * Returns the current floor number and room number from the server.
 	 */
 	public List<Integer> getTowerInfo() {
-		if (getData(new GetTowerInfoMessage()) instanceof TowerInfoMessage towerInfo){
+		if (getData(new GetTowerInfoRequest()) instanceof TowerInfoResponse towerInfo){
 			return List.of(towerInfo.getFloorNumber(), towerInfo.getRoomNumber());
 		}
 		return null;
@@ -362,12 +357,12 @@ public class ClientController extends Application implements WindowController.Cl
 
 
 	@Override
-	public Serializable onGetData(ClientToServerMessage message) {
+	public Serializable onGetData(Request message) {
 		return this.getData(message);
 	}
 
 	@Override
-	public boolean onPostData(ClientToServerMessage message) {
+	public boolean onPostData(Request message) {
 		return this.postData(message);
 	}
 
@@ -430,7 +425,7 @@ public class ClientController extends Application implements WindowController.Cl
 	@Override
 	public void setupTeamAndShowConfirmTeam(List<BugemonDTO> teamDTO) {
 		this.player.setTeam(teamDTO);
-		if (!this.postData(new SetUpTeamMessage(teamDTO))){
+		if (!this.postData(new SetUpTeamRequest(teamDTO))){
 			return;
 		}
 		this.confirmTeamController.setGameMode(this.gameMode);

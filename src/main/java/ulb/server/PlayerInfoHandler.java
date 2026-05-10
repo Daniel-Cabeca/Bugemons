@@ -11,7 +11,7 @@ import ulb.DTO.player.PlayerDTO;
 import ulb.mapper.bugemon.BugemonMapper;
 import ulb.mapper.item.ItemMapper;
 import ulb.mapper.player.PlayerMapper;
-import ulb.message.serverToClient.playerInfo.*;
+import ulb.message.response.playerInfo.*;
 import ulb.model.Player;
 import ulb.model.battle.Battle;
 import ulb.model.battle.Battle.ParticipantLabel;
@@ -35,7 +35,7 @@ public class PlayerInfoHandler {
 
 			Player player = new Player(username, id);
 			PlayerDTO playerDTO = PlayerMapper.toDTO(player);
-			clientHandler.sendMessage(new PlayerMessage(playerDTO));
+			clientHandler.sendMessage(new PlayerResponse(playerDTO));
 		}
 		catch (NoSuchElementException e) {
 			clientHandler.sendErrorMessage("Wrong Username");
@@ -52,7 +52,7 @@ public class PlayerInfoHandler {
 			for (Map.Entry<Item, Integer> e : inventory.getItems().entrySet()) {
 				inventoryDTO.put(ItemMapper.toDTO(e.getKey()), e.getValue());
 			}
-			clientHandler.sendMessage(new PlayerInventoryMessage(inventoryDTO));
+			clientHandler.sendMessage(new PlayerInventoryResponse(inventoryDTO));
 		}
 		else{
 			clientHandler.sendErrorMessage("Wrong Username");
@@ -73,6 +73,6 @@ public class PlayerInfoHandler {
 				.map(BugemonMapper::toDTO)
 				.toList();
 
-		clientHandler.sendMessage(new PlayerTeamMessage(teamDTO));
+		clientHandler.sendMessage(new PlayerTeamResponse(teamDTO));
 	}
 }

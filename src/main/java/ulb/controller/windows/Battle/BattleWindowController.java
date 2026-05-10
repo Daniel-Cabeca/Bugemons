@@ -1,14 +1,12 @@
 package ulb.controller.windows.Battle;
 
-import java.util.List;
-
 import javafx.event.ActionEvent;
 import javafx.stage.Stage;
 import ulb.DTO.player.PlayerDTO;
 import ulb.communication.GameMode;
 import ulb.controller.windows.WindowController;
-import ulb.message.clientToServer.gameInfo.GetTowerInfoMessage;
-import ulb.message.serverToClient.gameInfo.TowerInfoMessage;
+import ulb.message.request.gameInfo.GetTowerInfoRequest;
+import ulb.message.response.gameInfo.TowerInfoResponse;
 import ulb.view.WindowPath;
 import ulb.view.windows.BattleWindow;
 
@@ -49,7 +47,7 @@ public class BattleWindowController extends WindowController<BattleWindow> imple
 	}
 
 	public void setTowerInfo(){
-		if (this.clientListener.onGetData(new GetTowerInfoMessage()) instanceof TowerInfoMessage towerInfo){
+		if (this.clientListener.onGetData(new GetTowerInfoRequest()) instanceof TowerInfoResponse towerInfo){
 			this.towerFloorNumber = towerInfo.getFloorNumber();
 			this.towerRoomNumber = towerInfo.getRoomNumber();
 		}

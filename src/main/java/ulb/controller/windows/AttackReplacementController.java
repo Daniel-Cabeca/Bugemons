@@ -2,7 +2,7 @@ package ulb.controller.windows;
 import javafx.stage.Stage;
 import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.bugemon.BugemonDTO;
-import ulb.message.clientToServer.gameActions.ChooseAbilityRewardMessage;
+import ulb.message.request.gameActions.ChooseAbilityRewardRequest;
 import ulb.view.WindowPath;
 import ulb.view.windows.AttackReplacementWindow;
 
@@ -42,7 +42,7 @@ public class AttackReplacementController extends WindowController<AttackReplacem
      */
     @Override
     public void onReplaceAbility(AbilityDTO oldAbility) {
-        if (this.clientListener.onPostData(new ChooseAbilityRewardMessage(this.currentBugemon, oldAbility, this.currentNewAbility))) {
+        if (this.clientListener.onPostData(new ChooseAbilityRewardRequest(this.currentBugemon, oldAbility, this.currentNewAbility))) {
             this.clientListener.onShowWindow(WindowName.FLOOR);
         }
     }

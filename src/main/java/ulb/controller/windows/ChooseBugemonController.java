@@ -3,10 +3,10 @@ import javafx.stage.Stage;
 import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.player.PlayerDTO;
-import ulb.message.clientToServer.gameActions.ChooseStatRewardMessage;
-import ulb.message.clientToServer.gameData.GetRandomAbilityMessage;
-import ulb.message.serverToClient.StatusMessage;
-import ulb.message.serverToClient.gameData.RandomAbilityMessage;
+import ulb.message.request.gameActions.ChooseStatRewardRequest;
+import ulb.message.request.gameData.GetRandomAbilityRequest;
+import ulb.message.response.StatusResponse;
+import ulb.message.response.gameData.RandomAbilityResponse;
 import ulb.view.WindowPath;
 import ulb.view.windows.ChooseBugemonWindow;
 
@@ -39,20 +39,20 @@ public class ChooseBugemonController extends WindowController<ChooseBugemonWindo
 
     public void onBugemonChosen(BugemonDTO bugemon) {
         if (this.clientListener.onGetPendingFloorRewardChoice() == RewardChoice.STAT ) {
-            if (this.clientListener.onPostData(new ChooseStatRewardMessage(bugemon))){
+            if (this.clientListener.onPostData(new ChooseStatRewardRequest(bugemon))){
                 this.clientListener.onShowWindow(WindowName.FLOOR);
             }
             return;
         }
 
         AbilityDTO newAbility = null;
-        Serializable message = this.clientListener.onGetData(new GetRandomAbilityMessage(bugemon));
+        Serializable message = this.clientListener.onGetData(new GetRandomAbilityRequest(bugemon));
 
-        if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
+        if (message instanceof StatusResponse errorMessage && errorMessage.isFailure()){
             LOGGER.log(Level.WARNING, "Failed to get random ability: " + errorMessage.getMessage());
             return;
 
-        } else if (message instanceof RandomAbilityMessage randomAbility){
+        } else if (message instanceof RandomAbilityResponse randomAbility){
             newAbility = randomAbility.getAbility();
         }
 

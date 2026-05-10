@@ -7,7 +7,7 @@ import java.util.List;
 
 import ulb.DTO.team.TeamDTO;
 import ulb.mapper.team.TeamMapper;
-import ulb.message.serverToClient.teamSave.*;
+import ulb.message.response.teamSave.*;
 import ulb.model.Player;
 import ulb.model.team.Team;
 import ulb.exceptions.LoadException;
@@ -30,7 +30,7 @@ public class TeamSaveHandler {
 		for (Team team : teamService.getAllTeams(player)){
 			DTOTeams.add(TeamMapper.toDTO(team));
 		}
-		clientHandler.sendMessage(new SavedTeamsMessage(DTOTeams));
+		clientHandler.sendMessage(new SavedTeamsResponse(DTOTeams));
 	}
 
 	public void saveTeam(TeamDTO teamDTO) throws DataAccessException {

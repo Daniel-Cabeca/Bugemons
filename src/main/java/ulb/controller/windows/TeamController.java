@@ -8,15 +8,14 @@ import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.DTO.team.TeamDTO;
-import ulb.message.clientToServer.gameActions.QuitMultiBattleMessage;
-import ulb.message.clientToServer.gameActions.StartMultiBattleMessage;
-import ulb.message.clientToServer.gameData.GetAllBugemonSpeciesMessage;
-import ulb.message.clientToServer.setup.ConfirmTeamMultiMessage;
-import ulb.message.clientToServer.setup.SetUpTeamMessage;
-import ulb.message.clientToServer.social.GetMultiBattleStatusMessage;
-import ulb.message.clientToServer.teamSave.SaveTeamMessage;
-import ulb.message.serverToClient.gameData.BugemonSpeciesMessage;
-import ulb.message.serverToClient.social.MultiBattleStatusMessage;
+import ulb.message.request.gameActions.QuitMultiBattleRequest;
+import ulb.message.request.gameActions.StartMultiBattleRequest;
+import ulb.message.request.gameData.GetAllBugemonSpeciesRequest;
+import ulb.message.request.setup.ConfirmTeamMultiRequest;
+import ulb.message.request.social.GetMultiBattleStatusRequest;
+import ulb.message.request.teamSave.SaveTeamRequest;
+import ulb.message.response.gameData.BugemonSpeciesResponse;
+import ulb.message.response.social.MultiBattleStatusResponse;
 import ulb.view.WindowPath;
 import ulb.view.windows.CreateTeamWindow;
 
@@ -89,7 +88,7 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	 */
 	public void confirmTeamMulti(PlayerDTO opponent) {
 		PlayerDTO player = this.clientListener.onGetPlayer();
-		this.clientListener.onPostData(new ConfirmTeamMultiMessage(this.opponent, player.getTeam()));
+		this.clientListener.onPostData(new ConfirmTeamMultiRequest(this.opponent, player.getTeam()));
 
 		this.openWaitWindow(e -> {
 			this.waitForOpponentTeam(opponent);
@@ -136,7 +135,7 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	 * @return The multiplayer battle status DTO
 	 */
 	public MultiBattleStatusDTO getMultiBattleStatus(int userId1, int userId2) {
-		if (this.clientListener.onGetData(new GetMultiBattleStatusMessage(userId1, userId2)) instanceof MultiBattleStatusMessage msg)
+		if (this.clientListener.onGetData(new GetMultiBattleStatusRequest(userId1, userId2)) instanceof MultiBattleStatusResponse msg)
 			return msg.getStatus();
 		LOGGER.warning("Failed to obtain multiplayer battle status.");
 		return new MultiBattleStatusDTO();
@@ -148,7 +147,7 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	 * @param opponent The opponent
 	 */
 	private void startMultiBattle(PlayerDTO opponent) {
-		this.clientListener.onPostData(new StartMultiBattleMessage(opponent));
+		this.clientListener.onPostData(new StartMultiBattleRequest(opponent));
 		this.clientListener.onShowWindow(WindowName.BATTLE);
 	}
 
@@ -157,7 +156,7 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	 */
 	public void onReturn() {
 		if (this.hasOpponent()) {
-			this.clientListener.onGetData(new QuitMultiBattleMessage(this.opponent));
+			this.clientListener.onGetData(new QuitMultiBattleRequest(this.opponent));
 		}
 
 		this.clientListener.onShowWindow(WindowName.GAME_MODE);
@@ -188,7 +187,7 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	 * @param teamDTO The DTO of the team to be saved
 	 */
 	public void saveTeam(TeamDTO teamDTO) {
-		boolean success = this.clientListener.onPostData(new SaveTeamMessage(teamDTO));
+		boolean success = this.clientListener.onPostData(new SaveTeamRequest(teamDTO));
 		if (!success) {
 			this.view.showInvalidSaveAlert("Tu as déjà une équipe avec ce nom!");
 		}
@@ -220,9 +219,9 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	 */
 	@Override
 	public List<BugemonSpeciesDTO> getAllSpecies(){
-		Serializable message = this.clientListener.onGetData(new GetAllBugemonSpeciesMessage());
+		Serializable message = this.clientListener.onGetData(new GetAllBugemonSpeciesRequest());
 
-		if (message instanceof BugemonSpeciesMessage speciesMessage){
+		if (message instanceof BugemonSpeciesResponse speciesMessage){
 			return speciesMessage.getSpecies();
 		}
 		return null;

@@ -11,7 +11,7 @@ import ulb.mapper.ability.AbilityMapper;
 import ulb.mapper.bugemon.BugemonMapper;
 import ulb.mapper.bugemon.BugemonSpeciesMapper;
 import ulb.mapper.item.ItemMapper;
-import ulb.message.serverToClient.gameData.*;
+import ulb.message.response.gameData.*;
 import ulb.model.ability.Ability;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.BugemonSpecies;
@@ -39,7 +39,7 @@ public class GameDataHandler {
 		for (BugemonSpecies species : bugemonService.getAllSpecies()){
 			DTOSpeciesList.add(BugemonSpeciesMapper.toDTO(species));
 		}
-		clientHandler.sendMessage(new BugemonSpeciesMessage(DTOSpeciesList));
+		clientHandler.sendMessage(new BugemonSpeciesResponse(DTOSpeciesList));
 	}
 
 	public void getRandomAbility(BugemonDTO bugemonDTO) throws DataAccessException{
@@ -47,12 +47,12 @@ public class GameDataHandler {
 
 		Ability RandomAbility = abilityService.getRandomAbility(bugemon.getType(), bugemon.getAbilities());
 
-		clientHandler.sendMessage(new RandomAbilityMessage(AbilityMapper.toDTO(RandomAbility)));
+		clientHandler.sendMessage(new RandomAbilityResponse(AbilityMapper.toDTO(RandomAbility)));
 	}
 
 	public void getRandomItem() {
 		Item randomItem = itemService.getRandomItem();
 
-		clientHandler.sendMessage(new RandomItemMessage(ItemMapper.toDTO(randomItem)));
+		clientHandler.sendMessage(new RandomItemResponse(ItemMapper.toDTO(randomItem)));
 	}
 }

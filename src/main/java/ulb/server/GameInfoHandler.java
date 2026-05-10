@@ -15,7 +15,7 @@ import ulb.mapper.ability.AbilityMapper;
 import ulb.mapper.bugemon.BugemonMapper;
 import ulb.mapper.item.ItemMapper;
 import ulb.mapper.reward.RewardMapper;
-import ulb.message.serverToClient.gameInfo.*;
+import ulb.message.response.gameInfo.*;
 import ulb.model.Player;
 import ulb.model.ability.Ability;
 import ulb.model.action.Run;
@@ -43,7 +43,7 @@ public class GameInfoHandler {
     public void checkGameFinished() {
         Battle battle = clientHandler.getBattle();
 
-		clientHandler.sendMessage(new GameFinishedMessage(battle.isGameFinished()));
+		clientHandler.sendMessage(new GameFinishedResponse(battle.isGameFinished()));
 	}
 
 	public void checkUsableItems(List<ItemDTO> items) throws DataAccessException{
@@ -57,7 +57,7 @@ public class GameInfoHandler {
 			usableItems.put(itemDTO.id(), battle.checkItem(item, teamLabel));
 		}
 
-        clientHandler.sendMessage(new UsableItemsMessage(usableItems));
+        clientHandler.sendMessage(new UsableItemsResponse(usableItems));
 	}
 
 	public void getAbilityEffectiveness(BugemonDTO bugemonDTO, List<AbilityDTO> abilities) throws DataAccessException{
@@ -70,7 +70,7 @@ public class GameInfoHandler {
 			effectiveness.put(abilityDTO, effectivenessMessage);
 		}
 
-		clientHandler.sendMessage(new AbilityEffectivenessMessage(effectiveness));
+		clientHandler.sendMessage(new AbilityEffectivenessResponse(effectiveness));
 	}
 
     public void getActiveBugemons() {
@@ -84,7 +84,7 @@ public class GameInfoHandler {
 		Bugemon selfActive = battle.getActiveBugemon(teamLabel);
 		Bugemon opponentActive = battle.getActiveBugemon(battle.getOpponentTeamLabel(teamLabel)); 
 		
-		clientHandler.sendMessage(new ActiveBugemonsMessage(BugemonMapper.toDTO(selfActive), BugemonMapper.toDTO(opponentActive)));
+		clientHandler.sendMessage(new ActiveBugemonsResponse(BugemonMapper.toDTO(selfActive), BugemonMapper.toDTO(opponentActive)));
 	}
 
 	public void getBattleEndInfo() throws DataAccessException{
@@ -111,14 +111,14 @@ public class GameInfoHandler {
 		}
 
 		clientHandler.clearPendingLevelUpState();
-		clientHandler.sendMessage(new BattleEndInfoMessage(isWin, gainedXp, multiplayerBattle));
+		clientHandler.sendMessage(new BattleEndInfoResponse(isWin, gainedXp, multiplayerBattle));
 	}
 
 	public void getBattleState() {
         Battle battle = clientHandler.getBattle();
         ParticipantLabel teamLabel = clientHandler.getTeamLabel();
 
-		clientHandler.sendMessage(new BattleStateMessage(battle.getState(teamLabel)));
+		clientHandler.sendMessage(new BattleStateResponse(battle.getState(teamLabel)));
 	}
 
 	public void getLevelUpInfo() {
@@ -152,7 +152,7 @@ public class GameInfoHandler {
 			rewardDTOs.add(RewardMapper.toDTO(reward));
 		}
 
-		clientHandler.sendMessage(new LevelUpInfoMessage(BugemonMapper.toDTO(currentBugemon), rewardDTOs));
+		clientHandler.sendMessage(new LevelUpInfoResponse(BugemonMapper.toDTO(currentBugemon), rewardDTOs));
 	}
 
     public void getLogs(boolean clearLogs) {
@@ -168,7 +168,7 @@ public class GameInfoHandler {
 			battle.clearLogMsg();
 		}
 
-		clientHandler.sendMessage(new LogsMessage(List.of(selfHpAfterFirstAction, opponentHpAfterFirstAction), logs));
+		clientHandler.sendMessage(new LogsResponse(List.of(selfHpAfterFirstAction, opponentHpAfterFirstAction), logs));
 	}
 
 	public void getNextWindow() throws DataAccessException{
@@ -182,7 +182,7 @@ public class GameInfoHandler {
 
 		if (player != null && player.getTeam().getLevelUpBugemonNumber() > 0){
 			nextWindow = WindowType.LEVEL_UP;
-			clientHandler.sendMessage(new NextWindowMessage(nextWindow));
+			clientHandler.sendMessage(new NextWindowResponse(nextWindow));
 			return;
 		}
 
@@ -211,7 +211,7 @@ public class GameInfoHandler {
 					clientHandler.finishTower();
 				}
 
-				clientHandler.sendMessage(new NextWindowMessage(nextWindow));
+				clientHandler.sendMessage(new NextWindowResponse(nextWindow));
 				return;
 			}
 
@@ -235,12 +235,12 @@ public class GameInfoHandler {
 				}
 			}
 
-			clientHandler.sendMessage(new NextWindowMessage(nextWindow));
+			clientHandler.sendMessage(new NextWindowResponse(nextWindow));
 			return;
 		}
 
 		if (battle == null){
-			clientHandler.sendMessage(new NextWindowMessage(nextWindow));
+			clientHandler.sendMessage(new NextWindowResponse(nextWindow));
 			return;
 		}
 
@@ -248,12 +248,12 @@ public class GameInfoHandler {
 
 		if (battleParticipantSelf.getAction() instanceof Run) {
 			nextWindow = WindowType.MAIN_MENU;
-			clientHandler.sendMessage(new NextWindowMessage(nextWindow));
+			clientHandler.sendMessage(new NextWindowResponse(nextWindow));
 			return;
 		}
 
 		nextWindow = battle.isGameFinished() ? WindowType.MAIN_MENU : WindowType.GAME;
-		clientHandler.sendMessage(new NextWindowMessage(nextWindow));
+		clientHandler.sendMessage(new NextWindowResponse(nextWindow));
 	}
 
 	public void getTowerInfo() {
@@ -268,11 +268,11 @@ public class GameInfoHandler {
 		int towerRoomNumber = towerManager.getCurrentRoomId();
 		List<Integer> clearedRooms = towerManager.getCurrentFloorClearedRooms();
 
-		clientHandler.sendMessage(new TowerInfoMessage(towerFloorNumber, towerRoomNumber, clearedRooms));
+		clientHandler.sendMessage(new TowerInfoResponse(towerFloorNumber, towerRoomNumber, clearedRooms));
 	}
 
 	public void getTowerSavedInfo(Player player) throws DataAccessException{
 		boolean isTowerSaved = this.towerSaveService.isTowerSaved(player);
-		clientHandler.sendMessage(new TowerSavedInfoMessage(isTowerSaved));
+		clientHandler.sendMessage(new TowerSavedInfoResponse(isTowerSaved));
 	}
 }

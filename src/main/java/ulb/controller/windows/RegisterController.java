@@ -1,7 +1,7 @@
 package ulb.controller.windows;
 import javafx.stage.Stage;
 import ulb.DTO.player.PlayerRegisterDTO;
-import ulb.message.clientToServer.setup.RegisterMessage;
+import ulb.message.request.setup.RegisterRequest;
 import ulb.view.WindowPath;
 import ulb.view.windows.RegisterWindow;
 
@@ -47,7 +47,7 @@ public class RegisterController extends WindowController<RegisterWindow> impleme
      * @return True if accepted by server
      */
     public boolean logIn(PlayerRegisterDTO player){
-        return this.clientListener.onPostData(new RegisterMessage(player, true));
+        return this.clientListener.onPostData(new RegisterRequest(player, true));
     }
 
 
@@ -77,6 +77,6 @@ public class RegisterController extends WindowController<RegisterWindow> impleme
      * @return True if account creation succeeded
      */
     public boolean signUp(PlayerRegisterDTO player){
-        return this.clientListener.onPostData(new RegisterMessage(player, false));
+        return this.clientListener.onPostData(new RegisterRequest(player, false));
     }
 }

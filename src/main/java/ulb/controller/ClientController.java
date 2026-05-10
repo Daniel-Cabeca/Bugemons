@@ -38,8 +38,7 @@ import ulb.DTO.reward.RewardDTO;
 /**
  * Client-side application controller coordinating server messaging.
  */
-public class ClientController extends Application implements BattleWindowController.Listener,
-		AttackReplacementController.Listener, WindowController.ClientListener {
+public class ClientController extends Application implements BattleWindowController.Listener, WindowController.ClientListener {
 
 	private static final Logger LOGGER = Logger.getLogger(ClientController.class.getName());
 
@@ -124,6 +123,7 @@ public class ClientController extends Application implements BattleWindowControl
 		this.levelUpController = new LevelUpController(this.stage, this);
 		this.floorRewardController = new FloorRewardController(this.stage, this);
 		this.battleEndController = new BattleEndController(this.stage, this);
+		this.chooseBugemonController = new ChooseBugemonController(this.stage, this);
 		//TODO: implement battleWindow differently
 
 		this.registerController.show();
@@ -540,7 +540,7 @@ public class ClientController extends Application implements BattleWindowControl
 	public void onChooseBugemonReward(RewardChoice rewardChoice) {
 		pendingFloorRewardChoice = rewardChoice;
 		if (chooseBugemonController == null) {
-			chooseBugemonController = new ChooseBugemonController(this.stage, this, this.player);
+			chooseBugemonController = new ChooseBugemonController(this.stage, this);
 		}
 		try {
 			chooseBugemonController.show();
@@ -576,12 +576,7 @@ public class ClientController extends Application implements BattleWindowControl
 		if (attackReplacementController == null) {
 			attackReplacementController = new AttackReplacementController(stage, this);
 		}
-
-		try {
-			attackReplacementController.show(bugemon, newAbility);
-		} catch (ViewLoadException e) {
-			logViewLoadFailure("Impossible d'afficher l'écran de remplacement d'attaque.", e);
-		}
+		attackReplacementController.show(bugemon, newAbility);
 	}
 
 	public void onReturnFloorRewardWindow() {
@@ -596,33 +591,6 @@ public class ClientController extends Application implements BattleWindowControl
 			return List.of(towerInfo.getFloorNumber(), towerInfo.getRoomNumber());
 		}
 		return null;
-	}
-
-	// Attack Replacement Controller Listener
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onAttackReplaced(BugemonDTO bugemon, AbilityDTO newAbility, AbilityDTO oldAbility) {
-		if (postData(new ChooseAbilityRewardMessage(bugemon, oldAbility, newAbility))){
-			switchToFloorWindow();
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onReturnToChooseBugemon() {
-		if (chooseBugemonController == null) {
-			return;
-		}
-		try {
-			chooseBugemonController.show();
-		} catch (ViewLoadException e) {
-			logViewLoadFailure("Impossible de retourner à l'écran de choix du Bugémon.", e);
-		}
 	}
 
 	// FloorController
@@ -674,6 +642,11 @@ public class ClientController extends Application implements BattleWindowControl
 			case NEXT_ROOM -> this.nextRoomController.show();
 			case LEVEL_UP -> this.levelUpController.show();
 			case FLOOR_REWARD -> this.floorRewardController.show();
+			case CHOOSE_BUGEMEON -> {
+				try {
+					this.chooseBugemonController.show();
+				} catch (ViewLoadException e) {}
+			}
 		}
 	}
 

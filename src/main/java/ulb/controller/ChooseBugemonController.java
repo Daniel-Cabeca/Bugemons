@@ -16,7 +16,6 @@ import ulb.view.windows.ChooseBugemonWindow;
 public class ChooseBugemonController implements ChooseBugemonWindow.ViewListener {
     private final ClientController clientController;
     private final Stage stage;
-    private final PlayerDTO player;
     private ChooseBugemonWindow view;
 
     /**
@@ -24,12 +23,10 @@ public class ChooseBugemonController implements ChooseBugemonWindow.ViewListener
      *
      * @param stage The application stage
      * @param clientController The application controller
-     * @param player The current player data
      */
-    public ChooseBugemonController(Stage stage, ClientController clientController, PlayerDTO player) {
+    public ChooseBugemonController(Stage stage, ClientController clientController) {
         this.stage = stage;
         this.clientController = clientController;
-        this.player = player;
     }
 
     /**
@@ -39,7 +36,7 @@ public class ChooseBugemonController implements ChooseBugemonWindow.ViewListener
         FXMLLoader loader = FxmlLoader.load(this, WindowPath.CHOOSE_BUGEMON);
         view = loader.getController();
         view.setViewListener(this);
-        view.populatePlayerBugemons(player.getTeam());
+        view.populatePlayerBugemons(this.clientController.player.getTeam());
         Parent root = loader.getRoot();
         if (stage.getScene() == null) {
             stage.setScene(new Scene(root));

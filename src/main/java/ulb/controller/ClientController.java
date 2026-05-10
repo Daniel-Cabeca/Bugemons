@@ -420,9 +420,9 @@ public class ClientController extends Application implements
 		}
 		this.confirmTeamController.setGameMode(this.gameMode);
 		this.confirmTeamController.setPlayerTeam(team);
-		try {
-			this.confirmTeamController.show();
-		}catch (ViewLoadException e) {}
+	
+		this.confirmTeamController.show();
+		
 	}
 
 
@@ -453,23 +453,7 @@ public class ClientController extends Application implements
 
 	// Confirm Team Controller
 
-	public void onConfirm() {
-		switch (this.gameMode) {
-			case AUTO, CONTROLLED :
-				if (this.postData(new SetUpNormalModeMessage())){
-					switchToBattleWindow();
-				}
-				break;
-			case TOWER:
-				if (this.postData(new SetUpTowerModeMessage(true))){
-					switchToFloorWindow();
-				}
-				break;
-			default:
-				switchToModeWindow();
-				break;
-		}
-	}
+	
 
 	// BattleEndController
 
@@ -1145,11 +1129,7 @@ public class ClientController extends Application implements
 					this.waitWindowController.show();
 				} catch (ViewLoadException e){}
 			}
-			case CONFIRM_TEAM -> {
-				try {
-					this.confirmTeamController.show();
-				} catch (ViewLoadException e) {}
-			}
+			case CONFIRM_TEAM -> this.confirmTeamController.show();
 			case BATTLE -> {
 				this.switchToBattleWindow(); //TODO: implement battleWindowDifferently
 			}
@@ -1183,4 +1163,7 @@ public class ClientController extends Application implements
 
 	@Override
 	public void onSetPlayer(PlayerDTO player) { this.player = player; }
+
+	@Override
+	public GameMode onGetGameMode() { return this.gameMode; }
 }

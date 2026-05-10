@@ -89,6 +89,7 @@ public abstract class WindowController<T> {
         void onSetNewTimeLine(EventHandler waitCycle);
         void onStopWaitWindow();
         void onConfirmTeamSetter(List<BugemonDTO> team);
+		GameMode onGetGameMode();
     }
 
     /**

@@ -688,10 +688,11 @@ public class ClientController extends Application implements
 		nextRoom();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
+	public void onSetOpponentMulti(PlayerDTO opponent) {
+		this.teamController.setOpponent(opponent);
+	}
+
 	public void onReturnToGameModeWindow() {
 		switchToGameModeWindow();
 	}
@@ -760,7 +761,7 @@ public class ClientController extends Application implements
 	public void onSetPlayer(PlayerDTO player) { this.player = player; }
 
 	@Override
-	public void onSetOpponentMulti(PlayerDTO opponent) { this.teamController.setOpponent(opponent);}
+	public GameMode onGetGameMode() { return this.gameMode; }
 
 	/**
 	 * Sends the player's team to the server and switches to the battle mode window.

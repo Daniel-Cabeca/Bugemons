@@ -118,13 +118,6 @@ public class BattleWindowSetupHelper {
                     setGraphic(null);
                     setTooltip(null);
                 } else {
-                    try {
-                        Image image = new Image(getClass().getResourceAsStream(entry.itemSpritePath()));
-                        imageView.setImage(image);
-                    } catch (Exception e) {
-                        LOGGER.log(Level.WARNING, "Failed to load item image: " + entry.itemSpritePath(), e);
-                        imageView.setImage(null);
-                    }
                     label.setText(entry.itemName() + " x" + entry.quantity());
                     button.setDisable(!entry.usable());
                     Tooltip tooltip = new Tooltip(entry.itemDescription());

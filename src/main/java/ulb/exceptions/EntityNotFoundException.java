@@ -14,8 +14,4 @@ public class EntityNotFoundException extends NoSuchElementException {
 	public EntityNotFoundException(String entityName, Object id) {
 		super(entityName + " not found: " + id);
 	}
-
-	public EntityNotFoundException(String message) {
-		super(message);
-	}
 }

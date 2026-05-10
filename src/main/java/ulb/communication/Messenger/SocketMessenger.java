@@ -14,8 +14,8 @@ public class SocketMessenger implements Messenger {
     private final Logger LOGGER = Logger.getLogger(SocketMessenger.class.getName());
 
     private final Socket socket;
-    private ObjectInputStream reader;
-    private ObjectOutputStream writer;
+    private final ObjectInputStream reader;
+    private final ObjectOutputStream writer;
 
     public SocketMessenger(Socket socket) throws CommunicationException {
         if (socket == null) {

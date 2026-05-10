@@ -5,8 +5,8 @@ import java.util.List;
 import javafx.stage.Stage;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.communication.GameMode;
-import ulb.message.clientToServer.SetUpNormalModeMessage;
-import ulb.message.clientToServer.SetUpTowerModeMessage;
+import ulb.message.clientToServer.setup.SetUpNormalModeMessage;
+import ulb.message.clientToServer.setup.SetUpTowerModeMessage;
 import ulb.view.WindowPath;
 import ulb.view.windows.ConfirmTeamWindow;
 

@@ -8,7 +8,7 @@ import javafx.stage.Stage;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.communication.GameMode;
-import ulb.message.ClientToServerMessage;
+import ulb.message.clientToServer.ClientToServerMessage;
 import ulb.view.FxmlLoader;
 import ulb.exceptions.ViewLoadException;
 

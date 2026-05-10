@@ -1,9 +1,9 @@
 package ulb.controller.windows;
 import javafx.stage.Stage;
 import ulb.communication.GameMode;
-import ulb.message.clientToServer.GetTowerSavedInfoMessage;
-import ulb.message.clientToServer.SetUpTowerModeMessage;
-import ulb.message.serverToClient.TowerSavedInfoMessage;
+import ulb.message.clientToServer.gameInfo.GetTowerSavedInfoMessage;
+import ulb.message.clientToServer.setup.SetUpTowerModeMessage;
+import ulb.message.serverToClient.gameInfo.TowerSavedInfoMessage;
 import ulb.view.WindowPath;
 import ulb.view.windows.GameModeWindow;
 

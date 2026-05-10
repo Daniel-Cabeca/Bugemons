@@ -9,8 +9,14 @@ import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.DTO.team.TeamDTO;
 import ulb.message.clientToServer.*;
-import ulb.message.serverToClient.BugemonSpeciesMessage;
-import ulb.message.serverToClient.MultiBattleStatusMessage;
+import ulb.message.clientToServer.gameActions.StartMultiBattleMessage;
+import ulb.message.clientToServer.gameData.GetAllBugemonSpeciesMessage;
+import ulb.message.clientToServer.setup.ConfirmTeamMultiMessage;
+import ulb.message.clientToServer.setup.SetUpTeamMessage;
+import ulb.message.clientToServer.social.GetMultiBattleStatusMessage;
+import ulb.message.clientToServer.teamSave.SaveTeamMessage;
+import ulb.message.serverToClient.gameData.BugemonSpeciesMessage;
+import ulb.message.serverToClient.social.MultiBattleStatusMessage;
 import ulb.view.WindowPath;
 import ulb.view.windows.CreateTeamWindow;
 

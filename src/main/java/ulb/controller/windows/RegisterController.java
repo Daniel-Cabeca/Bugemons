@@ -1,7 +1,7 @@
 package ulb.controller.windows;
 import javafx.stage.Stage;
 import ulb.DTO.player.PlayerRegisterDTO;
-import ulb.message.clientToServer.RegisterMessage;
+import ulb.message.clientToServer.setup.RegisterMessage;
 import ulb.view.WindowPath;
 import ulb.view.windows.RegisterWindow;
 

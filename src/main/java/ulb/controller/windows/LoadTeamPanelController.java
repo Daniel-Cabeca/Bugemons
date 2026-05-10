@@ -3,15 +3,12 @@ package ulb.controller.windows;
 import java.io.Serializable;
 import java.util.List;
 
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import ulb.DTO.team.TeamDTO;
-import ulb.exceptions.ViewLoadException;
-import ulb.message.clientToServer.GetSavedTeamsMessage;
-import ulb.message.serverToClient.SavedTeamsMessage;
-import ulb.view.FxmlLoader;
+import ulb.message.clientToServer.teamSave.*;
+import ulb.message.serverToClient.teamSave.*;
 import ulb.view.WindowPath;
 import ulb.view.windows.LoadTeamPanel;
 

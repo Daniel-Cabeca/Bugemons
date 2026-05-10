@@ -8,14 +8,11 @@ import javafx.stage.Stage;
 
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import ulb.DTO.battle.MultiBattleStatusDTO;
-import ulb.DTO.team.TeamDTO;
 import ulb.communication.SocketClient;
 import ulb.controller.windows.*;
 import ulb.exceptions.CommunicationException;
@@ -28,30 +25,20 @@ import ulb.message.clientToServer.gameData.*;
 import ulb.message.clientToServer.gameInfo.*;
 import ulb.message.clientToServer.playerInfo.*;
 import ulb.message.clientToServer.setup.*;
-import ulb.message.clientToServer.social.*;
-import ulb.message.clientToServer.teamSave.*;
 import ulb.message.serverToClient.gameData.*;
 import ulb.message.serverToClient.gameInfo.*;
 import ulb.message.serverToClient.playerInfo.*;
-import ulb.message.serverToClient.social.*;
-import ulb.message.serverToClient.teamSave.*;
 import ulb.model.battle.BattleState;
 import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.DTO.reward.RewardDTO;
-import ulb.model.chat.ChatMessage;
-import ulb.controller.windows.RegisterController;
-import ulb.view.WindowPath;
 
 /**
  * Client-side application controller coordinating server messaging.
  */
-public class ClientController extends Application implements
-		BattleEndController.Listener, BattleWindowController.Listener, NextRoomController.Listener,
-		FloorRewardController.Listener, AttackReplacementController.Listener, LevelUpController.Listener,
-		FloorController.Listener, WindowController.ClientListener{
+public class ClientController extends Application implements BattleWindowController.Listener, WindowController.ClientListener {
 
 	private static final Logger LOGGER = Logger.getLogger(ClientController.class.getName());
 
@@ -77,10 +64,8 @@ public class ClientController extends Application implements
 	AttackReplacementController attackReplacementController;
 	LoadTeamPanelController loadTeamPanelController;
 
-	FloorRewardController.RewardChoice pendingFloorRewardChoice;
+	RewardChoice pendingFloorRewardChoice;
 	FloorController floorController;
-	BugemonDTO pendingLevelUpBugemon;
-	List<RewardDTO> pendingLevelUpRewards;
 
 	SocialPanelController socialPanelController;
 	WaitWindowController waitWindowController;
@@ -122,18 +107,23 @@ public class ClientController extends Application implements
 		primaryStage.setFullScreen(true);
 		primaryStage.setFullScreenExitHint("");
 
-		//TODO: check where to put
 		this.registerController = new RegisterController(this.stage, this);
 		this.modeController = new ModeController(this.stage, this);
-		this.socialPanelController = new SocialPanelController(this);
+		this.socialPanelController = new SocialPanelController(this.stage, this);
 		this.gameModeController = new GameModeController(this.stage, this);
 		this.teamController = new TeamController(this.stage, this);
 		this.floorController = new FloorController(this.stage, this);
-		this.waitWindowController = new WaitWindowController(this);
+		this.floorRewardController = new FloorRewardController(this.stage, this);
+		this.levelUpController = new LevelUpController(this.stage, this);
+		this.waitWindowController = new WaitWindowController(this.stage, this);
 		this.confirmTeamController = new ConfirmTeamController(this.stage, this);
 		this.loadTeamPanelController = new LoadTeamPanelController(this.stage, this);
-		//TODO: implement battleWindow differently
-
+		this.nextRoomController = new NextRoomController(this.stage, this);
+		this.levelUpController = new LevelUpController(this.stage, this);
+		this.floorRewardController = new FloorRewardController(this.stage, this);
+		this.battleEndController = new BattleEndController(this.stage, this);
+		this.chooseBugemonController = new ChooseBugemonController(this.stage, this);
+		this.attackReplacementController = new AttackReplacementController(this.stage, this);
 		this.registerController.show();
 
 		if (primaryStage.getScene() != null) {
@@ -158,11 +148,8 @@ public class ClientController extends Application implements
 				client.sendMessage(message);
 				Serializable response = client.receiveMessage();
 				if (response instanceof StatusMessage statusMessage) {
-					if (statusMessage.isFailure()) {
-						return false;
-					}
-					return true;
-				}
+                    return !statusMessage.isFailure();
+                }
 			} catch (CommunicationException e) {
 				LOGGER.log(Level.WARNING, "Communication error with server.", e);
 			}
@@ -209,172 +196,6 @@ public class ClientController extends Application implements
 		return null;
 	}
 
-
-
-	// Social Panel Controller
-
-	/**
-	 * Sends a battle request to the chosen player
-	 *
-	 * @param receiver The username of the player to challenge
-	 * @return True if the request was accepted by the server
-	 */
-	public boolean sendBattleRequest(String receiver) {
-		return postData(new SendBattleRequestMessage(player.getUsername(), receiver));
-	}
-
-	/**
-	 * Returns the list of pending incoming battle requests.
-	 *
-	 * @return The list of player usernames who sent a battle request
-	 */
-	public List<String> getBattleRequests() {
-		if (getData(new GetBattleRequestsMessage(player.getUsername())) instanceof BattleRequestsMessage msg)
-			return msg.getRequests();
-		return List.of();
-	}
-
-	/**
-	 * Accepts a battle request from the given player.
-	 *
-	 * @param sender The username of the player who sent the request
-	 * @return True if the acceptance was accepted by the server
-	 */
-	public boolean acceptBattleRequest(String sender) {
-		return postData(new AcceptBattleRequestMessage(player.getUsername(), sender));
-	}
-
-	/**
-	 * Declines a battle request from the given player.
-	 *
-	 * @param sender The username of the player who sent the request
-	 * @return True if the decline was accepted by the server
-	 */
-	public boolean declineBattleRequest(String sender) {
-		return postData(new DeclineBattleRequestMessage(player.getUsername(), sender));
-	}
-
-	/**
-	 * Returns the current multiplayer battle status between two players.
-	 *
-	 * @param userId1 The first player's id
-	 * @param userId2 The second player's id
-	 * @return The multiplayer battle status DTO
-	 */
-	public MultiBattleStatusDTO getMultiBattleStatus(int userId1, int userId2) {
-		if (getData(new GetMultiBattleStatusMessage(userId1, userId2)) instanceof MultiBattleStatusMessage msg)
-			return msg.getStatus();
-
-		LOGGER.warning("Failed to obtain multiplayer battle status.");
-		return new MultiBattleStatusDTO();
-	}
-
-	/**
-	 * Sends a friend request to the given player.
-	 *
-	 * @param receiver The username of the player to add as a friend
-	 * @return True if the request was acknowledged by the server
-	 */
-	public boolean sendFriendRequest(String receiver) {
-		return postData(new SendFriendRequestMessage(player.getUsername(), receiver));
-	}
-
-	/**
-	 * Returns the list of pending friend requests.
-	 *
-	 * @return The list of usernames who sent a friend request
-	 */
-	public List<String> getFriendRequests() {
-		if (getData(new GetFriendRequestsMessage(player.getUsername())) instanceof FriendRequestsMessage msg)
-			return msg.getRequests();
-		return List.of();
-	}
-
-	/**
-	 * Returns the current player's username.
-	 *
-	 * @return The player's username
-	 */
-	public String getPlayerName() {
-		return player.getUsername();
-	}
-
-	/**
-	 * Accepts a friend request from the given player.
-	 *
-	 * @param sender The username of the player who sent the request
-	 * @return True if the acceptance was acknowledged by the server
-	 */
-	public boolean acceptFriendRequest(String sender) {
-		return postData(new AcceptFriendRequestMessage(player.getUsername(), sender));
-	}
-
-	/**
-	 * Declines a friend request from the given player.
-	 *
-	 * @param sender The username of the player who sent the request
-	 * @return True if the decline was acknowledged by the server
-	 */
-	public boolean declineFriendRequest(String sender) {
-		return postData(new DeclineFriendRequestMessage(player.getUsername(), sender));
-	}
-
-	/**
-	 * Sends a chat message to the given player.
-	 *
-	 * @param receiver The username of the message recipient
-	 * @param content The content of the message
-	 */
-	public void sendChatMessage(String receiver, String content) {
-		postData(new SendChatMessageMessage(player.getUsername(), receiver, content));
-	}
-
-	/**
-	 * Returns the chat message history with the given friend.
-	 *
-	 * @param friend The username of the friend
-	 * @return The list of chat messages exchanged with that friend
-	 */
-	public List<ChatMessage> getChatMessages(String friend) {
-		if (getData(new GetChatMessagesMessage(player.getUsername(), friend)) instanceof ChatMessagesMessage msg)
-			return msg.getMessages();
-		return List.of();
-	}
-
-	/**
-	 * Returns the current player's friends list.
-	 *
-	 * @return The friends list
-	 */
-	public List<String> getFriendsList() {
-		if (getData(new GetFriendsListMessage(player.getUsername())) instanceof FriendsListMessage msg)
-			return msg.getFriends();
-		return List.of();
-	}
-
-	/**
-	 * Returns the leaderboard of the best players.
-	 *
-	 * @return The leaderboard map, or an empty map if unavailable
-	 */
-	public Map<String, Integer> getLeaderboardList() {
-		if (getData(new GetLeaderboardMessage()) instanceof LeaderboardMessage msg)
-			return msg.getLeaderboard();
-		return Collections.<String, Integer>emptyMap();
-	}
-
-	/**
-	 * Switches to the team selection window for a multiplayer battle.
-	 *
-	 * @param opponent The opponent for the battle
-	 */
-	public void switchToTeamSelectionForMulti(PlayerDTO opponent) {
-		this.teamController.setOpponent(opponent);
-		this.teamController.show();
-	}
-
-	// Register Controller :
-
 	/**
 	 * Loads a player by username, stores it as the current player, and returns it.
 	 *
@@ -386,66 +207,17 @@ public class ClientController extends Application implements
 		return this.player;
 	}
 
-
-
-	// Mode Controller Listener :
-
-
 	@Override
 	public void onOpenSocial() {
-		try {
-			this.socialPanelController.show();
-		} catch (ViewLoadException e) {
-			logViewLoadFailure("Impossible d'afficher le panneau social.", e);
-		}
+		this.socialPanelController.show();
 	}
-
-
-	// Game Mode Controller :
-
-
 	private void setGameMode(GameMode gameMode){this.gameMode = gameMode;}
-
-	// Confirm Team Controller
-
-	
-
-	// BattleEndController
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onHandleReturn() {
-		switchToModeWindow();
-	}
-
-	// Battle Mode Controller Listener :
-
-	/**
-	 * Shows the mode window.
-	 */
-	public void switchToModeWindow(){ // TODO: DEL
-		this.modeController.show();
-	}
-
-	/**
-	 * Switches to the game mode selection window.
-	 */
-	public void switchToGameModeWindow() {
-		this.gameModeController.show();
-	}
 
 	/**
 	 * Switches to the next room window.
 	 */
 	private void switchToNextRoomWindow(){
-		this.nextRoomController = new NextRoomController(stage, this);
-		try {
-			this.nextRoomController.show();
-		} catch (ViewLoadException e) {
-			logViewLoadFailure("Impossible d'afficher l'écran de salle suivante.", e);
-		}
+		this.nextRoomController.show();
 	}
 
 	/**
@@ -477,21 +249,6 @@ public class ClientController extends Application implements
 	}
 
 	/**
-	 * Switches to the floor window and creates the controller if needed.
-	 */
-	private void switchToFloorWindow(){
-		if (this.floorController == null) {
-			this.floorController = new FloorController(this.stage, this);
-		}
-
-		try {
-			this.floorController.show();
-		} catch (ViewLoadException e) {
-			logViewLoadFailure("Impossible d'afficher l'étage de la tour.", e);
-		}
-	}
-
-	/**
 	 * Switches to the battle end window with battle result.
 	 */
 	private void switchToBattleEndWindow(){
@@ -503,50 +260,19 @@ public class ClientController extends Application implements
 		if (message instanceof BattleEndInfoMessage battleInfo){
 			victory = battleInfo.isVictory();
 			totalXp = battleInfo.getTotalXp();
-			opponent = battleInfo.getOpponent();
 			multiplayerBattle = battleInfo.isMultiplayerBattle();
+			if (multiplayerBattle)
+				opponent = this.teamController.getOpponent().getUsername();
+			else {
+				opponent = "BotPlayer";
+			}
 
 		} else {
 			return;
 		}
 
-		this.battleEndController = new BattleEndController(stage, this);
-		try {
 			battleEndController.show(victory, totalXp, opponent, multiplayerBattle);
-		} catch (ViewLoadException e) {
-			logViewLoadFailure("Impossible d'afficher l'écran de fin de combat.", e);
-		}
-	}
-
-	/**
-	 * Switches to the level-up window.
-	 */
-	private void switchToLevelUpWindow(){
-		Serializable message = getData(new GetLevelUpInfoMessage());
-		if (!(message instanceof LevelUpInfoMessage levelUpInfo)) {
-			return;
-		}
-
-		this.pendingLevelUpBugemon = levelUpInfo.getBugemon();
-		this.pendingLevelUpRewards = levelUpInfo.getRewards();
-		this.levelUpController = new LevelUpController(stage, this);
-		try {
-			this.levelUpController.show();
-		} catch (ViewLoadException e) {
-			logViewLoadFailure("Impossible d'afficher l'écran de montée de niveau.", e);
-		}
-	}
-
-	/**
-	 * Switches to the tower reward window.
-	 */
-	private void switchToTowerRewardWindow(){
-		this.floorRewardController = new FloorRewardController(stage, this);
-		try {
-			floorRewardController.show();
-		} catch (ViewLoadException e) {
-			logViewLoadFailure("Impossible d'afficher l'écran de récompense d'étage.", e);
-		}
+			this.teamController.resetOpponent();
 	}
 
 	/**
@@ -556,7 +282,6 @@ public class ClientController extends Application implements
 		WindowType nextWindow = this.getWindowType();
 		switch (nextWindow) {
 			case NEXT_ROOM:
-				this.floorController = null;
 				switchToNextRoomWindow();
 				break;
 
@@ -565,11 +290,11 @@ public class ClientController extends Application implements
 				break;
 
 			case LEVEL_UP:
-				switchToLevelUpWindow();
+				this.levelUpController.show();
 				break;
 
 			case REWARD:
-				switchToTowerRewardWindow();
+				this.floorRewardController.show();
 				break;
 
 			case MAIN_MENU:
@@ -577,16 +302,12 @@ public class ClientController extends Application implements
 				break;
 
 			case FLOOR:
-				switchToFloorWindow();
+				this.floorController.show();
 				break;
 
 			default:
 				break;
 		}
-	}
-
-	public void onReturnToCreateTeamWindow() {
-		teamController.show();
 	}
 
 	// Battle Window Controller Listener :
@@ -782,46 +503,9 @@ public class ClientController extends Application implements
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<RewardDTO> getLevelUpRewards() {
-		Serializable message = getData(new GetLevelUpInfoMessage());
-		List<RewardDTO> rewards = null;
-
-		if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
-			LOGGER.log(Level.WARNING, "Failed to get level up rewards: " + errorMessage.getMessage());
-		} else if (message instanceof LevelUpInfoMessage levelUpInfo){
-			rewards = levelUpInfo.getRewards();
-		}
-
-		return rewards;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public void onRewardChosen(RewardDTO reward, ActionEvent event) {
 		if (postData(new ChooseLevelUpRewardMessage(reward))) {
 			nextRoom();
-		}
-	}
-
-	// Next Room Listener
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onContinue() {
-		nextRoom();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onReturn() {
-		if (this.postData(new AbandonTowerMessage())){
-				this.modeController.show();
 		}
 	}
 
@@ -831,97 +515,17 @@ public class ClientController extends Application implements
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void onObjectReward(ItemDTO rewardItem) {
-		if (postData(new ChooseItemRewardMessage(rewardItem))){
-			switchToFloorWindow();
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onChooseBugemonReward(FloorRewardController.RewardChoice rewardChoice) {
+	public void onChooseBugemonReward(RewardChoice rewardChoice) {
 		pendingFloorRewardChoice = rewardChoice;
 		if (chooseBugemonController == null) {
-			chooseBugemonController = new ChooseBugemonController(this.stage, this, this.player);
+			chooseBugemonController = new ChooseBugemonController(this.stage, this);
 		}
-		try {
-			chooseBugemonController.show();
-		} catch (ViewLoadException e) {
-			logViewLoadFailure("Impossible d'afficher l'écran de choix du Bugémon pour la récompense.", e);
-		}
+		chooseBugemonController.show();
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Returns the current floor number and room number from the server.
 	 */
-	@Override
-	public void onBugemonChosen(BugemonDTO bugemon) {
-		if (pendingFloorRewardChoice == FloorRewardController.RewardChoice.STAT) {
-			if (postData(new ChooseStatRewardMessage(bugemon))){
-				switchToFloorWindow();
-			}
-			return;
-		}
-
-		AbilityDTO newAbility = null;
-		Serializable message = getData(new GetRandomAbilityMessage(bugemon));
-
-		if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
-			LOGGER.log(Level.WARNING, "Failed to get random ability: " + errorMessage.getMessage());
-			return;
-
-		} else if (message instanceof RandomAbilityMessage randomAbility){
-			newAbility = randomAbility.getAbility();
-		}
-
-		if (newAbility == null) {
-			nextRoom();
-			return;
-		}
-
-		if (attackReplacementController == null) {
-			attackReplacementController = new AttackReplacementController(stage, this);
-		}
-
-		try {
-			attackReplacementController.show(bugemon, newAbility);
-		} catch (ViewLoadException e) {
-			logViewLoadFailure("Impossible d'afficher l'écran de remplacement d'attaque.", e);
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onReturnFloorRewardWindow() {
-		if (floorRewardController == null) {
-			floorRewardController = new FloorRewardController(stage, this);
-		}
-		try {
-			floorRewardController.show();
-		} catch (ViewLoadException e) {
-			logViewLoadFailure("Impossible d'afficher l'écran de récompense d'étage.", e);
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ItemDTO getRandomItem() {
-		if (getData(new GetRandomItemMessage()) instanceof RandomItemMessage randomItem){
-			return randomItem.getItem();
-		}
-		return null;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public List<Integer> getTowerInfo() {
 		if (getData(new GetTowerInfoMessage()) instanceof TowerInfoMessage towerInfo){
 			return List.of(towerInfo.getFloorNumber(), towerInfo.getRoomNumber());
@@ -929,55 +533,7 @@ public class ClientController extends Application implements
 		return null;
 	}
 
-	/**
-	 * Returns the list of ids of the cleared rooms in the current floor.
-	 *
-	 * @return The list of cleared room ids
-	 */
-	@Override
-	public List<Integer> getClearedRooms() {
-		if (getData(new GetTowerInfoMessage()) instanceof TowerInfoMessage towerInfo){
-			return towerInfo.getClearedRooms();
-		}
-		return List.of();
-	}
-
-	// Attack Replacement Controller Listener
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onAttackReplaced(BugemonDTO bugemon, AbilityDTO newAbility, AbilityDTO oldAbility) {
-		if (postData(new ChooseAbilityRewardMessage(bugemon, oldAbility, newAbility))){
-			switchToFloorWindow();
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onReturnToChooseBugemon() {
-		if (chooseBugemonController == null) {
-			return;
-		}
-		try {
-			chooseBugemonController.show();
-		} catch (ViewLoadException e) {
-			logViewLoadFailure("Impossible de retourner à l'écran de choix du Bugémon.", e);
-		}
-	}
-
 	// FloorController
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean onRoomSelected(int roomId) {
-		return postData(new ChooseTowerRoomMessage(roomId));
-	}
 
 	/**
 	 * {@inheritDoc}
@@ -987,45 +543,11 @@ public class ClientController extends Application implements
 		nextRoom();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
-	public void onReturnToGameModeWindow() {
-		switchToGameModeWindow();
+	public void onSetOpponentMulti(PlayerDTO opponent) {
+		this.teamController.setOpponent(opponent);
 	}
 
-	// Miscellaneous
-
-	/**
-	 * Opens a waiting window.
-	 *
-	 * @param waitCycle The event handler to play in a loop
-	 */
-	public void openWaitWindow(EventHandler waitCycle) {
-		this.closeSocialPanel();
-
-		this.waitWindowController = new WaitWindowController(this, waitCycle);
-		try {
-			this.waitWindowController.show();
-		} catch (ViewLoadException e) {
-			logViewLoadFailure("Impossible d'afficher l'écran d'attente.", e);
-		}
-    }
-
-	/**
-	 * Stops the main loop of the waiting window.
-	 */
-	public void stopWaitWindow() {
-		this.waitWindowController.stop();
-	}
-
-	/**
-	 * Closes the social panel.
-	 */
-	public void closeSocialPanel() {
-		this.socialPanelController.close();
-	}
 
 	@Override
 	public Serializable onGetData(ClientToServerMessage message) {
@@ -1047,30 +569,20 @@ public class ClientController extends Application implements
 		switch (window) {
 			case REGISTER -> this.registerController.show();
 			case MODE -> this.modeController.show();
-			case SOCIAL_PANEL -> {
-				try {
-					this.socialPanelController.show();
-				} catch (ViewLoadException e) {}
-			}
+			case SOCIAL_PANEL -> this.socialPanelController.show();
 			case GAME_MODE -> this.gameModeController.show();
 			case TEAM -> this.teamController.show();
-			case FLOOR ->{
-				try{
-					this.floorController.show();
-				}catch (ViewLoadException e){}
-
-			}
-			case WAIT -> {
-				try {
-					this.waitWindowController.show();
-				} catch (ViewLoadException e){}
-			}
+			case FLOOR -> this.floorController.show();
+			case WAIT -> this.waitWindowController.show();
 			case CONFIRM_TEAM -> this.confirmTeamController.show();
 			case BATTLE -> {
 				this.switchToBattleWindow(); //TODO: implement battleWindowDifferently
 			}
 			case LOAD_TEAM_PANEL -> this.loadTeamPanelController.show();
-
+			case NEXT_ROOM -> this.nextRoomController.show();
+			case LEVEL_UP -> this.levelUpController.show();
+			case FLOOR_REWARD -> this.floorRewardController.show();
+			case CHOOSE_BUGEMEON -> this.chooseBugemonController.show();
 		}
 	}
 
@@ -1083,8 +595,6 @@ public class ClientController extends Application implements
 	public PlayerDTO onGetPlayer() {
 		return this.getPlayer();
 	}
-	@Override
-	public void onCloseSocialPanel(){ this.socialPanelController.close(); }
 
 	@Override
 	public void onSetNewTimeLine(EventHandler waitCycle) { this.waitWindowController.setNewTimeLine(waitCycle); }
@@ -1117,6 +627,16 @@ public class ClientController extends Application implements
 		this.confirmTeamController.setPlayerTeam(teamDTO);
 	
 		this.confirmTeamController.show();
-		
 	}
+
+	@Override
+	public void onNextRoom() { this.nextRoom(); }
+
+	@Override
+	public void onShowAttackReplacement(BugemonDTO bugemon, AbilityDTO newAbility) {
+		this.attackReplacementController.show(bugemon, newAbility);
+	}
+
+	@Override
+	public RewardChoice onGetPendingFloorRewardChoice() { return this.pendingFloorRewardChoice; }
 }

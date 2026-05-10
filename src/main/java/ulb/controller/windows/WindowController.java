@@ -1,12 +1,15 @@
 package ulb.controller.windows;
 
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.player.PlayerDTO;
+import ulb.DTO.reward.RewardDTO;
 import ulb.communication.GameMode;
 import ulb.message.clientToServer.ClientToServerMessage;
 import ulb.view.FxmlLoader;
@@ -42,12 +45,10 @@ public abstract class WindowController<T> {
         try {
             this.loadView(windowPath);
         } catch (ViewLoadException e){
-            LOGGER.log(Level.WARNING, "\u001B[31m" + "Impossible d'afficher l'écran de " + this.getClass().getName() + "\u001B[0m", e);
+            LOGGER.log(Level.WARNING, "\u001B[31m" + "Impossible d'afficher l'écran de " + this.getClass().getName() + "\u001B[0m");
         }
     }
 
-    protected T getView() { return this.view; }
-    protected Stage getStage(){ return this.stage; }
     /**
      * Read the fxml file and load the view window
      */
@@ -79,18 +80,27 @@ public abstract class WindowController<T> {
         PlayerDTO onGetPlayer();
         void onSetPlayer(PlayerDTO player);
         PlayerDTO onLoadPlayer(String userName);
-        void onShowWindow(WindowName window);
+        void onSetOpponentMulti(PlayerDTO opponent);
+		void onShowWindow(WindowName window);
         void onSetGameMode(GameMode gameMode);
-        void onCloseSocialPanel();
         /**
          * Set newTimeLine in WaitWindow
-         * @param waitCycle
+         * @param waitCycle is current waitCycle
          */
         void onSetNewTimeLine(EventHandler waitCycle);
         void onStopWaitWindow();
 		void setupTeamAndShowConfirmTeam(List<BugemonDTO> teamDTO);
         void onConfirmTeamSetter(List<BugemonDTO> team);
 		GameMode onGetGameMode();
+
+        // Tower flow — complex routing that must stay in ClientController
+        void onRoomSelectionComplete();
+        void onChooseBugemonReward(RewardChoice rewardChoice);
+        void onRewardChosen(RewardDTO reward, ActionEvent event);
+        //void onShowBattleEnd(boolean victory, int totalXp, String opponent);
+        void onNextRoom();
+        void onShowAttackReplacement(BugemonDTO bugemon, AbilityDTO newAbility);
+        RewardChoice onGetPendingFloorRewardChoice();
     }
 
     /**

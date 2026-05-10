@@ -212,7 +212,9 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		if (!isGameTower){return;}
 		this.towerSaveService.deleteTowerInfo(player);
 		this.teamService.deleteTowerTeam(player);
-		this.resetGameSessionState();
+		this.towerManager = null;
+		this.isGameTower = false;
+		clearPendingLevelUpState();
 	}
 
 	void clearPendingLevelUpState() {

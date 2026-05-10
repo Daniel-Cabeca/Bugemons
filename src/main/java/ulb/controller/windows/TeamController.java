@@ -163,7 +163,7 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 			this.clientListener.onGetData(new QuitMultiBattleMessage(this.opponent));
 		}
 
-		this.clientListener.onShowWindow(WindowName.MODE);
+		this.clientListener.onShowWindow(WindowName.GAME_MODE);
 	}
 
 	/**

@@ -115,11 +115,23 @@
     <profile>
       <id>unix-data-path</id>
       <activation>
-        <os><family>unix</family></os>
+        <os><family>linux</family></os>
       </activation>
       <properties>
         <!-- Defaults to ~/.local/share/infof307 but respects XDG_DATA_HOME if set -->
         <data.path>${user.home}/.local/share/infof307</data.path>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>mac-data-path</id>
+      <activation>
+        <os>
+          <family>mac</family>
+        </os>
+      </activation>
+      <properties>
+        <data.path>${user.home}/Library/Application Support/infof307</data.path>
       </properties>
     </profile>
 

@@ -73,7 +73,7 @@ public class SocialHandler {
 		clientHandler.sendMessage(new BattleRequestsMessage(requests));
 	}
 
-	public void getMultiBattleStatus(int userId1, int userId2) throws DataAccessException {
+	public void getMultiBattleStatus(int userId1, int userId2) {
 		MultiBattleStatusDTO status = new MultiBattleStatusDTO();
 
 		try {

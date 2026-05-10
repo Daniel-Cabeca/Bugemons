@@ -30,7 +30,7 @@ import java.util.List;
 public class ClientHandler extends Thread implements ServerMessageHandler{
 	private static final Logger LOGGER = Logger.getLogger(ClientHandler.class.getName());
 
-    private SocketMessenger socketMessenger;
+    private final SocketMessenger socketMessenger;
     private boolean stop;
 
     private Player player;
@@ -49,13 +49,13 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	private final TowerSaveService towerSaveService;
 	private final TeamService teamService;
 
-	private SetupHandler setupHandler;
-	private PlayerInfoHandler playerInfoHandler;
-	private GameInfoHandler gameInfoHandler;
-	private GameActionsHandler gameActionsHandler;
-	private GameDataHandler gameDataHandler;
-	private SocialHandler socialHandler;
-	private TeamSaveHandler teamSaveHandler;
+	private final SetupHandler setupHandler;
+	private final PlayerInfoHandler playerInfoHandler;
+	private final GameInfoHandler gameInfoHandler;
+	private final GameActionsHandler gameActionsHandler;
+	private final GameDataHandler gameDataHandler;
+	private final SocialHandler socialHandler;
+	private final TeamSaveHandler teamSaveHandler;
 
 	void resetGameSessionState() { // package-private
 		this.battle = null;
@@ -87,9 +87,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	public Battle getBattle() { return this.battle; }
 	public TowerManager getTowerManager() { return this.towerManager; }
 	public boolean isGameTower() { return this.isGameTower; }
-	public boolean isMultiPlayer() { return this.multiBattleSession != null; }
 	public Battle.ParticipantLabel getTeamLabel() { return this.teamLabel; }
-	public Thread getOpponentBot() { return this.opponentBot; }
 	public Bugemon getPendingLevelUpBugemon() { return this.pendingLevelUpBugemon; }
 	public List<Reward> getPendingLevelUpRewards() { return this.pendingLevelUpRewards; }
 
@@ -126,10 +124,10 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		} catch (UserFacingException e) {
 			sendErrorMessage(e.getMessage());
 		} catch (DataAccessException e) {
-			LOGGER.log(Level.SEVERE, "Data access error while handling a client message.", e);
+			LOGGER.log(Level.SEVERE, "Data access error while handling a client message.");
 			sendErrorMessage("A data access error occurred while handling a client message.");
 		} catch (RuntimeException e) {
-			LOGGER.log(Level.SEVERE, "Unexpected error while handling a client message.", e);
+			LOGGER.log(Level.SEVERE, "Unexpected error while handling a client message.");
 			sendErrorMessage("An unexpected server error occurred while handling a client message.");
 		}
 	}
@@ -148,7 +146,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
 			return null;
 		} catch (CommunicationException e) {
-			handleCommunicationFailure("Communication with client has been interrupted.", e);
+			handleCommunicationFailure("Communication with client has been interrupted.");
 		}
 
 		return null;
@@ -162,7 +160,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		try {
 			this.socketMessenger.sendMessage(message);
 		} catch (CommunicationException e) {
-			handleCommunicationFailure("Impossible to send message to client.", e);
+			handleCommunicationFailure("Impossible to send message to client.");
 		}
 	}
 
@@ -174,11 +172,11 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 		try {
 			this.socketMessenger.sendMessage(new StatusMessage(false, errorMessage));
 		} catch (CommunicationException e) {
-			handleCommunicationFailure("Impossible to send error message to client.", e);
+			handleCommunicationFailure("Impossible to send error message to client.");
 		}
 	}
 
-	private void handleCommunicationFailure(String message, CommunicationException e) {
+	private void handleCommunicationFailure(String message) {
 		LOGGER.log(Level.INFO, message);
 		stopProcess();
 	}
@@ -258,11 +256,11 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	@Override public void chooseLevelUpReward(RewardDTO rewardDTO) throws DataAccessException { gameActionsHandler.chooseLevelUpReward(rewardDTO); }
 	@Override public void chooseStatReward(BugemonDTO bugemonDTO) throws DataAccessException { gameActionsHandler.chooseStatReward(bugemonDTO); }
 	@Override public void chooseTowerRoom(int roomId) throws DataAccessException { gameActionsHandler.chooseTowerRoom(roomId); }
-	@Override public void chooseRandomAction() throws DataAccessException { gameActionsHandler.chooseRandomAction(); }
+	@Override public void chooseRandomAction() { gameActionsHandler.chooseRandomAction(); }
 	@Override public void chooseRunAction() throws DataAccessException { gameActionsHandler.chooseRunAction(); }
-	@Override public void startMultiBattle(PlayerDTO opponentDTO) throws DataAccessException { gameActionsHandler.startMultiBattle(opponentDTO); }
-	@Override public void quitMultiBattle(PlayerDTO opponentDTO) throws DataAccessException { gameActionsHandler.quitMultiBattle(opponentDTO); }
-	@Override public void chooseSwapBugemonAction(BugemonDTO bugemonDTOToSwap) throws DataAccessException { gameActionsHandler.chooseSwapBugemonAction(bugemonDTOToSwap); }
+	@Override public void startMultiBattle(PlayerDTO opponentDTO) { gameActionsHandler.startMultiBattle(opponentDTO); }
+	@Override public void quitMultiBattle(PlayerDTO opponentDTO) { gameActionsHandler.quitMultiBattle(opponentDTO); }
+	@Override public void chooseSwapBugemonAction(BugemonDTO bugemonDTOToSwap) { gameActionsHandler.chooseSwapBugemonAction(bugemonDTOToSwap); }
 	@Override public void chooseUseAbilityAction(AbilityDTO abilityDTO) throws DataAccessException { gameActionsHandler.chooseUseAbilityAction(abilityDTO); }
 	@Override public void chooseUseItemAction(ItemDTO itemDTO) throws DataAccessException { gameActionsHandler.chooseUseItemAction(itemDTO); }
 

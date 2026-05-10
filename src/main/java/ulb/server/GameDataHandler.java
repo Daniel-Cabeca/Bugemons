@@ -33,8 +33,8 @@ public class GameDataHandler {
         this.itemService = itemService;
     }
 
-    public void getAllBugemonSpecies() throws DataAccessException{
-		List<BugemonSpeciesDTO> DTOSpeciesList = new ArrayList<BugemonSpeciesDTO>();
+    public void getAllBugemonSpecies() {
+		List<BugemonSpeciesDTO> DTOSpeciesList = new ArrayList<>();
 
 		for (BugemonSpecies species : bugemonService.getAllSpecies()){
 			DTOSpeciesList.add(BugemonSpeciesMapper.toDTO(species));
@@ -50,7 +50,7 @@ public class GameDataHandler {
 		clientHandler.sendMessage(new RandomAbilityMessage(AbilityMapper.toDTO(RandomAbility)));
 	}
 
-	public void getRandomItem() throws DataAccessException{
+	public void getRandomItem() {
 		Item randomItem = itemService.getRandomItem();
 
 		clientHandler.sendMessage(new RandomItemMessage(ItemMapper.toDTO(randomItem)));

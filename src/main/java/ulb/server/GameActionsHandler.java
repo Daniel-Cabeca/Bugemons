@@ -158,11 +158,10 @@ public class GameActionsHandler extends Thread{
 		}
 		else{
 			clientHandler.sendErrorMessage("Cannot move to the selected room");
-			return;
 		}
 	}
 
-	public void chooseRandomAction() throws DataAccessException{
+	public void chooseRandomAction() {
         Battle battle = clientHandler.getBattle();
         ParticipantLabel teamLabel = clientHandler.getTeamLabel();
 
@@ -199,7 +198,7 @@ public class GameActionsHandler extends Thread{
         clientHandler.sendSuccessMessage();
 	}
 
-	public void startMultiBattle(PlayerDTO opponentDTO) throws DataAccessException {
+	public void startMultiBattle(PlayerDTO opponentDTO) {
 		Player self = this.clientHandler.getPlayer();
 		MultiBattleSession session = this.multiBattleService.getMultiBattle(self.getUserId(), opponentDTO.getUserId());
 		Battle battle = session.getBattle();
@@ -212,7 +211,7 @@ public class GameActionsHandler extends Thread{
 		clientHandler.sendSuccessMessage();
 	}
 
-	public void quitMultiBattle(PlayerDTO opponentDTO) throws DataAccessException {
+	public void quitMultiBattle(PlayerDTO opponentDTO) {
 		Player self = this.clientHandler.getPlayer();
 		MultiBattleSession session = this.multiBattleService.getMultiBattle(self.getUserId(), opponentDTO.getUserId());
 		MultiBattleParticipant participant = session.getParticipant(self.getUserId());
@@ -222,7 +221,7 @@ public class GameActionsHandler extends Thread{
 		clientHandler.sendSuccessMessage();
 	}
 
-	public void chooseSwapBugemonAction(BugemonDTO bugemonDTOToSwap) throws DataAccessException{
+	public void chooseSwapBugemonAction(BugemonDTO bugemonDTOToSwap) {
         Player player = clientHandler.getPlayer();
         Battle battle = clientHandler.getBattle();
         ParticipantLabel teamLabel = clientHandler.getTeamLabel();

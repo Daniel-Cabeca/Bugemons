@@ -116,7 +116,7 @@ public class SetupHandler {
 		}
 	}
 
-    public void setupNormalMode() throws DataAccessException{
+    public void setupNormalMode() {
         Player player = clientHandler.getPlayer();
         Battle battle = clientHandler.getBattle();
         TowerManager towerManager = clientHandler.getTowerManager();

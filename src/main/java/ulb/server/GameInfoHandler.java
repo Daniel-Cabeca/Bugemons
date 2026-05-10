@@ -40,7 +40,7 @@ public class GameInfoHandler {
 		this.towerSaveService = towerSaveService;
     }
 
-    public void checkGameFinished() throws DataAccessException{
+    public void checkGameFinished() {
         Battle battle = clientHandler.getBattle();
 
 		clientHandler.sendMessage(new GameFinishedMessage(battle.isGameFinished()));
@@ -50,7 +50,7 @@ public class GameInfoHandler {
         Battle battle = clientHandler.getBattle();
         ParticipantLabel teamLabel = clientHandler.getTeamLabel();
 
-		Map<String, Boolean> usableItems = new HashMap<String, Boolean>();
+		Map<String, Boolean> usableItems = new HashMap<>();
 
 		for (ItemDTO itemDTO : items){
 			Item item = ItemMapper.toEntity(itemDTO);
@@ -61,7 +61,7 @@ public class GameInfoHandler {
 	}
 
 	public void getAbilityEffectiveness(BugemonDTO bugemonDTO, List<AbilityDTO> abilities) throws DataAccessException{
-		Map<AbilityDTO, String> effectiveness = new HashMap<AbilityDTO, String>();
+		Map<AbilityDTO, String> effectiveness = new HashMap<>();
 		Bugemon bugemonTarget = BugemonMapper.toEntity(bugemonDTO);
 		
 		for (AbilityDTO abilityDTO : abilities){
@@ -73,7 +73,7 @@ public class GameInfoHandler {
 		clientHandler.sendMessage(new AbilityEffectivenessMessage(effectiveness));
 	}
 
-    public void getActiveBugemons() throws DataAccessException{
+    public void getActiveBugemons() {
         Battle battle = clientHandler.getBattle();
         ParticipantLabel teamLabel = clientHandler.getTeamLabel();
 
@@ -114,14 +114,14 @@ public class GameInfoHandler {
 		clientHandler.sendMessage(new BattleEndInfoMessage(isWin, gainedXp, multiplayerBattle));
 	}
 
-	public void getBattleState() throws DataAccessException{
+	public void getBattleState() {
         Battle battle = clientHandler.getBattle();
         ParticipantLabel teamLabel = clientHandler.getTeamLabel();
 
 		clientHandler.sendMessage(new BattleStateMessage(battle.getState(teamLabel)));
 	}
 
-	public void getLevelUpInfo() throws DataAccessException{
+	public void getLevelUpInfo() {
         Player player = clientHandler.getPlayer();
         Battle battle = clientHandler.getBattle();
         Bugemon pendingLevelUpBugemon = clientHandler.getPendingLevelUpBugemon();
@@ -155,14 +155,14 @@ public class GameInfoHandler {
 		clientHandler.sendMessage(new LevelUpInfoMessage(BugemonMapper.toDTO(currentBugemon), rewardDTOs));
 	}
 
-    public void getLogs(boolean clearLogs) throws DataAccessException{
+    public void getLogs(boolean clearLogs) {
         Battle battle = clientHandler.getBattle();
         ParticipantLabel teamLabel = clientHandler.getTeamLabel();
 
 		int selfHpAfterFirstAction = battle.getHpAfterFirstActionSelf(teamLabel);
 		int opponentHpAfterFirstAction = battle.getHpAfterFirstActionOpponent(teamLabel);
 		
-		List<String> logs = new ArrayList<String>(battle.getLogMsg());
+		List<String> logs = new ArrayList<>(battle.getLogMsg());
 		
 		if (clearLogs){
 			battle.clearLogMsg();
@@ -256,7 +256,7 @@ public class GameInfoHandler {
 		clientHandler.sendMessage(new NextWindowMessage(nextWindow));
 	}
 
-	public void getTowerInfo() throws DataAccessException{
+	public void getTowerInfo() {
         TowerManager towerManager = clientHandler.getTowerManager();
         boolean isGameTower = clientHandler.isGameTower();
 

@@ -8,14 +8,11 @@ import javafx.stage.Stage;
 
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import ulb.DTO.battle.MultiBattleStatusDTO;
-import ulb.DTO.team.TeamDTO;
 import ulb.communication.SocketClient;
 import ulb.controller.windows.*;
 import ulb.exceptions.CommunicationException;
@@ -29,21 +26,16 @@ import ulb.message.clientToServer.gameInfo.*;
 import ulb.message.clientToServer.playerInfo.*;
 import ulb.message.clientToServer.setup.*;
 import ulb.message.clientToServer.social.*;
-import ulb.message.clientToServer.teamSave.*;
 import ulb.message.serverToClient.gameData.*;
 import ulb.message.serverToClient.gameInfo.*;
 import ulb.message.serverToClient.playerInfo.*;
 import ulb.message.serverToClient.social.*;
-import ulb.message.serverToClient.teamSave.*;
 import ulb.model.battle.BattleState;
 import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.DTO.reward.RewardDTO;
-import ulb.model.chat.ChatMessage;
-import ulb.controller.windows.RegisterController;
-import ulb.view.WindowPath;
 
 /**
  * Client-side application controller coordinating server messaging.
@@ -122,7 +114,7 @@ public class ClientController extends Application implements
 		//TODO: check where to put
 		this.registerController = new RegisterController(this.stage, this);
 		this.modeController = new ModeController(this.stage, this);
-		this.socialPanelController = new SocialPanelController(this);
+		this.socialPanelController = new SocialPanelController(this.stage, this);
 		this.gameModeController = new GameModeController(this.stage, this);
 		this.teamController = new TeamController(this.stage, this);
 		this.floorController = new FloorController(this.stage, this);
@@ -157,11 +149,8 @@ public class ClientController extends Application implements
 				client.sendMessage(message);
 				Serializable response = client.receiveMessage();
 				if (response instanceof StatusMessage statusMessage) {
-					if (statusMessage.isFailure()) {
-						return false;
-					}
-					return true;
-				}
+                    return !statusMessage.isFailure();
+                }
 			} catch (CommunicationException e) {
 				LOGGER.log(Level.WARNING, "Communication error with server.", e);
 			}
@@ -208,170 +197,6 @@ public class ClientController extends Application implements
 		return null;
 	}
 
-
-
-	// Social Panel Controller
-
-	/**
-	 * Sends a battle request to the chosen player
-	 *
-	 * @param receiver The username of the player to challenge
-	 * @return True if the request was accepted by the server
-	 */
-	public boolean sendBattleRequest(String receiver) {
-		return postData(new SendBattleRequestMessage(player.getUsername(), receiver));
-	}
-
-	/**
-	 * Returns the list of pending incoming battle requests.
-	 *
-	 * @return The list of player usernames who sent a battle request
-	 */
-	public List<String> getBattleRequests() {
-		if (getData(new GetBattleRequestsMessage(player.getUsername())) instanceof BattleRequestsMessage msg)
-			return msg.getRequests();
-		return List.of();
-	}
-
-	/**
-	 * Accepts a battle request from the given player.
-	 *
-	 * @param sender The username of the player who sent the request
-	 * @return True if the acceptance was accepted by the server
-	 */
-	public boolean acceptBattleRequest(String sender) {
-		return postData(new AcceptBattleRequestMessage(player.getUsername(), sender));
-	}
-
-	/**
-	 * Declines a battle request from the given player.
-	 *
-	 * @param sender The username of the player who sent the request
-	 * @return True if the decline was accepted by the server
-	 */
-	public boolean declineBattleRequest(String sender) {
-		return postData(new DeclineBattleRequestMessage(player.getUsername(), sender));
-	}
-
-	/**
-	 * Returns the current multiplayer battle status between two players.
-	 *
-	 * @param userId1 The first player's id
-	 * @param userId2 The second player's id
-	 * @return The multiplayer battle status DTO
-	 */
-	public MultiBattleStatusDTO getMultiBattleStatus(int userId1, int userId2) {
-		if (getData(new GetMultiBattleStatusMessage(userId1, userId2)) instanceof MultiBattleStatusMessage msg)
-			return msg.getStatus();
-
-		LOGGER.warning("Failed to obtain multiplayer battle status.");
-		return new MultiBattleStatusDTO();
-	}
-
-	/**
-	 * Sends a friend request to the given player.
-	 *
-	 * @param receiver The username of the player to add as a friend
-	 * @return True if the request was acknowledged by the server
-	 */
-	public boolean sendFriendRequest(String receiver) {
-		return postData(new SendFriendRequestMessage(player.getUsername(), receiver));
-	}
-
-	/**
-	 * Returns the list of pending friend requests.
-	 *
-	 * @return The list of usernames who sent a friend request
-	 */
-	public List<String> getFriendRequests() {
-		if (getData(new GetFriendRequestsMessage(player.getUsername())) instanceof FriendRequestsMessage msg)
-			return msg.getRequests();
-		return List.of();
-	}
-
-	/**
-	 * Returns the current player's username.
-	 *
-	 * @return The player's username
-	 */
-	public String getPlayerName() {
-		return player.getUsername();
-	}
-
-	/**
-	 * Accepts a friend request from the given player.
-	 *
-	 * @param sender The username of the player who sent the request
-	 * @return True if the acceptance was acknowledged by the server
-	 */
-	public boolean acceptFriendRequest(String sender) {
-		return postData(new AcceptFriendRequestMessage(player.getUsername(), sender));
-	}
-
-	/**
-	 * Declines a friend request from the given player.
-	 *
-	 * @param sender The username of the player who sent the request
-	 * @return True if the decline was acknowledged by the server
-	 */
-	public boolean declineFriendRequest(String sender) {
-		return postData(new DeclineFriendRequestMessage(player.getUsername(), sender));
-	}
-
-	/**
-	 * Sends a chat message to the given player.
-	 *
-	 * @param receiver The username of the message recipient
-	 * @param content The content of the message
-	 */
-	public void sendChatMessage(String receiver, String content) {
-		postData(new SendChatMessageMessage(player.getUsername(), receiver, content));
-	}
-
-	/**
-	 * Returns the chat message history with the given friend.
-	 *
-	 * @param friend The username of the friend
-	 * @return The list of chat messages exchanged with that friend
-	 */
-	public List<ChatMessage> getChatMessages(String friend) {
-		if (getData(new GetChatMessagesMessage(player.getUsername(), friend)) instanceof ChatMessagesMessage msg)
-			return msg.getMessages();
-		return List.of();
-	}
-
-	/**
-	 * Returns the current player's friends list.
-	 *
-	 * @return The friends list
-	 */
-	public List<String> getFriendsList() {
-		if (getData(new GetFriendsListMessage(player.getUsername())) instanceof FriendsListMessage msg)
-			return msg.getFriends();
-		return List.of();
-	}
-
-	/**
-	 * Returns the leaderboard of the best players.
-	 *
-	 * @return The leaderboard map, or an empty map if unavailable
-	 */
-	public Map<String, Integer> getLeaderboardList() {
-		if (getData(new GetLeaderboardMessage()) instanceof LeaderboardMessage msg)
-			return msg.getLeaderboard();
-		return Collections.<String, Integer>emptyMap();
-	}
-
-	/**
-	 * Switches to the team selection window for a multiplayer battle.
-	 *
-	 * @param opponent The opponent for the battle
-	 */
-	public void switchToTeamSelectionForMulti(PlayerDTO opponent) {
-		this.teamController.setOpponent(opponent);
-		this.teamController.show();
-	}
-
 	// Register Controller :
 
 	/**
@@ -385,29 +210,16 @@ public class ClientController extends Application implements
 		return this.player;
 	}
 
-
-
 	// Mode Controller Listener :
-
 
 	@Override
 	public void onOpenSocial() {
-		try {
-			this.socialPanelController.show();
-		} catch (ViewLoadException e) {
-			logViewLoadFailure("Impossible d'afficher le panneau social.", e);
-		}
+		this.socialPanelController.show();
 	}
-
 
 	// Game Mode Controller :
 
-
 	private void setGameMode(GameMode gameMode){this.gameMode = gameMode;}
-
-	// Confirm Team Controller
-
-	
 
 	// BattleEndController
 
@@ -551,10 +363,6 @@ public class ClientController extends Application implements
 			default:
 				break;
 		}
-	}
-
-	public void onReturnToCreateTeamWindow() {
-		teamController.show();
 	}
 
 	// Battle Window Controller Listener :
@@ -880,36 +688,12 @@ public class ClientController extends Application implements
 		nextRoom();
 	}
 
-	// Miscellaneous
-
 	/**
-	 * Opens a waiting window.
-	 *
-	 * @param waitCycle The event handler to play in a loop
+	 * {@inheritDoc}
 	 */
-	public void openWaitWindow(EventHandler waitCycle) {
-		this.closeSocialPanel();
-
-		this.waitWindowController = new WaitWindowController(this, waitCycle);
-		try {
-			this.waitWindowController.show();
-		} catch (ViewLoadException e) {
-			logViewLoadFailure("Impossible d'afficher l'écran d'attente.", e);
-		}
-    }
-
-	/**
-	 * Stops the main loop of the waiting window.
-	 */
-	public void stopWaitWindow() {
-		this.waitWindowController.stop();
-	}
-
-	/**
-	 * Closes the social panel.
-	 */
-	public void closeSocialPanel() {
-		this.socialPanelController.close();
+	@Override
+	public void onReturnToGameModeWindow() {
+		switchToGameModeWindow();
 	}
 
 	@Override
@@ -932,11 +716,7 @@ public class ClientController extends Application implements
 		switch (window) {
 			case REGISTER -> this.registerController.show();
 			case MODE -> this.modeController.show();
-			case SOCIAL_PANEL -> {
-				try {
-					this.socialPanelController.show();
-				} catch (ViewLoadException e) {}
-			}
+			case SOCIAL_PANEL -> this.socialPanelController.show();
 			case GAME_MODE -> this.gameModeController.show();
 			case TEAM -> this.teamController.show();
 			case FLOOR -> this.floorController.show();
@@ -963,8 +743,6 @@ public class ClientController extends Application implements
 	public PlayerDTO onGetPlayer() {
 		return this.getPlayer();
 	}
-	@Override
-	public void onCloseSocialPanel(){ this.socialPanelController.close(); }
 
 	@Override
 	public void onSetNewTimeLine(EventHandler waitCycle) { this.waitWindowController.setNewTimeLine(waitCycle); }
@@ -982,7 +760,7 @@ public class ClientController extends Application implements
 	public void onSetPlayer(PlayerDTO player) { this.player = player; }
 
 	@Override
-	public GameMode onGetGameMode() { return this.gameMode; }
+	public void onSetOpponentMulti(PlayerDTO opponent) { this.teamController.setOpponent(opponent);}
 
 	/**
 	 * Sends the player's team to the server and switches to the battle mode window.

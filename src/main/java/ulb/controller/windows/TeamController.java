@@ -8,7 +8,6 @@ import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.DTO.team.TeamDTO;
-import ulb.message.clientToServer.*;
 import ulb.message.clientToServer.gameActions.StartMultiBattleMessage;
 import ulb.message.clientToServer.gameData.GetAllBugemonSpeciesMessage;
 import ulb.message.clientToServer.setup.ConfirmTeamMultiMessage;
@@ -101,7 +100,6 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	 * @param waitCycle The event handler to play in a loop
 	 */
 	public void openWaitWindow(EventHandler waitCycle) {
-		this.clientListener.onCloseSocialPanel();
 		this.clientListener.onSetNewTimeLine(waitCycle);
 		this.clientListener.onShowWindow(WindowName.WAIT);
 	}

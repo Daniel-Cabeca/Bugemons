@@ -29,8 +29,7 @@ public class LoadTeamPanel {
      * @param savedTeams the player's saved teams
      */
     public void populateSavedTeams(List<TeamDTO> savedTeams) {
-        savedTeamsAccordion.getPanes().clear();
-        selectedTeam = null;
+		savedTeamsAccordion.getPanes().clear();
         for (TeamDTO team : savedTeams) {
             TitledPane pane = createTeamPane(team);
             savedTeamsAccordion.getPanes().add(pane);

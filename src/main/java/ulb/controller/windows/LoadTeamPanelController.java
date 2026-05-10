@@ -26,15 +26,15 @@ public class LoadTeamPanelController extends WindowController<LoadTeamPanel> imp
     public void show() {
         setSavedTeams();
 
-        if (popupStage == null) {
-            popupStage = new Stage();
-            popupStage.initStyle(StageStyle.UNDECORATED);
-            popupStage.initOwner(stage);
-            Scene scene = new Scene(this.loader.getRoot());
-            scene.getStylesheets().add(getClass().getResource("/styles/global.css").toExternalForm());
-            popupStage.setScene(scene);
-        }
+		if (popupStage == null){
+			popupStage = new Stage();
+			popupStage.initStyle(StageStyle.UNDECORATED);
+			popupStage.initOwner(stage);
 
+			Scene scene = new Scene(this.loader.getRoot());
+			scene.getStylesheets().add(getClass().getResource("/styles/global.css").toExternalForm());
+			popupStage.setScene(scene);
+		}
         popupStage.show();
         popupStage.centerOnScreen();
     }

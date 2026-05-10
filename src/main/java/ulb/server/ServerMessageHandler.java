@@ -51,6 +51,7 @@ import java.util.List;
 	 void chooseRandomAction() throws UserFacingException, DataAccessException;
 	 void chooseRunAction() throws UserFacingException, DataAccessException;
 	 void startMultiBattle(PlayerDTO opponentDTO) throws UserFacingException, DataAccessException;
+	 void quitMultiBattle(PlayerDTO opponentDTO) throws UserFacingException, DataAccessException;
 	 void chooseSwapBugemonAction(BugemonDTO bugemonDTOToSwap) throws UserFacingException, DataAccessException;
 	 void chooseUseAbilityAction(AbilityDTO abilityDTO) throws UserFacingException, DataAccessException;
 	 void chooseUseItemAction(ItemDTO itemDTO) throws UserFacingException, DataAccessException;

@@ -202,7 +202,6 @@ public class GameActionsHandler extends Thread{
 
 	public void startMultiBattle(PlayerDTO opponentDTO) throws DataAccessException {
 		Player self = this.clientHandler.getPlayer();
-
 		MultiBattleSession session = this.multiBattleService.getMultiBattle(self.getUserId(), opponentDTO.getUserId());
 		Battle battle = session.getBattle();
 		MultiBattleParticipant participant = session.getParticipant(self.getUserId());
@@ -210,6 +209,16 @@ public class GameActionsHandler extends Thread{
 		this.clientHandler.setBattle(battle);
 		this.clientHandler.setMultiBattleSession(session);
 		this.clientHandler.setTeamLabel(participant.getParticipantLabel());
+
+		clientHandler.sendSuccessMessage();
+	}
+
+	public void quitMultiBattle(PlayerDTO opponentDTO) throws DataAccessException {
+		Player self = this.clientHandler.getPlayer();
+		MultiBattleSession session = this.multiBattleService.getMultiBattle(self.getUserId(), opponentDTO.getUserId());
+		MultiBattleParticipant participant = session.getParticipant(self.getUserId());
+
+		participant.decline();
 
 		clientHandler.sendSuccessMessage();
 	}

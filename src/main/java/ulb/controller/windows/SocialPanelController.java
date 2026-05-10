@@ -266,6 +266,7 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 		view.setInviteStatus(ok ? "Défi envoyé !" : "Impossible d'envoyer le défi.");
 
 		if (ok) {
+			this.onClose();
 			this.clientListener.onSetNewTimeLine(e -> {
 				this.waitForBattleRequestResponse(friend);
 			});

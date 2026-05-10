@@ -194,7 +194,6 @@ public class GameActionsHandler extends Thread{
 				clientHandler.setBattle(towerManager.getCurrentBattle());
 			}
 		} else {
-			// clientHandler.setBattle(null);
 			clientHandler.clearPendingLevelUpState();
 		}
 

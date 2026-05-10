@@ -148,9 +148,6 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	 * @param opponent The opponent
 	 */
 	private void startMultiBattle(PlayerDTO opponent) {
-		List<BugemonDTO> team = this.clientListener.onGetPlayer().getTeam();
-		this.clientListener.onPostData(new SetUpTeamMessage(team));
-
 		this.clientListener.onPostData(new StartMultiBattleMessage(opponent));
 		this.clientListener.onShowWindow(WindowName.BATTLE);
 	}

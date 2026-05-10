@@ -280,6 +280,11 @@ public class ClientController extends Application implements BattleWindowControl
 	 */
 	public void nextRoom(){
 		WindowType nextWindow = this.getWindowType();
+		if (nextWindow == null) {
+			LOGGER.warning("Impossible to determine the next window from the server.");
+			return;
+		}
+
 		switch (nextWindow) {
 			case NEXT_ROOM:
 				switchToNextRoomWindow();
@@ -494,6 +499,8 @@ public class ClientController extends Application implements BattleWindowControl
 
 		if (message instanceof NextWindowMessage nextWindow){
 			return nextWindow.getNextWindow();
+		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()) {
+			LOGGER.warning("Failed to get next window: " + errorMessage.getMessage());
 		}
 
 		return null;

@@ -66,6 +66,10 @@ public class RoomManager {
 	 * @param type Room type
 	 */
 	public void initializeRoomContent(RoomType type) {
+		if (this.room.isRoomCompleted()) {
+			return;
+		}
+
 		switch (type) {
 			case BATTLE:
 				initializeBattleRoom(false);

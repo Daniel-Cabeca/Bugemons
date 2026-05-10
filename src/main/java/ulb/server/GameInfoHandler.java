@@ -178,8 +178,6 @@ public class GameInfoHandler {
         boolean isGameTower = clientHandler.isGameTower();
         ParticipantLabel teamLabel = clientHandler.getTeamLabel();
 
-		BattleParticipant battleParticipantSelf = battle.getParticipant(teamLabel);
-
 		WindowType nextWindow = WindowType.MAIN_MENU;
 
 		if (player != null && player.getTeam().getLevelUpBugemonNumber() > 0){
@@ -245,6 +243,8 @@ public class GameInfoHandler {
 			clientHandler.sendMessage(new NextWindowMessage(nextWindow));
 			return;
 		}
+
+		BattleParticipant battleParticipantSelf = battle.getParticipant(teamLabel);
 
 		if (battleParticipantSelf.getAction() instanceof Run) {
 			nextWindow = WindowType.MAIN_MENU;

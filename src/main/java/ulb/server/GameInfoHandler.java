@@ -18,8 +18,10 @@ import ulb.mapper.reward.RewardMapper;
 import ulb.message.serverToClient.gameInfo.*;
 import ulb.model.Player;
 import ulb.model.ability.Ability;
+import ulb.model.action.Run;
 import ulb.model.battle.Battle;
 import ulb.model.battle.Battle.ParticipantLabel;
+import ulb.model.battle.BattleParticipant;
 import ulb.model.battle.BattleState;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.item.Item;
@@ -176,6 +178,8 @@ public class GameInfoHandler {
         boolean isGameTower = clientHandler.isGameTower();
         ParticipantLabel teamLabel = clientHandler.getTeamLabel();
 
+		BattleParticipant battleParticipantSelf = battle.getParticipant(teamLabel);
+
 		WindowType nextWindow = WindowType.MAIN_MENU;
 
 		if (player != null && player.getTeam().getLevelUpBugemonNumber() > 0){
@@ -238,6 +242,12 @@ public class GameInfoHandler {
 		}
 
 		if (battle == null){
+			clientHandler.sendMessage(new NextWindowMessage(nextWindow));
+			return;
+		}
+
+		if (battleParticipantSelf.getAction() instanceof Run) {
+			nextWindow = WindowType.MAIN_MENU;
 			clientHandler.sendMessage(new NextWindowMessage(nextWindow));
 			return;
 		}

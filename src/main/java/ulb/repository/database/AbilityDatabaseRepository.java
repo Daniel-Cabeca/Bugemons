@@ -77,43 +77,35 @@ public class AbilityDatabaseRepository implements AbilityRepository {
 	@Override
 	public Ability findById(String id) throws NoSuchElementException {
 		String sql = """
-				   SELECT a.*, e.id AS effect_id, e.type AS effect_type, e.target, e.value,
-				          esm.hp, esm.attack, esm.defense, esm.initiative, esm.duration
-				   FROM abilities a
-				   LEFT JOIN effects e ON a.id = e.ability_id
-				   LEFT JOIN effect_stats_modifier esm ON e.id = esm.effect_id
-				   WHERE a.id = ?
-				""";
-
+               SELECT a.*, e.id AS effect_id, e.type AS effect_type, e.target, e.value,
+                      esm.hp, esm.attack, esm.defense, esm.initiative, esm.duration
+               FROM abilities a
+               LEFT JOIN effects e ON a.id = e.ability_id
+               LEFT JOIN effect_stats_modifier esm ON e.id = esm.effect_id
+               WHERE a.id = ?
+            """;
 		try (PreparedStatement pstmt = this.database.prepareStatement(sql)) {
 			pstmt.setString(1, id);
 			ResultSet rs = pstmt.executeQuery();
-
 			Ability ability = null;
 			EffectList effects = new EffectList();
-
 			while (rs.next()) {
 				if (ability == null) {
-
 					Type abilityType = Type.valueOf(rs.getString("type"));
-
 					ability = new Ability(
 							rs.getString("id"),
 							rs.getString("name"),
 							abilityType,
 							rs.getString("description"),
 							rs.getInt("power"),
-							effects // On passe la référence de l'EffectList ici
+							effects
 					);
 				}
-
-
 				String effectId = rs.getString("effect_id");
 				if (effectId != null) {
 					Effect effect = null;
 					EffectType type = EffectType.valueOf(rs.getString("effect_type"));
 					EffectTarget target = EffectTarget.valueOf(rs.getString("target"));
-
 					if (type == EffectType.HEAL) {
 						effect = new EffectHeal(target, rs.getInt("value"));
 					} else if (type == EffectType.STAT_MODIFIER) {
@@ -122,25 +114,21 @@ public class AbilityDatabaseRepository implements AbilityRepository {
 						statsChanges.put(EffectStatType.ATTACK, rs.getInt("attack"));
 						statsChanges.put(EffectStatType.DEFENSE, rs.getInt("defense"));
 						statsChanges.put(EffectStatType.INITIATIVE, rs.getInt("initiative"));
-
 						EffectStatDuration duration = EffectStatDuration.valueOf(rs.getString("duration"));
 						effect = new EffectStatModifier(target, duration, statsChanges);
 					}
-
 					if (effect != null) {
 						effects.add(effect);
 					}
 				}
 			}
-
 			if (ability == null) {
 				throw new EntityNotFoundException("Ability", id);
 			}
-
 			return ability;
-
 		} catch (SQLException e) {
-			throw new RuntimeException("Erreur SQL lors de la recherche de l'ability", e);
+			LOGGER.log(Level.SEVERE, "SQL error while loading ability with id: " + id, e);
+			return null;
 		}
 	}
 

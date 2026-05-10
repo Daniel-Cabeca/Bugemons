@@ -35,7 +35,7 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 		this.view.setViewListener(this);
 	}
 
-	public CreateTeamWindow getView(){return this.view;}
+
 	public PlayerDTO getSelfPlayer() { return this.clientListener.onGetPlayer(); }
 	public boolean hasOpponent() { return this.opponent != null; }
 	public PlayerDTO getOpponent() { return this.opponent; }

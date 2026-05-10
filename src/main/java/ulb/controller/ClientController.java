@@ -107,7 +107,6 @@ public class ClientController extends Application implements BattleWindowControl
 		primaryStage.setFullScreen(true);
 		primaryStage.setFullScreenExitHint("");
 
-		//TODO: check where to put
 		this.registerController = new RegisterController(this.stage, this);
 		this.modeController = new ModeController(this.stage, this);
 		this.socialPanelController = new SocialPanelController(this.stage, this);
@@ -124,8 +123,7 @@ public class ClientController extends Application implements BattleWindowControl
 		this.floorRewardController = new FloorRewardController(this.stage, this);
 		this.battleEndController = new BattleEndController(this.stage, this);
 		this.chooseBugemonController = new ChooseBugemonController(this.stage, this);
-		//TODO: implement battleWindow differently
-
+		this.attackReplacementController = new AttackReplacementController(this.stage, this);
 		this.registerController.show();
 
 		if (primaryStage.getScene() != null) {
@@ -198,8 +196,6 @@ public class ClientController extends Application implements BattleWindowControl
 		return null;
 	}
 
-	// Register Controller :
-
 	/**
 	 * Loads a player by username, stores it as the current player, and returns it.
 	 *
@@ -211,15 +207,10 @@ public class ClientController extends Application implements BattleWindowControl
 		return this.player;
 	}
 
-	// Mode Controller Listener :
-
 	@Override
 	public void onOpenSocial() {
 		this.socialPanelController.show();
 	}
-
-	// Game Mode Controller :
-
 	private void setGameMode(GameMode gameMode){this.gameMode = gameMode;}
 
 	/**
@@ -258,13 +249,6 @@ public class ClientController extends Application implements BattleWindowControl
 	}
 
 	/**
-	 * Switches to the floor window and creates the controller if needed.
-	 */
-	private void switchToFloorWindow() {
-		this.floorController.show();
-	}
-
-	/**
 	 * Switches to the battle end window with battle result.
 	 */
 	private void switchToBattleEndWindow(){
@@ -292,20 +276,6 @@ public class ClientController extends Application implements BattleWindowControl
 	}
 
 	/**
-	 * Switches to the level-up window.
-	 */
-	private void switchToLevelUpWindow() {
-		this.levelUpController.show();
-	}
-
-	/**
-	 * Switches to the tower reward window.
-	 */
-	private void switchToTowerRewardWindow() {
-		this.floorRewardController.show();
-	}
-
-	/**
 	 * Switches to the next window according to info gotten from the server.
 	 */
 	public void nextRoom(){
@@ -320,11 +290,11 @@ public class ClientController extends Application implements BattleWindowControl
 				break;
 
 			case LEVEL_UP:
-				switchToLevelUpWindow();
+				this.levelUpController.show();
 				break;
 
 			case REWARD:
-				switchToTowerRewardWindow();
+				this.floorRewardController.show();
 				break;
 
 			case MAIN_MENU:
@@ -332,7 +302,7 @@ public class ClientController extends Application implements BattleWindowControl
 				break;
 
 			case FLOOR:
-				switchToFloorWindow();
+				this.floorController.show();
 				break;
 
 			default:
@@ -550,45 +520,7 @@ public class ClientController extends Application implements BattleWindowControl
 		if (chooseBugemonController == null) {
 			chooseBugemonController = new ChooseBugemonController(this.stage, this);
 		}
-		try {
-			chooseBugemonController.show();
-		} catch (ViewLoadException e) {
-			logViewLoadFailure("Impossible d'afficher l'écran de choix du Bugémon pour la récompense.", e);
-		}
-	}
-
-	public void onBugemonChosen(BugemonDTO bugemon) {
-		if (pendingFloorRewardChoice == RewardChoice.STAT) {
-			if (postData(new ChooseStatRewardMessage(bugemon))){
-				switchToFloorWindow();
-			}
-			return;
-		}
-
-		AbilityDTO newAbility = null;
-		Serializable message = getData(new GetRandomAbilityMessage(bugemon));
-
-		if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
-			LOGGER.log(Level.WARNING, "Failed to get random ability: " + errorMessage.getMessage());
-			return;
-
-		} else if (message instanceof RandomAbilityMessage randomAbility){
-			newAbility = randomAbility.getAbility();
-		}
-
-		if (newAbility == null) {
-			nextRoom();
-			return;
-		}
-
-		if (attackReplacementController == null) {
-			attackReplacementController = new AttackReplacementController(stage, this);
-		}
-		attackReplacementController.show(bugemon, newAbility);
-	}
-
-	public void onReturnFloorRewardWindow() {
-		this.floorRewardController.show();
+		chooseBugemonController.show();
 	}
 
 	/**
@@ -650,11 +582,7 @@ public class ClientController extends Application implements BattleWindowControl
 			case NEXT_ROOM -> this.nextRoomController.show();
 			case LEVEL_UP -> this.levelUpController.show();
 			case FLOOR_REWARD -> this.floorRewardController.show();
-			case CHOOSE_BUGEMEON -> {
-				try {
-					this.chooseBugemonController.show();
-				} catch (ViewLoadException e) {}
-			}
+			case CHOOSE_BUGEMEON -> this.chooseBugemonController.show();
 		}
 	}
 
@@ -701,14 +629,14 @@ public class ClientController extends Application implements BattleWindowControl
 		this.confirmTeamController.show();
 	}
 
-//	@Override
-//	public void onShowBattleEnd(boolean victory, int totalXp, String opponent) {
-//		try {
-//
-//			this.battleEndController.show(victory, totalXp, opponent);
-//		} catch (ViewLoadException e) {}
-//	}
-
 	@Override
 	public void onNextRoom() { this.nextRoom(); }
+
+	@Override
+	public void onShowAttackReplacement(BugemonDTO bugemon, AbilityDTO newAbility) {
+		this.attackReplacementController.show(bugemon, newAbility);
+	}
+
+	@Override
+	public RewardChoice onGetPendingFloorRewardChoice() { return this.pendingFloorRewardChoice; }
 }

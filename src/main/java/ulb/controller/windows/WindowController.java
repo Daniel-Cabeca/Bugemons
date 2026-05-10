@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.DTO.reward.RewardDTO;
@@ -48,8 +49,6 @@ public abstract class WindowController<T> {
         }
     }
 
-    protected T getView() { return this.view; }
-    protected Stage getStage(){ return this.stage; }
     /**
      * Read the fxml file and load the view window
      */
@@ -86,7 +85,7 @@ public abstract class WindowController<T> {
         void onSetGameMode(GameMode gameMode);
         /**
          * Set newTimeLine in WaitWindow
-         * @param waitCycle
+         * @param waitCycle is current waitCycle
          */
         void onSetNewTimeLine(EventHandler waitCycle);
         void onStopWaitWindow();
@@ -100,6 +99,8 @@ public abstract class WindowController<T> {
         void onRewardChosen(RewardDTO reward, ActionEvent event);
         //void onShowBattleEnd(boolean victory, int totalXp, String opponent);
         void onNextRoom();
+        void onShowAttackReplacement(BugemonDTO bugemon, AbilityDTO newAbility);
+        RewardChoice onGetPendingFloorRewardChoice();
     }
 
     /**

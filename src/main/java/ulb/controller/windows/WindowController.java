@@ -98,6 +98,8 @@ public abstract class WindowController<T> {
         void onRoomSelectionComplete();
         void onChooseBugemonReward(RewardChoice rewardChoice);
         void onRewardChosen(RewardDTO reward, ActionEvent event);
+        //void onShowBattleEnd(boolean victory, int totalXp, String opponent);
+        void onNextRoom();
     }
 
     /**

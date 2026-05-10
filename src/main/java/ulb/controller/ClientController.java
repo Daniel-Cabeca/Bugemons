@@ -39,7 +39,7 @@ import ulb.DTO.reward.RewardDTO;
  * Client-side application controller coordinating server messaging.
  */
 public class ClientController extends Application implements
-		BattleEndController.Listener, BattleWindowController.Listener, NextRoomController.Listener,
+		BattleEndController.Listener, BattleWindowController.Listener,
 		AttackReplacementController.Listener, WindowController.ClientListener {
 
 	private static final Logger LOGGER = Logger.getLogger(ClientController.class.getName());
@@ -121,6 +121,10 @@ public class ClientController extends Application implements
 		this.waitWindowController = new WaitWindowController(this.stage, this);
 		this.confirmTeamController = new ConfirmTeamController(this.stage, this);
 		this.loadTeamPanelController = new LoadTeamPanelController(this.stage, this);
+		this.nextRoomController = new NextRoomController(this.stage, this);
+		this.levelUpController = new LevelUpController(this.stage, this);
+		this.floorRewardController = new FloorRewardController(this.stage, this);
+		this.battleEndController = new BattleEndController(this.stage, this);
 		//TODO: implement battleWindow differently
 
 		this.registerController.show();
@@ -242,12 +246,7 @@ public class ClientController extends Application implements
 	 * Switches to the next room window.
 	 */
 	private void switchToNextRoomWindow(){
-		this.nextRoomController = new NextRoomController(stage, this);
-		try {
-			this.nextRoomController.show();
-		} catch (ViewLoadException e) {
-			logViewLoadFailure("Impossible d'afficher l'écran de salle suivante.", e);
-		}
+		this.nextRoomController.show();
 	}
 
 	/**
@@ -302,7 +301,6 @@ public class ClientController extends Application implements
 			return;
 		}
 
-		this.battleEndController = new BattleEndController(stage, this);
 		try {
 			battleEndController.show(victory, totalXp, opponent);
 		} catch (ViewLoadException e) {
@@ -558,26 +556,6 @@ public class ClientController extends Application implements
 		}
 	}
 
-	// Next Room Listener
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onContinue() {
-		nextRoom();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onReturn() {
-		if (this.postData(new AbandonTowerMessage())){
-				this.modeController.show();
-		}
-	}
-
 	// Floor Reward Listener
 
 	/**
@@ -718,7 +696,9 @@ public class ClientController extends Application implements
 				this.switchToBattleWindow(); //TODO: implement battleWindowDifferently
 			}
 			case LOAD_TEAM_PANEL -> this.loadTeamPanelController.show();
-
+			case NEXT_ROOM -> this.nextRoomController.show();
+			case LEVEL_UP -> this.levelUpController.show();
+			case FLOOR_REWARD -> this.floorRewardController.show();
 		}
 	}
 
@@ -763,6 +743,16 @@ public class ClientController extends Application implements
 		this.confirmTeamController.setPlayerTeam(teamDTO);
 	
 		this.confirmTeamController.show();
-		
 	}
+
+//	@Override
+//	public void onShowBattleEnd(boolean victory, int totalXp, String opponent) {
+//		try {
+//
+//			this.battleEndController.show(victory, totalXp, opponent);
+//		} catch (ViewLoadException e) {}
+//	}
+
+	@Override
+	public void onNextRoom() { this.nextRoom(); }
 }

@@ -1,5 +1,6 @@
 package ulb.controller.windows;
 
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -7,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.player.PlayerDTO;
+import ulb.DTO.reward.RewardDTO;
 import ulb.communication.GameMode;
 import ulb.message.clientToServer.ClientToServerMessage;
 import ulb.view.FxmlLoader;
@@ -91,6 +93,11 @@ public abstract class WindowController<T> {
 		void setupTeamAndShowConfirmTeam(List<BugemonDTO> teamDTO);
         void onConfirmTeamSetter(List<BugemonDTO> team);
 		GameMode onGetGameMode();
+
+        // Tower flow — complex routing that must stay in ClientController
+        void onRoomSelectionComplete();
+        void onChooseBugemonReward(RewardChoice rewardChoice);
+        void onRewardChosen(RewardDTO reward, ActionEvent event);
     }
 
     /**

@@ -50,8 +50,7 @@ import ulb.view.WindowPath;
  */
 public class ClientController extends Application implements
 		BattleEndController.Listener, BattleWindowController.Listener, NextRoomController.Listener,
-		FloorRewardController.Listener, AttackReplacementController.Listener, LevelUpController.Listener,
-		FloorController.Listener, WindowController.ClientListener{
+		AttackReplacementController.Listener, WindowController.ClientListener {
 
 	private static final Logger LOGGER = Logger.getLogger(ClientController.class.getName());
 
@@ -77,10 +76,8 @@ public class ClientController extends Application implements
 	AttackReplacementController attackReplacementController;
 	LoadTeamPanelController loadTeamPanelController;
 
-	FloorRewardController.RewardChoice pendingFloorRewardChoice;
+	RewardChoice pendingFloorRewardChoice;
 	FloorController floorController;
-	BugemonDTO pendingLevelUpBugemon;
-	List<RewardDTO> pendingLevelUpRewards;
 
 	SocialPanelController socialPanelController;
 	WaitWindowController waitWindowController;
@@ -129,6 +126,8 @@ public class ClientController extends Application implements
 		this.gameModeController = new GameModeController(this.stage, this);
 		this.teamController = new TeamController(this.stage, this);
 		this.floorController = new FloorController(this.stage, this);
+		this.floorRewardController = new FloorRewardController(this.stage, this);
+		this.levelUpController = new LevelUpController(this.stage, this);
 		this.waitWindowController = new WaitWindowController(this);
 		this.confirmTeamController = new ConfirmTeamController(this.stage, this);
 		this.loadTeamPanelController = new LoadTeamPanelController(this.stage, this);
@@ -479,16 +478,8 @@ public class ClientController extends Application implements
 	/**
 	 * Switches to the floor window and creates the controller if needed.
 	 */
-	private void switchToFloorWindow(){
-		if (this.floorController == null) {
-			this.floorController = new FloorController(this.stage, this);
-		}
-
-		try {
-			this.floorController.show();
-		} catch (ViewLoadException e) {
-			logViewLoadFailure("Impossible d'afficher l'étage de la tour.", e);
-		}
+	private void switchToFloorWindow() {
+		this.floorController.show();
 	}
 
 	/**
@@ -516,32 +507,15 @@ public class ClientController extends Application implements
 	/**
 	 * Switches to the level-up window.
 	 */
-	private void switchToLevelUpWindow(){
-		Serializable message = getData(new GetLevelUpInfoMessage());
-		if (!(message instanceof LevelUpInfoMessage levelUpInfo)) {
-			return;
-		}
-
-		this.pendingLevelUpBugemon = levelUpInfo.getBugemon();
-		this.pendingLevelUpRewards = levelUpInfo.getRewards();
-		this.levelUpController = new LevelUpController(stage, this);
-		try {
-			this.levelUpController.show();
-		} catch (ViewLoadException e) {
-			logViewLoadFailure("Impossible d'afficher l'écran de montée de niveau.", e);
-		}
+	private void switchToLevelUpWindow() {
+		this.levelUpController.show();
 	}
 
 	/**
 	 * Switches to the tower reward window.
 	 */
-	private void switchToTowerRewardWindow(){
-		this.floorRewardController = new FloorRewardController(stage, this);
-		try {
-			floorRewardController.show();
-		} catch (ViewLoadException e) {
-			logViewLoadFailure("Impossible d'afficher l'écran de récompense d'étage.", e);
-		}
+	private void switchToTowerRewardWindow() {
+		this.floorRewardController.show();
 	}
 
 	/**
@@ -551,7 +525,6 @@ public class ClientController extends Application implements
 		WindowType nextWindow = this.getWindowType();
 		switch (nextWindow) {
 			case NEXT_ROOM:
-				this.floorController = null;
 				switchToNextRoomWindow();
 				break;
 
@@ -777,23 +750,6 @@ public class ClientController extends Application implements
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<RewardDTO> getLevelUpRewards() {
-		Serializable message = getData(new GetLevelUpInfoMessage());
-		List<RewardDTO> rewards = null;
-
-		if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
-			LOGGER.log(Level.WARNING, "Failed to get level up rewards: " + errorMessage.getMessage());
-		} else if (message instanceof LevelUpInfoMessage levelUpInfo){
-			rewards = levelUpInfo.getRewards();
-		}
-
-		return rewards;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public void onRewardChosen(RewardDTO reward, ActionEvent event) {
 		if (postData(new ChooseLevelUpRewardMessage(reward))) {
 			nextRoom();
@@ -826,17 +782,7 @@ public class ClientController extends Application implements
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void onObjectReward(ItemDTO rewardItem) {
-		if (postData(new ChooseItemRewardMessage(rewardItem))){
-			switchToFloorWindow();
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onChooseBugemonReward(FloorRewardController.RewardChoice rewardChoice) {
+	public void onChooseBugemonReward(RewardChoice rewardChoice) {
 		pendingFloorRewardChoice = rewardChoice;
 		if (chooseBugemonController == null) {
 			chooseBugemonController = new ChooseBugemonController(this.stage, this, this.player);
@@ -848,12 +794,8 @@ public class ClientController extends Application implements
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public void onBugemonChosen(BugemonDTO bugemon) {
-		if (pendingFloorRewardChoice == FloorRewardController.RewardChoice.STAT) {
+		if (pendingFloorRewardChoice == RewardChoice.STAT) {
 			if (postData(new ChooseStatRewardMessage(bugemon))){
 				switchToFloorWindow();
 			}
@@ -887,54 +829,18 @@ public class ClientController extends Application implements
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public void onReturnFloorRewardWindow() {
-		if (floorRewardController == null) {
-			floorRewardController = new FloorRewardController(stage, this);
-		}
-		try {
-			floorRewardController.show();
-		} catch (ViewLoadException e) {
-			logViewLoadFailure("Impossible d'afficher l'écran de récompense d'étage.", e);
-		}
+		this.floorRewardController.show();
 	}
 
 	/**
-	 * {@inheritDoc}
+	 * Returns the current floor number and room number from the server.
 	 */
-	@Override
-	public ItemDTO getRandomItem() {
-		if (getData(new GetRandomItemMessage()) instanceof RandomItemMessage randomItem){
-			return randomItem.getItem();
-		}
-		return null;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public List<Integer> getTowerInfo() {
 		if (getData(new GetTowerInfoMessage()) instanceof TowerInfoMessage towerInfo){
 			return List.of(towerInfo.getFloorNumber(), towerInfo.getRoomNumber());
 		}
 		return null;
-	}
-
-	/**
-	 * Returns the list of ids of the cleared rooms in the current floor.
-	 *
-	 * @return The list of cleared room ids
-	 */
-	@Override
-	public List<Integer> getClearedRooms() {
-		if (getData(new GetTowerInfoMessage()) instanceof TowerInfoMessage towerInfo){
-			return towerInfo.getClearedRooms();
-		}
-		return List.of();
 	}
 
 	// Attack Replacement Controller Listener
@@ -970,24 +876,8 @@ public class ClientController extends Application implements
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean onRoomSelected(int roomId) {
-		return postData(new ChooseTowerRoomMessage(roomId));
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public void onRoomSelectionComplete() {
 		nextRoom();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onReturnToGameModeWindow() {
-		switchToGameModeWindow();
 	}
 
 	// Miscellaneous
@@ -1049,12 +939,7 @@ public class ClientController extends Application implements
 			}
 			case GAME_MODE -> this.gameModeController.show();
 			case TEAM -> this.teamController.show();
-			case FLOOR ->{
-				try{
-					this.floorController.show();
-				}catch (ViewLoadException e){}
-
-			}
+			case FLOOR -> this.floorController.show();
 			case WAIT -> {
 				try {
 					this.waitWindowController.show();

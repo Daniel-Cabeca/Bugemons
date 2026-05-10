@@ -29,12 +29,12 @@ public class LoadTeamPanel {
      * @param savedTeams the player's saved teams
      */
     public void populateSavedTeams(List<TeamDTO> savedTeams) {
+        savedTeamsAccordion.getPanes().clear();
+        selectedTeam = null;
         for (TeamDTO team : savedTeams) {
             TitledPane pane = createTeamPane(team);
             savedTeamsAccordion.getPanes().add(pane);
-            pane.setOnMouseClicked(e -> {
-                selectedTeam = team;
-            });
+            pane.setOnMouseClicked(e -> selectedTeam = team);
         }
     }
 

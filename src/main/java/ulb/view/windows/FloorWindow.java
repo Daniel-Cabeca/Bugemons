@@ -36,6 +36,7 @@ public class FloorWindow {
     private record RoomUI(Button button, int col, int row) {}
 
     private final Map<Integer, RoomUI> rooms = new HashMap<>();
+    private final Map<Integer, String> originalStyles = new HashMap<>();
 
     public enum Direction {
         HORIZONTAL,
@@ -74,6 +75,9 @@ public class FloorWindow {
         rooms.put(5, new RoomUI(battleB, 3, 3));
         rooms.put(6, new RoomUI(bonusB, 3, 4));
         rooms.put(7, new RoomUI(boss, 3, 1));
+        for (Map.Entry<Integer, RoomUI> entry : rooms.entrySet()) {
+            originalStyles.put(entry.getKey(), entry.getValue().button().getStyle());
+        }
     }
 
     /**
@@ -265,6 +269,9 @@ public class FloorWindow {
      * @param visitedRooms The list of visited rooms
      */
     public void markVisitedRooms(List<Integer> visitedRooms) {
+        for (Map.Entry<Integer, RoomUI> entry : rooms.entrySet()) {
+            entry.getValue().button().setStyle(originalStyles.getOrDefault(entry.getKey(), ""));
+        }
         String visitedRoomStyle = "-fx-background-color: #c0c0c0; -fx-font-size: 24px";
         for (Integer id : visitedRooms) {
             RoomUI roomUI = rooms.get(id);

@@ -26,7 +26,7 @@ import java.util.logging.Logger;
 public abstract class WindowController<T> {
     protected Stage stage;
     protected T view;
-    private FXMLLoader loader;
+    protected FXMLLoader loader;
     protected final Logger LOGGER = Logger.getLogger(this.getClass().getName());
     protected ClientListener clientListener;
 
@@ -88,6 +88,7 @@ public abstract class WindowController<T> {
          */
         void onSetNewTimeLine(EventHandler waitCycle);
         void onStopWaitWindow();
+		void setupTeamAndShowConfirmTeam(List<BugemonDTO> teamDTO);
         void onConfirmTeamSetter(List<BugemonDTO> team);
 		GameMode onGetGameMode();
     }

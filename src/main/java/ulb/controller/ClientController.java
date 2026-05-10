@@ -40,7 +40,7 @@ import ulb.model.chat.ChatMessage;
 public class ClientController extends Application implements
 		BattleEndController.Listener, BattleWindowController.Listener, NextRoomController.Listener,
 		FloorRewardController.Listener, AttackReplacementController.Listener, LevelUpController.Listener,
-		LoadTeamPanelController.Listener, FloorController.Listener, WindowController.ClientListener{
+		FloorController.Listener, WindowController.ClientListener{
 
 	private static final Logger LOGGER = Logger.getLogger(ClientController.class.getName());
 
@@ -399,57 +399,6 @@ public class ClientController extends Application implements
 
 
 	private void setGameMode(GameMode gameMode){this.gameMode = gameMode;}
-
-
-
-
-
-
-	// Team Controller :
-
-
-
-	/**
-	 * Sends the player's team to the server and switches to the battle mode window.
-	 */
-	public void setupTeamAndShowModeMenu() {
-		List<BugemonDTO> team = player.getTeam();
-
-		if (!this.postData(new SetUpTeamMessage(team))){
-			return;
-		}
-		this.confirmTeamController.setGameMode(this.gameMode);
-		this.confirmTeamController.setPlayerTeam(team);
-	
-		this.confirmTeamController.show();
-		
-	}
-
-
-	/**
-	 * Returns the player's saved teams from the database.
-	 *
-	 * @return The player's saved teams
-	 */
-	@Override
-	public List<TeamDTO> getSavedTeams() {
-		Serializable message = this.getData(new GetSavedTeamsMessage());
-
-		if (message instanceof SavedTeamsMessage teamsMessage){
-			return teamsMessage.getTeams();
-		}
-		return null;
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onTeamLoaded(TeamDTO selectedTeam) {
-		player.setTeam(selectedTeam.members());
-		setupTeamAndShowModeMenu();
-	}
 
 	// Confirm Team Controller
 
@@ -1133,6 +1082,7 @@ public class ClientController extends Application implements
 			case BATTLE -> {
 				this.switchToBattleWindow(); //TODO: implement battleWindowDifferently
 			}
+			case LOAD_TEAM_PANEL -> this.loadTeamPanelController.show();
 
 		}
 	}
@@ -1166,4 +1116,20 @@ public class ClientController extends Application implements
 
 	@Override
 	public GameMode onGetGameMode() { return this.gameMode; }
+
+	/**
+	 * Sends the player's team to the server and switches to the battle mode window.
+	 */
+	@Override
+	public void setupTeamAndShowConfirmTeam(List<BugemonDTO> teamDTO) {
+		this.player.setTeam(teamDTO);
+		if (!this.postData(new SetUpTeamMessage(teamDTO))){
+			return;
+		}
+		this.confirmTeamController.setGameMode(this.gameMode);
+		this.confirmTeamController.setPlayerTeam(teamDTO);
+	
+		this.confirmTeamController.show();
+		
+	}
 }

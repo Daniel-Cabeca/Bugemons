@@ -2,16 +2,11 @@ package ulb.controller.windows;
 
 import java.util.List;
 
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.communication.GameMode;
-import ulb.exceptions.ViewLoadException;
 import ulb.message.clientToServer.SetUpNormalModeMessage;
 import ulb.message.clientToServer.SetUpTowerModeMessage;
-import ulb.view.FxmlLoader;
 import ulb.view.WindowPath;
 import ulb.view.windows.ConfirmTeamWindow;
 

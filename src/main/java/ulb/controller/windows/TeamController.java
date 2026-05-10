@@ -70,20 +70,9 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 			this.confirmTeamMulti(this.getOpponent());
 		}
 		else {
-			this.setupTeamAndShowModeMenu();
+			List<BugemonDTO> team = this.clientListener.onGetPlayer().getTeam();
+			this.clientListener.setupTeamAndShowConfirmTeam(team);
 		}
-	}
-	/**
-	 * Sends the player's team to the server and switches to the battle mode window.
-	 */
-	public void setupTeamAndShowModeMenu() {
-		List<BugemonDTO> team = this.clientListener.onGetPlayer().getTeam();
-
-		if (!this.clientListener.onPostData(new SetUpTeamMessage(team))){
-			return;
-		}
-		this.clientListener.onConfirmTeamSetter(team);
-		this.clientListener.onShowWindow(WindowName.CONFIRM_TEAM);
 	}
 
 	/**

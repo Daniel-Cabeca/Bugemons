@@ -34,7 +34,7 @@ public class BattleEndController implements BattleEndWindow.ViewListener {
      * @param victory Whether the battle was won
      * @param totalXP Total experience gained
      */
-    public void show(boolean victory, int totalXP, String opponent) throws ViewLoadException {
+    public void show(boolean victory, int totalXP, String opponent, boolean multiplayerBattle) throws ViewLoadException {
         FXMLLoader loader = FxmlLoader.load(this, WindowPath.BATTLE_END);
         view = loader.getController();
         this.view.setViewListener(this);
@@ -45,7 +45,7 @@ public class BattleEndController implements BattleEndWindow.ViewListener {
         } else {
             stage.getScene().setRoot(root);
         }
-        this.view.setResult(victory, totalXP, opponent);
+        this.view.setResult(victory, totalXP, opponent, multiplayerBattle);
         this.stage.show();
     }
 

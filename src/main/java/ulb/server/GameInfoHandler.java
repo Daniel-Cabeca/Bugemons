@@ -91,6 +91,7 @@ public class GameInfoHandler {
 		boolean isGameTower = clientHandler.isGameTower();
 		TowerManager towerManager = clientHandler.getTowerManager();
 
+		boolean multiplayerBattle = battle.getMultiplayerBattle();
 		String opponent = battle.getParticipantB().getPlayer().getUsername();
 
 		if (opponent.equals(clientHandler.getPlayer().getUsername())) {
@@ -100,11 +101,11 @@ public class GameInfoHandler {
 		boolean isWin = battle != null && battle.getState(teamLabel) == BattleState.WON;
 		int gainedXp = 0;
 
-		if (isWin && battle != null){
+		if (isWin && battle != null) {
 			gainedXp = battle.computeTotalXP(battle.getTeam(battle.getOpponentTeamLabel(teamLabel)));
 		}
 
-		if (battle != null && battle.isGameFinished()){
+		if (battle != null && battle.isGameFinished()) {
 			clientHandler.setBattle(null);
 		}
 
@@ -113,7 +114,7 @@ public class GameInfoHandler {
 		}
 
 		clientHandler.clearPendingLevelUpState();
-		clientHandler.sendMessage(new BattleEndInfoMessage(isWin, gainedXp, opponent));
+		clientHandler.sendMessage(new BattleEndInfoMessage(isWin, gainedXp, opponent, multiplayerBattle));
 	}
 
 	public void getBattleState() throws DataAccessException{

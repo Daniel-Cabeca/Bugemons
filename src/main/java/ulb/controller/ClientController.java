@@ -499,10 +499,12 @@ public class ClientController extends Application implements
 		boolean victory;
 		int totalXp;
 		String opponent;
+		boolean multiplayerBattle;
 		if (message instanceof BattleEndInfoMessage battleInfo){
 			victory = battleInfo.isVictory();
 			totalXp = battleInfo.getTotalXp();
 			opponent = battleInfo.getOpponent();
+			multiplayerBattle = battleInfo.isMultiplayerBattle();
 
 		} else {
 			return;
@@ -510,7 +512,7 @@ public class ClientController extends Application implements
 
 		this.battleEndController = new BattleEndController(stage, this);
 		try {
-			battleEndController.show(victory, totalXp, opponent);
+			battleEndController.show(victory, totalXp, opponent, multiplayerBattle);
 		} catch (ViewLoadException e) {
 			logViewLoadFailure("Impossible d'afficher l'écran de fin de combat.", e);
 		}

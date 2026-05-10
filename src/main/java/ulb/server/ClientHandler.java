@@ -263,6 +263,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	@Override public void chooseRandomAction() throws DataAccessException { gameActionsHandler.chooseRandomAction(); }
 	@Override public void chooseRunAction() throws DataAccessException { gameActionsHandler.chooseRunAction(); }
 	@Override public void startMultiBattle(PlayerDTO opponentDTO) throws DataAccessException { gameActionsHandler.startMultiBattle(opponentDTO); }
+	@Override public void quitMultiBattle(PlayerDTO opponentDTO) throws DataAccessException { gameActionsHandler.quitMultiBattle(opponentDTO); }
 	@Override public void chooseSwapBugemonAction(BugemonDTO bugemonDTOToSwap) throws DataAccessException { gameActionsHandler.chooseSwapBugemonAction(bugemonDTOToSwap); }
 	@Override public void chooseUseAbilityAction(AbilityDTO abilityDTO) throws DataAccessException { gameActionsHandler.chooseUseAbilityAction(abilityDTO); }
 	@Override public void chooseUseItemAction(ItemDTO itemDTO) throws DataAccessException { gameActionsHandler.chooseUseItemAction(itemDTO); }

@@ -8,6 +8,7 @@ import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.DTO.team.TeamDTO;
+import ulb.message.clientToServer.gameActions.QuitMultiBattleMessage;
 import ulb.message.clientToServer.gameActions.StartMultiBattleMessage;
 import ulb.message.clientToServer.gameData.GetAllBugemonSpeciesMessage;
 import ulb.message.clientToServer.setup.ConfirmTeamMultiMessage;
@@ -158,7 +159,11 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	 * Handles return action from the team creation screen.
 	 */
 	public void onReturn() {
-		this.clientListener.onShowWindow(WindowName.GAME_MODE);
+		if (this.hasOpponent()) {
+			this.clientListener.onGetData(new QuitMultiBattleMessage(this.opponent));
+		}
+
+		this.clientListener.onShowWindow(WindowName.MODE);
 	}
 
 	/**

@@ -14,14 +14,14 @@ public class MultiBattleStatusMapper {
 	public static MultiBattleStatusDTO toDTO(MultiBattleSession battle) {
 		MultiBattleStatusDTO dto = new MultiBattleStatusDTO();
 
-		if (battle.isReady()) {
+		if (battle.isDeclined()) {
+			dto.setStatus(Status.DECLINED);
+		}
+		else if (battle.isReady()) {
 			dto.setStatus(Status.BATTLE);
 		}
 		else if (battle.isAccepted()) {
 			dto.setStatus(Status.PICKING_TEAMS);
-		}
-		else if (battle.isDeclined()) {
-			dto.setStatus(Status.DECLINED);
 		}
 		else {
 			dto.setStatus(Status.WAITING_ACCEPT);

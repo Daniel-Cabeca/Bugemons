@@ -10,11 +10,6 @@ import ulb.DTO.player.PlayerDTO;
 import ulb.DTO.player.PlayerRegisterDTO;
 import ulb.mapper.bugemon.BugemonMapper;
 import ulb.mapper.player.PlayerMapper;
-import ulb.message.clientToServer.ConfirmTeamMultiMessage;
-import ulb.message.clientToServer.RegisterMessage;
-import ulb.message.clientToServer.SetUpNormalModeMessage;
-import ulb.message.clientToServer.SetUpTeamMessage;
-import ulb.message.clientToServer.SetUpTowerModeMessage;
 import ulb.model.Player;
 import ulb.model.battle.Battle;
 import ulb.model.battle.MultiBattleSession;
@@ -70,10 +65,10 @@ public class SetupHandler {
         return PlayerMapper.toEntity(dto, inventory, userId);
     }
 
-	public void handle(ConfirmTeamMultiMessage message) throws DataAccessException {
+	public void setupMultiBattle(PlayerDTO opponent, List<BugemonDTO> bugemons) throws DataAccessException {
 		Player player = clientHandler.getPlayer();
-		PlayerDTO opponent = message.getOpponent();
-		Team team = makeTeam(message.getTeam());
+		Team team = makeTeam(bugemons);
+		clientHandler.setTeam(team);
 
 		MultiBattleSession battle = this.multiBattleService.getMultiBattle(player.getUserId(), opponent.getUserId());
 		battle.getParticipant(player.getUserId()).setTeam(team);
@@ -101,19 +96,19 @@ public class SetupHandler {
 		return new Team(entities);
 	}
 
-	public void handle(RegisterMessage message) throws DataAccessException{
+	public void registerPlayer(PlayerRegisterDTO playerRegisterDTO, boolean isLogin) throws DataAccessException{
 		boolean success;
-		String username = message.getPlayer().username();
-		String password = message.getPlayer().password();
+		String username = playerRegisterDTO.username();
+		String password = playerRegisterDTO.password();
 
-		if (message.isLogin()) {
+		if (isLogin) {
 			success = accountService.login(username, password);
 		}
 		else {
 			success = accountService.register(username, password);
 		}
 		if (success) {
-			Player player = buildPlayer(message.getPlayer(), message.isLogin());
+			Player player = buildPlayer(playerRegisterDTO, isLogin);
             clientHandler.setPlayer(player);
 			clientHandler.sendSuccessMessage();
 		} else {
@@ -121,7 +116,7 @@ public class SetupHandler {
 		}
 	}
 
-    public void handle(SetUpNormalModeMessage message) throws DataAccessException{
+    public void setupNormalMode() throws DataAccessException{
         Player player = clientHandler.getPlayer();
         Battle battle = clientHandler.getBattle();
         TowerManager towerManager = clientHandler.getTowerManager();
@@ -159,10 +154,10 @@ public class SetupHandler {
 		clientHandler.sendSuccessMessage();
 	}
 
-	public void handle(SetUpTeamMessage message) throws DataAccessException{
+	public void setupTeam(List<BugemonDTO> bugemons) throws DataAccessException{
 		Team team = new Team();
 
-		for (BugemonDTO bugemonDTO : message.getTeam()){
+		for (BugemonDTO bugemonDTO : bugemons){
 			if (!team.add(BugemonMapper.toEntity(bugemonDTO))){
 				clientHandler.sendErrorMessage("Invalid Team");
 			}
@@ -172,22 +167,21 @@ public class SetupHandler {
 		clientHandler.sendSuccessMessage();
 	}
 
-    public void handle(SetUpTowerModeMessage message) throws DataAccessException{
-		boolean setupNewTower = message.isNewTower();
+    public void setupTowerMode(boolean isNewTower) throws DataAccessException{
         Player player = clientHandler.getPlayer();
 
-		if (!setupNewTower){
+		if (!isNewTower){
 			player.setTeam(teamService.getTowerTeam(player));
 		}
 
         Battle battle = clientHandler.getBattle();
         TowerManager towerManager = clientHandler.getTowerManager();
         boolean isGameTower = clientHandler.isGameTower();
-
+		
 		if (battle != null || towerManager != null || isGameTower) {
 			clientHandler.resetGameSessionState();
 		}
-		towerManager = new TowerManager(player, setupNewTower, bugemonService, itemService, teamService, towerSaveService);
+		towerManager = new TowerManager(player, isNewTower, bugemonService, itemService, teamService, towerSaveService);
 		clientHandler.setTowerManager(towerManager);
 
 		clientHandler.setBattle(towerManager.getCurrentBattle());

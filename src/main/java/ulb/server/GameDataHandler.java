@@ -1,5 +1,6 @@
 package ulb.server;
 
+import ulb.DTO.bugemon.BugemonDTO;
 import ulb.exceptions.DataAccessException;
 
 import java.util.ArrayList;
@@ -10,12 +11,7 @@ import ulb.mapper.ability.AbilityMapper;
 import ulb.mapper.bugemon.BugemonMapper;
 import ulb.mapper.bugemon.BugemonSpeciesMapper;
 import ulb.mapper.item.ItemMapper;
-import ulb.message.clientToServer.GetAllBugemonSpeciesMessage;
-import ulb.message.clientToServer.GetRandomAbilityMessage;
-import ulb.message.clientToServer.GetRandomItemMessage;
-import ulb.message.serverToClient.BugemonSpeciesMessage;
-import ulb.message.serverToClient.RandomAbilityMessage;
-import ulb.message.serverToClient.RandomItemMessage;
+import ulb.message.serverToClient.gameData.*;
 import ulb.model.ability.Ability;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.BugemonSpecies;
@@ -36,7 +32,8 @@ public class GameDataHandler {
         this.abilityService = abilityService;
         this.itemService = itemService;
     }
-    public void handle(GetAllBugemonSpeciesMessage message) throws DataAccessException{
+
+    public void getAllBugemonSpecies() throws DataAccessException{
 		List<BugemonSpeciesDTO> DTOSpeciesList = new ArrayList<BugemonSpeciesDTO>();
 
 		for (BugemonSpecies species : bugemonService.getAllSpecies()){
@@ -45,15 +42,15 @@ public class GameDataHandler {
 		clientHandler.sendMessage(new BugemonSpeciesMessage(DTOSpeciesList));
 	}
 
-	public void handle(GetRandomAbilityMessage message) throws DataAccessException{
-		Bugemon bugemon = BugemonMapper.toEntity(message.getBugemon());
+	public void getRandomAbility(BugemonDTO bugemonDTO) throws DataAccessException{
+		Bugemon bugemon = BugemonMapper.toEntity(bugemonDTO);
 
 		Ability RandomAbility = abilityService.getRandomAbility(bugemon.getType(), bugemon.getAbilities());
 
 		clientHandler.sendMessage(new RandomAbilityMessage(AbilityMapper.toDTO(RandomAbility)));
 	}
 
-	public void handle(GetRandomItemMessage message) throws DataAccessException{
+	public void getRandomItem() throws DataAccessException{
 		Item randomItem = itemService.getRandomItem();
 
 		clientHandler.sendMessage(new RandomItemMessage(ItemMapper.toDTO(randomItem)));

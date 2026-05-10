@@ -421,7 +421,7 @@ public class Battle {
 
 	/**
 	 * Returns the available Bugemons
-	 * @param team the team whose available Bugemons are returned
+	 * @param teamLabel the team whose available Bugemons are returned
 	 * @return the available Bugemons
 	 */
 	public List<Bugemon> getAvailableBugemons(ParticipantLabel teamLabel){

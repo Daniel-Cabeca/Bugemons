@@ -50,8 +50,7 @@ public class LevelUpWindow extends Window {
 	 */
 	public void initializeView(BugemonDTO bugemon, List<RewardDTO> rewards) {
 		if (bugemon == null || rewards == null) {
-			System.err.println("Invalid arguments");
-			return;
+			throw new IllegalArgumentException("'bugemon' and 'rewards' cannot be null.");
 		}
 		setRewards(rewards);
 		setBugemonLevel(bugemon);
@@ -64,13 +63,11 @@ public class LevelUpWindow extends Window {
 	 */
 	public void setRewards(List<RewardDTO> rewards) {
 		if (rewards == null || rewards.size() < 3) {
-			System.err.println("Invalid reward list");
-			return;
+			throw new IllegalArgumentException("Rewards list cannot be null and contain at least 3 rewards.");
 		}
 		rewardA = rewards.get(0);
 		rewardB = rewards.get(1);
 		rewardC = rewards.get(2);
-
 		rewardALabel.setText(createRewardsText(rewardA));
 		rewardBLabel.setText(createRewardsText(rewardB));
 		rewardCLabel.setText(createRewardsText(rewardC));

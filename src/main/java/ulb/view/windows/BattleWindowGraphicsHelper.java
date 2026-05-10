@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 
@@ -25,6 +27,7 @@ import java.util.stream.Collectors;
  * and sequentially animating battle log messages across multiple phases.
  */
 public class BattleWindowGraphicsHelper {
+    private static final Logger LOGGER = Logger.getLogger(BattleWindowGraphicsHelper.class.getName());
 
     private BattleUIComponents ui;
     private Boolean firstAttackWasPlayer;
@@ -311,17 +314,16 @@ public class BattleWindowGraphicsHelper {
         if (snapshot == null || snapshot.playerBugemon() == null || snapshot.opponentBugemon() == null) {
             return;
         }
-
         BugemonDisplay playerBugemon = snapshot.playerBugemon();
         BugemonDisplay opponentBugemon = snapshot.opponentBugemon();
-		
+
         try {
             Image playerImage = new Image(getClass().getResourceAsStream(playerBugemon.spritePath()));
             ui.playerBugemon().setImage(playerImage);
         } catch (Exception e) {
-            System.err.println("Failed to load player bugemon sprite: " + e.getMessage());
+            LOGGER.log(Level.WARNING, "Failed to load player bugemon sprite: " + playerBugemon.spritePath(), e);
+            ui.playerBugemon().setImage(null);
         }
-
         ui.playerBugemonLabel().setText(playerBugemon.name());
         ui.playerLevelLabel().setText("Lv." + playerBugemon.level());
         ui.playerBugemonLabel().setStyle("-fx-text-fill: " + TypeColor.getTypeColor(playerBugemon.bugemonType()) + ";");
@@ -334,9 +336,9 @@ public class BattleWindowGraphicsHelper {
             Image opponentImage = new Image(getClass().getResourceAsStream(opponentBugemon.spritePath()));
             ui.opponentBugemon().setImage(opponentImage);
         } catch (Exception e) {
-            System.err.println("Failed to load opponent bugemon sprite: " + e.getMessage());
+            LOGGER.log(Level.WARNING, "Failed to load opponent bugemon sprite: " + opponentBugemon.spritePath(), e);
+            ui.opponentBugemon().setImage(null);
         }
-
         ui.opponentBugemonLabel().setText(opponentBugemon.name());
         ui.opponentLevelLabel().setText("Lv." + opponentBugemon.level());
         ui.opponentBugemonLabel().setStyle("-fx-text-fill: " + TypeColor.getTypeColor(opponentBugemon.bugemonType()) + ";");

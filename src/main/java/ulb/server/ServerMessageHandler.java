@@ -1,74 +1,81 @@
 package ulb.server;
 
-import ulb.message.clientToServer.*;
+import ulb.DTO.ability.AbilityDTO;
+import ulb.DTO.bugemon.BugemonDTO;
+import ulb.DTO.item.ItemDTO;
+import ulb.DTO.player.PlayerDTO;
+import ulb.DTO.player.PlayerRegisterDTO;
+import ulb.DTO.reward.RewardDTO;
+import ulb.DTO.team.TeamDTO;
 import ulb.exceptions.DataAccessException;
 import ulb.exceptions.UserFacingException;
+
+import java.util.List;
 
 /**
  * Interface for classes that receive messages on the server side.
  */
  public interface ServerMessageHandler {
 	// SETUP 
-	 void handle(ConfirmTeamMultiMessage message) throws UserFacingException, DataAccessException;
-	 void handle(RegisterMessage message) throws UserFacingException, DataAccessException;
-	 void handle(SetUpNormalModeMessage message) throws UserFacingException, DataAccessException;
-	 void handle(SetUpTeamMessage message) throws UserFacingException, DataAccessException;
-	 void handle(SetUpTowerModeMessage message) throws UserFacingException, DataAccessException;
+	 void setupMultiBattle(PlayerDTO opponent, List<BugemonDTO> bugemons) throws UserFacingException, DataAccessException;
+	 void registerPlayer(PlayerRegisterDTO playerRegisterDTO, boolean isLogin) throws UserFacingException, DataAccessException;
+	 void setupNormalMode() throws UserFacingException, DataAccessException;
+	 void setupTeam(List<BugemonDTO> bugemons) throws UserFacingException, DataAccessException;
+	 void setupTowerMode(boolean isNewTower) throws UserFacingException, DataAccessException;
 
 	 // PLAYER INFO
-	 void handle(GetPlayerMessage message) throws UserFacingException, DataAccessException;
-	 void handle(GetPlayerInventoryMessage message) throws UserFacingException, DataAccessException;
-	 void handle(GetPlayerTeamMessage message) throws UserFacingException, DataAccessException;
-	 void handle(GetUserIdFromNameMessage message) throws UserFacingException, DataAccessException;
+	 void getPlayerInfo(String username) throws UserFacingException, DataAccessException;
+	 void getPlayerInventory(String username) throws UserFacingException, DataAccessException;
+	 void getPlayerTeam() throws UserFacingException, DataAccessException;
 
 	// GAME INFO
-	 void handle(CheckGameFinishedMessage message) throws UserFacingException, DataAccessException;
-	 void handle(CheckUsableItemMessage message) throws UserFacingException, DataAccessException;
-	 void handle(GetAbilityEffectivenessMessage message) throws UserFacingException, DataAccessException;
-	 void handle(GetActiveBugemonsMessage message) throws UserFacingException, DataAccessException;
-	 void handle(GetBattleEndInfoMessage message) throws UserFacingException, DataAccessException;
-	 void handle(GetBattleStateMessage message) throws UserFacingException, DataAccessException;
-	 void handle(GetLevelUpInfoMessage message) throws UserFacingException, DataAccessException;
-	 void handle(GetLogsMessage message) throws UserFacingException, DataAccessException;
-	 void handle(GetNextWindowMessage message) throws UserFacingException, DataAccessException;
-	 void handle(GetTowerInfoMessage message) throws UserFacingException, DataAccessException;
-	 void handle(GetTowerSavedInfoMessage message) throws UserFacingException, DataAccessException;
+	 void checkGameFinished() throws UserFacingException, DataAccessException;
+	 void checkUsableItems(List<ItemDTO> items) throws UserFacingException, DataAccessException;
+	 void getAbilityEffectiveness(BugemonDTO bugemonDTO, List<AbilityDTO> abilities) throws UserFacingException, DataAccessException;
+	 void getActiveBugemons() throws UserFacingException, DataAccessException;
+	 void getBattleEndInfo() throws UserFacingException, DataAccessException;
+	 void getBattleState() throws UserFacingException, DataAccessException;
+	 void getLevelUpInfo() throws UserFacingException, DataAccessException;
+	 void getLogs(boolean clearLogs) throws UserFacingException, DataAccessException;
+	 void getNextWindow() throws UserFacingException, DataAccessException;
+	 void getTowerInfo() throws UserFacingException, DataAccessException;
+	 void getTowerSavedInfo() throws UserFacingException, DataAccessException;
 
 	// GAME ACTIONS
-	 void handle(AbandonTowerMessage message) throws UserFacingException, DataAccessException;
-	 void handle(ChooseAbilityRewardMessage message) throws UserFacingException, DataAccessException;
-	 void handle(ChooseItemRewardMessage message) throws UserFacingException, DataAccessException;
-	 void handle(ChooseLevelUpRewardMessage message) throws UserFacingException, DataAccessException;
-	 void handle(ChooseStatRewardMessage message) throws UserFacingException, DataAccessException;
-	 void handle(ChooseTowerRoomMessage message) throws UserFacingException, DataAccessException;
-	 void handle(PickRandomActionMessage message) throws UserFacingException, DataAccessException;
-	 void handle(RunMessage message) throws UserFacingException, DataAccessException;
-	 void handle(StartMultiBattleMessage message) throws UserFacingException, DataAccessException;
-	 void handle(SwapBugemonMessage message) throws UserFacingException, DataAccessException;
-	 void handle(UseAbilityMessage message) throws UserFacingException, DataAccessException;
-	 void handle(UseItemMessage message) throws UserFacingException, DataAccessException;
+	 void abandonTower() throws UserFacingException, DataAccessException;
+	 void chooseAbilityReward(BugemonDTO bugemonDTO, AbilityDTO oldAbilityDTO, AbilityDTO newAbilityDTO) throws UserFacingException, DataAccessException;
+	 void chooseItemReward(ItemDTO itemDTO) throws UserFacingException, DataAccessException;
+	 void chooseLevelUpReward(RewardDTO rewardDTO) throws UserFacingException, DataAccessException;
+	 void chooseStatReward(BugemonDTO bugemonDTO) throws UserFacingException, DataAccessException;
+	 void chooseTowerRoom(int roomId) throws UserFacingException, DataAccessException;
+	 void chooseRandomAction() throws UserFacingException, DataAccessException;
+	 void chooseRunAction() throws UserFacingException, DataAccessException;
+	 void startMultiBattle(PlayerDTO opponentDTO) throws UserFacingException, DataAccessException;
+	 void chooseSwapBugemonAction(BugemonDTO bugemonDTOToSwap) throws UserFacingException, DataAccessException;
+	 void chooseUseAbilityAction(AbilityDTO abilityDTO) throws UserFacingException, DataAccessException;
+	 void chooseUseItemAction(ItemDTO itemDTO) throws UserFacingException, DataAccessException;
 
 	// GAME DATA
-	 void handle(GetAllBugemonSpeciesMessage message) throws UserFacingException, DataAccessException;
-	 void handle(GetRandomAbilityMessage message) throws UserFacingException, DataAccessException;
-	 void handle(GetRandomItemMessage message) throws UserFacingException, DataAccessException;
+	 void getAllBugemonSpecies() throws UserFacingException, DataAccessException;
+	 void getRandomAbility(BugemonDTO bugemonDTO) throws UserFacingException, DataAccessException;
+	 void getRandomItem() throws UserFacingException, DataAccessException;
 
 	// SOCIAL
-	 void handle(AcceptBattleRequestMessage message) throws UserFacingException, DataAccessException;
-	 void handle(AcceptFriendRequestMessage message) throws UserFacingException, DataAccessException;
-	 void handle(DeclineBattleRequestMessage message) throws UserFacingException, DataAccessException;
-	 void handle(DeclineFriendRequestMessage message) throws UserFacingException, DataAccessException;
-	 void handle(GetBattleRequestsMessage message) throws UserFacingException, DataAccessException;
-	 void handle(GetMultiBattleStatusMessage message) throws UserFacingException, DataAccessException;
-	 void handle(GetChatMessagesMessage message) throws UserFacingException, DataAccessException;
-	 void handle(GetFriendRequestsMessage message) throws UserFacingException, DataAccessException;
-	 void handle(GetFriendsListMessage message) throws UserFacingException, DataAccessException;
-	 void handle(GetLeaderboardMessage message) throws UserFacingException, DataAccessException;
-	 void handle(SendBattleRequestMessage message) throws UserFacingException, DataAccessException;
-	 void handle(SendChatMessageMessage message) throws UserFacingException, DataAccessException;
-	 void handle(SendFriendRequestMessage message) throws UserFacingException, DataAccessException;
+	 void acceptBattleRequest(String senderUsername, String receiverUsername) throws UserFacingException, DataAccessException;
+	 void acceptFriendRequest(String senderUsername, String receiverUsername) throws UserFacingException, DataAccessException;
+	 void declineBattleRequest(String senderUsername, String receiverUsername) throws UserFacingException, DataAccessException;
+	 void declineFriendRequest(String senderUsername, String receiverUsername) throws UserFacingException, DataAccessException;
+	 void getBattleRequests(String username) throws UserFacingException, DataAccessException;
+	 void getMultiBattleStatus(int userId1, int userId2) throws UserFacingException, DataAccessException;
+	 void getChatMessages(String usernameA, String usernameB) throws UserFacingException, DataAccessException;
+	 void getFriendRequests(String username) throws UserFacingException, DataAccessException;
+	 void getFriendsList(String username) throws UserFacingException, DataAccessException;
+	 void getLeaderboard() throws UserFacingException, DataAccessException;
+	 void sendBattleRequest(String senderUsername, String receiverUsername) throws UserFacingException, DataAccessException;
+	 void sendChatMessage(String senderUsername, String receiverUsername, String content) throws UserFacingException, DataAccessException;
+	 void sendFriendRequest(String senderUsername, String receiverUsername) throws UserFacingException, DataAccessException;
 
 	 // TEAM SAVE
-	 void handle(GetSavedTeamsMessage message) throws UserFacingException, DataAccessException;
-	 void handle(SaveTeamMessage message) throws UserFacingException, DataAccessException;
+	 void getSavedTeams() throws UserFacingException, DataAccessException;
+	 void saveTeam(TeamDTO teamDTO) throws UserFacingException, DataAccessException;
 }

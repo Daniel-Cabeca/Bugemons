@@ -1,5 +1,6 @@
 package ulb.server;
 
+import ulb.DTO.bugemon.BugemonDTO;
 import ulb.exceptions.DataAccessException;
 
 import java.util.ArrayList;
@@ -7,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ulb.message.serverToClient.NextWindowMessage.WindowType;
 import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.DTO.reward.RewardDTO;
@@ -15,28 +15,7 @@ import ulb.mapper.ability.AbilityMapper;
 import ulb.mapper.bugemon.BugemonMapper;
 import ulb.mapper.item.ItemMapper;
 import ulb.mapper.reward.RewardMapper;
-import ulb.message.clientToServer.CheckGameFinishedMessage;
-import ulb.message.clientToServer.CheckUsableItemMessage;
-import ulb.message.clientToServer.GetAbilityEffectivenessMessage;
-import ulb.message.clientToServer.GetActiveBugemonsMessage;
-import ulb.message.clientToServer.GetBattleEndInfoMessage;
-import ulb.message.clientToServer.GetBattleStateMessage;
-import ulb.message.clientToServer.GetLevelUpInfoMessage;
-import ulb.message.clientToServer.GetLogsMessage;
-import ulb.message.clientToServer.GetNextWindowMessage;
-import ulb.message.clientToServer.GetTowerInfoMessage;
-import ulb.message.clientToServer.GetTowerSavedInfoMessage;
-import ulb.message.serverToClient.AbilityEffectivenessMessage;
-import ulb.message.serverToClient.ActiveBugemonsMessage;
-import ulb.message.serverToClient.BattleEndInfoMessage;
-import ulb.message.serverToClient.BattleStateMessage;
-import ulb.message.serverToClient.GameFinishedMessage;
-import ulb.message.serverToClient.LevelUpInfoMessage;
-import ulb.message.serverToClient.LogsMessage;
-import ulb.message.serverToClient.NextWindowMessage;
-import ulb.message.serverToClient.TowerInfoMessage;
-import ulb.message.serverToClient.TowerSavedInfoMessage;
-import ulb.message.serverToClient.UsableItemsMessage;
+import ulb.message.serverToClient.gameInfo.*;
 import ulb.model.Player;
 import ulb.model.ability.Ability;
 import ulb.model.battle.Battle;
@@ -59,19 +38,19 @@ public class GameInfoHandler {
 		this.towerSaveService = towerSaveService;
     }
 
-    public void handle(CheckGameFinishedMessage message) throws DataAccessException{
+    public void checkGameFinished() throws DataAccessException{
         Battle battle = clientHandler.getBattle();
 
 		clientHandler.sendMessage(new GameFinishedMessage(battle.isGameFinished()));
 	}
 
-	public void handle(CheckUsableItemMessage message) throws DataAccessException{
+	public void checkUsableItems(List<ItemDTO> items) throws DataAccessException{
         Battle battle = clientHandler.getBattle();
         ParticipantLabel teamLabel = clientHandler.getTeamLabel();
 
 		Map<String, Boolean> usableItems = new HashMap<String, Boolean>();
 
-		for (ItemDTO itemDTO : message.getItems()){
+		for (ItemDTO itemDTO : items){
 			Item item = ItemMapper.toEntity(itemDTO);
 			usableItems.put(itemDTO.id(), battle.checkItem(item, teamLabel));
 		}
@@ -79,11 +58,11 @@ public class GameInfoHandler {
         clientHandler.sendMessage(new UsableItemsMessage(usableItems));
 	}
 
-	public void handle(GetAbilityEffectivenessMessage message) throws DataAccessException{
+	public void getAbilityEffectiveness(BugemonDTO bugemonDTO, List<AbilityDTO> abilities) throws DataAccessException{
 		Map<AbilityDTO, String> effectiveness = new HashMap<AbilityDTO, String>();
-		Bugemon bugemonTarget = BugemonMapper.toEntity(message.getBugemonTarget());
+		Bugemon bugemonTarget = BugemonMapper.toEntity(bugemonDTO);
 		
-		for (AbilityDTO abilityDTO : message.getAbilities()){
+		for (AbilityDTO abilityDTO : abilities){
 			Ability ability = AbilityMapper.toEntity(abilityDTO);
 			String effectivenessMessage = ability.getEffectivenessMessage(bugemonTarget);
 			effectiveness.put(abilityDTO, effectivenessMessage);
@@ -92,7 +71,7 @@ public class GameInfoHandler {
 		clientHandler.sendMessage(new AbilityEffectivenessMessage(effectiveness));
 	}
 
-    public void handle(GetActiveBugemonsMessage message) throws DataAccessException{
+    public void getActiveBugemons() throws DataAccessException{
         Battle battle = clientHandler.getBattle();
         ParticipantLabel teamLabel = clientHandler.getTeamLabel();
 
@@ -106,7 +85,7 @@ public class GameInfoHandler {
 		clientHandler.sendMessage(new ActiveBugemonsMessage(BugemonMapper.toDTO(selfActive), BugemonMapper.toDTO(opponentActive)));
 	}
 
-	public void handle(GetBattleEndInfoMessage message) throws DataAccessException{
+	public void getBattleEndInfo() throws DataAccessException{
 		Battle battle = clientHandler.getBattle();
         ParticipantLabel teamLabel = clientHandler.getTeamLabel();
 		boolean isGameTower = clientHandler.isGameTower();
@@ -131,14 +110,14 @@ public class GameInfoHandler {
 		clientHandler.sendMessage(new BattleEndInfoMessage(isWin, gainedXp));
 	}
 
-	public void handle(GetBattleStateMessage message) throws DataAccessException{
+	public void getBattleState() throws DataAccessException{
         Battle battle = clientHandler.getBattle();
         ParticipantLabel teamLabel = clientHandler.getTeamLabel();
 
 		clientHandler.sendMessage(new BattleStateMessage(battle.getState(teamLabel)));
 	}
 
-	public void handle(GetLevelUpInfoMessage message) throws DataAccessException{
+	public void getLevelUpInfo() throws DataAccessException{
         Player player = clientHandler.getPlayer();
         Battle battle = clientHandler.getBattle();
         Bugemon pendingLevelUpBugemon = clientHandler.getPendingLevelUpBugemon();
@@ -172,7 +151,7 @@ public class GameInfoHandler {
 		clientHandler.sendMessage(new LevelUpInfoMessage(BugemonMapper.toDTO(currentBugemon), rewardDTOs));
 	}
 
-    public void handle(GetLogsMessage message) throws DataAccessException{
+    public void getLogs(boolean clearLogs) throws DataAccessException{
         Battle battle = clientHandler.getBattle();
         ParticipantLabel teamLabel = clientHandler.getTeamLabel();
 
@@ -181,14 +160,14 @@ public class GameInfoHandler {
 		
 		List<String> logs = new ArrayList<String>(battle.getLogMsg());
 		
-		if (message.clearLogs()){
+		if (clearLogs){
 			battle.clearLogMsg();
 		}
 
 		clientHandler.sendMessage(new LogsMessage(List.of(selfHpAfterFirstAction, opponentHpAfterFirstAction), logs));
 	}
 
-	public void handle(GetNextWindowMessage message) throws DataAccessException{
+	public void getNextWindow() throws DataAccessException{
 		Player player = clientHandler.getPlayer();
         Battle battle = clientHandler.getBattle();
         TowerManager towerManager = clientHandler.getTowerManager();
@@ -265,7 +244,7 @@ public class GameInfoHandler {
 		clientHandler.sendMessage(new NextWindowMessage(nextWindow));
 	}
 
-	public void handle(GetTowerInfoMessage message) throws DataAccessException{
+	public void getTowerInfo() throws DataAccessException{
         TowerManager towerManager = clientHandler.getTowerManager();
         boolean isGameTower = clientHandler.isGameTower();
 
@@ -280,7 +259,7 @@ public class GameInfoHandler {
 		clientHandler.sendMessage(new TowerInfoMessage(towerFloorNumber, towerRoomNumber, clearedRooms));
 	}
 
-	public void handle(GetTowerSavedInfoMessage message, Player player) throws DataAccessException{
+	public void getTowerSavedInfo(Player player) throws DataAccessException{
 		boolean isTowerSaved = this.towerSaveService.isTowerSaved(player);
 		clientHandler.sendMessage(new TowerSavedInfoMessage(isTowerSaved));
 	}

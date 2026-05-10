@@ -20,14 +20,22 @@ Le projet utilise également `maven`. Pour l'installer :
 ## Démarrage
 Pour démarrer l'application, il faut lancer le serveur avant de lancer le client (en attendant que le serveur est bien lancé, càd lorsqu'il affiche "SERVER ON").
 
+### Créer les fichier .jar
+- Créer le fichier .jar server : `mvn package -P server`
+- Créer le fichier .jar client : `mvn package -P client`
+
 ### Démarrage via .jar
-- Pour lancer le serveur : `java --module-path <chemin_vers_lib_openjfx> --add-modules javafx.controls,javafx.fxml -jar target/info-F307-Groupe-10.jar --server`
-- Pour lancer le client : `java --module-path <chemin_vers_lib_openjfx> --add-modules javafx.controls,javafx.fxml -jar target/info-F307-Groupe-10.jar` 
+- Pour lancer le serveur : `java -jar server.jar`
+- Pour lancer le client : `java -jar client.jar`
 
 ### Démarrage via commande
 - Pour compiler: `mvn compile`
-- Pour lancer l'application côté client : mvn javafx:run
-- Pour lancer l'application côté serveur : mvn clean javafx:run -Djavafx.args="--server"
+- Pour lancer l'application côté client : `mvn javafx:run -P client`
+- Pour lancer l'application côté serveur : `mvn exec:java -P server`
+
+### Supprimer la base de donnée
+`mvn clean`
+(la base de donnée)
 
 ## Auteurs
 - Abdalrahman El Hussein - @aelh0063

@@ -7,11 +7,8 @@ import java.util.List;
 
 import ulb.DTO.team.TeamDTO;
 import ulb.mapper.team.TeamMapper;
-import ulb.message.clientToServer.GetSavedTeamsMessage;
-import ulb.message.clientToServer.SaveTeamMessage;
-import ulb.message.serverToClient.SavedTeamsMessage;
+import ulb.message.serverToClient.teamSave.*;
 import ulb.model.Player;
-import ulb.model.bugemon.Bugemon;
 import ulb.model.team.Team;
 import ulb.exceptions.LoadException;
 import ulb.service.TeamService;
@@ -25,7 +22,7 @@ public class TeamSaveHandler {
         this.teamService = teamService;
     }
 
-	public void handle(GetSavedTeamsMessage message) throws DataAccessException {
+	public void getSavedTeams() throws DataAccessException {
 		Player player = clientHandler.getPlayer();
 
 		List<TeamDTO> DTOTeams = new ArrayList<>();
@@ -36,10 +33,9 @@ public class TeamSaveHandler {
 		clientHandler.sendMessage(new SavedTeamsMessage(DTOTeams));
 	}
 
-	public void handle(SaveTeamMessage message) throws DataAccessException {
+	public void saveTeam(TeamDTO teamDTO) throws DataAccessException {
         Player player = clientHandler.getPlayer();
         
-		TeamDTO teamDTO = message.getTeam();
 		Team team = TeamMapper.toEntity(teamDTO);
 
 		try {

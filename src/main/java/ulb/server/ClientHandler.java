@@ -1,13 +1,19 @@
 package ulb.server;
 
+import ulb.DTO.ability.AbilityDTO;
+import ulb.DTO.bugemon.BugemonDTO;
+import ulb.DTO.item.ItemDTO;
+import ulb.DTO.player.PlayerDTO;
+import ulb.DTO.player.PlayerRegisterDTO;
+import ulb.DTO.reward.RewardDTO;
+import ulb.DTO.team.TeamDTO;
 import ulb.communication.Messenger.SocketMessenger;
 import ulb.exceptions.CommunicationException;
-import ulb.message.ClientToServerMessage;
 import ulb.exceptions.DataAccessException;
 import ulb.exceptions.UserFacingException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import ulb.message.clientToServer.*;
+import ulb.message.clientToServer.ClientToServerMessage;
 import ulb.message.serverToClient.*;
 import ulb.model.Player;
 import ulb.model.battle.Battle;
@@ -20,11 +26,14 @@ import ulb.model.tower.towerManager.TowerManager;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ClientHandler extends Thread implements ServerMessageHandler{
+	private static final Logger LOGGER = Logger.getLogger(ClientHandler.class.getName());
+
     private SocketMessenger socketMessenger;
     private boolean stop;
-	private static final Logger LOGGER = Logger.getLogger(ClientHandler.class.getName());
 
     private Player player;
 
@@ -109,23 +118,23 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	/**
 	 * Reads the socket and handle the received message
 	 */
-    private void handleMessage(){
-        ClientToServerMessage message = receiveMessage();
-
-        if (message == null){
-            return;
-        }
-
+	private void handleMessage(){
+		ClientToServerMessage message = receiveMessage();
+		if (message == null){
+			return;
+		}
 		try {
 			message.dispatch(this);
 		} catch (UserFacingException e) {
 			sendErrorMessage(e.getMessage());
 		} catch (DataAccessException e) {
+			LOGGER.log(Level.SEVERE, "Data access error while handling a client message.", e);
 			sendErrorMessage("A data access error occurred while handling a client message.");
 		} catch (RuntimeException e) {
+			LOGGER.log(Level.SEVERE, "Unexpected error while handling a client message.", e);
 			sendErrorMessage("An unexpected server error occurred while handling a client message.");
 		}
-    }
+	}
 
     public void stopProcess(){
         this.stop = true;
@@ -213,79 +222,78 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
 	// SETUP
 
-	@Override public void handle(ConfirmTeamMultiMessage message) throws DataAccessException { setupHandler.handle(message); }
-	@Override public void handle(RegisterMessage message) throws DataAccessException { setupHandler.handle(message); }
-	@Override public void handle(SetUpNormalModeMessage message) throws DataAccessException { setupHandler.handle(message); }
-	@Override public void handle(SetUpTeamMessage message) throws DataAccessException { setupHandler.handle(message); }
-	@Override public void handle(SetUpTowerModeMessage message) throws DataAccessException { setupHandler.handle(message); }
+	@Override public void setupMultiBattle(PlayerDTO opponent, List<BugemonDTO> bugemons) throws DataAccessException { setupHandler.setupMultiBattle(opponent, bugemons); }
+	@Override public void registerPlayer(PlayerRegisterDTO playerRegisterDTO, boolean isLogin) throws DataAccessException { setupHandler.registerPlayer(playerRegisterDTO, isLogin); }
+	@Override public void setupNormalMode() throws DataAccessException { setupHandler.setupNormalMode(); }
+	@Override public void setupTeam(List<BugemonDTO> bugemons) throws DataAccessException { setupHandler.setupTeam(bugemons); }
+	@Override public void setupTowerMode(boolean isNewTower) throws DataAccessException { setupHandler.setupTowerMode(isNewTower); }
 
 
 	// PLAYER INFO
 
-	@Override public void handle(GetPlayerMessage message) throws DataAccessException { playerInfoHandler.handle(message); }
-	@Override public void handle(GetPlayerInventoryMessage message) throws DataAccessException { playerInfoHandler.handle(message); }
-	@Override public void handle(GetPlayerTeamMessage message) throws DataAccessException { playerInfoHandler.handle(message); }
-	@Override public void handle(GetUserIdFromNameMessage message) throws DataAccessException { playerInfoHandler.handle(message); }
+	@Override public void getPlayerInfo(String username) throws DataAccessException { playerInfoHandler.getPlayerInfo(username); }
+	@Override public void getPlayerInventory(String username) throws DataAccessException { playerInfoHandler.getPlayerInventory(username); }
+	@Override public void getPlayerTeam() throws DataAccessException { playerInfoHandler.getPlayerTeam(); }
 
 
 	// GAME INFO
 
-	@Override public void handle(CheckGameFinishedMessage message) throws DataAccessException { gameInfoHandler.handle(message); }
-	@Override public void handle(CheckUsableItemMessage message) throws DataAccessException { gameInfoHandler.handle(message); }
-	@Override public void handle(GetAbilityEffectivenessMessage message) throws DataAccessException { gameInfoHandler.handle(message); }
-	@Override public void handle(GetActiveBugemonsMessage message) throws DataAccessException { gameInfoHandler.handle(message); }
-	@Override public void handle(GetBattleEndInfoMessage message) throws DataAccessException { gameInfoHandler.handle(message); }
-	@Override public void handle(GetBattleStateMessage message) throws DataAccessException { gameInfoHandler.handle(message); }
-	@Override public void handle(GetLevelUpInfoMessage message) throws DataAccessException { gameInfoHandler.handle(message); }
-	@Override public void handle(GetLogsMessage message) throws DataAccessException { gameInfoHandler.handle(message); }
-	@Override public void handle(GetNextWindowMessage message) throws DataAccessException { gameInfoHandler.handle(message); }
-	@Override public void handle(GetTowerInfoMessage message) throws DataAccessException { gameInfoHandler.handle(message); }
-	@Override public void handle(GetTowerSavedInfoMessage message) throws DataAccessException { gameInfoHandler.handle(message, this.player); }
+	@Override public void checkGameFinished() throws DataAccessException { gameInfoHandler.checkGameFinished(); }
+	@Override public void checkUsableItems(List<ItemDTO> items) throws DataAccessException { gameInfoHandler.checkUsableItems(items); }
+	@Override public void getAbilityEffectiveness(BugemonDTO bugemonDTO, List<AbilityDTO> abilities) throws DataAccessException { gameInfoHandler.getAbilityEffectiveness(bugemonDTO, abilities); }
+	@Override public void getActiveBugemons() throws DataAccessException { gameInfoHandler.getActiveBugemons(); }
+	@Override public void getBattleEndInfo() throws DataAccessException { gameInfoHandler.getBattleEndInfo(); }
+	@Override public void getBattleState() throws DataAccessException { gameInfoHandler.getBattleState(); }
+	@Override public void getLevelUpInfo() throws DataAccessException { gameInfoHandler.getLevelUpInfo(); }
+	@Override public void getLogs(boolean clearLogs) throws DataAccessException { gameInfoHandler.getLogs(clearLogs); }
+	@Override public void getNextWindow() throws DataAccessException { gameInfoHandler.getNextWindow(); }
+	@Override public void getTowerInfo() throws DataAccessException { gameInfoHandler.getTowerInfo(); }
+	@Override public void getTowerSavedInfo() throws DataAccessException { gameInfoHandler.getTowerSavedInfo(this.player); }
 
 	// GAME ACTIONS
 
-	@Override public void handle(AbandonTowerMessage message) throws DataAccessException { gameActionsHandler.handle(message); }
-	@Override public void handle(ChooseAbilityRewardMessage message) throws DataAccessException { gameActionsHandler.handle(message); }
-	@Override public void handle(ChooseItemRewardMessage message) throws DataAccessException { gameActionsHandler.handle(message); }
-	@Override public void handle(ChooseLevelUpRewardMessage message) throws DataAccessException { gameActionsHandler.handle(message); }
-	@Override public void handle(ChooseStatRewardMessage message) throws DataAccessException { gameActionsHandler.handle(message); }
-	@Override public void handle(ChooseTowerRoomMessage message) throws DataAccessException { gameActionsHandler.handle(message); }
-	@Override public void handle(PickRandomActionMessage message) throws DataAccessException { gameActionsHandler.handle(message); }
-	@Override public void handle(RunMessage message) throws DataAccessException { gameActionsHandler.handle(message); }
-	@Override public void handle(StartMultiBattleMessage message) throws DataAccessException { gameActionsHandler.handle(message); }
-	@Override public void handle(SwapBugemonMessage message) throws DataAccessException { gameActionsHandler.handle(message); }
-	@Override public void handle(UseAbilityMessage message) throws DataAccessException { gameActionsHandler.handle(message); }
-	@Override public void handle(UseItemMessage message) throws DataAccessException { gameActionsHandler.handle(message); }
+	@Override public void abandonTower() throws DataAccessException { gameActionsHandler.abandonTower(); }
+	@Override public void chooseAbilityReward(BugemonDTO bugemonDTO, AbilityDTO oldAbilityDTO, AbilityDTO newAbilityDTO) throws DataAccessException { gameActionsHandler.chooseAbilityReward(bugemonDTO, oldAbilityDTO, newAbilityDTO); }
+	@Override public void chooseItemReward(ItemDTO itemDTO) throws DataAccessException { gameActionsHandler.chooseItemReward(itemDTO); }
+	@Override public void chooseLevelUpReward(RewardDTO rewardDTO) throws DataAccessException { gameActionsHandler.chooseLevelUpReward(rewardDTO); }
+	@Override public void chooseStatReward(BugemonDTO bugemonDTO) throws DataAccessException { gameActionsHandler.chooseStatReward(bugemonDTO); }
+	@Override public void chooseTowerRoom(int roomId) throws DataAccessException { gameActionsHandler.chooseTowerRoom(roomId); }
+	@Override public void chooseRandomAction() throws DataAccessException { gameActionsHandler.chooseRandomAction(); }
+	@Override public void chooseRunAction() throws DataAccessException { gameActionsHandler.chooseRunAction(); }
+	@Override public void startMultiBattle(PlayerDTO opponentDTO) throws DataAccessException { gameActionsHandler.startMultiBattle(opponentDTO); }
+	@Override public void chooseSwapBugemonAction(BugemonDTO bugemonDTOToSwap) throws DataAccessException { gameActionsHandler.chooseSwapBugemonAction(bugemonDTOToSwap); }
+	@Override public void chooseUseAbilityAction(AbilityDTO abilityDTO) throws DataAccessException { gameActionsHandler.chooseUseAbilityAction(abilityDTO); }
+	@Override public void chooseUseItemAction(ItemDTO itemDTO) throws DataAccessException { gameActionsHandler.chooseUseItemAction(itemDTO); }
 
 
 	// GAME DATA
 
-	@Override public void handle(GetAllBugemonSpeciesMessage message) throws DataAccessException { gameDataHandler.handle(message); }
-	@Override public void handle(GetRandomAbilityMessage message) throws DataAccessException { gameDataHandler.handle(message); }
-	@Override public void handle(GetRandomItemMessage message) throws DataAccessException { gameDataHandler.handle(message); }
+	@Override public void getAllBugemonSpecies() throws DataAccessException { gameDataHandler.getAllBugemonSpecies(); }
+	@Override public void getRandomAbility(BugemonDTO bugemonDTO) throws DataAccessException { gameDataHandler.getRandomAbility(bugemonDTO); }
+	@Override public void getRandomItem() throws DataAccessException { gameDataHandler.getRandomItem(); }
 
 
 	// SOCIAL
 
-	@Override public void handle(AcceptBattleRequestMessage message) throws DataAccessException { socialHandler.handle(message); }
-	@Override public void handle(AcceptFriendRequestMessage message) throws DataAccessException { socialHandler.handle(message); }
-	@Override public void handle(DeclineBattleRequestMessage message) throws DataAccessException { socialHandler.handle(message); }
-	@Override public void handle(DeclineFriendRequestMessage message) throws DataAccessException { socialHandler.handle(message); }
-	@Override public void handle(GetBattleRequestsMessage message) throws DataAccessException { socialHandler.handle(message); }
-	@Override public void handle(GetMultiBattleStatusMessage message) throws DataAccessException { socialHandler.handle(message); }
-	@Override public void handle(GetChatMessagesMessage message) throws DataAccessException { socialHandler.handle(message); }
-	@Override public void handle(GetFriendRequestsMessage message) throws DataAccessException { socialHandler.handle(message); }
-	@Override public void handle(GetFriendsListMessage message) throws DataAccessException { socialHandler.handle(message); }
-	@Override public void handle(SendBattleRequestMessage message) throws DataAccessException { socialHandler.handle(message); }
-	@Override public void handle(SendChatMessageMessage message) throws DataAccessException { socialHandler.handle(message); }
-	@Override public void handle(SendFriendRequestMessage message) throws DataAccessException { socialHandler.handle(message); }
-	@Override public void handle(GetLeaderboardMessage message) throws DataAccessException {socialHandler.handle(message); }
+	@Override public void acceptBattleRequest(String senderUsername, String receiverUsername) throws DataAccessException { socialHandler.acceptBattleRequest(senderUsername, receiverUsername); }
+	@Override public void acceptFriendRequest(String senderUsername, String receiverUsername) throws DataAccessException { socialHandler.acceptFriendRequest(senderUsername, receiverUsername); }
+	@Override public void declineBattleRequest(String senderUsername, String receiverUsername) throws DataAccessException { socialHandler.declineBattleRequest(senderUsername, receiverUsername); }
+	@Override public void declineFriendRequest(String senderUsername, String receiverUsername) throws DataAccessException { socialHandler.declineFriendRequest(senderUsername, receiverUsername); }
+	@Override public void getBattleRequests(String username) throws DataAccessException { socialHandler.getBattleRequests(username); }
+	@Override public void getMultiBattleStatus(int userId1, int userId2) throws DataAccessException { socialHandler.getMultiBattleStatus(userId1, userId2); }
+	@Override public void getChatMessages(String usernameA, String usernameB) throws DataAccessException { socialHandler.getChatMessages(usernameA, usernameB); }
+	@Override public void getFriendRequests(String username) throws DataAccessException { socialHandler.getFriendRequests(username); }
+	@Override public void getFriendsList(String username) throws DataAccessException { socialHandler.getFriendsList(username); }
+	@Override public void getLeaderboard() throws DataAccessException {socialHandler.getLeaderboard(); }
+	@Override public void sendBattleRequest(String senderUsername, String receiverUsername) throws DataAccessException { socialHandler.sendBattleRequest(senderUsername, receiverUsername); }
+	@Override public void sendChatMessage(String senderUsername, String receiverUsername, String content) throws DataAccessException { socialHandler.sendChatMessage(senderUsername, receiverUsername, content); }
+	@Override public void sendFriendRequest(String senderUsername, String receiverUsername) throws DataAccessException { socialHandler.sendFriendRequest(senderUsername, receiverUsername); }
 
 
 	// TEAM SAVE
 
-	@Override public void handle(GetSavedTeamsMessage message) throws DataAccessException { teamSaveHandler.handle(message); }
-	@Override public void handle(SaveTeamMessage message) throws DataAccessException { teamSaveHandler.handle(message); }
+	@Override public void getSavedTeams() throws DataAccessException { teamSaveHandler.getSavedTeams(); }
+	@Override public void saveTeam(TeamDTO teamDTO) throws DataAccessException { teamSaveHandler.saveTeam(teamDTO); }
 
 
 }

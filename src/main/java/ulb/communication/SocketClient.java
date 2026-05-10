@@ -6,7 +6,7 @@ import java.net.Socket;
 
 import ulb.communication.Messenger.SocketMessenger;
 import ulb.exceptions.CommunicationException;
-import ulb.message.ClientToServerMessage;
+import ulb.message.clientToServer.ClientToServerMessage;
 
 public class SocketClient {
     private Socket socket;
@@ -15,13 +15,10 @@ public class SocketClient {
     public SocketClient(String serverIP, int serverPort) throws CommunicationException {
         try{
             socket = new Socket(serverIP, serverPort);
-            System.out.println("CONNECTED TO SERVER");
-
             messenger = new SocketMessenger(socket);
-
         } catch (IOException e){
             closeSocket();
-            throw new CommunicationException("Impossible to connext to server.", e);
+            throw new CommunicationException("Impossible to connect to server.", e);
         } catch (CommunicationException e){
             closeSocket();
             throw e;

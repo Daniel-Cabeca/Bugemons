@@ -6,7 +6,6 @@ import ulb.model.bugemon.Stats;
 import ulb.model.type.Type;
 import ulb.repository.BugemonSpeciesRepository;
 import ulb.exceptions.EntityNotFoundException;
-import ulb.exceptions.LoadException;
 import ulb.repository.database.sql.Database;
 import ulb.utils.DuplicateElementException;
 
@@ -142,10 +141,10 @@ public class BugemonSpeciesDatabaseRepository implements BugemonSpeciesRepositor
 				String abilityId = rs.getString("ability_id");
 				if (abilityId != null && index < 3) {
 					try {
-						abilities.setAbility(index,abilityRepo.findById(abilityId));
+						abilities.setAbility(index, abilityRepo.findById(abilityId));
 						index++;
 					} catch (NoSuchElementException e) {
-						System.err.println("Warning: Ability " + abilityId + " not found for species " + id);
+						LOGGER.log(Level.WARNING, "Ability " + abilityId + " not found for species " + id, e);
 					}
 				}
 			}
@@ -166,30 +165,26 @@ public class BugemonSpeciesDatabaseRepository implements BugemonSpeciesRepositor
 	 */
 	@Override
 	public Iterable<BugemonSpecies> findAll() {
-		List<BugemonSpecies> abilities = new ArrayList<>();
+		List<BugemonSpecies> species = new ArrayList<>();
 		String sql = "SELECT id FROM bugemon_species";
-
 
 		try (PreparedStatement pstmt = this.database.prepareStatement(sql)) {
 			ResultSet rs = pstmt.executeQuery();
-
 			while (rs.next()) {
-				String BugemonId = rs.getString("id");
+				String bugemonId = rs.getString("id");
 				try {
-
-					BugemonSpecies bugemonSpecies = findById(BugemonId);
+					BugemonSpecies bugemonSpecies = findById(bugemonId);
 					if (bugemonSpecies != null) {
-						abilities.add(bugemonSpecies);
+						species.add(bugemonSpecies);
 					}
 				} catch (NoSuchElementException e) {
-
-					System.err.println("Erreur : ID trouvé mais item non chargeable : " + BugemonId);
+					LOGGER.log(Level.WARNING, "ID found but Bugémon species could not be loaded: " + bugemonId, e);
 				}
 			}
 		} catch (SQLException e) {
 			LOGGER.log(Level.WARNING, "Failed to load Bugémon species from database.", e);
 		}
 
-		return abilities;
+		return species;
 	}
 }

@@ -175,11 +175,7 @@ public class Battle {
 		}
 
 		setActiveBugemon(target, team);
-		if (team == ParticipantLabel.TEAM_A){
-			logMsg.add("Tu as envoyé " + target.getName() + "!");
-		} else {
-			logMsg.add("L'adversaire a envoyé " + target.getName() + "!");
-		}
+		logMsg.add(target.getName() + " a été envoyé !");
 		return true;
 	}
 

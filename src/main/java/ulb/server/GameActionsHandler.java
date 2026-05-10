@@ -12,7 +12,6 @@ import ulb.DTO.reward.RewardDTO;
 import ulb.mapper.ability.AbilityMapper;
 import ulb.mapper.item.ItemMapper;
 import ulb.mapper.reward.RewardMapper;
-import ulb.message.clientToServer.*;
 import ulb.model.Player;
 import ulb.model.ability.Ability;
 import ulb.model.action.Action;

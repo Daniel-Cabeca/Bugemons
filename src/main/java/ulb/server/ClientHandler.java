@@ -26,8 +26,6 @@ import ulb.model.tower.towerManager.TowerManager;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class ClientHandler extends Thread implements ServerMessageHandler{
 	private static final Logger LOGGER = Logger.getLogger(ClientHandler.class.getName());

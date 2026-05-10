@@ -5,7 +5,6 @@ import ulb.service.AccountService;
 import ulb.model.Player;
 import ulb.model.action.*;
 import ulb.model.bugemon.Bugemon;
-import ulb.model.bugemon.Stats;
 import ulb.model.item.Item;
 import ulb.model.effect.EffectHeal;
 import ulb.model.reward.Reward;
@@ -18,6 +17,8 @@ import ulb.model.reward.RewardType;
 
 
 public class Battle {
+	private BattleHandler battleHandler;
+
 	private AccountService accountService;
 
 	private boolean multiplayerBattle;
@@ -45,6 +46,7 @@ public class Battle {
 		this.logMsg = new ArrayList<>();
 		this.activeEffects = new ArrayList<>();
 		this.multiplayerBattle = false;
+		this.battleHandler = new BattleHandler(this);
 	}
 
 	public Battle(Team teamA, Team teamB, Player playerA, Player playerB, boolean multiplayerBattle, AccountService accountService) {
@@ -61,6 +63,10 @@ public class Battle {
 		}
 	}
 
+	public BattleParticipant getParticipantA() { return this.participantA; }
+
+	public BattleParticipant getParticipantB() { return this.participantB; }
+
 	public Team getTeam(ParticipantLabel team) { return this.getParticipant(team).getTeam(); }
 
 	public Bugemon getActiveBugemon(ParticipantLabel team) { return this.getParticipant(team).getActiveBugemon(); }
@@ -73,9 +79,15 @@ public class Battle {
 
 	public BattleState getState(ParticipantLabel team) { return this.getParticipant(team).getState(); }
 
+	public boolean getGameFinished() { return this.gameFinished; }
+
 	public ParticipantLabel getOpponentTeamLabel(ParticipantLabel currentTeam) { 
 		return currentTeam == ParticipantLabel.TEAM_B ? ParticipantLabel.TEAM_A : ParticipantLabel.TEAM_B; 
 	}
+
+	public boolean getMultiplayerBattle() { return this.multiplayerBattle; }
+
+	public AccountService getaccountService() { return this.accountService; }
 
 	public int getHpAfterFirstActionSelf(ParticipantLabel team) { return this.getParticipant(team).getHpAfterFirstAction(); }
 
@@ -83,10 +95,9 @@ public class Battle {
 
 	public void setAction(Action action, ParticipantLabel team) { this.getParticipant(team).setAction(action); }
 
-	public void setActiveBugemon(Bugemon bugemon, ParticipantLabel team) { this.getParticipant(team).setActiveBugemon(bugemon); 
-	}
+	public void setActiveBugemon(Bugemon bugemon, ParticipantLabel team) { this.getParticipant(team).setActiveBugemon(bugemon); }
 
-	private void setState(BattleState state, ParticipantLabel team) { this.getParticipant(team).setState(state); }
+	void setState(BattleState state, ParticipantLabel team) { this.getParticipant(team).setState(state); }
 
 	public boolean isBugemonKO(ParticipantLabel team){ return this.getActiveBugemon(team).isKO(); }
 
@@ -95,6 +106,10 @@ public class Battle {
 	public boolean isBossBattle(){ return this.isBossBattle; }
 
 	public void setFloorNumber(int floorNumber){ this.floorNumber = floorNumber; }
+
+	public void setGameFinished(boolean finished) { this.gameFinished = finished; }
+
+	public void setParticipantHpAfterFirstAction(BattleParticipant participant, int hp){ participant.setHpAfterFirstAction(hp); }
 
 	public void enableBossBattle() { this.isBossBattle = true; }
 
@@ -221,7 +236,7 @@ public class Battle {
 	 * @param team the team on which the action is applied
 	 * @return boolean indicating if the action succeeded
 	 */
-	private boolean applyAction(Action action, ParticipantLabel team){
+	boolean applyAction(Action action, ParticipantLabel team){
 		return action != null && action.executeAction(this, team);
 	}
 
@@ -269,141 +284,10 @@ public class Battle {
 	}
 
 	/**
-	 * handle the round of one of the two players
-	 * @param playerTeam the player who plays now
-	 * @return a boolean depending on if the turn continues
-	 */
-	private boolean handlePlayerTurn(ParticipantLabel playerTeam){
-		Action currentAction = getAction(playerTeam);
-
-		this.applyAction(currentAction, playerTeam);
-
-		if (gameFinished) {
-			handleBattleEnd();
-			return false;
-		}
-
-		if (handleActionFinished(playerTeam)){
-			tickActiveEffects();
-			if (gameFinished){
-				handleBattleEnd();
-			}
-			return false;
-		}
-		return true;
-	}
-
-	/**
 	 * Handles one round of the battle
 	 */
 	private void handleRound(){
-		// checks whose action should be executed first and applies it
-		this.participantA.setHpAfterFirstAction(-1);
-		this.participantB.setHpAfterFirstAction(-1);
-
-		ParticipantLabel firstPlayer = this.getFirstTeamToPlay();
-		ParticipantLabel secondPlayer = getOpponentTeamLabel(firstPlayer);
-		
-		if (! this.handlePlayerTurn(firstPlayer)){
-			return;
-		}
-
-		this.participantA.setHpAfterFirstAction(this.participantA.getActiveBugemon().getHp());
-		this.participantB.setHpAfterFirstAction(this.participantB.getActiveBugemon().getHp());
-
-		logMsg.add(null); // separator between first and second action messages 
-		
-		if (! this.handlePlayerTurn(secondPlayer)){
-			return;
-		}
-
-		tickActiveEffects();
-		setState(BattleState.INGAME, ParticipantLabel.TEAM_A);
-		setState(BattleState.INGAME, ParticipantLabel.TEAM_B);
-	}
-
-	/**
-	 * Decrements TTL of all active TOUR effects and reverts those that have expired.
-	 */
-	private void tickActiveEffects() {
-		List<ActiveEffect> expired = new ArrayList<>();
-		for (ActiveEffect ae : activeEffects) {
-			ae.ttl--;
-			if (ae.ttl <= 0) {
-				Stats revert = new Stats(-ae.delta.getHp(), -ae.delta.getAttack(), -ae.delta.getDefense(), -ae.delta.getInitiative());
-				ae.target.changeFightStats(revert);
-				logMsg.add("L'effet de " + ae.itemName + " sur " + ae.target.getName() + " s'est dissipé!");
-				expired.add(ae);
-			}
-		}
-		activeEffects.removeAll(expired);
-	}
-
-
-	/**
-	 * Check if the round is finished and set the states depending on that
-	 * @param previousActiveTeam the team who just finished the round
-	 * @return a boolean depending on if the round is finished
-	 */
-	private boolean handleActionFinished(ParticipantLabel previousActiveTeam){
-		ParticipantLabel opponentTeam = getOpponentTeamLabel(previousActiveTeam);
-		if (this.isTeamKO(opponentTeam)){
-			setState(BattleState.LOST, opponentTeam);
-			setState(BattleState.WON, previousActiveTeam);
-			this.gameFinished = true;
-
-		} else if (this.isBugemonKO(opponentTeam)){
-			setState(BattleState.SWAPPING, opponentTeam);
-			setState(BattleState.WAITING, previousActiveTeam);
-			if (previousActiveTeam == ParticipantLabel.TEAM_A){
-				logMsg.add(this.participantB.getActiveBugemon().getName() + " est KO!");
-				if (this.participantA.getHpAfterFirstAction() == -1) {
-					this.participantA.setHpAfterFirstAction(this.participantA.getActiveBugemon().getHp());
-					this.participantB.setHpAfterFirstAction(0);
-
-				}
-
-				logMsg.add(null);
-				Bugemon nextB = getTeam(ParticipantLabel.TEAM_B).getNextBugemon(this.participantB.getActiveBugemon());
-
-				if (nextB != null) {
-					setActiveBugemon(nextB, ParticipantLabel.TEAM_B);
-					logMsg.add("L'adversaire a envoyé " + nextB.getName() + "!");
-				} // TO REFACTOR : le changement de bugemon ne doit pas se faire dans battle mais dans strategy, refactor des logs en fonction de ça.
-				setState(BattleState.INGAME, ParticipantLabel.TEAM_A);
-				setState(BattleState.INGAME, ParticipantLabel.TEAM_B); // TO REFACTOR TOO
-			}
-			
-		} else {
-			return false;
-		}
-		return true;
-	}
-
-	/**
-	 * Handles the end of the battle
-	 */
-	private void handleBattleEnd(){
-		BattleParticipant winner = this.participantA;
-		BattleParticipant loser = this.participantB;
-		if (this.getState(ParticipantLabel.TEAM_B) == BattleState.WON) {
-			winner = this.participantB;
-			loser = this.participantA;
-		}
-
-		List<Bugemon> bugemonsOfWinner = winner.getParticipatingBugemons();
-		Team teamOfLoser = loser.getTeam();
-
-		int gainedXP = computeTotalXP(teamOfLoser);
-		for (Bugemon b : bugemonsOfWinner){
-			b.gainXp(gainedXP / bugemonsOfWinner.size());
-		}
-
-		if (this.multiplayerBattle) {
-			Player winnerPlayer = winner.getPlayer();
-			accountService.addPoints(winnerPlayer.getUserId(), 1);
-		}
-
+		this.battleHandler.handleRound();
 	}
 
 	/**

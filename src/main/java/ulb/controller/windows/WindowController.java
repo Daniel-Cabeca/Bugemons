@@ -79,9 +79,9 @@ public abstract class WindowController<T> {
         PlayerDTO onGetPlayer();
         void onSetPlayer(PlayerDTO player);
         PlayerDTO onLoadPlayer(String userName);
-        void onShowWindow(WindowName window);
+        void onSetOpponentMulti(PlayerDTO opponent);
+		void onShowWindow(WindowName window);
         void onSetGameMode(GameMode gameMode);
-        void onCloseSocialPanel();
         /**
          * Set newTimeLine in WaitWindow
          * @param waitCycle

@@ -15,7 +15,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import ulb.DTO.battle.MultiBattleStatusDTO;
-import ulb.DTO.team.TeamDTO;
 import ulb.communication.SocketClient;
 import ulb.controller.windows.*;
 import ulb.exceptions.CommunicationException;
@@ -29,12 +28,10 @@ import ulb.message.clientToServer.gameInfo.*;
 import ulb.message.clientToServer.playerInfo.*;
 import ulb.message.clientToServer.setup.*;
 import ulb.message.clientToServer.social.*;
-import ulb.message.clientToServer.teamSave.*;
 import ulb.message.serverToClient.gameData.*;
 import ulb.message.serverToClient.gameInfo.*;
 import ulb.message.serverToClient.playerInfo.*;
 import ulb.message.serverToClient.social.*;
-import ulb.message.serverToClient.teamSave.*;
 import ulb.model.battle.BattleState;
 import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.bugemon.BugemonDTO;
@@ -42,8 +39,6 @@ import ulb.DTO.player.PlayerDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.DTO.reward.RewardDTO;
 import ulb.model.chat.ChatMessage;
-import ulb.controller.windows.RegisterController;
-import ulb.view.WindowPath;
 
 /**
  * Client-side application controller coordinating server messaging.
@@ -125,7 +120,7 @@ public class ClientController extends Application implements
 		//TODO: check where to put
 		this.registerController = new RegisterController(this.stage, this);
 		this.modeController = new ModeController(this.stage, this);
-		this.socialPanelController = new SocialPanelController(this);
+		this.socialPanelController = new SocialPanelController(this.stage, this);
 		this.gameModeController = new GameModeController(this.stage, this);
 		this.teamController = new TeamController(this.stage, this);
 		this.floorController = new FloorController(this.stage, this);
@@ -393,11 +388,7 @@ public class ClientController extends Application implements
 
 	@Override
 	public void onOpenSocial() {
-		try {
-			this.socialPanelController.show();
-		} catch (ViewLoadException e) {
-			logViewLoadFailure("Impossible d'afficher le panneau social.", e);
-		}
+		this.socialPanelController.show();
 	}
 
 
@@ -990,36 +981,11 @@ public class ClientController extends Application implements
 		switchToGameModeWindow();
 	}
 
-	// Miscellaneous
-
-	/**
-	 * Opens a waiting window.
-	 *
-	 * @param waitCycle The event handler to play in a loop
-	 */
-	public void openWaitWindow(EventHandler waitCycle) {
-		this.closeSocialPanel();
-
-		this.waitWindowController = new WaitWindowController(this, waitCycle);
-		try {
-			this.waitWindowController.show();
-		} catch (ViewLoadException e) {
-			logViewLoadFailure("Impossible d'afficher l'écran d'attente.", e);
-		}
-    }
-
 	/**
 	 * Stops the main loop of the waiting window.
 	 */
 	public void stopWaitWindow() {
 		this.waitWindowController.stop();
-	}
-
-	/**
-	 * Closes the social panel.
-	 */
-	public void closeSocialPanel() {
-		this.socialPanelController.close();
 	}
 
 	@Override
@@ -1042,11 +1008,7 @@ public class ClientController extends Application implements
 		switch (window) {
 			case REGISTER -> this.registerController.show();
 			case MODE -> this.modeController.show();
-			case SOCIAL_PANEL -> {
-				try {
-					this.socialPanelController.show();
-				} catch (ViewLoadException e) {}
-			}
+			case SOCIAL_PANEL -> this.socialPanelController.show();
 			case GAME_MODE -> this.gameModeController.show();
 			case TEAM -> this.teamController.show();
 			case FLOOR ->{
@@ -1078,8 +1040,6 @@ public class ClientController extends Application implements
 	public PlayerDTO onGetPlayer() {
 		return this.getPlayer();
 	}
-	@Override
-	public void onCloseSocialPanel(){ this.socialPanelController.close(); }
 
 	@Override
 	public void onSetNewTimeLine(EventHandler waitCycle) { this.waitWindowController.setNewTimeLine(waitCycle); }
@@ -1096,6 +1056,9 @@ public class ClientController extends Application implements
 	@Override
 	public void onSetPlayer(PlayerDTO player) { this.player = player; }
 
+	@Override
+	public void onSetOpponentMulti(PlayerDTO opponent) { this.teamController.setOpponent(opponent);}
+	
 	@Override
 	public GameMode onGetGameMode() { return this.gameMode; }
 

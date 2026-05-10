@@ -35,14 +35,14 @@ public class BattleEndWindow extends Window {
 	 *
 	 * @param victory boolean indicating if the player's team won
 	 */
-	public void setResult(boolean victory, int totalXP) {
+	public void setResult(boolean victory, int totalXP, String opponent) {
 		if (victory) {
 			titleLabel.setText("Victoire!");
-			messageLabel.setText("Tous les Bugémons adverses ont été mis KO. Tu as gagné!");
+			messageLabel.setText("Tous les Bugémons adverses ont été mis KO. Tu as gagné contre " + opponent + " !");
 			gainXPLabel.setText("XP gagné: " + totalXP);
 		} else {
 			titleLabel.setText("Défaite");
-			messageLabel.setText("Tous tes Bugemons sont KO. Tu as perdu !");
+			messageLabel.setText("Tous tes Bugemons sont KO. Tu as perdu contre " + opponent + " !");
 			gainXPLabel.setText("");
 		}
 	}

@@ -50,6 +50,15 @@ public class BugemonDTO implements Serializable{
 	public Type getType(){return this.getSpecies().getType();}
 	public List<AbilityDTO> getAbilities(){return this.getSpecies().getAbilities();}
 
+	public AbilityDTO findActiveAbilityById(String abilityId) {
+        for (AbilityDTO ability : this.getAbilities()) {
+            if (ability != null && abilityId.equals(ability.id())) {
+                return ability;
+            }
+        }
+        return null;
+    }
+
 	public int getHp(){return this.getFightStats().hp();}
 
 	public void setSpecies(BugemonSpeciesDTO species) {this.species = species;}

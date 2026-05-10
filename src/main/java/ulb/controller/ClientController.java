@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 
 import ulb.communication.SocketClient;
 import ulb.controller.windows.*;
+import ulb.controller.windows.Battle.BattleWindowController;
 import ulb.exceptions.CommunicationException;
 import ulb.exceptions.ViewLoadException;
 import ulb.communication.GameMode;
@@ -38,7 +39,7 @@ import ulb.DTO.reward.RewardDTO;
 /**
  * Client-side application controller coordinating server messaging.
  */
-public class ClientController extends Application implements BattleWindowController.Listener, WindowController.ClientListener {
+public class ClientController extends Application implements WindowController.ClientListener {
 
 	private static final Logger LOGGER = Logger.getLogger(ClientController.class.getName());
 
@@ -120,6 +121,7 @@ public class ClientController extends Application implements BattleWindowControl
 		this.loadTeamPanelController = new LoadTeamPanelController(this.stage, this);
 		this.nextRoomController = new NextRoomController(this.stage, this);
 		this.levelUpController = new LevelUpController(this.stage, this);
+		this.battleWindowController = new BattleWindowController(this.stage, this);
 		this.floorRewardController = new FloorRewardController(this.stage, this);
 		this.battleEndController = new BattleEndController(this.stage, this);
 		this.chooseBugemonController = new ChooseBugemonController(this.stage, this);
@@ -207,10 +209,6 @@ public class ClientController extends Application implements BattleWindowControl
 		return this.player;
 	}
 
-	@Override
-	public void onOpenSocial() {
-		this.socialPanelController.show();
-	}
 	private void setGameMode(GameMode gameMode){this.gameMode = gameMode;}
 
 	/**
@@ -224,28 +222,9 @@ public class ClientController extends Application implements BattleWindowControl
 	 * Switches to the battle window according to game mode (and tower floor and room number if Tower mode)
 	 */
 	private void switchToBattleWindow() {
-		int towerFloorNumber = 0, towerRoomNumber = 0;
-		if (this.gameMode == GameMode.TOWER){
-			List<Integer> towerInfo;
-			if ((towerInfo = this.getTowerInfo()) != null){
-				towerFloorNumber = towerInfo.get(0);
-				towerRoomNumber = towerInfo.get(1);
-			}
-		}
-		battleWindowController = new BattleWindowController(
-				this.stage,
-				this,
-				player,
-				gameMode,
-				towerFloorNumber,
-				towerRoomNumber
-		);
-
-		try {
-			battleWindowController.show();
-		} catch (ViewLoadException e) {
-			logViewLoadFailure("Impossible d'afficher l'écran de combat.", e);
-		}
+		this.battleWindowController.setPlayer(player);
+		this.battleWindowController.setGameMode(gameMode);
+		this.battleWindowController.show();
 	}
 
 	/**
@@ -312,180 +291,6 @@ public class ClientController extends Application implements BattleWindowControl
 
 			default:
 				break;
-		}
-	}
-
-	// Battle Window Controller Listener :
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void updatePlayerInventory(String userName){
-		Serializable message = getData(new GetPlayerInventoryMessage(userName));
-		if (message instanceof PlayerInventoryMessage playerInventory){
-			this.player.setInventory(playerInventory.getInventory());
-		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
-			LOGGER.log(Level.WARNING, "Failed to update player inventory: " + errorMessage.getMessage());
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onBattleStateChecked(BattleState state, ActionEvent event) {
-		if (state != BattleState.WON && state != BattleState.LOST){
-			return;
-		}
-		nextRoom();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public List<BugemonDTO> getActiveBugemons(){
-		Serializable message = getData(new GetActiveBugemonsMessage());
-		if (message instanceof ActiveBugemonsMessage activeBugemons){
-			return List.of(activeBugemons.getSelfActiveBugemon(), activeBugemons.getOpponentActiveBugemon());
-		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
-			LOGGER.log(Level.WARNING, "Failed to get active bugemons: " + errorMessage.getMessage());
-		}
-		return null;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public List<BugemonDTO> getPlayerTeam(){
-		Serializable message = getData(new GetPlayerTeamMessage());
-		if (message instanceof PlayerTeamMessage playerTeam){
-			return playerTeam.getBugemons();
-		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
-			LOGGER.log(Level.WARNING, "Failed to get player team: " + errorMessage.getMessage());
-		}
-		return null;
-	}
-
-	@Override
-	public Map<AbilityDTO, String> getAbilityEffectiveness(List<AbilityDTO> abilities, BugemonDTO bugemonTarget){
-		Serializable message = getData(new GetAbilityEffectivenessMessage(abilities, bugemonTarget));
-		if (message instanceof AbilityEffectivenessMessage effectivenessMessage){
-			return effectivenessMessage.getEffectiveness();
-		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
-			LOGGER.log(Level.WARNING, "Failed to get ability effectiveness: " + errorMessage.getMessage());
-		}
-		return null;
-	}
-
-	@Override
-	public List<Integer> getHpAfterFirstAction(){
-		Serializable message = getData(new GetLogsMessage(false));
-		if (message instanceof LogsMessage logs){
-			return logs.getHpsAfterFirstAction();
-		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
-			LOGGER.log(Level.WARNING, "Failed to get HP after first action: " + errorMessage.getMessage());
-		}
-		return null;
-	}
-
-	@Override
-	public BattleState getState(){
-		Serializable message = getData(new GetBattleStateMessage());
-		if (message instanceof BattleStateMessage battleState){
-			return battleState.getBattleState();
-		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
-			LOGGER.log(Level.WARNING, "Failed to get battle state: " + errorMessage.getMessage());
-		}
-		return null;
-	}
-
-	@Override
-	public List<String> getLogs(){
-		Serializable message = getData(new GetLogsMessage(true));
-		if (message instanceof LogsMessage logs){
-			return logs.getLogs();
-		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
-			LOGGER.log(Level.WARNING, "Failed to get logs: " + errorMessage.getMessage());
-		}
-		return null;
-	}
-
-	@Override
-	public Map<String, Boolean> checkItems(List<ItemDTO> items){
-		Serializable message = getData(new CheckUsableItemMessage(items));
-		if (message instanceof UsableItemsMessage usableItems){
-			return usableItems.getItemMap();
-		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
-			LOGGER.log(Level.WARNING, "Failed to check usable items: " + errorMessage.getMessage());
-		}
-		return null;
-	}
-
-	@Override
-	public boolean isGameFinished(){
-		Serializable message = getData(new CheckGameFinishedMessage());
-		if (message instanceof GameFinishedMessage gameFinished){
-			return gameFinished.isGameFinished();
-		} else if (message instanceof StatusMessage errorMessage && errorMessage.isFailure()){
-			LOGGER.log(Level.WARNING, "Failed to check if game is finished: " + errorMessage.getMessage());
-		}
-		return true;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public BattleState onAutoTurn() {
-		if (!postData(new ChooseRandomActionMessage())){
-			return null;
-		}
-		return getState();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public BattleState onUseItem(ItemDTO item) {
-		if (!postData(new UseItemMessage(item))){
-			return null;
-		}
-		return getState();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public BattleState onSwapBugemon(BugemonDTO bugemon) {
-		if (!postData(new SwapBugemonMessage(bugemon))){
-			return null;
-		}
-		return getState();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public BattleState onUseAbility(AbilityDTO ability) {
-		if (!postData(new UseAbilityMessage(ability))){
-			return null;
-		}
-		return getState();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onRun() {
-		if (postData(new RunMessage())){
-			nextRoom();
 		}
 	}
 
@@ -582,9 +387,7 @@ public class ClientController extends Application implements BattleWindowControl
 			case FLOOR -> this.floorController.show();
 			case WAIT -> this.waitWindowController.show();
 			case CONFIRM_TEAM -> this.confirmTeamController.show();
-			case BATTLE -> {
-				this.switchToBattleWindow(); //TODO: implement battleWindowDifferently
-			}
+			case BATTLE -> this.switchToBattleWindow();
 			case LOAD_TEAM_PANEL -> this.loadTeamPanelController.show();
 			case NEXT_ROOM -> this.nextRoomController.show();
 			case LEVEL_UP -> this.levelUpController.show();

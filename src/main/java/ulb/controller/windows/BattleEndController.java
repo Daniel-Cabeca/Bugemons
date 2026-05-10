@@ -28,9 +28,9 @@ public class BattleEndController extends WindowController<BattleEndWindow> imple
      * @param totalXP Total experience gained
      * @param opponent the one player fought
      */
-    public void show(boolean victory, int totalXP, String opponent){
+    public void show(boolean victory, int totalXP, String opponent, boolean multiplayerBattle){
         super.show();
-        this.view.setResult(victory, totalXP, opponent);
+        this.view.setResult(victory, totalXP, opponent, multiplayerBattle);
     }
 
     /**
@@ -38,4 +38,5 @@ public class BattleEndController extends WindowController<BattleEndWindow> imple
      */
     @Override
     public void onHandleReturn() { this.clientListener.onShowWindow(WindowName.MODE); }
+
 }

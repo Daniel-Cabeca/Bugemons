@@ -90,7 +90,6 @@ public abstract class WindowController<T> {
         void onStopWaitWindow();
 		void setupTeamAndShowConfirmTeam(List<BugemonDTO> teamDTO);
         void onConfirmTeamSetter(List<BugemonDTO> team);
-		GameMode onGetGameMode();
     }
 
     /**

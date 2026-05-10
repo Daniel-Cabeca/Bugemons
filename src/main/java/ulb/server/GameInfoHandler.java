@@ -91,6 +91,12 @@ public class GameInfoHandler {
 		boolean isGameTower = clientHandler.isGameTower();
 		TowerManager towerManager = clientHandler.getTowerManager();
 
+		String opponent = battle.getParticipantB().getPlayer().getUsername();
+
+		if (opponent.equals(clientHandler.getPlayer().getUsername())) {
+			opponent = battle.getParticipantA().getPlayer().getUsername();
+		}
+
 		boolean isWin = battle != null && battle.getState(teamLabel) == BattleState.WON;
 		int gainedXp = 0;
 
@@ -107,7 +113,7 @@ public class GameInfoHandler {
 		}
 
 		clientHandler.clearPendingLevelUpState();
-		clientHandler.sendMessage(new BattleEndInfoMessage(isWin, gainedXp));
+		clientHandler.sendMessage(new BattleEndInfoMessage(isWin, gainedXp, opponent));
 	}
 
 	public void getBattleState() throws DataAccessException{

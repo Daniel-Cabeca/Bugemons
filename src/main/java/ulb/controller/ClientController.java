@@ -498,16 +498,19 @@ public class ClientController extends Application implements
 		Serializable message = getData(new GetBattleEndInfoMessage());
 		boolean victory;
 		int totalXp;
+		String opponent;
 		if (message instanceof BattleEndInfoMessage battleInfo){
 			victory = battleInfo.isVictory();
 			totalXp = battleInfo.getTotalXp();
+			opponent = battleInfo.getOpponent();
+
 		} else {
 			return;
 		}
 
 		this.battleEndController = new BattleEndController(stage, this);
 		try {
-			battleEndController.show(victory, totalXp);
+			battleEndController.show(victory, totalXp, opponent);
 		} catch (ViewLoadException e) {
 			logViewLoadFailure("Impossible d'afficher l'écran de fin de combat.", e);
 		}

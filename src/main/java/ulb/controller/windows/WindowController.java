@@ -44,7 +44,7 @@ public abstract class WindowController<T> {
         try {
             this.loadView(windowPath);
         } catch (ViewLoadException e){
-            LOGGER.log(Level.WARNING, "\u001B[31m" + "Impossible d'afficher l'écran de " + this.getClass().getName() + "\u001B[0m", e);
+            LOGGER.log(Level.WARNING, "\u001B[31m" + "Impossible d'afficher l'écran de " + this.getClass().getName() + "\u001B[0m");
         }
     }
 

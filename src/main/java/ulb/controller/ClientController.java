@@ -25,11 +25,9 @@ import ulb.message.clientToServer.gameData.*;
 import ulb.message.clientToServer.gameInfo.*;
 import ulb.message.clientToServer.playerInfo.*;
 import ulb.message.clientToServer.setup.*;
-import ulb.message.clientToServer.social.*;
 import ulb.message.serverToClient.gameData.*;
 import ulb.message.serverToClient.gameInfo.*;
 import ulb.message.serverToClient.playerInfo.*;
-import ulb.message.serverToClient.social.*;
 import ulb.model.battle.BattleState;
 import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.bugemon.BugemonDTO;
@@ -120,7 +118,7 @@ public class ClientController extends Application implements
 		this.floorController = new FloorController(this.stage, this);
 		this.floorRewardController = new FloorRewardController(this.stage, this);
 		this.levelUpController = new LevelUpController(this.stage, this);
-		this.waitWindowController = new WaitWindowController(this);
+		this.waitWindowController = new WaitWindowController(this.stage, this);
 		this.confirmTeamController = new ConfirmTeamController(this.stage, this);
 		this.loadTeamPanelController = new LoadTeamPanelController(this.stage, this);
 		//TODO: implement battleWindow differently
@@ -238,13 +236,6 @@ public class ClientController extends Application implements
 	 */
 	public void switchToModeWindow(){ // TODO: DEL
 		this.modeController.show();
-	}
-
-	/**
-	 * Switches to the game mode selection window.
-	 */
-	public void switchToGameModeWindow() {
-		this.gameModeController.show();
 	}
 
 	/**
@@ -693,9 +684,6 @@ public class ClientController extends Application implements
 		this.teamController.setOpponent(opponent);
 	}
 
-	public void onReturnToGameModeWindow() {
-		switchToGameModeWindow();
-	}
 
 	@Override
 	public Serializable onGetData(ClientToServerMessage message) {
@@ -721,11 +709,7 @@ public class ClientController extends Application implements
 			case GAME_MODE -> this.gameModeController.show();
 			case TEAM -> this.teamController.show();
 			case FLOOR -> this.floorController.show();
-			case WAIT -> {
-				try {
-					this.waitWindowController.show();
-				} catch (ViewLoadException e){}
-			}
+			case WAIT -> this.waitWindowController.show();
 			case CONFIRM_TEAM -> this.confirmTeamController.show();
 			case BATTLE -> {
 				this.switchToBattleWindow(); //TODO: implement battleWindowDifferently

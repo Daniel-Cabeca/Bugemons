@@ -38,8 +38,7 @@ import ulb.DTO.reward.RewardDTO;
 /**
  * Client-side application controller coordinating server messaging.
  */
-public class ClientController extends Application implements
-		BattleEndController.Listener, BattleWindowController.Listener,
+public class ClientController extends Application implements BattleWindowController.Listener,
 		AttackReplacementController.Listener, WindowController.ClientListener {
 
 	private static final Logger LOGGER = Logger.getLogger(ClientController.class.getName());
@@ -223,25 +222,6 @@ public class ClientController extends Application implements
 
 	private void setGameMode(GameMode gameMode){this.gameMode = gameMode;}
 
-	// BattleEndController
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onHandleReturn() {
-		switchToModeWindow();
-	}
-
-	// Battle Mode Controller Listener :
-
-	/**
-	 * Shows the mode window.
-	 */
-	public void switchToModeWindow(){ // TODO: DEL
-		this.modeController.show();
-	}
-
 	/**
 	 * Switches to the next room window.
 	 */
@@ -300,12 +280,7 @@ public class ClientController extends Application implements
 		} else {
 			return;
 		}
-
-		try {
-			battleEndController.show(victory, totalXp, opponent);
-		} catch (ViewLoadException e) {
-			logViewLoadFailure("Impossible d'afficher l'écran de fin de combat.", e);
-		}
+		battleEndController.show(victory, totalXp, opponent);
 	}
 
 	/**

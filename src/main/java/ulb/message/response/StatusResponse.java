@@ -13,7 +13,8 @@ public class StatusResponse extends Response {
 		this.message = message;
 	}
 
+	@Override
 	public boolean isSuccess() { return this.isSuccess; }
-	public boolean isFailure() { return !this.isSuccess; }
+
 	public String getMessage() { return this.message; }
 }

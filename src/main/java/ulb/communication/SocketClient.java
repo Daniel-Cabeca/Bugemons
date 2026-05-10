@@ -9,8 +9,8 @@ import ulb.exceptions.CommunicationException;
 import ulb.message.clientToServer.ClientToServerMessage;
 
 public class SocketClient {
-    private Socket socket;
-    private SocketMessenger messenger;
+    private final Socket socket;
+    private final SocketMessenger messenger;
 
     public SocketClient(String serverIP, int serverPort) throws CommunicationException {
         try{

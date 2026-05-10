@@ -18,25 +18,25 @@ import ulb.service.*;
 public class SocketServer {
     private static final Logger LOGGER = Logger.getLogger(SocketServer.class.getName());
 
-    private ServerSocket serverSocket;
+    private final ServerSocket serverSocket;
     private boolean stopServer;
-    private List<Thread> clients;
+    private final List<Thread> clients;
 
     public SocketServer(int port) throws CommunicationException {
-        try{
+        try {
             serverSocket = new ServerSocket(port);
             this.stopServer = false;
-            clients = new ArrayList<Thread>();
-        } catch (IOException e){
+            clients = new ArrayList<>();
+        } catch (IOException e) {
             throw new CommunicationException("Impossible to start the server on port " + port + ".", e);
         }
     }
 
     public void waitAllThreads(){
         for (Thread thread : this.clients){
-            try{
+            try {
                 thread.join();
-            } catch (InterruptedException e){
+            } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 close();
                 return;
@@ -82,7 +82,7 @@ public class SocketServer {
     public void close(){
         stopServer = true;
 
-        if (serverSocket == null || serverSocket.isClosed()) {
+        if (serverSocket.isClosed()) {
             return;
         }
 

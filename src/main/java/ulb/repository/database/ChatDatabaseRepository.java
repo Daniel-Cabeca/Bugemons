@@ -12,11 +12,15 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Repository for chat conversations stored in the database.
  */
 public class ChatDatabaseRepository implements ChatRepository {
+	private static final Logger LOGGER = Logger.getLogger(ChatDatabaseRepository.class.getName());
+
 	public static final int MAX_MESSAGES = 20;
 
 	private final Database database;
@@ -77,17 +81,18 @@ public class ChatDatabaseRepository implements ChatRepository {
 	@Override
 	public int countMessages(String usernameA, String usernameB) {
 		String sql = """
-				SELECT COUNT(*) FROM chat_messages
-				WHERE (sender_username = ? AND receiver_username = ?)
-				OR (sender_username = ? AND receiver_username = ?)
-				""";
+            SELECT COUNT(*) FROM chat_messages
+            WHERE (sender_username = ? AND receiver_username = ?)
+            OR (sender_username = ? AND receiver_username = ?)
+            """;
 		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
 			this.setMessagesParameters(stmt, usernameA, usernameB, 1);
 			ResultSet rs = stmt.executeQuery();
 			if (rs.next()) return rs.getInt(1);
 			return 0;
 		} catch (SQLException e) {
-			throw new RuntimeException(e.getMessage());
+			LOGGER.log(Level.SEVERE, "Failed to count messages between " + usernameA + " and " + usernameB + ".", e);
+			return 0;
 		}
 	}
 

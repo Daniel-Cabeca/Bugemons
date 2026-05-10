@@ -3,11 +3,15 @@ package ulb.repository.database.sql;
 import ulb.exceptions.LoadException;
 
 import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Base SQL database wrapper exposing helper operations.
  */
 public abstract class Database {
+	private static final Logger LOGGER = Logger.getLogger(Database.class.getName());
+
 	private final String url;
 	private final Connection connection;
 
@@ -61,7 +65,8 @@ public abstract class Database {
 		try {
 			return this.getConnection().createStatement();
 		} catch (SQLException e) {
-			throw new RuntimeException("Failed to create an SQL statement: "+ e.getMessage());
+			LOGGER.log(Level.SEVERE, "Failed to create an SQL statement.", e);
+			return null;
 		}
 	}
 
@@ -75,7 +80,8 @@ public abstract class Database {
 		try {
 			return this.getConnection().prepareStatement(sql);
 		} catch (SQLException e) {
-			throw new RuntimeException("Failed to create a prepared SQL statement: "+ e.getMessage());
+			LOGGER.log(Level.SEVERE, "Failed to prepare an SQL statement.", e);
+			return null;
 		}
 	}
 
@@ -104,19 +110,18 @@ public abstract class Database {
 	/**
 	 * Whether the database has been newly created.
 	 *
-	 * @return True if it is a new databas,e false otherwise
+	 * @return True if it is a new database false otherwise
 	 */
 	public boolean isNew() {
 		Statement statement = this.createStatement();
-
 		try {
 			ResultSet res = statement.executeQuery(
-				"SELECT name FROM sqlite_master WHERE type='table' AND name='items';"
+					"SELECT name FROM sqlite_master WHERE type='table' AND name='items';"
 			);
-
 			return !res.next();
 		} catch (SQLException e) {
-			throw new RuntimeException("Failed to test if the database is new: "+ e.getMessage());
+			LOGGER.log(Level.SEVERE, "Failed to test if the database is new.", e);
+			return false;
 		}
 	}
 }

@@ -97,46 +97,39 @@ public class BugemonSpeciesDatabaseRepository implements BugemonSpeciesRepositor
 	 */
 	@Override
 	public BugemonSpecies findById(String id) throws NoSuchElementException {
-
 		String sql = """
-       SELECT bs.*, ba.ability_id
-       FROM bugemon_species bs
-       LEFT JOIN species_abilities ba ON bs.id = ba.species_id
-       WHERE bs.id = ?
-    """;
-
+           SELECT bs.*, ba.ability_id
+           FROM bugemon_species bs
+           LEFT JOIN species_abilities ba ON bs.id = ba.species_id
+           WHERE bs.id = ?
+        """;
 		try (PreparedStatement pstmt = this.database.prepareStatement(sql)) {
 			pstmt.setString(1, id);
 			ResultSet rs = pstmt.executeQuery();
 
 			BugemonSpecies species = null;
 			AbilitySet abilities = new AbilitySet();
-
-
 			AbilityDatabaseRepository abilityRepo = new AbilityDatabaseRepository(this.database);
+
 			int index = 0;
 			while (rs.next()) {
 				if (species == null) {
-
 					Stats baseStats = new Stats(
 							rs.getInt("hp"),
 							rs.getInt("attack"),
 							rs.getInt("defense"),
 							rs.getInt("initiative")
 					);
-
-
 					species = new BugemonSpecies(
 							rs.getString("id"),
 							rs.getString("name"),
 							Type.valueOf(rs.getString("type")),
 							baseStats,
-							abilities, // Référence vers l'AbilitySet qu'on va remplir
+							abilities,
 							rs.getString("sprite"),
 							rs.getBoolean("starter")
 					);
 				}
-
 
 				String abilityId = rs.getString("ability_id");
 				if (abilityId != null && index < 3) {
@@ -148,15 +141,13 @@ public class BugemonSpeciesDatabaseRepository implements BugemonSpeciesRepositor
 					}
 				}
 			}
-
 			if (species == null) {
 				throw new EntityNotFoundException("Bugemon species", id);
 			}
-
 			return species;
-
 		} catch (SQLException e) {
-			throw new RuntimeException("Erreur lors de la récupération de l'espèce Bugemon", e);
+			LOGGER.log(Level.SEVERE, "SQL error while loading Bugemon species with id: " + id, e);
+			return null;
 		}
 	}
 

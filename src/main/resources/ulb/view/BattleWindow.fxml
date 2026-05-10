@@ -35,7 +35,15 @@
                 <javafx.geometry.Insets top="10" left="10"/>
             </padding>
             <children>
-                <Button text="👥" onAction="#openSocialPanel"/>
+				<Button onAction="#openSocialPanel">
+					<graphic>
+						<ImageView fitHeight="25.0" fitWidth="25.0" preserveRatio="true">
+							<image>
+								<Image url="@../../png/other/social-icon.png" />
+							</image>
+						</ImageView>
+					</graphic>
+				</Button>
                 <Label fx:id="floorLabel" style="-fx-font-size: 30px"/>
                 <Label fx:id="roomLabel" style="-fx-font-size: 30px"/>
             </children>

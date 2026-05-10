@@ -136,18 +136,6 @@
     </profile>
 
     <profile>
-      <id>unix-xdg-override</id>
-      <activation>
-        <property>
-          <name>env.XDG_DATA_HOME</name>
-        </property>
-      </activation>
-      <properties>
-        <data.path>${env.XDG_DATA_HOME}/infof307</data.path>
-      </properties>
-    </profile>
-
-    <profile>
       <id>windows-data-path</id>
       <activation>
         <os><family>windows</family></os>

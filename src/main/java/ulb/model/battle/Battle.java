@@ -33,6 +33,7 @@ public class Battle {
 	private boolean gameFinished = false;
 
 	private List<String> logMsg;
+	private boolean clearLogs = false;
 	private List<ActiveEffect> activeEffects;
 
 	public enum ParticipantLabel {
@@ -373,7 +374,14 @@ public class Battle {
 	/** 
 	 * Clears the current log message
 	 */
-	public void clearLogMsg() { 
-		logMsg.clear();
+	synchronized public void clearLogMsg() { 
+		if (!multiplayerBattle){ // if solo battle, always clears the logs
+			logMsg.clear();
+			return;
+		} // else, clears the logs only when the two player asked for it
+		if (clearLogs){
+			logMsg.clear();
+		}
+		clearLogs = ! clearLogs; // switch the flag so that it clears the logs only when the two players asked for 
 	}
 }

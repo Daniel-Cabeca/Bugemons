@@ -276,14 +276,21 @@ public class ClientController extends Application implements BattleWindowControl
 		if (message instanceof BattleEndInfoMessage battleInfo){
 			victory = battleInfo.isVictory();
 			totalXp = battleInfo.getTotalXp();
-			opponent = battleInfo.getOpponent();
+			// opponent = this.teamController.getOpponent().getUsername();
+			// opponent = battleInfo.getOpponent();
 			multiplayerBattle = battleInfo.isMultiplayerBattle();
+			if (multiplayerBattle)
+				opponent = this.teamController.getOpponent().getUsername();
+			else {
+				opponent = "NoOpponent";
+			}
 
 		} else {
 			return;
 		}
 
-		battleEndController.show(victory, totalXp, opponent, multiplayerBattle);
+			battleEndController.show(victory, totalXp, opponent, multiplayerBattle);
+			this.teamController.resetOpponent();
 	}
 
 	/**

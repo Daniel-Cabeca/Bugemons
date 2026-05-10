@@ -40,6 +40,7 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	public boolean hasOpponent() { return this.opponent != null; }
 	public PlayerDTO getOpponent() { return this.opponent; }
 	public void setOpponent(PlayerDTO opponent) { this.opponent = opponent; }
+	public void resetOpponent() { this.opponent = null; }
 
 
 	@Override

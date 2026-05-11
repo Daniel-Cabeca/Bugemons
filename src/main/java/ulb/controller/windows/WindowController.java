@@ -1,23 +1,13 @@
 package ulb.controller.windows;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import ulb.DTO.ability.AbilityDTO;
-import ulb.DTO.bugemon.BugemonDTO;
-import ulb.DTO.player.PlayerDTO;
-import ulb.DTO.reward.RewardDTO;
-import ulb.communication.GameMode;
 import ulb.controller.ClientController;
-import ulb.message.request.Request;
 import ulb.view.FxmlLoader;
 import ulb.exceptions.ViewLoadException;
 
-import java.io.Serializable;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

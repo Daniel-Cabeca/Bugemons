@@ -39,7 +39,6 @@ public class ClientController extends Application implements WindowController.Cl
 	private static final Logger LOGGER = Logger.getLogger(ClientController.class.getName());
 
 	SocketClient client;
-	private final Object serverRequestLock = new Object();
 	Stage stage;
 
 	PlayerDTO player;
@@ -136,39 +135,22 @@ public class ClientController extends Application implements WindowController.Cl
 	/**
 	 * Sends data to the server and returns whether the request was accepted.
 	 *
-	 * @param message The message sent to the server
+	 * @param request The request sent to the server
 	 * @return True if the request was accepted by the server
 	 */
-	private boolean postData(Request message){
-		synchronized (serverRequestLock) {
-			try {
-				client.sendMessage(message);
-				Serializable response = client.receiveMessage();
-				if (response instanceof StatusResponse statusResponse) {
-                    return !statusResponse.isFailure();
-                }
-			} catch (CommunicationException e) {
-				LOGGER.log(Level.WARNING, "Communication error with server.", e);
-			}
-			return false;
-		}
+	private boolean postData(Request request){
+		Response response = this.client.getResponse(request);
+		return response.isSuccess();
 	}
 
 	/**
 	 * Sends a request to the server and returns the response.
 	 *
-	 * @param message The message sent to the server
+	 * @param request The message sent to the server
 	 * @return The response received from the server
 	 */
-	private Serializable getData(Request message){
-		synchronized (serverRequestLock) {
-			try {
-				client.sendMessage(message);
-				return client.receiveMessage();
-			} catch (CommunicationException e) {
-				return new StatusResponse(false, "Connexion perdue avec le serveur.");
-			}
-		}
+	private Response getData(Request request){
+		return this.client.getResponse(request);
 	}
 
 	/**

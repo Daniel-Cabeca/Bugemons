@@ -9,17 +9,23 @@ import ulb.exceptions.CommunicationException;
 import ulb.message.request.Request;
 import ulb.message.response.Response;
 import ulb.message.response.StatusResponse;
+import ulb.server.ClientHandler;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SocketClient {
     private final Object serverRequestLock = new Object();
 
     private final Socket socket;
     private final SocketMessenger messenger;
+    private static final Logger LOGGER = Logger.getLogger(SocketClient.class.getName());
 
     public SocketClient(String serverIP, int serverPort) throws CommunicationException {
         try{
             socket = new Socket(serverIP, serverPort);
             messenger = new SocketMessenger(socket);
+            LOGGER.log(Level.INFO, "Client successfully connected to the server");
         } catch (IOException e){
             closeSocket();
             throw new CommunicationException("Impossible to connect to server.", e);

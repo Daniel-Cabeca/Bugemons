@@ -159,7 +159,10 @@ public class ClientController extends Application {
 		return this.client.getResponse(request);
 	}
 
-	
+
+	public PlayerDTO getPlayer() {
+		return this.player;
+	}
 
 	/**
 	 * Retrieves a player DTO by username from the server.
@@ -172,22 +175,6 @@ public class ClientController extends Application {
 			return msg.getPlayer();
 		}
 		return null;
-	}
-	
-	public List<BugemonDTO> getUpdatedTeam() {
-		if (getData(new GetPlayerTeamRequest()) instanceof PlayerTeamResponse msg) {
-			return msg.getBugemons();
-		}
-		return null;
-	}
-
-	public PlayerDTO getPlayer() {
-		return this.player;
-	}
-
-	public void updateTeam() {
-		List<BugemonDTO> updatedTeam = getUpdatedTeam();
-		this.player.setTeam(updatedTeam);
 	}
 
 	/**
@@ -204,6 +191,25 @@ public class ClientController extends Application {
 	public PlayerDTO loadPlayer(String username) {
 		this.player = this.getPlayer(username);
 		return this.player;
+	}
+	
+	/**
+	 * Retrieves the updated inventory of the player.
+	 * @return the updated inventory
+	 */
+	public List<BugemonDTO> getUpdatedTeam() {
+		if (getData(new GetPlayerTeamRequest()) instanceof PlayerTeamResponse msg) {
+			return msg.getBugemons();
+		}
+		return null;
+	}
+
+	/**
+	 * Updates the team of the player. 
+	 */
+	public void updateTeam() {
+		List<BugemonDTO> updatedTeam = getUpdatedTeam();
+		this.player.setTeam(updatedTeam);
 	}
 
 	/**

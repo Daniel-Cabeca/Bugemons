@@ -5,6 +5,8 @@ import ulb.exceptions.DataAccessException;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import ulb.DTO.battle.MultiBattleStatusDTO;
 import ulb.mapper.battle.MultiBattleStatusMapper;
@@ -20,6 +22,7 @@ public class SocialHandler {
     private final AccountService accountService;
     private final ChatService chatService;
 	private final MultiBattleService multiBattleService;
+	private static final Logger LOGGER = Logger.getLogger(SocialHandler.class.getName());
 
     public SocialHandler(ClientHandler clientHandler, AccountService accountService, ChatService chatService, MultiBattleService multiBattleService) {
         this.clientHandler = clientHandler;
@@ -80,7 +83,10 @@ public class SocialHandler {
 			MultiBattleSession multiBattle = multiBattleService.getMultiBattle(userId1, userId2);
 			status = MultiBattleStatusMapper.toDTO(multiBattle);
 		}
-		catch (NoSuchElementException e) {}
+		catch (NoSuchElementException e) {
+			LOGGER.log(Level.FINE, "No multiplayer battle session found between users " + userId1 + " and " + userId2
+            + ". Returning NOT_CREATED status.");
+		}
 
 		MultiBattleStatusResponse response = new MultiBattleStatusResponse(status);
 		clientHandler.sendMessage(response);

@@ -187,6 +187,6 @@ public class AbilityTest {
 
 		Bugemon bugemon = new Bugemon(testSpecies);
 
-		assertNull(ability.getEffectivenessMessage(bugemon));
+		assertEquals("", ability.getEffectivenessMessage(bugemon));
 	}
 }

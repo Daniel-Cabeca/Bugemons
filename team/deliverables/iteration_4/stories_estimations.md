@@ -1,53 +1,53 @@
-# Histoires - Estimation de la durée et du risque de développement pour l'itération 3
+# Histoires - Estimation de la durée et du risque de développement pour l'itération 4
 
 Ce document contient l'éstimation de la durée et du risque de développement pour chacune des 28 histoires.
 
 ## Histoires et estimation
 
-|    ID | Titre                                            | Priorité client | Introduit dans l’itération |          État           | Durée estimée (h) | Risque estimé (1-3) |
-|------:|--------------------------------------------------|:---------------:|:--------------------------:|:-----------------------:|:-----------------:|:-------------------:|
-|  H-01 | Constituer une équipe                            |        1        |             1              | $${\color{green}Fini}$$ |        12         |          2          |
-|  H-02 | Sauvegarder et charger une équipe                |        2        |             /              |            /            |         8         |          2          |
-|  H-03 | Modifier équipes sauvegardées                    |        2        |             /              |            /            |         4         |          2          |
-|  H-04 | Combat automatique                               |        1        |             1              | $${\color{green}Fini}$$ |        16         |          2          |
-|  H-05 | Contrôle des actions en combat                   |        1        |            1-2             | $${\color{green}Fini}$$ |        15         |          2          |
-|  H-06 | Calcul de dégâts avec statistiques               |        1        |            1-2             | $${\color{green}Fini}$$ |         7         |          2          |
-|  H-07 | Expérience et montée de niveau                   |        1        |            1-2             | $${\color{green}Fini}$$ |        10         |          2          |
-|  H-08 | Statuts                                          |        1        |             /              | $${\color{green}Fini}$$ |         8         |          2          |
-|  H-09 | Structure de la Tour NO                          |        1        |            1-2             | $${\color{green}Fini}$$ |        31         |          2          |
-|  H-10 | Utiliser un objet                                |        1        |             1              | $${\color{green}Fini}$$ |        11         |          2          |
-|  H-11 | Récompenses d’étage                              |        1        |             /              |            /            |         8         |          3          |
-|  H-12 | Bugédex                                          |        2        |             /              |            /            |         8         |          2          |
-|  H-13 | Ajouter des Bugémons                             |        2        |             /              |            /            |         8         |          3          |
-| H-14a | Exploration visuelle des étages                  |        1        |             /              |            /            |        14         |          1          |
-| H-14b | Afficher l'état d'exploration                    |        1        |             /              |            /            |         4         |          1          |
-|  H-15 | Animations de combat                             |        3        |             /              |            /            |         6         |          2          |
-|  H-16 | Animations de déplacement en mode exploration    |        3        |             /              |            /            |         4         |          2          |
-| H-17a | Systèmes de compétences                          |        2        |             /              |            /            |        15         |          2          |
-| H-17b | Arbre de compétences                             |        2        |             /              |            /            |        15         |          2          |
-|  H-18 | Jouer à la manette                               |        3        |             /              |            /            |        12         |          2          |
-|  H-19 | Génération procédurale des étages                |        2        |             /              |            /            |        10         |          2          |
-|  H-20 | Sauvegarder sa progression, et continuer         |        2        |             /              |            /            |        15         |          2          |
-|  H-21 | Choisir un niveau de difficulté                  |        2        |             /              |            /            |         6         |          2          |
-| H-22a | Intelligence artificielle de combat (attaque)    |        2        |             /              |            /            |         6         |          1          |
-| H-22b | Intelligence artificielle de combat (objet soin) |        2        |             /              |            /            |         4         |          1          |
-| H-22c | Intelligence artificielle de combat (swap)       |        2        |             /              |            /            |         8         |          1          |
-|  H-23 | Générer une équipe dynamiquement                 |        2        |             /              |            /            |         8         |          2          |
-|  H-24 | Musique d’ambiance                               |        3        |             /              |            /            |         4         |          3          |
-|  H-25 | Défier un autre joueur                           |        3        |             /              |            /            |        15         |          2          |
-|  H-26 | Chat                                             |        1        |             /              |            /            |        10         |          2          |
-|  H-27 | Filtrer les messages inappropriés                |        3        |             /              |            /            |         5         |          3          |
-|  H-28 | Leaderboard                                      |        1        |             /              |            /            |       6-10        |          2          |
-|  HC-A | Établir une connexion serveur-client             |        1        |             2              | $${\color{green}Fini}$$ |        25         |          1          |
-|  HC-B | Créer une base de données                        |        /        |             /              |            /            |        15         |          1          |
-|  HC-C | Animation de sprites                             |        /        |             /              |            /            |         6         |          2          |
-|  HC-D | Amis                                             |        /        |             /              |            /            |        14         |          2          |
-|  HB-A | Abandonner la partie                             |        /        |             1              | $${\color{green}Fini}$$ |         4         |          2          |
-|  HB-B | Charger de nouveaux sprites                      |        /        |             /              |            /            |        10         |          2          |
-|  HB-C | Créer de nouvelles attaques                      |        /        |             /              |            /            |         6         |          2          |
-|  HB-D | Créer la musique                                 |        /        |             /              |            /            |         5         |          1          |
-|   R-1 | Refactoring                         			          |        /        |             2              | $${\color{green}Fini}$$ |        20         |          /          |
-|   R-2 | Refactoring                         			          |        /        |             /              |            /            |        10         |          /          |
+|    ID | Titre                                            | Priorité client | Introduit dans l’itération |              État              | Durée estimée (h) | Risque estimé (1-3) |
+|------:|--------------------------------------------------|:---------------:|:--------------------------:|:------------------------------:|:-----------------:|:-------------------:|
+|  H-01 | Constituer une équipe                            |        1        |             1              |    $${\color{green}Fini}$$     |        12         |          2          |
+|  H-02 | Sauvegarder et charger une équipe                |        2        |             /              |               /                |         8         |          2          |
+|  H-03 | Modifier équipes sauvegardées                    |        2        |             /              |               /                |         4         |          2          |
+|  H-04 | Combat automatique                               |        1        |             1              |    $${\color{green}Fini}$$     |        16         |          2          |
+|  H-05 | Contrôle des actions en combat                   |        1        |            1-2             |    $${\color{green}Fini}$$     |        15         |          2          |
+|  H-06 | Calcul de dégâts avec statistiques               |        1        |            1-2             |    $${\color{green}Fini}$$     |         7         |          2          |
+|  H-07 | Expérience et montée de niveau                   |        1        |            1-2             |    $${\color{green}Fini}$$     |        10         |          2          |
+|  H-08 | Statuts                                          |        1        |             /              |    $${\color{green}Fini}$$     |         8         |          2          |
+|  H-09 | Structure de la Tour NO                          |        1        |            1-2             |    $${\color{green}Fini}$$     |        31         |          2          |
+|  H-10 | Utiliser un objet                                |        1        |             1              |    $${\color{green}Fini}$$     |        11         |          2          |
+|  H-11 | Récompenses d’étage                              |        1        |             3              |    $${\color{green}Fini}$$     |         8         |          3          |
+|  H-12 | Bugédex                                          |        2        |             /              |               /                |        12         |          2          |
+|  H-13 | Ajouter des Bugémons                             |        2        |             /              |               /                |         8         |          3          |
+| H-14a | Exploration visuelle des étages                  |        1        |             /              |               /                |        15         |          1          |
+| H-14b | Afficher l'état d'exploration                    |        1        |             /              |               /                |         6         |          1          |
+|  H-15 | Animations de combat                             |        3        |             /              |               /                |         8         |          2          |
+|  H-16 | Animations de déplacement en mode exploration    |        3        |             /              |               /                |         4         |          2          |
+| H-17a | Systèmes de compétences                          |        2        |             /              |               /                |        15         |          2          |
+| H-17b | Arbre de compétences                             |        2        |             /              |               /                |        15         |          2          |
+|  H-18 | Jouer à la manette                               |        3        |             /              |               /                |        12         |          2          |
+|  H-19 | Génération procédurale des étages                |        2        |             /              |               /                |        13         |          2          |
+|  H-20 | Sauvegarder sa progression, et continuer         |        2        |             /              |               /                |        10         |          2          |
+|  H-21 | Choisir un niveau de difficulté                  |        2        |             /              |               /                |         6         |          2          |
+| H-22a | Intelligence artificielle de combat (attaque)    |        2        |             /              |               /                |         6         |          1          |
+| H-22b | Intelligence artificielle de combat (objet soin) |        2        |             /              |               /                |         4         |          1          |
+| H-22c | Intelligence artificielle de combat (swap)       |        2        |             /              |               /                |         8         |          1          |
+|  H-23 | Générer une équipe dynamiquement                 |        2        |             /              |               /                |        10         |          2          |
+|  H-24 | Musique d’ambiance                               |        3        |             /              |               /                |         4         |          3          |
+|  H-25 | Défier un autre joueur                           |        3        |             3              | $${\color{yellow}En progrès}$$ |        12         |          2          |
+|  H-26 | Chat                                             |        1        |             3              | $${\color{yellow}En progrès}$$ |        12         |          2          |
+|  H-27 | Filtrer les messages inappropriés                |        3        |             /              |               /                |         5         |          3          |
+|  H-28 | Leaderboard                                      |        1        |             /              |               /                |        10         |          2          |
+|  HC-A | Établir une connexion serveur-client             |        1        |             2              |    $${\color{green}Fini}$$     |        25         |          1          |
+|  HC-B | Créer une base de données                        |        /        |             3              |    $${\color{green}Fini}$$     |        15         |          1          |
+|  HC-C | Animation de sprites                             |        /        |             /              |               /                |         6         |          2          |
+|  HC-D | Amis                                             |        /        |             3              |    $${\color{green}Fini}$$     |        14         |          2          |
+|  HB-A | Abandonner la partie                             |        /        |             1              |    $${\color{green}Fini}$$     |         4         |          2          |
+|  HB-B | Charger de nouveaux sprites                      |        /        |             /              |               /                |        10         |          2          |
+|  HB-C | Créer de nouvelles attaques                      |        /        |             /              |               /                |         6         |          2          |
+|  HB-D | Créer la musique                                 |        /        |             /              |               /                |         5         |          1          |
+|   R-1 | Refactoring                         			          |        /        |             2              |    $${\color{green}Fini}$$     |        20         |          /          |
+|   R-2 | Refactoring                         			          |        /        |             3              |    $${\color{green}Fini}$$     |        10         |          /          |
 
 ## Légende
 - H = Histoire de l'énoncé
@@ -216,9 +216,6 @@ Actions selon le type de salle :
 - Combat : lance immédiatement un combat
 - Bonus : affiche l’écran de choix de récompense (3 options) (cf. histoire « Récompenses d’étage »)
 - Boss : lance le combat de boss et passe à l’étage suivant en cas de victoire
-
-Questions
-- Quelle est la différence entre un combat et un boss ? 
 
 ### H-14b - Afficher l'état d'exploration
 L'interface affiche:
@@ -392,9 +389,6 @@ Dans le chat, les messages inappropriés (obscènes, insultants, …) sont adouc
 ### H-28 - Leaderboard
 
 En mode multijoueurs, à chaque fois que 2 personnes s’affrontent, celle qui emporte la victoire gagne 1 point. Il y a ensuite un classement qui permet de voir quels joueurs ont obtenu le plus de points.
-L’estimation des heures dépend du moment où cette histoire est implémentée. Avant les histoires de base de données (HC-B) et de
-défier un autre joueur (H-25), le temps est estimé à 6 points comme le leaderboard sera statique et basé sur des données fictives. 
-Après leur mise en place, il faudra intégrer un système de points et connecter à la base de données, ce qui augmente le temps estimé à 10 points.
 
 ### Histoire complémentaire A - Établir la connexion serveur-client
 

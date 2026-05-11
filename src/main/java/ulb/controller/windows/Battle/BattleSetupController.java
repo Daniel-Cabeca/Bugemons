@@ -13,6 +13,7 @@ import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.communication.GameMode;
+import ulb.controller.ClientController;
 import ulb.controller.windows.WindowController.ClientListener;
 import ulb.message.request.gameInfo.CheckUsableItemRequest;
 import ulb.message.request.gameInfo.GetAbilityEffectivenessRequest;
@@ -37,11 +38,13 @@ import ulb.view.windows.BattleWindow.InventoryEntry;
 
 public class BattleSetupController {
 	private final ClientListener clientListener;
+	private final ClientController clientController;
 	private BattleWindow view;
 	protected final Logger LOGGER = Logger.getLogger(this.getClass().getName());
 
-	BattleSetupController(ClientListener clientListener){
-		this.clientListener = clientListener;
+	BattleSetupController(ClientController clientController){
+		this.clientListener = clientController;
+		this.clientController = clientController;
 	}
 
 	public void setView(BattleWindow view) { this.view = view; }

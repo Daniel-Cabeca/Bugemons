@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.stage.Stage;
 import ulb.DTO.player.PlayerDTO;
 import ulb.communication.GameMode;
+import ulb.controller.ClientController;
 import ulb.controller.windows.WindowController;
 import ulb.message.request.gameInfo.GetTowerInfoRequest;
 import ulb.message.response.gameInfo.TowerInfoResponse;
@@ -23,13 +24,13 @@ public class BattleWindowController extends WindowController<BattleWindow> imple
      * Creates the floor reward controller.
      *
      * @param stage The application stage
-     * @param clientListener Listener to communicate with the ClientController
+     * @param clientController The client controller
      */
-    public BattleWindowController(Stage stage, ClientListener clientListener) {
-        super(stage, WindowPath.BATTLE, clientListener);
+    public BattleWindowController(Stage stage, ClientController clientController) {
+        super(stage, WindowPath.BATTLE, clientController);
         this.view.setViewListener(this);
-		battleSetupController = new BattleSetupController(clientListener);
-		battleActionController = new BattleActionController(clientListener, battleSetupController);
+		battleSetupController = new BattleSetupController(clientController);
+		battleActionController = new BattleActionController(clientController, battleSetupController);
     }
 
 	public void show(){

@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import ulb.DTO.team.TeamDTO;
+import ulb.controller.ClientController;
 import ulb.message.request.teamSave.*;
 import ulb.message.response.teamSave.*;
 import ulb.view.WindowPath;
@@ -15,7 +16,7 @@ import ulb.view.windows.LoadTeamPanel;
 public class LoadTeamPanelController extends WindowController<LoadTeamPanel> implements LoadTeamPanel.ViewListener {
 	private Stage popupStage;
 
-	public LoadTeamPanelController(Stage stage, ClientListener clientController) {
+	public LoadTeamPanelController(Stage stage, ClientController clientController) {
        	super(stage, WindowPath.LOAD_TEAM_PANEL, clientController);
 		this.view.setViewListener(this);
     }

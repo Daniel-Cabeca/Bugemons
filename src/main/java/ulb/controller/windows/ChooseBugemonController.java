@@ -1,8 +1,10 @@
 package ulb.controller.windows;
+
 import javafx.stage.Stage;
 import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.player.PlayerDTO;
+import ulb.controller.ClientController;
 import ulb.message.request.gameActions.ChooseStatRewardRequest;
 import ulb.message.request.gameData.GetRandomAbilityRequest;
 import ulb.message.response.StatusResponse;
@@ -21,10 +23,10 @@ public class ChooseBugemonController extends WindowController<ChooseBugemonWindo
      * Creates the choose bugemon controller.
      *
      * @param stage The application stage
-     * @param clientListener The application controller
+     * @param clientController The application controller
      */
-    public ChooseBugemonController(Stage stage,ClientListener clientListener) {
-        super(stage, WindowPath.CHOOSE_BUGEMON, clientListener);
+    public ChooseBugemonController(Stage stage, ClientController clientController) {
+        super(stage, WindowPath.CHOOSE_BUGEMON, clientController);
         this.view.setViewListener(this);
     }
 

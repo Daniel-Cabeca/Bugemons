@@ -1,6 +1,7 @@
 package ulb.controller.windows;
 import javafx.stage.Stage;
 import ulb.DTO.player.PlayerRegisterDTO;
+import ulb.controller.ClientController;
 import ulb.message.request.setup.RegisterRequest;
 import ulb.view.WindowPath;
 import ulb.view.windows.RegisterWindow;
@@ -14,10 +15,10 @@ public class RegisterController extends WindowController<RegisterWindow> impleme
      * Creates the register controller and attaches it to the view.
      *
      * @param stage The application stage
-     * @param  clientListener listener to communicate with the clientController
+     * @param  clientController The client controller
      */
-    public RegisterController(Stage stage, ClientListener clientListener){
-        super(stage, WindowPath.REGISTER, clientListener);
+    public RegisterController(Stage stage, ClientController clientController){
+        super(stage, WindowPath.REGISTER, clientController);
         this.view.setViewListener(this);
     }
 

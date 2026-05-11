@@ -1,7 +1,9 @@
 package ulb.controller.windows;
+
 import javafx.stage.Stage;
 import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.bugemon.BugemonDTO;
+import ulb.controller.ClientController;
 import ulb.message.request.gameActions.ChooseAbilityRewardRequest;
 import ulb.view.WindowPath;
 import ulb.view.windows.AttackReplacementWindow;
@@ -17,10 +19,10 @@ public class AttackReplacementController extends WindowController<AttackReplacem
      * Creates the controller with its stage and callback listener.
      *
      * @param stage          The application stage
-     * @param clientListener The listener notified of user actions
+     * @param clientController The client controller
      */
-    public AttackReplacementController(Stage stage, ClientListener clientListener) {
-        super(stage, WindowPath.ATTACK_REPLACEMENT, clientListener);
+    public AttackReplacementController(Stage stage, ClientController clientController) {
+        super(stage, WindowPath.ATTACK_REPLACEMENT, clientController);
         this.view.setViewListener(this);
     }
 

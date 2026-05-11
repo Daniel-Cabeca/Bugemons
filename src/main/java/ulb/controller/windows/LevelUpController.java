@@ -6,6 +6,7 @@ import javafx.event.ActionEvent;
 import javafx.stage.Stage;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.reward.RewardDTO;
+import ulb.controller.ClientController;
 import ulb.message.request.gameInfo.GetLevelUpInfoRequest;
 import ulb.message.response.gameInfo.LevelUpInfoResponse;
 import ulb.view.WindowPath;
@@ -20,10 +21,10 @@ public class LevelUpController extends WindowController<LevelUpWindow> implement
      * Creates the level up controller.
      *
      * @param stage The application stage
-     * @param clientListener Listener to communicate with the ClientController
+     * @param clientController The client controller
      */
-    public LevelUpController(Stage stage, ClientListener clientListener) {
-        super(stage, WindowPath.LEVEL_UP, clientListener);
+    public LevelUpController(Stage stage, ClientController clientController) {
+        super(stage, WindowPath.LEVEL_UP, clientController);
         this.view.setViewListener(this);
     }
 

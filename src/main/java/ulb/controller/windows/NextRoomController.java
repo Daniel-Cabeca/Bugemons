@@ -1,6 +1,7 @@
 package ulb.controller.windows;
 
 import javafx.stage.Stage;
+import ulb.controller.ClientController;
 import ulb.message.request.gameActions.AbandonTowerRequest;
 import ulb.view.WindowPath;
 import ulb.view.windows.NextRoomWindow;
@@ -14,10 +15,10 @@ public class NextRoomController extends WindowController<NextRoomWindow> impleme
      * Creates the next room controller.
      *
      * @param stage The application stage
-     * @param clientListener The listener notified of navigation actions
+     * @param clientController The controller used for navigation
      */
-    public NextRoomController(Stage stage, ClientListener clientListener) {
-        super(stage, WindowPath.NEXT_ROOM, clientListener);
+    public NextRoomController(Stage stage, ClientController clientController) {
+        super(stage, WindowPath.NEXT_ROOM, clientController);
         this.view.setViewListener(this);
     }
 

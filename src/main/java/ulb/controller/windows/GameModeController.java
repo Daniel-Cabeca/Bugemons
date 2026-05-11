@@ -1,4 +1,5 @@
 package ulb.controller.windows;
+
 import javafx.stage.Stage;
 import ulb.communication.GameMode;
 import ulb.message.request.gameInfo.GetTowerSavedInfoRequest;
@@ -6,6 +7,7 @@ import ulb.message.request.setup.SetUpTowerModeRequest;
 import ulb.message.response.gameInfo.TowerSavedInfoResponse;
 import ulb.view.WindowPath;
 import ulb.view.windows.GameModeWindow;
+import ulb.controller.ClientController;
 
 import java.io.Serializable;
 
@@ -18,10 +20,10 @@ public class GameModeController extends WindowController<GameModeWindow> impleme
      * Creates the game mode controller.
      *
      * @param stage The application stage
-     * @param clientListener listener to communicate with the clientController
+     * @param clientController The client controller
      */
-    public GameModeController(Stage stage, ClientListener clientListener) {
-        super(stage, WindowPath.GAME_MODE, clientListener);
+    public GameModeController(Stage stage, ClientController clientController) {
+        super(stage, WindowPath.GAME_MODE, clientController);
         this.view.setViewListener(this);
     }
 

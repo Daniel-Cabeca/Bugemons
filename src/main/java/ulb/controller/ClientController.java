@@ -390,16 +390,7 @@ public class ClientController extends Application implements WindowController.Cl
 	public void onStopWaitWindow() { this.waitWindowController.stop(); }
 
 	@Override
-	public void onConfirmTeamSetter(List<BugemonDTO> team) {
-		this.confirmTeamController.setPlayerTeam(team);
-		this.confirmTeamController.setGameMode(this.gameMode);
-	}
-
-	@Override
 	public void onSetPlayer(PlayerDTO player) { this.player = player; }
-
-	@Override
-	public GameMode onGetGameMode() { return this.gameMode; }
 
 	/**
 	 * Sends the player's team to the server and switches to the battle mode window.

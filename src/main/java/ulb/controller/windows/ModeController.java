@@ -2,6 +2,7 @@ package ulb.controller.windows;
 
 import javafx.application.Platform;
 import javafx.stage.Stage;
+import ulb.controller.ClientController;
 import ulb.view.WindowPath;
 import ulb.view.windows.ModeWindow;
 
@@ -13,10 +14,10 @@ public class ModeController extends WindowController<ModeWindow> implements Mode
      * Creates the mode controller.
      *
      * @param stage The application stage
-     * @param clientListener listener to communicate with the clientController
+     * @param clientController The client controller
      */
-    public ModeController(Stage stage, ClientListener clientListener) {
-        super(stage, WindowPath.MODE, clientListener);
+    public ModeController(Stage stage, ClientController clientController) {
+        super(stage, WindowPath.MODE, clientController);
         this.view.setViewListener(this);
     }
 

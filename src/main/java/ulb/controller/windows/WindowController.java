@@ -11,6 +11,7 @@ import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.DTO.reward.RewardDTO;
 import ulb.communication.GameMode;
+import ulb.controller.ClientController;
 import ulb.message.request.Request;
 import ulb.view.FxmlLoader;
 import ulb.exceptions.ViewLoadException;
@@ -32,16 +33,19 @@ public abstract class WindowController<T> {
     protected FXMLLoader loader;
     protected final Logger LOGGER = Logger.getLogger(this.getClass().getName());
     protected ClientListener clientListener;
+    protected ClientController clientController;
 
     /**
      * A super constructor for all windowControlls
      * @param stage used to show fxml windows
      * @param windowPath the fxml path of the viewWindow
-     * @param clientListener attribute that communicate with the clientContoller
+     * @param clientController the client controller
      */
-    protected WindowController(Stage stage, String windowPath, ClientListener clientListener){
+    protected WindowController(Stage stage, String windowPath, ClientController clientController){
         this.stage = stage;
-        this.clientListener = clientListener;
+        this.clientListener = clientController;
+        this.clientController = clientController;
+
         try {
             this.loadView(windowPath);
         } catch (ViewLoadException e){
@@ -90,14 +94,11 @@ public abstract class WindowController<T> {
         void onSetNewTimeLine(EventHandler waitCycle);
         void onStopWaitWindow();
 		void setupTeamAndShowConfirmTeam(List<BugemonDTO> teamDTO);
-        void onConfirmTeamSetter(List<BugemonDTO> team);
-		GameMode onGetGameMode();
 
         // Tower flow — complex routing that must stay in ClientController
         void onRoomSelectionComplete();
         void onChooseBugemonReward(RewardChoice rewardChoice);
         void onRewardChosen(RewardDTO reward, ActionEvent event);
-        //void onShowBattleEnd(boolean victory, int totalXp, String opponent);
         void onNextRoom();
         void onShowAttackReplacement(BugemonDTO bugemon, AbilityDTO newAbility);
         RewardChoice onGetPendingFloorRewardChoice();

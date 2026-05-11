@@ -1,6 +1,5 @@
 package ulb.controller.windows;
 
-
 import javafx.event.EventHandler;
 import javafx.stage.Stage;
 import ulb.DTO.battle.MultiBattleStatusDTO;
@@ -8,6 +7,7 @@ import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.DTO.team.TeamDTO;
+import ulb.controller.ClientController;
 import ulb.message.request.gameActions.QuitMultiBattleRequest;
 import ulb.message.request.gameActions.StartMultiBattleRequest;
 import ulb.message.request.gameData.GetAllBugemonSpeciesRequest;
@@ -30,7 +30,7 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 
 	private PlayerDTO opponent = null;
 
-	public TeamController(Stage stage,ClientListener clientController) {
+	public TeamController(Stage stage, ClientController clientController) {
 		super(stage, WindowPath.CREATE_TEAM, clientController);
 		this.view.setViewListener(this);
 	}

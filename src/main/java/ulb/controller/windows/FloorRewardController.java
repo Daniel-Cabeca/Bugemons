@@ -2,6 +2,7 @@ package ulb.controller.windows;
 
 import javafx.stage.Stage;
 import ulb.DTO.item.ItemDTO;
+import ulb.controller.ClientController;
 import ulb.message.request.gameActions.ChooseItemRewardRequest;
 import ulb.message.request.gameData.GetRandomItemRequest;
 import ulb.message.response.gameData.RandomItemResponse;
@@ -19,10 +20,10 @@ public class FloorRewardController extends WindowController<FloorRewardWindow> i
      * Creates the floor reward controller.
      *
      * @param stage The application stage
-     * @param clientListener Listener to communicate with the ClientController
+     * @param clientController The client controller
      */
-    public FloorRewardController(Stage stage, ClientListener clientListener) {
-        super(stage, WindowPath.FLOOR_REWARD, clientListener);
+    public FloorRewardController(Stage stage, ClientController clientController) {
+        super(stage, WindowPath.FLOOR_REWARD, clientController);
         this.view.setViewListener(this);
     }
 

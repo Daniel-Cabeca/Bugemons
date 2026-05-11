@@ -2,6 +2,7 @@ package ulb.controller.windows;
 
 import javafx.application.Platform;
 import javafx.stage.Stage;
+import ulb.controller.ClientController;
 import ulb.model.tower.Floor;
 import ulb.message.request.gameActions.ChooseTowerRoomRequest;
 import ulb.message.request.gameInfo.GetTowerInfoRequest;
@@ -23,10 +24,10 @@ public class FloorController extends WindowController<FloorWindow> implements Fl
      * Creates the floor controller and loads the FXML once.
      *
      * @param stage The application stage
-     * @param clientListener Listener to communicate with the ClientController
+     * @param clientController The client controller
      */
-    public FloorController(Stage stage, ClientListener clientListener) {
-        super(stage, WindowPath.FLOOR, clientListener);
+    public FloorController(Stage stage, ClientController clientController) {
+        super(stage, WindowPath.FLOOR, clientController);
         this.view.setViewListener(this);
         this.view.setupRoomsMap();
     }

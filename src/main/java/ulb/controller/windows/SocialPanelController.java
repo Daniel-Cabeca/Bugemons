@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import ulb.DTO.battle.MultiBattleStatusDTO;
 import ulb.DTO.player.PlayerDTO;
+import ulb.controller.ClientController;
 import ulb.message.request.Request;
 import ulb.message.request.playerInfo.GetPlayerRequest;
 import ulb.message.request.social.*;
@@ -29,10 +30,10 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
      * Creates the social panel controller.
      *
      * @param stage The application stage
-     * @param clientListener listener to communicate with the clientController
+     * @param clientController The client controller
      */
-    public SocialPanelController(Stage stage, ClientListener clientListener) {
-        super(stage, WindowPath.SOCIAL_PANEL, clientListener);
+    public SocialPanelController(Stage stage, ClientController clientController) {
+        super(stage, WindowPath.SOCIAL_PANEL, clientController);
         this.view.setViewListener(this);
     }
 

@@ -1,7 +1,7 @@
 package ulb.controller.windows;
 
-
 import javafx.stage.Stage;
+import ulb.controller.ClientController;
 import ulb.view.WindowPath;
 import ulb.view.windows.BattleEndWindow;
 
@@ -14,10 +14,10 @@ public class BattleEndController extends WindowController<BattleEndWindow> imple
      * Creates the battle end controller.
      *
      * @param stage The application stage
-     * @param clientListener Listener handling return action
+     * @param clientController The client controller
      */
-    public BattleEndController(Stage stage, ClientListener clientListener) {
-        super(stage,WindowPath.BATTLE_END,  clientListener);
+    public BattleEndController(Stage stage, ClientController clientController) {
+        super(stage,WindowPath.BATTLE_END,  clientController);
         this.view.setViewListener(this);
     }
 

@@ -5,6 +5,7 @@ import java.util.List;
 import javafx.stage.Stage;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.communication.GameMode;
+import ulb.controller.ClientController;
 import ulb.message.request.setup.SetUpNormalModeRequest;
 import ulb.message.request.setup.SetUpTowerModeRequest;
 import ulb.view.WindowPath;
@@ -15,13 +16,13 @@ public class ConfirmTeamController extends WindowController<ConfirmTeamWindow> i
     private GameMode gameMode;
 	
 	/**
-     * Creates the confrim team controller.
+     * Creates the confirm team controller.
      *
      * @param stage The application stage
-     * @param clientListener listener to communicate with the clientController
+     * @param clientController the clientController
      */
-    public ConfirmTeamController(Stage stage, ClientListener clientListener) {
-        super(stage, WindowPath.CONFIRM_TEAM, clientListener);
+    public ConfirmTeamController(Stage stage, ClientController clientController) {
+        super(stage, WindowPath.CONFIRM_TEAM, clientController);
         this.view.setViewListener(this);
     }
 

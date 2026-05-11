@@ -90,4 +90,70 @@ public class BugemonTest {
 		assertTrue(a.checkInitiative(b));
 	}
 
+	@Test
+	public void isKOReturnsFalseWhenHpIsPositive() {
+		Bugemon b = createBugemon("A", Type.AQUA, 100, 10, 10, 10);
+		assertFalse(b.isKO());
+	}
+
+	@Test
+	public void isKOReturnsTrueWhenHpIsZero() {
+		Bugemon b = createBugemon("A", Type.AQUA, 0, 10, 10, 10);
+		assertTrue(b.isKO());
+	}
+
+	@Test
+	public void hasHpDecreasedReturnsFalseAtFullHp() {
+		Bugemon b = createBugemon("A", Type.AQUA, 100, 10, 10, 10);
+		assertFalse(b.hasHPDecreased());
+	}
+
+	@Test
+	public void hasHpDecreasedReturnsTrueAfterDamage() {
+		Bugemon b = createBugemon("A", Type.AQUA, 100, 10, 10, 10);
+		b.changeFightStats(new Stats(-30, 0, 0, 0));
+		assertTrue(b.hasHPDecreased());
+	}
+
+	@Test
+	public void changeFightStatsAppliesDelta() {
+		Bugemon b = createBugemon("A", Type.AQUA, 100, 10, 10, 10);
+		b.changeFightStats(new Stats(-20, 5, -3, 2));
+		assertEquals(80, b.getFightStats().getHp());
+		assertEquals(15, b.getFightStats().getAttack());
+		assertEquals(7,  b.getFightStats().getDefense());
+		assertEquals(12, b.getFightStats().getInitiative());
+	}
+
+	@Test
+	public void changeFightStatsDoesNotExceedBaseHp() {
+		Bugemon b = createBugemon("A", Type.AQUA, 100, 10, 10, 10);
+		b.changeFightStats(new Stats(999, 0, 0, 0)); // try to heal over cap
+		assertEquals(100, b.getFightStats().getHp());
+	}
+
+	@Test
+	public void consumeLevelRewardReturnsFalseWhenNoRewardsPending() {
+		Bugemon b = createBugemon("A", Type.AQUA, 100, 10, 10, 10);
+		assertFalse(b.consumeLevelReward(new Stats(5, 5, 5, 5)));
+	}
+
+	@Test
+	public void consumeLevelRewardAppliesRewardWhenPending() {
+		Bugemon b = createBugemon("A", Type.AQUA, 100, 10, 10, 10);
+		b.gainXp(51); // makes the bugemon level up so it gets a reward
+
+		assertTrue(b.consumeLevelReward(new Stats(10, 5, 5, 5)));
+		assertEquals(110, b.getBaseStats().getHp());
+		assertEquals(15,  b.getBaseStats().getAttack());
+	}
+
+	@Test
+	public void consumeLevelRewardDecrementsRemainingRewards() {
+		Bugemon b = createBugemon("A", Type.AQUA, 100, 10, 10, 10);
+		b.gainXp(51);
+		b.consumeLevelReward(new Stats(5, 5, 5, 5));
+		assertEquals(0, b.getRemainingReward());
+	}
+
 }

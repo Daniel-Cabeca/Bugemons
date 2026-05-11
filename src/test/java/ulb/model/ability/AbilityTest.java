@@ -120,4 +120,73 @@ public class AbilityTest {
 
 		assertEquals(expectedDamage, obtainedDamage);
 	}
+
+	@Test
+	public void effectivenessMessageIsCorrectWhenSuperEffective() {
+		Ability ability = createAbilityA();
+
+		Ability abilityA = new Ability("idA", "nameA", Type.AQUA, "descriptionA", 10);
+		Ability abilityB = new Ability("idB", "nameB", Type.AQUA, "descriptionB", 10);
+		Ability abilityC = new Ability("idC", "nameC", Type.AQUA, "descriptionC", 10);
+
+		BugemonSpecies testSpecies = new BugemonSpecies(
+				"id",
+				"name",
+				Type.AQUA,
+				new Stats(100, 100, 100, 100),
+				new AbilitySet(abilityA, abilityB, abilityC),
+				"sprite",
+				true
+		);
+
+		Bugemon bugemon = new Bugemon(testSpecies);
+
+		assertEquals("Super efficace !", ability.getEffectivenessMessage(bugemon));
+	}
+
+	@Test
+	public void effectivenessMessageIsCorrectWhenNotEffective() {
+		Ability ability = createAbilityA();
+
+		Ability abilityA = new Ability("idA", "nameA", Type.LITHO, "descriptionA", 10);
+		Ability abilityB = new Ability("idB", "nameB", Type.LITHO, "descriptionB", 10);
+		Ability abilityC = new Ability("idC", "nameC", Type.LITHO, "descriptionC", 10);
+
+		BugemonSpecies testSpecies = new BugemonSpecies(
+				"id",
+				"name",
+				Type.LITHO,
+				new Stats(100, 100, 100, 100),
+				new AbilitySet(abilityA, abilityB, abilityC),
+				"sprite",
+				true
+		);
+
+		Bugemon bugemon = new Bugemon(testSpecies);
+
+		assertEquals("Pas très efficace !", ability.getEffectivenessMessage(bugemon));
+	}
+
+	@Test
+	public void effectivenessMessageIsNullWhenNormal() {
+		Ability ability = createAbilityA();
+
+		Ability abilityA = new Ability("idA", "nameA", Type.FLORA, "descriptionA", 10);
+		Ability abilityB = new Ability("idB", "nameB", Type.FLORA, "descriptionB", 10);
+		Ability abilityC = new Ability("idC", "nameC", Type.FLORA, "descriptionC", 10);
+
+		BugemonSpecies testSpecies = new BugemonSpecies(
+				"id",
+				"name",
+				Type.FLORA,
+				new Stats(100, 100, 100, 100),
+				new AbilitySet(abilityA, abilityB, abilityC),
+				"sprite",
+				true
+		);
+
+		Bugemon bugemon = new Bugemon(testSpecies);
+
+		assertNull(ability.getEffectivenessMessage(bugemon));
+	}
 }

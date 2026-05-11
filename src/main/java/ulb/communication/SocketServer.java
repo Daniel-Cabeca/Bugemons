@@ -97,6 +97,7 @@ public class SocketServer {
                     SocketMessenger clientMessenger = new SocketMessenger(clientSocket);
                     ClientHandler controller = new ClientHandler(clientMessenger, abilityService, bugemonService, itemService, accountService, chatService, teamService, inventoryService, towerSaveService, multiBattleService);
                     clients.add(controller);
+                    LOGGER.log(Level.INFO, "Client successfully connected to the server");
                     controller.start();
                 } catch (CommunicationException e) {
                     LOGGER.log(Level.WARNING, "Impossible to initialize communication with client.", e);

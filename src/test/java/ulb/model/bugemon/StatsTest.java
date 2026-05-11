@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 public class StatsTest {
 	@Test
-	public void positifStatsChange() {
+	public void positiveStatsChange() {
 		Stats stat1 = new Stats(10, 10, 10, 10);
 		Stats stat2 = new Stats(10, 1, 5, 7);
 		stat1.change(stat2);

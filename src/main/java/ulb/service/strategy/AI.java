@@ -3,7 +3,12 @@ package ulb.service.strategy;
 import ulb.model.action.Action;
 import ulb.model.battle.Battle;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class AI extends Thread {
+    private static final Logger LOGGER = Logger.getLogger(AI.class.getName());
+
     private Battle battle;
     private Strategy strategy;
     private final long SLEEP_TIME = 1000;
@@ -27,8 +32,11 @@ public class AI extends Thread {
             this.playAutoTurn();
             try {
                 Thread.sleep(SLEEP_TIME);
-            } catch(Exception e) {}
-            
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                LOGGER.log(Level.WARNING, "AI interrupted while waiting for the next automatic turn.", e);
+                return;
+            }
         }
     }
 
@@ -37,10 +45,9 @@ public class AI extends Thread {
 	 */
 	public void playAutoTurn() {
         Action action = strategy.pickAction(battle, teamLabel);
-        
+
         if (action != null){
             battle.chooseAction(action, teamLabel);
         }
-	}
-    
+    }
 }

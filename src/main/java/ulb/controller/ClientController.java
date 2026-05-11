@@ -369,7 +369,7 @@ public class ClientController extends Application implements WindowController.Cl
 			case NEXT_ROOM -> this.nextRoomController.show();
 			case LEVEL_UP -> this.levelUpController.show();
 			case FLOOR_REWARD -> this.floorRewardController.show();
-			case CHOOSE_BUGEMEON -> this.chooseBugemonController.show();
+			case CHOOSE_BUGEMON -> this.chooseBugemonController.show();
 		}
 	}
 

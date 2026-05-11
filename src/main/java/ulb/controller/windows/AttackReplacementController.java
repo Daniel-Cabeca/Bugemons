@@ -51,5 +51,5 @@ public class AttackReplacementController extends WindowController<AttackReplacem
      * {@inheritDoc}
      */
     @Override
-    public void onReturnToChooseBugemon() { this.clientListener.onShowWindow(WindowName.CHOOSE_BUGEMEON); }
+    public void onReturnToChooseBugemon() { this.clientListener.onShowWindow(WindowName.CHOOSE_BUGEMON); }
 }

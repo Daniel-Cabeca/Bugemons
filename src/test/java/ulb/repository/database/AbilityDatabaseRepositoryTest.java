@@ -8,7 +8,6 @@ import ulb.model.type.Type;
 import ulb.repository.database.sql.Database;
 import ulb.repository.database.sql.DatabaseInMemory;
 import ulb.repository.database.sql.DatabaseInitializer;import ulb.repository.database.sql.DatabaseMock;
-import ulb.utils.DuplicateElementException;
 
 import java.util.stream.StreamSupport;
 

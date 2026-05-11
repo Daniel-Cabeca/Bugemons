@@ -23,12 +23,9 @@ public class Room {
 		}
     }
 
-
     public RoomType getRoomType() {return roomType;}
 
-
     public int getId() {return id;}
-
 
 	public boolean isRoomCompleted() {return this.completedRoom;}
 

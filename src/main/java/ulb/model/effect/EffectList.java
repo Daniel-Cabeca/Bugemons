@@ -23,6 +23,12 @@ public class EffectList {
 		this.effects.add(effect);
 	}
 
+	/**
+	 * Applies effects to the chosen team
+	 *
+	 * @param battle The current battle
+	 * @param team	The chosen team
+	 */
 	public void apply(Battle battle, ParticipantLabel team) {
 		for (Effect effect: this.effects) {
 			effect.apply(battle, team);

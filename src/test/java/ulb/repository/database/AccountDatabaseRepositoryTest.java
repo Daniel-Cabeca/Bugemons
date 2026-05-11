@@ -5,7 +5,6 @@ import ulb.repository.database.sql.DatabaseInitializer;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-import ulb.exceptions.LoadException;
 import ulb.repository.database.sql.Database;
 import ulb.repository.database.sql.DatabaseInMemory;
 

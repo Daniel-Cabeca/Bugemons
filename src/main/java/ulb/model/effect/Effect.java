@@ -23,8 +23,6 @@ public abstract class Effect {
 		this.target = targetType;
 	}
 
-	// Getters
-
 	/**
 	 * Returns the target scope of this effect.
 	 *

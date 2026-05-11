@@ -11,12 +11,7 @@ import ulb.model.item.Item;
 import ulb.repository.database.sql.Database;
 import ulb.repository.database.sql.DatabaseInMemory;
 import ulb.repository.database.sql.DatabaseInitializer;
-import ulb.repository.database.sql.DatabaseMock;
-import ulb.repository.mock.BugemonSpeciesMockRepository;
 import ulb.utils.DuplicateElementException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 

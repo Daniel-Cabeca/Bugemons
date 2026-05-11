@@ -67,16 +67,22 @@ public class ClientController extends Application {
 
 	public Stage getStage() { return stage; }
 
+	/**
+	 * Logs a view load failure with the given error message.
+	 *
+	 * @param errorMessage The message to log
+	 * @param e The exception that caused the failure
+	 */
 	private void logViewLoadFailure(String errorMessage, ViewLoadException e) {
 		LOGGER.log(Level.WARNING, errorMessage, e);
 	}
 
-    /**
-     * Initializes network client from application launch parameters.
-     */
-    @Override
-    public void init() throws CommunicationException {
-        List<String> params = getParameters().getRaw();
+	/**
+	 * Initializes network client from application launch parameters.
+	 */
+	@Override
+	public void init() throws CommunicationException {
+		List<String> params = getParameters().getRaw();
 
 		String serverIp = params.get(0);
 		int serverPort = Integer.parseInt(params.get(1));
@@ -153,17 +159,12 @@ public class ClientController extends Application {
 		return this.client.getResponse(request);
 	}
 
-	/**
-	 * Returns the currently authenticated player.
-	 *
-	 * @return Current player DTO
-	 */
 	public PlayerDTO getPlayer() {
 		return this.player;
 	}
 
 	/**
-	 * Retrieves a player DTO by username from server.
+	 * Retrieves a player DTO by username from the server.
 	 *
 	 * @param username Username to retrieve
 	 * @return Matching player DTO or null if unavailable
@@ -175,19 +176,27 @@ public class ClientController extends Application {
 		return null;
 	}
 
+	/**
+	 * Clears the currently authenticated player.
+	 */
 	public void unsetPlayer() { this.player = null; }
 
 	/**
 	 * Loads a player by username, stores it as the current player, and returns it.
 	 *
-	 * @param userName The username to look up
+	 * @param username The username to look up
 	 * @return The player DTO, or null if not found
 	 */
-	public PlayerDTO loadPlayer(String userName) {
-		this.player = this.getPlayer(userName);
+	public PlayerDTO loadPlayer(String username) {
+		this.player = this.getPlayer(username);
 		return this.player;
 	}
 
+	/**
+	 * Sets the current game mode.
+	 *
+	 * @param gameMode The game mode to set
+	 */
 	public void setGameMode(GameMode gameMode){this.gameMode = gameMode;}
 
 	/**
@@ -198,7 +207,7 @@ public class ClientController extends Application {
 	}
 
 	/**
-	 * Switches to the battle window according to game mode (and tower floor and room number if Tower mode)
+	 * Switches to the battle window according to game mode (and tower floor and room number if Tower mode).
 	 */
 	private void switchToBattleWindow() {
 		this.battleWindowController.setPlayer(player);
@@ -229,8 +238,8 @@ public class ClientController extends Application {
 			return;
 		}
 
-			battleEndController.show(victory, totalXp, opponent, multiplayerBattle);
-			this.teamController.resetOpponent();
+		battleEndController.show(victory, totalXp, opponent, multiplayerBattle);
+		this.teamController.resetOpponent();
 	}
 
 	/**
@@ -290,6 +299,12 @@ public class ClientController extends Application {
 		return null;
 	}
 
+	/**
+	 * Submits the chosen level-up reward to the server and goes to the next window.
+	 *
+	 * @param reward The reward chosen by the player
+	 * @param event The triggering action event
+	 */
 	public void chooseReward(RewardDTO reward, ActionEvent event) {
 		if (postData(new ChooseLevelUpRewardRequest(reward))) {
 			nextRoom();
@@ -298,6 +313,11 @@ public class ClientController extends Application {
 
 	// Floor Reward Listener
 
+	/**
+	 * Stores the pending floor reward choice and opens the "choose Bugemon" window.
+	 *
+	 * @param rewardChoice The type of reward the player has chosen
+	 */
 	public void chooseBugemonReward(RewardChoice rewardChoice) {
 		pendingFloorRewardChoice = rewardChoice;
 		if (chooseBugemonController == null) {
@@ -308,6 +328,8 @@ public class ClientController extends Application {
 
 	/**
 	 * Returns the current floor number and room number from the server.
+	 *
+	 * @return A list containing the floor number and room number, or null if unavailable
 	 */
 	public List<Integer> getTowerInfo() {
 		if (getData(new GetTowerInfoRequest()) instanceof TowerInfoResponse towerInfo){
@@ -318,10 +340,20 @@ public class ClientController extends Application {
 
 	// FloorController
 
+	/**
+	 * Sets the opponent for the current multiplayer session.
+	 *
+	 * @param opponent The opponent player DTO
+	 */
 	public void setOpponentMulti(PlayerDTO opponent) {
 		this.teamController.setOpponent(opponent);
 	}
 
+	/**
+	 * Navigates to the given window by name.
+	 *
+	 * @param window The window to display
+	 */
 	public void showWindow(WindowController.WindowName window) {
 		switch (window) {
 			case REGISTER -> this.registerController.show();
@@ -342,15 +374,21 @@ public class ClientController extends Application {
 	}
 
 	/**
-	 * Set newTimeLine in WaitWindow
-	 * @param waitCycle is current waitCycle
+	 * Sets a new timeline on the wait window.
+	 *
+	 * @param waitCycle The event handler to run in the wait loop
 	 */
 	public void setNewTimeLine(EventHandler waitCycle) { this.waitWindowController.setNewTimeLine(waitCycle); }
 
+	/**
+	 * Stops the wait window loop.
+	 */
 	public void stopWaitWindow() { this.waitWindowController.stop(); }
 
 	/**
-	 * Sends the player's team to the server and switches to the battle mode window.
+	 * Sends the player's team to the server and switches to the confirm team window.
+	 *
+	 * @param teamDTO The list of Bugemons in the player's team
 	 */
 	public void setupTeamAndShowConfirmTeam(List<BugemonDTO> teamDTO) {
 		this.player.setTeam(teamDTO);
@@ -359,13 +397,24 @@ public class ClientController extends Application {
 		}
 		this.confirmTeamController.setGameMode(this.gameMode);
 		this.confirmTeamController.setPlayerTeam(teamDTO);
-	
+
 		this.confirmTeamController.show();
 	}
 
+	/**
+	 * Displays the attack replacement window for the given Bugemon and new ability.
+	 *
+	 * @param bugemon The Bugemon learning a new ability
+	 * @param newAbility The new ability to be learned
+	 */
 	public void showAttackReplacement(BugemonDTO bugemon, AbilityDTO newAbility) {
 		this.attackReplacementController.show(bugemon, newAbility);
 	}
 
+	/**
+	 * Returns the pending floor reward choice.
+	 *
+	 * @return The current pending reward choice
+	 */
 	public RewardChoice getPendingFloorRewardChoice() { return this.pendingFloorRewardChoice; }
 }

@@ -5,6 +5,7 @@ import ulb.service.AccountService;
 import ulb.model.Player;
 import ulb.model.action.*;
 import ulb.model.bugemon.Bugemon;
+import ulb.model.bugemon.Stats;
 import ulb.model.item.Item;
 import ulb.model.effect.EffectHeal;
 import ulb.model.reward.Reward;

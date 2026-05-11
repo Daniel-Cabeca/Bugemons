@@ -281,8 +281,12 @@ public class BattleSetupController {
         if (view == null) {
             return;
         }
-
-        view.setForcedSwitch(isForcedSwitch());
+        
+        boolean isForcedToSwitch = this.isForcedSwitch();
+        if(isForcedToSwitch){
+            clientController.updateTeam();
+        }
+        view.setForcedSwitch(isForcedToSwitch);
         Optional<BattleSnapshot> snapshot = buildBattleSnapshot();
         
 		if (snapshot.isPresent()) {

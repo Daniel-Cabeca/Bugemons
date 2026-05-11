@@ -159,9 +159,7 @@ public class ClientController extends Application {
 		return this.client.getResponse(request);
 	}
 
-	public PlayerDTO getPlayer() {
-		return this.player;
-	}
+	
 
 	/**
 	 * Retrieves a player DTO by username from the server.
@@ -174,6 +172,22 @@ public class ClientController extends Application {
 			return msg.getPlayer();
 		}
 		return null;
+	}
+	
+	public List<BugemonDTO> getUpdatedTeam() {
+		if (getData(new GetPlayerTeamRequest()) instanceof PlayerTeamResponse msg) {
+			return msg.getBugemons();
+		}
+		return null;
+	}
+
+	public PlayerDTO getPlayer() {
+		return this.player;
+	}
+
+	public void updateTeam() {
+		List<BugemonDTO> updatedTeam = getUpdatedTeam();
+		this.player.setTeam(updatedTeam);
 	}
 
 	/**

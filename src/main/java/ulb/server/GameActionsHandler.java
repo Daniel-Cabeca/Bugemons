@@ -205,7 +205,7 @@ public class GameActionsHandler extends Thread{
 		MultiBattleParticipant participant = session.getParticipant(self.getUserId());
 
 		this.clientHandler.setBattle(battle);
-		this.clientHandler.setMultiBattleSession(session);
+		// this.clientHandler.setMultiBattleSession(session);
 		this.clientHandler.setTeamLabel(participant.getParticipantLabel());
 
 		clientHandler.sendSuccessMessage();

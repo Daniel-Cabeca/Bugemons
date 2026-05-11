@@ -19,19 +19,6 @@ public class DatabaseInFile extends Database {
 	private static final Map<String, DatabaseInFile> instances = new HashMap<>();
 
 	private final String name;
-	private final boolean isNew;
-
-	/**
-	 * Creates a file-backed database instance.
-	 *
-	 * @param name The database base filename
-	 * @param isNew Whether the database file is newly created
-	 */
-	DatabaseInFile(String name, boolean isNew) throws LoadException {
-		super("jdbc:sqlite:" + getPath(name).toString());
-		this.name = name;
-		this.isNew = isNew;
-	}
 
 	/**
 	 * Creates a file-backed database instance and infers if it is new.
@@ -39,7 +26,8 @@ public class DatabaseInFile extends Database {
 	 * @param name The database base filename
 	 */
 	DatabaseInFile(String name) throws LoadException {
-		this(name, !Files.exists(getPath(name)));
+		super("jdbc:sqlite:" + getPath(name).toString());
+		this.name = name;
 	}
 
 	/**

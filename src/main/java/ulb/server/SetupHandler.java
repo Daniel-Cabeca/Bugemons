@@ -147,7 +147,6 @@ public class SetupHandler {
         clientHandler.setGameMode(false);
 
 		Thread opponentBot = new AI(battle, new StrategyRandom());
-        clientHandler.setOpponentBot(opponentBot);
 		opponentBot.start();
 		clientHandler.clearPendingLevelUpState();
 

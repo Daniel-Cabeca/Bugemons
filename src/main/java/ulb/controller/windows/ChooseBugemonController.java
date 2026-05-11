@@ -34,21 +34,21 @@ public class ChooseBugemonController extends WindowController<ChooseBugemonWindo
      * Displays the choose bugemon screen.
      */
     public void show() {
-        PlayerDTO player = this.clientListener.onGetPlayer();
+        PlayerDTO player = this.clientController.getPlayer();
         this.view.populatePlayerBugemons(player.getTeam());
         super.show();
     }
 
     public void onBugemonChosen(BugemonDTO bugemon) {
-        if (this.clientListener.onGetPendingFloorRewardChoice() == RewardChoice.STAT ) {
-            if (this.clientListener.onPostData(new ChooseStatRewardRequest(bugemon))){
-                this.clientListener.onShowWindow(WindowName.FLOOR);
+        if (this.clientController.getPendingFloorRewardChoice() == RewardChoice.STAT ) {
+            if (this.clientController.postData(new ChooseStatRewardRequest(bugemon))){
+                this.clientController.showWindow(WindowName.FLOOR);
             }
             return;
         }
 
         AbilityDTO newAbility = null;
-        Serializable message = this.clientListener.onGetData(new GetRandomAbilityRequest(bugemon));
+        Serializable message = this.clientController.getData(new GetRandomAbilityRequest(bugemon));
 
         if (message instanceof StatusResponse errorMessage && errorMessage.isFailure()){
             LOGGER.log(Level.WARNING, "Failed to get random ability: " + errorMessage.getMessage());
@@ -59,15 +59,15 @@ public class ChooseBugemonController extends WindowController<ChooseBugemonWindo
         }
 
         if (newAbility == null) {
-            this.clientListener.onNextRoom();
+            this.clientController.nextRoom();
             return;
         }
-        this.clientListener.onShowAttackReplacement(bugemon, newAbility);
+        this.clientController.showAttackReplacement(bugemon, newAbility);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void onReturnFloorRewardWindow() { this.clientListener.onShowWindow(WindowName.FLOOR_REWARD); }
+    public void onReturnFloorRewardWindow() { this.clientController.showWindow(WindowName.FLOOR_REWARD); }
 }

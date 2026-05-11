@@ -44,8 +44,8 @@ public class AttackReplacementController extends WindowController<AttackReplacem
      */
     @Override
     public void onReplaceAbility(AbilityDTO oldAbility) {
-        if (this.clientListener.onPostData(new ChooseAbilityRewardRequest(this.currentBugemon, oldAbility, this.currentNewAbility))) {
-            this.clientListener.onShowWindow(WindowName.FLOOR);
+        if (this.clientController.postData(new ChooseAbilityRewardRequest(this.currentBugemon, oldAbility, this.currentNewAbility))) {
+            this.clientController.showWindow(WindowName.FLOOR);
         }
     }
 
@@ -53,5 +53,5 @@ public class AttackReplacementController extends WindowController<AttackReplacem
      * {@inheritDoc}
      */
     @Override
-    public void onReturnToChooseBugemon() { this.clientListener.onShowWindow(WindowName.CHOOSE_BUGEMON); }
+    public void onReturnToChooseBugemon() { this.clientController.showWindow(WindowName.CHOOSE_BUGEMON); }
 }

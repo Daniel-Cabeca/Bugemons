@@ -48,7 +48,7 @@ public class BattleWindowController extends WindowController<BattleWindow> imple
 	}
 
 	public void setTowerInfo(){
-		if (this.clientListener.onGetData(new GetTowerInfoRequest()) instanceof TowerInfoResponse towerInfo){
+		if (this.clientController.getData(new GetTowerInfoRequest()) instanceof TowerInfoResponse towerInfo){
 			this.towerFloorNumber = towerInfo.getFloorNumber();
 			this.towerRoomNumber = towerInfo.getRoomNumber();
 		}
@@ -102,7 +102,7 @@ public class BattleWindowController extends WindowController<BattleWindow> imple
      */
     @Override
     public void onOpenSocial() {
-        this.clientListener.onShowWindow(WindowName.SOCIAL_PANEL);
+        this.clientController.showWindow(WindowName.SOCIAL_PANEL);
     }
 
     /**

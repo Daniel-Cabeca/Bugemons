@@ -37,6 +37,6 @@ public class BattleEndController extends WindowController<BattleEndWindow> imple
      * {@inheritDoc}
      */
     @Override
-    public void onHandleReturn() { this.clientListener.onShowWindow(WindowName.MODE); }
+    public void onHandleReturn() { this.clientController.showWindow(WindowName.MODE); }
 
 }

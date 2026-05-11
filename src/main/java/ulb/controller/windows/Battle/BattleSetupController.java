@@ -14,7 +14,6 @@ import ulb.DTO.item.ItemDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.communication.GameMode;
 import ulb.controller.ClientController;
-import ulb.controller.windows.WindowController.ClientListener;
 import ulb.message.request.gameInfo.CheckUsableItemRequest;
 import ulb.message.request.gameInfo.GetAbilityEffectivenessRequest;
 import ulb.message.request.gameInfo.GetActiveBugemonsRequest;
@@ -37,20 +36,18 @@ import ulb.view.windows.BattleWindow.BugemonEntry;
 import ulb.view.windows.BattleWindow.InventoryEntry;
 
 public class BattleSetupController {
-	private final ClientListener clientListener;
 	private final ClientController clientController;
 	private BattleWindow view;
 	protected final Logger LOGGER = Logger.getLogger(this.getClass().getName());
 
 	BattleSetupController(ClientController clientController){
-		this.clientListener = clientController;
 		this.clientController = clientController;
 	}
 
 	public void setView(BattleWindow view) { this.view = view; }
 
 	public void updateInventory(PlayerDTO player){
-		Serializable message = this.clientListener.onGetData(new GetPlayerInventoryRequest(player.getUsername()));
+		Serializable message = this.clientController.getData(new GetPlayerInventoryRequest(player.getUsername()));
 		if (message instanceof PlayerInventoryResponse playerInventory){
 			player.setInventory(playerInventory.getInventory());
 		} else if (message instanceof StatusResponse errorMessage && errorMessage.isFailure()){
@@ -59,7 +56,7 @@ public class BattleSetupController {
 	}
 
 	public Map<String, Boolean> checkItems(List<ItemDTO> items){
-		Serializable message = this.clientListener.onGetData(new CheckUsableItemRequest(items));
+		Serializable message = this.clientController.getData(new CheckUsableItemRequest(items));
 		if (message instanceof UsableItemsResponse usableItems){
 			return usableItems.getItemMap();
 		} else if (message instanceof StatusResponse errorMessage && errorMessage.isFailure()){
@@ -69,7 +66,7 @@ public class BattleSetupController {
 	}
 
 	public List<BugemonDTO> getActiveBugemons(){
-		Serializable message = clientListener.onGetData(new GetActiveBugemonsRequest());
+		Serializable message = clientController.getData(new GetActiveBugemonsRequest());
 		if (message instanceof ActiveBugemonsResponse activeBugemons){
 			return List.of(activeBugemons.getSelfActiveBugemon(), activeBugemons.getOpponentActiveBugemon());
 		} else if (message instanceof StatusResponse errorMessage && errorMessage.isFailure()){
@@ -79,7 +76,7 @@ public class BattleSetupController {
 	}
 
 	public BattleState getState(){
-		Serializable message = this.clientListener.onGetData(new GetBattleStateRequest());
+		Serializable message = this.clientController.getData(new GetBattleStateRequest());
 		if (message instanceof BattleStateResponse battleState){
 			return battleState.getBattleState();
 		} else if (message instanceof StatusResponse errorMessage && errorMessage.isFailure()){
@@ -89,7 +86,7 @@ public class BattleSetupController {
 	}
 
 	public Map<AbilityDTO, String> getAbilityEffectiveness(List<AbilityDTO> abilities, BugemonDTO bugemonTarget){
-		Serializable message = this.clientListener.onGetData(new GetAbilityEffectivenessRequest(abilities, bugemonTarget));
+		Serializable message = this.clientController.getData(new GetAbilityEffectivenessRequest(abilities, bugemonTarget));
 		if (message instanceof AbilityEffectivenessResponse effectivenessMessage){
 			return effectivenessMessage.getEffectiveness();
 		} else if (message instanceof StatusResponse errorMessage && errorMessage.isFailure()){
@@ -240,7 +237,7 @@ public class BattleSetupController {
      */
     public boolean handleBattleState(BattleState state, PlayerDTO player, ActionEvent event) {
 		if (state == BattleState.WON || state == BattleState.LOST){
-			this.clientListener.onNextRoom();
+			this.clientController.nextRoom();
 		}
         view.setForcedSwitch(state == BattleState.SWAPPING);
         if (state == BattleState.SWAPPING) {
@@ -257,7 +254,7 @@ public class BattleSetupController {
      * @return The current list of log messages
      */
     public List<String> consumeLogMessages() {
-        Serializable message = this.clientListener.onGetData(new GetLogsRequest(true));
+        Serializable message = this.clientController.getData(new GetLogsRequest(true));
 		if (message instanceof LogsResponse logs){
 			return logs.getLogs();
 		} else if (message instanceof StatusResponse errorMessage && errorMessage.isFailure()){

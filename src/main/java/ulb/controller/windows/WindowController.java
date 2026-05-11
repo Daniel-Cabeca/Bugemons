@@ -32,7 +32,6 @@ public abstract class WindowController<T> {
     protected T view;
     protected FXMLLoader loader;
     protected final Logger LOGGER = Logger.getLogger(this.getClass().getName());
-    protected ClientListener clientListener;
     protected ClientController clientController;
 
     /**
@@ -43,7 +42,6 @@ public abstract class WindowController<T> {
      */
     protected WindowController(Stage stage, String windowPath, ClientController clientController){
         this.stage = stage;
-        this.clientListener = clientController;
         this.clientController = clientController;
 
         try {
@@ -73,35 +71,6 @@ public abstract class WindowController<T> {
         }
         this.stage.centerOnScreen(); //keeps UI neat
         this.stage.show();
-    }
-
-    /**
-     * ClientListener is a way to communicate between WindowControllers and the ClientController
-     */
-    public interface ClientListener{
-        Serializable onGetData(Request message);
-        boolean onPostData(Request message);
-        PlayerDTO onGetPlayer();
-        void onSetPlayer(PlayerDTO player);
-        PlayerDTO onLoadPlayer(String userName);
-        void onSetOpponentMulti(PlayerDTO opponent);
-		void onShowWindow(WindowName window);
-        void onSetGameMode(GameMode gameMode);
-        /**
-         * Set newTimeLine in WaitWindow
-         * @param waitCycle is current waitCycle
-         */
-        void onSetNewTimeLine(EventHandler waitCycle);
-        void onStopWaitWindow();
-		void setupTeamAndShowConfirmTeam(List<BugemonDTO> teamDTO);
-
-        // Tower flow — complex routing that must stay in ClientController
-        void onRoomSelectionComplete();
-        void onChooseBugemonReward(RewardChoice rewardChoice);
-        void onRewardChosen(RewardDTO reward, ActionEvent event);
-        void onNextRoom();
-        void onShowAttackReplacement(BugemonDTO bugemon, AbilityDTO newAbility);
-        RewardChoice onGetPendingFloorRewardChoice();
     }
 
     /**

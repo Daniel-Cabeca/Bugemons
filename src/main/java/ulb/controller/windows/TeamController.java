@@ -36,7 +36,7 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	}
 
 
-	public PlayerDTO getSelfPlayer() { return this.clientListener.onGetPlayer(); }
+	public PlayerDTO getSelfPlayer() { return this.clientController.getPlayer(); }
 	public boolean hasOpponent() { return this.opponent != null; }
 	public PlayerDTO getOpponent() { return this.opponent; }
 	public void setOpponent(PlayerDTO opponent) { this.opponent = opponent; }
@@ -76,8 +76,8 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 			this.confirmTeamMulti(this.getOpponent());
 		}
 		else {
-			List<BugemonDTO> team = this.clientListener.onGetPlayer().getTeam();
-			this.clientListener.setupTeamAndShowConfirmTeam(team);
+			List<BugemonDTO> team = this.clientController.getPlayer().getTeam();
+			this.clientController.setupTeamAndShowConfirmTeam(team);
 		}
 	}
 
@@ -87,8 +87,8 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	 * @param opponent The opponent
 	 */
 	public void confirmTeamMulti(PlayerDTO opponent) {
-		PlayerDTO player = this.clientListener.onGetPlayer();
-		this.clientListener.onPostData(new ConfirmTeamMultiRequest(this.opponent, player.getTeam()));
+		PlayerDTO player = this.clientController.getPlayer();
+		this.clientController.postData(new ConfirmTeamMultiRequest(this.opponent, player.getTeam()));
 
 		this.openWaitWindow(e -> {
 			this.waitForOpponentTeam(opponent);
@@ -101,8 +101,8 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	 * @param waitCycle The event handler to play in a loop
 	 */
 	public void openWaitWindow(EventHandler waitCycle) {
-		this.clientListener.onSetNewTimeLine(waitCycle);
-		this.clientListener.onShowWindow(WindowName.WAIT);
+		this.clientController.setNewTimeLine(waitCycle);
+		this.clientController.showWindow(WindowName.WAIT);
 	}
 	/**
 	 * Called in a loop while waiting for the opponent to pick his team.
@@ -110,12 +110,12 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	 * @param opponent The opponent
 	 */
 	private void waitForOpponentTeam(PlayerDTO opponent) {
-		PlayerDTO self = this.clientListener.onGetPlayer();
+		PlayerDTO self = this.clientController.getPlayer();
 		MultiBattleStatusDTO status = this.getMultiBattleStatus(self.getUserId(), opponent.getUserId());
 
 		switch (status.getStatus()) {
 			case BATTLE:
-				this.clientListener.onStopWaitWindow();
+				this.clientController.stopWaitWindow();
 				this.startMultiBattle(opponent);
 				break;
 
@@ -123,8 +123,8 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 				break;
 
 			default:
-				this.clientListener.onStopWaitWindow();
-				this.clientListener.onShowWindow(WindowName.MODE);
+				this.clientController.stopWaitWindow();
+				this.clientController.showWindow(WindowName.MODE);
 		}
 	}
 	/**
@@ -135,7 +135,7 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	 * @return The multiplayer battle status DTO
 	 */
 	public MultiBattleStatusDTO getMultiBattleStatus(int userId1, int userId2) {
-		if (this.clientListener.onGetData(new GetMultiBattleStatusRequest(userId1, userId2)) instanceof MultiBattleStatusResponse msg)
+		if (this.clientController.getData(new GetMultiBattleStatusRequest(userId1, userId2)) instanceof MultiBattleStatusResponse msg)
 			return msg.getStatus();
 		LOGGER.warning("Failed to obtain multiplayer battle status.");
 		return new MultiBattleStatusDTO();
@@ -147,8 +147,8 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	 * @param opponent The opponent
 	 */
 	private void startMultiBattle(PlayerDTO opponent) {
-		this.clientListener.onPostData(new StartMultiBattleRequest(opponent));
-		this.clientListener.onShowWindow(WindowName.BATTLE);
+		this.clientController.postData(new StartMultiBattleRequest(opponent));
+		this.clientController.showWindow(WindowName.BATTLE);
 	}
 
 	/**
@@ -156,10 +156,10 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	 */
 	public void onReturn() {
 		if (this.hasOpponent()) {
-			this.clientListener.onGetData(new QuitMultiBattleRequest(this.opponent));
+			this.clientController.getData(new QuitMultiBattleRequest(this.opponent));
 		}
 
-		this.clientListener.onShowWindow(WindowName.GAME_MODE);
+		this.clientController.showWindow(WindowName.GAME_MODE);
 	}
 
 	/**
@@ -167,7 +167,7 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	 */
 	@Override
 	public void onLoadTeam() {
-		this.clientListener.onShowWindow(WindowName.LOAD_TEAM_PANEL);
+		this.clientController.showWindow(WindowName.LOAD_TEAM_PANEL);
 	}
 
     /**
@@ -187,7 +187,7 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	 * @param teamDTO The DTO of the team to be saved
 	 */
 	public void saveTeam(TeamDTO teamDTO) {
-		boolean success = this.clientListener.onPostData(new SaveTeamRequest(teamDTO));
+		boolean success = this.clientController.postData(new SaveTeamRequest(teamDTO));
 		if (!success) {
 			this.view.showInvalidSaveAlert("Tu as déjà une équipe avec ce nom!");
 		}
@@ -219,7 +219,7 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	 */
 	@Override
 	public List<BugemonSpeciesDTO> getAllSpecies(){
-		Serializable message = this.clientListener.onGetData(new GetAllBugemonSpeciesRequest());
+		Serializable message = this.clientController.getData(new GetAllBugemonSpeciesRequest());
 
 		if (message instanceof BugemonSpeciesResponse speciesMessage){
 			return speciesMessage.getSpecies();

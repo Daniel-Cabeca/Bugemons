@@ -41,7 +41,7 @@ public class LoadTeamPanelController extends WindowController<LoadTeamPanel> imp
     }
 
 	private List<TeamDTO> getSavedTeams() {
-		Serializable message = this.clientListener.onGetData(new GetSavedTeamsRequest());
+		Serializable message = this.clientController.getData(new GetSavedTeamsRequest());
 
 		if (message instanceof SavedTeamsResponse teamsMessage){
 			return teamsMessage.getTeams();
@@ -56,7 +56,7 @@ public class LoadTeamPanelController extends WindowController<LoadTeamPanel> imp
 
 	@Override
     public void onLoadTeam(TeamDTO selectedTeam) {
-		this.clientListener.setupTeamAndShowConfirmTeam(selectedTeam.members());
+		this.clientController.setupTeamAndShowConfirmTeam(selectedTeam.members());
         popupStage.close();
     }
 

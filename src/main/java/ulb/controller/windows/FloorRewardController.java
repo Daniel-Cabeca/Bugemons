@@ -32,10 +32,10 @@ public class FloorRewardController extends WindowController<FloorRewardWindow> i
      */
     @Override
     public void show() {
-        if (clientListener.onGetData(new GetRandomItemRequest()) instanceof RandomItemResponse r) {
+        if (clientController.getData(new GetRandomItemRequest()) instanceof RandomItemResponse r) {
             rewardItem = r.getItem();
         }
-        if (clientListener.onGetData(new GetTowerInfoRequest()) instanceof TowerInfoResponse info) {
+        if (clientController.getData(new GetTowerInfoRequest()) instanceof TowerInfoResponse info) {
             view.initializeLabels(info.getFloorNumber(), info.getRoomNumber(), rewardItem != null ? rewardItem.name() : "");
         }
         super.show();
@@ -44,8 +44,8 @@ public class FloorRewardController extends WindowController<FloorRewardWindow> i
     /** {@inheritDoc} */
     @Override
     public void onObjectReward() {
-        if (clientListener.onPostData(new ChooseItemRewardRequest(rewardItem))) {
-            clientListener.onShowWindow(WindowName.FLOOR);
+        if (clientController.postData(new ChooseItemRewardRequest(rewardItem))) {
+            clientController.showWindow(WindowName.FLOOR);
         }
     }
 
@@ -53,13 +53,13 @@ public class FloorRewardController extends WindowController<FloorRewardWindow> i
     @Override
     public void onChooseAttackReward() {
         pendingChoice = RewardChoice.ATTACK;
-        clientListener.onChooseBugemonReward(pendingChoice);
+        clientController.chooseBugemonReward(pendingChoice);
     }
 
     /** {@inheritDoc} */
     @Override
     public void onStatReward() {
         pendingChoice = RewardChoice.STAT;
-        clientListener.onChooseBugemonReward(pendingChoice);
+        clientController.chooseBugemonReward(pendingChoice);
     }
 }

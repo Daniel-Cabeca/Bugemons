@@ -50,7 +50,7 @@ public class FloorController extends WindowController<FloorWindow> implements Fl
      * Resets the fled-detection state when the floor number changes.
      */
     private void syncCurrentRoomFromServer() {
-        if (!(clientListener.onGetData(new GetTowerInfoRequest()) instanceof TowerInfoResponse info)) return;
+        if (!(clientController.getData(new GetTowerInfoRequest()) instanceof TowerInfoResponse info)) return;
         int serverFloor = info.getFloorNumber();
         this.currentRoomId = info.getRoomNumber();
         if (serverFloor != this.currentFloorNumber) {
@@ -73,10 +73,10 @@ public class FloorController extends WindowController<FloorWindow> implements Fl
         boolean isAdjacent = floorGraph.getAdjacentRoomsIds(currentRoomId).contains(targetRoomId);
         if (!isAdjacent) return;
         view.translationAnimationHandler(targetRoomId, () -> {
-            boolean success = clientListener.onPostData(new ChooseTowerRoomRequest(targetRoomId));
+            boolean success = clientController.postData(new ChooseTowerRoomRequest(targetRoomId));
             if (!success) return;
             this.lastEnteredRoomId = targetRoomId;
-            clientListener.onRoomSelectionComplete();
+            clientController.nextRoom();
         });
     }
 
@@ -120,5 +120,5 @@ public class FloorController extends WindowController<FloorWindow> implements Fl
 
     /** {@inheritDoc} */
     @Override
-    public void onReturnFloorWindow() { clientListener.onShowWindow(WindowName.GAME_MODE); }
+    public void onReturnFloorWindow() { clientController.showWindow(WindowName.GAME_MODE); }
 }

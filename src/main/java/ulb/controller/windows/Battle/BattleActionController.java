@@ -13,7 +13,7 @@ import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.communication.GameMode;
-import ulb.controller.windows.WindowController.ClientListener;
+import ulb.controller.ClientController;
 import ulb.message.request.gameActions.ChooseRandomActionRequest;
 import ulb.message.request.gameActions.RunRequest;
 import ulb.message.request.gameActions.SwapBugemonRequest;
@@ -29,15 +29,15 @@ import ulb.view.windows.BattleWindow;
 import ulb.view.windows.BattleWindow.BattleSnapshot;
 
 public class BattleActionController {
-	private final ClientListener clientListener;
+	private final ClientController clientController;
 	private final BattleSetupController battleSetupController;
 	private BattleWindow view;
 	protected final Logger LOGGER = Logger.getLogger(this.getClass().getName());
 
 	private boolean waitingForOpponentAction = false;
 
-	BattleActionController(ClientListener clientListener, BattleSetupController battleSetupController){
-		this.clientListener = clientListener;
+	BattleActionController(ClientController clientController, BattleSetupController battleSetupController){
+		this.clientController = clientController;
 		this.battleSetupController = battleSetupController;
 	}
  
@@ -106,7 +106,7 @@ public class BattleActionController {
     }
 
 	public boolean isGameFinished(){
-		Serializable message = this.clientListener.onGetData(new CheckGameFinishedRequest());
+		Serializable message = this.clientController.getData(new CheckGameFinishedRequest());
 		if (message instanceof GameFinishedResponse gameFinished){
 			return gameFinished.isGameFinished();
 		} else if (message instanceof StatusResponse errorMessage && errorMessage.isFailure()){
@@ -116,7 +116,7 @@ public class BattleActionController {
 	}
 
 	public List<Integer> getHpAfterFirstAction(){
-		Serializable message = this.clientListener.onGetData(new GetLogsRequest(false));
+		Serializable message = this.clientController.getData(new GetLogsRequest(false));
 		if (message instanceof LogsResponse logs){
 			return logs.getHpsAfterFirstAction();
 		} else if (message instanceof StatusResponse errorMessage && errorMessage.isFailure()){
@@ -212,7 +212,7 @@ public class BattleActionController {
 	public void useItem(String itemId, PlayerDTO player, ActionEvent event){
 		ItemDTO item = findInventoryItemById(itemId, player);
 
-		if (!this.clientListener.onPostData(new UseItemRequest(item))){
+		if (!this.clientController.postData(new UseItemRequest(item))){
 			return;
 		}
 
@@ -230,7 +230,7 @@ public class BattleActionController {
 	public void useAbility(String abilityId, PlayerDTO player, ActionEvent event){
 		AbilityDTO ability = findActiveAbilityById(abilityId);
 
-		if (!this.clientListener.onPostData(new UseAbilityRequest(ability))){
+		if (!this.clientController.postData(new UseAbilityRequest(ability))){
 			return;
 		}
 
@@ -250,7 +250,7 @@ public class BattleActionController {
             view.setCurrentSnapshot(snapshotBeforeAction);
         }
 
-		if (!this.clientListener.onPostData(new SwapBugemonRequest(bugemon))){
+		if (!this.clientController.postData(new SwapBugemonRequest(bugemon))){
 			return;
 		}
 
@@ -272,7 +272,7 @@ public class BattleActionController {
 	public void autoAction(PlayerDTO player, ActionEvent event){
         view.setAutoButtonVisible(false);
 
-		if (!this.clientListener.onPostData(new ChooseRandomActionRequest())){
+		if (!this.clientController.postData(new ChooseRandomActionRequest())){
 			return;
 		}
 
@@ -285,8 +285,8 @@ public class BattleActionController {
 	}
 
 	public void run(){
-		if (this.clientListener.onPostData(new RunRequest())){
-			this.clientListener.onNextRoom();
+		if (this.clientController.postData(new RunRequest())){
+			this.clientController.nextRoom();
 		}
 	}
 }

@@ -30,12 +30,12 @@ public class RegisterController extends WindowController<RegisterWindow> impleme
         PlayerRegisterDTO playerDTO = new PlayerRegisterDTO(userName, password);
         boolean success = this.logIn(playerDTO);
         if (success){
-            if (this.clientListener.onLoadPlayer(userName) == null) {
+            if (this.clientController.loadPlayer(userName) == null) {
                 LOGGER.warning("Player is null after login for username: " + userName);
                 this.view.setErrorLabel("Connexion réussie, mais profil joueur introuvable.");
                 return;
             }
-            this.clientListener.onShowWindow(WindowName.MODE);
+            this.clientController.showWindow(WindowName.MODE);
         } else {
             this.view.setErrorLabel("Nom d'utilisateur ou mot de passe incorrect.");
         }
@@ -48,7 +48,7 @@ public class RegisterController extends WindowController<RegisterWindow> impleme
      * @return True if accepted by server
      */
     public boolean logIn(PlayerRegisterDTO player){
-        return this.clientListener.onPostData(new RegisterRequest(player, true));
+        return this.clientController.postData(new RegisterRequest(player, true));
     }
 
 
@@ -60,12 +60,12 @@ public class RegisterController extends WindowController<RegisterWindow> impleme
         PlayerRegisterDTO playerDTO = new PlayerRegisterDTO(userName, password);
         boolean success = this.signUp(playerDTO);
         if (success) {
-            if (this.clientListener.onLoadPlayer(userName) == null) {
+            if (this.clientController.loadPlayer(userName) == null) {
                 LOGGER.warning("Player is null after sign-up for username: " + userName);
                 this.view.setErrorLabel("Inscription réussie, mais profil joueur introuvable.");
                 return;
             }
-            this.clientListener.onShowWindow(WindowName.MODE);
+            this.clientController.showWindow(WindowName.MODE);
         } else {
             this.view.setErrorLabel("Ce nom d'utilisateur est déjà pris.");
         }
@@ -78,6 +78,6 @@ public class RegisterController extends WindowController<RegisterWindow> impleme
      * @return True if account creation succeeded
      */
     public boolean signUp(PlayerRegisterDTO player){
-        return this.clientListener.onPostData(new RegisterRequest(player, false));
+        return this.clientController.postData(new RegisterRequest(player, false));
     }
 }

@@ -34,7 +34,7 @@ import ulb.DTO.reward.RewardDTO;
 /**
  * Client-side application controller coordinating server messaging.
  */
-public class ClientController extends Application implements WindowController.ClientListener {
+public class ClientController extends Application {
 
 	private static final Logger LOGGER = Logger.getLogger(ClientController.class.getName());
 
@@ -138,7 +138,7 @@ public class ClientController extends Application implements WindowController.Cl
 	 * @param request The request sent to the server
 	 * @return True if the request was accepted by the server
 	 */
-	private boolean postData(Request request){
+	public boolean postData(Request request){
 		Response response = this.client.getResponse(request);
 		return response.isSuccess();
 	}
@@ -149,7 +149,7 @@ public class ClientController extends Application implements WindowController.Cl
 	 * @param request The message sent to the server
 	 * @return The response received from the server
 	 */
-	private Response getData(Request request){
+	public Response getData(Request request){
 		return this.client.getResponse(request);
 	}
 
@@ -175,18 +175,20 @@ public class ClientController extends Application implements WindowController.Cl
 		return null;
 	}
 
+	public void unsetPlayer() { this.player = null; }
+
 	/**
 	 * Loads a player by username, stores it as the current player, and returns it.
 	 *
 	 * @param userName The username to look up
 	 * @return The player DTO, or null if not found
 	 */
-	private PlayerDTO loadPlayer(String userName) {
+	public PlayerDTO loadPlayer(String userName) {
 		this.player = this.getPlayer(userName);
 		return this.player;
 	}
 
-	private void setGameMode(GameMode gameMode){this.gameMode = gameMode;}
+	public void setGameMode(GameMode gameMode){this.gameMode = gameMode;}
 
 	/**
 	 * Switches to the next room window.
@@ -288,11 +290,7 @@ public class ClientController extends Application implements WindowController.Cl
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onRewardChosen(RewardDTO reward, ActionEvent event) {
+	public void chooseReward(RewardDTO reward, ActionEvent event) {
 		if (postData(new ChooseLevelUpRewardRequest(reward))) {
 			nextRoom();
 		}
@@ -300,11 +298,7 @@ public class ClientController extends Application implements WindowController.Cl
 
 	// Floor Reward Listener
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onChooseBugemonReward(RewardChoice rewardChoice) {
+	public void chooseBugemonReward(RewardChoice rewardChoice) {
 		pendingFloorRewardChoice = rewardChoice;
 		if (chooseBugemonController == null) {
 			chooseBugemonController = new ChooseBugemonController(this.stage, this);
@@ -324,37 +318,11 @@ public class ClientController extends Application implements WindowController.Cl
 
 	// FloorController
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void onRoomSelectionComplete() {
-		nextRoom();
-	}
-
-	@Override
-	public void onSetOpponentMulti(PlayerDTO opponent) {
+	public void setOpponentMulti(PlayerDTO opponent) {
 		this.teamController.setOpponent(opponent);
 	}
 
-
-	@Override
-	public Serializable onGetData(Request message) {
-		return this.getData(message);
-	}
-
-	@Override
-	public boolean onPostData(Request message) {
-		return this.postData(message);
-	}
-
-	@Override
-	public PlayerDTO onLoadPlayer(String userName) {
-		return this.loadPlayer(userName);
-	}
-
-	@Override
-	public void onShowWindow(WindowController.WindowName window) {
+	public void showWindow(WindowController.WindowName window) {
 		switch (window) {
 			case REGISTER -> this.registerController.show();
 			case MODE -> this.modeController.show();
@@ -373,29 +341,17 @@ public class ClientController extends Application implements WindowController.Cl
 		}
 	}
 
-	@Override
-	public void onSetGameMode(GameMode gameMode) {
-		this.setGameMode(gameMode);
-	}
+	/**
+	 * Set newTimeLine in WaitWindow
+	 * @param waitCycle is current waitCycle
+	 */
+	public void setNewTimeLine(EventHandler waitCycle) { this.waitWindowController.setNewTimeLine(waitCycle); }
 
-	@Override
-	public PlayerDTO onGetPlayer() {
-		return this.getPlayer();
-	}
-
-	@Override
-	public void onSetNewTimeLine(EventHandler waitCycle) { this.waitWindowController.setNewTimeLine(waitCycle); }
-
-	@Override
-	public void onStopWaitWindow() { this.waitWindowController.stop(); }
-
-	@Override
-	public void onSetPlayer(PlayerDTO player) { this.player = player; }
+	public void stopWaitWindow() { this.waitWindowController.stop(); }
 
 	/**
 	 * Sends the player's team to the server and switches to the battle mode window.
 	 */
-	@Override
 	public void setupTeamAndShowConfirmTeam(List<BugemonDTO> teamDTO) {
 		this.player.setTeam(teamDTO);
 		if (!this.postData(new SetUpTeamRequest(teamDTO))){
@@ -407,14 +363,9 @@ public class ClientController extends Application implements WindowController.Cl
 		this.confirmTeamController.show();
 	}
 
-	@Override
-	public void onNextRoom() { this.nextRoom(); }
-
-	@Override
-	public void onShowAttackReplacement(BugemonDTO bugemon, AbilityDTO newAbility) {
+	public void showAttackReplacement(BugemonDTO bugemon, AbilityDTO newAbility) {
 		this.attackReplacementController.show(bugemon, newAbility);
 	}
 
-	@Override
-	public RewardChoice onGetPendingFloorRewardChoice() { return this.pendingFloorRewardChoice; }
+	public RewardChoice getPendingFloorRewardChoice() { return this.pendingFloorRewardChoice; }
 }

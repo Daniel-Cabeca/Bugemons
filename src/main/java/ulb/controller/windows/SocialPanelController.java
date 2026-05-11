@@ -39,7 +39,7 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 
 	private PlayerDTO getPlayer(){
 		if (player == null){
-			this.player = this.clientListener.onGetPlayer();
+			this.player = this.clientController.getPlayer();
 		}
 		return player;
 	}
@@ -67,7 +67,7 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 	}
 
 	private List<String> getRequests(Request request){
-		Serializable response = this.clientListener.onGetData(request);
+		Serializable response = this.clientController.getData(request);
 		if (response instanceof FriendRequestsResponse msg)
 			return msg.getRequests();
 		else if (response instanceof BattleRequestsResponse msg)
@@ -78,13 +78,13 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 	}
 
 	private List<String> getFriendList(){
-		if (this.clientListener.onGetData(new GetFriendsListRequest(getPlayer().getUsername())) instanceof FriendsListResponse msg)
+		if (this.clientController.getData(new GetFriendsListRequest(getPlayer().getUsername())) instanceof FriendsListResponse msg)
 			return msg.getFriends();
 		return List.of();
 	}
 
 	private Map<String, Integer> getLeaderboardList(){
-		if (this.clientListener.onGetData(new GetLeaderboardRequest()) instanceof LeaderboardResponse msg)
+		if (this.clientController.getData(new GetLeaderboardRequest()) instanceof LeaderboardResponse msg)
 			return msg.getLeaderboard();
 		return Collections.<String, Integer>emptyMap();
 	
@@ -109,7 +109,7 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 
     private void loadMessagesInCurrentThread(String friend) {
 		List<ChatMessage> chatMessages = null;
-		if (this.clientListener.onGetData(new GetChatMessagesRequest(getPlayer().getUsername(), friend)) instanceof ChatMessagesResponse msg)
+		if (this.clientController.getData(new GetChatMessagesRequest(getPlayer().getUsername(), friend)) instanceof ChatMessagesResponse msg)
 			chatMessages = msg.getMessages();
 
         List<String> lines = new ArrayList<>();
@@ -120,7 +120,7 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
     }
 
 	private PlayerDTO getPlayerByName(String username){
-		if (this.clientListener.onGetData(new GetPlayerRequest(username)) instanceof PlayerResponse msg) {
+		if (this.clientController.getData(new GetPlayerRequest(username)) instanceof PlayerResponse msg) {
 			return msg.getPlayer();
 		}
 		return null;
@@ -134,7 +134,7 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 	 * @return The multiplayer battle status DTO
 	 */
 	public MultiBattleStatusDTO getMultiBattleStatus(int userId1, int userId2) {
-		if (this.clientListener.onGetData(new GetMultiBattleStatusRequest(userId1, userId2)) instanceof MultiBattleStatusResponse msg)
+		if (this.clientController.getData(new GetMultiBattleStatusRequest(userId1, userId2)) instanceof MultiBattleStatusResponse msg)
 			return msg.getStatus();
 
 		LOGGER.warning("Failed to obtain multiplayer battle status.");
@@ -142,8 +142,8 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 	}
 
 	private void switchToTeamSelectionForMulti(PlayerDTO opponent){
-		this.clientListener.onSetOpponentMulti(opponent);
-		this.clientListener.onShowWindow(WindowName.TEAM);
+		this.clientController.setOpponentMulti(opponent);
+		this.clientController.showWindow(WindowName.TEAM);
 	}
 
 	/**
@@ -156,7 +156,7 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 
 		switch(status.getStatus()) {
 			case PICKING_TEAMS:
-				this.clientListener.onStopWaitWindow();
+				this.clientController.stopWaitWindow();
 				this.switchToTeamSelectionForMulti(opponent);
 				break;
 
@@ -164,8 +164,8 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 				break;
 
 			default:
-				this.clientListener.onStopWaitWindow();
-				this.clientListener.onShowWindow(WindowName.MODE);
+				this.clientController.stopWaitWindow();
+				this.clientController.showWindow(WindowName.MODE);
 		}
 	}
 
@@ -182,14 +182,14 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 	*/
 	@Override
 	public void onDeclineFriend(String sender) {
-		if (this.clientListener.onPostData(new DeclineFriendRequestRequest(getPlayer().getUsername(), sender))){
+		if (this.clientController.postData(new DeclineFriendRequestRequest(getPlayer().getUsername(), sender))){
 			refreshFriendRequests();
 		}
 	}
 
 	@Override
 	public void onDeclineBattle(String sender) {
-		if (this.clientListener.onPostData(new DeclineBattleRequestRequest(getPlayer().getUsername(), sender))){
+		if (this.clientController.postData(new DeclineBattleRequestRequest(getPlayer().getUsername(), sender))){
 			refreshFriendRequests();
 		}
 	}
@@ -199,7 +199,7 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 	*/
 	@Override
 	public void onAcceptFriend(String sender) {
-		if (this.clientListener.onPostData(new AcceptFriendRequestRequest(getPlayer().getUsername(), sender))) {
+		if (this.clientController.postData(new AcceptFriendRequestRequest(getPlayer().getUsername(), sender))) {
 			refreshFriendRequests();
             refreshFriends();
 		}
@@ -207,7 +207,7 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 
 	@Override
 	public void onAcceptBattle(String sender) {
-		if (this.clientListener.onPostData(new AcceptBattleRequestRequest(getPlayer().getUsername(), sender))) {
+		if (this.clientController.postData(new AcceptBattleRequestRequest(getPlayer().getUsername(), sender))) {
 			PlayerDTO opponent = this.getPlayerByName(sender);
 
 			this.popupStage.close();
@@ -228,7 +228,7 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 			view.setInviteStatus("Vous êtes déjà amis !");
 			return;
 		}
-		boolean ok = this.clientListener.onPostData(new SendFriendRequestRequest(getPlayer().getUsername(), target));
+		boolean ok = this.clientController.postData(new SendFriendRequestRequest(getPlayer().getUsername(), target));
 		view.setInviteStatus(ok ? "Demande envoyée !" : "Utilisateur introuvable.");
 		if (ok) {
 			view.clearInviteField();
@@ -263,15 +263,15 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 		}
 
 		PlayerDTO friend = this.getPlayerByName(friendName);
-		boolean ok = this.clientListener.onPostData(new SendBattleRequestRequest(getPlayer().getUsername(), friendName));
+		boolean ok = this.clientController.postData(new SendBattleRequestRequest(getPlayer().getUsername(), friendName));
 		view.setInviteStatus(ok ? "Défi envoyé !" : "Impossible d'envoyer le défi.");
 
 		if (ok) {
 			this.onClose();
-			this.clientListener.onSetNewTimeLine(e -> {
+			this.clientController.setNewTimeLine(e -> {
 				this.waitForBattleRequestResponse(friend);
 			});
-			this.clientListener.onShowWindow(WindowName.WAIT);
+			this.clientController.showWindow(WindowName.WAIT);
 		}
 	}
 
@@ -282,7 +282,7 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
     public void onSendMessage(String friend, String content) {
         view.clearChatField();
         new Thread(() -> {
-            this.clientListener.onPostData(new SendChatMessageRequest(getPlayer().getUsername(), friend, content));
+            this.clientController.postData(new SendChatMessageRequest(getPlayer().getUsername(), friend, content));
             loadMessagesInCurrentThread(friend);
         }).start();
     }

@@ -26,7 +26,7 @@ public class NextRoomController extends WindowController<NextRoomWindow> impleme
      * Handles continue action.
      */
     @Override
-    public void onContinue() { this.clientListener.onNextRoom(); }
+    public void onContinue() { this.clientController.nextRoom(); }
 
 //    /**
 //     * Returns the next window type according to server flow.
@@ -94,8 +94,8 @@ public class NextRoomController extends WindowController<NextRoomWindow> impleme
      */
     @Override
     public void onReturn() {
-        if (this.clientListener.onPostData(new AbandonTowerRequest())){
-            this.clientListener.onShowWindow(WindowName.MODE);
+        if (this.clientController.postData(new AbandonTowerRequest())){
+            this.clientController.showWindow(WindowName.MODE);
         }
     }
 }

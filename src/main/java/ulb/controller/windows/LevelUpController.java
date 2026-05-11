@@ -33,7 +33,7 @@ public class LevelUpController extends WindowController<LevelUpWindow> implement
      */
     @Override
     public void show() {
-        if (!(clientListener.onGetData(new GetLevelUpInfoRequest()) instanceof LevelUpInfoResponse info)) return;
+        if (!(clientController.getData(new GetLevelUpInfoRequest()) instanceof LevelUpInfoResponse info)) return;
         List<RewardDTO> rewards = info.getRewards();
         if (rewards == null || rewards.isEmpty()) return;
         BugemonDTO bugemon = rewards.get(0).bugemon();
@@ -44,6 +44,6 @@ public class LevelUpController extends WindowController<LevelUpWindow> implement
     /** {@inheritDoc} */
     @Override
     public void onRewardChosen(RewardDTO reward, ActionEvent event) {
-        clientListener.onRewardChosen(reward, event);
+        clientController.chooseReward(reward, event);
     }
 }

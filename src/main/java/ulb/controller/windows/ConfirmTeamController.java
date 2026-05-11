@@ -51,7 +51,7 @@ public class ConfirmTeamController extends WindowController<ConfirmTeamWindow> i
 				switchToTower();
 				break;
 			default:
-				this.clientListener.onShowWindow(WindowName.MODE);
+				this.clientController.showWindow(WindowName.MODE);
 				break;
 		}
 	}
@@ -60,8 +60,8 @@ public class ConfirmTeamController extends WindowController<ConfirmTeamWindow> i
 	 * Tell the server to setup the Battle and switch to battle window if the setup is succeded
 	 */
 	private void switchToBattle(){
-		if (this.clientListener.onPostData(new SetUpNormalModeRequest())){
-			this.clientListener.onShowWindow(WindowName.BATTLE);
+		if (this.clientController.postData(new SetUpNormalModeRequest())){
+			this.clientController.showWindow(WindowName.BATTLE);
 		}
 	}
 
@@ -69,8 +69,8 @@ public class ConfirmTeamController extends WindowController<ConfirmTeamWindow> i
 	 * Tell the server to setup the Tower and switch to floor window if the setup is succeded
 	 */
 	private void switchToTower(){
-		if (this.clientListener.onPostData(new SetUpTowerModeRequest(true))){
-			this.clientListener.onShowWindow(WindowName.FLOOR);
+		if (this.clientController.postData(new SetUpTowerModeRequest(true))){
+			this.clientController.showWindow(WindowName.FLOOR);
 		}
 	}
 	
@@ -79,7 +79,7 @@ public class ConfirmTeamController extends WindowController<ConfirmTeamWindow> i
      */
     @Override
     public void onReturn() {
-		this.clientListener.onShowWindow(WindowName.TEAM);
+		this.clientController.showWindow(WindowName.TEAM);
     }
 
     /**

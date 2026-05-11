@@ -26,7 +26,7 @@ public class ModeController extends WindowController<ModeWindow> implements Mode
      */
     @Override
     public void onOpenSocial() {
-        this.clientListener.onShowWindow(WindowName.SOCIAL_PANEL);
+        this.clientController.showWindow(WindowName.SOCIAL_PANEL);
     }
 
 
@@ -35,7 +35,7 @@ public class ModeController extends WindowController<ModeWindow> implements Mode
      */
     @Override
     public void onSolo() {
-        this.clientListener.onShowWindow(WindowName.GAME_MODE);
+        this.clientController.showWindow(WindowName.GAME_MODE);
     }
 
 
@@ -53,7 +53,7 @@ public class ModeController extends WindowController<ModeWindow> implements Mode
      */
     @Override
     public void onLogOut() {
-        this.clientListener.onSetPlayer(null);
-        this.clientListener.onShowWindow(WindowName.REGISTER);
+        this.clientController.unsetPlayer();
+        this.clientController.showWindow(WindowName.REGISTER);
     }
 }

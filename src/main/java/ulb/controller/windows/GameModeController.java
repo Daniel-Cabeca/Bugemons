@@ -42,7 +42,7 @@ public class GameModeController extends WindowController<GameModeWindow> impleme
      * @return true if there is a tower Saving database else false
      */
     private boolean isTowerSaved() {
-        Serializable message = this.clientListener.onGetData(new GetTowerSavedInfoRequest());
+        Serializable message = this.clientController.getData(new GetTowerSavedInfoRequest());
         if (message instanceof TowerSavedInfoResponse towerInfoMessage){
             return towerInfoMessage.isTowerSaved();
         }
@@ -74,8 +74,8 @@ public class GameModeController extends WindowController<GameModeWindow> impleme
         if (newTower) {
             this.setModeAndShowTeamWindow(GameMode.TOWER);
         }else{
-            if (this.clientListener.onPostData(new SetUpTowerModeRequest(false))){
-                this.clientListener.onShowWindow(WindowName.FLOOR);
+            if (this.clientController.postData(new SetUpTowerModeRequest(false))){
+                this.clientController.showWindow(WindowName.FLOOR);
             }
         }
     }
@@ -85,8 +85,8 @@ public class GameModeController extends WindowController<GameModeWindow> impleme
      * @param gameMode indicate which game mode is chosen
      */
     private void setModeAndShowTeamWindow(GameMode gameMode){
-        this.clientListener.onSetGameMode(gameMode);
-        this.clientListener.onShowWindow(WindowName.TEAM);
+        this.clientController.setGameMode(gameMode);
+        this.clientController.showWindow(WindowName.TEAM);
     }
 
     /**
@@ -94,6 +94,6 @@ public class GameModeController extends WindowController<GameModeWindow> impleme
      */
     @Override
     public void onReturn() {
-        this.clientListener.onShowWindow(WindowName.MODE);
+        this.clientController.showWindow(WindowName.MODE);
     }
 }

@@ -150,7 +150,6 @@ public class InventoryDatabaseRepository implements InventoryRepository {
                 String itemID = rs.getString("id");
                 Item item = this.itemRepository.findById(itemID);
                 int quantity = rs.getInt("quantity");
-
 				inventory.addItem(item, quantity);
 			}
 		} catch (SQLException e) {

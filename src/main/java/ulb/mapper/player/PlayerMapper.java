@@ -33,8 +33,12 @@ public class PlayerMapper {
         
         for (Map.Entry<Item, Integer> e : entity.getInventory().getItems().entrySet())
             inventory.put(ItemMapper.toDTO(e.getKey()), e.getValue());
-
-        return new PlayerDTO(entity.getUserId(), entity.getUsername(), team, inventory);
+		
+		int userId = -1;
+		if (entity.getUserId().isPresent()){
+			userId = entity.getUserId().get();
+		}
+        return new PlayerDTO(userId, entity.getUsername(), team, inventory);
     }
 
     public static Player toEntity(PlayerRegisterDTO dto, Inventory inventory, int userId) {

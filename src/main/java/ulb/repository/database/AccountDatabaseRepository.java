@@ -1,6 +1,7 @@
 package ulb.repository.database;
 
 import ulb.exceptions.DataAccessException;
+import ulb.exceptions.EntityNotFoundException;
 import ulb.repository.AccountRepository;
 import ulb.exceptions.LoadException;
 import ulb.repository.database.sql.Database;
@@ -48,13 +49,13 @@ public class AccountDatabaseRepository implements AccountRepository {
 	/**
 	 * {@inheritDoc}
 	 */
-	public String getPasswordHash(String username) throws LoadException {
+	public String getPasswordHash(String username) throws LoadException, EntityNotFoundException {
 		String sql = "SELECT password_hash FROM users WHERE username = ?";
 		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
 			stmt.setString(1, username);
 			ResultSet rs = stmt.executeQuery();
 			if (rs.next()) return rs.getString("password_hash");
-			return null;
+			throw new EntityNotFoundException("Password", username);
 		} catch (SQLException e) {
 			throw new LoadException("Failed to fetch user: " + e.getMessage());
 		}
@@ -63,15 +64,16 @@ public class AccountDatabaseRepository implements AccountRepository {
 	/**
 	 * {@inheritDoc}
 	 */
-	public int getUserId(String username) throws NoSuchElementException {
+	public Integer getUserId(String username) throws EntityNotFoundException {
 		String sql = "SELECT id FROM users WHERE username = ?";
 		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
 			stmt.setString(1, username);
 			ResultSet rs = stmt.executeQuery();
 			if (rs.next()) return rs.getInt("id");
-			return -1;
+			throw new EntityNotFoundException("Password", username);
 		} catch (SQLException e) {
-			throw new NoSuchElementException("Failed to fetch user id: " + e.getMessage());
+			// LOGGER
+			throw new EntityNotFoundException("Password", username);
 		}
 	}
 

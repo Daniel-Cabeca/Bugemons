@@ -65,9 +65,12 @@ public class TowerManager {
 			tower = towerSaveService.getTowerSave(player);
 		}
 		this.tower = tower;
-		this.floorNumber = this.tower.getCurrentFloorId() - 1;
-		this.currentFloorManager = new FloorManager(this.tower.getCurrentFloor(), this.player, this.getBugemonService(), this.getItemService());
-		
+		if (tower.getCurrentFloorId().isPresent()){
+			this.floorNumber = this.tower.getCurrentFloorId().get() - 1;
+			this.currentFloorManager = new FloorManager(this.tower.getCurrentFloor().get(), this.player, this.getBugemonService(), this.getItemService());
+		} else {
+			// TODO Error
+		}
 		saveTowerInfo();
 	}
 

@@ -1,9 +1,11 @@
 package ulb.server;
 
 import ulb.exceptions.DataAccessException;
+import ulb.exceptions.GameException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.player.PlayerDTO;
@@ -67,14 +69,25 @@ public class SetupHandler {
 
 	public void setupMultiBattle(PlayerDTO opponent, List<BugemonDTO> bugemons) throws DataAccessException {
 		Player player = clientHandler.getPlayer();
+
+		if (player.getUserId().isEmpty()){
+			clientHandler.sendErrorMessage("The player is not register");
+			return;
+		}
+
 		Team team = makeTeam(bugemons);
 		clientHandler.setTeam(team);
 
-		MultiBattleSession battle = this.multiBattleService.getMultiBattle(player.getUserId(), opponent.getUserId());
-		battle.getParticipant(player.getUserId()).setTeam(team);
+		MultiBattleSession battle = this.multiBattleService.getMultiBattle(player.getUserId().get(), opponent.getUserId());
+		battle.getParticipant(player.getUserId().get()).setTeam(team);
 
-		if (battle.isReady()) {
-			battle.start(accountService);
+		try{
+			if (battle.isReady()) {
+				battle.start(accountService);
+			}
+		} catch (GameException e){
+			clientHandler.sendErrorMessage("fail to start the game : " + e.getMessage());
+			return;
 		}
 
 		clientHandler.sendSuccessMessage();
@@ -170,7 +183,10 @@ public class SetupHandler {
         Player player = clientHandler.getPlayer();
 
 		if (!isNewTower){
-			player.setTeam(teamService.getTowerTeam(player));
+			Optional<Team> playerTeam = teamService.getTowerTeam(player);
+			if (playerTeam.isPresent()){
+				player.setTeam(playerTeam.get());
+			}
 		}
 
         Battle battle = clientHandler.getBattle();

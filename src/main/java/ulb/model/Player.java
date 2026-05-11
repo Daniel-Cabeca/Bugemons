@@ -1,6 +1,9 @@
 package ulb.model;
 
 import ulb.model.team.Team;
+
+import java.util.Optional;
+
 import ulb.model.item.Inventory;
 
 /**
@@ -8,7 +11,7 @@ import ulb.model.item.Inventory;
  */
 public class Player {
 	private String username;
-	private final int userId;
+	private final Optional<Integer> userId;
 	private Team team;
 	private Inventory inventory;
 	
@@ -29,9 +32,14 @@ public class Player {
 	 */
 	public Player(String username, int userId, Inventory inventory) {
 		this.username = username;
-		this.userId = userId;
 		this.team = new Team();
 		this.inventory = inventory;
+
+		if (userId == -1){
+			this.userId = Optional.empty(); // empty when the player is a Bot
+		} else {
+			this.userId = Optional.of(userId);
+		}
 	}
 
 	/**
@@ -45,7 +53,7 @@ public class Player {
 	}
 
 	/** Returns User ID. */
-	public final int getUserId() {return this.userId;}
+	public final Optional<Integer> getUserId() {return this.userId;}
 	/** Returns username. */
 	public final String getUsername() {return this.username;}
 	/** Returns player team. */

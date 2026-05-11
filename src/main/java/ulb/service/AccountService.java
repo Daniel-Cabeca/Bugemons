@@ -1,12 +1,14 @@
 package ulb.service;
 
 import ulb.exceptions.DataAccessException;
+import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
 import ulb.repository.AccountRepository;
 
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 /**
  * Service layer for account registration and authentication.
@@ -43,10 +45,9 @@ public class AccountService {
      * @return True if credentials match, false otherwise
      * @throws LoadException If the lookup fails
      */
-    public boolean login(String username, String password) throws LoadException {
+    public boolean login(String username, String password) throws LoadException, EntityNotFoundException {
         String storedPassword = repository.getPasswordHash(username);
-        // null means the username doesn't exist
-        if (storedPassword == null) return false;
+        // empty means the username doesn't exist
         return storedPassword.equals(password);
     }
 
@@ -57,7 +58,7 @@ public class AccountService {
      * @return The user id, or -1 if the user does not exist
      * @throws NoSuchElementException If the lookup fails
      */
-    public int getUserId(String username) throws NoSuchElementException {
+    public Integer getUserId(String username) throws NoSuchElementException {
         return repository.getUserId(username);
     }
 

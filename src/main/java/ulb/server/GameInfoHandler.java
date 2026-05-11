@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.item.ItemDTO;
@@ -124,7 +125,7 @@ public class GameInfoHandler {
 	public void getLevelUpInfo() {
         Player player = clientHandler.getPlayer();
         Battle battle = clientHandler.getBattle();
-        Bugemon pendingLevelUpBugemon = clientHandler.getPendingLevelUpBugemon();
+        Optional<Bugemon> pendingLevelUpBugemon = clientHandler.getPendingLevelUpBugemon();
         List<Reward> pendingLevelUpRewards = clientHandler.getPendingLevelUpRewards();
 
 		if (battle == null || player == null || player.getTeam() == null) {
@@ -132,18 +133,18 @@ public class GameInfoHandler {
 			return;
 		}
 
-		Bugemon currentBugemon = player.getTeam().getFirstLevelUpBugemon();
-		if (currentBugemon == null) {
+		Optional<Bugemon> currentBugemon = player.getTeam().getFirstLevelUpBugemon();
+		if (currentBugemon.isEmpty()) {
 			clientHandler.clearPendingLevelUpState();
 			clientHandler.sendErrorMessage("No bugemon requires a level up reward");
 			return;
 		}
 
-		if (pendingLevelUpBugemon == null
-				|| pendingLevelUpRewards == null
-				|| !pendingLevelUpBugemon.getSpeciesId().equals(currentBugemon.getSpeciesId())) {
-			clientHandler.setPendingLevelUpBugemon(currentBugemon);
-			clientHandler.setPendingLevelUpRewards(new ArrayList<>(battle.computeRewards(currentBugemon)));
+		if (pendingLevelUpBugemon.isEmpty()
+				|| pendingLevelUpRewards == null || pendingLevelUpBugemon.isEmpty()
+				|| !pendingLevelUpBugemon.get().getSpeciesId().equals(currentBugemon.get().getSpeciesId())) {
+			clientHandler.setPendingLevelUpBugemon(currentBugemon.get());
+			clientHandler.setPendingLevelUpRewards(new ArrayList<>(battle.computeRewards(currentBugemon.get())));
 		}
         List<Reward> updatedPendingLevelUpRewards = clientHandler.getPendingLevelUpRewards();
 
@@ -152,7 +153,7 @@ public class GameInfoHandler {
 			rewardDTOs.add(RewardMapper.toDTO(reward));
 		}
 
-		clientHandler.sendMessage(new LevelUpInfoResponse(BugemonMapper.toDTO(currentBugemon), rewardDTOs));
+		clientHandler.sendMessage(new LevelUpInfoResponse(BugemonMapper.toDTO(currentBugemon.get()), rewardDTOs));
 	}
 
     public void getLogs(boolean clearLogs) {

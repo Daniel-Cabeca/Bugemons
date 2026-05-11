@@ -1,10 +1,9 @@
 package ulb.service;
 
-import java.util.NoSuchElementException;
-
 import ulb.repository.ItemRepository;
 import ulb.repository.StartingInventoryRepository;
 import ulb.model.item.Item;
+import ulb.exceptions.EntityNotFoundException;
 import ulb.model.item.Inventory;
 import java.util.List;
 import java.util.ArrayList;
@@ -24,9 +23,9 @@ public class ItemService {
 	*
 	* @param id The item's id
 	* @return The Item instance
-	* @throws NoSuchElementException If no item matches the id
+	* @throws EntityNotFoundException If no item matches the id
 	*/
-	public Item getItem(String id) throws NoSuchElementException {
+	public Item getItem(String id) throws EntityNotFoundException {
 		return this.itemRepository.findById(id);
 	}
 

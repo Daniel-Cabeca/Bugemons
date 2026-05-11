@@ -8,9 +8,8 @@ import ulb.model.item.Item;
 import ulb.model.item.Inventory;
 
 import ulb.repository.ItemRepository;
-
+import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
-import java.util.NoSuchElementException;
 
 /**
  * Json parser for item inventories.
@@ -42,7 +41,7 @@ public class InventoryJsonParser {
 			try {
 				Item item = this.itemRepository.findById(id);
 				inventory.addItem(item, quantity);
-			} catch (NoSuchElementException e) {
+			} catch (EntityNotFoundException e) {
 				throw new LoadException("Item "+ id +" does not exist");
 			}
 		}

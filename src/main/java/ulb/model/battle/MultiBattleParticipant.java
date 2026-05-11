@@ -1,5 +1,7 @@
 package ulb.model.battle;
 
+import java.util.Optional;
+
 import ulb.model.Player;
 import ulb.model.team.Team;
 
@@ -8,7 +10,7 @@ public class MultiBattleParticipant {
 
 	private boolean accepted = false;
 	private boolean declined = false;
-	private Team team = null;
+	private Optional<Team> team = Optional.empty();
 	private Battle.ParticipantLabel participantLabel;
 
 	public MultiBattleParticipant(Player player, Battle.ParticipantLabel participantLabel) {
@@ -17,7 +19,7 @@ public class MultiBattleParticipant {
 	}
 
 	public Player getPlayer() { return this.player; }
-	public int getUserId() { return this.player.getUserId(); }
+	public int getUserId() { return this.player.getUserId().get(); }
 	public Battle.ParticipantLabel getParticipantLabel() { return this.participantLabel; }
 
 	public boolean hasAccepted() { return this.accepted; }
@@ -26,7 +28,7 @@ public class MultiBattleParticipant {
 	public boolean hasDeclined() { return this.declined; }
 	public void decline() { this.declined = true; }
 
-	public boolean hasTeam() { return this.team != null; }
-	public Team getTeam() { return this.team; }
-	public void setTeam(Team team) { this.team = team; }
+	public boolean hasTeam() { return this.team.isPresent(); }
+	public Optional<Team> getTeam() { return this.team; }
+	public void setTeam(Team team) { this.team = Optional.of(team); }
 }

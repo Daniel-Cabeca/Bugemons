@@ -4,6 +4,7 @@ import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.BugemonSpecies;
 import ulb.model.bugemon.Stats;
 import ulb.model.team.Team;
+import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
 import ulb.repository.TeamRepository;
 import ulb.repository.database.sql.Database;
@@ -14,6 +15,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -225,9 +227,9 @@ public class TeamDatabaseRepository implements TeamRepository {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Bugemon findBugemon(int id) throws NoSuchElementException {
+	public Bugemon findBugemon(int id) throws EntityNotFoundException {
 		String sql = "SELECT * FROM bugemons WHERE id = ?";
-		Bugemon bugemon = null;
+		Optional<Bugemon> bugemon = Optional.empty();
 		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
 			stmt.setInt(1, id);
 			ResultSet rs = stmt.executeQuery();
@@ -235,11 +237,12 @@ public class TeamDatabaseRepository implements TeamRepository {
 				BugemonSpeciesDatabaseRepository speciesRepo = new BugemonSpeciesDatabaseRepository(this.database);
 				String speciesId = rs.getString("species_id");
 				BugemonSpecies species = speciesRepo.findById(speciesId);
-				bugemon = new Bugemon(species);
-				bugemon.setId(rs.getInt("id"));
-				bugemon.setLevel(rs.getInt("level"));
-				bugemon.setXp(rs.getInt("xp"));
-				bugemon.setRemainingRewards(rs.getInt("remaining_rewards"));
+
+				Bugemon newBugemon = new Bugemon(species);
+				newBugemon.setId(rs.getInt("id"));
+				newBugemon.setLevel(rs.getInt("level"));
+				newBugemon.setXp(rs.getInt("xp"));
+				newBugemon.setRemainingRewards(rs.getInt("remaining_rewards"));
 
 				Stats savedStats = new Stats(
 						rs.getInt("hp"),
@@ -248,21 +251,25 @@ public class TeamDatabaseRepository implements TeamRepository {
 						rs.getInt("initiative")
 				);
 
-				bugemon.setBaseStats(savedStats);
-
+				newBugemon.setBaseStats(savedStats);
+				bugemon = Optional.of(newBugemon);
 			}
 
 		} catch (SQLException e) {
 			LOGGER.log(Level.WARNING, "Failed to load bugemon with id: " + id, e);
+			throw new EntityNotFoundException("Bugemon", id);
 		}
-		return bugemon;
+		if (bugemon.isEmpty()){
+			throw new EntityNotFoundException("Bugemon", id);
+		}
+		return bugemon.get();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Team findById(int id) throws NoSuchElementException {
+	public Team findById(int id) throws EntityNotFoundException {
 		String sql = """
         SELECT t.team_name, tm.bugemon_id
         FROM teams t
@@ -281,9 +288,11 @@ public class TeamDatabaseRepository implements TeamRepository {
 				int bugemonId = rs.getInt("bugemon_id");
 				if (bugemonId != 0) {
 					try {
-						bugemons.add(findBugemon(bugemonId));
-					} catch (NoSuchElementException e) {
+						Bugemon bugemon = findBugemon(bugemonId);
+						bugemons.add(bugemon);
+					} catch (EntityNotFoundException e) {
 						LOGGER.log(Level.WARNING, "ID found but Bugemon could not be loaded: " + bugemonId, e);
+						throw e;
 					}
 				}
 			}
@@ -300,7 +309,7 @@ public class TeamDatabaseRepository implements TeamRepository {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<Team> findAll(int userId) {
+	public List<Team> findAll(int userId) throws EntityNotFoundException{
 		String sql = """
         SELECT team_id
         FROM teams
@@ -315,8 +324,9 @@ public class TeamDatabaseRepository implements TeamRepository {
 				try {
 					Team team = findById(teamId);
 					teams.add(team);
-				} catch (NoSuchElementException e) {
+				} catch (EntityNotFoundException e) {
 					LOGGER.log(Level.WARNING, "ID found but team could not be loaded: " + teamId, e);
+					throw e;
 				}
 			}
 		} catch (SQLException e) {
@@ -329,7 +339,7 @@ public class TeamDatabaseRepository implements TeamRepository {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Team getTowerTeam(int userId) throws LoadException {
+	public Optional<Team> getTowerTeam(int userId) throws LoadException {
 		String sql = """
 				SELECT team_id FROM teams WHERE user_id = ? AND tower_team = 1
 				""";
@@ -339,13 +349,13 @@ public class TeamDatabaseRepository implements TeamRepository {
 			if (rs.next()){
 				int teamId = rs.getInt("team_id");
 				Team team = findById(teamId);
-				return team;
+				return Optional.of(team);
 			}
 
 		} catch (SQLException e) {
 			throw new LoadException("Failed to check team existence: " + e.getMessage());
 		}
-		return null;
+		return Optional.empty();
 	}
 
 	/**

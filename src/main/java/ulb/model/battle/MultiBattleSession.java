@@ -1,9 +1,12 @@
 package ulb.model.battle;
 
+import ulb.exceptions.GameException;
 import ulb.model.Player;
+import ulb.model.team.Team;
 import ulb.service.AccountService;
 
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 /**
  * Holds data pertaining to a multiplayer battle between two players.
@@ -72,10 +75,15 @@ public class MultiBattleSession {
 	/**
 	 * Creates a Battle instance for the session. To be called once both players are ready.
 	 */
-	public void start(AccountService accountService) {
+	public void start(AccountService accountService) throws GameException{
+		Optional<Team> teamA = this.participants.a().getTeam();
+		Optional<Team> teamB = this.participants.b().getTeam();
+		if (teamA.isEmpty() || teamB.isEmpty()){
+			throw new GameException("at least one player doesn't have a team");
+		}
 		this.battle = new Battle(
-			this.participants.a().getTeam(),
-			this.participants.b().getTeam(),
+			teamA.get(),
+			teamB.get(),
 
 			this.participants.a().getPlayer(),
 			this.participants.b().getPlayer(),

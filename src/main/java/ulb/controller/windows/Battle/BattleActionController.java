@@ -3,6 +3,7 @@ package ulb.controller.windows.Battle;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -49,22 +50,22 @@ public class BattleActionController {
      * @param itemId The id of the item to find
      * @return The matching item DTO, or null if not found
      */
-    private ItemDTO findInventoryItemById(String itemId, PlayerDTO player) {
+    private Optional<ItemDTO> findInventoryItemById(String itemId, PlayerDTO player) {
         if (itemId == null) {
-            return null;
+            return Optional.empty();
         }
 
         Map<ItemDTO, Integer> inventory = player.getInventory();
         if (inventory == null) {
-            return null;
+            return Optional.empty();
         }
 
         for (ItemDTO item : inventory.keySet()) {
             if (itemId.equals(item.id())) {
-                return item;
+                return Optional.of(item);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -73,22 +74,22 @@ public class BattleActionController {
      * @param bugemonId The id of the Bugemon to find
      * @return The matching Bugemon DTO, or null if not found
      */
-    private BugemonDTO findTeamBugemonById(String bugemonId, PlayerDTO player) {
+    private Optional<BugemonDTO> findTeamBugemonById(String bugemonId, PlayerDTO player) {
         if (bugemonId == null) {
-            return null;
+            return Optional.empty();
         }
 
         List<BugemonDTO> team = player.getTeam();
         if (team == null) {
-            return null;
+            return Optional.empty();
         }
 
         for (BugemonDTO bugemon : team) {
             if (bugemonId.equals(bugemon.getId())) {
-                return bugemon;
+                return Optional.of(bugemon);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
 	/**
@@ -97,10 +98,10 @@ public class BattleActionController {
      * @param abilityId The id of the ability to find
      * @return The matching ability DTO, or null if not found
      */
-    private AbilityDTO findActiveAbilityById(String abilityId) {
+    private Optional<AbilityDTO> findActiveAbilityById(String abilityId) {
         BugemonDTO activeBugemon = this.battleSetupController.getActiveBugemons().get(0);
         if (activeBugemon == null){
-            return null;
+            return Optional.empty();
         }
 		return activeBugemon.findActiveAbilityById(abilityId);
     }
@@ -122,7 +123,7 @@ public class BattleActionController {
 		} else if (message instanceof StatusResponse errorMessage && errorMessage.isFailure()){
 			LOGGER.log(Level.WARNING, "Failed to get HP after first action: " + errorMessage.getMessage());
 		}
-		return null;
+		return List.of();
 	}
 
 	/**
@@ -182,9 +183,13 @@ public class BattleActionController {
             firstActionOpponentHp = hpAfterFirstAction.get(1);
         }
 
-        BattleSnapshot finalSnapshot = this.battleSetupController.buildBattleSnapshot();
+        Optional<BattleSnapshot> finalSnapshot = this.battleSetupController.buildBattleSnapshot();
 
-        view.displayMessagesSequentially(logs, firstActionSelfHp, firstActionOpponentHp, finalSnapshot, () -> {
+		if (finalSnapshot.isEmpty()){
+			return ;
+		}
+
+        view.displayMessagesSequentially(logs, firstActionSelfHp, firstActionOpponentHp, finalSnapshot.get(), () -> {
             this.battleSetupController.refreshView();
             boolean stateHandled = this.battleSetupController.handleBattleState(stateAfter, player, event);
             if (!stateHandled) {
@@ -210,9 +215,9 @@ public class BattleActionController {
     }
 
 	public void useItem(String itemId, PlayerDTO player, ActionEvent event){
-		ItemDTO item = findInventoryItemById(itemId, player);
+		Optional<ItemDTO> item = findInventoryItemById(itemId, player);
 
-		if (!this.clientController.postData(new UseItemRequest(item))){
+		if (item.isEmpty() || !this.clientController.postData(new UseItemRequest(item.get()))){
 			return;
 		}
 
@@ -228,9 +233,9 @@ public class BattleActionController {
 	}
 
 	public void useAbility(String abilityId, PlayerDTO player, ActionEvent event){
-		AbilityDTO ability = findActiveAbilityById(abilityId);
+		Optional<AbilityDTO> ability = findActiveAbilityById(abilityId);
 
-		if (!this.clientController.postData(new UseAbilityRequest(ability))){
+		if (ability.isEmpty() || !this.clientController.postData(new UseAbilityRequest(ability.get()))){
 			return;
 		}
 
@@ -244,13 +249,19 @@ public class BattleActionController {
 	}
 
 	public void swapBugemon(String bugemonId, PlayerDTO player, GameMode gameMode, ActionEvent event){
-		BugemonDTO bugemon = findTeamBugemonById(bugemonId, player);
-        BattleSnapshot snapshotBeforeAction = this.battleSetupController.buildBattleSnapshot();
-        if (snapshotBeforeAction != null) {
-            view.setCurrentSnapshot(snapshotBeforeAction);
+		Optional<BugemonDTO> bugemon = findTeamBugemonById(bugemonId, player);
+
+		if (bugemon.isEmpty()){
+			return;
+		}
+        
+		Optional<BattleSnapshot> snapshotBeforeAction = this.battleSetupController.buildBattleSnapshot();
+        
+		if (snapshotBeforeAction.isPresent()) {
+            view.setCurrentSnapshot(snapshotBeforeAction.get());
         }
 
-		if (!this.clientController.postData(new SwapBugemonRequest(bugemon))){
+		if (!this.clientController.postData(new SwapBugemonRequest(bugemon.get()))){
 			return;
 		}
 

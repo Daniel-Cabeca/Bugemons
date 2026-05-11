@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import ulb.exceptions.LoadException;
 import ulb.repository.TowerSaveRepository;
@@ -113,43 +114,43 @@ public class TowerSaveDatabaseRepository implements TowerSaveRepository {
         } catch (SQLException e) {
             throw new LoadException("Failed to insert item to tower_saves: " + e.getMessage());
         }
-		return null;
+		return List.of();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Integer getCurrentFloorId(Integer userId) throws LoadException{
+	public Optional<Integer> getCurrentFloorId(Integer userId) throws LoadException{
 		String sql = "SELECT current_floor_id FROM tower_saves WHERE user_id=?";
 		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
 			stmt.setInt(1, userId);
 			ResultSet rs = stmt.executeQuery();
 			if (rs.next()){
-				return rs.getInt("current_floor_id");
+				return Optional.of(rs.getInt("current_floor_id"));
 			}
 		} catch (SQLException e) {
 			throw new LoadException("Failed to get current_floor_id from tower_saves: " + e.getMessage());
 		}
-		return -1;
+		return Optional.empty();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Integer getCurrentTeamId(Integer userId) throws LoadException{
+	public Optional<Integer> getCurrentTeamId(Integer userId) throws LoadException{
 		String sql = "SELECT current_team_id FROM tower_saves WHERE user_id=?";
 		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
 			stmt.setInt(1, userId);
 			ResultSet rs = stmt.executeQuery();
 			if (rs.next()){
-				return rs.getInt("current_team_id");
+				return Optional.of(rs.getInt("current_team_id"));
 			}
 		} catch (SQLException e) {
 			throw new LoadException("Failed to get current_team_id from tower_saves: " + e.getMessage());
 		}
-		return -1;
+		return Optional.empty();
 	}
 
 }

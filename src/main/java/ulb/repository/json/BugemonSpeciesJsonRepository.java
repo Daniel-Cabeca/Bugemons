@@ -8,6 +8,9 @@ import ulb.model.bugemon.BugemonSpecies;
 import ulb.repository.BugemonSpeciesRepository;
 
 import java.util.NoSuchElementException;
+import java.util.Optional;
+
+import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
 
 import ulb.repository.AbilityRepository;
@@ -62,7 +65,7 @@ public class BugemonSpeciesJsonRepository implements BugemonSpeciesRepository {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public BugemonSpecies findById(String id) throws NoSuchElementException {
+	public BugemonSpecies findById(String id) throws EntityNotFoundException {
 		return this.entries.get(id);
 	}
 

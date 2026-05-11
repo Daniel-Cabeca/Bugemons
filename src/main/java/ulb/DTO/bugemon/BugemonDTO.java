@@ -2,6 +2,7 @@ package ulb.DTO.bugemon;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Optional;
 
 import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.stats.StatsDTO;
@@ -50,13 +51,13 @@ public class BugemonDTO implements Serializable{
 	public Type getType(){return this.getSpecies().getType();}
 	public List<AbilityDTO> getAbilities(){return this.getSpecies().getAbilities();}
 
-	public AbilityDTO findActiveAbilityById(String abilityId) {
+	public Optional<AbilityDTO> findActiveAbilityById(String abilityId) {
         for (AbilityDTO ability : this.getAbilities()) {
             if (ability != null && abilityId.equals(ability.id())) {
-                return ability;
+                return Optional.of(ability);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
 	public int getHp(){return this.getFightStats().hp();}

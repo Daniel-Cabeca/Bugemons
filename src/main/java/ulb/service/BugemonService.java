@@ -7,6 +7,7 @@ import java.util.Random;
 import java.util.NoSuchElementException;
 
 import ulb.repository.BugemonSpeciesRepository;
+import ulb.exceptions.EntityNotFoundException;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.BugemonSpecies;
 
@@ -30,9 +31,9 @@ public class BugemonService {
 	 *
 	 * @param speciesId The id of the species
 	 * @return The instanciated Bugemon
-	 * @throws NoSuchElementException If the species id was not recognized
+	 * @throws EntityNotFoundException If the species id was not recognized
 	 */
-	public Bugemon spawnBugemon(String speciesId) throws NoSuchElementException {
+	public Bugemon spawnBugemon(String speciesId) throws EntityNotFoundException {
 		BugemonSpecies species = this.speciesRepository.findById(speciesId);
 		return new Bugemon(species);
 	}
@@ -90,9 +91,9 @@ public class BugemonService {
 	 * Fetches a Bugemon species by its id.
 	 *
 	 * @param id The species' id
-	 * @throws NoSuchElementException If no species matches the id
+	 * @throws EntityNotFoundException If no species matches the id
 	 */
-	public BugemonSpecies getBugemonSpecies(String id) throws NoSuchElementException {
+	public BugemonSpecies getBugemonSpecies(String id) throws EntityNotFoundException {
 		return this.speciesRepository.findById(id);
 	}
 

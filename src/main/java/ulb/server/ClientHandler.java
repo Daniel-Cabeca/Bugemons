@@ -25,6 +25,7 @@ import ulb.model.tower.towerManager.TowerManager;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Optional;
 
 public class ClientHandler extends Thread implements ServerMessageHandler{
 	private static final Logger LOGGER = Logger.getLogger(ClientHandler.class.getName());
@@ -40,7 +41,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	private TowerManager towerManager;
 	private boolean isGameTower;
 
-	private Bugemon pendingLevelUpBugemon;
+	private Optional<Bugemon> pendingLevelUpBugemon;
 	private List<Reward> pendingLevelUpRewards;
 
 	private final TowerSaveService towerSaveService;
@@ -85,7 +86,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	public TowerManager getTowerManager() { return this.towerManager; }
 	public boolean isGameTower() { return this.isGameTower; }
 	public Battle.ParticipantLabel getTeamLabel() { return this.teamLabel; }
-	public Bugemon getPendingLevelUpBugemon() { return this.pendingLevelUpBugemon; }
+	public Optional<Bugemon> getPendingLevelUpBugemon() { return this.pendingLevelUpBugemon; }
 	public List<Reward> getPendingLevelUpRewards() { return this.pendingLevelUpRewards; }
 
 	public void setPlayer(Player player) { this.player = player; }
@@ -94,7 +95,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	public void setTowerManager(TowerManager towerManager) { this.towerManager = towerManager; }
 	public void setGameMode(boolean isGameTower) { this.isGameTower = isGameTower; }
 	public void setTeamLabel(Battle.ParticipantLabel label) { this.teamLabel = label; }
-	public void setPendingLevelUpBugemon(Bugemon pendingLevelUpBugemon) { this.pendingLevelUpBugemon = pendingLevelUpBugemon; }
+	public void setPendingLevelUpBugemon(Bugemon pendingLevelUpBugemon) { this.pendingLevelUpBugemon = Optional.of(pendingLevelUpBugemon); }
 	public void setPendingLevelUpRewards(List<Reward> rewards) { this.pendingLevelUpRewards = rewards; }
 
 

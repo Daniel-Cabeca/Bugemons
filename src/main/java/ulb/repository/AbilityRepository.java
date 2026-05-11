@@ -1,7 +1,6 @@
 package ulb.repository;
 
-import java.util.NoSuchElementException;
-
+import ulb.exceptions.EntityNotFoundException;
 import ulb.model.ability.Ability;
 
 /**
@@ -13,9 +12,9 @@ public interface AbilityRepository {
 	 *
 	 * @param id The id of the ability
 	 * @return The Ability instance
-	 * @throws NoSuchElementException If no match was found for the id
+	 * @throws EntityNotFoundException If no match was found for the id
 	 */
-	public Ability findById(String id) throws NoSuchElementException;
+	public Ability findById(String id) throws EntityNotFoundException;
 
 	/**
 	 * Gives an iterable list of the abilities in the repository.

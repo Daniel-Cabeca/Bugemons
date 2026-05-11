@@ -1,11 +1,13 @@
 package ulb.repository;
 
 import ulb.exceptions.DataAccessException;
+import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
 
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 /**
  * Repository for the user accounts.
@@ -29,8 +31,9 @@ public interface AccountRepository {
 	 * @param username The account username
 	 * @return The stored password hash, or null if not found
 	 * @throws LoadException If the lookup fails
+	 * @throws EntityNotFoundException If no match was found for the username 
 	 */
-	public String getPasswordHash(String username) throws LoadException;
+	public String getPasswordHash(String username) throws LoadException, EntityNotFoundException;
 
 
 	/**
@@ -40,7 +43,7 @@ public interface AccountRepository {
 	 * @return The user id, or -1 if not found
 	 * @throws NoSuchElementException If the lookup fails
 	 */
-	public int getUserId(String username) throws NoSuchElementException;
+	public Integer getUserId(String username) throws NoSuchElementException;
 
 	/**
 	 * Returns the username of the player specified by a given id.

@@ -7,6 +7,7 @@ import ulb.exceptions.LoadException;
 import ulb.repository.TeamRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Service layer for team saving and loading.
@@ -31,11 +32,16 @@ public class TeamService {
      * @throws LoadException if the saving fails
      */
     public void insertTeam(Player player, Team team) throws LoadException {
-		int userId = player.getUserId();
+		Optional<Integer> userId = player.getUserId();
+
+		if (userId.isEmpty()){
+			return;
+		}
+
 		for (Bugemon b : team.getMembers()) {
 			insertUserBugemon(b, player);
 		}
-        repository.insertTeam(userId, team, false);
+        repository.insertTeam(userId.get(), team, false);
 		insertAllBugemonsInTeam(team);
     }
 
@@ -45,18 +51,22 @@ public class TeamService {
      * @throws LoadException if the saving fails
      */
     public void insertTowerTeam(Player player) throws LoadException {
-		int userId = player.getUserId();
+		Optional<Integer> userId = player.getUserId();
+
+		if (userId.isEmpty()){
+			return;
+		}
 		Team team = player.getTeam();
-		if (repository.hasTowerTeam(userId)){
+		if (repository.hasTowerTeam(userId.get())){
 			for (Bugemon b : team.getMembers()) {
 				updateUserBugemon(b, player);
 			}
-			repository.updateTowerTeam(userId, team);
+			repository.updateTowerTeam(userId.get(), team);
 		} else {
 			for (Bugemon b : team.getMembers()) {
 				insertUserBugemon(b, player);
 			}
-        	repository.insertTeam(userId, team, true);
+        	repository.insertTeam(userId.get(), team, true);
 			insertAllBugemonsInTeam(team);
 		}
     }
@@ -67,17 +77,21 @@ public class TeamService {
      * @throws LoadException if the deleting fails
      */
 	public void deleteTowerTeam(Player player) throws LoadException {
-		int userId = player.getUserId();
+		Optional<Integer> userId = player.getUserId();
 
-		if (repository.hasTowerTeam(userId)){
-			Team team = getTowerTeam(player);
+		if (userId.isEmpty()){
+			return;
+		}
 
-			for (Bugemon b : team.getMembers()) {
-				repository.deleteUserBugemon(b, userId);
-				repository.deleteBugemonInTeam(b, team.getId());
+		if (repository.hasTowerTeam(userId.get())){
+			Optional<Team> team = getTowerTeam(player);
+
+			for (Bugemon b : team.get().getMembers()) {
+				repository.deleteUserBugemon(b, userId.get());
+				repository.deleteBugemonInTeam(b, team.get().getId());
 			}
 
-			repository.deleteTowerTeam(userId);
+			repository.deleteTowerTeam(userId.get());
 		}
 	}
 
@@ -101,8 +115,13 @@ public class TeamService {
      * @throws LoadException if the operation fails
      */
     public boolean teamExists(String teamName, Player player) throws LoadException {
-		int userId = player.getUserId();
-        return repository.teamExists(teamName, userId);
+		Optional<Integer> userId = player.getUserId();
+
+		if (userId.isPresent()){
+			return false;
+		}
+
+        return repository.teamExists(teamName, userId.get());
     }
 
     /**
@@ -112,8 +131,13 @@ public class TeamService {
      * @param player the user
      */
 	public void insertUserBugemon(Bugemon bugemon, Player player) throws LoadException {
-		int userId = player.getUserId();
-		repository.insertUserBugemon(bugemon, userId);
+		Optional<Integer> userId = player.getUserId();
+
+		if (userId.isEmpty()){
+			return;
+		}
+
+		repository.insertUserBugemon(bugemon, userId.get());
 	}
 
 	/**
@@ -123,8 +147,13 @@ public class TeamService {
      * @param player the user
      */
 	public void updateUserBugemon(Bugemon bugemon, Player player) throws LoadException {
-		int userId = player.getUserId();
-		repository.updateUserBugemon(bugemon, userId);
+		Optional<Integer> userId = player.getUserId();
+
+		if (userId.isEmpty()){
+			return;
+		}
+
+		repository.updateUserBugemon(bugemon, userId.get());
 	}
 
     /**
@@ -134,8 +163,13 @@ public class TeamService {
      * @return the list of the user's saved teams
      */
 	public List<Team> getAllTeams(Player player) throws LoadException {
-		int userId = player.getUserId();
-		return repository.findAll(userId);
+		Optional<Integer> userId = player.getUserId();
+
+		if (userId.isEmpty()){
+			return List.of();
+		}
+
+		return repository.findAll(userId.get());
 	}
 
 	/**
@@ -143,8 +177,12 @@ public class TeamService {
 	 * @param player the user
 	 * @return the team saved
 	 */
-	public Team getTowerTeam(Player player) throws LoadException {
-		int userId = player.getUserId();
-		return repository.getTowerTeam(userId);
+	public Optional<Team> getTowerTeam(Player player) throws LoadException {
+		Optional<Integer> userId = player.getUserId();
+
+		if (userId.isPresent()){
+			return repository.getTowerTeam(userId.get());
+		}
+		return Optional.empty();
 	}
 }

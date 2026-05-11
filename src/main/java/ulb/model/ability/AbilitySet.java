@@ -1,6 +1,7 @@
 package ulb.model.ability;
 
 import java.util.Iterator;
+import java.util.Optional;
 
 /**
  * Represents the set of abilities usable by a Bugemon.
@@ -76,7 +77,7 @@ public class AbilitySet implements Iterable<Ability> {
 	 */
 	public boolean contains(String id) {
 		for (Ability ability: this) {
-			if (ability.getId().equals(id)) {
+			if (ability != null && ability.getId().equals(id)) {
 				return true;
 			}
 		}
@@ -84,13 +85,13 @@ public class AbilitySet implements Iterable<Ability> {
 		return false;
 	}
 
-	public Ability getAbilityById(String id){
+	public Optional<Ability> getAbilityById(String id){
 		for (Ability ability : this.abilities){
-			if (ability.getId().equals(id)){
-				return ability;
+			if (ability != null && ability.getId().equals(id)){
+				return Optional.of(ability);
 			}
 		}
-		return null;
+		return Optional.empty();
 	}
 
 	/**

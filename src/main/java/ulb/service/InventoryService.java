@@ -40,7 +40,9 @@ public class InventoryService {
      * @throws LoadException
      */
     public void insertItem(Item item, int quantity, Player player) throws LoadException {
-        this.inventoryRepository.insertItem(item, quantity, player.getUserId());
+		if (player.getUserId().isPresent()){
+        	this.inventoryRepository.insertItem(item, quantity, player.getUserId().get());
+		}
     }
 
     /**
@@ -50,7 +52,9 @@ public class InventoryService {
      * @throws LoadException
      */
     public void deleteItem(Item item, int quantity, Player player) throws LoadException {
-        this.inventoryRepository.deleteItem(item, quantity, player.getUserId());
+		if (player.getUserId().isPresent()){
+        	this.inventoryRepository.deleteItem(item, quantity, player.getUserId().get());
+		}
     }
 
     /**
@@ -60,7 +64,9 @@ public class InventoryService {
      * @throws LoadException
      */
     public void updateInventory(Inventory inventory, Player player) throws LoadException {
-        this.inventoryRepository.updateInventory(inventory, player.getUserId());
+		if (player.getUserId().isPresent()){
+        	this.inventoryRepository.updateInventory(inventory, player.getUserId().get());
+		}
     }
 
     /**

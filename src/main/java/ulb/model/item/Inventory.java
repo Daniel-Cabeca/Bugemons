@@ -2,6 +2,7 @@ package ulb.model.item;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * An inventory containing variable quantities of items.
@@ -22,13 +23,13 @@ public class Inventory {
 	 * @param id the id of the item to find
 	 * @return the coresponding item if found, if not returns null
 	 */
-	private Item findItemByID(String id) {
+	private Optional<Item> findItemByID(String id) {
 		for (Item item : items.keySet()) {
 			if (item != null && item.getId().equals(id)) {
-				return item;
+				return Optional.of(item);
 			}
 		}
-		return null;
+		return Optional.empty();
 	}
 
 	/**
@@ -38,12 +39,12 @@ public class Inventory {
 	 * @param quantity The quantity to add
 	 */
 	public void addItem(Item item, int quantity) {
-		Item itemToAdd = findItemByID(item.getId());
+		Optional<Item> itemToAdd = findItemByID(item.getId());
 
-		if (itemToAdd == null) {
+		if (itemToAdd.isEmpty()) {
 			this.items.put(item, quantity);
 		} else {
-			this.items.put(itemToAdd, this.items.get(itemToAdd) + quantity);
+			this.items.put(itemToAdd.get(), this.items.get(itemToAdd.get()) + quantity);
 		}
 	}
 
@@ -53,13 +54,13 @@ public class Inventory {
 	 * @param item The item to remove
 	 */
 	public void removeItem(Item item) {
-		Item itemToRemove = findItemByID(item.getId());
-		if (this.items.containsKey(itemToRemove)) {
-			int current = this.items.get(itemToRemove);
+		Optional<Item> itemToRemove = findItemByID(item.getId());
+		if (itemToRemove.isPresent() && this.items.containsKey(itemToRemove.get())) {
+			int current = this.items.get(itemToRemove.get());
 			if (current <= 1) {
-				this.items.remove(itemToRemove);
+				this.items.remove(itemToRemove.get());
 			} else {
-				this.items.put(itemToRemove, current - 1);
+				this.items.put(itemToRemove.get(), current - 1);
 			}
 		}
 	}
@@ -74,8 +75,12 @@ public class Inventory {
 	 * @return The quantity of the item in the inventory (0 if not present)
 	 */
 	public int getQuantity(Item item) {
-		Item itemToFind = findItemByID(item.getId());
-		Integer quantity = this.items.get(itemToFind);
+		Optional<Item> itemToFind = findItemByID(item.getId());
+		if (itemToFind.isEmpty()){
+			return 0;
+		}
+
+		Integer quantity = this.items.get(itemToFind.get());
 
 		if (quantity == null) {
 			return 0;

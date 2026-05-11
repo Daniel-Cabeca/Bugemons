@@ -3,6 +3,7 @@ package ulb.repository;
 import ulb.exceptions.LoadException;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TowerSaveRepository {
 	/**
@@ -53,7 +54,7 @@ public interface TowerSaveRepository {
 	 * @return a list corresponding of the id of the rooms
 	 * @throws LoadException if the operation fails
 	 */
-	Integer getCurrentFloorId(Integer userId) throws LoadException;
+	Optional<Integer> getCurrentFloorId(Integer userId) throws LoadException;
 
 	/**
 	 * get the id of the current team
@@ -61,5 +62,5 @@ public interface TowerSaveRepository {
 	 * @return a list corresponding of the id of the rooms
 	 * @throws LoadException if the operation fails
 	 */
-	Integer getCurrentTeamId(Integer userId) throws LoadException;
+	Optional<Integer> getCurrentTeamId(Integer userId) throws LoadException;
 } 

@@ -1,7 +1,10 @@
 package ulb.service;
 
 import ulb.exceptions.LoadException;
+
 import java.util.List;
+import java.util.Optional;
+
 import ulb.model.Player;
 import ulb.model.tower.Tower;
 import ulb.repository.TowerSaveRepository;
@@ -28,23 +31,28 @@ public class TowerSaveService {
 	 * @param player player who played in the tower
 	 */
 	public void saveTowerInfo(Tower tower, Player player) throws LoadException {
-		Integer userId = player.getUserId();
-		Integer currentFloorId = tower.getCurrentFloorId();
+		Optional<Integer> userId = player.getUserId();
+		Optional<Integer> currentFloorId = tower.getCurrentFloorId();
+
+		if (userId.isEmpty() || currentFloorId.isEmpty()){
+			return;
+		}
+
 		List<Integer> completedRoomsId =
 			tower.getCurrentFloorCompletedRoomsId();
 		Integer teamId = player.getTeamId();
 
-		if (this.towerSaveRepository.isTowerSaved(userId)) {
+		if (this.towerSaveRepository.isTowerSaved(userId.get())) {
 			this.towerSaveRepository.updateTowerSave(
-				userId,
-				currentFloorId,
+				userId.get(),
+				currentFloorId.get(),
 				completedRoomsId,
 				teamId
 			);
 		} else {
 			this.towerSaveRepository.addTowerSave(
-				userId,
-				currentFloorId,
+				userId.get(),
+				currentFloorId.get(),
 				completedRoomsId,
 				teamId
 			);
@@ -56,24 +64,40 @@ public class TowerSaveService {
 	 * @param player the player who played in the tower
 	 */
 	public void deleteTowerInfo(Player player) throws LoadException {
-		Integer userId = player.getUserId();
-		if (this.towerSaveRepository.isTowerSaved(userId)) {
-			this.towerSaveRepository.deleteTowerInfo(userId);
+		Optional<Integer> userId = player.getUserId();
+
+		if (userId.isEmpty()){
+			return;
+		}
+
+		if (this.towerSaveRepository.isTowerSaved(userId.get())) {
+			this.towerSaveRepository.deleteTowerInfo(userId.get());
 		}
 	}
 
 	public Tower getTowerSave(Player player) throws LoadException {
-		Integer userId = player.getUserId();
-		if (!this.towerSaveRepository.isTowerSaved(userId)){
+		Optional<Integer> userId = player.getUserId();
+
+		if (userId.isEmpty() || !this.towerSaveRepository.isTowerSaved(userId.get())){
 			return new Tower();
 		}
-		List<Integer> completedRoomId =  this.towerSaveRepository.getCompletedRoomsId(userId);
-		int currentFloorId = this.towerSaveRepository.getCurrentFloorId(userId);
-		return new Tower(currentFloorId, completedRoomId);
+		
+		List<Integer> completedRoomId =  this.towerSaveRepository.getCompletedRoomsId(userId.get());
+		Optional<Integer> currentFloorId = this.towerSaveRepository.getCurrentFloorId(userId.get());
+		if (currentFloorId.isPresent()){
+			return new Tower(currentFloorId.get(), completedRoomId);
+		}
+		return new Tower();
 		
 	}
 
 	public boolean isTowerSaved(Player player) throws LoadException {
-		return this.towerSaveRepository.isTowerSaved(player.getUserId());
+		Optional<Integer> userId = player.getUserId();
+
+		if (userId.isEmpty()){
+			return false;
+		}
+
+		return this.towerSaveRepository.isTowerSaved(userId.get());
 	}
 }

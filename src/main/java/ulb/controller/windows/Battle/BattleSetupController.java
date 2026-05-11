@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -217,15 +218,16 @@ public class BattleSetupController {
      *
      * @return The battle snapshot, or null if unavailable
      */
-    public BattleSnapshot buildBattleSnapshot() {
+    public Optional<BattleSnapshot> buildBattleSnapshot() {
         List<BugemonDTO> activeBugemons = this.getActiveBugemons();
         BugemonDTO playerBugemon = activeBugemons.get(0);
         BugemonDTO opponentBugemon = activeBugemons.get(1);
-        if (playerBugemon == null || opponentBugemon == null) {
-            return null;
+        
+		if (playerBugemon == null || opponentBugemon == null) {
+            return Optional.empty();
         }
-
-        return new BattleSnapshot(toBugemonDisplay(playerBugemon), toBugemonDisplay(opponentBugemon));
+		BattleSnapshot snapshot = new BattleSnapshot(toBugemonDisplay(playerBugemon), toBugemonDisplay(opponentBugemon));
+        return Optional.of(snapshot);
     }
 
 	/**
@@ -281,9 +283,10 @@ public class BattleSetupController {
         }
 
         view.setForcedSwitch(isForcedSwitch());
-        BattleSnapshot snapshot = buildBattleSnapshot();
-        if (snapshot != null) {
-            view.renderBattle(snapshot);
+        Optional<BattleSnapshot> snapshot = buildBattleSnapshot();
+        
+		if (snapshot.isPresent()) {
+            view.renderBattle(snapshot.get());
         }
         view.showLogMessages(consumeLogMessages());
     }
@@ -292,7 +295,11 @@ public class BattleSetupController {
      * Updates tower information banner when in tower mode.
      */
     public void updateTowerInfo(GameMode gameMode, int towerFloorNumber, int towerRoomNumber) {
-        if (gameMode == GameMode.TOWER) {
+		if (view == null) {
+            return;
+        }
+		
+		if (gameMode == GameMode.TOWER) {
             view.setTowerInfo(towerFloorNumber, towerRoomNumber);
         } else {
             view.clearTowerInfo();

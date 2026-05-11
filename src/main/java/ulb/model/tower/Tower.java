@@ -2,6 +2,7 @@ package ulb.model.tower;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class Tower {
 
@@ -47,33 +48,35 @@ public class Tower {
 	}
 
 	private void setCurrentFloorCompletedRooms(List<Integer> completedRoomsId){
-		Floor currentFloor = this.getCurrentFloor();
-		currentFloor.setRoomsCompleted(completedRoomsId);
+		Optional<Floor> currentFloor = this.getCurrentFloor();
+		if (currentFloor.isPresent()){
+			currentFloor.get().setRoomsCompleted(completedRoomsId);
+		}
 	}
 
 	public List<Floor> getFloors() { return floors; }
 
-	public Floor getCurrentFloor() {
+	public Optional<Floor> getCurrentFloor() {
 		for (Floor floor : this.floors) {
 			if (!floor.isFloorCompleted()) {
-				return floor;
+				return Optional.of(floor);
 			}
 		}
-		return null;
+		return Optional.empty();
 	}
 
-	public int getCurrentFloorId() {
-		Floor currentFloor = getCurrentFloor();
-		if (currentFloor != null) {
-			return currentFloor.getId();
+	public Optional<Integer> getCurrentFloorId() {
+		Optional<Floor> currentFloor = getCurrentFloor();
+		if (currentFloor.isPresent()) {
+			return Optional.of(currentFloor.get().getId());
 		}
-		return -1;
+		return Optional.empty();
 	}
 
 	public List<Integer> getCurrentFloorCompletedRoomsId() {
-		Floor currentFloor = getCurrentFloor();
-		if (currentFloor != null) {
-			return currentFloor.getCompletedRoomsId();
+		Optional<Floor> currentFloor = getCurrentFloor();
+		if (currentFloor.isPresent()) {
+			return currentFloor.get().getCompletedRoomsId();
 		}
 		return new ArrayList<>();
 	}

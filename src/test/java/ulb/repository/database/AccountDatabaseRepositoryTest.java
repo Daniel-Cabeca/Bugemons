@@ -5,6 +5,8 @@ import ulb.repository.database.sql.DatabaseInitializer;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+import ulb.exceptions.EntityNotFoundException;
+import ulb.exceptions.LoadException;
 import ulb.repository.database.sql.Database;
 import ulb.repository.database.sql.DatabaseInMemory;
 
@@ -65,7 +67,7 @@ public class AccountDatabaseRepositoryTest {
 	@Test
 	void getPasswordHashReturnsNullWhenUserMissing() throws Exception {
 		AccountDatabaseRepository repo = newRepository();
-		assertNull(repo.getPasswordHash("nobody"));
+		assertThrows(EntityNotFoundException.class, () -> repo.getPasswordHash("nobody").isEmpty());
 	}
 
 	@Test
@@ -75,7 +77,7 @@ public class AccountDatabaseRepositoryTest {
 		repo.register("second", "b");
 		assertEquals(1, repo.getUserId("first"));
 		assertEquals(2, repo.getUserId("second"));
-		assertEquals(-1, repo.getUserId("ghost"));
+		assertThrows(EntityNotFoundException.class, () -> repo.getUserId("ghost"));
 	}
 
 	@Test

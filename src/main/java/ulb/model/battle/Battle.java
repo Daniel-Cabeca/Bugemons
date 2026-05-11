@@ -12,6 +12,7 @@ import ulb.model.reward.Reward;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Vector;
 import ulb.model.reward.RewardType;
 
@@ -182,9 +183,10 @@ public class Battle {
 	/**
 	 * Returns the next available non-active Bugemon when switching.
 	 * @param team the team whose Bugemons are being considered
-	 * @return the next available non-active Bugemon or null if none available
+	 * @return the next available non-active Bugemon as an Optional object. 
+	 * 		   The Optional is empty if no Bugemon is available
 	 */
-	public Bugemon getNextBugemon(ParticipantLabel team){
+	public Optional<Bugemon> getNextBugemon(ParticipantLabel team){
 		return this.getTeam(team).getNextBugemon(this.getActiveBugemon(team));
 	}
 

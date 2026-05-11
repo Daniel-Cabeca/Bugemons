@@ -1,5 +1,7 @@
 package ulb.model.tower.towerManager;
 
+import java.util.Optional;
+
 import ulb.model.Player;
 import ulb.model.battle.Battle;
 import ulb.model.tower.Floor;
@@ -35,7 +37,12 @@ public class FloorManager {
 
 		this.currentRoomId = floor.getStartRoomId();
 		this.previousRoomId = this.currentRoomId;
-		this.currentRoomManager = new RoomManager(floor.getRoomById(currentRoomId), floor.getId(), this.player, this.getBugemonService(), this.getItemService());
+		if (floor.getRoomById(currentRoomId).isPresent()){
+			this.currentRoomManager = new RoomManager(floor.getRoomById(currentRoomId).get(), floor.getId(), this.player, this.getBugemonService(), this.getItemService());
+		} else {
+			// TODO Error
+		}
+		
 	}
 
 	/** Returns managed floor. */
@@ -59,23 +66,27 @@ public class FloorManager {
         if (!currentRoomManager.isRoomCompleted()) return false;
         if (!floor.getAdjacentRoomsIds(currentRoomId).contains(targetRoomId)) return false;
 
-        Room target = floor.getRoomById(targetRoomId);
-        if (target == null) return false;
+        Optional<Room> target = floor.getRoomById(targetRoomId);
+        if (target.isEmpty()) return false;
 
 		this.previousRoomId = currentRoomId;
-        this.currentRoomId = target.getId();
-        currentRoomManager = new RoomManager(target, floor.getId(), player, getBugemonService(), getItemService());
+        this.currentRoomId = target.get().getId();
+        currentRoomManager = new RoomManager(target.get(), floor.getId(), player, getBugemonService(), getItemService());
         return true;
 	}
 
 	/** Resets current room to the previous one so the player can retry it. */
 	public void rewindRoom() {
-		Room fledRoom = floor.getRoomById(this.currentRoomId);
-		fledRoom.setRoomCompleted(false);
+		Optional<Room> fledRoom = floor.getRoomById(this.currentRoomId);
+		if (fledRoom.isPresent()){
+			fledRoom.get().setRoomCompleted(false);
+		}
 
 		this.currentRoomId = this.previousRoomId;
-		Room previousRoom =  floor.getRoomById(this.currentRoomId);
-		currentRoomManager = new RoomManager(previousRoom, floor.getId(), this.player, this.getBugemonService(), this.getItemService());
+		Optional<Room> previousRoom =  floor.getRoomById(this.currentRoomId);
+		if (previousRoom.isPresent()){
+			currentRoomManager = new RoomManager(previousRoom.get(), floor.getId(), this.player, this.getBugemonService(), this.getItemService());
+		}
 	}
 
 	/**

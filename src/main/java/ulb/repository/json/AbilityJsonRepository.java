@@ -9,7 +9,9 @@ import ulb.repository.AbilityRepository;
 import ulb.model.ability.Ability;
 
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
+import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
 
 /**
@@ -48,7 +50,7 @@ public class AbilityJsonRepository implements AbilityRepository {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Ability findById(String id) throws NoSuchElementException {
+	public Ability findById(String id) throws EntityNotFoundException {
 		return this.abilities.get(id);
 	}
 

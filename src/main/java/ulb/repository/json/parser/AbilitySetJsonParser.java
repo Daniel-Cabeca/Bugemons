@@ -1,12 +1,12 @@
 package ulb.repository.json.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import java.util.NoSuchElementException;
 
 import ulb.model.ability.Ability;
 import ulb.model.ability.AbilitySet;
 
 import ulb.repository.AbilityRepository;
+import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
 
 /**
@@ -40,7 +40,8 @@ public class AbilitySetJsonParser {
 			try {
 				Ability ability = this.abilityRepository.findById(abilityId);
 				abilities[i++] = ability;
-			} catch (NoSuchElementException e) {
+				
+			} catch (EntityNotFoundException e) {
 				throw new LoadException("Ability does not exist: "+ abilityId);
 			}
 		}

@@ -10,6 +10,9 @@ import ulb.model.item.Item;
 import ulb.model.item.Inventory;
 
 import java.util.NoSuchElementException;
+import java.util.Optional;
+
+import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
 
 /**
@@ -52,7 +55,7 @@ public class ItemJsonRepository implements ItemRepository {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Item findById(String id) throws NoSuchElementException {
+	public Item findById(String id) throws EntityNotFoundException {
 		return this.items.get(id);
 	}
 

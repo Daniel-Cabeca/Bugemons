@@ -3,6 +3,7 @@ package ulb.model.tower;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class Floor {
 
@@ -58,17 +59,17 @@ public class Floor {
 	 * @return the start room id (4 for all floors except the final floor that only has one boss battle)
 	 */
 	public int getStartRoomId() {
-		Room room4 = getRoomById(4);
-		return room4 != null ? 4 : rooms.getFirst().getId();
+		Optional<Room> room4 = getRoomById(4);
+		return room4.isPresent() ? 4 : rooms.getFirst().getId();
 	}
 
-	public Room getRoomById(int roomId) {
+	public Optional<Room> getRoomById(int roomId) {
 		for (Room room : rooms) {
 			if (room.getId() == roomId) {
-				return room;
+				return Optional.of(room);
 			}
 		}
-		return null;
+		return Optional.empty();
 	}
 
 	public boolean isBossCompleted() {

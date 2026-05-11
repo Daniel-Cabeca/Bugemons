@@ -2,6 +2,7 @@ package ulb.model.battle;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import ulb.model.Player;
 import ulb.model.action.Action;
@@ -117,11 +118,11 @@ public class BattleHandler {
 				}
 
 				this.battle.getLogMsg().add(null);
-				Bugemon nextB = this.battle.getTeam(ParticipantLabel.TEAM_B).getNextBugemon(participantB.getActiveBugemon());
+				Optional<Bugemon> nextBugemon = this.battle.getTeam(ParticipantLabel.TEAM_B).getNextBugemon(participantB.getActiveBugemon());
 
-				if (nextB != null) {
-					this.battle.setActiveBugemon(nextB, ParticipantLabel.TEAM_B);
-					this.battle.getLogMsg().add("L'adversaire a envoyé " + nextB.getName() + "!");
+				if (nextBugemon.isPresent()) {
+					this.battle.setActiveBugemon(nextBugemon.get(), ParticipantLabel.TEAM_B);
+					this.battle.getLogMsg().add("L'adversaire a envoyé " + nextBugemon.get().getName() + "!");
 				} // TO REFACTOR : le changement de bugemon ne doit pas se faire dans battle mais dans strategy, refactor des logs en fonction de ça.
 				this.battle.setState(BattleState.INGAME, ParticipantLabel.TEAM_A);
 				this.battle.setState(BattleState.INGAME, ParticipantLabel.TEAM_B); // TO REFACTOR TOO
@@ -156,7 +157,9 @@ public class BattleHandler {
 
 		if (this.battle.getMultiplayerBattle()) {
 			Player winnerPlayer = winner.getPlayer();
-			this.battle.getaccountService().addPoints(winnerPlayer.getUserId(), 1);
+			if (winnerPlayer.getUserId().isPresent()){
+				this.battle.getaccountService().addPoints(winnerPlayer.getUserId().get(), 1);
+			}
 		}
 
 	}

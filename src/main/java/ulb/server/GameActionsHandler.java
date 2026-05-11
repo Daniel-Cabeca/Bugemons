@@ -5,6 +5,7 @@ import ulb.DTO.item.ItemDTO;
 import ulb.exceptions.DataAccessException;
 
 import java.util.List;
+import java.util.Optional;
 
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.player.PlayerDTO;
@@ -59,21 +60,21 @@ public class GameActionsHandler extends Thread{
         Player player = clientHandler.getPlayer();
         TowerManager towerManager = clientHandler.getTowerManager();
 
-		Bugemon chosenBugemon = player.getTeam().getBugemonById(bugemonDTO.getId());
+		Optional<Bugemon> chosenBugemon = player.getTeam().getBugemonById(bugemonDTO.getId());
 
-		if (chosenBugemon == null){
+		if (chosenBugemon.isEmpty()){
 			clientHandler.sendErrorMessage("Bugemon not present in the Team");
 			return;
 		}
 
-		Ability oldAbility = chosenBugemon.getAbilities().getAbilityById(oldAbilityDTO.id());
-		if (oldAbility == null){
+		Optional<Ability> oldAbility = chosenBugemon.get().getAbilities().getAbilityById(oldAbilityDTO.id());
+		if (oldAbility.isEmpty()){
 			clientHandler.sendErrorMessage("Ability not learned");
 			return;
 		}
 		Ability newAbility = AbilityMapper.toEntity(newAbilityDTO);
 
-		chosenBugemon.swapAbility(newAbility, oldAbility);
+		chosenBugemon.get().swapAbility(newAbility, oldAbility.get());
 
 		towerManager.setCurrentRoomCompleted(true);
 		clientHandler.sendSuccessMessage();
@@ -129,18 +130,18 @@ public class GameActionsHandler extends Thread{
         Player player = clientHandler.getPlayer();
         TowerManager towerManager = clientHandler.getTowerManager();
 
-		Bugemon chosenBugemon = player.getTeam().getBugemonById(bugemonDTO.getId());
+		Optional<Bugemon> chosenBugemon = player.getTeam().getBugemonById(bugemonDTO.getId());
 
-		if (chosenBugemon == null){
+		if (chosenBugemon.isEmpty()){
 			clientHandler.sendErrorMessage("Bugemon not present in the Team");
 			return;
 		}
 
-		Reward reward = new Reward(chosenBugemon);
+		Reward reward = new Reward(chosenBugemon.get());
 		reward.configureReward(RewardType.COMBINATION);
 
-		chosenBugemon.changeBaseStats(reward.getStats());
-		chosenBugemon.changeFightStats(reward.getStats());
+		chosenBugemon.get().changeBaseStats(reward.getStats());
+		chosenBugemon.get().changeFightStats(reward.getStats());
 
 		towerManager.setCurrentRoomCompleted(true);
 		clientHandler.sendSuccessMessage();
@@ -200,9 +201,15 @@ public class GameActionsHandler extends Thread{
 
 	public void startMultiBattle(PlayerDTO opponentDTO) {
 		Player self = this.clientHandler.getPlayer();
-		MultiBattleSession session = this.multiBattleService.getMultiBattle(self.getUserId(), opponentDTO.getUserId());
+
+		if(self.getUserId().isEmpty() || opponentDTO.getUserId() == -1){
+			clientHandler.sendErrorMessage("The player or the opponent is not register");
+			return;
+		}
+
+		MultiBattleSession session = this.multiBattleService.getMultiBattle(self.getUserId().get(), opponentDTO.getUserId());
 		Battle battle = session.getBattle();
-		MultiBattleParticipant participant = session.getParticipant(self.getUserId());
+		MultiBattleParticipant participant = session.getParticipant(self.getUserId().get());
 
 		this.clientHandler.setBattle(battle);
 		// this.clientHandler.setMultiBattleSession(session);
@@ -213,8 +220,14 @@ public class GameActionsHandler extends Thread{
 
 	public void quitMultiBattle(PlayerDTO opponentDTO) {
 		Player self = this.clientHandler.getPlayer();
-		MultiBattleSession session = this.multiBattleService.getMultiBattle(self.getUserId(), opponentDTO.getUserId());
-		MultiBattleParticipant participant = session.getParticipant(self.getUserId());
+
+		if (self.getUserId().isEmpty() || opponentDTO.getUserId() == -1){
+			clientHandler.sendErrorMessage("The player or the opponent is not register");
+			return;
+		}
+
+		MultiBattleSession session = this.multiBattleService.getMultiBattle(self.getUserId().get(), opponentDTO.getUserId());
+		MultiBattleParticipant participant = session.getParticipant(self.getUserId().get());
 
 		participant.decline();
 
@@ -226,8 +239,14 @@ public class GameActionsHandler extends Thread{
         Battle battle = clientHandler.getBattle();
         ParticipantLabel teamLabel = clientHandler.getTeamLabel();
 
-		Bugemon bugemonToSwap = player.getTeam().getBugemonById(bugemonDTOToSwap.getId());
-		battle.chooseAction(new Swap(bugemonToSwap), teamLabel);
+		Optional<Bugemon> bugemonToSwap = player.getTeam().getBugemonById(bugemonDTOToSwap.getId());
+
+		if (bugemonToSwap.isEmpty()){
+			clientHandler.sendErrorMessage("The bugemon to swap doesn't exist");
+			return;
+		}
+		
+		battle.chooseAction(new Swap(bugemonToSwap.get()), teamLabel);
 
 		clientHandler.sendSuccessMessage();
 	}

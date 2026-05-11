@@ -1,8 +1,8 @@
 package ulb.repository;
 
 import java.lang.Iterable;
-import java.util.NoSuchElementException;
 
+import ulb.exceptions.EntityNotFoundException;
 import ulb.model.bugemon.BugemonSpecies;
 /**
  * Repository of the BugemonSpecies instances in the game data.
@@ -13,9 +13,9 @@ public interface BugemonSpeciesRepository {
 	 *
 	 * @param id The id of the species
 	 * @return The BugemonSpecies instance
-	 * @throws NoSuchElementException If no match was found for the id
+	 * @throws EntityNotFoundException If no match was found for the id
 	 */
-	public BugemonSpecies findById(String id) throws NoSuchElementException;
+	public BugemonSpecies findById(String id) throws EntityNotFoundException;
 
 	/**
 	 * Gives an iterable list of the species in the repository.

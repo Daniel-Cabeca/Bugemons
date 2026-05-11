@@ -110,7 +110,7 @@ public class Ability implements HasId {
 				damage + " PV!");
 
 		String effectivenessMessage = getEffectivenessMessage(oppositeBugemon);
-		if (effectivenessMessage != null) {
+		if (!effectivenessMessage.equals("")) {
 			battle.addLogMsg(effectivenessMessage);
 		}
 	}
@@ -119,7 +119,7 @@ public class Ability implements HasId {
 	 * Gets the effectiveness message of the ability
 	 *
 	 * @param oppositeBugemon The Bugemon this ability is used against
-	 * @return The effectiveness message (or null if the effectiveness is normal)
+	 * @return The effectiveness message (or an empty string if the effectiveness is normal)
 	 */
 	public String getEffectivenessMessage(Bugemon oppositeBugemon) {
 		Effectiveness.Category effectivenessCategory = Effectiveness.getCategory(this.getType(), oppositeBugemon.getType());
@@ -132,7 +132,7 @@ public class Ability implements HasId {
 				return "Pas très efficace !";
 
 			default:
-				return null;
+				return "";
 		}
 	}
 

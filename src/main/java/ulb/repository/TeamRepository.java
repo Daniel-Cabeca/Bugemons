@@ -1,11 +1,13 @@
 package ulb.repository;
 
+import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.team.Team;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 public interface TeamRepository {
 
@@ -98,9 +100,9 @@ public interface TeamRepository {
      *
      * @param id the id of the bugemon to find
      * @return the constructed Bugemon object
-     * @throws NoSuchElementException if the bugemon is not found
+     * @throws EntityNotFoundException if the bugemon is not found
      */
-	Bugemon findBugemon(int id) throws NoSuchElementException;
+	Bugemon findBugemon(int id) throws EntityNotFoundException;
 
     /**
      * Finds the team in the teams table based on its id
@@ -120,9 +122,10 @@ public interface TeamRepository {
 	List<Team> findAll(int userId) throws LoadException;
 
 	/**
-	 * Get the tower team of a user saved in the database 
+	 * Get the tower team saved for a user as an Optional object.
+	 * The object is empty if no team is found.
 	 * @param userId the user
 	 * @return the tower team saved
 	 */
-	Team getTowerTeam(int userId) throws LoadException;
+	Optional<Team> getTowerTeam(int userId) throws LoadException;
 }

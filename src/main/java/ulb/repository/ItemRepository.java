@@ -1,8 +1,8 @@
 package ulb.repository;
 
 import java.lang.Iterable;
-import java.util.NoSuchElementException;
 
+import ulb.exceptions.EntityNotFoundException;
 import ulb.model.item.Item;
 
 /**
@@ -14,9 +14,9 @@ public interface ItemRepository {
 	 *
 	 * @param id The id of the item
 	 * @return The Item instance
-	 * @throws NoSuchElementException If no match was found for the id
+	 * @throws EntityNotFoundException If no match was found for the id
 	 */
-	public Item findById(String id) throws NoSuchElementException;
+	public Item findById(String id) throws EntityNotFoundException;
 
 	/**
 	 * Gives an iterable list of the items in the repository.

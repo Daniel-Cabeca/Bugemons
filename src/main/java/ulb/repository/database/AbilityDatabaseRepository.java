@@ -87,27 +87,27 @@ public class AbilityDatabaseRepository implements AbilityRepository {
 		try (PreparedStatement pstmt = this.database.prepareStatement(sql)) {
 			pstmt.setString(1, id);
 			ResultSet rs = pstmt.executeQuery();
-			Ability ability = null;
+			Optional<Ability> ability = Optional.empty();
 			EffectList effects = new EffectList();
 			while (rs.next()) {
-				if (ability == null) {
+				if (ability.isEmpty()) {
 					Type abilityType = Type.valueOf(rs.getString("type"));
-					ability = new Ability(
+					ability = Optional.of(new Ability(
 							rs.getString("id"),
 							rs.getString("name"),
 							abilityType,
 							rs.getString("description"),
 							rs.getInt("power"),
 							effects
-					);
+					));
 				}
 				String effectId = rs.getString("effect_id");
 				if (effectId != null) {
-					Effect effect = null;
+					Optional<Effect> effect = Optional.empty();
 					EffectType type = EffectType.valueOf(rs.getString("effect_type"));
 					EffectTarget target = EffectTarget.valueOf(rs.getString("target"));
 					if (type == EffectType.HEAL) {
-						effect = new EffectHeal(target, rs.getInt("value"));
+						effect = Optional.of(new EffectHeal(target, rs.getInt("value")));
 					} else if (type == EffectType.STAT_MODIFIER) {
 						Map<EffectStatType, Integer> statsChanges = new EnumMap<>(EffectStatType.class);
 						statsChanges.put(EffectStatType.HP, rs.getInt("hp"));
@@ -115,20 +115,20 @@ public class AbilityDatabaseRepository implements AbilityRepository {
 						statsChanges.put(EffectStatType.DEFENSE, rs.getInt("defense"));
 						statsChanges.put(EffectStatType.INITIATIVE, rs.getInt("initiative"));
 						EffectStatDuration duration = EffectStatDuration.valueOf(rs.getString("duration"));
-						effect = new EffectStatModifier(target, duration, statsChanges);
+						effect = Optional.of(new EffectStatModifier(target, duration, statsChanges));
 					}
-					if (effect != null) {
-						effects.add(effect);
+					if (effect.isPresent()) {
+						effects.add(effect.get());
 					}
 				}
 			}
-			if (ability == null) {
+			if (ability.isEmpty()) {
 				throw new EntityNotFoundException("Ability", id);
 			}
-			return ability;
+			return ability.get();
 		} catch (SQLException e) {
 			LOGGER.log(Level.SEVERE, "SQL error while loading ability with id: " + id, e);
-			return null;
+			throw new EntityNotFoundException("Ability", id);
 		}
 	}
 
@@ -145,9 +145,7 @@ public class AbilityDatabaseRepository implements AbilityRepository {
 				String AbilityId = rs.getString("id");
 				try {
 					Ability ability = findById(AbilityId);
-					if (ability != null) {
-						abilities.add(ability);
-					}
+					abilities.add(ability);
 				} catch (NoSuchElementException e) {
 					LOGGER.log(Level.WARNING, "ID found but ability could not be loaded: " + AbilityId, e);
 				}

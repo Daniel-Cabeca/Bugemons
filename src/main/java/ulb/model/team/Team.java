@@ -2,6 +2,7 @@ package ulb.model.team;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import ulb.model.bugemon.Bugemon;
 
@@ -170,24 +171,25 @@ public class Team {
     }
 
     /**
-	 * Returns the next available Bugemon
+	 * Returns the next available Bugemon as an Optional object. 
+	 * If the Optional is empty, no Bugemon is available
 	 * @param current the current Bugemon
-	 * @return the next available Bugemon or null if none available
+	 * @return the next available Bugemon as an Optional objet
 	 */
-    public Bugemon getNextBugemon(Bugemon current) {
+    public Optional<Bugemon> getNextBugemon(Bugemon current) {
         int indexCurrent = this.getBugemonIndex(current);
         if (indexCurrent < 0) {
-            return null;
+            return Optional.empty();
         } 
 
         for (int i = indexCurrent+1; i % members.size() != indexCurrent; i++) {
 			Bugemon candidate = members.get(i % this.members.size());
 			if (!candidate.isKO()) {
-				return candidate;
+				return Optional.of(candidate);
 			}
 		}
 
-        return null;
+        return Optional.empty();
     }
 
     public List<Bugemon> getBugemonsAlive() {
@@ -205,13 +207,13 @@ public class Team {
         return this.contains(bugemon) && !bugemon.isKO();
     }
 
-	public Bugemon getFirstLevelUpBugemon(){
+	public Optional<Bugemon> getFirstLevelUpBugemon(){
 		for (Bugemon bugemon : this.getMembers()){
 			if (bugemon.getRemainingReward() > 0){
-				return bugemon;
+				return Optional.of(bugemon);
 			}
 		}
-		return null;
+		return Optional.empty();
 	}
 
 	public int getLevelUpBugemonNumber(){
@@ -224,13 +226,13 @@ public class Team {
 		return levelUpNumber;
 	}
 
-	public Bugemon getBugemonById(String id){
+	public Optional<Bugemon> getBugemonById(String id){
 		for (Bugemon bugemon : this.getMembers()){
 			if (bugemon.getSpeciesId().equals(id)){
-				return bugemon;
+				return Optional.of(bugemon);
 			}
 		}
-		return null;
+		return Optional.empty();
 	}
         
 }

@@ -125,7 +125,8 @@ public class TeamTest {
         Bugemon b3 = createBugemon("B3");
         Team team = new Team(List.of(b1, b2, b3));
 
-        assertEquals(b3, team.getNextBugemon(b2));
+		assertTrue(team.getNextBugemon(b2).isPresent());
+        assertEquals(b3, team.getNextBugemon(b2).get());
     }
 
     @Test 
@@ -136,7 +137,8 @@ public class TeamTest {
         Team team = new Team(List.of(b1, b2, b3));
         b2.changeFightStats(new Stats(-1000, 0, 0, 0));
 
-        assertEquals(b3, team.getNextBugemon(b1));
+		assertTrue(team.getNextBugemon(b1).isPresent());
+        assertEquals(b3, team.getNextBugemon(b1).get());
     }
 
     @Test 
@@ -147,7 +149,8 @@ public class TeamTest {
         Team team = new Team(List.of(b1, b2, b3));
         b3.changeFightStats(new Stats(-1000, 0, 0, 0));
 
-        assertEquals(b1, team.getNextBugemon(b2));
+		assertTrue(team.getNextBugemon(b2).isPresent());
+        assertEquals(b1, team.getNextBugemon(b2).get());
     }
 
     @Test

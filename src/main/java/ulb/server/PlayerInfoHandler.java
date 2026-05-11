@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.item.ItemDTO;
@@ -31,8 +32,7 @@ public class PlayerInfoHandler {
 
 	public void getPlayerInfo(String username) {
 		try {
-			int id = this.accountService.getUserId(username);
-
+			Integer id = this.accountService.getUserId(username);
 			Player player = new Player(username, id);
 			PlayerDTO playerDTO = PlayerMapper.toDTO(player);
 			clientHandler.sendMessage(new PlayerResponse(playerDTO));

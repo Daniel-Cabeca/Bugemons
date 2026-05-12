@@ -1,7 +1,6 @@
 package ulb.controller;
 
 import javafx.application.Application;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -291,9 +290,8 @@ public class ClientController extends Application {
 	 * Submits the chosen level-up reward to the server and goes to the next window.
 	 *
 	 * @param reward The reward chosen by the player
-	 * @param event The triggering action event
 	 */
-	public void chooseReward(RewardDTO reward, ActionEvent event) {
+	public void chooseReward(RewardDTO reward) {
 		if (postData(new ChooseLevelUpRewardRequest(reward))) {
 			nextRoom();
 		}

@@ -44,6 +44,6 @@ public class LevelUpController extends WindowController<LevelUpWindow> implement
     /** {@inheritDoc} */
     @Override
     public void onRewardChosen(RewardDTO reward, ActionEvent event) {
-        clientController.chooseReward(reward, event);
+        clientController.chooseReward(reward);
     }
 }

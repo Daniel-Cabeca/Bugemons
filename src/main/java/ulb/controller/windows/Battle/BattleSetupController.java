@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javafx.event.ActionEvent;
 import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.item.ItemDTO;
@@ -232,10 +231,9 @@ public class BattleSetupController {
      * Applies UI transitions for a given battle state.
      *
      * @param state The battle state to handle
-     * @param event The triggering action event
      * @return True if the state transition was handled
      */
-    public boolean handleBattleState(BattleState state, PlayerDTO player, ActionEvent event) {
+    public boolean handleBattleState(BattleState state, PlayerDTO player) {
 		if (state == BattleState.WON || state == BattleState.LOST){
 			this.clientController.nextRoom();
 		}

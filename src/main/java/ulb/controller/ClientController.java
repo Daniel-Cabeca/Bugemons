@@ -9,14 +9,12 @@ import javafx.stage.Stage;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import ulb.communication.SocketClient;
 import ulb.controller.windows.*;
 import ulb.controller.windows.Battle.BattleWindowController;
 import ulb.exceptions.CommunicationException;
-import ulb.exceptions.ViewLoadException;
 import ulb.communication.GameMode;
 import ulb.message.request.*;
 import ulb.message.response.*;
@@ -66,16 +64,6 @@ public class ClientController extends Application {
 	WaitWindowController waitWindowController;
 
 	public Stage getStage() { return stage; }
-
-	/**
-	 * Logs a view load failure with the given error message.
-	 *
-	 * @param errorMessage The message to log
-	 * @param e The exception that caused the failure
-	 */
-	private void logViewLoadFailure(String errorMessage, ViewLoadException e) {
-		LOGGER.log(Level.WARNING, errorMessage, e);
-	}
 
 	/**
 	 * Initializes network client from application launch parameters.
@@ -324,18 +312,6 @@ public class ClientController extends Application {
 			chooseBugemonController = new ChooseBugemonController(this.stage, this);
 		}
 		chooseBugemonController.show();
-	}
-
-	/**
-	 * Returns the current floor number and room number from the server.
-	 *
-	 * @return A list containing the floor number and room number, or null if unavailable
-	 */
-	public List<Integer> getTowerInfo() {
-		if (getData(new GetTowerInfoRequest()) instanceof TowerInfoResponse towerInfo){
-			return List.of(towerInfo.getFloorNumber(), towerInfo.getRoomNumber());
-		}
-		return null;
 	}
 
 	// FloorController

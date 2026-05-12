@@ -62,10 +62,7 @@ public class BugemonDTO implements Serializable{
 	public int getHp(){return this.getFightStats().hp();}
 
 	public void setSpecies(BugemonSpeciesDTO species) {this.species = species;}
-	public void setBaseStats(StatsDTO baseStats) {this.baseStats = baseStats;}
-	public void setFightStats(StatsDTO fightStats) {this.fightStats = fightStats;}
 	public void setXp(int xp) {this.xp = xp;}
 	public void setLevel(int level) {this.level = level;}
-	public void setRemainingRewards(int remainingRewards) {this.remainingRewards = remainingRewards;}
 
 }

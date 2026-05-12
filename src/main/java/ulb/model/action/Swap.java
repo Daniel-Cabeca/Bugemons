@@ -22,20 +22,6 @@ public class Swap implements Action {
         this.toSwap = toSwap;
     }
 
-    /** Returns the bugemon to swap in. */
-    public Bugemon getToSwap() {
-        return this.toSwap;
-    }
-
-    /**
-     * Sets the bugemon to swap in.
-     *
-     * @param toSwap Bugemon to swap in
-     */
-    public void setToSwap(Bugemon toSwap) {
-        this.toSwap = toSwap;
-    }
-
     /** {@inheritDoc} */
     @Override
     public boolean executeAction(Battle battle, ParticipantLabel team) {

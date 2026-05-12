@@ -39,17 +39,4 @@ public class BugemonSpecies implements HasId {
 	public int getAttack() { return this.getBaseStats().getAttack(); }
 	public int getDefense() { return this.getBaseStats().getDefense(); }
 	public int getInitiative() { return this.getBaseStats().getInitiative(); }
-
-	/**
-	 * Creates a fresh Bugemon instance from this species.
-	 *
-	 * @return A new Bugemon instance
-	 */
-	public Bugemon spawn() {
-		return new Bugemon(this);
-	}
-
-	public boolean equals(BugemonSpecies other){
-		return this.id.equals(other.id);
-	}
 }

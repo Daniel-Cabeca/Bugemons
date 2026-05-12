@@ -28,7 +28,6 @@ public class CreateTeamWindow extends Window {
 	private final int MAX_BUGEMONS = 6;
 
 	private final List<String> selectedBugemonIds = new ArrayList<>();
-	private List<BugemonSpeciesDTO> availableBugemons = List.of();
 	private ViewListener viewListener;
 
 	/**
@@ -41,16 +40,6 @@ public class CreateTeamWindow extends Window {
 
 	public void setViewListener(ViewListener viewListener) {
 		this.viewListener = viewListener;
-	}
-
-	/**
-	 * Displays the available Bugémons in the selection grid.
-	 *
-	 * @param availableBugemons the Bugémons that can be selected
-	 */
-	public void displayAvailableBugemons(List<BugemonSpeciesDTO> availableBugemons) {
-		this.availableBugemons = List.copyOf(availableBugemons);
-		populateAvailableBugemons();
 	}
 
 	/**

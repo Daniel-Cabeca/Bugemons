@@ -51,7 +51,6 @@ public class Ability implements HasId {
 	public String getName() { return this.name; }
 	public Type getType() { return this.type; }
 	public String getDescription() {return this.description;}
-	public String getAccurateDescription() {return this.description + "\n Puissance:  " + this.power;}
 	public int getPower() { return this.power; }
 	public EffectList getEffects() { return this.effects; }
 

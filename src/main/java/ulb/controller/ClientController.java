@@ -65,8 +65,6 @@ public class ClientController extends Application {
 	SocialPanelController socialPanelController;
 	WaitWindowController waitWindowController;
 
-	public Stage getStage() { return stage; }
-
 	/**
 	 * Logs a view load failure with the given error message.
 	 *
@@ -344,18 +342,6 @@ public class ClientController extends Application {
 			chooseBugemonController = new ChooseBugemonController(this.stage, this);
 		}
 		chooseBugemonController.show();
-	}
-
-	/**
-	 * Returns the current floor number and room number from the server.
-	 *
-	 * @return A list containing the floor number and room number, or null if unavailable
-	 */
-	public List<Integer> getTowerInfo() {
-		if (getData(new GetTowerInfoRequest()) instanceof TowerInfoResponse towerInfo){
-			return List.of(towerInfo.getFloorNumber(), towerInfo.getRoomNumber());
-		}
-		return null;
 	}
 
 	// FloorController

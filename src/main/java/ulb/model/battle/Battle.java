@@ -363,9 +363,6 @@ public class Battle {
 		this.gameFinished = true;
 	}
 
-	public int getHpAfterFirstActionA() { return this.participantA.getHpAfterFirstAction(); }
-	public int getHpAfterFirstActionB() { return this.participantB.getHpAfterFirstAction(); }
-
 	public List<String> getLogMsg() { return logMsg; } 
 	public void addLogMsg(String log){this.logMsg.add(log);}
 

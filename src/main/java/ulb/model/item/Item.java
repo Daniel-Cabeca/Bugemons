@@ -60,12 +60,4 @@ public class Item implements HasId {
 		this.effect.apply(battle, team);
 	}
 
-	/**
-	 * Returns the target scope of this item's effect.
-	 *
-	 * @return Effect target scope
-	 */
-	public EffectTarget getTarget(){
-		return this.effect.getTarget();
-	}
 }

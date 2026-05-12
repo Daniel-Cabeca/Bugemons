@@ -25,7 +25,6 @@ public class BugemonSpeciesDTO implements Serializable{
 	public Type getType() {return type;}
 	public StatsDTO getBaseStats() {return baseStats;}
 	public List<AbilityDTO> getAbilities() {return abilities;}
-	public AbilityDTO getAbility(int index){return this.abilities.get(index);}
 	public String getSprite() {return sprite;}
 	public String getSpritePath() {return "/png/" + sprite;}
 	public boolean isStarter() {return starter;}
@@ -34,7 +33,6 @@ public class BugemonSpeciesDTO implements Serializable{
 	public void setName(String name) {this.name = name;}
 	public void setType(Type type) {this.type = type;}
 	public void setBaseStats(StatsDTO baseStats) {this.baseStats = baseStats;}
-	public void setAbilities(List<AbilityDTO> abilities) {this.abilities = abilities;}
 	public void setSprite(String sprite) {this.sprite = sprite;}
 	public void setStarter(boolean starter) {this.starter = starter;}
 

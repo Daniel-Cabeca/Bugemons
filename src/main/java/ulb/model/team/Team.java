@@ -118,27 +118,6 @@ public class Team {
     }
 
     /**
-     * Removes a Bugemon from the team based on its name
-     *
-     * @param name the name of the Bugemon to be removed
-     * @return {@code true} if the Bugemon was removed, {@code false} otherwise
-     */
-    public boolean removeByName(String name) {
-        if (name == null || name.isBlank()) {
-            return false;
-        }
-
-        for (int i = 0; i < this.size(); i ++) {
-            if (this.members.get(i).getName().equals(name)) {
-                this.members.remove(i);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
 	 * Checks if entire team is KO or not
 	 *
 	 * @return true if entire team is KO

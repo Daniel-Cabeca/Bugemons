@@ -137,17 +137,8 @@ public class TowerManager {
 		return this.tower.getCurrentFloorCompletedRoomsId();
 	}
 
-	/** Returns current player. */
-	public Player getPlayer() {return player;}
-
-	/** Sets current player. */
-	public void setPlayer(Player player) {this.player = player;}
-
 	/** Returns tower definition. */
 	public Tower getTower() {return tower;}
-
-	/** Sets tower definition. */
-	public void setTower(Tower tower) {this.tower = tower;}
 
 	/** Returns current floor number as displayed in game. */
 	public int getFloorNumber() {

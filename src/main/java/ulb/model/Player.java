@@ -62,8 +62,6 @@ public class Player {
 	public final int getTeamId(){return this.team.getId();}
 	/** Returns player inventory. */
 	public Inventory getInventory() {return this.inventory;}
-	/** Sets player username. */
-	public void setUsername(String username) {this.username = username;}
 	/** Sets player team. */
 	public void setTeam(Team team) {this.team = team;}
 

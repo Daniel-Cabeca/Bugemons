@@ -22,10 +22,6 @@ public class AbilityTest {
 		return new Ability("b", "B", Type.FLORA, "Ability b", 10);
 	}
 
-	private Ability createAbilityC() {
-		return new Ability("c", "C", Type.FLORA, "Ability c", 10);
-	}
-
 	@Test
 	public void abilitiesAreEqual() {
 		Ability a = createAbilityA();

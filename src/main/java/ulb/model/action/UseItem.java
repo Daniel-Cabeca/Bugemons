@@ -22,20 +22,6 @@ public class UseItem implements Action {
         this.item = item;
     }
 
-    /** Returns the selected item. */
-    public Item getItem() {
-        return this.item;
-    }
-
-    /**
-     * Sets the item to use.
-     *
-     * @param item Item to use
-     */
-    public void setItem(Item item) {
-        this.item = item;
-    }
-
     /** {@inheritDoc} */
     @Override
     public boolean executeAction(Battle battle, ParticipantLabel team) {

@@ -17,8 +17,6 @@ public class RegisterWindow extends Window {
     @FXML
     private PasswordField passwordField;
     @FXML
-    private PasswordField confirmPasswordField;
-    @FXML
     private Label errorLabel;
     private ViewListener viewListener;
 

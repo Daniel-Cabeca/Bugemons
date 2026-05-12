@@ -46,8 +46,6 @@ public class Bugemon {
 	public int getId() { return this.id; }
 	public String getName() { return this.getSpecies().getName(); }
 	public Type getType() { return this.getSpecies().getType(); }
-	public String getSprite() { return this.getSpecies().getSprite(); }
-	public String getSpritePath() {return this.getSpecies().getSpritePath();}
 
 	public int getHp() { return this.getFightStats().getHp(); }
 	public int getAttack() { return this.getFightStats().getAttack(); }
@@ -115,14 +113,6 @@ public class Bugemon {
 		changeFightStats(reward);
 		this.remainingRewards--;
 		return true;
-	}
-
-	/**
-	 * Apply a reward to Base Stats
-	 * @param reward The reward applied
-	 */
-	public void applyLevelReward(Stats reward){
-		consumeLevelReward(reward);
 	}
 
 	public boolean equals(Bugemon other){

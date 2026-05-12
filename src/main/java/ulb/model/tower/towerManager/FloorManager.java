@@ -103,15 +103,6 @@ public class FloorManager {
 		return true;
 	}
 
-	/** Returns current player. */
-	public Player getPlayer() { return player; }
-
-	/** Sets current player. */
-	public void setPlayer(Player player) { this.player = player; }
-
-	/** Returns current battle instance. */
-	public Battle getCurrentBattle() { return getCurrentRoomManager().getBattle(); }
-
 	/** Returns current room. */
 	public Room getRoom() { return this.getCurrentRoomManager().getRoom(); }
 

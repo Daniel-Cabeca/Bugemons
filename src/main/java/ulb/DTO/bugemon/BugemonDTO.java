@@ -46,7 +46,6 @@ public class BugemonDTO implements Serializable{
 
 	public String getId(){return this.getSpecies().getId();}
 	public String getName(){return this.getSpecies().getName();}
-	public String getSprite(){return this.getSpecies().getSprite();}
 	public String getSpritePath() {return this.getSpecies().getSpritePath();}
 	public Type getType(){return this.getSpecies().getType();}
 	public List<AbilityDTO> getAbilities(){return this.getSpecies().getAbilities();}
@@ -61,12 +60,5 @@ public class BugemonDTO implements Serializable{
     }
 
 	public int getHp(){return this.getFightStats().hp();}
-
-	public void setSpecies(BugemonSpeciesDTO species) {this.species = species;}
-	public void setBaseStats(StatsDTO baseStats) {this.baseStats = baseStats;}
-	public void setFightStats(StatsDTO fightStats) {this.fightStats = fightStats;}
-	public void setXp(int xp) {this.xp = xp;}
-	public void setLevel(int level) {this.level = level;}
-	public void setRemainingRewards(int remainingRewards) {this.remainingRewards = remainingRewards;}
 
 }

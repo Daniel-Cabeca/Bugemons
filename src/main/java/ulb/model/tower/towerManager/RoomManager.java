@@ -25,7 +25,6 @@ public class RoomManager {
 	private final int floorNumber;
 	private Player player;
 	private Battle battle;
-	private boolean isTeamA;
 	private final BugemonService bugemonService;
 	private final ItemService itemService;
 
@@ -112,18 +111,6 @@ public class RoomManager {
 	/** Returns managed room. */
 	public Room getRoom() {return room;}
 
-	/** Sets managed room. */
-	public void setRoom(Room room) {this.room = room;}
-
-	/** Returns current player. */
-	public Player getPlayer() {return player;}
-
-	/** Sets current player. */
-	public void setPlayer(Player player) {this.player = player;}
-
 	/** Returns current battle instance. */
 	public Battle getBattle() {return this.battle;}
-
-	/** Sets current battle instance. */
-	public void setBattle(Battle battle) {this.battle = battle;}
 }

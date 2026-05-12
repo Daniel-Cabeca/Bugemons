@@ -210,7 +210,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	}
 
 	void clearPendingLevelUpState() {
-		this.pendingLevelUpBugemon = null;
+		this.pendingLevelUpBugemon = Optional.empty();
 		this.pendingLevelUpRewards = null;
 	}
 

@@ -13,11 +13,6 @@ public class Reward {
         this.stats = new Stats();
     }
 
-    public Reward(Reward otherReward){
-        this.bugemon = otherReward.bugemon;
-        this.stats = new Stats(otherReward.stats);
-    }
-
     /**
      * Generate random stats for the combinaison reward type
      * @return the stats generated
@@ -82,14 +77,6 @@ public class Reward {
             default:
                 break;
         }
-    }
-
-    /**
-     * @return the randomly generated reward type
-     */
-    public RewardType generateRandomReward() {
-        int i = (int) (Math.random() * RewardType.values().length);
-        return RewardType.values()[i];
     }
 
     public void setStats(Stats stats) {this.stats = stats;}

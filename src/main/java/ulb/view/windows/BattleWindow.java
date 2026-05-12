@@ -450,15 +450,6 @@ public class BattleWindow extends Window {
     }
 
     /**
-     * Plays the attack animation for the correct Bugemon.
-     *
-     * @param isPlayer {@code true} animate the player's Bugemon, {@code false} the opponent's Bugemon
-     */
-    public void playAttackAnimation(boolean isPlayer) {
-        graphicsHelper.playAttackAnimation(isPlayer ? PlayerBugemon : OpponentBugemon, isPlayer);
-    }
-
-    /**
      * Immutable snapshot of the current battle state for both the player and opponent Bugemons.
      *
      * @param playerBugemon display data for the player's active Bugemon

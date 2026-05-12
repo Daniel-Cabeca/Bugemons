@@ -42,9 +42,6 @@ public class ChatMessage implements Serializable {
         this(-1, senderUsername, receiverUsername, content, sentAt);
     }
 
-
-    public long getId() { return this.id; }
-
     public String getSenderUsername() { return this.senderUsername; }
 
     public String getReceiverUsername() { return this.receiverUsername; }

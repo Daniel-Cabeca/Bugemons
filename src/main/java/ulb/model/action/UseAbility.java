@@ -23,20 +23,6 @@ public class UseAbility implements Action {
         this.ability = ability;
     }
 
-    /** Returns the selected ability. */
-    public Ability getAbility() {
-        return ability;
-    }
-
-    /**
-     * Sets the ability to use.
-     *
-     * @param ability Ability to use
-     */
-    public void setAbility(Ability ability) {
-        this.ability = ability;
-    }
-
     /** {@inheritDoc} */
     @Override
     public boolean executeAction(Battle battle, ParticipantLabel team) {

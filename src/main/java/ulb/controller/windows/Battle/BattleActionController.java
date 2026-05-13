@@ -191,7 +191,7 @@ public class BattleActionController {
 
         view.displayMessagesSequentially(logs, firstActionSelfHp, firstActionOpponentHp, finalSnapshot.get(), () -> {
             this.battleSetupController.refreshView();
-            boolean stateHandled = this.battleSetupController.handleBattleState(stateAfter, player, event);
+            boolean stateHandled = this.battleSetupController.handleBattleState(stateAfter, player);
             if (!stateHandled) {
                 afterDisplay.run();
             }

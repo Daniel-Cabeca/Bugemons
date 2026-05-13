@@ -1,7 +1,6 @@
 package ulb.controller;
 
 import javafx.application.Application;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -9,14 +8,12 @@ import javafx.stage.Stage;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import ulb.communication.SocketClient;
 import ulb.controller.windows.*;
 import ulb.controller.windows.Battle.BattleWindowController;
 import ulb.exceptions.CommunicationException;
-import ulb.exceptions.ViewLoadException;
 import ulb.communication.GameMode;
 import ulb.message.request.*;
 import ulb.message.response.*;
@@ -64,16 +61,6 @@ public class ClientController extends Application {
 
 	SocialPanelController socialPanelController;
 	WaitWindowController waitWindowController;
-
-	/**
-	 * Logs a view load failure with the given error message.
-	 *
-	 * @param errorMessage The message to log
-	 * @param e The exception that caused the failure
-	 */
-	private void logViewLoadFailure(String errorMessage, ViewLoadException e) {
-		LOGGER.log(Level.WARNING, errorMessage, e);
-	}
 
 	/**
 	 * Initializes network client from application launch parameters.
@@ -321,9 +308,8 @@ public class ClientController extends Application {
 	 * Submits the chosen level-up reward to the server and goes to the next window.
 	 *
 	 * @param reward The reward chosen by the player
-	 * @param event The triggering action event
 	 */
-	public void chooseReward(RewardDTO reward, ActionEvent event) {
+	public void chooseReward(RewardDTO reward) {
 		if (postData(new ChooseLevelUpRewardRequest(reward))) {
 			nextRoom();
 		}

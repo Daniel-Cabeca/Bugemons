@@ -8,7 +8,6 @@ import ulb.repository.AccountRepository;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 /**
  * Service layer for account registration and authentication.
@@ -44,6 +43,7 @@ public class AccountService {
      * @param password The provided password hash
      * @return True if credentials match, false otherwise
      * @throws LoadException If the lookup fails
+	 * @throws EntityNotFoundException If no player is registered with the username
      */
     public boolean login(String username, String password) throws LoadException, EntityNotFoundException {
         String storedPassword = repository.getPasswordHash(username);

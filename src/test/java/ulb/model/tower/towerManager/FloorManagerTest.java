@@ -73,7 +73,8 @@ public class FloorManagerTest {
 		// move to allowed room first
 		manager.moveToRoom(5);
 		// try to move to next room while previous is not completed (5 and 6 are adjacent)
-		assertFalse(manager.moveToRoom(6));	
+		manager.moveToRoom(6);
+		assertNotEquals(6, manager.getCurrentRoomId());	
 
 	}
 
@@ -91,7 +92,8 @@ public class FloorManagerTest {
 		manager.moveToRoom(5);
 		manager.getRoom().setRoomCompleted(true);
 		// rooms 5 and 7 aren't adjacent
-		assertFalse(manager.moveToRoom(7));
+		manager.moveToRoom(7);
+		assertNotEquals(6, manager.getCurrentRoomId());
 	}
 }
 

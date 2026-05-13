@@ -1,5 +1,6 @@
 package ulb.model.tower.towerManager;
 
+import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
 import ulb.model.tower.Floor;
 import ulb.model.tower.RoomType;
@@ -55,7 +56,7 @@ public class TowerManager {
 		this(player, true, bugemonService, itemService, teamService, towerSaveService);
 	}
 
-	private void setupTower(boolean setupNewTower) throws LoadException {
+	private void setupTower(boolean setupNewTower) throws LoadException, EntityNotFoundException {
 		Tower tower;
 		if (setupNewTower){
 			tower = new Tower();
@@ -65,12 +66,9 @@ public class TowerManager {
 			tower = towerSaveService.getTowerSave(player);
 		}
 		this.tower = tower;
-		if (tower.getCurrentFloorId().isPresent()){
-			this.floorNumber = this.tower.getCurrentFloorId().get() - 1;
-			this.currentFloorManager = new FloorManager(this.tower.getCurrentFloor().get(), this.player, this.getBugemonService(), this.getItemService());
-		} else {
-			// TODO Error
-		}
+		this.floorNumber = this.tower.getCurrentFloorId() - 1;
+		this.currentFloorManager = new FloorManager(this.tower.getCurrentFloor(), this.player, this.getBugemonService(), this.getItemService());
+		
 		saveTowerInfo();
 	}
 
@@ -79,16 +77,16 @@ public class TowerManager {
 	 * @param targetRoomId ID of the room to move to
 	 * @return True if move was successful, false otherwise
 	*/
-	public boolean moveToRoom(int targetRoomId) throws LoadException {
-		if(!this.currentFloorManager.moveToRoom(targetRoomId)){
-			return false;
+	public void moveToRoom(int targetRoomId) throws LoadException, EntityNotFoundException {
+		this.currentFloorManager.moveToRoom(targetRoomId);
+
+		if (this.getCurrentRoomId() == targetRoomId){
+			nextFloor();
 		}
-		nextFloor();
-		return true;
 	}
 
 	/** Advances to next floor if current floor is completed. */
-	public void nextFloor() throws LoadException {
+	public void nextFloor() throws LoadException, EntityNotFoundException {
 		if (currentFloorManager.isFloorCompleted() && !isTowerCompleted()) {
 			floorNumber++;
 			currentFloorManager = new FloorManager(tower.getFloors().get(floorNumber), this.player, this.getBugemonService(), this.getItemService());
@@ -96,7 +94,7 @@ public class TowerManager {
 		saveTowerInfo();
 	}
 
-	public void saveTowerInfo() throws LoadException {
+	public void saveTowerInfo() throws LoadException, EntityNotFoundException {
 		this.teamService.insertTowerTeam(this.player);
 		this.towerSaveService.saveTowerInfo(this.tower, this.player);
 	}
@@ -125,7 +123,7 @@ public class TowerManager {
 	 * Sets current managed room completion status and save the tower.
 	 * @param status the status of the current room
 	 */
-	public void setCurrentRoomCompleted(boolean status) throws LoadException {
+	public void setCurrentRoomCompleted(boolean status) throws LoadException, EntityNotFoundException {
 		this.getCurrentRoomManager().setRoomCompleted(status);
 		saveTowerInfo();
 	}

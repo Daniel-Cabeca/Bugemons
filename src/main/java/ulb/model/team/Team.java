@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import ulb.exceptions.EntityNotFoundException;
 import ulb.model.bugemon.Bugemon;
 
 public class Team {
@@ -205,13 +206,13 @@ public class Team {
 		return levelUpNumber;
 	}
 
-	public Optional<Bugemon> getBugemonById(String id){
+	public Bugemon getBugemonById(String id) throws EntityNotFoundException{
 		for (Bugemon bugemon : this.getMembers()){
 			if (bugemon.getSpeciesId().equals(id)){
-				return Optional.of(bugemon);
+				return bugemon;
 			}
 		}
-		return Optional.empty();
+		throw new EntityNotFoundException("bugemon", id);
 	}
         
 }

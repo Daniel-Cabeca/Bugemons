@@ -79,7 +79,7 @@ public class MultiBattleSession {
 		Optional<Team> teamA = this.participants.a().getTeam();
 		Optional<Team> teamB = this.participants.b().getTeam();
 		if (teamA.isEmpty() || teamB.isEmpty()){
-			throw new GameException("at least one player doesn't have a team");
+			throw new GameException("all the players must have a team");
 		}
 		this.battle = new Battle(
 			teamA.get(),

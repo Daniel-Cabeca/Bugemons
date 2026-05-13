@@ -2,6 +2,7 @@ package ulb.model.tower.towerManager;
 
 import java.util.Optional;
 
+import ulb.exceptions.EntityNotFoundException;
 import ulb.model.Player;
 import ulb.model.battle.Battle;
 import ulb.model.tower.Floor;
@@ -29,7 +30,7 @@ public class FloorManager {
 	 * @param bugemonService Bugemon service
 	 * @param itemService Item service
 	 */
-	public FloorManager(Floor floor, Player player, BugemonService bugemonService, ItemService itemService){
+	public FloorManager(Floor floor, Player player, BugemonService bugemonService, ItemService itemService) throws EntityNotFoundException{
 		this.player = player;
 		this.bugemonService = bugemonService;
 		this.itemService = itemService;
@@ -37,12 +38,7 @@ public class FloorManager {
 
 		this.currentRoomId = floor.getStartRoomId();
 		this.previousRoomId = this.currentRoomId;
-		if (floor.getRoomById(currentRoomId).isPresent()){
-			this.currentRoomManager = new RoomManager(floor.getRoomById(currentRoomId).get(), floor.getId(), this.player, this.getBugemonService(), this.getItemService());
-		} else {
-			// TODO Error
-		}
-		
+		this.currentRoomManager = new RoomManager(floor.getRoomById(currentRoomId), floor.getId(), this.player, this.getBugemonService(), this.getItemService());
 	}
 
 	/** Returns managed floor. */
@@ -59,34 +55,28 @@ public class FloorManager {
 	/** Advances to the specified room if it's adjacent and the current one is completed.
 	 * @param targetRoomId ID of the room to move to
 	 */
-	public boolean moveToRoom(int targetRoomId){
+	public void moveToRoom(int targetRoomId) throws EntityNotFoundException{
 		int currentRoomId = getCurrentRoomId();
 
-        if (targetRoomId == currentRoomId) return true;
-        if (!currentRoomManager.isRoomCompleted()) return false;
-        if (!floor.getAdjacentRoomsIds(currentRoomId).contains(targetRoomId)) return false;
+        if (targetRoomId == currentRoomId) return;
+        if (!currentRoomManager.isRoomCompleted()) return;
+        if (!floor.getAdjacentRoomsIds(currentRoomId).contains(targetRoomId)) return;
 
-        Optional<Room> target = floor.getRoomById(targetRoomId);
-        if (target.isEmpty()) return false;
+       	Room target = floor.getRoomById(targetRoomId);
 
 		this.previousRoomId = currentRoomId;
-        this.currentRoomId = target.get().getId();
-        currentRoomManager = new RoomManager(target.get(), floor.getId(), player, getBugemonService(), getItemService());
-        return true;
+        this.currentRoomId = target.getId();
+        currentRoomManager = new RoomManager(target, floor.getId(), player, getBugemonService(), getItemService());
 	}
 
 	/** Resets current room to the previous one so the player can retry it. */
-	public void rewindRoom() {
-		Optional<Room> fledRoom = floor.getRoomById(this.currentRoomId);
-		if (fledRoom.isPresent()){
-			fledRoom.get().setRoomCompleted(false);
-		}
+	public void rewindRoom() throws EntityNotFoundException {
+		Room fledRoom = floor.getRoomById(this.currentRoomId);
+		fledRoom.setRoomCompleted(false);
 
 		this.currentRoomId = this.previousRoomId;
-		Optional<Room> previousRoom =  floor.getRoomById(this.currentRoomId);
-		if (previousRoom.isPresent()){
-			currentRoomManager = new RoomManager(previousRoom.get(), floor.getId(), this.player, this.getBugemonService(), this.getItemService());
-		}
+		Room previousRoom =  floor.getRoomById(this.currentRoomId);
+		currentRoomManager = new RoomManager(previousRoom, floor.getId(), this.player, this.getBugemonService(), this.getItemService());
 	}
 
 	/**

@@ -3,6 +3,7 @@ package ulb.server;
 import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.exceptions.DataAccessException;
+import ulb.exceptions.EntityNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -59,22 +60,26 @@ public class GameActionsHandler extends Thread{
 	public void chooseAbilityReward(BugemonDTO bugemonDTO, AbilityDTO oldAbilityDTO, AbilityDTO newAbilityDTO) throws DataAccessException{
         Player player = clientHandler.getPlayer();
         TowerManager towerManager = clientHandler.getTowerManager();
-
-		Optional<Bugemon> chosenBugemon = player.getTeam().getBugemonById(bugemonDTO.getId());
-
-		if (chosenBugemon.isEmpty()){
+		
+		Bugemon chosenBugemon;
+		try{
+			chosenBugemon = player.getTeam().getBugemonById(bugemonDTO.getId());
+		} catch (EntityNotFoundException e){
 			clientHandler.sendErrorMessage("Bugemon not present in the Team");
 			return;
 		}
 
-		Optional<Ability> oldAbility = chosenBugemon.get().getAbilities().getAbilityById(oldAbilityDTO.id());
-		if (oldAbility.isEmpty()){
+		Ability oldAbility;
+		try {
+			oldAbility = chosenBugemon.getAbilities().getAbilityById(oldAbilityDTO.id());
+		} catch (EntityNotFoundException e) {
 			clientHandler.sendErrorMessage("Ability not learned");
 			return;
 		}
+		
 		Ability newAbility = AbilityMapper.toEntity(newAbilityDTO);
 
-		chosenBugemon.get().swapAbility(newAbility, oldAbility.get());
+		chosenBugemon.swapAbility(newAbility, oldAbility);
 
 		towerManager.setCurrentRoomCompleted(true);
 		clientHandler.sendSuccessMessage();
@@ -130,18 +135,19 @@ public class GameActionsHandler extends Thread{
         Player player = clientHandler.getPlayer();
         TowerManager towerManager = clientHandler.getTowerManager();
 
-		Optional<Bugemon> chosenBugemon = player.getTeam().getBugemonById(bugemonDTO.getId());
-
-		if (chosenBugemon.isEmpty()){
+		Bugemon chosenBugemon;
+		try{
+			chosenBugemon = player.getTeam().getBugemonById(bugemonDTO.getId());
+		} catch (EntityNotFoundException e){
 			clientHandler.sendErrorMessage("Bugemon not present in the Team");
 			return;
 		}
 
-		Reward reward = new Reward(chosenBugemon.get());
+		Reward reward = new Reward(chosenBugemon);
 		reward.configureReward(RewardType.COMBINATION);
 
-		chosenBugemon.get().changeBaseStats(reward.getStats());
-		chosenBugemon.get().changeFightStats(reward.getStats());
+		chosenBugemon.changeBaseStats(reward.getStats());
+		chosenBugemon.changeFightStats(reward.getStats());
 
 		towerManager.setCurrentRoomCompleted(true);
 		clientHandler.sendSuccessMessage();
@@ -154,10 +160,10 @@ public class GameActionsHandler extends Thread{
 			clientHandler.sendErrorMessage("The game isn't in tower mode");
 			return;
 		}
-		if (clientHandler.nextTowerRoom(roomId)){
+		clientHandler.nextTowerRoom(roomId);
+		if (clientHandler.isCurrentRoomIdEqual(roomId)){
 			clientHandler.sendSuccessMessage();
-		}
-		else{
+		} else{
 			clientHandler.sendErrorMessage("Cannot move to the selected room");
 		}
 	}
@@ -239,14 +245,15 @@ public class GameActionsHandler extends Thread{
         Battle battle = clientHandler.getBattle();
         ParticipantLabel teamLabel = clientHandler.getTeamLabel();
 
-		Optional<Bugemon> bugemonToSwap = player.getTeam().getBugemonById(bugemonDTOToSwap.getId());
-
-		if (bugemonToSwap.isEmpty()){
-			clientHandler.sendErrorMessage("The bugemon to swap doesn't exist");
+		Bugemon bugemonToSwap;
+		try{
+			bugemonToSwap = player.getTeam().getBugemonById(bugemonDTOToSwap.getId());
+		} catch (EntityNotFoundException e){
+			clientHandler.sendErrorMessage("Bugemon not present in the Team");
 			return;
 		}
 		
-		battle.chooseAction(new Swap(bugemonToSwap.get()), teamLabel);
+		battle.chooseAction(new Swap(bugemonToSwap), teamLabel);
 
 		clientHandler.sendSuccessMessage();
 	}

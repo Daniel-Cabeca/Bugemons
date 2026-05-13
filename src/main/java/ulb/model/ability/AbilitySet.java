@@ -1,7 +1,8 @@
 package ulb.model.ability;
 
 import java.util.Iterator;
-import java.util.Optional;
+
+import ulb.exceptions.EntityNotFoundException;
 
 /**
  * Represents the set of abilities usable by a Bugemon.
@@ -85,13 +86,13 @@ public class AbilitySet implements Iterable<Ability> {
 		return false;
 	}
 
-	public Optional<Ability> getAbilityById(String id){
+	public Ability getAbilityById(String id) throws EntityNotFoundException{
 		for (Ability ability : this.abilities){
 			if (ability != null && ability.getId().equals(id)){
-				return Optional.of(ability);
+				return ability;
 			}
 		}
-		return Optional.empty();
+		throw new EntityNotFoundException("ability", id);
 	}
 
 	/**

@@ -1,5 +1,6 @@
 package ulb.service;
 
+import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
 
 import java.util.List;
@@ -30,11 +31,11 @@ public class TowerSaveService {
 	 * @param tower current tower played by the player
 	 * @param player player who played in the tower
 	 */
-	public void saveTowerInfo(Tower tower, Player player) throws LoadException {
+	public void saveTowerInfo(Tower tower, Player player) throws LoadException, EntityNotFoundException {
 		Optional<Integer> userId = player.getUserId();
-		Optional<Integer> currentFloorId = tower.getCurrentFloorId();
+		Integer currentFloorId = tower.getCurrentFloorId();
 
-		if (userId.isEmpty() || currentFloorId.isEmpty()){
+		if (userId.isEmpty()){ // don't save the tower if the player isn't registered
 			return;
 		}
 
@@ -45,14 +46,14 @@ public class TowerSaveService {
 		if (this.towerSaveRepository.isTowerSaved(userId.get())) {
 			this.towerSaveRepository.updateTowerSave(
 				userId.get(),
-				currentFloorId.get(),
+				currentFloorId,
 				completedRoomsId,
 				teamId
 			);
 		} else {
 			this.towerSaveRepository.addTowerSave(
 				userId.get(),
-				currentFloorId.get(),
+				currentFloorId,
 				completedRoomsId,
 				teamId
 			);

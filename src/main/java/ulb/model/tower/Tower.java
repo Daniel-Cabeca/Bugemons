@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import ulb.exceptions.EntityNotFoundException;
+
 public class Tower {
 
 	private List<Floor> floors;
@@ -47,38 +49,30 @@ public class Tower {
 		}
 	}
 
-	private void setCurrentFloorCompletedRooms(List<Integer> completedRoomsId){
-		Optional<Floor> currentFloor = this.getCurrentFloor();
-		if (currentFloor.isPresent()){
-			currentFloor.get().setRoomsCompleted(completedRoomsId);
-		}
+	private void setCurrentFloorCompletedRooms(List<Integer> completedRoomsId) throws EntityNotFoundException{
+		Floor currentFloor = this.getCurrentFloor();
+		currentFloor.setRoomsCompleted(completedRoomsId);
 	}
 
 	public List<Floor> getFloors() { return floors; }
 
-	public Optional<Floor> getCurrentFloor() {
+	public Floor getCurrentFloor() throws EntityNotFoundException {
 		for (Floor floor : this.floors) {
 			if (!floor.isFloorCompleted()) {
-				return Optional.of(floor);
+				return floor;
 			}
 		}
-		return Optional.empty();
+		throw new EntityNotFoundException("floor", "current");
 	}
 
-	public Optional<Integer> getCurrentFloorId() {
-		Optional<Floor> currentFloor = getCurrentFloor();
-		if (currentFloor.isPresent()) {
-			return Optional.of(currentFloor.get().getId());
-		}
-		return Optional.empty();
+	public Integer getCurrentFloorId() throws EntityNotFoundException {
+		Floor currentFloor = getCurrentFloor();
+		return currentFloor.getId();
 	}
 
-	public List<Integer> getCurrentFloorCompletedRoomsId() {
-		Optional<Floor> currentFloor = getCurrentFloor();
-		if (currentFloor.isPresent()) {
-			return currentFloor.get().getCompletedRoomsId();
-		}
-		return new ArrayList<>();
+	public List<Integer> getCurrentFloorCompletedRoomsId() throws EntityNotFoundException {
+		Floor currentFloor = getCurrentFloor();
+		return currentFloor.getCompletedRoomsId();
 	}
 
 	public boolean getTowerCompleted() { return this.completedTower; }

@@ -9,7 +9,6 @@ import ulb.exceptions.CommunicationException;
 import ulb.message.request.Request;
 import ulb.message.response.Response;
 import ulb.message.response.StatusResponse;
-import ulb.server.ClientHandler;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

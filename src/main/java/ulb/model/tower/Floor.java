@@ -3,7 +3,8 @@ package ulb.model.tower;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
+
+import ulb.exceptions.EntityNotFoundException;
 
 public class Floor {
 
@@ -59,17 +60,21 @@ public class Floor {
 	 * @return the start room id (4 for all floors except the final floor that only has one boss battle)
 	 */
 	public int getStartRoomId() {
-		Optional<Room> room4 = getRoomById(4);
-		return room4.isPresent() ? 4 : rooms.getFirst().getId();
+		try {
+			Room room4 = getRoomById(4);
+			return 4;
+		} catch (EntityNotFoundException e) {
+			return rooms.getFirst().getId();
+		}
 	}
 
-	public Optional<Room> getRoomById(int roomId) {
+	public Room getRoomById(int roomId) throws EntityNotFoundException{
 		for (Room room : rooms) {
 			if (room.getId() == roomId) {
-				return Optional.of(room);
+				return room;
 			}
 		}
-		return Optional.empty();
+		throw new EntityNotFoundException("room", roomId);
 	}
 
 	public boolean isBossCompleted() {

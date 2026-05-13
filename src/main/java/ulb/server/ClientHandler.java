@@ -188,16 +188,21 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	/**
 	 * Go to the next room if the game is in tower mode
 	 */
-	public boolean nextTowerRoom(int targetRoomId) throws DataAccessException {
+	public void nextTowerRoom(int targetRoomId) throws DataAccessException {
+		if (!isGameTower){
+			return;
+		}
+		this.towerManager.moveToRoom(targetRoomId);
+		if (towerManager.getCurrentRoomId() == targetRoomId){
+			this.battle = this.towerManager.getCurrentBattle();
+		}
+	}
+
+	public boolean isCurrentRoomIdEqual(int targetRoomId){
 		if (!isGameTower){
 			return false;
 		}
-		if (this.towerManager.moveToRoom(targetRoomId)){
-			this.battle = this.towerManager.getCurrentBattle();
-			return true;
-		}
-		return false;
-
+		return this.towerManager.getCurrentRoomId() == targetRoomId;
 	}
 
 	void finishTower() throws DataAccessException {

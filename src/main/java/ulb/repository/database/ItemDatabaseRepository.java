@@ -107,6 +107,12 @@ public class ItemDatabaseRepository implements ItemRepository {
 						EffectStatDuration duration = EffectStatDuration.valueOf(durationStr);
 						effect = Optional.of(new EffectStatModifier(target,duration,statsChanges));
 					}
+					else if (type == EffectType.RESET_MALUS) {
+						effect = Optional.of(new EffectResetMalus(target));
+					}
+					else if (type == EffectType.SWITCH) {
+						effect = Optional.of(new EffectSwitch(target));
+					}
 				}
 				if (effect.isEmpty()){
 					throw new EntityNotFoundException("Effect for item", id);

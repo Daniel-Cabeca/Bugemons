@@ -11,44 +11,22 @@ import ulb.model.type.Type;
 /**
  * Transferable Bugemon, used on the vue side.
  */
-public class BugemonDTO implements Serializable{
-    private BugemonSpeciesDTO species;
-	private StatsDTO baseStats;
-	private StatsDTO fightStats;
-	private int xp;
-	private int level;
-	private int remainingRewards;
-
-	public BugemonDTO(BugemonSpeciesDTO species, StatsDTO baseStats, StatsDTO fightStats, int xp, int level, int remainingRewards){
-		this.species = species;
-		this.baseStats = baseStats;
-		this.fightStats = fightStats;
-		this.xp = xp;
-		this.level = level;
-		this.remainingRewards = remainingRewards;
-	}
+public record BugemonDTO(BugemonSpeciesDTO species, StatsDTO baseStats, StatsDTO fightStats, int xp, int level, int remainingRewards) implements Serializable {
 
 	public BugemonDTO(BugemonSpeciesDTO species){
-		this.species = species;
-		this.baseStats = species.getBaseStats();
-		this.fightStats = species.getBaseStats();
-		this.xp = 0;
-		this.level = 1;
-		this.remainingRewards = 0;
+		this(species, species.baseStats(), species.baseStats(), 0, 1, 0);
 	}
 
-	public BugemonSpeciesDTO getSpecies() {return species;}
-	public StatsDTO getBaseStats() {return baseStats;}
-	public StatsDTO getFightStats() {return fightStats;}
-	public int getXp() {return xp;}
-	public int getLevel() {return level;}
-	public int getRemainingRewards() {return remainingRewards;}
+	public String getId(){return this.species().id();}
+	public String getName(){return this.species().name();}
+	public String getSpritePath() {return this.species().getSpritePath();}
+	public Type getType(){return this.species().type();}
+	public List<AbilityDTO> getAbilities(){return this.species().abilities();}
 
-	public String getId(){return this.getSpecies().getId();}
-	public String getName(){return this.getSpecies().getName();}
-	public String getSpritePath() {return this.getSpecies().getSpritePath();}
-	public Type getType(){return this.getSpecies().getType();}
-	public List<AbilityDTO> getAbilities(){return this.getSpecies().getAbilities();}
+	public int getHp(){return this.fightStats().hp();}
+	public int getAttack(){return this.fightStats().attack();}
+	public int getDefense(){return this.fightStats().defense();}
+	public int getInitiative(){return this.fightStats().initiative();}
 
 	public Optional<AbilityDTO> findActiveAbilityById(String abilityId) {
         for (AbilityDTO ability : this.getAbilities()) {
@@ -58,7 +36,5 @@ public class BugemonDTO implements Serializable{
         }
         return Optional.empty();
     }
-
-	public int getHp(){return this.getFightStats().hp();}
 
 }

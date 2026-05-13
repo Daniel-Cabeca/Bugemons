@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.naming.CommunicationException;
+
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -133,12 +135,12 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 	 * @param userId2 The second player's id
 	 * @return The multiplayer battle status DTO
 	 */
-	public MultiBattleStatusDTO getMultiBattleStatus(int userId1, int userId2) {
+	public MultiBattleStatusDTO getMultiBattleStatus(int userId1, int userId2) throws CommunicationException{
 		if (this.clientController.getData(new GetMultiBattleStatusRequest(userId1, userId2)) instanceof MultiBattleStatusResponse msg)
 			return msg.getStatus();
 
 		LOGGER.warning("Failed to obtain multiplayer battle status.");
-		return new MultiBattleStatusDTO();
+		throw new CommunicationException();
 	}
 
 	private void switchToTeamSelectionForMulti(PlayerDTO opponent){
@@ -152,9 +154,15 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 	 * @param opponent The player the battle request has been sent to
 	 */
 	private void waitForBattleRequestResponse(PlayerDTO opponent) {
-		MultiBattleStatusDTO status = this.getMultiBattleStatus(getPlayer().getUserId(), opponent.getUserId());
+		MultiBattleStatusDTO status = null;
+		try{
+			status = this.getMultiBattleStatus(getPlayer().getUserId(), opponent.getUserId());
+		} catch(CommunicationException e){
+			this.clientController.stopWaitWindow();
+			this.clientController.showWindow(WindowName.MODE);
+		}
 
-		switch(status.getStatus()) {
+		switch(status.status()) {
 			case PICKING_TEAMS:
 				this.clientController.stopWaitWindow();
 				this.switchToTeamSelectionForMulti(opponent);

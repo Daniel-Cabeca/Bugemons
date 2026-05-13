@@ -1,5 +1,7 @@
 package ulb.mapper.battle;
 
+import java.lang.Thread.State;
+
 import ulb.DTO.battle.MultiBattleStatusDTO;
 import ulb.DTO.battle.MultiBattleStatusDTO.Status;
 import ulb.model.battle.MultiBattleSession;
@@ -12,22 +14,22 @@ public class MultiBattleStatusMapper {
 	private MultiBattleStatusMapper() {}
 
 	public static MultiBattleStatusDTO toDTO(MultiBattleSession battle) {
-		MultiBattleStatusDTO dto = new MultiBattleStatusDTO();
+		MultiBattleStatusDTO.Status status = Status.NOT_CREATED;
 
 		if (battle.isDeclined()) {
-			dto.setStatus(Status.DECLINED);
+			status = Status.DECLINED;
 		}
 		else if (battle.isReady()) {
-			dto.setStatus(Status.BATTLE);
+			status = Status.BATTLE;
 		}
 		else if (battle.isAccepted()) {
-			dto.setStatus(Status.PICKING_TEAMS);
+			status = Status.PICKING_TEAMS;
 		}
 		else {
-			dto.setStatus(Status.WAITING_ACCEPT);
+			status = Status.WAITING_ACCEPT;
 		}
 
-		return dto;
+		return new MultiBattleStatusDTO(status);
 	}
 
 }

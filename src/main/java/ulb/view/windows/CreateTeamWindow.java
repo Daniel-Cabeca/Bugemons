@@ -54,7 +54,7 @@ public class CreateTeamWindow extends Window {
 			VBox cell = new VBox(8);
 			cell.getStyleClass().add("availableBugemons");
 
-			Label name = new Label(bugemon.getName());
+			Label name = new Label(bugemon.name());
 
 			Image image = new Image(bugemon.getSpritePath());
 			ImageView sprite = new ImageView(image);
@@ -63,13 +63,13 @@ public class CreateTeamWindow extends Window {
 			sprite.setPreserveRatio(true);
 
 			CheckBox checkBox = new CheckBox();
-			checkBox.setSelected(selectedBugemonIds.contains(bugemon.getId()));
+			checkBox.setSelected(selectedBugemonIds.contains(bugemon.id()));
 
 			checkBox.setOnAction(e -> {
 				if (checkBox.isSelected()) {
-					onSelectBugemon(bugemon.getId());
+					onSelectBugemon(bugemon.id());
 				} else {
-					onDeselectBugemon(bugemon.getId());
+					onDeselectBugemon(bugemon.id());
 				}
 			});
 

@@ -12,19 +12,19 @@ import ulb.DTO.item.ItemDTO;
  */
 public class PlayerDTO implements Serializable {
 	private final int userId;
-    private final String userName;
+    private final String username;
 	private List<BugemonDTO> team;
 	private Map<ItemDTO, Integer> inventory;
 
-	public PlayerDTO(int userId, String userName, List<BugemonDTO> team, Map<ItemDTO, Integer> inventory){
+	public PlayerDTO(int userId, String username, List<BugemonDTO> team, Map<ItemDTO, Integer> inventory){
 		this.userId = userId;
-		this.userName = userName;
+		this.username = username;
 		this.team = team;
 		this.inventory = inventory;
 	}
 
 	public int getUserId() { return this.userId; }
-	public String getUsername() {return userName;}
+	public String getUsername() {return username;}
 	public List<BugemonDTO> getTeam() {return team;}
 	public Map<ItemDTO, Integer> getInventory() {return inventory;}
 

@@ -78,7 +78,7 @@ public class LevelUpWindow extends Window {
 	 * @param bugemon the bugemon that needs it's level set.
 	 */
 	public void setBugemonLevel(BugemonDTO bugemon) {
-		bugemonLevel.setText("Bugémon a atteint le niveau " + bugemon.getLevel() + "!");
+		bugemonLevel.setText("Bugémon a atteint le niveau " + bugemon.level() + "!");
 	}
 
 	/**

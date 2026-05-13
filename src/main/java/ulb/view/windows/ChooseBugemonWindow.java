@@ -45,15 +45,15 @@ public class ChooseBugemonWindow extends Window {
             sprite.setPreserveRatio(true);
 
 			// Setting infos of the Bugemon
-            Label name = new Label(bugemon.getName() + " (Niveau: " + bugemon.getLevel() + ")");
+            Label name = new Label(bugemon.getName() + " (Niveau: " + bugemon.level() + ")");
             name.setStyle("-fx-font-weight: bold; -fx-font-size: 30px");
 
 			// Setting stats of the Bugemon
             Label stats = new Label(
-                    "PV: " + bugemon.getFightStats().hp()
-                            + " ATK: " + bugemon.getFightStats().attack()
-                            + " DEF: " + bugemon.getFightStats().defense()
-                            + " INIT: " + bugemon.getFightStats().initiative());
+                    "PV: " + bugemon.getHp()
+                            + " ATK: " + bugemon.getAttack()
+                            + " DEF: " + bugemon.getDefense()
+                            + " INIT: " + bugemon.getInitiative());
             stats.setStyle("-fx-font-size: 30px");
 
             CheckBox selectBox = new CheckBox();

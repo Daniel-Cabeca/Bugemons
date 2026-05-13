@@ -26,12 +26,12 @@ public class BugemonMapper {
     public static Bugemon toEntity(BugemonDTO dto) throws MappingException {
         if (dto == null) return null;
         Bugemon bugemon = new Bugemon(
-                BugemonSpeciesMapper.toEntity(dto.getSpecies()));
-                bugemon.setXp(dto.getXp());
-                bugemon.setLevel(dto.getLevel());
-                bugemon.setRemainingRewards(dto.getRemainingRewards());
-                bugemon.setBaseStats(StatsMapper.toEntity(dto.getBaseStats()));
-                bugemon.setFightStats(StatsMapper.toEntity(dto.getFightStats()));
+                BugemonSpeciesMapper.toEntity(dto.species()));
+                bugemon.setXp(dto.xp());
+                bugemon.setLevel(dto.level());
+                bugemon.setRemainingRewards(dto.remainingRewards());
+                bugemon.setBaseStats(StatsMapper.toEntity(dto.baseStats()));
+                bugemon.setFightStats(StatsMapper.toEntity(dto.fightStats()));
         return bugemon;
     }
 }

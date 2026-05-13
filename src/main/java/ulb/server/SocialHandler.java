@@ -9,6 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import ulb.DTO.battle.MultiBattleStatusDTO;
+import ulb.DTO.battle.MultiBattleStatusDTO.Status;
 import ulb.mapper.battle.MultiBattleStatusMapper;
 import ulb.message.response.social.*;
 import ulb.model.battle.MultiBattleParticipant;
@@ -77,7 +78,7 @@ public class SocialHandler {
 	}
 
 	public void getMultiBattleStatus(int userId1, int userId2) {
-		MultiBattleStatusDTO status = new MultiBattleStatusDTO();
+		MultiBattleStatusDTO status = new MultiBattleStatusDTO(Status.NOT_CREATED);
 
 		try {
 			MultiBattleSession multiBattle = multiBattleService.getMultiBattle(userId1, userId2);

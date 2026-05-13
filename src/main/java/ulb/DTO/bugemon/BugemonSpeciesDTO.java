@@ -11,34 +11,13 @@ import ulb.model.type.Type;
 /**
  * Transferable BugemonSpecies, used on the vue side.
  */
-public class BugemonSpeciesDTO implements Serializable{
-    private String id;
-	private String name;
-	private Type type;
-	private StatsDTO baseStats;
-	private List<AbilityDTO> abilities;
-	private String sprite;
-	private boolean starter;
+public record BugemonSpeciesDTO(String id, 
+								String name, 
+								Type type, 
+								StatsDTO baseStats, 
+								List<AbilityDTO> abilities, 
+								String sprite, 
+								boolean starter) implements Serializable {
 
-	public String getId() {return id;}
-	public String getName() {return name;}
-	public Type getType() {return type;}
-	public StatsDTO getBaseStats() {return baseStats;}
-	public List<AbilityDTO> getAbilities() {return abilities;}
-	public String getSprite() {return sprite;}
 	public String getSpritePath() {return "/png/" + sprite;}
-	public boolean isStarter() {return starter;}
-
-	public void setId(String id) {this.id = id;}
-	public void setName(String name) {this.name = name;}
-	public void setType(Type type) {this.type = type;}
-	public void setBaseStats(StatsDTO baseStats) {this.baseStats = baseStats;}
-	public void setSprite(String sprite) {this.sprite = sprite;}
-	public void setStarter(boolean starter) {this.starter = starter;}
-
-	public void addAbility(AbilityDTO ability){
-		if (this.abilities == null){
-			this.abilities = new ArrayList<AbilityDTO>();
-		}
-		this.abilities.add(ability);}
 }

@@ -206,9 +206,9 @@ public class BattleSetupController {
                 bugemon.getName(),
                 bugemon.getSpritePath(),
                 bugemon.getType(),
-                bugemon.getLevel(),
+                bugemon.level(),
                 bugemon.getHp(),
-                bugemon.getBaseStats().hp()
+                bugemon.baseStats().hp()
         );
     }
 

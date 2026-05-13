@@ -96,11 +96,13 @@ public class ConfirmTeamWindow extends Window {
             sprite.setFitWidth(50);
             sprite.setFitHeight(50);
             sprite.setPreserveRatio(true);
-            Label name = new Label(bugemon.getName() + " (Niveau: " + bugemon.getLevel() + ")");
+            Label name = new Label(bugemon.getName() + " (Niveau: " + bugemon.level() + ")");
             name.setStyle("-fx-font-weight: bold;");
-            Label stats = new Label("PV: " + bugemon.getFightStats().hp() +
-                    " ATK: " + bugemon.getFightStats().attack() + " DEF: " +
-                    bugemon.getFightStats().defense() + " INIT: " + bugemon.getFightStats().initiative());
+            Label stats = new Label("PV: " + bugemon.getHp() +
+                    				" ATK: " + bugemon.getAttack() + 
+									" DEF: " + bugemon.getDefense() + 
+									" INIT: " + bugemon.getInitiative());
+									
             cell.getChildren().addAll(name, sprite, stats);
             playerTeamGrid.add(cell, col, row++);
             count++;

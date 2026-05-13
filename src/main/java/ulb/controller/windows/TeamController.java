@@ -23,6 +23,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.naming.CommunicationException;
+
 /**
  * Controller for creating and validating the player's starting team.
  */
@@ -111,9 +113,16 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	 */
 	private void waitForOpponentTeam(PlayerDTO opponent) {
 		PlayerDTO self = this.clientController.getPlayer();
-		MultiBattleStatusDTO status = this.getMultiBattleStatus(self.getUserId(), opponent.getUserId());
 
-		switch (status.getStatus()) {
+		MultiBattleStatusDTO status = null;
+		try{
+			status = this.getMultiBattleStatus(self.getUserId(), opponent.getUserId());
+		} catch(CommunicationException e){
+			this.clientController.stopWaitWindow();
+			this.clientController.showWindow(WindowName.MODE);
+		}
+
+		switch (status.status()) {
 			case BATTLE:
 				this.clientController.stopWaitWindow();
 				this.startMultiBattle(opponent);
@@ -134,11 +143,11 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	 * @param userId2 The second player's id
 	 * @return The multiplayer battle status DTO
 	 */
-	public MultiBattleStatusDTO getMultiBattleStatus(int userId1, int userId2) {
+	public MultiBattleStatusDTO getMultiBattleStatus(int userId1, int userId2) throws CommunicationException {
 		if (this.clientController.getData(new GetMultiBattleStatusRequest(userId1, userId2)) instanceof MultiBattleStatusResponse msg)
 			return msg.getStatus();
 		LOGGER.warning("Failed to obtain multiplayer battle status.");
-		return new MultiBattleStatusDTO();
+		throw new CommunicationException();
 
 	}
 	/**
@@ -204,7 +213,7 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 		List<BugemonSpeciesDTO> allSpecies = this.getAllSpecies();
 		for (String bugemonId : selectedBugemonIds) {
 			for (BugemonSpeciesDTO species : allSpecies){
-				if (bugemonId.equals(species.getId())){
+				if (bugemonId.equals(species.id())){
 					members.add(new BugemonDTO(species));
 				}
 			}

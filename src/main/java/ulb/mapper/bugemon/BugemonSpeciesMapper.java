@@ -1,5 +1,6 @@
 package ulb.mapper.bugemon;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ulb.DTO.bugemon.BugemonSpeciesDTO;
@@ -23,10 +24,10 @@ public class BugemonSpeciesMapper {
     public static BugemonSpecies toEntity(BugemonSpeciesDTO dto) throws MappingException{
         if(dto == null) return null;
 
-        Stats stats = StatsMapper.toEntity(dto.getBaseStats());
+        Stats stats = StatsMapper.toEntity(dto.baseStats());
         AbilitySet abilitySet = new AbilitySet();
 
-        List<AbilityDTO> abilities = dto.getAbilities();
+        List<AbilityDTO> abilities = dto.abilities();
         if (abilities != null) {
             for (int i = 0; i < abilities.size() && i < AbilitySet.SIZE; i++) {
                 abilitySet.setAbility(i, AbilityMapper.toEntity(abilities.get(i)));
@@ -34,33 +35,35 @@ public class BugemonSpeciesMapper {
         }
 
         return new BugemonSpecies(
-                dto.getId(),
-                dto.getName(),
-                dto.getType(),
+                dto.id(),
+                dto.name(),
+                dto.type(),
                 stats,
                 abilitySet,
-                dto.getSprite(),
-                dto.isStarter()
+                dto.sprite(),
+                dto.starter()
         );
     }
 
     public static BugemonSpeciesDTO toDTO(BugemonSpecies entity){
         if(entity == null) return null;
+		List<AbilityDTO> abilityDTOs = new ArrayList<>();
 
-        BugemonSpeciesDTO dto = new BugemonSpeciesDTO();
-
-        dto.setId(entity.getId());
-        dto.setName(entity.getName());
-        dto.setType(entity.getType());
-        dto.setBaseStats(StatsMapper.toDTO(entity.getBaseStats()));
-        dto.setSprite(entity.getSprite());
-        dto.setStarter(entity.isStarter());
-
-        if(entity.getAbilities() != null){
+		if (entity.getAbilities() != null){
             for(var ability : entity.getAbilities()){
-                dto.addAbility(AbilityMapper.toDTO(ability));
+                abilityDTOs.add(AbilityMapper.toDTO(ability));
             }
         }
+
+        BugemonSpeciesDTO dto = new BugemonSpeciesDTO(
+			entity.getId(),
+			entity.getName(),
+			entity.getType(),
+			StatsMapper.toDTO(entity.getBaseStats()),
+			abilityDTOs,
+			entity.getSprite(),
+			entity.isStarter()
+		);
 
         return dto;
     }

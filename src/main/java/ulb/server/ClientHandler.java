@@ -232,7 +232,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 
 	@Override public void getPlayerInfo(String username) throws DataAccessException { playerInfoHandler.getPlayerInfo(username); }
 	@Override public void getPlayerInventory(String username) throws DataAccessException { playerInfoHandler.getPlayerInventory(username); }
-	@Override public void getPlayerTeam() throws DataAccessException { playerInfoHandler.getPlayerTeam(); }
+	@Override public void getPlayerTeam(String username) throws DataAccessException { playerInfoHandler.getPlayerTeam(username); }
 
 
 	// GAME INFO

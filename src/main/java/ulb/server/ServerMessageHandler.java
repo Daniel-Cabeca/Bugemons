@@ -26,7 +26,7 @@ import java.util.List;
 	 // PLAYER INFO
 	 void getPlayerInfo(String username) throws UserFacingException, DataAccessException;
 	 void getPlayerInventory(String username) throws UserFacingException, DataAccessException;
-	 void getPlayerTeam() throws UserFacingException, DataAccessException;
+	 void getPlayerTeam(String username) throws UserFacingException, DataAccessException;
 
 	// GAME INFO
 	 void checkGameFinished() throws UserFacingException, DataAccessException;

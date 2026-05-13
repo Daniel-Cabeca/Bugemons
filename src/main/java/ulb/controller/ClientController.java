@@ -177,25 +177,6 @@ public class ClientController extends Application {
 		this.player = this.getPlayer(username);
 		return this.player;
 	}
-	
-	/**
-	 * Retrieves the updated inventory of the player.
-	 * @return the updated inventory
-	 */
-	public List<BugemonDTO> getUpdatedTeam() {
-		if (getData(new GetPlayerTeamRequest()) instanceof PlayerTeamResponse msg) {
-			return msg.getBugemons();
-		}
-		return null;
-	}
-
-	/**
-	 * Updates the team of the player. 
-	 */
-	public void updateTeam() {
-		List<BugemonDTO> updatedTeam = getUpdatedTeam();
-		this.player.setTeam(updatedTeam);
-	}
 
 	/**
 	 * Sets the current game mode.

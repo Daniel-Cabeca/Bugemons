@@ -20,6 +20,7 @@ import ulb.message.request.gameInfo.GetActiveBugemonsRequest;
 import ulb.message.request.gameInfo.GetBattleStateRequest;
 import ulb.message.request.gameInfo.GetLogsRequest;
 import ulb.message.request.playerInfo.GetPlayerInventoryRequest;
+import ulb.message.request.playerInfo.GetPlayerTeamRequest;
 import ulb.message.response.StatusResponse;
 import ulb.message.response.gameInfo.AbilityEffectivenessResponse;
 import ulb.message.response.gameInfo.ActiveBugemonsResponse;
@@ -27,6 +28,7 @@ import ulb.message.response.gameInfo.BattleStateResponse;
 import ulb.message.response.gameInfo.LogsResponse;
 import ulb.message.response.gameInfo.UsableItemsResponse;
 import ulb.message.response.playerInfo.PlayerInventoryResponse;
+import ulb.message.response.playerInfo.PlayerTeamResponse;
 import ulb.model.battle.BattleState;
 import ulb.view.windows.BattleWindow;
 import ulb.view.windows.BattleWindow.AbilityEntry;
@@ -54,6 +56,15 @@ public class BattleSetupController {
 			LOGGER.log(Level.WARNING, "Failed to update player inventory: " + errorMessage.getMessage());
 		}
 	}
+
+    public void updateTeam(PlayerDTO player) {
+        Serializable message = this.clientController.getData(new GetPlayerTeamRequest(player.getUsername()));
+		if (message instanceof PlayerTeamResponse playerTeam){
+			player.setTeam(playerTeam.getBugemons());
+		} else if (message instanceof StatusResponse errorMessage && errorMessage.isFailure()){
+			LOGGER.log(Level.WARNING, "Failed to update player team: " + errorMessage.getMessage());
+		}
+    }
 
 	public Map<String, Boolean> checkItems(List<ItemDTO> items){
 		Serializable message = this.clientController.getData(new CheckUsableItemRequest(items));
@@ -131,9 +142,8 @@ public class BattleSetupController {
      * @return The list of bugemon entries
      */
     public List<BugemonEntry> buildBugemonEntries(PlayerDTO player) {
-        clientController.updateTeam();
-        List<BugemonDTO> playerTeam = clientController.getPlayer().getTeam();
-        // List<BugemonDTO> playerTeam = player.getTeam();
+        this.updateTeam(player);
+        List<BugemonDTO> playerTeam = player.getTeam();
         if (playerTeam == null) {
             return List.of();
         }

@@ -13,8 +13,6 @@ import ulb.mapper.item.ItemMapper;
 import ulb.mapper.player.PlayerMapper;
 import ulb.message.response.playerInfo.*;
 import ulb.model.Player;
-import ulb.model.battle.Battle;
-import ulb.model.battle.Battle.ParticipantLabel;
 import ulb.model.item.Inventory;
 import ulb.model.item.Item;
 import ulb.model.team.Team;
@@ -58,20 +56,19 @@ public class PlayerInfoHandler {
 		}
 	}
 
-    public void getPlayerTeam() {
-        Battle battle = clientHandler.getBattle();
-        ParticipantLabel teamLabel = clientHandler.getTeamLabel();
+    public void getPlayerTeam(String username) {
+		Player player = clientHandler.getPlayer();
+		if (username.equals(player.getUsername())) {
+			Team team = player.getTeam();
+			List<BugemonDTO> teamDTO = team.getMembers()
+					.stream()
+					.map(BugemonMapper::toDTO)
+					.toList();
 
-		if (battle == null){
-			clientHandler.sendErrorMessage("The battle has not been created");
-			return;
+			clientHandler.sendMessage(new PlayerTeamResponse(teamDTO));
 		}
-		Team team = battle.getTeam(teamLabel);
-		List<BugemonDTO> teamDTO = team.getMembers()
-				.stream()
-				.map(BugemonMapper::toDTO)
-				.toList();
-
-		clientHandler.sendMessage(new PlayerTeamResponse(teamDTO));
+		else {
+			clientHandler.sendErrorMessage("Wrong Username");
+		}
 	}
 }

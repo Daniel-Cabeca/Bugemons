@@ -131,7 +131,9 @@ public class BattleSetupController {
      * @return The list of bugemon entries
      */
     public List<BugemonEntry> buildBugemonEntries(PlayerDTO player) {
-        List<BugemonDTO> playerTeam = player.getTeam();
+        clientController.updateTeam();
+        List<BugemonDTO> playerTeam = clientController.getPlayer().getTeam();
+        // List<BugemonDTO> playerTeam = player.getTeam();
         if (playerTeam == null) {
             return List.of();
         }
@@ -281,9 +283,6 @@ public class BattleSetupController {
         }
         
         boolean isForcedToSwitch = this.isForcedSwitch();
-        if(isForcedToSwitch){
-            clientController.updateTeam();
-        }
         view.setForcedSwitch(isForcedToSwitch);
         Optional<BattleSnapshot> snapshot = buildBattleSnapshot();
         

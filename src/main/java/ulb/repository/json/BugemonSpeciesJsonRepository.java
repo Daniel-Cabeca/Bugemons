@@ -7,9 +7,6 @@ import ulb.repository.json.parser.BugemonSpeciesJsonParser;
 import ulb.model.bugemon.BugemonSpecies;
 import ulb.repository.BugemonSpeciesRepository;
 
-import java.util.NoSuchElementException;
-import java.util.Optional;
-
 import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
 

@@ -8,6 +8,7 @@ import java.util.NoSuchElementException;
 
 import ulb.repository.BugemonSpeciesRepository;
 import ulb.exceptions.EntityNotFoundException;
+import ulb.exceptions.LoadException;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.BugemonSpecies;
 
@@ -33,7 +34,7 @@ public class BugemonService {
 	 * @return The instanciated Bugemon
 	 * @throws EntityNotFoundException If the species id was not recognized
 	 */
-	public Bugemon spawnBugemon(String speciesId) throws EntityNotFoundException {
+	public Bugemon spawnBugemon(String speciesId) throws LoadException, EntityNotFoundException {
 		BugemonSpecies species = this.speciesRepository.findById(speciesId);
 		return new Bugemon(species);
 	}
@@ -43,7 +44,7 @@ public class BugemonService {
 	 *
 	 * @return The list of all species ids
 	 */
-	private List<String> getAllSpeciesIds() {
+	private List<String> getAllSpeciesIds() throws LoadException, EntityNotFoundException{
 		List<String> ids = new ArrayList<>();
 
 		for (BugemonSpecies species: this.speciesRepository.findAll()) {
@@ -58,7 +59,7 @@ public class BugemonService {
 	 *
 	 * @return The instanciated Bugemon
 	 */
-	public Bugemon spawnBugemonRandom() {
+	public Bugemon spawnBugemonRandom() throws LoadException, EntityNotFoundException{
 		Random random = new Random();
 		List<String> ids = this.getAllSpeciesIds();
 
@@ -72,7 +73,7 @@ public class BugemonService {
 	 * @param number The number of Bugemons to spawn
 	 * @return The spawned Bugemons
 	 */
-	public List<Bugemon> spawnBugemonRandomDistinct(int number) {
+	public List<Bugemon> spawnBugemonRandomDistinct(int number) throws LoadException, EntityNotFoundException{
 		List<String> ids = this.getAllSpeciesIds();
 		Collections.shuffle(ids);
 
@@ -93,7 +94,7 @@ public class BugemonService {
 	 * @param id The species' id
 	 * @throws EntityNotFoundException If no species matches the id
 	 */
-	public BugemonSpecies getBugemonSpecies(String id) throws EntityNotFoundException {
+	public BugemonSpecies getBugemonSpecies(String id) throws LoadException, EntityNotFoundException {
 		return this.speciesRepository.findById(id);
 	}
 
@@ -102,7 +103,7 @@ public class BugemonService {
 	 *
 	 * @return An iterable of all the species
 	 */
-	public Iterable<BugemonSpecies> getAllSpecies() {
+	public Iterable<BugemonSpecies> getAllSpecies() throws LoadException, EntityNotFoundException{
 		return this.speciesRepository.findAll();
 	}
 }

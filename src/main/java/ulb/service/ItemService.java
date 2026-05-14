@@ -4,6 +4,7 @@ import ulb.repository.ItemRepository;
 import ulb.repository.StartingInventoryRepository;
 import ulb.model.item.Item;
 import ulb.exceptions.EntityNotFoundException;
+import ulb.exceptions.LoadException;
 import ulb.model.item.Inventory;
 import java.util.List;
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ public class ItemService {
 	*
 	* @return An iterable of all the items
 	*/
-	public Iterable<Item> getAllItems() {
+	public Iterable<Item> getAllItems() throws LoadException, EntityNotFoundException{
 		return this.itemRepository.findAll();
 	}
 
@@ -57,7 +58,7 @@ public class ItemService {
 	 *
 	 * @return A random item
 	 */
-	public Item getRandomItem() {
+	public Item getRandomItem() throws LoadException, EntityNotFoundException{
 		List<Item> items = new ArrayList<>();
 		for (Item item : this.itemRepository.findAll()) {
 			items.add(item);
@@ -72,7 +73,7 @@ public class ItemService {
 	 * @param category The category to fetch items from
 	 * @return The items of the given category
 	 */
-	public List<Item> getItemsByCategory(String category) {
+	public List<Item> getItemsByCategory(String category) throws LoadException, EntityNotFoundException{
 		List<Item> result = new ArrayList<>();
 		for (Item item : this.itemRepository.findAll()) {
 			if (item.getCategory().equals(category)) {

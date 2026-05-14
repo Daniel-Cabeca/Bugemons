@@ -3,11 +3,11 @@ package ulb.server;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.DTO.player.PlayerDTO;
+import ulb.exceptions.EntityNotFoundException;
 import ulb.mapper.bugemon.BugemonMapper;
 import ulb.mapper.item.ItemMapper;
 import ulb.mapper.player.PlayerMapper;
@@ -34,7 +34,7 @@ public class PlayerInfoHandler {
 			PlayerDTO playerDTO = PlayerMapper.toDTO(player);
 			clientHandler.sendMessage(new PlayerResponse(playerDTO));
 		}
-		catch (NoSuchElementException e) {
+		catch (EntityNotFoundException e) {
 			clientHandler.sendErrorMessage("Wrong Username");
 		}
 	}

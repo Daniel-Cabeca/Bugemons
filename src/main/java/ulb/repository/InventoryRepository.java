@@ -2,6 +2,7 @@ package ulb.repository;
 
 import java.util.NoSuchElementException;
 
+import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
 import ulb.model.item.Inventory;
 import ulb.model.item.Item;
@@ -48,5 +49,5 @@ public interface InventoryRepository {
 	 * @return the corresponding inventory of the user
 	 * @throws NoSuchElementException
 	 */
-	public Inventory getInventory(int userId) throws NoSuchElementException;
+	public Inventory getInventory(int userId) throws LoadException, EntityNotFoundException;
 }

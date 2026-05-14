@@ -76,7 +76,7 @@ public class TowerSaveService {
 		}
 	}
 
-	public Tower getTowerSave(Player player) throws LoadException {
+	public Tower getTowerSave(Player player) throws LoadException, EntityNotFoundException {
 		Optional<Integer> userId = player.getUserId();
 
 		if (userId.isEmpty() || !this.towerSaveRepository.isTowerSaved(userId.get())){

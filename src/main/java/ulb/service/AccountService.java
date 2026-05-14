@@ -58,7 +58,7 @@ public class AccountService {
      * @return The user id, or -1 if the user does not exist
      * @throws NoSuchElementException If the lookup fails
      */
-    public Integer getUserId(String username) throws NoSuchElementException {
+    public Integer getUserId(String username) throws EntityNotFoundException {
         return repository.getUserId(username);
     }
 
@@ -70,7 +70,7 @@ public class AccountService {
 	 * @throws NoSuchElementException If no user has the given id
 	 * @throws DataAccessException If some unexpected error occurs with the repository
 	 */
-	public String getUsername(int userId) throws NoSuchElementException, DataAccessException {
+	public String getUsername(int userId) throws EntityNotFoundException, DataAccessException {
 		return this.repository.getUsername(userId);
 	}
 
@@ -117,11 +117,11 @@ public class AccountService {
 	public void declineBattleRequest(int senderId, int receiverId) throws LoadException {
 		repository.declineBattleRequest(senderId, receiverId);
 	}
-	public void addPoints(int userId, int pointsToAdd) {
+	public void addPoints(int userId, int pointsToAdd) throws LoadException{
 		repository.addPoints(userId,pointsToAdd);
 	}
 
-	public  Map<String, Integer> getLeaderboard(){
+	public  Map<String, Integer> getLeaderboard() throws LoadException{
 		return repository.getLeaderboard();
 	}
 }

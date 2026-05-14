@@ -1,5 +1,6 @@
 package ulb.repository.mock;
 
+import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
 
 import java.util.NoSuchElementException;
@@ -36,16 +37,16 @@ public class ItemMockRepository implements ItemRepository {
 	}
 
 	@Override
-	public Item findById(String id) throws NoSuchElementException {
+	public Item findById(String id) throws EntityNotFoundException {
 		try {
 			return itemRepository.findById(id);
-		} catch (NoSuchElementException e) {
+		} catch (EntityNotFoundException e) {
 			return mockData.findById(id);
 		}
 	}
 
 	@Override
-	public Iterable<Item> findAll() {
+	public Iterable<Item> findAll() throws LoadException, EntityNotFoundException {
 		return itemRepository.findAll();
 	}
 }

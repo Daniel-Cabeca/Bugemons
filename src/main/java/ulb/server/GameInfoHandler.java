@@ -192,12 +192,22 @@ public class GameInfoHandler {
 				boolean won = battle.getState(teamLabel) == BattleState.WON;
 
 				if (won) {
-					towerManager.setCurrentRoomCompleted(true);
+					try {
+						towerManager.setCurrentRoomCompleted(true);
+					} catch (Exception e) {
+						clientHandler.sendErrorMessage("The room cannot be completed");
+						return;
+					}
 					battle.resetFightStats();
 					RoomType currentRoomType = towerManager.getCurrentRoomType();
 
 					if (currentRoomType == RoomType.BOSS) {
-						towerManager.nextFloor();
+						try {
+							towerManager.nextFloor();
+						} catch (Exception e) {
+							clientHandler.sendErrorMessage("The next floor cannot be selected");
+							return;
+						}
 	
 						if (!towerManager.isTowerCompleted()) {
 							RoomType nextRoomType = towerManager.getCurrentRoomType();
@@ -267,7 +277,14 @@ public class GameInfoHandler {
 		}
 		int towerFloorNumber = towerManager.getFloorNumber();
 		int towerRoomNumber = towerManager.getCurrentRoomId();
-		List<Integer> clearedRooms = towerManager.getCurrentFloorClearedRooms();
+
+		List<Integer> clearedRooms;
+		try {
+			clearedRooms = towerManager.getCurrentFloorClearedRooms();
+		} catch (Exception e) {
+			clientHandler.sendErrorMessage("Cannot get the cleared room for the current floor");
+			return;
+		}	
 
 		clientHandler.sendMessage(new TowerInfoResponse(towerFloorNumber, towerRoomNumber, clearedRooms));
 	}

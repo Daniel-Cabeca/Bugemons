@@ -45,6 +45,17 @@ public class GameActionsHandler extends Thread{
 		this.multiBattleService = multiBattleService;
     }
 
+	private void completeCurrentRoom(TowerManager towerManager){
+		try {
+			towerManager.setCurrentRoomCompleted(true);
+		} catch (Exception e) {
+			clientHandler.sendErrorMessage("The room cannot be completed");
+			return;
+		}
+		
+		clientHandler.sendSuccessMessage();
+	}
+
 	public void abandonTower() throws DataAccessException{
         boolean isGameTower = clientHandler.isGameTower();
 
@@ -80,9 +91,8 @@ public class GameActionsHandler extends Thread{
 		Ability newAbility = AbilityMapper.toEntity(newAbilityDTO);
 
 		chosenBugemon.swapAbility(newAbility, oldAbility);
-
-		towerManager.setCurrentRoomCompleted(true);
-		clientHandler.sendSuccessMessage();
+		
+		this.completeCurrentRoom(towerManager);
 	}
 
 	public void chooseItemReward(ItemDTO itemDTO) throws DataAccessException{
@@ -94,9 +104,7 @@ public class GameActionsHandler extends Thread{
 
 		inventoryService.insertItem(item, 1, player);
 
-		towerManager.setCurrentRoomCompleted(true);
-
-		clientHandler.sendSuccessMessage();
+		this.completeCurrentRoom(towerManager);
 	}
 
 	public void chooseLevelUpReward(RewardDTO rewardDTO) throws DataAccessException{
@@ -149,8 +157,7 @@ public class GameActionsHandler extends Thread{
 		chosenBugemon.changeBaseStats(reward.getStats());
 		chosenBugemon.changeFightStats(reward.getStats());
 
-		towerManager.setCurrentRoomCompleted(true);
-		clientHandler.sendSuccessMessage();
+		this.completeCurrentRoom(towerManager);
 	}
 
 	public void chooseTowerRoom(int roomId) throws DataAccessException{
@@ -160,7 +167,13 @@ public class GameActionsHandler extends Thread{
 			clientHandler.sendErrorMessage("The game isn't in tower mode");
 			return;
 		}
-		clientHandler.nextTowerRoom(roomId);
+		try {
+			clientHandler.nextTowerRoom(roomId);
+		} catch (Exception e) {
+			clientHandler.sendErrorMessage("The room cannot be selected");
+			return;
+		}
+		
 		if (clientHandler.isCurrentRoomIdEqual(roomId)){
 			clientHandler.sendSuccessMessage();
 		} else{
@@ -195,7 +208,13 @@ public class GameActionsHandler extends Thread{
 			if (towerManager.isFinalFloor()) {
 				clientHandler.finishTower();
 			} else {
-				towerManager.getCurrentFloorManager().rewindRoom();
+				try {
+					towerManager.getCurrentFloorManager().rewindRoom();
+				} catch (Exception e) {
+					clientHandler.sendErrorMessage("The previous room cannot be selected");
+					return;
+				}
+				
 				clientHandler.setBattle(towerManager.getCurrentBattle());
 			}
 		} else {

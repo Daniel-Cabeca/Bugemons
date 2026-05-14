@@ -11,7 +11,7 @@ import ulb.repository.mock.ItemMockRepository;
 
 public class InventoryTest {
 	@Test
-	public void addItemFunctionnality() {
+	public void addItemFunctionnality() throws Exception {
 		ItemRepository repository = new ItemMockRepository();
 		Item item = repository.findById("baie_tonique");
 
@@ -22,7 +22,7 @@ public class InventoryTest {
 	}
 
 	@Test
-	public void removeItemFunctionnality() {
+	public void removeItemFunctionnality() throws Exception {
 		ItemRepository repository = new ItemMockRepository();
 		Item item = repository.findById("baie_tonique");
 
@@ -36,7 +36,7 @@ public class InventoryTest {
 	}
 
 	@Test
-	public void getQuantityOfItemNotInInventory() {
+	public void getQuantityOfItemNotInInventory() throws Exception {
 		ItemRepository itemRepository = new ItemMockRepository();
 		Item item = itemRepository.findById("baie_revigorante");
 
@@ -45,7 +45,7 @@ public class InventoryTest {
 	}
 
 	@Test
-	public void getQuantityOfItemInInventory() {
+	public void getQuantityOfItemInInventory() throws Exception {
 		ItemRepository itemRepository = new ItemMockRepository();
 		Item item = itemRepository.findById("baie_revigorante");
 

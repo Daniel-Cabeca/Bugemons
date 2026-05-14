@@ -1,6 +1,7 @@
 package ulb.service;
 
 import ulb.exceptions.DataAccessException;
+import ulb.exceptions.EntityNotFoundException;
 import ulb.model.Player;
 import ulb.model.battle.MultiBattleSession;
 import ulb.repository.MultiBattleRepository;
@@ -39,7 +40,7 @@ public class MultiBattleService {
 	 * @return The created multiplayer battle session
 	 * @throws DataAccessException If some unexpected repository error occurs
 	 */
-	public MultiBattleSession createMultiBattle(int userId1, int userId2) throws DataAccessException {
+	public MultiBattleSession createMultiBattle(int userId1, int userId2) throws EntityNotFoundException, DataAccessException {
 		String username1 = this.accountService.getUsername(userId1);
 		String username2 = this.accountService.getUsername(userId2);
 

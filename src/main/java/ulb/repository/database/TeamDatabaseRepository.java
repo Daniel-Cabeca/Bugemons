@@ -227,7 +227,7 @@ public class TeamDatabaseRepository implements TeamRepository {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Bugemon findBugemon(int id) throws EntityNotFoundException {
+	public Bugemon findBugemon(int id) throws LoadException, EntityNotFoundException {
 		String sql = "SELECT * FROM bugemons WHERE id = ?";
 		Optional<Bugemon> bugemon = Optional.empty();
 		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
@@ -257,7 +257,7 @@ public class TeamDatabaseRepository implements TeamRepository {
 
 		} catch (SQLException e) {
 			LOGGER.log(Level.WARNING, "Failed to load bugemon with id: " + id, e);
-			throw new EntityNotFoundException("Bugemon", id);
+			throw new LoadException("Fail to fetch request: " + e.getMessage());
 		}
 		if (bugemon.isEmpty()){
 			throw new EntityNotFoundException("Bugemon", id);
@@ -269,7 +269,7 @@ public class TeamDatabaseRepository implements TeamRepository {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Team findById(int id) throws EntityNotFoundException {
+	public Team findById(int id) throws LoadException, EntityNotFoundException {
 		String sql = """
         SELECT t.team_name, tm.bugemon_id
         FROM teams t
@@ -298,6 +298,7 @@ public class TeamDatabaseRepository implements TeamRepository {
 			}
 		} catch (SQLException e) {
 			LOGGER.log(Level.WARNING, "Failed to load team with id: " + id, e);
+			throw new LoadException("Fail to fetch request: " + e.getMessage());
 		}
 		Team team = new Team(bugemons);
 		team.setTeamName(teamName);
@@ -309,7 +310,7 @@ public class TeamDatabaseRepository implements TeamRepository {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<Team> findAll(int userId) throws EntityNotFoundException{
+	public List<Team> findAll(int userId) throws LoadException,EntityNotFoundException{
 		String sql = """
         SELECT team_id
         FROM teams
@@ -331,6 +332,7 @@ public class TeamDatabaseRepository implements TeamRepository {
 			}
 		} catch (SQLException e) {
 			LOGGER.log(Level.WARNING, "Failed to load teams for user with id: " + userId, e);
+			throw new LoadException("Fail to fetch request: " + e.getMessage());
 		}
 		return teams;
 	}
@@ -339,7 +341,7 @@ public class TeamDatabaseRepository implements TeamRepository {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Optional<Team> getTowerTeam(int userId) throws LoadException {
+	public Optional<Team> getTowerTeam(int userId) throws LoadException, EntityNotFoundException {
 		String sql = """
 				SELECT team_id FROM teams WHERE user_id = ? AND tower_team = 1
 				""";

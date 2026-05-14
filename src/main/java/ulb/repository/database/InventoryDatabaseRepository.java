@@ -4,6 +4,7 @@ import ulb.model.item.Inventory;
 import ulb.model.item.Item;
 import ulb.repository.InventoryRepository;
 import ulb.repository.ItemRepository;
+import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
 import ulb.repository.database.sql.Database;
 
@@ -132,7 +133,7 @@ public class InventoryDatabaseRepository implements InventoryRepository {
      * {@inheritDoc}
      */
     @Override
-    public Inventory getInventory(int userId) throws NoSuchElementException {
+    public Inventory getInventory(int userId) throws LoadException, EntityNotFoundException {
         Inventory inventory = new Inventory();
 
         String sql = """
@@ -154,6 +155,7 @@ public class InventoryDatabaseRepository implements InventoryRepository {
 			}
 		} catch (SQLException e) {
 			LOGGER.log(Level.WARNING, "Failed to load inventory for user with id: " + userId, e);
+			throw new LoadException("Fail to fetch request: " + e.getMessage());
 		}
 
         return inventory;

@@ -36,7 +36,6 @@ public class AbilitySetJsonParser {
 
 		for (JsonNode abilityNode: node) {
 			String abilityId = abilityNode.asText();
-
 			try {
 				Ability ability = this.abilityRepository.findById(abilityId);
 				abilities[i++] = ability;

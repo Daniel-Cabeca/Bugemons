@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
+import ulb.exceptions.EntityNotFoundException;
+import ulb.exceptions.LoadException;
 import ulb.model.Player;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.team.Team;
@@ -16,7 +18,8 @@ import ulb.repository.mock.StartingInventoryMockRepository;import ulb.repository
 
 public class RoomManagerTest {
 
-	private Bugemon makeBugemon() {
+	private Bugemon makeBugemon() throws LoadException, EntityNotFoundException
+ {
 		BugemonSpeciesRepository bugemonRepository = new BugemonSpeciesMockRepository();
 		BugemonService bugemonService = new BugemonService(bugemonRepository);
 
@@ -24,7 +27,7 @@ public class RoomManagerTest {
 	}
 
     @Test
-    void roomNotCompletedOnInitialisation() {
+    void roomNotCompletedOnInitialisation() throws Exception {
 		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
 		ItemService itemService = new ItemService(new ItemMockRepository(), new StartingInventoryMockRepository());
 
@@ -40,7 +43,7 @@ public class RoomManagerTest {
     }
 
     @Test
-    void setRoomCompletedUpdatesManagerAndRoom() {
+    void setRoomCompletedUpdatesManagerAndRoom() throws Exception {
 		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
 		ItemService itemService = new ItemService(new ItemMockRepository(), new StartingInventoryMockRepository());
 
@@ -58,7 +61,7 @@ public class RoomManagerTest {
     }
 
 	@Test
-	void createBattleRoomInitializesBattle() {
+	void createBattleRoomInitializesBattle() throws Exception {
 		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
 		ItemService itemService = new ItemService(new ItemMockRepository(), new StartingInventoryMockRepository());
 
@@ -75,7 +78,7 @@ public class RoomManagerTest {
 	}
 
 	@Test
-	void createBossRoomInitializesBossBattle() {
+	void createBossRoomInitializesBossBattle() throws Exception {
 		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
 		ItemService itemService = new ItemService(new ItemMockRepository(), new StartingInventoryMockRepository());
 

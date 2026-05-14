@@ -2,6 +2,8 @@ package ulb.model.team;
 
 import java.util.List;
 
+import ulb.exceptions.EntityNotFoundException;
+import ulb.exceptions.LoadException;
 import ulb.model.bugemon.Bugemon;
 import ulb.service.BugemonService;
 
@@ -13,7 +15,7 @@ public class OpponentTeamGenerator {
 	 * @return the randomly generated opponent team
 	 * @throws IllegalArgumentException if the player team is null, empty or not valid
 	 */
-	public static Team generateRandomOpponentTeam(Team playerTeam, BugemonService bugemonService) {
+	public static Team generateRandomOpponentTeam(Team playerTeam, BugemonService bugemonService) throws LoadException, EntityNotFoundException {
 		if (playerTeam == null) {
 			throw new IllegalArgumentException("Player team cannot be null.");
 		}

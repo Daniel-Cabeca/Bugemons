@@ -10,17 +10,17 @@ import ulb.model.bugemon.BugemonSpecies;
 
 import ulb.repository.AbilityRepository;
 import ulb.repository.mock.AbilityMockRepository;
-
+import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
 
 public class BugemonSpeciesJsonParserTest {
-	public static BugemonSpeciesJsonParser getParser() {
+	public static BugemonSpeciesJsonParser getParser() throws LoadException, EntityNotFoundException {
 		AbilityRepository abilityRepository = new AbilityMockRepository();
 		abilityRepository.findById("pollen_sournois");
 		return new BugemonSpeciesJsonParser(abilityRepository);
 	}
 
-	public static BugemonSpecies parseOneFromString(String str) throws LoadException {
+	public static BugemonSpecies parseOneFromString(String str) throws LoadException, EntityNotFoundException {
 		BugemonSpeciesJsonParser parser = getParser();
 
 		JsonNode node = Json.getNode(str);

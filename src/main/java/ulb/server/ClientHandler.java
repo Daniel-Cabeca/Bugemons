@@ -10,9 +10,12 @@ import ulb.DTO.team.TeamDTO;
 import ulb.communication.Messenger.SocketMessenger;
 import ulb.exceptions.CommunicationException;
 import ulb.exceptions.DataAccessException;
+import ulb.exceptions.EntityNotFoundException;
+import ulb.exceptions.LoadException;
 import ulb.exceptions.UserFacingException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import ulb.message.request.Request;
 import ulb.message.response.*;
 import ulb.model.Player;
@@ -121,10 +124,10 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 			sendErrorMessage(e.getMessage());
 		} catch (DataAccessException e) {
 			LOGGER.log(Level.SEVERE, "Data access error while handling a client message.");
-			sendErrorMessage("A data access error occurred while handling a client message.");
+			sendErrorMessage("A data access error occurred while handling a client message : " + e.getMessage());
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, "Unexpected error while handling a client message.");
-			sendErrorMessage("An unexpected server error occurred while handling a client message.");
+			sendErrorMessage("An unexpected server error occurred while handling a client message : " + e.getMessage());
 		}
 	}
 
@@ -188,7 +191,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	/**
 	 * Go to the next room if the game is in tower mode
 	 */
-	public void nextTowerRoom(int targetRoomId) throws DataAccessException {
+	public void nextTowerRoom(int targetRoomId) throws LoadException, EntityNotFoundException {
 		if (!isGameTower){
 			return;
 		}
@@ -208,7 +211,11 @@ public class ClientHandler extends Thread implements ServerMessageHandler{
 	void finishTower() throws DataAccessException {
 		if (!isGameTower){return;}
 		this.towerSaveService.deleteTowerInfo(player);
-		this.teamService.deleteTowerTeam(player);
+		try {
+			this.teamService.deleteTowerTeam(player);
+		} catch (Exception e) {
+			LOGGER.log(Level.WARNING, "Failed to delete the TowerTeam");
+		}
 		this.towerManager = null;
 		this.isGameTower = false;
 		clearPendingLevelUpState();

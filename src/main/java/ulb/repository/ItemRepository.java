@@ -3,6 +3,7 @@ package ulb.repository;
 import java.lang.Iterable;
 
 import ulb.exceptions.EntityNotFoundException;
+import ulb.exceptions.LoadException;
 import ulb.model.item.Item;
 
 /**
@@ -23,6 +24,6 @@ public interface ItemRepository {
 	 *
 	 * @return An object iterable over the existing items
 	 */
-	public Iterable<Item> findAll();
+	public Iterable<Item> findAll() throws LoadException, EntityNotFoundException;
 
 }

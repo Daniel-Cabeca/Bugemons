@@ -10,7 +10,8 @@ import ulb.model.action.UseAbility;
 import ulb.model.action.UseItem;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.Stats;
-
+import ulb.exceptions.EntityNotFoundException;
+import ulb.exceptions.LoadException;
 import ulb.model.Player;
 import ulb.model.team.Team;
 import ulb.model.battle.Battle;
@@ -21,17 +22,17 @@ import ulb.repository.ItemRepository;
 import ulb.repository.mock.ItemMockRepository;
 
 public class ItemTest {
-	private static Item getItem(String id) {
+	private static Item getItem(String id) throws EntityNotFoundException {
 		ItemRepository repository = new ItemMockRepository();
 		return repository.findById(id);
 	}
 
-	private static Bugemon spawnBugemon(String id) {
+	private static Bugemon spawnBugemon(String id) throws LoadException, EntityNotFoundException {
 		BugemonService service = new BugemonService(new BugemonSpeciesMockRepository());
 		return service.spawnBugemon(id);
 	}
 
-	private Battle makeBattleController(Bugemon... bugemons) {
+	private Battle makeBattleController(Bugemon... bugemons) throws Exception {
 		List<Bugemon> bugemonList = bugemons.length > 0 ? List.of(bugemons) : List.of(spawnBugemon("florachu"));
 		Team teamA = new Team(bugemonList);
 		Team teamB = new Team(List.of(spawnBugemon("pass_turn")));
@@ -45,7 +46,7 @@ public class ItemTest {
 		return new Battle(teamA, teamB, player, otherPlayer);
 	}
 
-	private void playTurnWithItem(Battle battle, Item item) {
+	private void playTurnWithItem(Battle battle, Item item) throws Exception {
 		Ability otherAbility = battle.getActiveBugemon(ParticipantLabel.TEAM_B).getAbilities().getAbility(0);
 
 		battle.chooseAction(new UseItem(item), Battle.ParticipantLabel.TEAM_A);
@@ -53,7 +54,7 @@ public class ItemTest {
 	}
 
     @Test
-	public void healItemAppliesFullEffect() {
+	public void healItemAppliesFullEffect() throws Exception {
 		Bugemon bugemon = spawnBugemon("100hp");
 		bugemon.changeFightStats(new Stats(-20, 0, 0, 0));
 
@@ -68,7 +69,7 @@ public class ItemTest {
 	}
 
 	@Test
-	public void healItemAppliesPartialEffect() {
+	public void healItemAppliesPartialEffect() throws Exception {
 		Bugemon bugemon = spawnBugemon("100hp");
 		bugemon.changeFightStats(new Stats(-5, 0, 0, 0));
 
@@ -84,7 +85,7 @@ public class ItemTest {
 	}
 
 	@Test
-	public void statModifierAppliesEffect() {
+	public void statModifierAppliesEffect() throws Exception {
 		Bugemon bugemon = spawnBugemon("50atk");
 
 		Battle battle = makeBattleController(bugemon);
@@ -99,7 +100,7 @@ public class ItemTest {
 	}
 
 	@Test
-	public void multipleStatModifierAppliesEffect() {
+	public void multipleStatModifierAppliesEffect() throws Exception {
 		Bugemon bugemon = spawnBugemon("100all");
 
 		Battle battle = makeBattleController(bugemon);
@@ -115,7 +116,7 @@ public class ItemTest {
 	}
 
 	@Test
-	public void switchItemAppliesEffect() {
+	public void switchItemAppliesEffect() throws Exception {
 		Battle battle = makeBattleController(spawnBugemon("florachu"), spawnBugemon("pyricore"));
 		Player player = battle.getPlayer(ParticipantLabel.TEAM_A);
 
@@ -130,7 +131,7 @@ public class ItemTest {
 	}
 
 	@Test
-	public void resetMalusItemAppliesEffect() {
+	public void resetMalusItemAppliesEffect() throws Exception {
 		Bugemon bugemon = spawnBugemon("100all");
 		bugemon.changeFightStats(new Stats(-5, -5, -5, -5)); 
 

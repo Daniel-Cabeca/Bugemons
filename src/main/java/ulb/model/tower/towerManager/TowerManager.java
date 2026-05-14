@@ -36,7 +36,7 @@ public class TowerManager {
 	 * @param itemService Item service
 	 * @param setupNewTower tells if the tower saved or a new tower is used
 	 */
-	public TowerManager(Player player, boolean setupNewTower, BugemonService bugemonService, ItemService itemService, TeamService teamService, TowerSaveService towerSaveService) throws LoadException {
+	public TowerManager(Player player, boolean setupNewTower, BugemonService bugemonService, ItemService itemService, TeamService teamService, TowerSaveService towerSaveService) throws LoadException, EntityNotFoundException {
 		this.player = player;
 		this.bugemonService = bugemonService;
 		this.itemService = itemService;
@@ -52,7 +52,7 @@ public class TowerManager {
 	 * @param bugemonService Bugemon service
 	 * @param itemService Item service
 	 */
-	public TowerManager(Player player, BugemonService bugemonService, ItemService itemService, TeamService teamService, TowerSaveService towerSaveService) throws LoadException {
+	public TowerManager(Player player, BugemonService bugemonService, ItemService itemService, TeamService teamService, TowerSaveService towerSaveService) throws LoadException, EntityNotFoundException {
 		this(player, true, bugemonService, itemService, teamService, towerSaveService);
 	}
 
@@ -131,7 +131,7 @@ public class TowerManager {
     /**
      * @return the list of the ids of the current floor's cleared rooms
      */
-	public List<Integer> getCurrentFloorClearedRooms() {
+	public List<Integer> getCurrentFloorClearedRooms() throws EntityNotFoundException {
 		return this.tower.getCurrentFloorCompletedRoomsId();
 	}
 

@@ -2,6 +2,9 @@ package ulb.server;
 
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.exceptions.DataAccessException;
+import ulb.exceptions.EntityNotFoundException;
+import ulb.exceptions.LoadException;
+import ulb.exceptions.MappingException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,23 +38,40 @@ public class GameDataHandler {
 
     public void getAllBugemonSpecies() {
 		List<BugemonSpeciesDTO> DTOSpeciesList = new ArrayList<>();
-
-		for (BugemonSpecies species : bugemonService.getAllSpecies()){
-			DTOSpeciesList.add(BugemonSpeciesMapper.toDTO(species));
+		
+		try {
+			for (BugemonSpecies species : bugemonService.getAllSpecies()){
+				DTOSpeciesList.add(BugemonSpeciesMapper.toDTO(species));
+			}
+		} catch (Exception e) {
+			clientHandler.sendErrorMessage("Cannot get all bugemon species");
+			return;
 		}
 		clientHandler.sendMessage(new BugemonSpeciesResponse(DTOSpeciesList));
 	}
 
-	public void getRandomAbility(BugemonDTO bugemonDTO) throws DataAccessException{
+	public void getRandomAbility(BugemonDTO bugemonDTO) throws LoadException, DataAccessException {
 		Bugemon bugemon = BugemonMapper.toEntity(bugemonDTO);
-
-		Ability RandomAbility = abilityService.getRandomAbility(bugemon.getType(), bugemon.getAbilities());
+		
+		Ability RandomAbility;
+		try {
+			RandomAbility = abilityService.getRandomAbility(bugemon.getType(), bugemon.getAbilities());
+		} catch (Exception e) {
+			clientHandler.sendErrorMessage("Failed to get random ability");
+			return;
+		}
 
 		clientHandler.sendMessage(new RandomAbilityResponse(AbilityMapper.toDTO(RandomAbility)));
 	}
 
 	public void getRandomItem() {
-		Item randomItem = itemService.getRandomItem();
+		Item randomItem;
+		try {
+			randomItem = itemService.getRandomItem();
+		} catch (Exception e) {
+			clientHandler.sendErrorMessage("Cannot get a random item");
+			return;
+		}
 
 		clientHandler.sendMessage(new RandomItemResponse(ItemMapper.toDTO(randomItem)));
 	}

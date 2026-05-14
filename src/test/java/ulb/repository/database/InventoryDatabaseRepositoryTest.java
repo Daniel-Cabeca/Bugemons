@@ -2,6 +2,7 @@ package ulb.repository.database;
 
 import org.junit.jupiter.api.Test;
 
+import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
 import ulb.model.effect.Effect;
 import ulb.model.effect.EffectHeal;
@@ -11,7 +12,6 @@ import ulb.model.item.Item;
 import ulb.repository.database.sql.Database;
 import ulb.repository.database.sql.DatabaseInMemory;
 import ulb.repository.database.sql.DatabaseInitializer;
-import ulb.utils.DuplicateElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,13 +23,13 @@ public class InventoryDatabaseRepositoryTest {
     Item item1;
     Item item2;
 
-    private void insertUser(String username, Database database) throws LoadException {
+    private void insertUser(String username, Database database) throws LoadException, EntityNotFoundException {
         AccountDatabaseRepository accountRepository = new AccountDatabaseRepository(database);
         accountRepository.register(username, "password");
 		this.userId = accountRepository.getUserId(username);
     }
 
-    private void initiateDatabaseAndRepositories() throws LoadException, DuplicateElementException {
+    private void initiateDatabaseAndRepositories() throws Exception {
         Database database = new DatabaseInMemory();
         DatabaseInitializer databaseInitializer = new DatabaseInitializer(database);
         databaseInitializer.createTables();

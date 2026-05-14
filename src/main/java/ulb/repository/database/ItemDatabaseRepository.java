@@ -1,6 +1,7 @@
 package ulb.repository.database;
 
 import ulb.exceptions.EntityNotFoundException;
+import ulb.exceptions.LoadException;
 import ulb.model.effect.*;
 import ulb.model.item.Item;
 import ulb.repository.ItemRepository;
@@ -139,7 +140,7 @@ public class ItemDatabaseRepository implements ItemRepository {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Iterable<Item> findAll() throws EntityNotFoundException{
+	public Iterable<Item> findAll() throws LoadException, EntityNotFoundException{
 		List<Item> items = new ArrayList<>();
 		String sql = "SELECT id FROM items";
 		try (PreparedStatement pstmt = this.database.prepareStatement(sql)) {
@@ -156,6 +157,7 @@ public class ItemDatabaseRepository implements ItemRepository {
 			}
 		} catch (SQLException e) {
 			LOGGER.log(Level.WARNING, "Failed to load items from database.", e);
+			throw new LoadException("Fail to fetch request: " + e.getMessage());
 		}
 		return items;
 	}

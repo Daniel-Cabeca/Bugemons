@@ -4,6 +4,7 @@ import ulb.model.item.Item;
 import ulb.model.Player;
 import ulb.model.item.Inventory;
 import ulb.repository.InventoryRepository;
+import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
 
 import java.util.NoSuchElementException;
@@ -75,7 +76,7 @@ public class InventoryService {
      * @return the inventory of the given user
      * @throws NoSuchElementException
      */
-    public Inventory getInventoryFromDatabase(int userId) throws NoSuchElementException {
+    public Inventory getInventoryFromDatabase(int userId) throws LoadException, EntityNotFoundException {
         return this.inventoryRepository.getInventory(userId);
     }
 }

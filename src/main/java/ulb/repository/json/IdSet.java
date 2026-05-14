@@ -21,9 +21,9 @@ public class IdSet<T extends HasId> implements Iterable<T> {
 	 *
 	 * @param id The entry's id
 	 * @return The matching entry
-	 * @throws NoSuchElementException If no match was found for the id
+	 * @throws EntityNotFoundException If no match was found for the id
 	 */
-	public T get(String id) throws NoSuchElementException {
+	public T get(String id) throws EntityNotFoundException {
 		 T entry = this.entries.get(id);
 
 		 if (entry == null) {

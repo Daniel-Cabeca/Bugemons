@@ -5,6 +5,7 @@ import ulb.model.effect.*;
 import ulb.model.type.Type;
 import ulb.repository.AbilityRepository;
 import ulb.exceptions.EntityNotFoundException;
+import ulb.exceptions.LoadException;
 import ulb.repository.database.sql.Database;
 import ulb.utils.DuplicateElementException;
 
@@ -75,7 +76,7 @@ public class AbilityDatabaseRepository implements AbilityRepository {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Ability findById(String id) throws NoSuchElementException {
+	public Ability findById(String id) throws LoadException, EntityNotFoundException {
 		String sql = """
                SELECT a.*, e.id AS effect_id, e.type AS effect_type, e.target, e.value,
                       esm.hp, esm.attack, esm.defense, esm.initiative, esm.duration
@@ -128,7 +129,7 @@ public class AbilityDatabaseRepository implements AbilityRepository {
 			return ability.get();
 		} catch (SQLException e) {
 			LOGGER.log(Level.SEVERE, "SQL error while loading ability with id: " + id, e);
-			throw new EntityNotFoundException("Ability", id);
+			throw new LoadException("Fail to fetch request: " + e.getMessage());
 		}
 	}
 
@@ -136,7 +137,7 @@ public class AbilityDatabaseRepository implements AbilityRepository {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Iterable<Ability> findAll() {
+	public Iterable<Ability> findAll() throws LoadException, EntityNotFoundException {
 		List<Ability> abilities = new ArrayList<>();
 		String sql = "SELECT id FROM abilities";
 		try (PreparedStatement pstmt = this.database.prepareStatement(sql)) {
@@ -146,12 +147,14 @@ public class AbilityDatabaseRepository implements AbilityRepository {
 				try {
 					Ability ability = findById(AbilityId);
 					abilities.add(ability);
-				} catch (NoSuchElementException e) {
+				} catch (EntityNotFoundException e) {
 					LOGGER.log(Level.WARNING, "ID found but ability could not be loaded: " + AbilityId, e);
+					throw e;
 				}
 			}
 		} catch (SQLException e) {
 			LOGGER.log(Level.WARNING, "Failed to load abilities from database.", e);
+			throw new LoadException("Fail to fetch request: " + e.getMessage());
 		}
 		return abilities;
 	}

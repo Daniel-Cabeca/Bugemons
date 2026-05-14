@@ -13,10 +13,12 @@ import ulb.model.bugemon.Bugemon;
 import ulb.model.battle.Battle;
 import ulb.model.battle.Battle.ParticipantLabel;
 import ulb.model.team.Team;
+import ulb.exceptions.EntityNotFoundException;
+import ulb.exceptions.LoadException;
 import ulb.model.Player;
 
 public class EffectTest {
-	private static Battle getTestBattle() {
+	private static Battle getTestBattle() throws LoadException, EntityNotFoundException {
 		BugemonSpeciesMockRepository repository = new BugemonSpeciesMockRepository();
 		BugemonService service = new BugemonService(repository);
 
@@ -36,7 +38,7 @@ public class EffectTest {
 	}
 
 	@Test
-	public void getTargetsIsOwnBugemonWhenTargetIsOwnBugemon() {
+	public void getTargetsIsOwnBugemonWhenTargetIsOwnBugemon() throws Exception {
 		Battle battle = getTestBattle();
 		Effect effect = new EffectStatModifier(EffectTarget.OWN_BUGEMON, EffectStatDuration.PERMANENT, Map.of());
 
@@ -48,7 +50,7 @@ public class EffectTest {
 	}
 
 	@Test
-	public void getTargetsIsActiveOpposingBugemonWhenTargetIsOpposingBugemon() {
+	public void getTargetsIsActiveOpposingBugemonWhenTargetIsOpposingBugemon() throws Exception {
 		Battle battle = getTestBattle();
 		Effect effect = new EffectStatModifier(EffectTarget.OPPOSITE_BUGEMON, EffectStatDuration.PERMANENT, Map.of());
 
@@ -60,7 +62,7 @@ public class EffectTest {
 	}
 
 	@Test
-	public void getTargetsIsOwnTeamWhenTargetIsOwnTeam() {
+	public void getTargetsIsOwnTeamWhenTargetIsOwnTeam() throws Exception {
 		Battle battle = getTestBattle();
 		Effect effect = new EffectStatModifier(EffectTarget.OWN_TEAM, EffectStatDuration.PERMANENT, Map.of());
 

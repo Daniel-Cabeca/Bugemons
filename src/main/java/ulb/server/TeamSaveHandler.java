@@ -26,10 +26,14 @@ public class TeamSaveHandler {
 		Player player = clientHandler.getPlayer();
 
 		List<TeamDTO> DTOTeams = new ArrayList<>();
-
-		for (Team team : teamService.getAllTeams(player)){
-			DTOTeams.add(TeamMapper.toDTO(team));
+		try {
+			for (Team team : teamService.getAllTeams(player)){
+				DTOTeams.add(TeamMapper.toDTO(team));
+			}
+		} catch (Exception e) {
+			throw new DataAccessException("Cannot get all saved teams");
 		}
+		
 		clientHandler.sendMessage(new SavedTeamsResponse(DTOTeams));
 	}
 

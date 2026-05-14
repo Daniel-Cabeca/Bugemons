@@ -80,7 +80,7 @@ public class AccountDatabaseRepository implements AccountRepository {
 	/**
 	 * {@inheritDoc}
 	 */
-	public String getUsername(int userId) throws NoSuchElementException, DataAccessException {
+	public String getUsername(int userId) throws EntityNotFoundException, DataAccessException {
 		String sql = "SELECT username FROM  users WHERE id = ?";
 
 		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
@@ -95,7 +95,7 @@ public class AccountDatabaseRepository implements AccountRepository {
 			throw new DataAccessException("Failed to parse SQL query");
 		}
 
-		throw new NoSuchElementException("Player not found for this id: "+ userId);
+		throw new EntityNotFoundException("Player",userId);
 	}
 
 	/**
@@ -269,7 +269,7 @@ public class AccountDatabaseRepository implements AccountRepository {
 		}
 	}
 
-	public void addPoints(int userId, int pointsToAdd) {
+	public void addPoints(int userId, int pointsToAdd) throws LoadException {
 		String sql = "UPDATE users SET points = points + ? WHERE id = ?";
 
 		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
@@ -278,11 +278,11 @@ public class AccountDatabaseRepository implements AccountRepository {
 			stmt.executeUpdate();
 		} catch (SQLException e) {
 			LOGGER.log(Level.WARNING, "Failed to add leaderboard points for user id: " + userId, e);
-			// Optionnel : throw new LoadException("Erreur lors de l'ajout des points");
+			throw new LoadException("Failed to fetch request: " + e.getMessage());
 		}
 	}
 
-	public Map<String, Integer> getLeaderboard() {
+	public Map<String, Integer> getLeaderboard() throws LoadException {
 		Map<String, Integer> leaderboard = new LinkedHashMap<>();
 		String sql = "SELECT username, points FROM users ORDER BY points DESC LIMIT 10";
 
@@ -293,6 +293,7 @@ public class AccountDatabaseRepository implements AccountRepository {
 			}
 		} catch (SQLException e) {
 			LOGGER.log(Level.WARNING, "Failed to load leaderboard from database.", e);
+			throw new LoadException("Failed to fetch request: " + e.getMessage());
 		}
 		return leaderboard;
 	}

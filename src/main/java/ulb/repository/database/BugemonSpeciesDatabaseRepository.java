@@ -7,6 +7,7 @@ import ulb.model.bugemon.Stats;
 import ulb.model.type.Type;
 import ulb.repository.BugemonSpeciesRepository;
 import ulb.exceptions.EntityNotFoundException;
+import ulb.exceptions.LoadException;
 import ulb.repository.database.sql.Database;
 import ulb.utils.DuplicateElementException;
 
@@ -98,7 +99,7 @@ public class BugemonSpeciesDatabaseRepository implements BugemonSpeciesRepositor
 	 * {@inheritDoc}
 	 */
 	@Override
-	public BugemonSpecies findById(String id) throws NoSuchElementException {
+	public BugemonSpecies findById(String id) throws LoadException, EntityNotFoundException {
 		String sql = """
            SELECT bs.*, ba.ability_id
            FROM bugemon_species bs
@@ -140,9 +141,9 @@ public class BugemonSpeciesDatabaseRepository implements BugemonSpeciesRepositor
 						abilities.setAbility(index, ability);
 						index++;
 						
-					} catch (NoSuchElementException e) {
+					} catch (Exception e) {
 						LOGGER.log(Level.WARNING, "Ability " + abilityId + " not found for species " + id, e);
-						throw new EntityNotFoundException("Ability", abilityId);
+						throw e;
 					}
 				}
 			}
@@ -160,7 +161,7 @@ public class BugemonSpeciesDatabaseRepository implements BugemonSpeciesRepositor
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Iterable<BugemonSpecies> findAll() {
+	public Iterable<BugemonSpecies> findAll() throws LoadException, EntityNotFoundException {
 		List<BugemonSpecies> species = new ArrayList<>();
 		String sql = "SELECT id FROM bugemon_species";
 
@@ -178,6 +179,7 @@ public class BugemonSpeciesDatabaseRepository implements BugemonSpeciesRepositor
 			}
 		} catch (SQLException e) {
 			LOGGER.log(Level.WARNING, "Failed to load Bugémon species from database.", e);
+			throw new LoadException("Fail to fetch request: " + e.getMessage());
 		}
 
 		return species;

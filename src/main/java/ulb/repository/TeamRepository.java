@@ -102,7 +102,7 @@ public interface TeamRepository {
      * @return the constructed Bugemon object
      * @throws EntityNotFoundException if the bugemon is not found
      */
-	Bugemon findBugemon(int id) throws EntityNotFoundException;
+	Bugemon findBugemon(int id) throws LoadException, EntityNotFoundException;
 
     /**
      * Finds the team in the teams table based on its id
@@ -111,7 +111,7 @@ public interface TeamRepository {
      * @return the constructed Team object
      * @throws NoSuchElementException if the team is not found
      */
-	Team findById(int id) throws NoSuchElementException;
+	Team findById(int id) throws LoadException, EntityNotFoundException;
 
     /**
      * Finds all the teams belonging to a user
@@ -119,7 +119,7 @@ public interface TeamRepository {
      * @param username the name of the user whose teams are to be retrieved
      * @return the list of Team objects
      */
-	List<Team> findAll(int userId) throws LoadException;
+	List<Team> findAll(int userId) throws LoadException, EntityNotFoundException;
 
 	/**
 	 * Get the tower team saved for a user as an Optional object.
@@ -127,5 +127,5 @@ public interface TeamRepository {
 	 * @param userId the user
 	 * @return the tower team saved
 	 */
-	Optional<Team> getTowerTeam(int userId) throws LoadException;
+	Optional<Team> getTowerTeam(int userId) throws LoadException, EntityNotFoundException;
 }

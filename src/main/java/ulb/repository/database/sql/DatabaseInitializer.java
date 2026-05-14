@@ -1,5 +1,6 @@
 package ulb.repository.database.sql;
 
+import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
 
 import java.sql.SQLException;
@@ -78,7 +79,7 @@ public class DatabaseInitializer {
 	/**
 	 * Populates the database with the default game data.
 	 */
-	void populate() throws LoadException {
+	void populate() throws LoadException, EntityNotFoundException {
 		ItemRepository itemRepository = new ItemJsonRepository();
 		AbilityRepository abilityRepository = new AbilityJsonRepository();
 		BugemonSpeciesJsonRepository bugemonSpeciesJsonRepository = new BugemonSpeciesJsonRepository();
@@ -91,7 +92,7 @@ public class DatabaseInitializer {
 	 *
 	 * @throws IllegalStateException If the database's connection is already open.
 	 */
-	public void initialize() throws LoadException {
+	public void initialize() throws LoadException, EntityNotFoundException {
 		this.createTables();
 		this.populate();
 	}
@@ -101,7 +102,7 @@ public class DatabaseInitializer {
 	 *
 	 * @return The default database, initialized and connected.
 	 */
-	public static Database prepareDefaultDatabase() throws LoadException {
+	public static Database prepareDefaultDatabase() throws LoadException, EntityNotFoundException {
 		Database database = DatabaseInFile.get(DatabaseInFile.NAME_DEFAULT);
 		DatabaseInitializer initializer = new DatabaseInitializer(database);
 

@@ -3,6 +3,7 @@ package ulb.service;
 import ulb.model.Player;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.team.Team;
+import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
 import ulb.repository.TeamRepository;
 
@@ -76,7 +77,7 @@ public class TeamService {
      * @param player the user whose team is deleted
      * @throws LoadException if the deleting fails
      */
-	public void deleteTowerTeam(Player player) throws LoadException {
+	public void deleteTowerTeam(Player player) throws LoadException, EntityNotFoundException {
 		Optional<Integer> userId = player.getUserId();
 
 		if (userId.isEmpty()){
@@ -162,7 +163,7 @@ public class TeamService {
      * @param username the user's name
      * @return the list of the user's saved teams
      */
-	public List<Team> getAllTeams(Player player) throws LoadException {
+	public List<Team> getAllTeams(Player player) throws LoadException, EntityNotFoundException {
 		Optional<Integer> userId = player.getUserId();
 
 		if (userId.isEmpty()){
@@ -177,7 +178,7 @@ public class TeamService {
 	 * @param player the user
 	 * @return the team saved
 	 */
-	public Optional<Team> getTowerTeam(Player player) throws LoadException {
+	public Optional<Team> getTowerTeam(Player player) throws LoadException, EntityNotFoundException {
 		Optional<Integer> userId = player.getUserId();
 
 		if (userId.isPresent()){

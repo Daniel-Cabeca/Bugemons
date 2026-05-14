@@ -1,5 +1,6 @@
 package ulb.repository.mock;
 
+import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
 
 import java.util.NoSuchElementException;
@@ -19,7 +20,7 @@ public class BugemonSpeciesMockRepository implements BugemonSpeciesRepository {
 	private static BugemonSpeciesRepository mockData = null;
 
 	public BugemonSpeciesMockRepository() {
-		if (speciesRepository == null) {
+		if (speciesRepository == null || mockData == null) {
 			load();
 		}
 	}
@@ -31,7 +32,7 @@ public class BugemonSpeciesMockRepository implements BugemonSpeciesRepository {
 			speciesRepository = new BugemonSpeciesJsonRepository(abilityRepository);
 			mockData = new BugemonSpeciesJsonRepository(MockResources.getStream(MockResources.PATH_BUGEMON_SPECIES), abilityRepository);
 		} catch (LoadException e) {
-			throw new IllegalStateException("Failed to load Bugemon species mock data.", e);
+			throw new IllegalStateException("Failed to load Bugemon species mock data : " + e.getMessage(), e);
 		}
 	}
 
@@ -40,16 +41,16 @@ public class BugemonSpeciesMockRepository implements BugemonSpeciesRepository {
 	}
 
 	@Override
-	public BugemonSpecies findById(String id) throws NoSuchElementException {
+	public BugemonSpecies findById(String id) throws LoadException, EntityNotFoundException {
 		try {
 			return speciesRepository.findById(id);
-		} catch (NoSuchElementException e) {
+		} catch (EntityNotFoundException e) {
 			return mockData.findById(id);
 		}
 	}
 
 	@Override
-	public Iterable<BugemonSpecies> findAll() {
+	public Iterable<BugemonSpecies> findAll() throws LoadException, EntityNotFoundException {
 		return speciesRepository.findAll();
 	}
 }

@@ -15,7 +15,7 @@ import java.util.List;
 public class BattleParticipantTest {
 
     @Test
-    public void setActiveBugemonAddsToParticipatingBugemons() {
+    public void setActiveBugemonAddsToParticipatingBugemons() throws Exception {
         BugemonSpeciesMockRepository repository = new BugemonSpeciesMockRepository();
         BugemonService service = new BugemonService(repository);
 
@@ -36,7 +36,7 @@ public class BattleParticipantTest {
     }
 
     @Test
-    public void setActiveBugemonDoesntAddSameBugemonTwice() {
+    public void setActiveBugemonDoesntAddSameBugemonTwice() throws Exception {
         BugemonSpeciesMockRepository repository = new BugemonSpeciesMockRepository();
         BugemonService service = new BugemonService(repository);
 

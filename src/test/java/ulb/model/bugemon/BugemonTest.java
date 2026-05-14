@@ -2,6 +2,8 @@ package ulb.model.bugemon;
 
 import org.junit.jupiter.api.Test;
 
+import ulb.exceptions.EntityNotFoundException;
+import ulb.exceptions.LoadException;
 import ulb.model.ability.Ability;
 import ulb.model.ability.AbilitySet;
 import ulb.model.type.Type;
@@ -79,7 +81,7 @@ public class BugemonTest {
 	}
 
 	@Test
-	public void checkInitiative(){
+	public void checkInitiative() throws Exception {
 		BugemonSpeciesRepository repository = new BugemonSpeciesMockRepository();
 		BugemonService service = new BugemonService(repository);
 

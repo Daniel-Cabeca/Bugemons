@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
+import ulb.exceptions.EntityNotFoundException;
+import ulb.exceptions.LoadException;
 import ulb.model.Player;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.team.Team;
@@ -26,7 +28,7 @@ import ulb.service.TowerSaveService;
 
 public class TowerManagerTest {
 
-	private Bugemon makeBugemon(BugemonService bugemonService) {
+	private Bugemon makeBugemon(BugemonService bugemonService) throws LoadException, EntityNotFoundException {
 		return bugemonService.spawnBugemon("florachu");
 	}
 

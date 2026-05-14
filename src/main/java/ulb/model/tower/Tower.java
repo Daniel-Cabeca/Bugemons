@@ -24,7 +24,7 @@ public class Tower {
 	 * @param currentFloorId the id of the current floor
 	 * @param completedRoomsId the list of ids of the current floor completed rooms
 	 */
-	public Tower(int currentFloorId, List<Integer> completedRoomsId) {
+	public Tower(int currentFloorId, List<Integer> completedRoomsId) throws EntityNotFoundException {
 		this();
 		this.setCompletedFloors(currentFloorId);
 		this.setCurrentFloorCompletedRooms(completedRoomsId);

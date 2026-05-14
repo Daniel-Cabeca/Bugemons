@@ -3,6 +3,8 @@ package ulb.model.battle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import ulb.model.Player;
 import ulb.model.action.Action;
@@ -10,9 +12,10 @@ import ulb.model.battle.Battle.ParticipantLabel;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.Stats;
 import ulb.model.team.Team;
+import ulb.server.ClientHandler;
 
 public class BattleHandler {
-
+	private static final Logger LOGGER = Logger.getLogger(ClientHandler.class.getName());
 	private Battle battle;
 
 	public BattleHandler(Battle battle){
@@ -158,7 +161,12 @@ public class BattleHandler {
 		if (this.battle.getMultiplayerBattle()) {
 			Player winnerPlayer = winner.getPlayer();
 			if (winnerPlayer.getUserId().isPresent()){
-				this.battle.getaccountService().addPoints(winnerPlayer.getUserId().get(), 1);
+				try {
+					this.battle.getaccountService().addPoints(winnerPlayer.getUserId().get(), 1);
+				
+				} catch (Exception e) {
+					LOGGER.log(Level.WARNING, "Failed to add point at the end of the battle", e);
+				}
 			}
 		}
 

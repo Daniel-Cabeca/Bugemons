@@ -3,6 +3,7 @@ package ulb.repository;
 import java.lang.Iterable;
 
 import ulb.exceptions.EntityNotFoundException;
+import ulb.exceptions.LoadException;
 import ulb.model.bugemon.BugemonSpecies;
 /**
  * Repository of the BugemonSpecies instances in the game data.
@@ -15,12 +16,12 @@ public interface BugemonSpeciesRepository {
 	 * @return The BugemonSpecies instance
 	 * @throws EntityNotFoundException If no match was found for the id
 	 */
-	public BugemonSpecies findById(String id) throws EntityNotFoundException;
+	public BugemonSpecies findById(String id) throws LoadException, EntityNotFoundException;
 
 	/**
 	 * Gives an iterable list of the species in the repository.
 	 *
 	 * @return An object iterable over the existing species
 	 */
-	public Iterable<BugemonSpecies> findAll();
+	public Iterable<BugemonSpecies> findAll() throws LoadException, EntityNotFoundException;
 }

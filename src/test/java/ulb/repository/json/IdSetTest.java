@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.NoSuchElementException;
 
+import ulb.exceptions.EntityNotFoundException;
 import ulb.model.HasId;
 
 public class IdSetTest {
@@ -43,7 +44,7 @@ public class IdSetTest {
 	@Test
 	public void testGetNotPresent() throws Exception {
 		IdSet<Entry> set = new IdSet<>();
-		assertThrows(NoSuchElementException.class, () -> { set.get("doesnotexist"); });
+		assertThrows(EntityNotFoundException.class, () -> { set.get("doesnotexist"); });
 	}
 
 	@Test

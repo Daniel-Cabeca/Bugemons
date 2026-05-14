@@ -1,7 +1,9 @@
 package ulb.server;
 
 import ulb.exceptions.DataAccessException;
+import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.GameException;
+import ulb.exceptions.LoadException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +54,7 @@ public class SetupHandler {
     }
 
 
-    private Player buildPlayer(PlayerRegisterDTO dto, boolean isLogin) throws DataAccessException {
+    private Player buildPlayer(PlayerRegisterDTO dto, boolean isLogin) throws LoadException, EntityNotFoundException {
         String username = dto.username();
 
         Inventory inventory;
@@ -114,17 +116,20 @@ public class SetupHandler {
 		String username = playerRegisterDTO.username();
 		String password = playerRegisterDTO.password();
 
-		if (isLogin) {
-			success = accountService.login(username, password);
-		}
-		else {
-			success = accountService.register(username, password);
-		}
-		if (success) {
-			Player player = buildPlayer(playerRegisterDTO, isLogin);
-            clientHandler.setPlayer(player);
-			clientHandler.sendSuccessMessage();
-		} else {
+
+		try {
+			if (isLogin) {
+				success = accountService.login(username, password);
+			}
+			else {
+				success = accountService.register(username, password);
+			}
+				if (success) {
+				Player player = buildPlayer(playerRegisterDTO, isLogin);
+				clientHandler.setPlayer(player);
+				clientHandler.sendSuccessMessage();
+			} 
+		} catch (Exception e) {
 			clientHandler.sendErrorMessage("Register failed");
 		}
 	}
@@ -183,9 +188,15 @@ public class SetupHandler {
         Player player = clientHandler.getPlayer();
 
 		if (!isNewTower){
-			Optional<Team> playerTeam = teamService.getTowerTeam(player);
-			if (playerTeam.isPresent()){
-				player.setTeam(playerTeam.get());
+			
+			try {
+				Optional<Team> playerTeam = teamService.getTowerTeam(player);
+				if (playerTeam.isPresent()){
+					player.setTeam(playerTeam.get());
+				}
+			} catch (Exception e) {
+				clientHandler.sendErrorMessage("Cannot get tower team");
+				return;
 			}
 		}
 
@@ -196,7 +207,12 @@ public class SetupHandler {
 		if (battle != null || towerManager != null || isGameTower) {
 			clientHandler.resetGameSessionState();
 		}
-		towerManager = new TowerManager(player, isNewTower, bugemonService, itemService, teamService, towerSaveService);
+		try {
+			towerManager = new TowerManager(player, isNewTower, bugemonService, itemService, teamService, towerSaveService);
+		} catch (Exception e) {
+			clientHandler.sendErrorMessage("The tower cannot be initialized");
+			return;
+		}
 		clientHandler.setTowerManager(towerManager);
 
 		clientHandler.setBattle(towerManager.getCurrentBattle());

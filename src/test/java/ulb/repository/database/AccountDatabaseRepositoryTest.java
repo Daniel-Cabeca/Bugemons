@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
+import ulb.exceptions.UserAlreadyExistsException;
 import ulb.repository.database.sql.Database;
 import ulb.repository.database.sql.DatabaseInMemory;
 
@@ -61,7 +62,7 @@ public class AccountDatabaseRepositoryTest {
 		assertDoesNotThrow(() -> {
 			repo.register("alice", "hash1");
 		});
-		assertThrows(Exception.class, () -> {
+		assertThrows(UserAlreadyExistsException.class, () -> {
 			repo.register("alice", "hash2");
 		});
 	}

@@ -33,6 +33,7 @@ public class AccountService {
      * @param password The password hash to store
      * @return False if the username is already used, true otherwise
      * @throws LoadException If the registration fails
+	 * @throws UserAlreadyExistsException If the user already is registered in the database
      */
     public void register(String username, String password) throws LoadException, UserAlreadyExistsException {
         // return repository.register(username, password);
@@ -47,6 +48,7 @@ public class AccountService {
      * @return True if credentials match, false otherwise
      * @throws LoadException If the lookup fails
 	 * @throws EntityNotFoundException If no player is registered with the username
+	 * @throws InvalidCredentialsException If the wrong password is given.
      */
     public void login(String username, String password) throws LoadException, EntityNotFoundException, InvalidCredentialsException{
         String storedPassword = repository.getPasswordHash(username);

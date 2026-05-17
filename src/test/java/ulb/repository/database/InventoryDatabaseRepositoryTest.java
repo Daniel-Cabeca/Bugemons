@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
+import ulb.exceptions.UserAlreadyExistsException;
 import ulb.model.effect.Effect;
 import ulb.model.effect.EffectHeal;
 import ulb.model.effect.EffectTarget;
@@ -23,7 +24,7 @@ public class InventoryDatabaseRepositoryTest {
     Item item1;
     Item item2;
 
-    private void insertUser(String username, Database database) throws LoadException, EntityNotFoundException {
+    private void insertUser(String username, Database database) throws LoadException, EntityNotFoundException, UserAlreadyExistsException {
         AccountDatabaseRepository accountRepository = new AccountDatabaseRepository(database);
         accountRepository.register(username, "password");
 		this.userId = accountRepository.getUserId(username);

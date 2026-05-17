@@ -21,6 +21,7 @@ public interface AccountRepository {
 	 * @param password The password hash to store
 	 * @return False if the username is already taken, true otherwise
 	 * @throws LoadException If the user cannot be persisted
+	 * @throws UserAlreadyExistsException If the user already is registered in the database
 	 */
 	public void register(String username, String password) throws LoadException, UserAlreadyExistsException;
 

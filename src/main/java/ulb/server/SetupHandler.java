@@ -112,23 +112,20 @@ public class SetupHandler {
 	}
 
 	public void registerPlayer(PlayerRegisterDTO playerRegisterDTO, boolean isLogin) throws DataAccessException{
-		boolean success;
 		String username = playerRegisterDTO.username();
 		String password = playerRegisterDTO.password();
 
-
 		try {
 			if (isLogin) {
-				success = accountService.login(username, password);
+				accountService.login(username, password);
 			}
 			else {
-				success = accountService.register(username, password);
+				accountService.register(username, password);
 			}
-				if (success) {
-				Player player = buildPlayer(playerRegisterDTO, isLogin);
-				clientHandler.setPlayer(player);
-				clientHandler.sendSuccessMessage();
-			} 
+
+			Player player = buildPlayer(playerRegisterDTO, isLogin);
+			clientHandler.setPlayer(player);
+			clientHandler.sendSuccessMessage();
 		} catch (Exception e) {
 			clientHandler.sendErrorMessage("Register failed");
 		}

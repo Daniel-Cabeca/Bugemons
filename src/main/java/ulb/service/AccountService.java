@@ -32,8 +32,9 @@ public class AccountService {
      * @return False if the username is already used, true otherwise
      * @throws LoadException If the registration fails
      */
-    public boolean register(String username, String password) throws LoadException {
-        return repository.register(username, password);
+    public void register(String username, String password) throws LoadException {
+        // return repository.register(username, password);
+		repository.register(username, password);
     }
 
     /**
@@ -45,10 +46,11 @@ public class AccountService {
      * @throws LoadException If the lookup fails
 	 * @throws EntityNotFoundException If no player is registered with the username
      */
-    public boolean login(String username, String password) throws LoadException, EntityNotFoundException {
+    public void login(String username, String password) throws LoadException, EntityNotFoundException {
         String storedPassword = repository.getPasswordHash(username);
-        // empty means the username doesn't exist
-        return storedPassword.equals(password);
+		if (!storedPassword.equals(password)) {
+			throw new LoadException("Wrong password");
+		}
     }
 
     /**

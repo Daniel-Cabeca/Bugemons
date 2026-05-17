@@ -21,7 +21,7 @@ public interface AccountRepository {
 	 * @return False if the username is already taken, true otherwise
 	 * @throws LoadException If the user cannot be persisted
 	 */
-	public boolean register(String username, String password) throws LoadException;
+	public void register(String username, String password) throws LoadException;
 
 
 	/**

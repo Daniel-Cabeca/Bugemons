@@ -33,15 +33,13 @@ public class AccountDatabaseRepository implements AccountRepository {
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean register(String username, String password) throws LoadException {
+	public void register(String username, String password) throws LoadException {
 		String sql = "INSERT INTO users (username, password_hash) VALUES (?, ?)";
 		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
 			stmt.setString(1, username);
 			stmt.setString(2, password);
 			stmt.executeUpdate();
-			return true;
 		} catch (SQLException e) {
-			if (e.getMessage().contains("UNIQUE")) return false;
 			throw new LoadException("Failed to register user: " + e.getMessage());
 		}
 	}

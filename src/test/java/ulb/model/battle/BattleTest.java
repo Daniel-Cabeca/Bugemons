@@ -12,6 +12,7 @@ import ulb.model.type.Type;
 import java.util.List;
 import ulb.model.Player;
 import ulb.model.ability.AbilitySet;
+import ulb.model.action.UseAbility;
 import ulb.model.battle.Battle.ParticipantLabel;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -48,6 +49,10 @@ public class BattleTest {
 		Player p = new Player();
 		Battle battle = new Battle(teamA, teamB, p, new Player());
 
+		battle.chooseAction(new UseAbility(fast.getAbilities().getAbility(0)), ParticipantLabel.TEAM_A);
+		battle.chooseAction(new UseAbility(slow.getAbilities().getAbility(0)), ParticipantLabel.TEAM_B);
+
+
 		assertSame(ParticipantLabel.TEAM_A, battle.getFirstTeamToPlay());
 	}
 
@@ -61,6 +66,10 @@ public class BattleTest {
 
 		Player p = new Player();
 		Battle battle = new Battle(teamA, teamB, p, new Player());
+
+		battle.chooseAction(new UseAbility(slow.getAbilities().getAbility(0)), ParticipantLabel.TEAM_A);
+		battle.chooseAction(new UseAbility(fast.getAbilities().getAbility(0)), ParticipantLabel.TEAM_B);
+
 
 		assertSame(ParticipantLabel.TEAM_B, battle.getFirstTeamToPlay());
 	}
@@ -78,6 +87,9 @@ public class BattleTest {
 
 		boolean sawA = false;
 		boolean sawB = false;
+
+		battle.chooseAction(new UseAbility(sameA.getAbilities().getAbility(0)), ParticipantLabel.TEAM_A);
+		battle.chooseAction(new UseAbility(sameB.getAbilities().getAbility(0)), ParticipantLabel.TEAM_B);
 
 		for (int i = 0; i < 200; i++) {
 			Battle.ParticipantLabel result = battle.getFirstTeamToPlay();

@@ -20,7 +20,7 @@ public class StartingInventoryMockRepository implements StartingInventoryReposit
 		try {
 			inventoryRepository = new StartingInventoryJsonRepository(new ItemJsonRepository());
 		} catch (LoadException e) {
-			throw new IllegalStateException("Failed to load starting inventory mock data.", e);
+			throw new IllegalStateException("Failed to load starting inventory mock data.");
 		}
 	}
 

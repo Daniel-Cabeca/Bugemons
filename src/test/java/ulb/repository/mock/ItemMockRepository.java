@@ -3,8 +3,6 @@ package ulb.repository.mock;
 import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
 
-import java.util.NoSuchElementException;
-
 import ulb.model.item.Item;
 import ulb.repository.ItemRepository;
 import ulb.repository.json.ItemJsonRepository;
@@ -28,7 +26,7 @@ public class ItemMockRepository implements ItemRepository {
 			itemRepository = new ItemJsonRepository();
 			mockData = new ItemJsonRepository(MockResources.getStream(MockResources.PATH_ITEMS));
 		} catch (LoadException e) {
-			throw new IllegalStateException("Failed to load item mock data.", e);
+			throw new IllegalStateException("Failed to load item mock data.");
 		}
 	}
 

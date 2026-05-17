@@ -40,7 +40,7 @@ public class SocketMessengerTest {
                 }
                 this.messenger = new SocketMessenger(socket);
             } catch (Exception e){
-                LOGGER.log(Level.SEVERE, "Failed to establish socket connection.", e);
+                LOGGER.log(Level.SEVERE, "Failed to establish socket connection.");
             }
         }
 
@@ -52,7 +52,7 @@ public class SocketMessengerTest {
             try{
                 this.messenger.sendMessage(message);
             } catch (Exception e){
-                LOGGER.log(Level.WARNING, "Failed to send message.", e);
+                LOGGER.log(Level.WARNING, "Failed to send message.");
             }
         }
 
@@ -81,7 +81,7 @@ public class SocketMessengerTest {
 
             connectionSocket.close();
         } catch (Exception e){
-            LOGGER.log(Level.SEVERE, "Failed to create socket actors.", e);
+            LOGGER.log(Level.SEVERE, "Failed to create socket actors.");
         }
     }
 

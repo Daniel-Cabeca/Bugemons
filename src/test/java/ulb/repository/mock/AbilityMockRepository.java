@@ -3,8 +3,6 @@ package ulb.repository.mock;
 import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
 
-import java.util.NoSuchElementException;
-
 import ulb.model.ability.Ability;
 import ulb.repository.AbilityRepository;
 import ulb.repository.json.AbilityJsonRepository;
@@ -28,7 +26,7 @@ public class AbilityMockRepository implements AbilityRepository {
 			abilityRepository = new AbilityJsonRepository();
 			mockData = new AbilityJsonRepository(MockResources.getStream(MockResources.PATH_ABILITIES));
 		} catch (LoadException e) {
-			throw new IllegalStateException("Failed to load ability mock data.", e);
+			throw new IllegalStateException("Failed to load ability mock data.");
 		}
 	}
 

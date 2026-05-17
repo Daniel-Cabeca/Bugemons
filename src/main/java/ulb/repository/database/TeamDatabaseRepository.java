@@ -14,7 +14,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -256,7 +255,7 @@ public class TeamDatabaseRepository implements TeamRepository {
 			}
 
 		} catch (SQLException e) {
-			LOGGER.log(Level.WARNING, "Failed to load bugemon with id: " + id, e);
+			LOGGER.log(Level.WARNING, "Failed to load bugemon with id: " + id);
 			throw new LoadException("Fail to fetch request: " + e.getMessage());
 		}
 		if (bugemon.isEmpty()){
@@ -291,13 +290,13 @@ public class TeamDatabaseRepository implements TeamRepository {
 						Bugemon bugemon = findBugemon(bugemonId);
 						bugemons.add(bugemon);
 					} catch (EntityNotFoundException e) {
-						LOGGER.log(Level.WARNING, "ID found but Bugemon could not be loaded: " + bugemonId, e);
+						LOGGER.log(Level.WARNING, "ID found but Bugemon could not be loaded: " + bugemonId);
 						throw e;
 					}
 				}
 			}
 		} catch (SQLException e) {
-			LOGGER.log(Level.WARNING, "Failed to load team with id: " + id, e);
+			LOGGER.log(Level.WARNING, "Failed to load team with id: " + id);
 			throw new LoadException("Fail to fetch request: " + e.getMessage());
 		}
 		Team team = new Team(bugemons);
@@ -326,12 +325,12 @@ public class TeamDatabaseRepository implements TeamRepository {
 					Team team = findById(teamId);
 					teams.add(team);
 				} catch (EntityNotFoundException e) {
-					LOGGER.log(Level.WARNING, "ID found but team could not be loaded: " + teamId, e);
+					LOGGER.log(Level.WARNING, "ID found but team could not be loaded: " + teamId);
 					throw e;
 				}
 			}
 		} catch (SQLException e) {
-			LOGGER.log(Level.WARNING, "Failed to load teams for user with id: " + userId, e);
+			LOGGER.log(Level.WARNING, "Failed to load teams for user with id: " + userId);
 			throw new LoadException("Fail to fetch request: " + e.getMessage());
 		}
 		return teams;

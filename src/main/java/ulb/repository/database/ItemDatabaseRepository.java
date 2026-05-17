@@ -131,7 +131,7 @@ public class ItemDatabaseRepository implements ItemRepository {
 			}
 			throw new EntityNotFoundException("Item", id);
 		} catch (SQLException e) {
-			LOGGER.log(Level.WARNING, "Failed to load item with id: " + id, e);
+			LOGGER.log(Level.WARNING, "Failed to load item with id: " + id);
 			throw new EntityNotFoundException("Item", id);
 		}
 	}
@@ -151,12 +151,12 @@ public class ItemDatabaseRepository implements ItemRepository {
 					Item item = findById(itemId);
 					items.add(item);
 				} catch (EntityNotFoundException e) {
-					LOGGER.log(Level.WARNING, "ID found but item could not be loaded: " + itemId, e);
+					LOGGER.log(Level.WARNING, "ID found but item could not be loaded: " + itemId);
 					throw e;
 				}
 			}
 		} catch (SQLException e) {
-			LOGGER.log(Level.WARNING, "Failed to load items from database.", e);
+			LOGGER.log(Level.WARNING, "Failed to load items from database.");
 			throw new LoadException("Fail to fetch request: " + e.getMessage());
 		}
 		return items;

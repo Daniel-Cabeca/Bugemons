@@ -16,7 +16,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -142,7 +141,7 @@ public class BugemonSpeciesDatabaseRepository implements BugemonSpeciesRepositor
 						index++;
 						
 					} catch (Exception e) {
-						LOGGER.log(Level.WARNING, "Ability " + abilityId + " not found for species " + id, e);
+						LOGGER.log(Level.WARNING, "Ability " + abilityId + " not found for species " + id);
 						throw e;
 					}
 				}
@@ -152,7 +151,7 @@ public class BugemonSpeciesDatabaseRepository implements BugemonSpeciesRepositor
 			}
 			return species.get();
 		} catch (SQLException e) {
-			LOGGER.log(Level.SEVERE, "SQL error while loading Bugemon species with id: " + id, e);
+			LOGGER.log(Level.SEVERE, "SQL error while loading Bugemon species with id: " + id);
 			throw new EntityNotFoundException("Bugemon species", id);
 		}
 	}
@@ -173,12 +172,12 @@ public class BugemonSpeciesDatabaseRepository implements BugemonSpeciesRepositor
 					BugemonSpecies bugemonSpecies = findById(bugemonId);
 					species.add(bugemonSpecies);
 				} catch (EntityNotFoundException e) {
-					LOGGER.log(Level.WARNING, "ID found but Bugémon species could not be loaded: " + bugemonId, e);
+					LOGGER.log(Level.WARNING, "ID found but Bugémon species could not be loaded: " + bugemonId);
 					throw e;
 				}
 			}
 		} catch (SQLException e) {
-			LOGGER.log(Level.WARNING, "Failed to load Bugémon species from database.", e);
+			LOGGER.log(Level.WARNING, "Failed to load Bugémon species from database.");
 			throw new LoadException("Fail to fetch request: " + e.getMessage());
 		}
 

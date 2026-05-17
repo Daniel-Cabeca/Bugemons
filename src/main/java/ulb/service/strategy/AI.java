@@ -34,7 +34,7 @@ public class AI extends Thread {
                 Thread.sleep(SLEEP_TIME);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                LOGGER.log(Level.WARNING, "AI interrupted while waiting for the next automatic turn.", e);
+                LOGGER.log(Level.WARNING, "AI interrupted while waiting for the next automatic turn.");
                 return;
             }
         }

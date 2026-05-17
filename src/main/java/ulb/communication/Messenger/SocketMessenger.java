@@ -30,7 +30,7 @@ public class SocketMessenger implements Messenger {
 
         } catch (IOException e){
             this.close();
-            throw new CommunicationException("Impossible to open network's communication.", e);
+            throw new CommunicationException("Impossible to open network's communication.");
         }
     }
 
@@ -46,7 +46,7 @@ public class SocketMessenger implements Messenger {
             this.writer.flush();
         } catch (IOException e){
             this.close();
-            throw new CommunicationException("Impossible to send network message.", e);
+            throw new CommunicationException("Impossible to send network message.");
         }
     }
 
@@ -56,10 +56,10 @@ public class SocketMessenger implements Messenger {
             return (Serializable) reader.readObject();
         } catch (IOException e){
             this.close();
-            throw new CommunicationException("Impossible to receive network message.", e);
+            throw new CommunicationException("Impossible to receive network message.");
         } catch (ClassNotFoundException e){
             this.close();
-            throw new CommunicationException("Unrecognized network message.", e);
+            throw new CommunicationException("Unrecognized network message.");
         }
     }
 
@@ -70,7 +70,7 @@ public class SocketMessenger implements Messenger {
                 this.writer.close();
                 this.socket.close();
             } catch (IOException e) {
-                LOGGER.log(Level.WARNING, "Error while closing socket connection.", e);
+                LOGGER.log(Level.WARNING, "Error while closing socket connection.");
             }
         }
     }

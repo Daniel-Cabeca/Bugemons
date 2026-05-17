@@ -27,7 +27,7 @@ public class SocketClient {
             LOGGER.log(Level.INFO, "Client successfully connected to the server");
         } catch (IOException e){
             closeSocket();
-            throw new CommunicationException("Impossible to connect to server.", e);
+            throw new CommunicationException("Impossible to connect to server.");
         } catch (CommunicationException e){
             closeSocket();
             throw e;

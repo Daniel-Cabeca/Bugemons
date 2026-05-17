@@ -34,7 +34,7 @@ public class SocketServer {
             clients = new ArrayList<>();
             LOGGER.log(Level.INFO, "Server is running ...");
         } catch (IOException e) {
-            throw new CommunicationException("Impossible to start the server on port " + port + ".", e);
+            throw new CommunicationException("Impossible to start the server on port " + port + ".");
         }
     }
 
@@ -67,10 +67,10 @@ public class SocketServer {
                 return null;
             }
             close();
-            throw new CommunicationException("The socket server has been interrupted.", e);
+            throw new CommunicationException("The socket server has been interrupted.");
         } catch (IOException e){
             close();
-            throw new CommunicationException("Error while waiting for connection with client.", e);
+            throw new CommunicationException("Error while waiting for connection with client.");
         }
     }
 
@@ -101,7 +101,7 @@ public class SocketServer {
                     LOGGER.log(Level.INFO, "Client successfully connected to the server");
                     controller.start();
                 } catch (CommunicationException e) {
-                    LOGGER.log(Level.WARNING, "Impossible to initialize communication with client.", e);
+                    LOGGER.log(Level.WARNING, "Impossible to initialize communication with client.");
                     closeClientSocket(clientSocket);
                 }
             }
@@ -121,7 +121,7 @@ public class SocketServer {
         try{
             serverSocket.close();
         } catch (IOException e){
-            LOGGER.log(Level.SEVERE, "Impossible to close server.", e);
+            LOGGER.log(Level.SEVERE, "Impossible to close server.");
         }
     }
 

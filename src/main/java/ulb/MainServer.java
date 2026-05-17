@@ -49,7 +49,7 @@ public class MainServer {
 		try{
 			startServer(serverPort);
 		} catch (Exception e){
-			LOGGER.log(Level.SEVERE, "Failed to start server.", e);
+			LOGGER.log(Level.SEVERE, "Failed to start server.");
 		}
 	}
 

@@ -165,7 +165,7 @@ public class BattleHandler {
 					this.battle.getaccountService().addPoints(winnerPlayer.getUserId().get(), 1);
 				
 				} catch (Exception e) {
-					LOGGER.log(Level.WARNING, "Failed to add point at the end of the battle", e);
+					LOGGER.log(Level.WARNING, "Failed to add point at the end of the battle");
 				}
 			}
 		}

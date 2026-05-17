@@ -9,7 +9,6 @@ import ulb.exceptions.LoadException;
 import ulb.repository.database.sql.Database;
 
 import java.sql.*;
-import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -154,7 +153,7 @@ public class InventoryDatabaseRepository implements InventoryRepository {
 				inventory.addItem(item, quantity);
 			}
 		} catch (SQLException e) {
-			LOGGER.log(Level.WARNING, "Failed to load inventory for user with id: " + userId, e);
+			LOGGER.log(Level.WARNING, "Failed to load inventory for user with id: " + userId);
 			throw new LoadException("Fail to fetch request: " + e.getMessage());
 		}
 

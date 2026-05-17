@@ -94,7 +94,7 @@ public class RoomManager {
 		try{
 			opponentTeam = OpponentTeamGenerator.generateRandomOpponentTeam(playerTeam, this.getBugemonService());
 		} catch(Exception e){
-			LOGGER.log(Level.WARNING, "Failed to generate random opponent team, defaulting to empty team.", e);
+			LOGGER.log(Level.WARNING, "Failed to generate random opponent team, defaulting to empty team.");
 		}
 		Inventory playerBInventory = this.getItemService().createStarterInventory();
 		this.battle = new Battle(playerTeam, opponentTeam, player, new Player("PlayerB", -1, playerBInventory));

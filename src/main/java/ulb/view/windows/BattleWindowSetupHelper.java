@@ -169,7 +169,7 @@ public class BattleWindowSetupHelper {
                         Image image = new Image(getClass().getResourceAsStream(entry.bugemonSpritePath()));
                         imageView.setImage(image);
                     } catch (Exception e) {
-                        LOGGER.log(Level.WARNING, "Failed to load Bugemon image: " + entry.bugemonSpritePath(), e);
+                        LOGGER.log(Level.WARNING, "Failed to load Bugemon image: " + entry.bugemonSpritePath());
                         imageView.setImage(null);
                     }
                     label.setText(entry.ko() ? entry.bugemonName() + " (KO)" : entry.bugemonName());

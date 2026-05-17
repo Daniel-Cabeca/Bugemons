@@ -39,7 +39,7 @@ public abstract class Database {
 			}
 			return connection;
 		} catch (SQLException e) {
-			throw new LoadException("Failed to connect to database '"+ url +"'.", e);
+			throw new LoadException("Failed to connect to database '"+ url +"'.");
 		}
 	}
 
@@ -65,7 +65,7 @@ public abstract class Database {
 		try {
 			return this.getConnection().createStatement();
 		} catch (SQLException e) {
-			LOGGER.log(Level.SEVERE, "Failed to create an SQL statement.", e);
+			LOGGER.log(Level.SEVERE, "Failed to create an SQL statement.");
 			return null;
 		}
 	}
@@ -80,7 +80,7 @@ public abstract class Database {
 		try {
 			return this.getConnection().prepareStatement(sql);
 		} catch (SQLException e) {
-			LOGGER.log(Level.SEVERE, "Failed to prepare an SQL statement.", e);
+			LOGGER.log(Level.SEVERE, "Failed to prepare an SQL statement.");
 			return null;
 		}
 	}
@@ -120,7 +120,7 @@ public abstract class Database {
 			);
 			return !res.next();
 		} catch (SQLException e) {
-			LOGGER.log(Level.SEVERE, "Failed to test if the database is new.", e);
+			LOGGER.log(Level.SEVERE, "Failed to test if the database is new.");
 			return false;
 		}
 	}

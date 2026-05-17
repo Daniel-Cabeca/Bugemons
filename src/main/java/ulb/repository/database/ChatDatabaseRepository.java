@@ -91,7 +91,7 @@ public class ChatDatabaseRepository implements ChatRepository {
 			if (rs.next()) return rs.getInt(1);
 			return 0;
 		} catch (SQLException e) {
-			LOGGER.log(Level.SEVERE, "Failed to count messages between " + usernameA + " and " + usernameB + ".", e);
+			LOGGER.log(Level.SEVERE, "Failed to count messages between " + usernameA + " and " + usernameB + ".");
 			return 0;
 		}
 	}

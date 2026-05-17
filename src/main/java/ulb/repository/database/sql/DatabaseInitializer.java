@@ -52,7 +52,7 @@ public class DatabaseInitializer {
 		try {
 			script.execute(this.getDatabase());
 		} catch (SQLException e) {
-			throw new LoadException("Failed to create tables for the database '" + this.getDatabase().getUrl() + "'.", e);
+			throw new LoadException("Failed to create tables for the database '" + this.getDatabase().getUrl() + "'.");
 		}
 	}
 
@@ -72,7 +72,7 @@ public class DatabaseInitializer {
 			abilityRepository.insertAbilities(abilities);
 			bugemonSpeciesDatabaseRepository.insertSpecies(species);
 		} catch(DuplicateElementException e) {
-			throw new LoadException("The game data the database is populated with contains duplicate elements.", e);
+			throw new LoadException("The game data the database is populated with contains duplicate elements.");
 		}
 	}
 

@@ -34,7 +34,7 @@ public final class FxmlLoader {
 			loader.load();
 			return loader;
 		} catch (IOException e) {
-			throw new ViewLoadException("Impossible de charger le FXML : " + path, e);
+			throw new ViewLoadException("Impossible de charger le FXML : " + path);
 		}
 	}
 }

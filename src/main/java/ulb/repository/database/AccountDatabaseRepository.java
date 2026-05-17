@@ -277,7 +277,7 @@ public class AccountDatabaseRepository implements AccountRepository {
 			stmt.setInt(2, userId);
 			stmt.executeUpdate();
 		} catch (SQLException e) {
-			LOGGER.log(Level.WARNING, "Failed to add leaderboard points for user id: " + userId, e);
+			LOGGER.log(Level.WARNING, "Failed to add leaderboard points for user id: " + userId);
 			throw new LoadException("Failed to fetch request: " + e.getMessage());
 		}
 	}
@@ -292,7 +292,7 @@ public class AccountDatabaseRepository implements AccountRepository {
 				leaderboard.put(rs.getString("username"), rs.getInt("points"));
 			}
 		} catch (SQLException e) {
-			LOGGER.log(Level.WARNING, "Failed to load leaderboard from database.", e);
+			LOGGER.log(Level.WARNING, "Failed to load leaderboard from database.");
 			throw new LoadException("Failed to fetch request: " + e.getMessage());
 		}
 		return leaderboard;

@@ -128,7 +128,7 @@ public class AbilityDatabaseRepository implements AbilityRepository {
 			}
 			return ability.get();
 		} catch (SQLException e) {
-			LOGGER.log(Level.SEVERE, "SQL error while loading ability with id: " + id, e);
+			LOGGER.log(Level.SEVERE, "SQL error while loading ability with id: " + id);
 			throw new LoadException("Fail to fetch request: " + e.getMessage());
 		}
 	}
@@ -148,12 +148,12 @@ public class AbilityDatabaseRepository implements AbilityRepository {
 					Ability ability = findById(AbilityId);
 					abilities.add(ability);
 				} catch (EntityNotFoundException e) {
-					LOGGER.log(Level.WARNING, "ID found but ability could not be loaded: " + AbilityId, e);
+					LOGGER.log(Level.WARNING, "ID found but ability could not be loaded: " + AbilityId);
 					throw e;
 				}
 			}
 		} catch (SQLException e) {
-			LOGGER.log(Level.WARNING, "Failed to load abilities from database.", e);
+			LOGGER.log(Level.WARNING, "Failed to load abilities from database.");
 			throw new LoadException("Fail to fetch request: " + e.getMessage());
 		}
 		return abilities;

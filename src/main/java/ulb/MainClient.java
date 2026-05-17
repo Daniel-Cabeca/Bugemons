@@ -18,7 +18,7 @@ public class MainClient {
         try{
             Application.launch(ClientController.class, serverIp, serverPort.toString());
         } catch (Exception e){
-            LOGGER.log(Level.SEVERE, "Failed to launch client sided main.", e);
+            LOGGER.log(Level.SEVERE, "Failed to launch client sided main.");
         }
     }
 }

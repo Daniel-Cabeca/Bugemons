@@ -60,7 +60,7 @@ public class SqlScript {
 			byte[] bytes = stream.readAllBytes();
 			return new String(bytes);
 		} catch (IOException e) {
-			throw new LoadException("Failed to read SQL script '" + this.getUrl() + "'.", e);
+			throw new LoadException("Failed to read SQL script '" + this.getUrl() + "'.");
 		}
 	}
 

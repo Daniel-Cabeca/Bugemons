@@ -321,7 +321,7 @@ public class BattleWindowGraphicsHelper {
             Image playerImage = new Image(getClass().getResourceAsStream(playerBugemon.spritePath()));
             ui.playerBugemon().setImage(playerImage);
         } catch (Exception e) {
-            LOGGER.log(Level.WARNING, "Failed to load player bugemon sprite: " + playerBugemon.spritePath(), e);
+            LOGGER.log(Level.WARNING, "Failed to load player bugemon sprite: " + playerBugemon.spritePath());
             ui.playerBugemon().setImage(null);
         }
         ui.playerBugemonLabel().setText(playerBugemon.name());
@@ -336,7 +336,7 @@ public class BattleWindowGraphicsHelper {
             Image opponentImage = new Image(getClass().getResourceAsStream(opponentBugemon.spritePath()));
             ui.opponentBugemon().setImage(opponentImage);
         } catch (Exception e) {
-            LOGGER.log(Level.WARNING, "Failed to load opponent bugemon sprite: " + opponentBugemon.spritePath(), e);
+            LOGGER.log(Level.WARNING, "Failed to load opponent bugemon sprite: " + opponentBugemon.spritePath());
             ui.opponentBugemon().setImage(null);
         }
         ui.opponentBugemonLabel().setText(opponentBugemon.name());

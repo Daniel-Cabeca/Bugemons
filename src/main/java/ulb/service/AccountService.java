@@ -2,7 +2,9 @@ package ulb.service;
 
 import ulb.exceptions.DataAccessException;
 import ulb.exceptions.EntityNotFoundException;
+import ulb.exceptions.InvalidCredentialsException;
 import ulb.exceptions.LoadException;
+import ulb.exceptions.UserAlreadyExistsException;
 import ulb.repository.AccountRepository;
 
 import java.util.List;
@@ -32,7 +34,7 @@ public class AccountService {
      * @return False if the username is already used, true otherwise
      * @throws LoadException If the registration fails
      */
-    public void register(String username, String password) throws LoadException {
+    public void register(String username, String password) throws LoadException, UserAlreadyExistsException {
         // return repository.register(username, password);
 		repository.register(username, password);
     }
@@ -46,10 +48,10 @@ public class AccountService {
      * @throws LoadException If the lookup fails
 	 * @throws EntityNotFoundException If no player is registered with the username
      */
-    public void login(String username, String password) throws LoadException, EntityNotFoundException {
+    public void login(String username, String password) throws LoadException, EntityNotFoundException, InvalidCredentialsException{
         String storedPassword = repository.getPasswordHash(username);
 		if (!storedPassword.equals(password)) {
-			throw new LoadException("Wrong password");
+			throw new InvalidCredentialsException();
 		}
     }
 

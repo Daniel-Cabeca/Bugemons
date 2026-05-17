@@ -4,6 +4,7 @@ import ulb.exceptions.DataAccessException;
 import ulb.exceptions.EntityNotFoundException;
 import ulb.repository.AccountRepository;
 import ulb.exceptions.LoadException;
+import ulb.exceptions.UserAlreadyExistsException;
 import ulb.repository.database.sql.Database;
 
 import java.sql.PreparedStatement;
@@ -33,14 +34,19 @@ public class AccountDatabaseRepository implements AccountRepository {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void register(String username, String password) throws LoadException {
+	public void register(String username, String password) throws LoadException, UserAlreadyExistsException {
 		String sql = "INSERT INTO users (username, password_hash) VALUES (?, ?)";
 		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
 			stmt.setString(1, username);
 			stmt.setString(2, password);
 			stmt.executeUpdate();
 		} catch (SQLException e) {
-			throw new LoadException("Failed to register user: " + e.getMessage());
+			if (e.getMessage().contains("UNIQUE")) {
+				throw new UserAlreadyExistsException(username);
+			}
+			else {
+				throw new LoadException("Failed to register user: " + e.getMessage());
+			}
 		}
 	}
 
@@ -93,7 +99,7 @@ public class AccountDatabaseRepository implements AccountRepository {
 			throw new DataAccessException("Failed to parse SQL query");
 		}
 
-		throw new EntityNotFoundException("Player",userId);
+		throw new EntityNotFoundException("Player", userId);
 	}
 
 	/**

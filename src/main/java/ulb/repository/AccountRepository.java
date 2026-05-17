@@ -3,6 +3,7 @@ package ulb.repository;
 import ulb.exceptions.DataAccessException;
 import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
+import ulb.exceptions.UserAlreadyExistsException;
 
 import java.util.List;
 import java.util.Map;
@@ -21,7 +22,7 @@ public interface AccountRepository {
 	 * @return False if the username is already taken, true otherwise
 	 * @throws LoadException If the user cannot be persisted
 	 */
-	public void register(String username, String password) throws LoadException;
+	public void register(String username, String password) throws LoadException, UserAlreadyExistsException;
 
 
 	/**

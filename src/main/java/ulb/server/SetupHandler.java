@@ -3,7 +3,9 @@ package ulb.server;
 import ulb.exceptions.DataAccessException;
 import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.GameException;
+import ulb.exceptions.InvalidCredentialsException;
 import ulb.exceptions.LoadException;
+import ulb.exceptions.UserAlreadyExistsException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -126,8 +128,18 @@ public class SetupHandler {
 			Player player = buildPlayer(playerRegisterDTO, isLogin);
 			clientHandler.setPlayer(player);
 			clientHandler.sendSuccessMessage();
-		} catch (Exception e) {
-			clientHandler.sendErrorMessage("Register failed");
+		}
+		catch (UserAlreadyExistsException e) {
+			clientHandler.sendErrorMessage("Username already taken");
+		}
+		catch (EntityNotFoundException e) {
+			clientHandler.sendErrorMessage("User not found");
+		}
+		catch (InvalidCredentialsException e) {
+			clientHandler.sendErrorMessage("Wrong password");
+		}
+		catch (LoadException e) {
+			clientHandler.sendErrorMessage("Internal server error");
 		}
 	}
 

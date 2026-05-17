@@ -100,7 +100,6 @@ public class BattleHandler {
 	 * @return a boolean depending on if the round is finished
 	 */
 	public boolean handleActionFinished(ParticipantLabel previousActiveTeam){
-
 		BattleParticipant participantA = battle.getParticipantA();
 		BattleParticipant participantB = battle.getParticipantB();
 
@@ -119,16 +118,6 @@ public class BattleHandler {
 					battle.setParticipantHpAfterFirstAction(participantA, participantA.getActiveBugemon().getHp());
 					battle.setParticipantHpAfterFirstAction(participantB, 0);
 				}
-
-				this.battle.getLogMsg().add(null);
-				Optional<Bugemon> nextBugemon = this.battle.getTeam(ParticipantLabel.TEAM_B).getNextBugemon(participantB.getActiveBugemon());
-
-				if (nextBugemon.isPresent()) {
-					this.battle.setActiveBugemon(nextBugemon.get(), ParticipantLabel.TEAM_B);
-					this.battle.getLogMsg().add("L'adversaire a envoyé " + nextBugemon.get().getName() + "!");
-				} // TO REFACTOR : le changement de bugemon ne doit pas se faire dans battle mais dans strategy, refactor des logs en fonction de ça.
-				this.battle.setState(BattleState.INGAME, ParticipantLabel.TEAM_A);
-				this.battle.setState(BattleState.INGAME, ParticipantLabel.TEAM_B); // TO REFACTOR TOO
 			}
 			
 		} else {

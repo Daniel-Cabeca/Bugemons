@@ -1,6 +1,7 @@
 package ulb.server;
 
 import ulb.exceptions.DataAccessException;
+import ulb.exceptions.UserFacingException;
 
 import java.util.List;
 import java.util.Map;
@@ -38,8 +39,7 @@ public class SocialHandler {
 			senderId = accountService.getUserId(senderUsername);
 			receiverId = accountService.getUserId(receiverUsername);
 		} catch (Exception e) {
-			clientHandler.sendErrorMessage("Cannot get player id");
-			return;
+			throw new DataAccessException("Cannot get player Id");
 		}
 
 		accountService.acceptBattleRequest(senderId, receiverId);
@@ -56,8 +56,7 @@ public class SocialHandler {
 			senderId = accountService.getUserId(senderUsername);
 			receiverId = accountService.getUserId(receiverUsername);
 		} catch (Exception e) {
-			clientHandler.sendErrorMessage("Cannot get player id");
-			return;
+			throw new DataAccessException("Cannot get player Id");
 		}
 
 		accountService.acceptFriendRequest(senderId, receiverId);
@@ -70,8 +69,7 @@ public class SocialHandler {
 			senderId = accountService.getUserId(senderUsername);
 			receiverId = accountService.getUserId(receiverUsername);
 		} catch (Exception e) {
-			clientHandler.sendErrorMessage("Cannot get player id");
-			return;
+			throw new DataAccessException("Cannot get player Id");
 		}
 
 		MultiBattleSession session = multiBattleService.getMultiBattle(senderId, receiverId);
@@ -88,8 +86,7 @@ public class SocialHandler {
 			senderId = accountService.getUserId(senderUsername);
 			receiverId = accountService.getUserId(receiverUsername);
 		} catch (Exception e) {
-			clientHandler.sendErrorMessage("Cannot get player id");
-			return;
+			throw new DataAccessException("Cannot get player Id");
 		}
 		accountService.declineFriendRequest(senderId, receiverId);
 		clientHandler.sendSuccessMessage();
@@ -100,8 +97,7 @@ public class SocialHandler {
 		try {
 			userId = accountService.getUserId(username);
 		} catch (Exception e) {
-			clientHandler.sendErrorMessage("Cannot get player id");
-			return;
+			throw new DataAccessException("Cannot get player Id");
 		}
 		List<String> requests = accountService.getPendingBattleRequests(userId);
 		clientHandler.sendMessage(new BattleRequestsResponse(requests));
@@ -132,8 +128,7 @@ public class SocialHandler {
 		try {
 			userId = accountService.getUserId(username);
 		} catch (Exception e) {
-			clientHandler.sendErrorMessage("Cannot get player id");
-			return;
+			throw new DataAccessException("Cannot get player Id");
 		}
 		List<String> requests = accountService.getPendingFriendRequests(userId);
 		clientHandler.sendMessage(new FriendRequestsResponse(requests));
@@ -144,8 +139,7 @@ public class SocialHandler {
 		try {
 			userId = accountService.getUserId(username);
 		} catch (Exception e) {
-			clientHandler.sendErrorMessage("Cannot get player id");
-			return;
+			throw new DataAccessException("Cannot get player Id");
 		}
 		List<String> friends = accountService.getFriendsList(userId);
 		clientHandler.sendMessage(new FriendsListResponse(friends));
@@ -156,29 +150,25 @@ public class SocialHandler {
 		clientHandler.sendMessage(new LeaderboardResponse(leaderboard));
 	}
 
-	public void sendBattleRequest(String senderUsername, String receiverUsername) throws DataAccessException{
+	public void sendBattleRequest(String senderUsername, String receiverUsername) throws UserFacingException, DataAccessException{
 		int senderId, receiverId;
 		try {
 			senderId = accountService.getUserId(senderUsername);
 			receiverId = accountService.getUserId(receiverUsername);
 		} catch (Exception e) {
-			clientHandler.sendErrorMessage("Cannot get player id");
-			return;
+			throw new DataAccessException("Cannot get player Id");
 		}
 		if (senderId == -1 || receiverId == -1){
-			clientHandler.sendErrorMessage("Utilisateur introuvable");
-			return;
+			throw new UserFacingException("Unkown User");
 		}
 		if (accountService.hasPendingBattleRequestBetween(senderId, receiverId)) {
-			clientHandler.sendErrorMessage("Un défi est déjà en attente avec cet ami");
-			return;
+			throw new UserFacingException("A battle request is already pending with this friend");
 		}
 		MultiBattleSession multiBattle;
 		try {
 			multiBattle = multiBattleService.createMultiBattle(senderId, receiverId);
 		} catch (Exception e) {
-			clientHandler.sendErrorMessage("Cannot create multiBattleSession");
-			return;
+			throw new DataAccessException("Cannot create multiBattleSession");
 		}
 		
 		multiBattle.getParticipant(senderId).accept();
@@ -192,19 +182,17 @@ public class SocialHandler {
 		clientHandler.sendSuccessMessage();
 	}
 
-	public void sendFriendRequest(String senderUsername, String receiverUsername) throws DataAccessException{
+	public void sendFriendRequest(String senderUsername, String receiverUsername) throws UserFacingException, DataAccessException{
 		int senderId, receiverId;
 		try {
 			senderId = accountService.getUserId(senderUsername);
 			receiverId = accountService.getUserId(receiverUsername);
 		} catch (Exception e) {
-			clientHandler.sendErrorMessage("Cannot get player id");
-			return;
+			throw new DataAccessException("Cannot get player Id");
 		}
 
 		if (senderId == -1 || receiverId == -1){
-			clientHandler.sendErrorMessage("Utilisateur introuvable");
-			return;
+			throw new UserFacingException("Unkown User");
 		}
 		accountService.sendFriendRequest(senderId, receiverId);
 		clientHandler.sendSuccessMessage();

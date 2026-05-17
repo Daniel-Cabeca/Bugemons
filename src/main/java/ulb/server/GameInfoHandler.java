@@ -2,6 +2,7 @@ package ulb.server;
 
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.exceptions.DataAccessException;
+import ulb.exceptions.UserFacingException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -74,13 +75,12 @@ public class GameInfoHandler {
 		clientHandler.sendMessage(new AbilityEffectivenessResponse(effectiveness));
 	}
 
-    public void getActiveBugemons() {
+    public void getActiveBugemons() throws DataAccessException {
         Battle battle = clientHandler.getBattle();
         ParticipantLabel teamLabel = clientHandler.getTeamLabel();
 
 		if (battle == null){
-			clientHandler.sendErrorMessage("The battle has not been created");
-			return;
+			throw new DataAccessException("The battle has not been created");
 		}
 		Bugemon selfActive = battle.getActiveBugemon(teamLabel);
 		Bugemon opponentActive = battle.getActiveBugemon(battle.getOpponentTeamLabel(teamLabel)); 
@@ -122,22 +122,20 @@ public class GameInfoHandler {
 		clientHandler.sendMessage(new BattleStateResponse(battle.getState(teamLabel)));
 	}
 
-	public void getLevelUpInfo() {
+	public void getLevelUpInfo() throws UserFacingException {
         Player player = clientHandler.getPlayer();
         Battle battle = clientHandler.getBattle();
         Optional<Bugemon> pendingLevelUpBugemon = clientHandler.getPendingLevelUpBugemon();
         List<Reward> pendingLevelUpRewards = clientHandler.getPendingLevelUpRewards();
 
 		if (battle == null || player == null || player.getTeam() == null) {
-			clientHandler.sendErrorMessage("No pending level up information available");
-			return;
+			throw new UserFacingException("No pending level up information available");
 		}
 
 		Optional<Bugemon> currentBugemon = player.getTeam().getFirstLevelUpBugemon();
 		if (currentBugemon.isEmpty()) {
 			clientHandler.clearPendingLevelUpState();
-			clientHandler.sendErrorMessage("No bugemon requires a level up reward");
-			return;
+			throw new UserFacingException("No bugemon requires a level up reward");
 		}
 
 		if (pendingLevelUpBugemon.isEmpty()
@@ -195,8 +193,7 @@ public class GameInfoHandler {
 					try {
 						towerManager.setCurrentRoomCompleted(true);
 					} catch (Exception e) {
-						clientHandler.sendErrorMessage("The room cannot be completed");
-						return;
+						throw new DataAccessException("The room cannot be completed");
 					}
 					battle.resetFightStats();
 					RoomType currentRoomType = towerManager.getCurrentRoomType();
@@ -205,8 +202,7 @@ public class GameInfoHandler {
 						try {
 							towerManager.nextFloor();
 						} catch (Exception e) {
-							clientHandler.sendErrorMessage("The next floor cannot be selected");
-							return;
+							throw new DataAccessException("The next floor cannot be selected");
 						}
 	
 						if (!towerManager.isTowerCompleted()) {
@@ -267,13 +263,12 @@ public class GameInfoHandler {
 		clientHandler.sendMessage(new NextWindowResponse(nextWindow));
 	}
 
-	public void getTowerInfo() {
+	public void getTowerInfo() throws DataAccessException {
         TowerManager towerManager = clientHandler.getTowerManager();
         boolean isGameTower = clientHandler.isGameTower();
 
 		if (!isGameTower){
-			clientHandler.sendErrorMessage("The game isn't in tower mode");
-			return;
+			throw new DataAccessException("Cannot get Tower info if the game isn't in Tower mode");
 		}
 		int towerFloorNumber = towerManager.getFloorNumber();
 		int towerRoomNumber = towerManager.getCurrentRoomId();
@@ -282,8 +277,7 @@ public class GameInfoHandler {
 		try {
 			clearedRooms = towerManager.getCurrentFloorClearedRooms();
 		} catch (Exception e) {
-			clientHandler.sendErrorMessage("Cannot get the cleared room for the current floor");
-			return;
+			throw new DataAccessException("Cannot get the cleared room for the current floor");
 		}	
 
 		clientHandler.sendMessage(new TowerInfoResponse(towerFloorNumber, towerRoomNumber, clearedRooms));

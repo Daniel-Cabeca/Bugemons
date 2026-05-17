@@ -11,6 +11,7 @@ import ulb.message.response.teamSave.*;
 import ulb.model.Player;
 import ulb.model.team.Team;
 import ulb.exceptions.LoadException;
+import ulb.exceptions.UserFacingException;
 import ulb.service.TeamService;
 
 public class TeamSaveHandler {
@@ -37,22 +38,21 @@ public class TeamSaveHandler {
 		clientHandler.sendMessage(new SavedTeamsResponse(DTOTeams));
 	}
 
-	public void saveTeam(TeamDTO teamDTO) throws DataAccessException {
+	public void saveTeam(TeamDTO teamDTO) throws UserFacingException, DataAccessException {
         Player player = clientHandler.getPlayer();
         
 		Team team = TeamMapper.toEntity(teamDTO);
 
 		try {
 			if (teamService.teamExists(team.getTeamName(), player)) {
-				clientHandler.sendErrorMessage("A team with this name already exists.");
-				return;
+				throw new UserFacingException("A team with this name already exists.");
 			}
 
 			teamService.insertTeam(player, team);
 			clientHandler.sendSuccessMessage();
 
 		} catch (LoadException e) {
-			clientHandler.sendErrorMessage(e.getMessage());
+			throw new DataAccessException(e.getMessage());
 		}
 	}
 

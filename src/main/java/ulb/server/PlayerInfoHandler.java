@@ -8,6 +8,7 @@ import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.exceptions.EntityNotFoundException;
+import ulb.exceptions.UserFacingException;
 import ulb.mapper.bugemon.BugemonMapper;
 import ulb.mapper.item.ItemMapper;
 import ulb.mapper.player.PlayerMapper;
@@ -27,7 +28,7 @@ public class PlayerInfoHandler {
         this.accountService = accountService;
     }
 
-	public void getPlayerInfo(String username) {
+	public void getPlayerInfo(String username) throws UserFacingException {
 		try {
 			Integer id = this.accountService.getUserId(username);
 			Player player = new Player(username, id);
@@ -35,11 +36,11 @@ public class PlayerInfoHandler {
 			clientHandler.sendMessage(new PlayerResponse(playerDTO));
 		}
 		catch (EntityNotFoundException e) {
-			clientHandler.sendErrorMessage("Wrong Username");
+			throw new UserFacingException("Wrong username");
 		}
 	}
 
-	public void getPlayerInventory(String username) {
+	public void getPlayerInventory(String username) throws UserFacingException {
         Player player = clientHandler.getPlayer();
 
 		if (username.equals(player.getUsername())){
@@ -52,11 +53,11 @@ public class PlayerInfoHandler {
 			clientHandler.sendMessage(new PlayerInventoryResponse(inventoryDTO));
 		}
 		else{
-			clientHandler.sendErrorMessage("Wrong Username");
+			throw new UserFacingException("Wrong username");
 		}
 	}
 
-    public void getPlayerTeam(String username) {
+    public void getPlayerTeam(String username) throws UserFacingException {
 		Player player = clientHandler.getPlayer();
 		if (username.equals(player.getUsername())) {
 			Team team = player.getTeam();
@@ -68,7 +69,7 @@ public class PlayerInfoHandler {
 			clientHandler.sendMessage(new PlayerTeamResponse(teamDTO));
 		}
 		else {
-			clientHandler.sendErrorMessage("Wrong Username");
+			throw new UserFacingException("Wrong username");
 		}
 	}
 }

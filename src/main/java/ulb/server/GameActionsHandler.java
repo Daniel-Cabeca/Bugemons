@@ -4,9 +4,9 @@ import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.exceptions.DataAccessException;
 import ulb.exceptions.EntityNotFoundException;
+import ulb.exceptions.UserFacingException;
 
 import java.util.List;
-import java.util.Optional;
 
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.player.PlayerDTO;
@@ -45,12 +45,11 @@ public class GameActionsHandler extends Thread{
 		this.multiBattleService = multiBattleService;
     }
 
-	private void completeCurrentRoom(TowerManager towerManager){
+	private void completeCurrentRoom(TowerManager towerManager) throws DataAccessException {
 		try {
 			towerManager.setCurrentRoomCompleted(true);
 		} catch (Exception e) {
-			clientHandler.sendErrorMessage("The room cannot be completed");
-			return;
+			throw new DataAccessException("Thr room cannot be completed");
 		}
 		
 		clientHandler.sendSuccessMessage();
@@ -60,15 +59,14 @@ public class GameActionsHandler extends Thread{
         boolean isGameTower = clientHandler.isGameTower();
 
 		if (!isGameTower){
-			clientHandler.sendErrorMessage(getName());
-			return;
+			throw new DataAccessException("Cannot abandon the Tower if the game isn't in Tower mode");
 		}
 		clientHandler.finishTower();
 		clientHandler.sendSuccessMessage();
 	}
 
 
-	public void chooseAbilityReward(BugemonDTO bugemonDTO, AbilityDTO oldAbilityDTO, AbilityDTO newAbilityDTO) throws DataAccessException{
+	public void chooseAbilityReward(BugemonDTO bugemonDTO, AbilityDTO oldAbilityDTO, AbilityDTO newAbilityDTO) throws UserFacingException, DataAccessException{
         Player player = clientHandler.getPlayer();
         TowerManager towerManager = clientHandler.getTowerManager();
 		
@@ -76,16 +74,14 @@ public class GameActionsHandler extends Thread{
 		try{
 			chosenBugemon = player.getTeam().getBugemonById(bugemonDTO.getId());
 		} catch (EntityNotFoundException e){
-			clientHandler.sendErrorMessage("Bugemon not present in the Team");
-			return;
+			throw new UserFacingException("The bugemon chosen for the ability reward isn't present in the Team");
 		}
 
 		Ability oldAbility;
 		try {
 			oldAbility = chosenBugemon.getAbilities().getAbilityById(oldAbilityDTO.id());
 		} catch (EntityNotFoundException e) {
-			clientHandler.sendErrorMessage("Ability not learned");
-			return;
+			throw new UserFacingException("The ability to be swapped isn't learned by the Bugemon");
 		}
 		
 		Ability newAbility = AbilityMapper.toEntity(newAbilityDTO);
@@ -107,17 +103,15 @@ public class GameActionsHandler extends Thread{
 		this.completeCurrentRoom(towerManager);
 	}
 
-	public void chooseLevelUpReward(RewardDTO rewardDTO) throws DataAccessException{
+	public void chooseLevelUpReward(RewardDTO rewardDTO) throws UserFacingException, DataAccessException{
         List<Reward> pendingLevelUpRewards = clientHandler.getPendingLevelUpRewards();
         
 		if (pendingLevelUpRewards == null || pendingLevelUpRewards.isEmpty()) {
-			clientHandler.sendErrorMessage("No pending level up reward to apply");
-			return;
+			throw new UserFacingException("No pending level up reward to apply");
 		}
 
 		if (rewardDTO == null) {
-			clientHandler.sendErrorMessage("Invalid reward");
-			return;
+			throw new UserFacingException("Invalid reward");
 		}
 
 		Reward chosenReward = RewardMapper.toEntity(rewardDTO);
@@ -131,15 +125,14 @@ public class GameActionsHandler extends Thread{
 		}
 
 		if (!applied) {
-			clientHandler.sendErrorMessage("Reward does not match the current level up choices");
-			return;
+			throw new UserFacingException("Reward does not match the current level up choices");
 		}
 
 		clientHandler.clearPendingLevelUpState();
 		clientHandler.sendSuccessMessage();
 	}
 
-	public void chooseStatReward(BugemonDTO bugemonDTO) throws DataAccessException{
+	public void chooseStatReward(BugemonDTO bugemonDTO) throws UserFacingException, DataAccessException{
         Player player = clientHandler.getPlayer();
         TowerManager towerManager = clientHandler.getTowerManager();
 
@@ -147,8 +140,7 @@ public class GameActionsHandler extends Thread{
 		try{
 			chosenBugemon = player.getTeam().getBugemonById(bugemonDTO.getId());
 		} catch (EntityNotFoundException e){
-			clientHandler.sendErrorMessage("Bugemon not present in the Team");
-			return;
+			throw new UserFacingException("The bugemon chosen for the ability reward isn't present in the Team");
 		}
 
 		Reward reward = new Reward(chosenBugemon);
@@ -164,20 +156,18 @@ public class GameActionsHandler extends Thread{
 		boolean isGameTower = clientHandler.isGameTower();
 
 		if (!isGameTower){
-			clientHandler.sendErrorMessage("The game isn't in tower mode");
-			return;
+			throw new DataAccessException("Cannot choose a Tower room if the game isn't in Tower mode");
 		}
 		try {
 			clientHandler.nextTowerRoom(roomId);
 		} catch (Exception e) {
-			clientHandler.sendErrorMessage("The room cannot be selected");
-			return;
+			throw new DataAccessException("The room cannot be selected");
 		}
 		
 		if (clientHandler.isCurrentRoomIdEqual(roomId)){
 			clientHandler.sendSuccessMessage();
 		} else{
-			clientHandler.sendErrorMessage("Cannot move to the selected room");
+			throw new DataAccessException("Cannot move to the selected room");
 		}
 	}
 
@@ -211,8 +201,7 @@ public class GameActionsHandler extends Thread{
 				try {
 					towerManager.getCurrentFloorManager().rewindRoom();
 				} catch (Exception e) {
-					clientHandler.sendErrorMessage("The previous room cannot be selected");
-					return;
+					throw new DataAccessException("The previous room cannot be selected");
 				}
 				
 				clientHandler.setBattle(towerManager.getCurrentBattle());
@@ -224,12 +213,11 @@ public class GameActionsHandler extends Thread{
         clientHandler.sendSuccessMessage();
 	}
 
-	public void startMultiBattle(PlayerDTO opponentDTO) {
+	public void startMultiBattle(PlayerDTO opponentDTO) throws UserFacingException {
 		Player self = this.clientHandler.getPlayer();
 
 		if(self.getUserId().isEmpty() || opponentDTO.getUserId() == -1){
-			clientHandler.sendErrorMessage("The player or the opponent is not register");
-			return;
+			throw new UserFacingException("The player or the opponent isn't registred");
 		}
 
 		MultiBattleSession session = this.multiBattleService.getMultiBattle(self.getUserId().get(), opponentDTO.getUserId());
@@ -243,12 +231,11 @@ public class GameActionsHandler extends Thread{
 		clientHandler.sendSuccessMessage();
 	}
 
-	public void quitMultiBattle(PlayerDTO opponentDTO) {
+	public void quitMultiBattle(PlayerDTO opponentDTO) throws UserFacingException {
 		Player self = this.clientHandler.getPlayer();
 
 		if (self.getUserId().isEmpty() || opponentDTO.getUserId() == -1){
-			clientHandler.sendErrorMessage("The player or the opponent is not register");
-			return;
+			throw new UserFacingException("The player or the opponent isn't registred");
 		}
 
 		MultiBattleSession session = this.multiBattleService.getMultiBattle(self.getUserId().get(), opponentDTO.getUserId());
@@ -259,7 +246,7 @@ public class GameActionsHandler extends Thread{
 		clientHandler.sendSuccessMessage();
 	}
 
-	public void chooseSwapBugemonAction(BugemonDTO bugemonDTOToSwap) {
+	public void chooseSwapBugemonAction(BugemonDTO bugemonDTOToSwap) throws UserFacingException {
         Player player = clientHandler.getPlayer();
         Battle battle = clientHandler.getBattle();
         ParticipantLabel teamLabel = clientHandler.getTeamLabel();
@@ -268,8 +255,7 @@ public class GameActionsHandler extends Thread{
 		try{
 			bugemonToSwap = player.getTeam().getBugemonById(bugemonDTOToSwap.getId());
 		} catch (EntityNotFoundException e){
-			clientHandler.sendErrorMessage("Bugemon not present in the Team");
-			return;
+			throw new UserFacingException("The bugemon to swap isn't present in the Team");
 		}
 		
 		battle.chooseAction(new Swap(bugemonToSwap), teamLabel);

@@ -8,11 +8,13 @@ import ulb.model.bugemon.Bugemon;
 /**
  * Action representing the use of an ability.
  */
-public class UseAbility implements Action {
+public class UseAbility extends Action {
     private Ability ability;
 
     /** Creates an empty ability action. */
-    public UseAbility() {}
+    public UseAbility() {
+		this.priority = 0;
+	}
 
     /**
      * Creates an ability action.
@@ -20,6 +22,7 @@ public class UseAbility implements Action {
      * @param ability Ability to use
      */
     public UseAbility(Ability ability) {
+		this();
         this.ability = ability;
     }
 

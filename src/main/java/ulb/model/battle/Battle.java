@@ -120,7 +120,7 @@ public class Battle {
 	 * @return the TeamLabel of the first team to play
 	 */
 	public ParticipantLabel getFirstTeamToPlay(){
-		if (getActiveBugemon(ParticipantLabel.TEAM_A).checkInitiative(getActiveBugemon(ParticipantLabel.TEAM_B))){
+		if (getParticipantA().hasInitiative(getParticipantB())){
 			return ParticipantLabel.TEAM_A;
 		}
 		return ParticipantLabel.TEAM_B;

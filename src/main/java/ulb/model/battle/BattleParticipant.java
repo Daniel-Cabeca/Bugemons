@@ -4,6 +4,7 @@ import java.util.Vector;
 
 import ulb.model.Player;
 import ulb.model.action.Action;
+import ulb.model.battle.Battle.ParticipantLabel;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.team.Team;
 
@@ -63,6 +64,23 @@ public class BattleParticipant {
             participatingBugemons.add(activeBugemon);
         }
     }
+
+	/**
+	 * check if the team has the initiative for the next move.
+	 * It compares the priority of the two actions and then, if needed, the initiative of the two 
+	 * actives bugemons
+	 * @param other the other participant to compare the initiative with
+	 * @return true if the team has the initiative
+	 */
+	public boolean hasInitiative(BattleParticipant other){
+		int actionPriorityTeamA = this.getAction().hasHightPriority(other.getAction());
+
+		if (actionPriorityTeamA != 0){ // if the priority isn't equal to 0, one action has higher priority than the other
+			return actionPriorityTeamA == 1;
+		}
+
+		return getActiveBugemon().checkInitiative(other.getActiveBugemon());
+	}
 
 
     public BattleState getState() { return state; }

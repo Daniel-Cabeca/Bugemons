@@ -7,11 +7,13 @@ import ulb.model.item.Item;
 /**
  * Action representing item usage during battle.
  */
-public class UseItem implements Action {
+public class UseItem extends Action {
     private Item item;
 
     /** Creates an empty item action. */
-    public UseItem() {}
+    public UseItem() {
+		this.priority = 2;
+	}
 
     /**
      * Creates an item action.
@@ -19,6 +21,7 @@ public class UseItem implements Action {
      * @param item Item to use
      */
     public UseItem(Item item) {
+		this();
         this.item = item;
     }
 
@@ -27,5 +30,4 @@ public class UseItem implements Action {
     public boolean executeAction(Battle battle, ParticipantLabel team) {
         return battle.applyItem(this.item, team);
     }
-
 }

@@ -12,7 +12,7 @@
 <GridPane style="-fx-background-image:url(backgrounds/NextRoomBackground.png); -fx-background-size: stretch;"
         maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
           prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1"
-          xmlns="http://javafx.com/javafx/23.0.1" fx:controller="ulb.view.windows.FloorWindow">
+          xmlns="http://javafx.com/javafx" fx:controller="ulb.view.windows.FloorWindow">
   <columnConstraints>
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />

@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane  xmlns="http://javafx.com/javafx/21"
+<AnchorPane  xmlns="http://javafx.com/javafx"
 	xmlns:fx="http://javafx.com/fxml/1"
 	fx:controller="ulb.view.windows.WaitWindow"
 	style="-fx-background-image:url(backgrounds/Wait.png); -fx-background-size: stretch;">

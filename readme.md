@@ -18,7 +18,7 @@ Le projet utilise également `maven`. Pour l'installer :
 - sur Windows : https://git-scm.com/install/windows
 
 ## Démarrage
-Pour démarrer l'application, il faut lancer le serveur avant de lancer le client (en attendant que le serveur est bien lancé, càd lorsqu'il affiche "SERVER ON").
+Pour démarrer l'application, il faut lancer le serveur avant de lancer le client (en attendant que le serveur est bien lancé, càd lorsqu'il affiche "Server is running ...").
 
 ### Créer les fichier .jar
 - Créer le fichier .jar server : `mvn package -P server`
@@ -29,9 +29,9 @@ Pour démarrer l'application, il faut lancer le serveur avant de lancer le clien
 - Pour lancer le client : `java -jar client.jar`
 
 ### Démarrage via commande
-- Pour compiler: `mvn compile`
-- Pour lancer l'application côté client : `mvn javafx:run -P client`
+- Pour compiler : `mvn compile`
 - Pour lancer l'application côté serveur : `mvn exec:java -P server`
+- Pour lancer l'application côté client : `mvn javafx:run -P client`
 
 ### Supprimer la base de donnée
 `mvn clean`

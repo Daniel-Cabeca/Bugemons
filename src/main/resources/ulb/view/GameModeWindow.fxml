@@ -6,7 +6,7 @@
 <?import javafx.scene.control.Button?>
 
 <StackPane style="-fx-background-image: url(backgrounds/BattleModeBackground.png); -fx-background-size: stretch"
-           xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1"
+           xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="ulb.view.windows.GameModeWindow">
 
     <VBox fx:id="content" alignment="CENTER" spacing="20">

@@ -32,6 +32,7 @@ public class SocketServer {
             serverSocket = new ServerSocket(port);
             this.stopServer = false;
             clients = new ArrayList<>();
+            LOGGER.log(Level.INFO, "Server is running ...");
         } catch (IOException e) {
             throw new CommunicationException("Impossible to start the server on port " + port + ".", e);
         }
@@ -113,6 +114,7 @@ public class SocketServer {
      */
     public void close(){
         stopServer = true;
+        LOGGER.log(Level.INFO, "Server has stopped successfully ...");
         if (serverSocket.isClosed()) {
             return;
         }

@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <StackPane style="-fx-background-image: url(backgrounds/BattleModeBackground.png);
--fx-background-size: stretch" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1"
+-fx-background-size: stretch" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="ulb.view.windows.ConfirmTeamWindow">
 
 

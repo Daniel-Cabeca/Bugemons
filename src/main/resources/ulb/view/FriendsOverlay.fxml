@@ -6,7 +6,7 @@
 <BorderPane prefHeight="600" prefWidth="900"
             style="-fx-background-color: rgba(30, 35, 45, 0.65);
                    -fx-background-radius: 12;"
-            xmlns="http://javafx.com/javafx/25"
+            xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="ulb.view.windows.FriendsOverlay">
 

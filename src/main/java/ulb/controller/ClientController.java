@@ -124,6 +124,16 @@ public class ClientController extends Application {
 	}
 
 	/**
+	 * Closes the network connection when the JavaFX application exits.
+	 */
+	@Override
+	public void stop() {
+		if (this.client != null) {
+			this.client.closeSocket();
+		}
+	}
+
+	/**
 	 * Sends data to the server and returns whether the request was accepted.
 	 *
 	 * @param request The request sent to the server
@@ -143,7 +153,6 @@ public class ClientController extends Application {
 	public Response getData(Request request){
 		return this.client.getResponse(request);
 	}
-
 
 	public PlayerDTO getPlayer() {
 		return this.player;

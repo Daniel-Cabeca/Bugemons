@@ -11,7 +11,7 @@
 
 <?import javafx.geometry.Insets?>
 <VBox style="-fx-background-image:url(backgrounds/FloorRewardBackground.png); -fx-background-size: stretch;"
-      alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" spacing="5.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ulb.view.windows.ChooseBugemonWindow">
+      alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" spacing="5.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ulb.view.windows.ChooseBugemonWindow">
    <children>
       <Label style="-fx-font-size: 50px;" text="Choisis ton Bugémon:">
       <VBox.margin>

@@ -11,6 +11,9 @@ import ulb.repository.database.sql.Database;
 import ulb.repository.database.sql.DatabaseInMemory;
 
 import java.util.Map;
+
+import javax.lang.model.type.ExecutableType;
+
 import java.util.List;
 
 public class AccountDatabaseRepositoryTest {
@@ -47,14 +50,20 @@ public class AccountDatabaseRepositoryTest {
 	@Test
 	void registerReturnsTrueForNewUser() throws Exception {
 		AccountDatabaseRepository repo = newRepository();
-		assertTrue(repo.register("alice", "hash1"));
+		assertDoesNotThrow(() -> {
+			repo.register("alice", "hash1");
+		});
 	}
 
 	@Test
 	void registerReturnsFalseWhenUsernameAlreadyTaken() throws Exception {
 		AccountDatabaseRepository repo = newRepository();
-		assertTrue(repo.register("alice", "hash1"));
-		assertFalse(repo.register("alice", "hash2"));
+		assertDoesNotThrow(() -> {
+			repo.register("alice", "hash1");
+		});
+		assertThrows(Exception.class, () -> {
+			repo.register("alice", "hash2");
+		});
 	}
 
 	@Test

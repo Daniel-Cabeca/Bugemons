@@ -200,6 +200,7 @@ public class GameActionsHandler extends Thread{
 			} else {
 				try {
 					towerManager.getCurrentFloorManager().rewindRoom();
+					towerManager.setFledBattle(true);
 				} catch (Exception e) {
 					throw new DataAccessException("The previous room cannot be selected");
 				}

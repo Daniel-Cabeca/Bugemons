@@ -33,8 +33,8 @@ public class BattleWindowController extends WindowController<BattleWindow> imple
 		battleActionController = new BattleActionController(clientController, battleSetupController);
     }
 
-	public void show(){
-		setTowerInfo();
+	public void show() {
+		loadTowerInfoIfNeeded();
 
 		view.initializeContent();
 		view.initializeView(gameMode == GameMode.AUTO);
@@ -47,12 +47,18 @@ public class BattleWindowController extends WindowController<BattleWindow> imple
 		super.show();
 	}
 
-	public void setTowerInfo(){
-		if (this.clientController.getData(new GetTowerInfoRequest()) instanceof TowerInfoResponse towerInfo){
-			this.towerFloorNumber = towerInfo.getFloorNumber();
-			this.towerRoomNumber = towerInfo.getRoomNumber();
-		}
-	}
+	private void loadTowerInfoIfNeeded() {
+        if (this.gameMode != GameMode.TOWER) {
+            this.towerFloorNumber = 0;
+            this.towerRoomNumber = 0;
+            return;
+        }
+
+        if (this.clientController.getData(new GetTowerInfoRequest()) instanceof TowerInfoResponse towerInfo) {
+            this.towerFloorNumber = towerInfo.getFloorNumber();
+            this.towerRoomNumber = towerInfo.getRoomNumber();
+        }
+    }
 
 	public void setPlayer(PlayerDTO player) { this.player = player; }
 	public void setGameMode(GameMode gameMode) { this.gameMode = gameMode; }

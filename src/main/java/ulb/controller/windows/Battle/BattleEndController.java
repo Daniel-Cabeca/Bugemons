@@ -1,7 +1,8 @@
-package ulb.controller.windows;
+package ulb.controller.windows.Battle;
 
 import javafx.stage.Stage;
 import ulb.controller.ClientController;
+import ulb.controller.windows.WindowController;
 import ulb.view.WindowPath;
 import ulb.view.windows.BattleEndWindow;
 

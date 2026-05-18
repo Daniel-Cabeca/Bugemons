@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 
 import ulb.communication.SocketClient;
 import ulb.controller.windows.*;
+import ulb.controller.windows.Battle.BattleEndController;
 import ulb.controller.windows.Battle.BattleWindowController;
 import ulb.exceptions.CommunicationException;
 import ulb.model.GameMode;

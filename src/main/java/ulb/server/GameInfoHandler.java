@@ -111,6 +111,10 @@ public class GameInfoHandler {
 			clientHandler.finishTower();
 		}
 
+		if (isGameTower && towerManager != null) {
+			towerManager.setFledBattle(false);
+		}
+
 		clientHandler.clearPendingLevelUpState();
 		clientHandler.sendMessage(new BattleEndInfoResponse(isWin, gainedXp, multiplayerBattle));
 	}
@@ -272,6 +276,7 @@ public class GameInfoHandler {
 		}
 		int towerFloorNumber = towerManager.getFloorNumber();
 		int towerRoomNumber = towerManager.getCurrentRoomId();
+		boolean fledBattle = towerManager.hasFledBattle();
 
 		List<Integer> clearedRooms;
 		try {
@@ -280,7 +285,8 @@ public class GameInfoHandler {
 			throw new DataAccessException("Cannot get the cleared room for the current floor");
 		}	
 
-		clientHandler.sendMessage(new TowerInfoResponse(towerFloorNumber, towerRoomNumber, clearedRooms));
+		clientHandler.sendMessage(new TowerInfoResponse(towerFloorNumber, towerRoomNumber, clearedRooms, fledBattle));
+		towerManager.setFledBattle(false); // resets the flag after sending it
 	}
 
 	public void getTowerSavedInfo(Player player) throws DataAccessException{

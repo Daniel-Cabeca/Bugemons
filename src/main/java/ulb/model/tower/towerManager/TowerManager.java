@@ -21,6 +21,7 @@ public class TowerManager {
 	private Player player;
 	private Tower tower;
 	private int floorNumber;
+	private boolean fledBattle;
 	private FloorManager currentFloorManager;
 
 	private final BugemonService bugemonService;
@@ -165,4 +166,7 @@ public class TowerManager {
 	public BugemonService getBugemonService() { return this.bugemonService; }
 	/** Returns item service. */
 	public ItemService getItemService() { return this.itemService; }
+
+	public void setFledBattle(boolean fledBattle) { this.fledBattle = fledBattle; }
+	public boolean hasFledBattle() { return this.fledBattle; }
 }

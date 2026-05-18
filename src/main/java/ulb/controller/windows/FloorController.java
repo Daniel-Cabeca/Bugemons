@@ -17,7 +17,7 @@ public class FloorController extends WindowController<FloorWindow> implements Fl
 
     private final Floor floorGraph = new Floor(1, false);
     private int currentRoomId = 4;
-    private int lastEnteredRoomId = 4;
+    private int lastEnteredRoomId = 4; // used for the return animation after fleeing a battle
     private int currentFloorNumber = -1;
 
     /**
@@ -39,10 +39,6 @@ public class FloorController extends WindowController<FloorWindow> implements Fl
     public void show() {
         syncCurrentRoomFromServer();
         super.show();
-        if (lastEnteredRoomId != currentRoomId) {
-            view.updatePlayerPosition(lastEnteredRoomId);
-            Platform.runLater(this::playReturnAnimation);
-        }
     }
 
     /**
@@ -53,13 +49,22 @@ public class FloorController extends WindowController<FloorWindow> implements Fl
         if (!(clientController.getData(new GetTowerInfoRequest()) instanceof TowerInfoResponse info)) return;
         int serverFloor = info.getFloorNumber();
         this.currentRoomId = info.getRoomNumber();
-        if (serverFloor != this.currentFloorNumber) {
+
+        if (serverFloor != this.currentFloorNumber) { // moved to new floor
             this.lastEnteredRoomId = this.currentRoomId;
             this.currentFloorNumber = serverFloor;
         }
         view.setFloorNumber(serverFloor);
-        view.updatePlayerPosition(this.currentRoomId);
         view.markVisitedRooms(info.getClearedRooms());
+
+        if (info.hasFledBattle()) { // return animation if the player fled a battle
+            int from = this.lastEnteredRoomId;
+            int to = this.currentRoomId;
+            view.updatePlayerPosition(from); // places the sprite to the room from which the player fled
+            Platform.runLater(() -> playReturnAnimation(from, to));
+        } else {
+            view.updatePlayerPosition(this.currentRoomId);
+        }
     }
 
     /**
@@ -83,10 +88,11 @@ public class FloorController extends WindowController<FloorWindow> implements Fl
     /**
      * Plays the return animation when the player fled a battle.
      */
-    private void playReturnAnimation() {
-        view.translationAnimationHandler(currentRoomId, () -> {
-            view.updatePlayerPosition(currentRoomId);
-            lastEnteredRoomId = currentRoomId;
+    private void playReturnAnimation(int from, int to) {
+        view.updatePlayerPosition(from); // updates the start position right before the animation
+        view.translationAnimationHandler(to, () -> {
+            view.updatePlayerPosition(to);
+            lastEnteredRoomId = to;
         });
     }
 

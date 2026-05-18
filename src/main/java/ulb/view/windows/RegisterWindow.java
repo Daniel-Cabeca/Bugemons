@@ -9,7 +9,7 @@ import ulb.utils.Scaling;
 /**
  * View for the register and login screen.
  */
-public class RegisterWindow extends Window {
+public class RegisterWindow {
     @FXML
     private VBox content;
     @FXML

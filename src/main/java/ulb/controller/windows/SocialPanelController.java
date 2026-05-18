@@ -159,7 +159,7 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 			status = this.getMultiBattleStatus(getPlayer().getUserId(), opponent.getUserId());
 		} catch(CommunicationException e){
 			this.clientController.stopWaitWindow();
-			this.clientController.showWindow(WindowName.MODE);
+			this.clientController.showWindow(WindowName.MAIN_MENU);
 		}
 
 		switch(status.status()) {
@@ -173,7 +173,7 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 
 			default:
 				this.clientController.stopWaitWindow();
-				this.clientController.showWindow(WindowName.MODE);
+				this.clientController.showWindow(WindowName.MAIN_MENU);
 		}
 	}
 

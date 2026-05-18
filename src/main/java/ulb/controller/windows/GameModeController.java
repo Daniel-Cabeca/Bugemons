@@ -94,6 +94,6 @@ public class GameModeController extends WindowController<GameModeWindow> impleme
      */
     @Override
     public void onReturn() {
-        this.clientController.showWindow(WindowName.MODE);
+        this.clientController.showWindow(WindowName.MAIN_MENU);
     }
 }

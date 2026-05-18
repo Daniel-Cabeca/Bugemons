@@ -7,7 +7,7 @@ import ulb.utils.Scaling;
 /**
  * View for the game mode selection.
  */
-public class GameModeWindow extends Window {
+public class GameModeWindow {
     @FXML
     private VBox content;
     @FXML

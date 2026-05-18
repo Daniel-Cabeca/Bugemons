@@ -12,7 +12,7 @@ import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.stats.StatsDTO;
 import ulb.DTO.reward.RewardDTO;
 
-public class LevelUpWindow extends Window {
+public class LevelUpWindow {
 	@FXML
 	private Label bugemonLevel;
 	@FXML

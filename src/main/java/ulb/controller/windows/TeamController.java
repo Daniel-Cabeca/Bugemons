@@ -119,7 +119,7 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 			status = this.getMultiBattleStatus(self.getUserId(), opponent.getUserId());
 		} catch(CommunicationException e){
 			this.clientController.stopWaitWindow();
-			this.clientController.showWindow(WindowName.MODE);
+			this.clientController.showWindow(WindowName.MAIN_MENU);
 		}
 
 		switch (status.status()) {
@@ -133,7 +133,7 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 
 			default:
 				this.clientController.stopWaitWindow();
-				this.clientController.showWindow(WindowName.MODE);
+				this.clientController.showWindow(WindowName.MAIN_MENU);
 		}
 	}
 	/**

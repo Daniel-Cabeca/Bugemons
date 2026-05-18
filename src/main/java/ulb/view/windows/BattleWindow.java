@@ -14,7 +14,7 @@ import ulb.model.type.Type;
 
 import java.util.List;
 
-public class BattleWindow extends Window {
+public class BattleWindow {
 
     @FXML
     private ListView<InventoryEntry> inventoryList;

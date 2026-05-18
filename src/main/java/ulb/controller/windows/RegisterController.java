@@ -35,7 +35,7 @@ public class RegisterController extends WindowController<RegisterWindow> impleme
                 this.view.setErrorLabel("Connexion réussie, mais profil joueur introuvable.");
                 return;
             }
-            this.clientController.showWindow(WindowName.MODE);
+            this.clientController.showWindow(WindowName.MAIN_MENU);
         } else {
             this.view.setErrorLabel("Nom d'utilisateur ou mot de passe incorrect.");
         }
@@ -65,7 +65,7 @@ public class RegisterController extends WindowController<RegisterWindow> impleme
                 this.view.setErrorLabel("Inscription réussie, mais profil joueur introuvable.");
                 return;
             }
-            this.clientController.showWindow(WindowName.MODE);
+            this.clientController.showWindow(WindowName.MAIN_MENU);
         } else {
             this.view.setErrorLabel("Ce nom d'utilisateur est déjà pris.");
         }

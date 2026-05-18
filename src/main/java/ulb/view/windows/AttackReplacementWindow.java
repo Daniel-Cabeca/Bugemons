@@ -16,7 +16,7 @@ import ulb.DTO.bugemon.BugemonDTO;
 /**
  * Window responsible for handling the replacement of an ability when a Bugemon learns a new attack as a reward.
  */
-public class AttackReplacementWindow extends Window {
+public class AttackReplacementWindow {
 
 	private ViewListener viewListener;
 	private BugemonDTO bugemon;

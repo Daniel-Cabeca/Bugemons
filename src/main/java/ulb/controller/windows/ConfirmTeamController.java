@@ -51,7 +51,7 @@ public class ConfirmTeamController extends WindowController<ConfirmTeamWindow> i
 				switchToTower();
 				break;
 			default:
-				this.clientController.showWindow(WindowName.MODE);
+				this.clientController.showWindow(WindowName.MAIN_MENU);
 				break;
 		}
 	}

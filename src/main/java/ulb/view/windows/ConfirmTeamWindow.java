@@ -14,7 +14,7 @@ import ulb.DTO.bugemon.BugemonDTO;
  * View for the team confirmation screen.
  * Displays the player's team and the selected game mode before starting a battle.
  */
-public class ConfirmTeamWindow extends Window {
+public class ConfirmTeamWindow {
     @FXML
     private GridPane playerTeamGrid;
     @FXML

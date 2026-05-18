@@ -8,7 +8,7 @@ import ulb.utils.Scaling;
 /**
  * End screen displayed after winning/losing a battle
  */
-public class BattleEndWindow extends Window {
+public class BattleEndWindow {
 
 	@FXML
 	public Label titleLabel;

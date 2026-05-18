@@ -3,7 +3,7 @@ package ulb.view.windows;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
-public class NextRoomWindow extends Window {
+public class NextRoomWindow {
 
 	private ViewListener viewListener;
 

@@ -42,7 +42,7 @@ public class ClientController extends Application {
 	GameMode gameMode;
 
 	RegisterController registerController;
-	ModeController modeController;
+	MainMenuController mainMenuController;
 	GameModeController gameModeController;
 	TeamController teamController;
 	ConfirmTeamController confirmTeamController;
@@ -94,7 +94,7 @@ public class ClientController extends Application {
 		primaryStage.setFullScreenExitHint("");
 
 		this.registerController = new RegisterController(this.stage, this);
-		this.modeController = new ModeController(this.stage, this);
+		this.mainMenuController = new MainMenuController(this.stage, this);
 		this.socialPanelController = new SocialPanelController(this.stage, this);
 		this.gameModeController = new GameModeController(this.stage, this);
 		this.teamController = new TeamController(this.stage, this);
@@ -339,7 +339,7 @@ public class ClientController extends Application {
 	public void showWindow(WindowController.WindowName window) {
 		switch (window) {
 			case REGISTER -> this.registerController.show();
-			case MODE -> this.modeController.show();
+			case MAIN_MENU -> this.mainMenuController.show();
 			case SOCIAL_PANEL -> this.socialPanelController.show();
 			case GAME_MODE -> this.gameModeController.show();
 			case TEAM -> this.teamController.show();

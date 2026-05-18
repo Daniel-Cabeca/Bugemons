@@ -11,7 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import ulb.DTO.bugemon.BugemonDTO;
 
-public class ChooseBugemonWindow extends Window {
+public class ChooseBugemonWindow {
 
 	private ViewListener viewListener;
     private CheckBox selectedCheckBox;

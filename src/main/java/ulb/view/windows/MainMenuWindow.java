@@ -7,7 +7,7 @@ import ulb.utils.Scaling;
  * Class for the Mode selection window.
  * Handles UI interactions and scaling for the main menu options.
  */
-public class ModeWindow {
+public class MainMenuWindow {
 
 	@FXML
 	private VBox content;

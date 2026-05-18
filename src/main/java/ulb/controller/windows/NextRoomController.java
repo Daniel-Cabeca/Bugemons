@@ -95,7 +95,7 @@ public class NextRoomController extends WindowController<NextRoomWindow> impleme
     @Override
     public void onReturn() {
         if (this.clientController.postData(new AbandonTowerRequest())){
-            this.clientController.showWindow(WindowName.MODE);
+            this.clientController.showWindow(WindowName.MAIN_MENU);
         }
     }
 }

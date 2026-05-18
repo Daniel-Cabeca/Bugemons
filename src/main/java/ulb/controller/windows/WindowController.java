@@ -68,7 +68,7 @@ public abstract class WindowController<T> {
      * Each name represent an FXML ViewWindow to show
      */
     public enum WindowName{
-        REGISTER, MODE,GAME_MODE, ATTACK_REPLACEMENT, BATTLE, BATTLE_END,
+        REGISTER, MAIN_MENU, GAME_MODE, ATTACK_REPLACEMENT, BATTLE, BATTLE_END,
         CHOOSE_BUGEMON,CONFIRM_TEAM,FLOOR, FLOOR_REWARD, LEVEL_UP, LOAD_TEAM_PANEL,
         NEXT_ROOM, SOCIAL_PANEL, TEAM, WAIT
     }

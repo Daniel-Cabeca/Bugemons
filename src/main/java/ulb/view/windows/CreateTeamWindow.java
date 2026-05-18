@@ -16,7 +16,7 @@ import java.util.Optional;
 
 import ulb.DTO.bugemon.BugemonSpeciesDTO;
 
-public class CreateTeamWindow extends Window {
+public class CreateTeamWindow {
 
 	@FXML
 	private VBox content;

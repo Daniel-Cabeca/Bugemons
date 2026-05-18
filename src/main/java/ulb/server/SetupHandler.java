@@ -143,7 +143,7 @@ public class SetupHandler {
 		}
 	}
 
-    public void setupNormalMode() {
+    public void setupNormalMode() throws LoadException {
         Player player = clientHandler.getPlayer();
         Battle battle = clientHandler.getBattle();
         TowerManager towerManager = clientHandler.getTowerManager();
@@ -167,8 +167,11 @@ public class SetupHandler {
 			return;
 		}
 
-		Inventory playerBInventory = itemService.createStarterInventory();
-        battle = new Battle(player.getTeam(), teamB, player, new Player("PlayerB", -1, playerBInventory));
+		Inventory starterInventory = itemService.createStarterInventory();
+		// resets the inventory for each battle
+		player.setInventory(starterInventory);
+		inventoryService.updateInventory(starterInventory, player);
+        battle = new Battle(player.getTeam(), teamB, player, new Player("PlayerB", -1, starterInventory));
 		clientHandler.setBattle(battle);
 		clientHandler.setTeamLabel(Battle.ParticipantLabel.TEAM_A);
         clientHandler.setGameMode(false);
@@ -207,6 +210,10 @@ public class SetupHandler {
 				clientHandler.sendErrorMessage("Cannot get tower team");
 				return;
 			}
+		} else { // resets the inventory if started a new tower
+			Inventory starterInventory = itemService.createStarterInventory();
+			player.setInventory(starterInventory);
+			inventoryService.updateInventory(starterInventory, player);
 		}
 
         Battle battle = clientHandler.getBattle();

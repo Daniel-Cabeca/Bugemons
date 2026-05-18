@@ -65,4 +65,7 @@ public class Player {
 	/** Sets player team. */
 	public void setTeam(Team team) {this.team = team;}
 
+	public void setInventory(Inventory starterInventory) {
+		this.inventory = starterInventory;
+	}
 }

@@ -169,7 +169,7 @@ public class BattleWindowGraphicsHelper {
     private List<BattlePhaseStep> buildPhaseSteps(List<List<String>> phases, BattleSnapshot currentSnapshot, BattleSnapshot finalSnapshot,
                                                   Integer hpAfterFirstActionSelf, Integer hpAfterFirstActionOpponent) {
         List<BattlePhaseStep> steps = new ArrayList<>();
-        int phaseCount = phases.size();
+		int phaseCount = phases.size();
 
         for (int i = 0; i < phaseCount; i++) {
             List<String> messages = phases.get(i);
@@ -235,7 +235,8 @@ public class BattleWindowGraphicsHelper {
     private boolean isSwapMessage(String message) {
         return message != null
                 && (message.startsWith("Tu as envoyé ")
-                || message.startsWith("L'adversaire a envoyé "));
+                || message.startsWith("L'adversaire a envoyé ")
+				|| message.contains("a été envoyé "));
     }
 
     /**
@@ -327,11 +328,7 @@ public class BattleWindowGraphicsHelper {
         ui.playerBugemonLabel().setText(playerBugemon.name());
         ui.playerLevelLabel().setText("Lv." + playerBugemon.level());
         ui.playerBugemonLabel().setStyle("-fx-text-fill: " + TypeColor.getTypeColor(playerBugemon.bugemonType()) + ";");
-        double playerRatio = (double) playerBugemon.hp() / playerBugemon.maxHp();
-        ui.playerBugemonHPBar().setProgress(playerRatio);
-        updateHPBarColor(ui.playerBugemonHPBar(), playerRatio);
-        ui.playerBugemonHPNumber().setText(playerBugemon.hp() + " / " + playerBugemon.maxHp());
-
+        
         try {
             Image opponentImage = new Image(getClass().getResourceAsStream(opponentBugemon.spritePath()));
             ui.opponentBugemon().setImage(opponentImage);
@@ -342,11 +339,9 @@ public class BattleWindowGraphicsHelper {
         ui.opponentBugemonLabel().setText(opponentBugemon.name());
         ui.opponentLevelLabel().setText("Lv." + opponentBugemon.level());
         ui.opponentBugemonLabel().setStyle("-fx-text-fill: " + TypeColor.getTypeColor(opponentBugemon.bugemonType()) + ";");
-        double opponentRatio = (double) opponentBugemon.hp() / opponentBugemon.maxHp();
-        ui.opponentHPBar().setProgress(opponentRatio);
-        updateHPBarColor(ui.opponentHPBar(), opponentRatio);
-        ui.opponentHPNumber().setText(opponentBugemon.hp() + " / " + opponentBugemon.maxHp());
-    }
+
+		updateHPDisplay(playerBugemon.hp(), opponentBugemon.hp(), snapshot);
+		}
 
     /**
      * Clears the battle log text and hides the message box.
@@ -402,7 +397,7 @@ public class BattleWindowGraphicsHelper {
         }
 
         if (visual.playerHp() != null && visual.opponentHp() != null) {
-            updateHPDisplay(visual.playerHp(), visual.opponentHp(), currentSnapshotSupplier.get());
+        	updateHPDisplay(visual.playerHp(), visual.opponentHp(), currentSnapshotSupplier.get());
         }
     }
 
@@ -448,6 +443,9 @@ public class BattleWindowGraphicsHelper {
         } else {
             bar.getStyleClass().add("hp-bar-red");
         }
+		// re-apply css to avoid the progress bar to clip over the box
+		bar.applyCss();
+    	bar.layout();
     }
 
     /**

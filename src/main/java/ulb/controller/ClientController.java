@@ -14,7 +14,7 @@ import ulb.communication.SocketClient;
 import ulb.controller.windows.*;
 import ulb.controller.windows.Battle.BattleWindowController;
 import ulb.exceptions.CommunicationException;
-import ulb.communication.GameMode;
+import ulb.model.GameMode;
 import ulb.message.request.*;
 import ulb.message.response.*;
 import ulb.message.request.gameActions.*;

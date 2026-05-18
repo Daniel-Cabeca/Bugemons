@@ -3,7 +3,7 @@ package ulb.controller.windows.Battle;
 import javafx.event.ActionEvent;
 import javafx.stage.Stage;
 import ulb.DTO.player.PlayerDTO;
-import ulb.communication.GameMode;
+import ulb.model.GameMode;
 import ulb.controller.ClientController;
 import ulb.controller.windows.WindowController;
 import ulb.message.request.gameInfo.GetTowerInfoRequest;

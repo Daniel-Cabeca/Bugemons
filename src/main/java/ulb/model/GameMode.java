@@ -1,4 +1,4 @@
-package ulb.communication;
+package ulb.model;
 
 public enum GameMode {
     CONTROLLED,

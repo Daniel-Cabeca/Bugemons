@@ -6,7 +6,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import java.util.List;
-import ulb.communication.GameMode;
+import ulb.model.GameMode;
 import ulb.utils.Scaling;
 import ulb.DTO.bugemon.BugemonDTO;
 

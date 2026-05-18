@@ -4,7 +4,7 @@ import java.util.List;
 
 import javafx.stage.Stage;
 import ulb.DTO.bugemon.BugemonDTO;
-import ulb.communication.GameMode;
+import ulb.model.GameMode;
 import ulb.controller.ClientController;
 import ulb.message.request.setup.SetUpNormalModeRequest;
 import ulb.message.request.setup.SetUpTowerModeRequest;

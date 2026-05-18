@@ -12,7 +12,7 @@ import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.DTO.player.PlayerDTO;
-import ulb.communication.GameMode;
+import ulb.model.GameMode;
 import ulb.controller.ClientController;
 import ulb.message.request.gameInfo.CheckUsableItemRequest;
 import ulb.message.request.gameInfo.GetAbilityEffectivenessRequest;

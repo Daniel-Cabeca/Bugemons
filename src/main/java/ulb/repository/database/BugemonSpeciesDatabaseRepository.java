@@ -1,13 +1,13 @@
 package ulb.repository.database;
 
+import ulb.exceptions.EntityNotFoundException;
+import ulb.exceptions.LoadException;
 import ulb.model.ability.Ability;
 import ulb.model.ability.AbilitySet;
 import ulb.model.bugemon.BugemonSpecies;
 import ulb.model.bugemon.Stats;
 import ulb.model.type.Type;
 import ulb.repository.BugemonSpeciesRepository;
-import ulb.exceptions.EntityNotFoundException;
-import ulb.exceptions.LoadException;
 import ulb.repository.database.sql.Database;
 import ulb.utils.DuplicateElementException;
 
@@ -44,7 +44,7 @@ public class BugemonSpeciesDatabaseRepository implements BugemonSpeciesRepositor
 	 * @throws DuplicateElementException If a species already exists
 	 */
 	public void insertSpecies(Iterable<BugemonSpecies> Species) throws DuplicateElementException {
-		for (BugemonSpecies specie: Species) {
+		for (BugemonSpecies specie : Species) {
 			this.insertSpecie(specie);
 		}
 	}
@@ -56,7 +56,8 @@ public class BugemonSpeciesDatabaseRepository implements BugemonSpeciesRepositor
 	 * @throws DuplicateElementException If the species already exists
 	 */
 	public void insertSpecie(BugemonSpecies specie) throws DuplicateElementException {
-		String sqlSpecies = "INSERT INTO bugemon_species (id, name, type, sprite, starter, hp, attack, defense,initiative) VALUES (?, ?, ?, ?, ?, ?,?,?,?)";
+		String sqlSpecies = "INSERT INTO bugemon_species (id, name, type, sprite, starter, hp, attack, defense," +
+				"initiative) VALUES (?, ?, ?, ?, ?, ?,?,?,?)";
 
 		String sqlLinkAbility = "INSERT INTO species_abilities (species_id, ability_id) VALUES (?, ?)";
 
@@ -78,7 +79,6 @@ public class BugemonSpeciesDatabaseRepository implements BugemonSpeciesRepositor
 			}
 
 
-
 			try (PreparedStatement pstmtLink = this.database.prepareStatement(sqlLinkAbility)) {
 				for (int i = 0; i <= 2; i++) {
 					pstmtLink.setString(1, specie.getId());
@@ -90,7 +90,8 @@ public class BugemonSpeciesDatabaseRepository implements BugemonSpeciesRepositor
 
 
 		} catch (SQLException e) {
-			throw new DuplicateElementException("Failed to insert item: "+ specie.getId()+" ("+ e.getMessage() +")");
+			throw new DuplicateElementException("Failed to insert item: " + specie.getId() + " (" + e.getMessage() +
+					")");
 		}
 	}
 
@@ -100,11 +101,11 @@ public class BugemonSpeciesDatabaseRepository implements BugemonSpeciesRepositor
 	@Override
 	public BugemonSpecies findById(String id) throws LoadException, EntityNotFoundException {
 		String sql = """
-           SELECT bs.*, ba.ability_id
-           FROM bugemon_species bs
-           LEFT JOIN species_abilities ba ON bs.id = ba.species_id
-           WHERE bs.id = ?
-        """;
+				   SELECT bs.*, ba.ability_id
+				   FROM bugemon_species bs
+				   LEFT JOIN species_abilities ba ON bs.id = ba.species_id
+				   WHERE bs.id = ?
+				""";
 		try (PreparedStatement pstmt = this.database.prepareStatement(sql)) {
 			pstmt.setString(1, id);
 			ResultSet rs = pstmt.executeQuery();
@@ -116,21 +117,11 @@ public class BugemonSpeciesDatabaseRepository implements BugemonSpeciesRepositor
 			int index = 0;
 			while (rs.next()) {
 				if (species.isEmpty()) {
-					Stats baseStats = new Stats(
-							rs.getInt("hp"),
-							rs.getInt("attack"),
-							rs.getInt("defense"),
-							rs.getInt("initiative")
-					);
-					species = Optional.of(new BugemonSpecies(
-							rs.getString("id"),
-							rs.getString("name"),
-							Type.valueOf(rs.getString("type")),
-							baseStats,
-							abilities,
-							rs.getString("sprite"),
-							rs.getBoolean("starter")
-					));
+					Stats baseStats = new Stats(rs.getInt("hp"), rs.getInt("attack"), rs.getInt("defense"), rs.getInt(
+							"initiative"));
+					species = Optional.of(new BugemonSpecies(rs.getString("id"), rs.getString("name"),
+							Type.valueOf(rs.getString("type")), baseStats, abilities, rs.getString("sprite"),
+							rs.getBoolean("starter")));
 				}
 
 				String abilityId = rs.getString("ability_id");
@@ -139,7 +130,7 @@ public class BugemonSpeciesDatabaseRepository implements BugemonSpeciesRepositor
 						Ability ability = abilityRepo.findById(abilityId);
 						abilities.setAbility(index, ability);
 						index++;
-						
+
 					} catch (Exception e) {
 						LOGGER.log(Level.WARNING, "Ability " + abilityId + " not found for species " + id);
 						throw e;

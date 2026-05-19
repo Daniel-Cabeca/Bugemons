@@ -1,30 +1,41 @@
 package ulb.model.item;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.util.List;
-
-import ulb.model.ability.Ability;
-import ulb.model.action.UseAbility;
-import ulb.model.action.UseItem;
-import ulb.model.bugemon.Bugemon;
-import ulb.model.bugemon.Stats;
 import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
 import ulb.model.Player;
-import ulb.model.team.Team;
+import ulb.model.ability.Ability;
+import ulb.model.action.UseAbility;
+import ulb.model.action.UseItem;
 import ulb.model.battle.Battle;
 import ulb.model.battle.Battle.ParticipantLabel;
-import ulb.service.BugemonService;
-import ulb.repository.mock.BugemonSpeciesMockRepository;
+import ulb.model.bugemon.Bugemon;
+import ulb.model.bugemon.Stats;
+import ulb.model.team.Team;
 import ulb.repository.ItemRepository;
+import ulb.repository.mock.BugemonSpeciesMockRepository;
 import ulb.repository.mock.ItemMockRepository;
+import ulb.service.BugemonService;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class ItemTest {
-	private static Item getItem(String id) throws EntityNotFoundException {
-		ItemRepository repository = new ItemMockRepository();
-		return repository.findById(id);
+	@Test
+	public void healItemAppliesFullEffect() throws Exception {
+		Bugemon bugemon = spawnBugemon("100hp");
+		bugemon.changeFightStats(new Stats(-20, 0, 0, 0));
+
+		Battle battle = makeBattleController(bugemon);
+		Player player = battle.getPlayer(Battle.ParticipantLabel.TEAM_A);
+
+		Item item = getItem("heal_10");
+		player.getInventory().addItem(item, 1);
+
+		playTurnWithItem(battle, item);
+		assertEquals(90, bugemon.getFightStats().getHp());
 	}
 
 	private static Bugemon spawnBugemon(String id) throws LoadException, EntityNotFoundException {
@@ -46,26 +57,16 @@ public class ItemTest {
 		return new Battle(teamA, teamB, player, otherPlayer);
 	}
 
+	private static Item getItem(String id) throws EntityNotFoundException {
+		ItemRepository repository = new ItemMockRepository();
+		return repository.findById(id);
+	}
+
 	private void playTurnWithItem(Battle battle, Item item) throws Exception {
 		Ability otherAbility = battle.getActiveBugemon(ParticipantLabel.TEAM_B).getAbilities().getAbility(0);
 
 		battle.chooseAction(new UseItem(item), Battle.ParticipantLabel.TEAM_A);
 		battle.chooseAction(new UseAbility(otherAbility), Battle.ParticipantLabel.TEAM_B);
-	}
-
-    @Test
-	public void healItemAppliesFullEffect() throws Exception {
-		Bugemon bugemon = spawnBugemon("100hp");
-		bugemon.changeFightStats(new Stats(-20, 0, 0, 0));
-
-		Battle battle = makeBattleController(bugemon);
-		Player player = battle.getPlayer(Battle.ParticipantLabel.TEAM_A);
-
-		Item item = getItem("heal_10");
-		player.getInventory().addItem(item, 1);
-
-		playTurnWithItem(battle, item);
-		assertEquals(90, bugemon.getFightStats().getHp());
 	}
 
 	@Test
@@ -133,7 +134,7 @@ public class ItemTest {
 	@Test
 	public void resetMalusItemAppliesEffect() throws Exception {
 		Bugemon bugemon = spawnBugemon("100all");
-		bugemon.changeFightStats(new Stats(-5, -5, -5, -5)); 
+		bugemon.changeFightStats(new Stats(-5, -5, -5, -5));
 
 		Battle battle = makeBattleController(bugemon);
 		Player player = battle.getPlayer(ParticipantLabel.TEAM_A);
@@ -148,5 +149,5 @@ public class ItemTest {
 		assertEquals(100, bugemon.getFightStats().getDefense());
 		assertEquals(100, bugemon.getFightStats().getInitiative());
 	}
-    
+
 }

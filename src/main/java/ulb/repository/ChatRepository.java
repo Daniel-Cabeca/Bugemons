@@ -2,6 +2,7 @@ package ulb.repository;
 
 import ulb.exceptions.LoadException;
 import ulb.model.chat.ChatMessage;
+
 import java.util.List;
 
 public interface ChatRepository {

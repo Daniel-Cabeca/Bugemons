@@ -7,14 +7,14 @@ import ulb.message.request.Request;
 import ulb.server.ServerMessageHandler;
 
 public class ChooseLevelUpRewardRequest implements Request {
-    private final RewardDTO reward;
+	private final RewardDTO reward;
 
-    public ChooseLevelUpRewardRequest(RewardDTO reward) {
-        this.reward = reward;
-    }
+	public ChooseLevelUpRewardRequest(RewardDTO reward) {
+		this.reward = reward;
+	}
 
-    @Override
-    public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
-        handler.chooseLevelUpReward(reward);
-    }
+	@Override
+	public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
+		handler.chooseLevelUpReward(reward);
+	}
 }

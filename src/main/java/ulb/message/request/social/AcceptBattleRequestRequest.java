@@ -6,17 +6,17 @@ import ulb.message.request.Request;
 import ulb.server.ServerMessageHandler;
 
 public class AcceptBattleRequestRequest implements Request {
-    private final String receiverUsername;
-    private final String senderUsername;
+	private final String receiverUsername;
+	private final String senderUsername;
 
-    public AcceptBattleRequestRequest(String receiverUsername, String senderUsername) {
-        this.receiverUsername = receiverUsername;
-        this.senderUsername = senderUsername;
-    }
+	public AcceptBattleRequestRequest(String receiverUsername, String senderUsername) {
+		this.receiverUsername = receiverUsername;
+		this.senderUsername = senderUsername;
+	}
 
-    @Override
-    public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
-        handler.acceptBattleRequest(senderUsername, receiverUsername);
-    }
+	@Override
+	public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
+		handler.acceptBattleRequest(senderUsername, receiverUsername);
+	}
 
 }

@@ -1,8 +1,8 @@
 package ulb.model.ability;
 
-import java.util.Iterator;
-
 import ulb.exceptions.EntityNotFoundException;
+
+import java.util.Iterator;
 
 /**
  * Represents the set of abilities usable by a Bugemon.
@@ -62,6 +62,21 @@ public class AbilitySet implements Iterable<Ability> {
 	}
 
 	/**
+	 * Accesses the ability at a given index.
+	 *
+	 * @param index The index of the ability (starting from 0)
+	 * @return The ability
+	 * @throws IndexOutOfBoundsException If the index is invalid
+	 */
+	public Ability getAbility(int index) throws IndexOutOfBoundsException {
+		if (index < 0 || index >= SIZE) {
+			throw new IndexOutOfBoundsException("Invalid index.");
+		}
+
+		return this.abilities[index];
+	}
+
+	/**
 	 * Gives the number of abilities in the abilitySet.
 	 *
 	 * @return The number of abilities
@@ -70,25 +85,9 @@ public class AbilitySet implements Iterable<Ability> {
 		return SIZE;
 	}
 
-	/**
-	 * Checks whether an ability is present in the abilitySet.
-	 *
-	 * @param id The id of the ability to check.
-	 * @return True if the ability is present, false otherwise
-	 */
-	public boolean contains(String id) {
-		for (Ability ability: this) {
+	public Ability getAbilityById(String id) throws EntityNotFoundException {
+		for (Ability ability : this.abilities) {
 			if (ability != null && ability.getId().equals(id)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	public Ability getAbilityById(String id) throws EntityNotFoundException{
-		for (Ability ability : this.abilities){
-			if (ability != null && ability.getId().equals(id)){
 				return ability;
 			}
 		}
@@ -106,18 +105,19 @@ public class AbilitySet implements Iterable<Ability> {
 	}
 
 	/**
-	 * Accesses the ability at a given index.
+	 * Checks whether an ability is present in the abilitySet.
 	 *
-	 * @param index The index of the ability (starting from 0)
-	 * @return The ability
-	 * @throws IndexOutOfBoundsException If the index is invalid
+	 * @param id The id of the ability to check.
+	 * @return True if the ability is present, false otherwise
 	 */
-	public Ability getAbility(int index) throws IndexOutOfBoundsException {
-		if (index < 0 || index >= SIZE) {
-			throw new IndexOutOfBoundsException("Invalid index.");
+	public boolean contains(String id) {
+		for (Ability ability : this) {
+			if (ability != null && ability.getId().equals(id)) {
+				return true;
+			}
 		}
 
-		return this.abilities[index];
+		return false;
 	}
 
 	/**

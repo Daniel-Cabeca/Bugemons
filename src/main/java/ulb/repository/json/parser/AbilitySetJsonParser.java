@@ -1,13 +1,11 @@
 package ulb.repository.json.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
-import ulb.model.ability.Ability;
-import ulb.model.ability.AbilitySet;
-
-import ulb.repository.AbilityRepository;
 import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
+import ulb.model.ability.Ability;
+import ulb.model.ability.AbilitySet;
+import ulb.repository.AbilityRepository;
 
 /**
  * Object that parses ability sets from json nodes.
@@ -28,28 +26,24 @@ public class AbilitySetJsonParser {
 	 */
 	public AbilitySet parseOne(JsonNode node) throws LoadException {
 		if (node.size() != AbilitySet.SIZE) {
-			throw new LoadException("Ability sets must have exactly "+ AbilitySet.SIZE +" abilities.");
+			throw new LoadException("Ability sets must have exactly " + AbilitySet.SIZE + " abilities.");
 		}
 
 		Ability[] abilities = new Ability[AbilitySet.SIZE];
 		int i = 0;
 
-		for (JsonNode abilityNode: node) {
+		for (JsonNode abilityNode : node) {
 			String abilityId = abilityNode.asText();
 			try {
 				Ability ability = this.abilityRepository.findById(abilityId);
 				abilities[i++] = ability;
-				
+
 			} catch (EntityNotFoundException e) {
-				throw new LoadException("Ability does not exist: "+ abilityId);
+				throw new LoadException("Ability does not exist: " + abilityId);
 			}
 		}
 
 		// Couldn't find a more adaptable way of expanding the array.
-		return new AbilitySet(
-			abilities[0],
-			abilities[1],
-			abilities[2]
-		);
+		return new AbilitySet(abilities[0], abilities[1], abilities[2]);
 	}
 }

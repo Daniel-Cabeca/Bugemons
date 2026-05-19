@@ -1,9 +1,9 @@
 package ulb.message.request.gameActions;
 
+import ulb.DTO.player.PlayerDTO;
 import ulb.exceptions.DataAccessException;
 import ulb.exceptions.UserFacingException;
 import ulb.message.request.Request;
-import ulb.DTO.player.PlayerDTO;
 import ulb.server.ServerMessageHandler;
 
 public class StartMultiBattleRequest implements Request {

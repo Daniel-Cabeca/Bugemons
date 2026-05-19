@@ -1,10 +1,9 @@
 package ulb.model.item;
 
+import ulb.exceptions.EntityNotFoundException;
+
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
-
-import ulb.exceptions.EntityNotFoundException;
 
 /**
  * An inventory containing variable quantities of items.
@@ -21,20 +20,6 @@ public class Inventory {
 	}
 
 	/**
-	 * Looks for an item with the given id.
-	 * @param id the id of the item to find
-	 * @return the coresponding item if found, if not returns null
-	 */
-	private Item findItemByID(String id) throws EntityNotFoundException{
-		for (Item item : items.keySet()) {
-			if (item != null && item.getId().equals(id)) {
-				return item;
-			}
-		}
-		throw new EntityNotFoundException("item", id);
-	}
-
-	/**
 	 * Adds an item to the inventory.
 	 *
 	 * @param item The item to add
@@ -47,6 +32,21 @@ public class Inventory {
 		} catch (EntityNotFoundException e) {
 			this.items.put(item, quantity);
 		}
+	}
+
+	/**
+	 * Looks for an item with the given id.
+	 *
+	 * @param id the id of the item to find
+	 * @return the coresponding item if found, if not returns null
+	 */
+	private Item findItemByID(String id) throws EntityNotFoundException {
+		for (Item item : items.keySet()) {
+			if (item != null && item.getId().equals(id)) {
+				return item;
+			}
+		}
+		throw new EntityNotFoundException("item", id);
 	}
 
 	/**

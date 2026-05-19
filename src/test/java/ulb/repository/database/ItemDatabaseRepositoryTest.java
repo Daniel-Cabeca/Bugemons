@@ -1,8 +1,6 @@
 package ulb.repository.database;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-
 import ulb.model.effect.Effect;
 import ulb.model.effect.EffectHeal;
 import ulb.model.effect.EffectTarget;
@@ -11,7 +9,11 @@ import ulb.repository.database.sql.Database;
 import ulb.repository.database.sql.DatabaseInMemory;
 import ulb.repository.database.sql.DatabaseInitializer;
 import ulb.repository.database.sql.DatabaseMock;
+
 import java.util.stream.StreamSupport;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ItemDatabaseRepositoryTest {
 	@Test
@@ -25,25 +27,23 @@ public class ItemDatabaseRepositoryTest {
 
 	@Test
 	public void findAllGivesCorrectItems() throws Exception {
-    		Database database = new DatabaseInMemory();
-    		DatabaseInitializer databaseInitializer = new DatabaseInitializer(database);
-    		databaseInitializer.createTables();
+		Database database = new DatabaseInMemory();
+		DatabaseInitializer databaseInitializer = new DatabaseInitializer(database);
+		databaseInitializer.createTables();
 
-    		ItemDatabaseRepository repository = new ItemDatabaseRepository(database);
+		ItemDatabaseRepository repository = new ItemDatabaseRepository(database);
 
-			Effect effect = new EffectHeal(EffectTarget.OPPOSITE_BUGEMON,5);
+		Effect effect = new EffectHeal(EffectTarget.OPPOSITE_BUGEMON, 5);
 
-    		Item item1 = new Item("1","potion","","",effect,"");
-    		Item item2 = new Item("2","potion2","","",effect,"");
+		Item item1 = new Item("1", "potion", "", "", effect, "");
+		Item item2 = new Item("2", "potion2", "", "", effect, "");
 
-    		repository.insertItem(item1);
-    		repository.insertItem(item2);
+		repository.insertItem(item1);
+		repository.insertItem(item2);
 
-    		Iterable<Item> obtained = repository.findAll();
+		Iterable<Item> obtained = repository.findAll();
 
-    		assertTrue(StreamSupport.stream(obtained.spliterator(), false)
-                    .anyMatch(a -> a.getId().equals(item1.getId())));
-    		assertTrue(StreamSupport.stream(obtained.spliterator(), false)
-                    .anyMatch(a -> a.getId().equals(item1.getId())));
-    	}
+		assertTrue(StreamSupport.stream(obtained.spliterator(), false).anyMatch(a -> a.getId().equals(item1.getId())));
+		assertTrue(StreamSupport.stream(obtained.spliterator(), false).anyMatch(a -> a.getId().equals(item1.getId())));
+	}
 }

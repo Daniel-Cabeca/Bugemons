@@ -1,16 +1,15 @@
 package ulb.repository.database.sql;
 
+import ulb.exceptions.LoadException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-
-import java.util.List;
 import java.util.ArrayList;
-
-import ulb.exceptions.LoadException;
+import java.util.List;
 
 /**
  * SQL script that may contain multiple statements.
@@ -43,11 +42,37 @@ public class SqlScript {
 	}
 
 	/**
-	 * Returns the script resource URL.
+	 * Executes the script.
 	 *
-	 * @return The SQL script URL
+	 * @param database The database to run the script on
 	 */
-	public URL getUrl() { return this.url; }
+	public void execute(Database database) throws SQLException, LoadException {
+		Statement statement = database.createStatement();
+
+		for (String statementStr : this.getStatements()) {
+			statement.execute(statementStr);
+		}
+	}
+
+	/**
+	 * Gets the list of statements in the string.
+	 *
+	 * @return The list of statements
+	 */
+	public Iterable<String> getStatements() throws LoadException {
+		String[] statements = this.getSql().split(QUERY_SEPARATOR);
+		List<String> res = new ArrayList<>();
+
+		for (String statement : statements) {
+			statement = statement.trim();
+
+			if (!statement.isEmpty()) {
+				res.add(statement);
+			}
+		}
+
+		return res;
+	}
 
 	/**
 	 * Reads the script file's content.
@@ -65,37 +90,11 @@ public class SqlScript {
 	}
 
 	/**
-	 * Gets the list of statements in the string.
+	 * Returns the script resource URL.
 	 *
-	 * @return The list of statements
+	 * @return The SQL script URL
 	 */
-	public Iterable<String> getStatements() throws LoadException {
-		String[] statements = this.getSql().split(QUERY_SEPARATOR);
-		List<String> res = new ArrayList<>();
-
-		for (String statement: statements) {
-			statement = statement.trim();
-
-			if (!statement.isEmpty()) {
-				res.add(statement);
-			}
-		}
-
-		return res;
-	}
-
-	/**
-	 * Executes the script.
-	 *
-	 * @param database The database to run the script on
-	 */
-	public void execute(Database database) throws SQLException, LoadException {
-		Statement statement = database.createStatement();
-
-		for (String statementStr: this.getStatements()) {
-			statement.execute(statementStr);
-		}
-	}
+	public URL getUrl() { return this.url; }
 
 	/**
 	 * Executes the script.
@@ -108,7 +107,7 @@ public class SqlScript {
 	public void execute(Connection connection) throws SQLException, LoadException {
 		Statement statement = connection.createStatement();
 
-		for(String statementStr: this.getSql().split(";")) {
+		for (String statementStr : this.getSql().split(";")) {
 			String trimmedQuery = statementStr.trim();
 			if (!trimmedQuery.isEmpty()) {
 				statement.execute(trimmedQuery);

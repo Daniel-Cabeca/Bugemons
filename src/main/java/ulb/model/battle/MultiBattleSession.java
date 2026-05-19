@@ -12,19 +12,15 @@ import java.util.Optional;
  * Holds data pertaining to a multiplayer battle between two players.
  */
 public class MultiBattleSession {
-	public record ParticipantPair(MultiBattleParticipant a, MultiBattleParticipant b) {}
-
 	private final ParticipantPair participants;
 	private Battle battle = null;
-
 	public MultiBattleSession(Player player1, Player player2) {
-		this.participants = new ParticipantPair(
-				new MultiBattleParticipant(player1, Battle.ParticipantLabel.TEAM_A),
-				new MultiBattleParticipant(player2, Battle.ParticipantLabel.TEAM_B)
-		);
+		this.participants = new ParticipantPair(new MultiBattleParticipant(player1, Battle.ParticipantLabel.TEAM_A),
+				new MultiBattleParticipant(player2, Battle.ParticipantLabel.TEAM_B));
 	}
 
 	public Battle getBattle() { return this.battle; }
+
 	public ParticipantPair getParticipants() { return this.participants; }
 
 	/**
@@ -37,12 +33,12 @@ public class MultiBattleSession {
 	public MultiBattleParticipant getParticipant(int userId) throws NoSuchElementException {
 		if (userId == this.participants.a().getUserId()) {
 			return this.participants.a();
-		}
-		else if (userId == this.participants.b().getUserId()) {
+		} else if (userId == this.participants.b().getUserId()) {
 			return this.participants.b();
 		}
 
-		throw new NoSuchElementException("No corresponding participant was found in the multiplayer battle session for this id: "+ userId);
+		throw new NoSuchElementException("No corresponding participant was found in the multiplayer battle session for" +
+				" this id: " + userId);
 	}
 
 	/**
@@ -75,21 +71,19 @@ public class MultiBattleSession {
 	/**
 	 * Creates a Battle instance for the session. To be called once both players are ready.
 	 */
-	public void start(AccountService accountService) throws GameException{
+	public void start(AccountService accountService) throws GameException {
 		Optional<Team> teamA = this.participants.a().getTeam();
 		Optional<Team> teamB = this.participants.b().getTeam();
-		if (teamA.isEmpty() || teamB.isEmpty()){
+		if (teamA.isEmpty() || teamB.isEmpty()) {
 			throw new GameException("all the players must have a team");
 		}
-		this.battle = new Battle(
-			teamA.get(),
-			teamB.get(),
+		this.battle = new Battle(teamA.get(), teamB.get(),
 
-			this.participants.a().getPlayer(),
-			this.participants.b().getPlayer(),
+				this.participants.a().getPlayer(), this.participants.b().getPlayer(),
 
-			true,
-			accountService
-		);
+				true, accountService);
+	}
+
+	public record ParticipantPair(MultiBattleParticipant a, MultiBattleParticipant b) {
 	}
 }

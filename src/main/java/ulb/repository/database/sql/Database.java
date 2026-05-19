@@ -33,13 +33,13 @@ public abstract class Database {
 	 */
 	static Connection connect(String url) throws LoadException {
 		try {
-			Connection connection =  DriverManager.getConnection(url);
+			Connection connection = DriverManager.getConnection(url);
 			try (Statement stmt = connection.createStatement()) {
-    			stmt.execute("PRAGMA foreign_keys = ON"); // activate the foreign key constraint
+				stmt.execute("PRAGMA foreign_keys = ON"); // activate the foreign key constraint
 			}
 			return connection;
 		} catch (SQLException e) {
-			throw new LoadException("Failed to connect to database '"+ url +"'.");
+			throw new LoadException("Failed to connect to database '" + url + "'.");
 		}
 	}
 
@@ -49,26 +49,6 @@ public abstract class Database {
 	 * @return The configured database URL
 	 */
 	public String getUrl() { return this.url; }
-	/**
-	 * Returns the active SQL connection.
-	 *
-	 * @return The active SQL connection
-	 */
-	public Connection getConnection() { return this.connection; }
-
-	/**
-	 * Creates an SQL statement.
-	 *
-	 * @return The SQL statement
-	 */
-	public Statement createStatement() {
-		try {
-			return this.getConnection().createStatement();
-		} catch (SQLException e) {
-			LOGGER.log(Level.SEVERE, "Failed to create an SQL statement.");
-			return null;
-		}
-	}
 
 	/**
 	 * Creates a prepared SQL statement.
@@ -86,13 +66,20 @@ public abstract class Database {
 	}
 
 	/**
+	 * Returns the active SQL connection.
+	 *
+	 * @return The active SQL connection
+	 */
+	public Connection getConnection() { return this.connection; }
+
+	/**
 	 * Tests if a table is empty.
 	 *
 	 * @param table The name of the table to test
 	 * @return True if the table is empty, false otherwise
 	 */
 	public boolean isTableEmpty(String table) {
-		String sql = "SELECT EXISTS(SELECT 1 FROM "+ table +" LIMIT 1)";
+		String sql = "SELECT EXISTS(SELECT 1 FROM " + table + " LIMIT 1)";
 
 		try {
 			Statement statement = this.getConnection().createStatement();
@@ -103,7 +90,7 @@ public abstract class Database {
 			}
 			return true;
 		} catch (SQLException e) {
-			throw new IllegalArgumentException("SQL table does not exist: "+ table);
+			throw new IllegalArgumentException("SQL table does not exist: " + table);
 		}
 	}
 
@@ -115,13 +102,26 @@ public abstract class Database {
 	public boolean isNew() {
 		Statement statement = this.createStatement();
 		try {
-			ResultSet res = statement.executeQuery(
-					"SELECT name FROM sqlite_master WHERE type='table' AND name='items';"
-			);
+			ResultSet res = statement.executeQuery("SELECT name FROM sqlite_master WHERE type='table' AND " +
+					"name='items';");
 			return !res.next();
 		} catch (SQLException e) {
 			LOGGER.log(Level.SEVERE, "Failed to test if the database is new.");
 			return false;
+		}
+	}
+
+	/**
+	 * Creates an SQL statement.
+	 *
+	 * @return The SQL statement
+	 */
+	public Statement createStatement() {
+		try {
+			return this.getConnection().createStatement();
+		} catch (SQLException e) {
+			LOGGER.log(Level.SEVERE, "Failed to create an SQL statement.");
+			return null;
 		}
 	}
 }

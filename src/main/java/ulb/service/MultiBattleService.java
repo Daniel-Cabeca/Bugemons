@@ -23,24 +23,13 @@ public class MultiBattleService {
 	/**
 	 * Creates a new multiplayer battle session.
 	 *
-	 * @param player1 One of the players
-	 * @param player2 The other player
-	 * @return The created multiplayer battle session
-	 */
-	public MultiBattleSession createMultiBattle(Player player1, Player player2) {
-		MultiBattleSession battle = this.repository.create(player1, player2);
-		return battle;
-	}
-
-	/**
-	 * Creates a new multiplayer battle session.
-	 *
 	 * @param userId1 The id of one of the players
 	 * @param userId2 The id of the other player
 	 * @return The created multiplayer battle session
 	 * @throws DataAccessException If some unexpected repository error occurs
 	 */
-	public MultiBattleSession createMultiBattle(int userId1, int userId2) throws EntityNotFoundException, DataAccessException {
+	public MultiBattleSession createMultiBattle(int userId1, int userId2) throws EntityNotFoundException,
+			DataAccessException {
 		String username1 = this.accountService.getUsername(userId1);
 		String username2 = this.accountService.getUsername(userId2);
 
@@ -48,6 +37,18 @@ public class MultiBattleService {
 		Player player2 = new Player(username2, userId2);
 
 		return this.createMultiBattle(player1, player2);
+	}
+
+	/**
+	 * Creates a new multiplayer battle session.
+	 *
+	 * @param player1 One of the players
+	 * @param player2 The other player
+	 * @return The created multiplayer battle session
+	 */
+	public MultiBattleSession createMultiBattle(Player player1, Player player2) {
+		MultiBattleSession battle = this.repository.create(player1, player2);
+		return battle;
 	}
 
 	/**

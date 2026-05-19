@@ -13,6 +13,7 @@ public class NextRoomWindow {
 
 	/**
 	 * Handles the action to continue to the next room.
+	 *
 	 * @param event next event.
 	 */
 	@FXML

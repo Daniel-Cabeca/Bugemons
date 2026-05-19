@@ -9,7 +9,8 @@ import ulb.repository.json.ItemJsonRepository;
 
 /**
  * Mock repository for items.
- * Acts as an actual repository but is actually just using a static instance of a true repository loaded only once, for performance reasons.
+ * Acts as an actual repository but is actually just using a static instance of a true repository loaded only once,
+ * for performance reasons.
  */
 public class ItemMockRepository implements ItemRepository {
 	private static ItemRepository itemRepository = null;

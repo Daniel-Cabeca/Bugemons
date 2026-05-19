@@ -1,10 +1,6 @@
 package ulb.model.tower.towerManager;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.util.List;
-
 import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
 import ulb.model.Player;
@@ -14,9 +10,32 @@ import ulb.model.tower.Floor;
 import ulb.model.tower.Room;
 import ulb.repository.BugemonSpeciesRepository;
 import ulb.repository.mock.BugemonSpeciesMockRepository;
-import ulb.repository.mock.StartingInventoryMockRepository;import ulb.repository.mock.ItemMockRepository;import ulb.service.BugemonService;import ulb.service.ItemService;
+import ulb.repository.mock.ItemMockRepository;
+import ulb.repository.mock.StartingInventoryMockRepository;
+import ulb.service.BugemonService;
+import ulb.service.ItemService;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FloorManagerTest {
+
+	@Test
+	void floorIsNotCompletedOnInitialisation() throws Exception {
+		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
+		ItemService itemService = new ItemService(new ItemMockRepository(), new StartingInventoryMockRepository());
+
+		Player player = new Player();
+		Floor floor = new Floor(1, false);
+		Bugemon a = makeBugemon();
+		Team teamA = new Team(List.of(a));
+		player.setTeam(teamA);
+		FloorManager manager = new FloorManager(floor, player, bugemonService, itemService);
+
+		assertFalse(manager.isFloorCompleted());
+		assertFalse(floor.isFloorCompleted());
+	}
 
 	private Bugemon makeBugemon() throws LoadException, EntityNotFoundException {
 		BugemonSpeciesRepository bugemonRepository = new BugemonSpeciesMockRepository();
@@ -25,24 +44,8 @@ public class FloorManagerTest {
 		return bugemonService.spawnBugemon("florachu");
 	}
 
-    @Test
-    void floorIsNotCompletedOnInitialisation() throws Exception {
-		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
-		ItemService itemService = new ItemService(new ItemMockRepository(), new StartingInventoryMockRepository());
-
-		Player player = new Player();
-        Floor floor = new Floor(1, false);
-		Bugemon a = makeBugemon();
-		Team teamA = new Team(List.of(a));
-		player.setTeam(teamA);
-        FloorManager manager = new FloorManager(floor, player, bugemonService, itemService);
-
-        assertFalse(manager.isFloorCompleted());
-        assertFalse(floor.isFloorCompleted());
-    }
-
-    @Test
-    void floorIsCompletedWhenAllRoomsCompleted() throws Exception {
+	@Test
+	void floorIsCompletedWhenAllRoomsCompleted() throws Exception {
 		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
 		ItemService itemService = new ItemService(new ItemMockRepository(), new StartingInventoryMockRepository());
 
@@ -50,47 +53,47 @@ public class FloorManagerTest {
 		Bugemon a = makeBugemon();
 		Team teamA = new Team(List.of(a));
 		player.setTeam(teamA);
-        Floor floor = new Floor(1, false);
-        FloorManager manager = new FloorManager(floor, player, bugemonService, itemService);
+		Floor floor = new Floor(1, false);
+		FloorManager manager = new FloorManager(floor, player, bugemonService, itemService);
 
-        for (Room room : floor.getRooms()) {
-            room.setRoomCompleted(true);
-        }
+		for (Room room : floor.getRooms()) {
+			room.setRoomCompleted(true);
+		}
 
-        assertTrue(manager.isFloorCompleted());
-        assertTrue(floor.isFloorCompleted());
-    }
+		assertTrue(manager.isFloorCompleted());
+		assertTrue(floor.isFloorCompleted());
+	}
 
-	@Test 
+	@Test
 	void doesntMoveToNextRoomIfPreviousNotCompleted() throws Exception {
 		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
 		ItemService itemService = new ItemService(new ItemMockRepository(), new StartingInventoryMockRepository());
 
 		Player player = new Player();
-        Floor floor = new Floor(1, false);
+		Floor floor = new Floor(1, false);
 		Bugemon a = makeBugemon();
 		Team teamA = new Team(List.of(a));
 		player.setTeam(teamA);
-        FloorManager manager = new FloorManager(floor, player, bugemonService, itemService);
+		FloorManager manager = new FloorManager(floor, player, bugemonService, itemService);
 		// move to allowed room first
 		manager.moveToRoom(5);
 		// try to move to next room while previous is not completed (5 and 6 are adjacent)
 		manager.moveToRoom(6);
-		assertNotEquals(6, manager.getCurrentRoomId());	
+		assertNotEquals(6, manager.getCurrentRoomId());
 
 	}
 
-	@Test 
+	@Test
 	void doesntMoveToNextRoomIfPreviousNotAdjacent() throws Exception {
 		BugemonService bugemonService = new BugemonService(new BugemonSpeciesMockRepository());
 		ItemService itemService = new ItemService(new ItemMockRepository(), new StartingInventoryMockRepository());
 
 		Player player = new Player();
-        Floor floor = new Floor(1, false);
+		Floor floor = new Floor(1, false);
 		Bugemon a = makeBugemon();
 		Team teamA = new Team(List.of(a));
 		player.setTeam(teamA);
-        FloorManager manager = new FloorManager(floor, player, bugemonService, itemService);
+		FloorManager manager = new FloorManager(floor, player, bugemonService, itemService);
 		manager.moveToRoom(5);
 		manager.getRoom().setRoomCompleted(true);
 		// rooms 5 and 7 aren't adjacent

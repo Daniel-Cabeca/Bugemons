@@ -1,13 +1,24 @@
 package ulb.model.ability;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import ulb.model.type.Type;
 
 import java.util.Iterator;
 
-import ulb.model.type.Type;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AbilitySetTest {
+	@Test
+	public void containsIsTrueWhenAbilityInAbilitySet() {
+		AbilitySet abilityset = makeAbilitySetABC();
+		Ability a = makeAbilityA();
+		assertTrue(abilityset.contains(a));
+	}
+
+	private static AbilitySet makeAbilitySetABC() {
+		return new AbilitySet(makeAbilityA(), makeAbilityB(), makeAbilityC());
+	}
+
 	private static Ability makeAbilityA() {
 		return new Ability("a", "A", Type.FLORA, "Inflige des dégâts.", 40);
 	}
@@ -20,30 +31,15 @@ public class AbilitySetTest {
 		return new Ability("c", "C", Type.FLORA, "Inflige des dégâts.", 40);
 	}
 
-	private static Ability makeAbilityD() {
-		return new Ability("d", "D", Type.FLORA, "Inflige des dégâts.", 40);
-	}
-
-	private static Ability makeAbilityE() {
-		return new Ability("e", "E", Type.FLORA, "Inflige des dégâts.", 40);
-	}
-
-	private static AbilitySet makeAbilitySetABC() {
-		return new AbilitySet(makeAbilityA(), makeAbilityB(), makeAbilityC());
-	}
-
-	@Test
-	public void containsIsTrueWhenAbilityInAbilitySet() {
-		AbilitySet abilityset = makeAbilitySetABC();
-		Ability a = makeAbilityA();
-		assertTrue(abilityset.contains(a));
-	}
-
 	@Test
 	public void containsIsFalseWhenAbilityNotInAbilitySet() {
 		AbilitySet abilityset = makeAbilitySetABC();
 		Ability d = makeAbilityD();
 		assertFalse(abilityset.contains(d));
+	}
+
+	private static Ability makeAbilityD() {
+		return new Ability("d", "D", Type.FLORA, "Inflige des dégâts.", 40);
 	}
 
 	@Test
@@ -62,8 +58,12 @@ public class AbilitySetTest {
 	public void getAbilityWhenIndexIsOutOfBoundThrowsException() {
 		AbilitySet abilityset = makeAbilitySetABC();
 
-		assertThrows(IndexOutOfBoundsException.class, () -> { abilityset.getAbility(-1); });
-		assertThrows(IndexOutOfBoundsException.class, () -> { abilityset.getAbility(abilityset.size()); });
+		assertThrows(IndexOutOfBoundsException.class, () -> {
+			abilityset.getAbility(-1);
+		});
+		assertThrows(IndexOutOfBoundsException.class, () -> {
+			abilityset.getAbility(abilityset.size());
+		});
 	}
 
 	@Test
@@ -80,8 +80,12 @@ public class AbilitySetTest {
 		AbilitySet abilityset = makeAbilitySetABC();
 		Ability d = makeAbilityD();
 
-		assertThrows(IndexOutOfBoundsException.class, () -> { abilityset.setAbility(-1, d); });
-		assertThrows(IndexOutOfBoundsException.class, () -> { abilityset.setAbility(abilityset.size(), d); });
+		assertThrows(IndexOutOfBoundsException.class, () -> {
+			abilityset.setAbility(-1, d);
+		});
+		assertThrows(IndexOutOfBoundsException.class, () -> {
+			abilityset.setAbility(abilityset.size(), d);
+		});
 	}
 
 	@Test
@@ -119,7 +123,13 @@ public class AbilitySetTest {
 		Ability d = makeAbilityD();
 		Ability e = makeAbilityE();
 
-		assertThrows(IllegalArgumentException.class, () -> { abilityset.swapAbility(d, e); });
+		assertThrows(IllegalArgumentException.class, () -> {
+			abilityset.swapAbility(d, e);
+		});
+	}
+
+	private static Ability makeAbilityE() {
+		return new Ability("e", "E", Type.FLORA, "Inflige des dégâts.", 40);
 	}
 
 	@Test

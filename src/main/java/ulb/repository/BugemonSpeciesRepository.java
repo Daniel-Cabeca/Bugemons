@@ -1,10 +1,9 @@
 package ulb.repository;
 
-import java.lang.Iterable;
-
 import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
 import ulb.model.bugemon.BugemonSpecies;
+
 /**
  * Repository of the BugemonSpecies instances in the game data.
  */

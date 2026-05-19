@@ -1,24 +1,34 @@
 package ulb.repository.json.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import ulb.exceptions.LoadException;
+import ulb.model.effect.*;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import ulb.model.effect.Effect;
-import ulb.model.effect.EffectList;
-import ulb.model.effect.EffectResetMalus;
-import ulb.model.effect.EffectStatModifier;
-import ulb.model.effect.EffectHeal;
-import ulb.model.effect.EffectTarget;
-import ulb.model.effect.EffectStatDuration;
-import ulb.model.effect.EffectStatType;
-import ulb.model.effect.EffectSwitch;
-import ulb.exceptions.LoadException;
 
 /**
  * Parses effects from json nodes.
  */
 public class EffectJsonParser {
+	/**
+	 * Parses a list of effects from a json node.
+	 *
+	 * @param node The json node
+	 * @return A list of the parsed effects
+	 * @throws LoadException If parsing failed
+	 */
+	public EffectList parseList(JsonNode node) throws LoadException {
+		EffectList effects = new EffectList();
+
+		for (JsonNode effectNode : node) {
+			Effect effect = this.parseOne(effectNode);
+			effects.add(effect);
+		}
+
+		return effects;
+	}
+
 	/**
 	 * Parses one effect from a json node.
 	 *
@@ -29,7 +39,7 @@ public class EffectJsonParser {
 	public Effect parseOne(JsonNode node) throws LoadException {
 		String typeStr = node.get("type").asText();
 
-		switch(typeStr) {
+		switch (typeStr) {
 			case "soin":
 				return this.parseOneHeal(node);
 			case "stat_modifier":
@@ -41,105 +51,8 @@ public class EffectJsonParser {
 			case "switch":
 				return this.parseOneSwitch(node);
 			default:
-				throw new LoadException("Unknown effect type: "+ typeStr);
+				throw new LoadException("Unknown effect type: " + typeStr);
 		}
-	}
-
-	/**
-	 * Parses a list of effects from a json node.
-	 *
-	 * @param node The json node
-	 * @return A list of the parsed effects
-	 * @throws LoadException If parsing failed
-	 */
-	public EffectList parseList(JsonNode node) throws LoadException {
-		EffectList effects = new EffectList();
-
-		for (JsonNode effectNode: node) {
-			Effect effect = this.parseOne(effectNode);
-			effects.add(effect);
-		}
-
-		return effects;
-	}
-
-	/**
-	 * Parses an effect target from a json node.
-	 *
-	 * @param node The json node
-	 * @return The corresponding target enum value
-	 * @throws LoadException If the target is unrecognized
-	 */
-	public EffectTarget parseTarget(JsonNode node) throws LoadException {
-		String targetStr = node.asText();
-
-		switch(targetStr) {
-			case "lanceur":
-				return EffectTarget.OWN_BUGEMON;
-			case "adversaire":
-				return EffectTarget.OPPOSITE_BUGEMON;
-			case "equipe":
-				return EffectTarget.OWN_TEAM;
-			default:
-				throw new LoadException("Unknown effect target: "+ targetStr);
-		}
-	}
-
-	/**
-	 * Parses an effect duration from a json node.
-	 *
-	 * @param node The json node
-	 * @return The corresponding duration enum value
-	 * @throws LoadException If the duration is unrecognized
-	 */
-	public EffectStatDuration parseDuration(JsonNode node) throws LoadException {
-		String durationStr = node.asText();
-
-		switch(durationStr) {
-			case "permanent":
-				return EffectStatDuration.PERMANENT;
-			case "tour", "1_tour":
-				return EffectStatDuration.ROUND;
-			default:
-				throw new LoadException("Unrecognized effect duration: "+ durationStr);
-		}
-	}
-
-	/**
-	 * Parses a stat type from a json node.
-	 *
-	 * @param node The json node
-	 * @return The corresponding stat type enum value
-	 * @throws LoadException If the stat type is unrecognized
-	*/
-	public EffectStatType parseEffectStatType(String statStr) throws LoadException {
-		switch(statStr) {
-			case "pv":
-				return EffectStatType.HP;
-
-			case "attaque":
-				return EffectStatType.ATTACK;
-
-			case "defense":
-				return EffectStatType.DEFENSE;
-
-			case "initiative":
-				return EffectStatType.INITIATIVE;
-
-			default:
-				throw new LoadException("Unrecognized effect target"+ statStr);
-		}
-	}
-
-	/**
-	 * Parses a stat type from a json node.
-	 *
-	 * @param node The json node
-	 * @return The corresponding stat type enum value
-	 * @throws LoadException If the stat type is unrecognized
-	*/
-	public EffectStatType parseEffectStatType(JsonNode node) throws LoadException {
-		return this.parseEffectStatType(node.asText());
 	}
 
 	/**
@@ -196,10 +109,6 @@ public class EffectJsonParser {
 		return new EffectStatModifier(target, duration, modifiers);
 	}
 
-	private Iterable<Map.Entry<String, JsonNode>> iterableFields(JsonNode node) {
-		return () -> node.fields();
-	}
-
 	/**
 	 * Parses one reset malus effect from a json node.
 	 *
@@ -224,5 +133,88 @@ public class EffectJsonParser {
 		EffectTarget target = this.parseTarget(node.get("cible"));
 
 		return new EffectSwitch(target);
+	}
+
+	/**
+	 * Parses an effect target from a json node.
+	 *
+	 * @param node The json node
+	 * @return The corresponding target enum value
+	 * @throws LoadException If the target is unrecognized
+	 */
+	public EffectTarget parseTarget(JsonNode node) throws LoadException {
+		String targetStr = node.asText();
+
+		switch (targetStr) {
+			case "lanceur":
+				return EffectTarget.OWN_BUGEMON;
+			case "adversaire":
+				return EffectTarget.OPPOSITE_BUGEMON;
+			case "equipe":
+				return EffectTarget.OWN_TEAM;
+			default:
+				throw new LoadException("Unknown effect target: " + targetStr);
+		}
+	}
+
+	/**
+	 * Parses an effect duration from a json node.
+	 *
+	 * @param node The json node
+	 * @return The corresponding duration enum value
+	 * @throws LoadException If the duration is unrecognized
+	 */
+	public EffectStatDuration parseDuration(JsonNode node) throws LoadException {
+		String durationStr = node.asText();
+
+		switch (durationStr) {
+			case "permanent":
+				return EffectStatDuration.PERMANENT;
+			case "tour", "1_tour":
+				return EffectStatDuration.ROUND;
+			default:
+				throw new LoadException("Unrecognized effect duration: " + durationStr);
+		}
+	}
+
+	/**
+	 * Parses a stat type from a json node.
+	 *
+	 * @param node The json node
+	 * @return The corresponding stat type enum value
+	 * @throws LoadException If the stat type is unrecognized
+	 */
+	public EffectStatType parseEffectStatType(JsonNode node) throws LoadException {
+		return this.parseEffectStatType(node.asText());
+	}
+
+	private Iterable<Map.Entry<String, JsonNode>> iterableFields(JsonNode node) {
+		return () -> node.fields();
+	}
+
+	/**
+	 * Parses a stat type from a json node.
+	 *
+	 * @param node The json node
+	 * @return The corresponding stat type enum value
+	 * @throws LoadException If the stat type is unrecognized
+	 */
+	public EffectStatType parseEffectStatType(String statStr) throws LoadException {
+		switch (statStr) {
+			case "pv":
+				return EffectStatType.HP;
+
+			case "attaque":
+				return EffectStatType.ATTACK;
+
+			case "defense":
+				return EffectStatType.DEFENSE;
+
+			case "initiative":
+				return EffectStatType.INITIATIVE;
+
+			default:
+				throw new LoadException("Unrecognized effect target" + statStr);
+		}
 	}
 }

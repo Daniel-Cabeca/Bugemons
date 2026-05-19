@@ -1,13 +1,11 @@
 package ulb.repository.json;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.util.NoSuchElementException;
-
 import ulb.exceptions.EntityNotFoundException;
-import java.util.Iterator;
-
 import ulb.model.HasId;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Container for objects with a String id field for fast lookup.
@@ -24,13 +22,13 @@ public class IdSet<T extends HasId> implements Iterable<T> {
 	 * @throws EntityNotFoundException If no match was found for the id
 	 */
 	public T get(String id) throws EntityNotFoundException {
-		 T entry = this.entries.get(id);
+		T entry = this.entries.get(id);
 
-		 if (entry == null) {
+		if (entry == null) {
 			throw new EntityNotFoundException("Entry", id);
-		 }
+		}
 
-		 return entry;
+		return entry;
 	}
 
 	/**
@@ -51,7 +49,7 @@ public class IdSet<T extends HasId> implements Iterable<T> {
 		T oldEntry = this.entries.putIfAbsent(entry.getId(), entry);
 
 		if (oldEntry != null) {
-			throw new IllegalArgumentException("Entry already exists: "+ entry.getId());
+			throw new IllegalArgumentException("Entry already exists: " + entry.getId());
 		}
 	}
 }

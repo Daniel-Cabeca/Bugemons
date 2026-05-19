@@ -9,7 +9,8 @@ import ulb.repository.json.AbilityJsonRepository;
 
 /**
  * Mock repository for abilities.
- * Acts as an actual repository but is actually just using a static instance of a true repository loaded only once, for performance reasons.
+ * Acts as an actual repository but is actually just using a static instance of a true repository loaded only once,
+ * for performance reasons.
  */
 public class AbilityMockRepository implements AbilityRepository {
 	private static AbilityRepository abilityRepository = null;

@@ -7,63 +7,63 @@ import java.time.LocalDateTime;
  * Immutable chat message exchanged between two users.
  */
 public class ChatMessage implements Serializable {
-    private final long id;
-    private final String senderUsername;
-    private final String receiverUsername;
-    private final String content;
-    private final LocalDateTime sentAt;
+	private final long id;
+	private final String senderUsername;
+	private final String receiverUsername;
+	private final String content;
+	private final LocalDateTime sentAt;
 
-    /**
-     * Creates a persisted chat message.
-     *
-     * @param id Message id
-     * @param senderUsername Sender username
-     * @param receiverUsername Receiver username
-     * @param content Message content
-     * @param sentAt Message timestamp
-     */
-    public ChatMessage(long id, String senderUsername, String receiverUsername, String content, LocalDateTime sentAt) {
-        this.id = id;
-        this.senderUsername = senderUsername;
-        this.receiverUsername = receiverUsername;
-        this.content = content;
-        this.sentAt = sentAt;
-    }
+	/**
+	 * Creates a new chat message without persistent id.
+	 *
+	 * @param senderUsername Sender username
+	 * @param receiverUsername Receiver username
+	 * @param content Message content
+	 * @param sentAt Message timestamp
+	 */
+	public ChatMessage(String senderUsername, String receiverUsername, String content, LocalDateTime sentAt) {
+		this(-1, senderUsername, receiverUsername, content, sentAt);
+	}
 
-    /**
-     * Creates a new chat message without persistent id.
-     *
-     * @param senderUsername Sender username
-     * @param receiverUsername Receiver username
-     * @param content Message content
-     * @param sentAt Message timestamp
-     */
-    public ChatMessage(String senderUsername, String receiverUsername, String content, LocalDateTime sentAt) {
-        this(-1, senderUsername, receiverUsername, content, sentAt);
-    }
+	/**
+	 * Creates a persisted chat message.
+	 *
+	 * @param id Message id
+	 * @param senderUsername Sender username
+	 * @param receiverUsername Receiver username
+	 * @param content Message content
+	 * @param sentAt Message timestamp
+	 */
+	public ChatMessage(long id, String senderUsername, String receiverUsername, String content, LocalDateTime sentAt) {
+		this.id = id;
+		this.senderUsername = senderUsername;
+		this.receiverUsername = receiverUsername;
+		this.content = content;
+		this.sentAt = sentAt;
+	}
 
-    public String getSenderUsername() { return this.senderUsername; }
+	public String getReceiverUsername() { return this.receiverUsername; }
 
-    public String getReceiverUsername() { return this.receiverUsername; }
+	public LocalDateTime getSentAt() { return this.sentAt; }
 
-    public String getContent() { return this.content; }
+	/** {@inheritDoc} */
+	@Override
+	public String toString() {
+		return "[" + this.sentAt + "] " + this.senderUsername + " → " + this.receiverUsername + ": " + this.content;
+	}
 
-    public LocalDateTime getSentAt() { return this.sentAt; }
+	/**
+	 * Formats the message for local display.
+	 *
+	 * @param me Current local username
+	 * @return Formatted display line
+	 */
+	public String format(String me) {
+		String prefix = getSenderUsername().equals(me) ? "Vous" : getSenderUsername();
+		return prefix + ": " + getContent();
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        return "[" + this.sentAt + "] " + this.senderUsername + " → " + this.receiverUsername + ": " + this.content;
-    }
+	public String getSenderUsername() { return this.senderUsername; }
 
-    /**
-     * Formats the message for local display.
-     *
-     * @param me Current local username
-     * @return Formatted display line
-     */
-    public String format(String me) {
-        String prefix = getSenderUsername().equals(me) ? "Vous" : getSenderUsername();
-        return prefix + ": " + getContent();
-    }
+	public String getContent() { return this.content; }
 }

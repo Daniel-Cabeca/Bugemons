@@ -12,7 +12,7 @@ public class ChooseAbilityRewardRequest implements Request {
 	private final AbilityDTO oldAbility;
 	private final AbilityDTO newAbility;
 
-	public ChooseAbilityRewardRequest(BugemonDTO bugemon, AbilityDTO oldAbility, AbilityDTO newAbility){
+	public ChooseAbilityRewardRequest(BugemonDTO bugemon, AbilityDTO oldAbility, AbilityDTO newAbility) {
 		this.bugemon = bugemon;
 		this.oldAbility = oldAbility;
 		this.newAbility = newAbility;

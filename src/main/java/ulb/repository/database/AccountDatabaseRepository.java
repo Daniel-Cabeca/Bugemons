@@ -2,15 +2,18 @@ package ulb.repository.database;
 
 import ulb.exceptions.DataAccessException;
 import ulb.exceptions.EntityNotFoundException;
-import ulb.repository.AccountRepository;
 import ulb.exceptions.LoadException;
 import ulb.exceptions.UserAlreadyExistsException;
+import ulb.repository.AccountRepository;
 import ulb.repository.database.sql.Database;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -43,8 +46,7 @@ public class AccountDatabaseRepository implements AccountRepository {
 		} catch (SQLException e) {
 			if (e.getMessage().contains("UNIQUE")) {
 				throw new UserAlreadyExistsException(username);
-			}
-			else {
+			} else {
 				throw new LoadException("Failed to register user: " + e.getMessage());
 			}
 		}
@@ -94,12 +96,38 @@ public class AccountDatabaseRepository implements AccountRepository {
 			if (rs.next()) {
 				return rs.getString("username");
 			}
-		}
-		catch (SQLException e) {
+		} catch (SQLException e) {
 			throw new DataAccessException("Failed to parse SQL query");
 		}
 
 		throw new EntityNotFoundException("Player", userId);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public List<String> getFriendsList(int userId) throws LoadException {
+		List<String> friends = new ArrayList<>();
+
+		String sql = """
+				    SELECT u.username
+				    FROM users u
+				    JOIN friends f ON u.id = f.friend_id
+				    WHERE f.user_id = ?
+				""";
+
+		try (PreparedStatement pstmt = this.database.prepareStatement(sql)) {
+			pstmt.setInt(1, userId);
+			ResultSet rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				friends.add(rs.getString("username"));
+			}
+		} catch (SQLException e) {
+			throw new LoadException("Failed to fetch friends list: " + e.getMessage());
+		}
+
+		return friends;
 	}
 
 	/**
@@ -135,12 +163,69 @@ public class AccountDatabaseRepository implements AccountRepository {
 		}
 	}
 
+	public void sendBattleRequest(int senderId, int receiverId) throws LoadException {
+		String sql = "INSERT OR IGNORE INTO battle_requests (sender_id, receiver_id) VALUES (?, ?)";
+		try (PreparedStatement stmt = database.prepareStatement(sql)) {
+			stmt.setInt(1, senderId);
+			stmt.setInt(2, receiverId);
+			stmt.executeUpdate();
+		} catch (SQLException e) {
+			throw new LoadException("Failed to send battle request: " + e.getMessage());
+		}
+	}
+
+	public boolean hasPendingBattleRequestBetween(int userIdA, int userIdB) throws LoadException {
+		String sql = """
+					SELECT 1
+					FROM battle_requests
+					WHERE (sender_id = ? AND receiver_id = ?)
+					   OR (sender_id = ? AND receiver_id = ?)
+					LIMIT 1
+				""";
+		try (PreparedStatement stmt = database.prepareStatement(sql)) {
+			stmt.setInt(1, userIdA);
+			stmt.setInt(2, userIdB);
+			stmt.setInt(3, userIdB);
+			stmt.setInt(4, userIdA);
+			ResultSet rs = stmt.executeQuery();
+			return rs.next();
+		} catch (SQLException e) {
+			throw new LoadException("Failed to check pending battle request: " + e.getMessage());
+		}
+	}
+
+	public List<String> getPendingBattleRequests(int receiverId) throws LoadException {
+		List<String> senders = new ArrayList<>();
+		String sql = "SELECT u.username FROM users u JOIN battle_requests r ON u.id = r.sender_id WHERE r.receiver_id " +
+				"= ?";
+		try (PreparedStatement stmt = database.prepareStatement(sql)) {
+			stmt.setInt(1, receiverId);
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) senders.add(rs.getString("username"));
+		} catch (SQLException e) {
+			throw new LoadException("Failed to fetch requests: " + e.getMessage());
+		}
+		return senders;
+	}
+
+	public void acceptBattleRequest(int senderId, int receiverId) throws LoadException {
+		String del = "DELETE FROM battle_requests WHERE sender_id = ? AND receiver_id = ?";
+		try (PreparedStatement stmt = database.prepareStatement(del)) {
+			stmt.setInt(1, senderId);
+			stmt.setInt(2, receiverId);
+			stmt.executeUpdate();
+		} catch (SQLException e) {
+			throw new LoadException("Failed to accept request: " + e.getMessage());
+		}
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public List<String> getPendingFriendRequests(int receiverId) throws LoadException {
 		List<String> senders = new ArrayList<>();
-		String sql = "SELECT u.username FROM users u JOIN friend_requests r ON u.id = r.sender_id WHERE r.receiver_id = ?";
+		String sql = "SELECT u.username FROM users u JOIN friend_requests r ON u.id = r.sender_id WHERE r.receiver_id " +
+				"= ?";
 		try (PreparedStatement stmt = database.prepareStatement(sql)) {
 			stmt.setInt(1, receiverId);
 			ResultSet rs = stmt.executeQuery();
@@ -177,88 +262,6 @@ public class AccountDatabaseRepository implements AccountRepository {
 			stmt.executeUpdate();
 		} catch (SQLException e) {
 			throw new LoadException("Failed to decline request: " + e.getMessage());
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public List<String> getFriendsList(int userId) throws LoadException {
-		List<String> friends = new ArrayList<>();
-
-		String sql = """
-        SELECT u.username
-        FROM users u
-        JOIN friends f ON u.id = f.friend_id
-        WHERE f.user_id = ?
-    """;
-
-		try (PreparedStatement pstmt = this.database.prepareStatement(sql)) {
-			pstmt.setInt(1, userId);
-			ResultSet rs = pstmt.executeQuery();
-
-			while (rs.next()) {
-				friends.add(rs.getString("username"));
-			}
-		} catch (SQLException e) {
-			throw new LoadException("Failed to fetch friends list: " + e.getMessage());
-		}
-
-		return friends;
-	}
-
-	public void sendBattleRequest(int senderId, int receiverId) throws LoadException {
-		String sql = "INSERT OR IGNORE INTO battle_requests (sender_id, receiver_id) VALUES (?, ?)";
-		try (PreparedStatement stmt = database.prepareStatement(sql)) {
-			stmt.setInt(1, senderId);
-			stmt.setInt(2, receiverId);
-			stmt.executeUpdate();
-		} catch (SQLException e) {
-			throw new LoadException("Failed to send battle request: " + e.getMessage());
-		}
-	}
-
-	public boolean hasPendingBattleRequestBetween(int userIdA, int userIdB) throws LoadException {
-		String sql = """
-			SELECT 1
-			FROM battle_requests
-			WHERE (sender_id = ? AND receiver_id = ?)
-			   OR (sender_id = ? AND receiver_id = ?)
-			LIMIT 1
-		""";
-		try (PreparedStatement stmt = database.prepareStatement(sql)) {
-			stmt.setInt(1, userIdA);
-			stmt.setInt(2, userIdB);
-			stmt.setInt(3, userIdB);
-			stmt.setInt(4, userIdA);
-			ResultSet rs = stmt.executeQuery();
-			return rs.next();
-		} catch (SQLException e) {
-			throw new LoadException("Failed to check pending battle request: " + e.getMessage());
-		}
-	}
-
-	public List<String> getPendingBattleRequests(int receiverId) throws LoadException {
-		List<String> senders = new ArrayList<>();
-		String sql = "SELECT u.username FROM users u JOIN battle_requests r ON u.id = r.sender_id WHERE r.receiver_id = ?";
-		try (PreparedStatement stmt = database.prepareStatement(sql)) {
-			stmt.setInt(1, receiverId);
-			ResultSet rs = stmt.executeQuery();
-			while (rs.next()) senders.add(rs.getString("username"));
-		} catch (SQLException e) {
-			throw new LoadException("Failed to fetch requests: " + e.getMessage());
-		}
-		return senders;
-	}
-
-	public void acceptBattleRequest(int senderId, int receiverId) throws LoadException {
-		String del = "DELETE FROM battle_requests WHERE sender_id = ? AND receiver_id = ?";
-		try (PreparedStatement stmt = database.prepareStatement(del)) {
-			stmt.setInt(1, senderId);
-			stmt.setInt(2, receiverId);
-			stmt.executeUpdate();
-		} catch (SQLException e) {
-			throw new LoadException("Failed to accept request: " + e.getMessage());
 		}
 	}
 

@@ -1,14 +1,17 @@
 package ulb.repository.database.sql;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class DatabaseInitializerTest {
 	@Test
 	public void createTablesScriptDoesNotThrow() throws Exception {
 		Database db = new DatabaseInMemory();
 		DatabaseInitializer dbInitializer = new DatabaseInitializer(db);
-		assertDoesNotThrow(() -> { dbInitializer.createTables(); });
+		assertDoesNotThrow(() -> {
+			dbInitializer.createTables();
+		});
 	}
 
 	@Test
@@ -16,11 +19,15 @@ class DatabaseInitializerTest {
 		Database db = new DatabaseInMemory();
 		DatabaseInitializer dbInitializer = new DatabaseInitializer(db);
 		dbInitializer.createTables();
-		assertDoesNotThrow(() -> { dbInitializer.populate(); });
+		assertDoesNotThrow(() -> {
+			dbInitializer.populate();
+		});
 	}
 
 	@Test
 	public void prepareDefaultDatabaseDoesNotThrow() throws Exception {
-		assertDoesNotThrow(() -> { DatabaseInitializer.prepareDefaultDatabase(); });
+		assertDoesNotThrow(() -> {
+			DatabaseInitializer.prepareDefaultDatabase();
+		});
 	}
 }

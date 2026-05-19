@@ -1,50 +1,35 @@
 package ulb.repository.json.parser;
 
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.fasterxml.jackson.databind.JsonNode;
-import ulb.repository.json.Json;
-
-import ulb.model.bugemon.BugemonSpecies;
-
-import ulb.repository.AbilityRepository;
-import ulb.repository.mock.AbilityMockRepository;
+import org.junit.jupiter.api.Test;
 import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
+import ulb.model.bugemon.BugemonSpecies;
+import ulb.repository.AbilityRepository;
+import ulb.repository.json.Json;
+import ulb.repository.mock.AbilityMockRepository;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BugemonSpeciesJsonParserTest {
-	public static BugemonSpeciesJsonParser getParser() throws LoadException, EntityNotFoundException {
-		AbilityRepository abilityRepository = new AbilityMockRepository();
-		abilityRepository.findById("pollen_sournois");
-		return new BugemonSpeciesJsonParser(abilityRepository);
-	}
-
-	public static BugemonSpecies parseOneFromString(String str) throws LoadException, EntityNotFoundException {
-		BugemonSpeciesJsonParser parser = getParser();
-
-		JsonNode node = Json.getNode(str);
-		return parser.parseOne(node);
-	}
-
 	@Test
 	public void testFromJsonCorrect() throws Exception {
 		String str = """
-			{
-				"id": "florachu",
-				"nom": "Florachu",
-				"type": "Flora",
-				"stats": {
-					"pv": 90,
-					"attaque": 55,
-					"defense": 40,
-					"initiative": 50
-				},
-				"attaques": ["fouet_liane", "pollen_sournois", "racines_vives"],
-				"sprite": "florachu.png",
-				"starter": true
-			}
-			""";
+				{
+					"id": "florachu",
+					"nom": "Florachu",
+					"type": "Flora",
+					"stats": {
+						"pv": 90,
+						"attaque": 55,
+						"defense": 40,
+						"initiative": 50
+					},
+					"attaques": ["fouet_liane", "pollen_sournois", "racines_vives"],
+					"sprite": "florachu.png",
+					"starter": true
+				}
+				""";
 
 		BugemonSpecies species = parseOneFromString(str);
 
@@ -57,5 +42,18 @@ public class BugemonSpeciesJsonParserTest {
 		assertEquals("florachu.png", species.getSprite());
 		assertEquals("/png/florachu.png", species.getSpritePath());
 		assertEquals(true, species.isStarter());
+	}
+
+	public static BugemonSpecies parseOneFromString(String str) throws LoadException, EntityNotFoundException {
+		BugemonSpeciesJsonParser parser = getParser();
+
+		JsonNode node = Json.getNode(str);
+		return parser.parseOne(node);
+	}
+
+	public static BugemonSpeciesJsonParser getParser() throws LoadException, EntityNotFoundException {
+		AbilityRepository abilityRepository = new AbilityMockRepository();
+		abilityRepository.findById("pollen_sournois");
+		return new BugemonSpeciesJsonParser(abilityRepository);
 	}
 }

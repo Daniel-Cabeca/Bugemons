@@ -1,10 +1,6 @@
 package ulb.service;
 
-import ulb.exceptions.DataAccessException;
-import ulb.exceptions.EntityNotFoundException;
-import ulb.exceptions.InvalidCredentialsException;
-import ulb.exceptions.LoadException;
-import ulb.exceptions.UserAlreadyExistsException;
+import ulb.exceptions.*;
 import ulb.repository.AccountRepository;
 
 import java.util.List;
@@ -15,58 +11,59 @@ import java.util.NoSuchElementException;
  * Service layer for account registration and authentication.
  */
 public class AccountService {
-    private final AccountRepository repository;
+	private final AccountRepository repository;
 
-    /**
-     * Creates an account service using the provided repository.
-     *
-     * @param repository The repository used for account persistence
-     */
-    public AccountService(AccountRepository repository) {
-        this.repository = repository;
-    }
+	/**
+	 * Creates an account service using the provided repository.
+	 *
+	 * @param repository The repository used for account persistence
+	 */
+	public AccountService(AccountRepository repository) {
+		this.repository = repository;
+	}
 
-    /**
-     * Registers a user account.
-     *
-     * @param username The account username
-     * @param password The password hash to store
-     * @return False if the username is already used, true otherwise
-     * @throws LoadException If the registration fails
+	/**
+	 * Registers a user account.
+	 *
+	 * @param username The account username
+	 * @param password The password hash to store
+	 * @return False if the username is already used, true otherwise
+	 * @throws LoadException If the registration fails
 	 * @throws UserAlreadyExistsException If the user already is registered in the database
-     */
-    public void register(String username, String password) throws LoadException, UserAlreadyExistsException {
-        // return repository.register(username, password);
+	 */
+	public void register(String username, String password) throws LoadException, UserAlreadyExistsException {
+		// return repository.register(username, password);
 		repository.register(username, password);
-    }
+	}
 
-    /**
-     * Authenticates a user against stored credentials.
-     *
-     * @param username The account username
-     * @param password The provided password hash
-     * @return True if credentials match, false otherwise
-     * @throws LoadException If the lookup fails
+	/**
+	 * Authenticates a user against stored credentials.
+	 *
+	 * @param username The account username
+	 * @param password The provided password hash
+	 * @return True if credentials match, false otherwise
+	 * @throws LoadException If the lookup fails
 	 * @throws EntityNotFoundException If no player is registered with the username
 	 * @throws InvalidCredentialsException If the wrong password is given.
-     */
-    public void login(String username, String password) throws LoadException, EntityNotFoundException, InvalidCredentialsException{
-        String storedPassword = repository.getPasswordHash(username);
+	 */
+	public void login(String username, String password) throws LoadException, EntityNotFoundException,
+			InvalidCredentialsException {
+		String storedPassword = repository.getPasswordHash(username);
 		if (!storedPassword.equals(password)) {
 			throw new InvalidCredentialsException();
 		}
-    }
+	}
 
-    /**
-     * Returns the internal identifier of a user account.
-     *
-     * @param username The account username
-     * @return The user id, or -1 if the user does not exist
-     * @throws NoSuchElementException If the lookup fails
-     */
-    public Integer getUserId(String username) throws EntityNotFoundException {
-        return repository.getUserId(username);
-    }
+	/**
+	 * Returns the internal identifier of a user account.
+	 *
+	 * @param username The account username
+	 * @return The user id, or -1 if the user does not exist
+	 * @throws NoSuchElementException If the lookup fails
+	 */
+	public Integer getUserId(String username) throws EntityNotFoundException {
+		return repository.getUserId(username);
+	}
 
 	/**
 	 * Returns the username of the player specified by a given id.
@@ -123,11 +120,12 @@ public class AccountService {
 	public void declineBattleRequest(int senderId, int receiverId) throws LoadException {
 		repository.declineBattleRequest(senderId, receiverId);
 	}
-	public void addPoints(int userId, int pointsToAdd) throws LoadException{
-		repository.addPoints(userId,pointsToAdd);
+
+	public void addPoints(int userId, int pointsToAdd) throws LoadException {
+		repository.addPoints(userId, pointsToAdd);
 	}
 
-	public  Map<String, Integer> getLeaderboard() throws LoadException{
+	public Map<String, Integer> getLeaderboard() throws LoadException {
 		return repository.getLeaderboard();
 	}
 }

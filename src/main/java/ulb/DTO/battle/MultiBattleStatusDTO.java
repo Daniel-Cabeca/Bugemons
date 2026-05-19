@@ -4,11 +4,6 @@ import java.io.Serializable;
 
 public record MultiBattleStatusDTO(Status status) implements Serializable {
 	public enum Status {
-		NOT_CREATED,
-		WAITING_ACCEPT,
-		PICKING_TEAMS,
-		BATTLE,
-		END,
-		DECLINED,
+		NOT_CREATED, WAITING_ACCEPT, PICKING_TEAMS, BATTLE, END, DECLINED,
 	}
 }

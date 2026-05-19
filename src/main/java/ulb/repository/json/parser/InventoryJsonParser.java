@@ -1,15 +1,14 @@
 package ulb.repository.json.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import java.util.Map;
-import java.util.Iterator;
-
-import ulb.model.item.Item;
-import ulb.model.item.Inventory;
-
-import ulb.repository.ItemRepository;
 import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
+import ulb.model.item.Inventory;
+import ulb.model.item.Item;
+import ulb.repository.ItemRepository;
+
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Json parser for item inventories.
@@ -42,7 +41,7 @@ public class InventoryJsonParser {
 				Item item = this.itemRepository.findById(id);
 				inventory.addItem(item, quantity);
 			} catch (EntityNotFoundException e) {
-				throw new LoadException("Item "+ id +" does not exist");
+				throw new LoadException("Item " + id + " does not exist");
 			}
 		}
 

@@ -1,16 +1,16 @@
 package ulb.model.player;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import ulb.model.Player;
+import ulb.model.item.Inventory;
+import ulb.model.item.Item;
+import ulb.repository.mock.ItemMockRepository;
+import ulb.repository.mock.StartingInventoryMockRepository;
+import ulb.service.ItemService;
 
 import java.util.Map;
 
-import ulb.model.item.Item;
-import ulb.model.Player;
-import ulb.model.item.Inventory;
-import ulb.repository.mock.StartingInventoryMockRepository;
-import ulb.repository.mock.ItemMockRepository;
-import ulb.service.ItemService;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PlayerTest {
 	@Test

@@ -1,11 +1,11 @@
 package ulb.repository.database;
 
+import ulb.exceptions.EntityNotFoundException;
+import ulb.exceptions.LoadException;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.BugemonSpecies;
 import ulb.model.bugemon.Stats;
 import ulb.model.team.Team;
-import ulb.exceptions.EntityNotFoundException;
-import ulb.exceptions.LoadException;
 import ulb.repository.TeamRepository;
 import ulb.repository.database.sql.Database;
 
@@ -22,79 +22,79 @@ public class TeamDatabaseRepository implements TeamRepository {
 	private static final Logger LOGGER = Logger.getLogger(TeamDatabaseRepository.class.getName());
 
 
-    private final Database database;
+	private final Database database;
 
-    public TeamDatabaseRepository(Database database) {
-        this.database = database;
-    }
+	public TeamDatabaseRepository(Database database) {
+		this.database = database;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void insertTeam(int userId, Team team, boolean isTowerTeam) throws LoadException {
-        String sql = "INSERT INTO teams (user_id, team_name, tower_team) VALUES (?, ?, ?)";
-        try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
-            stmt.setInt(1, userId);
-            stmt.setString(2, team.getTeamName());
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void insertTeam(int userId, Team team, boolean isTowerTeam) throws LoadException {
+		String sql = "INSERT INTO teams (user_id, team_name, tower_team) VALUES (?, ?, ?)";
+		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
+			stmt.setInt(1, userId);
+			stmt.setString(2, team.getTeamName());
 			stmt.setBoolean(3, isTowerTeam);
-            stmt.executeUpdate();
+			stmt.executeUpdate();
 
 			try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
 				if (generatedKeys.next()) {
 					team.setId(generatedKeys.getInt(1));
 				}
 			}
-        } catch (SQLException e) {
-            throw new LoadException("Failed to insert team: " + e.getMessage());
-        }
-    }
+		} catch (SQLException e) {
+			throw new LoadException("Failed to insert team: " + e.getMessage());
+		}
+	}
 
 	/**
-     * {@inheritDoc}
-     */
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void deleteTowerTeam(int userId) throws LoadException{
+	public void updateTowerTeam(int userId, Team team) throws LoadException {
+		String sql = "UPDATE teams SET user_id = ?, team_name = ?, tower_team = 1";
+		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
+			stmt.setInt(1, userId);
+			stmt.setString(2, team.getTeamName());
+			stmt.executeUpdate();
+
+			try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+				if (generatedKeys.next()) {
+					team.setId(generatedKeys.getInt(1));
+				}
+			}
+		} catch (SQLException e) {
+			throw new LoadException("Failed to insert team: " + e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void deleteTowerTeam(int userId) throws LoadException {
 		String sql = "DELETE FROM teams WHERE user_id = ? AND tower_team = 1";
 		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
-            stmt.setInt(1, userId);
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            throw new LoadException("Failed to insert bugemons in team: " + e.getMessage());
-        }
+			stmt.setInt(1, userId);
+			stmt.executeUpdate();
+		} catch (SQLException e) {
+			throw new LoadException("Failed to insert bugemons in team: " + e.getMessage());
+		}
 	}
 
 	/**
-     * {@inheritDoc}
-     */
-	@Override 
-	public void updateTowerTeam(int userId, Team team) throws LoadException{
-		String sql = "UPDATE teams SET user_id = ?, team_name = ?, tower_team = 1";
-        try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
-            stmt.setInt(1, userId);
-            stmt.setString(2, team.getTeamName());
-            stmt.executeUpdate();
-
-			try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-				if (generatedKeys.next()) {
-					team.setId(generatedKeys.getInt(1));
-				}
-			}
-        } catch (SQLException e) {
-            throw new LoadException("Failed to insert team: " + e.getMessage());
-        }
-	}
-
-	/**
-     * {@inheritDoc}
-     */
+	 * {@inheritDoc}
+	 */
 	@Override
-	public boolean hasTowerTeam(int userId) throws LoadException{
+	public boolean hasTowerTeam(int userId) throws LoadException {
 		String sql = "SELECT COUNT(1) AS present FROM teams WHERE user_id = ? AND tower_team = 1";
 		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
 			stmt.setInt(1, userId);
 			ResultSet rs = stmt.executeQuery();
-			if (rs.next()){
+			if (rs.next()) {
 				return rs.getInt("present") == 1;
 			}
 		} catch (SQLException e) {
@@ -103,37 +103,72 @@ public class TeamDatabaseRepository implements TeamRepository {
 		return false;
 	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void insertBugemonInTeam(Bugemon bugemon, int teamId) throws LoadException {
-        String sql = "INSERT INTO team_members (team_id, bugemon_id) VALUES (?, ?)";
-        try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
-            stmt.setInt(1, teamId);
-            stmt.setInt(2, bugemon.getId());
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            throw new LoadException("Failed to insert bugemons in team: " + e.getMessage());
-        }
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void insertBugemonInTeam(Bugemon bugemon, int teamId) throws LoadException {
+		String sql = "INSERT INTO team_members (team_id, bugemon_id) VALUES (?, ?)";
+		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
+			stmt.setInt(1, teamId);
+			stmt.setInt(2, bugemon.getId());
+			stmt.executeUpdate();
+		} catch (SQLException e) {
+			throw new LoadException("Failed to insert bugemons in team: " + e.getMessage());
+		}
+	}
 
 	/**
-     * {@inheritDoc}
-     */
-    @Override
-    public void deleteBugemonInTeam(Bugemon bugemon, int teamId) throws LoadException {
-        String sql = "DELETE FROM team_members WHERE team_id = ? AND bugemon_id = ?";
-        try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
-            stmt.setInt(1, teamId);
-            stmt.setInt(2, bugemon.getId());
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            throw new LoadException("Failed to insert bugemons in team: " + e.getMessage());
-        }
-    }
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void deleteBugemonInTeam(Bugemon bugemon, int teamId) throws LoadException {
+		String sql = "DELETE FROM team_members WHERE team_id = ? AND bugemon_id = ?";
+		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
+			stmt.setInt(1, teamId);
+			stmt.setInt(2, bugemon.getId());
+			stmt.executeUpdate();
+		} catch (SQLException e) {
+			throw new LoadException("Failed to insert bugemons in team: " + e.getMessage());
+		}
+	}
 
-	private void executeUserBugemonStatement(PreparedStatement stmt, Bugemon bugemon, int userId, boolean useBugemonId) throws SQLException{
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean teamExists(String teamName, int userId) throws LoadException {
+		String sql = "SELECT 1 FROM teams WHERE team_name = ? AND user_id = ?";
+
+		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
+			stmt.setString(1, teamName);
+			stmt.setInt(2, userId);
+			ResultSet rs = stmt.executeQuery();
+			return rs.next();
+
+		} catch (SQLException e) {
+			throw new LoadException("Failed to check team existence: " + e.getMessage());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void insertUserBugemon(Bugemon bugemon, int userId) throws LoadException {
+		String sql = """
+				   INSERT INTO bugemons (species_id, user_id, level, xp, remaining_rewards, hp, attack, defense, initiative)
+				   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+				""";
+		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
+			this.executeUserBugemonStatement(stmt, bugemon, userId, false);
+		} catch (SQLException e) {
+			throw new LoadException("Failed to insert bugemon: " + e.getMessage());
+		}
+	}
+
+	private void executeUserBugemonStatement(PreparedStatement stmt, Bugemon bugemon, int userId,
+											 boolean useBugemonId) throws SQLException {
 		stmt.setString(1, bugemon.getSpecies().getId());
 		stmt.setInt(2, userId);
 		stmt.setInt(3, bugemon.getLevel());
@@ -145,7 +180,7 @@ public class TeamDatabaseRepository implements TeamRepository {
 		stmt.setInt(8, bugemon.getFightStats().getDefense());
 		stmt.setInt(9, bugemon.getFightStats().getInitiative());
 
-		if (useBugemonId){
+		if (useBugemonId) {
 			stmt.setInt(10, bugemon.getId());
 		}
 
@@ -154,7 +189,7 @@ public class TeamDatabaseRepository implements TeamRepository {
 		if (affectedRows == 0) {
 			throw new SQLException("Creating bugemon failed, no rows affected.");
 		}
-		if (!useBugemonId){
+		if (!useBugemonId) {
 			try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
 				if (generatedKeys.next()) {
 
@@ -166,7 +201,7 @@ public class TeamDatabaseRepository implements TeamRepository {
 					throw new SQLException("Creating bugemon failed, no ID obtained.");
 				}
 			}
-		}	
+		}
 
 	}
 
@@ -174,28 +209,12 @@ public class TeamDatabaseRepository implements TeamRepository {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void insertUserBugemon(Bugemon bugemon, int userId) throws LoadException {
-		String sql = """
-        INSERT INTO bugemons (species_id, user_id, level, xp, remaining_rewards, hp, attack, defense, initiative)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    	""";
-		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
-			this.executeUserBugemonStatement(stmt, bugemon, userId, false);
-		} catch (SQLException e) {
-			throw new LoadException("Failed to insert bugemon: " + e.getMessage());
-		}
-	}
-
-	/**
-     * {@inheritDoc}
-     */
-	@Override
 	public void updateUserBugemon(Bugemon bugemon, int userId) throws LoadException {
 		String sql = """
-        UPDATE bugemons SET species_id = ?, user_id = ?,
-							level = ?, xp = ?, remaining_rewards = ?, hp = ?, attack = ?,
-							defense = ?, initiative = ? WHERE id = ?
-		""";
+				      UPDATE bugemons SET species_id = ?, user_id = ?,
+									level = ?, xp = ?, remaining_rewards = ?, hp = ?, attack = ?,
+									defense = ?, initiative = ? WHERE id = ?
+				""";
 		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
 			this.executeUserBugemonStatement(stmt, bugemon, userId, true);
 		} catch (SQLException e) {
@@ -205,13 +224,13 @@ public class TeamDatabaseRepository implements TeamRepository {
 	}
 
 	/**
-     * {@inheritDoc}
-     */
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void deleteUserBugemon(Bugemon bugemon, int userId) throws LoadException {
 		String sql = """
-        DELETE FROM bugemons WHERE user_id = ? AND id = ?
-		""";
+				      DELETE FROM bugemons WHERE user_id = ? AND id = ?
+				""";
 		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
 			stmt.setInt(1, userId);
 			stmt.setInt(2, bugemon.getId());
@@ -221,7 +240,7 @@ public class TeamDatabaseRepository implements TeamRepository {
 		}
 
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -243,12 +262,8 @@ public class TeamDatabaseRepository implements TeamRepository {
 				newBugemon.setXp(rs.getInt("xp"));
 				newBugemon.setRemainingRewards(rs.getInt("remaining_rewards"));
 
-				Stats savedStats = new Stats(
-						rs.getInt("hp"),
-						rs.getInt("attack"),
-						rs.getInt("defense"),
-						rs.getInt("initiative")
-				);
+				Stats savedStats = new Stats(rs.getInt("hp"), rs.getInt("attack"), rs.getInt("defense"), rs.getInt(
+						"initiative"));
 
 				newBugemon.setBaseStats(savedStats);
 				bugemon = Optional.of(newBugemon);
@@ -258,7 +273,7 @@ public class TeamDatabaseRepository implements TeamRepository {
 			LOGGER.log(Level.WARNING, "Failed to load bugemon with id: " + id);
 			throw new LoadException("Fail to fetch request: " + e.getMessage());
 		}
-		if (bugemon.isEmpty()){
+		if (bugemon.isEmpty()) {
 			throw new EntityNotFoundException("Bugemon", id);
 		}
 		return bugemon.get();
@@ -270,11 +285,11 @@ public class TeamDatabaseRepository implements TeamRepository {
 	@Override
 	public Team findById(int id) throws LoadException, EntityNotFoundException {
 		String sql = """
-        SELECT t.team_name, tm.bugemon_id
-        FROM teams t
-        LEFT JOIN team_members tm ON t.team_id = tm.team_id
-        WHERE t.team_id = ?
-    """;
+				    SELECT t.team_name, tm.bugemon_id
+				    FROM teams t
+				    LEFT JOIN team_members tm ON t.team_id = tm.team_id
+				    WHERE t.team_id = ?
+				""";
 		List<Bugemon> bugemons = new ArrayList<>();
 		String teamName = "";
 		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
@@ -309,12 +324,12 @@ public class TeamDatabaseRepository implements TeamRepository {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<Team> findAll(int userId) throws LoadException,EntityNotFoundException{
+	public List<Team> findAll(int userId) throws LoadException, EntityNotFoundException {
 		String sql = """
-        SELECT team_id
-        FROM teams
-        WHERE user_id = ? AND tower_team = 0
-    """;
+				    SELECT team_id
+				    FROM teams
+				    WHERE user_id = ? AND tower_team = 0
+				""";
 		List<Team> teams = new ArrayList<>();
 		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
 			stmt.setInt(1, userId);
@@ -347,7 +362,7 @@ public class TeamDatabaseRepository implements TeamRepository {
 		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
 			stmt.setInt(1, userId);
 			ResultSet rs = stmt.executeQuery();
-			if (rs.next()){
+			if (rs.next()) {
 				int teamId = rs.getInt("team_id");
 				Team team = findById(teamId);
 				return Optional.of(team);
@@ -357,23 +372,5 @@ public class TeamDatabaseRepository implements TeamRepository {
 			throw new LoadException("Failed to check team existence: " + e.getMessage());
 		}
 		return Optional.empty();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean teamExists(String teamName, int userId) throws LoadException {
-		String sql = "SELECT 1 FROM teams WHERE team_name = ? AND user_id = ?";
-
-		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
-			stmt.setString(1, teamName);
-			stmt.setInt(2, userId);
-			ResultSet rs = stmt.executeQuery();
-			return rs.next();
-
-		} catch (SQLException e) {
-			throw new LoadException("Failed to check team existence: " + e.getMessage());
-		}
 	}
 }

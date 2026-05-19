@@ -1,9 +1,8 @@
 package ulb.repository.json.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
-import ulb.model.type.Type;
 import ulb.exceptions.LoadException;
+import ulb.model.type.Type;
 
 /**
  * Object that parses types from json nodes.

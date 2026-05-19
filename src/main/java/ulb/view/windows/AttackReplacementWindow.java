@@ -1,7 +1,5 @@
 package ulb.view.windows;
 
-import java.util.List;
-
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -12,6 +10,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import ulb.DTO.ability.AbilityDTO;
 import ulb.DTO.bugemon.BugemonDTO;
+
+import java.util.List;
 
 /**
  * Window responsible for handling the replacement of an ability when a Bugemon learns a new attack as a reward.
@@ -43,11 +43,11 @@ public class AttackReplacementWindow {
 	public void initializeReplacement(BugemonDTO bugemon, AbilityDTO newAbility) {
 		this.bugemon = bugemon;
 
-        bugemonLabel.setText(bugemon.getName() + " apprend une nouvelle attaque");
-        newAbilityLabel.setText(createAbilityText(newAbility));
-        bugemonSprite.setImage(new Image(getClass().getResourceAsStream(bugemon.getSpritePath())));
-        populateAbilities();
-    }
+		bugemonLabel.setText(bugemon.getName() + " apprend une nouvelle attaque");
+		newAbilityLabel.setText(createAbilityText(newAbility));
+		bugemonSprite.setImage(new Image(getClass().getResourceAsStream(bugemon.getSpritePath())));
+		populateAbilities();
+	}
 
 	/**
 	 * Creates a formatted string describing an ability.
@@ -56,10 +56,7 @@ public class AttackReplacementWindow {
 	 * @return a string containing the ability name, type, power and description
 	 */
 	private String createAbilityText(AbilityDTO ability) {
-		return ability.name() + "\n" +
-				"Type: " + ability.type() + "\n" +
-				"Puissance: " + ability.power() + "\n" +
-				ability.description();
+		return ability.name() + "\n" + "Type: " + ability.type() + "\n" + "Puissance: " + ability.power() + "\n" + ability.description();
 	}
 
 	/**

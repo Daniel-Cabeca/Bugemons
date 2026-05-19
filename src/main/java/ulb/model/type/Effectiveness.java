@@ -1,15 +1,21 @@
 package ulb.model.type;
 
 public abstract class Effectiveness {
-	public enum Category {
-		HIGH,
-		NORMAL,
-		LOW,
-	}
-
 	public static final float FACTOR_LOW = 0.75f;
 	public static final float FACTOR_NORMAL = 1.0f;
 	public static final float FACTOR_HIGH = 1.5f;
+
+	/**
+	 * Gives the multiplicative corresponding to the type of a move and the type of the target Bugemon.
+	 *
+	 * @param move The type of the move
+	 * @param target The type of the target Bugemon
+	 * @return The multiplicative factor
+	 */
+	public static float getFactor(Type move, Type target) {
+		Category category = getCategory(move, target);
+		return getFactor(category);
+	}
 
 	/**
 	 * Gives the effectiveness category corresponding to the type of a move and the type of the target Bugemon.
@@ -28,26 +34,23 @@ public abstract class Effectiveness {
 				}
 				break;
 			case AQUA:
-				if (target  == Type.PYRO) {
+				if (target == Type.PYRO) {
 					return Category.HIGH;
-				}
-				else if (target == Type.FLORA) {
+				} else if (target == Type.FLORA) {
 					return Category.LOW;
 				}
 				break;
 			case PYRO:
-				if (target  == Type.LITHO) {
+				if (target == Type.LITHO) {
 					return Category.HIGH;
-				}
-				else if (target == Type.AQUA) {
+				} else if (target == Type.AQUA) {
 					return Category.LOW;
 				}
 				break;
 			case LITHO:
-				if (target  == Type.FLORA) {
+				if (target == Type.FLORA) {
 					return Category.HIGH;
-				}
-				else if (target == Type.PYRO) {
+				} else if (target == Type.PYRO) {
 					return Category.LOW;
 				}
 				break;
@@ -65,7 +68,7 @@ public abstract class Effectiveness {
 	 * @return The multiplicative factor
 	 */
 	public static float getFactor(Category category) {
-		switch(category) {
+		switch (category) {
 			case HIGH:
 				return FACTOR_HIGH;
 
@@ -77,15 +80,7 @@ public abstract class Effectiveness {
 		}
 	}
 
-	/**
-	 * Gives the multiplicative corresponding to the type of a move and the type of the target Bugemon.
-	 *
-	 * @param move The type of the move
-	 * @param target The type of the target Bugemon
-	 * @return The multiplicative factor
-	 */
-	public static float getFactor(Type move, Type target) {
-		Category category = getCategory(move, target);
-		return getFactor(category);
+	public enum Category {
+		HIGH, NORMAL, LOW,
 	}
 }

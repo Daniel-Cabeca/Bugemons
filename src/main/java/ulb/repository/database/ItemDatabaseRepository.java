@@ -8,7 +8,9 @@ import ulb.repository.ItemRepository;
 import ulb.repository.database.sql.Database;
 import ulb.utils.DuplicateElementException;
 
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,7 +38,7 @@ public class ItemDatabaseRepository implements ItemRepository {
 	 * @param items The items to insert
 	 */
 	public void insertItems(Iterable<Item> items) throws DuplicateElementException {
-		for (Item item: items) {
+		for (Item item : items) {
 			this.insertItem(item);
 		}
 	}
@@ -59,9 +61,10 @@ public class ItemDatabaseRepository implements ItemRepository {
 			statement.executeUpdate();
 
 			EffectDatabaseRepository effectRepository = new EffectDatabaseRepository(this.database);
-			effectRepository.insert(item.getEffect(), item.getId(),true);
+			effectRepository.insert(item.getEffect(), item.getId(), true);
 		} catch (SQLException e) {
-			throw new DuplicateElementException("Failed to insert item: "+ item.getId() +" ("+ e.getMessage() +")");
+			throw new DuplicateElementException("Failed to insert item: " + item.getId() + " (" + e.getMessage() +
+					")");
 		}
 	}
 
@@ -69,16 +72,16 @@ public class ItemDatabaseRepository implements ItemRepository {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Item findById(String id) throws EntityNotFoundException{
+	public Item findById(String id) throws EntityNotFoundException {
 		// La grosse requête qui rassemble tout (Outer Join pour ne rien perdre)
 		String sql = """
-        SELECT i.*, e.id AS effect_id, e.type AS effect_type, e.target, e.value,
-               esm.hp, esm.attack, esm.defense, esm.initiative, esm.duration
-        FROM items i
-        LEFT JOIN effects e ON i.id = e.item_id
-        LEFT JOIN effect_stats_modifier esm ON e.id = esm.effect_id
-        WHERE i.id = ?
-    """;
+				    SELECT i.*, e.id AS effect_id, e.type AS effect_type, e.target, e.value,
+				           esm.hp, esm.attack, esm.defense, esm.initiative, esm.duration
+				    FROM items i
+				    LEFT JOIN effects e ON i.id = e.item_id
+				    LEFT JOIN effect_stats_modifier esm ON e.id = esm.effect_id
+				    WHERE i.id = ?
+				""";
 
 		try (PreparedStatement pstmt = this.database.prepareStatement(sql)) {
 			pstmt.setString(1, id);
@@ -95,8 +98,7 @@ public class ItemDatabaseRepository implements ItemRepository {
 					EffectTarget target = EffectTarget.valueOf(rs.getString("target"));
 					if (type == EffectType.HEAL) {
 						effect = Optional.of(new EffectHeal(target, rs.getInt("value")));
-					}
-					else if (type == EffectType.STAT_MODIFIER) {
+					} else if (type == EffectType.STAT_MODIFIER) {
 						// On reconstruit l'objet Stats du modificateur
 						Map<EffectStatType, Integer> statsChanges = new EnumMap<>(EffectStatType.class);
 						statsChanges.put(EffectStatType.HP, rs.getInt("hp"));
@@ -106,28 +108,20 @@ public class ItemDatabaseRepository implements ItemRepository {
 
 						String durationStr = rs.getString("duration");
 						EffectStatDuration duration = EffectStatDuration.valueOf(durationStr);
-						effect = Optional.of(new EffectStatModifier(target,duration,statsChanges));
-					}
-					else if (type == EffectType.RESET_MALUS) {
+						effect = Optional.of(new EffectStatModifier(target, duration, statsChanges));
+					} else if (type == EffectType.RESET_MALUS) {
 						effect = Optional.of(new EffectResetMalus(target));
-					}
-					else if (type == EffectType.SWITCH) {
+					} else if (type == EffectType.SWITCH) {
 						effect = Optional.of(new EffectSwitch(target));
 					}
 				}
-				if (effect.isEmpty()){
+				if (effect.isEmpty()) {
 					throw new EntityNotFoundException("Effect for item", id);
 				}
 
-				return new Item(
-						rs.getString("id"),
-						rs.getString("name"),
-						rs.getString("description"),
-						rs.getString("category"),
-						effect.get(),
-						rs.getString("sprite")
-				);
-				
+				return new Item(rs.getString("id"), rs.getString("name"), rs.getString("description"), rs.getString(
+						"category"), effect.get(), rs.getString("sprite"));
+
 			}
 			throw new EntityNotFoundException("Item", id);
 		} catch (SQLException e) {
@@ -140,7 +134,7 @@ public class ItemDatabaseRepository implements ItemRepository {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Iterable<Item> findAll() throws LoadException, EntityNotFoundException{
+	public Iterable<Item> findAll() throws LoadException, EntityNotFoundException {
 		List<Item> items = new ArrayList<>();
 		String sql = "SELECT id FROM items";
 		try (PreparedStatement pstmt = this.database.prepareStatement(sql)) {

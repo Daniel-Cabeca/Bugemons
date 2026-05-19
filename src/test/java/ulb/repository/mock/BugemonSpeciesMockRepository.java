@@ -2,16 +2,16 @@ package ulb.repository.mock;
 
 import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
-
 import ulb.model.bugemon.BugemonSpecies;
+import ulb.repository.AbilityRepository;
 import ulb.repository.BugemonSpeciesRepository;
 import ulb.repository.json.BugemonSpeciesJsonRepository;
-import ulb.repository.AbilityRepository;
 
 
 /**
  * Mock repository for abilities.
- * Acts as an actual repository but is actually just using a static instance of a true repository loaded only once, for performance reasons.
+ * Acts as an actual repository but is actually just using a static instance of a true repository loaded only once,
+ * for performance reasons.
  */
 public class BugemonSpeciesMockRepository implements BugemonSpeciesRepository {
 	private static BugemonSpeciesRepository speciesRepository = null;
@@ -28,7 +28,8 @@ public class BugemonSpeciesMockRepository implements BugemonSpeciesRepository {
 			AbilityRepository abilityRepository = new AbilityMockRepository();
 
 			speciesRepository = new BugemonSpeciesJsonRepository(abilityRepository);
-			mockData = new BugemonSpeciesJsonRepository(MockResources.getStream(MockResources.PATH_BUGEMON_SPECIES), abilityRepository);
+			mockData = new BugemonSpeciesJsonRepository(MockResources.getStream(MockResources.PATH_BUGEMON_SPECIES),
+					abilityRepository);
 		} catch (LoadException e) {
 			throw new IllegalStateException("Failed to load Bugemon species mock data : " + e.getMessage());
 		}

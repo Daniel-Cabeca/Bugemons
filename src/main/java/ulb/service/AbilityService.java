@@ -1,9 +1,5 @@
 package ulb.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
 import ulb.model.ability.Ability;
@@ -11,20 +7,24 @@ import ulb.model.ability.AbilitySet;
 import ulb.model.type.Type;
 import ulb.repository.AbilityRepository;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 public class AbilityService {
 
-    private final AbilityRepository abilityRepository;
+	private final AbilityRepository abilityRepository;
 
-    public AbilityService(AbilityRepository abilityRepository){
-        this.abilityRepository = abilityRepository;
-    }
+	public AbilityService(AbilityRepository abilityRepository) {
+		this.abilityRepository = abilityRepository;
+	}
 
-    /**
+	/**
 	 * Returns a random ability.
 	 *
 	 * @return A random ability
 	 */
-	public Ability getRandomAbility() throws LoadException, EntityNotFoundException{
+	public Ability getRandomAbility() throws LoadException, EntityNotFoundException {
 		List<Ability> abilities = new ArrayList<>();
 		for (Ability ability : this.abilityRepository.findAll()) {
 			abilities.add(ability);
@@ -40,7 +40,8 @@ public class AbilityService {
 	 * @param currentAbilities the abilities already known by the Bugemon
 	 * @return a random compatible ability, or null if none exists
 	 */
-	public Ability getRandomAbility(Type type, AbilitySet currentAbilities) throws LoadException, EntityNotFoundException {
+	public Ability getRandomAbility(Type type, AbilitySet currentAbilities) throws LoadException,
+			EntityNotFoundException {
 		List<Ability> candidates = new ArrayList<>();
 		for (Ability ability : this.abilityRepository.findAll()) {
 			if (ability.getType() == type && (currentAbilities == null || !currentAbilities.contains(ability))) {
@@ -55,5 +56,5 @@ public class AbilityService {
 		Random random = new Random();
 		return candidates.get(random.nextInt(candidates.size()));
 	}
-    
+
 }

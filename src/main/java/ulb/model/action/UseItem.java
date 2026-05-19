@@ -8,26 +8,26 @@ import ulb.model.item.Item;
  * Action representing item usage during battle.
  */
 public class UseItem extends Action {
-    private Item item;
+	private Item item;
 
-    /** Creates an empty item action. */
-    public UseItem() {
+	/**
+	 * Creates an item action.
+	 *
+	 * @param item Item to use
+	 */
+	public UseItem(Item item) {
+		this();
+		this.item = item;
+	}
+
+	/** Creates an empty item action. */
+	public UseItem() {
 		this.priority = 2;
 	}
 
-    /**
-     * Creates an item action.
-     *
-     * @param item Item to use
-     */
-    public UseItem(Item item) {
-		this();
-        this.item = item;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean executeAction(Battle battle, ParticipantLabel team) {
-        return battle.applyItem(this.item, team);
-    }
+	/** {@inheritDoc} */
+	@Override
+	public boolean executeAction(Battle battle, ParticipantLabel team) {
+		return battle.applyItem(this.item, team);
+	}
 }

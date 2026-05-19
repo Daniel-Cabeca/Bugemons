@@ -1,18 +1,28 @@
 package ulb.repository.json.parser;
 
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.fasterxml.jackson.databind.JsonNode;
-import ulb.repository.json.Json;
-
-import ulb.model.ability.AbilitySet;
-
-import ulb.repository.AbilityRepository;
-import ulb.repository.mock.AbilityMockRepository;
+import org.junit.jupiter.api.Test;
 import ulb.exceptions.LoadException;
+import ulb.model.ability.AbilitySet;
+import ulb.repository.AbilityRepository;
+import ulb.repository.json.Json;
+import ulb.repository.mock.AbilityMockRepository;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AbilitySetJsonParserTest {
+	@Test
+	public void testTooFew() throws Exception {
+		String str = """
+				["fouet_liane", "pollen_sournois"]
+				""";
+
+		assertThrows(LoadException.class, () -> {
+			getFromString(str);
+		});
+	}
+
 	public static AbilitySet getFromString(String str) throws LoadException {
 		AbilityRepository abilityRepository = new AbilityMockRepository();
 		AbilitySetJsonParser parser = new AbilitySetJsonParser(abilityRepository);
@@ -22,28 +32,21 @@ public class AbilitySetJsonParserTest {
 	}
 
 	@Test
-	public void testTooFew() throws Exception {
-		String str = """
-			["fouet_liane", "pollen_sournois"]
-			""";
-
-		assertThrows(LoadException.class, () -> { getFromString(str); });
-	}
-
-	@Test
 	public void testTooMany() throws Exception {
 		String str = """
-			["fouet_liane", "pollen_sournois", "racines_vives", "racines_vives"]
-			""";
+				["fouet_liane", "pollen_sournois", "racines_vives", "racines_vives"]
+				""";
 
-		assertThrows(LoadException.class, () -> { getFromString(str); });
+		assertThrows(LoadException.class, () -> {
+			getFromString(str);
+		});
 	}
 
 	@Test
 	public void testJsonCorrect() throws Exception {
 		String str = """
-			["fouet_liane", "pollen_sournois", "racines_vives"]
-			""";
+				["fouet_liane", "pollen_sournois", "racines_vives"]
+				""";
 
 		AbilitySet abilitySet = getFromString(str);
 
@@ -55,9 +58,11 @@ public class AbilitySetJsonParserTest {
 	@Test
 	public void testJsonFakeAbility() throws Exception {
 		String str = """
-			["fouet_liane", "pollen_sournois", "doesnotexist"]
-			""";
+				["fouet_liane", "pollen_sournois", "doesnotexist"]
+				""";
 
-		assertThrows(LoadException.class, () -> { getFromString(str); });
+		assertThrows(LoadException.class, () -> {
+			getFromString(str);
+		});
 	}
 }

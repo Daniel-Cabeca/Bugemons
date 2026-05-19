@@ -6,7 +6,7 @@ import ulb.message.request.Request;
 import ulb.server.ServerMessageHandler;
 
 public class CheckGameFinishedRequest implements Request {
-    @Override
+	@Override
 	public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
 		handler.checkGameFinished();
 	}

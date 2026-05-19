@@ -1,11 +1,11 @@
 package ulb.repository.database;
 
+import ulb.exceptions.EntityNotFoundException;
+import ulb.exceptions.LoadException;
 import ulb.model.ability.Ability;
 import ulb.model.effect.*;
 import ulb.model.type.Type;
 import ulb.repository.AbilityRepository;
-import ulb.exceptions.EntityNotFoundException;
-import ulb.exceptions.LoadException;
 import ulb.repository.database.sql.Database;
 import ulb.utils.DuplicateElementException;
 
@@ -68,7 +68,8 @@ public class AbilityDatabaseRepository implements AbilityRepository {
 			}
 
 		} catch (SQLException e) {
-			throw new DuplicateElementException("Failed to insert item: " + ability.getId() + " (" + e.getMessage() + ")");
+			throw new DuplicateElementException("Failed to insert item: " + ability.getId() + " (" + e.getMessage() +
+					")");
 		}
 	}
 
@@ -78,13 +79,13 @@ public class AbilityDatabaseRepository implements AbilityRepository {
 	@Override
 	public Ability findById(String id) throws LoadException, EntityNotFoundException {
 		String sql = """
-               SELECT a.*, e.id AS effect_id, e.type AS effect_type, e.target, e.value,
-                      esm.hp, esm.attack, esm.defense, esm.initiative, esm.duration
-               FROM abilities a
-               LEFT JOIN effects e ON a.id = e.ability_id
-               LEFT JOIN effect_stats_modifier esm ON e.id = esm.effect_id
-               WHERE a.id = ?
-            """;
+				   SELECT a.*, e.id AS effect_id, e.type AS effect_type, e.target, e.value,
+				          esm.hp, esm.attack, esm.defense, esm.initiative, esm.duration
+				   FROM abilities a
+				   LEFT JOIN effects e ON a.id = e.ability_id
+				   LEFT JOIN effect_stats_modifier esm ON e.id = esm.effect_id
+				   WHERE a.id = ?
+				""";
 		try (PreparedStatement pstmt = this.database.prepareStatement(sql)) {
 			pstmt.setString(1, id);
 			ResultSet rs = pstmt.executeQuery();
@@ -93,14 +94,8 @@ public class AbilityDatabaseRepository implements AbilityRepository {
 			while (rs.next()) {
 				if (ability.isEmpty()) {
 					Type abilityType = Type.valueOf(rs.getString("type"));
-					ability = Optional.of(new Ability(
-							rs.getString("id"),
-							rs.getString("name"),
-							abilityType,
-							rs.getString("description"),
-							rs.getInt("power"),
-							effects
-					));
+					ability = Optional.of(new Ability(rs.getString("id"), rs.getString("name"), abilityType,
+							rs.getString("description"), rs.getInt("power"), effects));
 				}
 				String effectId = rs.getString("effect_id");
 				if (effectId != null) {

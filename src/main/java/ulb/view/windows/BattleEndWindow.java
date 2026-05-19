@@ -39,19 +39,18 @@ public class BattleEndWindow {
 		if (victory) {
 			titleLabel.setText("Victoire!");
 			if (multiplayerBattle) {
-				messageLabel.setText("Tous les Bugémons adverses ont été mis KO. Tu as gagné contre " + opponent + " !");
-			}
-			else {
-				messageLabel.setText("Tous les Bugémons adverses ont été mis KO. Tu as gagné !" );
+				messageLabel.setText("Tous les Bugémons adverses ont été mis KO. Tu as gagné contre " + opponent + " " +
+						"!");
+			} else {
+				messageLabel.setText("Tous les Bugémons adverses ont été mis KO. Tu as gagné !");
 			}
 			gainXPLabel.setText("XP gagné: " + totalXP);
 		} else {
 			titleLabel.setText("Défaite");
 			if (multiplayerBattle) {
 				messageLabel.setText("Tous tes Bugémons sont KO. Tu as perdu contre " + opponent + " !");
-			}
-			else {
-				messageLabel.setText("Tous tes Bugémons sont KO. Tu as perdu !" );
+			} else {
+				messageLabel.setText("Tous tes Bugémons sont KO. Tu as perdu !");
 			}
 			gainXPLabel.setText("");
 		}
@@ -62,7 +61,7 @@ public class BattleEndWindow {
 	 */
 	public void handleReturn() {
 		listener.onHandleReturn();
-		
+
 	}
 
 	public interface ViewListener {

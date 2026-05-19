@@ -2,22 +2,20 @@ package ulb.repository.database.sql;
 
 import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
-
-import java.sql.SQLException;
-
 import ulb.model.ability.Ability;
 import ulb.model.bugemon.BugemonSpecies;
+import ulb.model.item.Item;
 import ulb.repository.AbilityRepository;
+import ulb.repository.ItemRepository;
+import ulb.repository.database.AbilityDatabaseRepository;
 import ulb.repository.database.BugemonSpeciesDatabaseRepository;
 import ulb.repository.database.ItemDatabaseRepository;
-import ulb.repository.database.AbilityDatabaseRepository;
 import ulb.repository.json.AbilityJsonRepository;
 import ulb.repository.json.BugemonSpeciesJsonRepository;
+import ulb.repository.json.ItemJsonRepository;
 import ulb.utils.DuplicateElementException;
 
-import ulb.model.item.Item;
-import ulb.repository.ItemRepository;
-import ulb.repository.json.ItemJsonRepository;
+import java.sql.SQLException;
 
 /**
  * Creates and populates the tables of a database for the game.
@@ -37,11 +35,30 @@ public class DatabaseInitializer {
 	}
 
 	/**
-	 * Returns the database managed by this initializer.
+	 * Prepares the default database.
 	 *
-	 * @return The managed database
+	 * @return The default database, initialized and connected.
 	 */
-	public Database getDatabase() { return this.database; }
+	public static Database prepareDefaultDatabase() throws LoadException, EntityNotFoundException {
+		Database database = DatabaseInFile.get(DatabaseInFile.NAME_DEFAULT);
+		DatabaseInitializer initializer = new DatabaseInitializer(database);
+
+		if (database.isNew()) {
+			initializer.initialize();
+		}
+		return database;
+	}
+
+	/**
+	 * Creates the database, its tables and populates it with the default game data if it does not exist.
+	 * The database's connection will be open after this call.
+	 *
+	 * @throws IllegalStateException If the database's connection is already open.
+	 */
+	public void initialize() throws LoadException, EntityNotFoundException {
+		this.createTables();
+		this.populate();
+	}
 
 	/**
 	 * Creates the tables for the database.
@@ -57,6 +74,23 @@ public class DatabaseInitializer {
 	}
 
 	/**
+	 * Populates the database with the default game data.
+	 */
+	void populate() throws LoadException, EntityNotFoundException {
+		ItemRepository itemRepository = new ItemJsonRepository();
+		AbilityRepository abilityRepository = new AbilityJsonRepository();
+		BugemonSpeciesJsonRepository bugemonSpeciesJsonRepository = new BugemonSpeciesJsonRepository();
+		this.populate(itemRepository.findAll(), abilityRepository.findAll(), bugemonSpeciesJsonRepository.findAll());
+	}
+
+	/**
+	 * Returns the database managed by this initializer.
+	 *
+	 * @return The managed database
+	 */
+	public Database getDatabase() { return this.database; }
+
+	/**
 	 * Populates the database with game data.
 	 *
 	 * @param items The list of items
@@ -66,49 +100,14 @@ public class DatabaseInitializer {
 	void populate(Iterable<Item> items, Iterable<Ability> abilities, Iterable<BugemonSpecies> species) throws LoadException {
 		ItemDatabaseRepository itemRepository = new ItemDatabaseRepository(this.getDatabase());
 		AbilityDatabaseRepository abilityRepository = new AbilityDatabaseRepository(this.getDatabase());
-		BugemonSpeciesDatabaseRepository bugemonSpeciesDatabaseRepository = new BugemonSpeciesDatabaseRepository(this.database);
+		BugemonSpeciesDatabaseRepository bugemonSpeciesDatabaseRepository =
+				new BugemonSpeciesDatabaseRepository(this.database);
 		try {
 			itemRepository.insertItems(items);
 			abilityRepository.insertAbilities(abilities);
 			bugemonSpeciesDatabaseRepository.insertSpecies(species);
-		} catch(DuplicateElementException e) {
+		} catch (DuplicateElementException e) {
 			throw new LoadException("The game data the database is populated with contains duplicate elements.");
 		}
-	}
-
-	/**
-	 * Populates the database with the default game data.
-	 */
-	void populate() throws LoadException, EntityNotFoundException {
-		ItemRepository itemRepository = new ItemJsonRepository();
-		AbilityRepository abilityRepository = new AbilityJsonRepository();
-		BugemonSpeciesJsonRepository bugemonSpeciesJsonRepository = new BugemonSpeciesJsonRepository();
-		this.populate(itemRepository.findAll(),abilityRepository.findAll(),bugemonSpeciesJsonRepository.findAll());
-	}
-
-	/**
-	 * Creates the database, its tables and populates it with the default game data if it does not exist.
-	 * The database's connection will be open after this call.
-	 *
-	 * @throws IllegalStateException If the database's connection is already open.
-	 */
-	public void initialize() throws LoadException, EntityNotFoundException {
-		this.createTables();
-		this.populate();
-	}
-
-	/**
-	 * Prepares the default database.
-	 *
-	 * @return The default database, initialized and connected.
-	 */
-	public static Database prepareDefaultDatabase() throws LoadException, EntityNotFoundException {
-		Database database = DatabaseInFile.get(DatabaseInFile.NAME_DEFAULT);
-		DatabaseInitializer initializer = new DatabaseInitializer(database);
-
-		if (database.isNew()) {
-			initializer.initialize();
-		}
-		return database;
 	}
 }

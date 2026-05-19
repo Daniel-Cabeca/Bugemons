@@ -4,89 +4,85 @@ import ulb.DTO.effect.EffectDTO;
 import ulb.DTO.effect.EffectHealDTO;
 import ulb.DTO.effect.EffectStatModifierDTO;
 import ulb.exceptions.MappingException;
-import ulb.model.effect.Effect;
-import ulb.model.effect.EffectHeal;
-import ulb.model.effect.EffectResetMalus;
-import ulb.model.effect.EffectStatModifier;
-import ulb.model.effect.EffectSwitch;
-import ulb.model.effect.EffectType;
 import ulb.model.battle.Battle;
+import ulb.model.effect.*;
 
 /**
  * Used to convert Regular Effect to DTO Effect
  */
 public class EffectMapper {
 
-    private EffectMapper(){}
+	private EffectMapper() {}
 
-    public static Effect toEntity(EffectDTO dto) throws MappingException{
-        if(dto == null) return null;
+	public static Effect toEntity(EffectDTO dto) throws MappingException {
+		if (dto == null) return null;
 
-        if (dto.getType() == null) {
-            throw new MappingException("Effect DTO has no type.");
-        }
+		if (dto.getType() == null) {
+			throw new MappingException("Effect DTO has no type.");
+		}
 
-        switch (dto.getType()) {
-            case SWITCH:
-                return new EffectSwitch(dto.getTarget()) {
-                    @Override
-                    public void apply(Battle battle, Battle.ParticipantLabel team){}
-                };
+		switch (dto.getType()) {
+			case SWITCH:
+				return new EffectSwitch(dto.getTarget()) {
+					@Override
+					public void apply(Battle battle, Battle.ParticipantLabel team) {}
+				};
 
-            case RESET_MALUS:
-                return new EffectResetMalus(dto.getTarget()) {
-                    @Override
-                    public void apply(Battle battle, Battle.ParticipantLabel team){}
-                };
+			case RESET_MALUS:
+				return new EffectResetMalus(dto.getTarget()) {
+					@Override
+					public void apply(Battle battle, Battle.ParticipantLabel team) {}
+				};
 
-            case STAT_MODIFIER:
-                if (dto instanceof EffectStatModifierDTO effectStat){
-                    return toEntity(effectStat);
-                }
-                throw new MappingException("STAT_MODIFIER effect has invalid DTO type: " + dto.getClass().getSimpleName());
+			case STAT_MODIFIER:
+				if (dto instanceof EffectStatModifierDTO effectStat) {
+					return toEntity(effectStat);
+				}
+				throw new MappingException("STAT_MODIFIER effect has invalid DTO type: " + dto.getClass().getSimpleName());
 
-            case HEAL:
-                if (dto instanceof EffectHealDTO effectHeal){
-                    return toEntity(effectHeal);
-                }
-                throw new MappingException("HEAL effect has invalid DTO type: " + dto.getClass().getSimpleName());
+			case HEAL:
+				if (dto instanceof EffectHealDTO effectHeal) {
+					return toEntity(effectHeal);
+				}
+				throw new MappingException("HEAL effect has invalid DTO type: " + dto.getClass().getSimpleName());
 
-            default:
-                throw new MappingException("Unknown effect type: " + dto.getType());
-        }
-    }
+			default:
+				throw new MappingException("Unknown effect type: " + dto.getType());
+		}
+	}
 
-    public static EffectHeal toEntity(EffectHealDTO dto){
-        if(dto == null) return null;
+	public static EffectStatModifier toEntity(EffectStatModifierDTO dto) {
+		if (dto == null) {
+			return null;
+		}
+		return new EffectStatModifier(dto.getTarget(), dto.getDuration(), dto.getModifiers()) {
+			// @Override
+			// public void apply(Battle battle, Battle.ParticipantLabel team){}
+		};
+	}
 
-        return new EffectHeal(dto.getTarget(), dto.getValue()) {
-            // @Override
-            // public void apply(Battle battle, Battle.ParticipantLabel team){}
-        };
-    }
+	public static EffectHeal toEntity(EffectHealDTO dto) {
+		if (dto == null) return null;
 
-    public static EffectStatModifier toEntity(EffectStatModifierDTO dto){
-        if(dto == null) {
-            return null;
-        }
-        return new EffectStatModifier(dto.getTarget(), dto.getDuration(), dto.getModifiers()) {
-            // @Override
-            // public void apply(Battle battle, Battle.ParticipantLabel team){}
-        };
-    }
+		return new EffectHeal(dto.getTarget(), dto.getValue()) {
+			// @Override
+			// public void apply(Battle battle, Battle.ParticipantLabel team){}
+		};
+	}
 
-    public static EffectDTO toDTO(Effect entity){
-        if(entity == null) return null;
+	public static EffectDTO toDTO(Effect entity) {
+		if (entity == null) return null;
 
-        if (entity instanceof EffectStatModifier statModifier){
-            return new EffectStatModifierDTO(EffectType.STAT_MODIFIER, statModifier.getTarget(), statModifier.getDuration(), statModifier.getModifiers());
-        } else if (entity instanceof EffectHeal heal){
-            return new EffectHealDTO(EffectType.HEAL, heal.getTarget(), heal.getValue());
-        } else if (entity instanceof EffectResetMalus resetMalus){
-            return new EffectDTO(EffectType.RESET_MALUS, resetMalus.getTarget());
-        } else if (entity instanceof EffectSwitch switchEffect){
-            return new EffectDTO(EffectType.SWITCH, switchEffect.getTarget());
-        }
-        return null;
-    }
+		if (entity instanceof EffectStatModifier statModifier) {
+			return new EffectStatModifierDTO(EffectType.STAT_MODIFIER, statModifier.getTarget(),
+					statModifier.getDuration(), statModifier.getModifiers());
+		} else if (entity instanceof EffectHeal heal) {
+			return new EffectHealDTO(EffectType.HEAL, heal.getTarget(), heal.getValue());
+		} else if (entity instanceof EffectResetMalus resetMalus) {
+			return new EffectDTO(EffectType.RESET_MALUS, resetMalus.getTarget());
+		} else if (entity instanceof EffectSwitch switchEffect) {
+			return new EffectDTO(EffectType.SWITCH, switchEffect.getTarget());
+		}
+		return null;
+	}
 }

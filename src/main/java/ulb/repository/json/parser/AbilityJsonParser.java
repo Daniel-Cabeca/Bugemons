@@ -1,14 +1,13 @@
 package ulb.repository.json.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import java.util.List;
-import java.util.ArrayList;
-
-import ulb.model.ability.Ability;
-import ulb.model.type.Type;
-import ulb.model.effect.EffectList;
-
 import ulb.exceptions.LoadException;
+import ulb.model.ability.Ability;
+import ulb.model.effect.EffectList;
+import ulb.model.type.Type;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Json parser for abilities.
@@ -31,7 +30,7 @@ public class AbilityJsonParser {
 	public Iterable<Ability> parseList(JsonNode node) throws LoadException {
 		List<Ability> res = new ArrayList<>();
 
-		for (JsonNode abilityNode: node) {
+		for (JsonNode abilityNode : node) {
 			Ability ability = parseOne(abilityNode);
 			res.add(ability);
 		}

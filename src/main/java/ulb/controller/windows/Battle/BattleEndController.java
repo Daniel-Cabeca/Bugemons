@@ -11,33 +11,33 @@ import ulb.view.windows.BattleEndWindow;
  */
 public class BattleEndController extends WindowController<BattleEndWindow> implements BattleEndWindow.ViewListener {
 
-    /**
-     * Creates the battle end controller.
-     *
-     * @param stage The application stage
-     * @param clientController The client controller
-     */
-    public BattleEndController(Stage stage, ClientController clientController) {
-        super(stage,WindowPath.BATTLE_END,  clientController);
-        this.view.setViewListener(this);
-    }
+	/**
+	 * Creates the battle end controller.
+	 *
+	 * @param stage The application stage
+	 * @param clientController The client controller
+	 */
+	public BattleEndController(Stage stage, ClientController clientController) {
+		super(stage, WindowPath.BATTLE_END, clientController);
+		this.view.setViewListener(this);
+	}
 
-    /**
-     * Displays battle result information.
-     *
-     * @param victory Whether the battle was won
-     * @param totalXP Total experience gained
-     * @param opponent the one player fought
-     */
-    public void show(boolean victory, int totalXP, String opponent, boolean multiplayerBattle){
-        super.show();
-        this.view.setResult(victory, totalXP, opponent, multiplayerBattle);
-    }
+	/**
+	 * Displays battle result information.
+	 *
+	 * @param victory Whether the battle was won
+	 * @param totalXP Total experience gained
+	 * @param opponent the one player fought
+	 */
+	public void show(boolean victory, int totalXP, String opponent, boolean multiplayerBattle) {
+		super.show();
+		this.view.setResult(victory, totalXP, opponent, multiplayerBattle);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void onHandleReturn() { this.clientController.showWindow(WindowName.MAIN_MENU); }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void onHandleReturn() { this.clientController.showWindow(WindowName.MAIN_MENU); }
 
 }

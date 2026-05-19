@@ -1,16 +1,14 @@
 package ulb.repository.json;
 
-import java.io.InputStream;
 import com.fasterxml.jackson.databind.JsonNode;
-import ulb.repository.json.parser.BugemonSpeciesJsonParser;
-
-import ulb.model.bugemon.BugemonSpecies;
-import ulb.repository.BugemonSpeciesRepository;
-
 import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
-
+import ulb.model.bugemon.BugemonSpecies;
 import ulb.repository.AbilityRepository;
+import ulb.repository.BugemonSpeciesRepository;
+import ulb.repository.json.parser.BugemonSpeciesJsonParser;
+
+import java.io.InputStream;
 
 /**
  * A Bugemon species repository loaded from a json file.
@@ -21,14 +19,20 @@ public class BugemonSpeciesJsonRepository implements BugemonSpeciesRepository {
 	/**
 	 * Loads a repository from the default json files.
 	 *
+	 * @throws LoadException If loading failed
+	 */
+	public BugemonSpeciesJsonRepository() throws LoadException {
+		this(new AbilityJsonRepository());
+	}
+
+	/**
+	 * Loads a repository from the default json files.
+	 *
 	 * @param abilityRepository The repository to use for abilities
 	 * @throws LoadException If loading failed
 	 */
 	public BugemonSpeciesJsonRepository(AbilityRepository abilityRepository) throws LoadException {
-		this(
-			JsonResources.getStream(JsonResources.PATH_BUGEMON_SPECIES),
-			abilityRepository
-		);
+		this(JsonResources.getStream(JsonResources.PATH_BUGEMON_SPECIES), abilityRepository);
 	}
 
 	/**
@@ -44,18 +48,9 @@ public class BugemonSpeciesJsonRepository implements BugemonSpeciesRepository {
 
 		BugemonSpeciesJsonParser bugemonParser = new BugemonSpeciesJsonParser(abilityRepository);
 
-		for (BugemonSpecies entry: bugemonParser.parseList(bugemonArray)) {
+		for (BugemonSpecies entry : bugemonParser.parseList(bugemonArray)) {
 			this.entries.add(entry);
 		}
-	}
-
-	/**
-	 * Loads a repository from the default json files.
-	 *
-	 * @throws LoadException If loading failed
-	 */
-	public BugemonSpeciesJsonRepository() throws LoadException {
-		this(new AbilityJsonRepository());
 	}
 
 	/**

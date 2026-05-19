@@ -1,26 +1,26 @@
 package ulb.model.effect;
 
-import java.util.List;
-
 import ulb.model.battle.Battle;
 import ulb.model.battle.Battle.ParticipantLabel;
 import ulb.model.bugemon.Bugemon;
 
-public class EffectResetMalus extends Effect{
+import java.util.List;
 
-    public EffectResetMalus(EffectTarget targetType){
-        super(targetType);
-    }
+public class EffectResetMalus extends Effect {
 
-     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void apply(Battle battle, ParticipantLabel team) {
-        List<Bugemon> targets = this.getTargets(battle, team);
+	public EffectResetMalus(EffectTarget targetType) {
+		super(targetType);
+	}
 
-		for (Bugemon target: targets) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void apply(Battle battle, ParticipantLabel team) {
+		List<Bugemon> targets = this.getTargets(battle, team);
+
+		for (Bugemon target : targets) {
 			target.removeStatsDebuffs();
 		}
-    }
+	}
 }

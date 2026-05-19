@@ -1,13 +1,5 @@
 package ulb.controller.windows;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import javax.naming.CommunicationException;
-
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -24,37 +16,37 @@ import ulb.model.chat.ChatMessage;
 import ulb.view.WindowPath;
 import ulb.view.windows.SocialPanel;
 
+import javax.naming.CommunicationException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 public class SocialPanelController extends WindowController<SocialPanel> implements SocialPanel.ViewListener {
 	private Stage popupStage;
 	private PlayerDTO player;
 
 	/**
-     * Creates the social panel controller.
-     *
-     * @param stage The application stage
-     * @param clientController The client controller
-     */
-    public SocialPanelController(Stage stage, ClientController clientController) {
-        super(stage, WindowPath.SOCIAL_PANEL, clientController);
-        this.view.setViewListener(this);
-    }
-
-	private PlayerDTO getPlayer(){
-		if (player == null){
-			this.player = this.clientController.getPlayer();
-		}
-		return player;
+	 * Creates the social panel controller.
+	 *
+	 * @param stage The application stage
+	 * @param clientController The client controller
+	 */
+	public SocialPanelController(Stage stage, ClientController clientController) {
+		super(stage, WindowPath.SOCIAL_PANEL, clientController);
+		this.view.setViewListener(this);
 	}
 
 	/**
-	* Displays the Social panel screen.
-	*/
+	 * Displays the Social panel screen.
+	 */
 	public void show() {
 
 		view.setFriendsList(this.getFriendList());
 		view.setLeaderboardList(this.getLeaderboardList());
 
-		if (popupStage == null){
+		if (popupStage == null) {
 			popupStage = new Stage();
 			popupStage.initStyle(StageStyle.UNDECORATED);
 			popupStage.initOwner(this.stage);
@@ -64,64 +56,68 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 			popupStage.setX(this.stage.getX());
 			popupStage.setY(this.stage.getY());
 		}
-		
+
 		popupStage.show();
 	}
 
-	private List<String> getRequests(Request request){
-		Serializable response = this.clientController.getData(request);
-		if (response instanceof FriendRequestsResponse msg)
-			return msg.getRequests();
-		else if (response instanceof BattleRequestsResponse msg)
-			return msg.getRequests();
-		else if (response instanceof FriendsListResponse msg)
-			return msg.getFriends();
-		return List.of();
-	}
-
-	private List<String> getFriendList(){
+	private List<String> getFriendList() {
 		if (this.clientController.getData(new GetFriendsListRequest(getPlayer().getUsername())) instanceof FriendsListResponse msg)
 			return msg.getFriends();
 		return List.of();
 	}
 
-	private Map<String, Integer> getLeaderboardList(){
+	private Map<String, Integer> getLeaderboardList() {
 		if (this.clientController.getData(new GetLeaderboardRequest()) instanceof LeaderboardResponse msg)
 			return msg.getLeaderboard();
-		return Collections.<String, Integer>emptyMap();
-	
+		return Collections.emptyMap();
+
+	}	private List<String> getRequests(Request request) {
+		Serializable response = this.clientController.getData(request);
+		if (response instanceof FriendRequestsResponse msg) return msg.getRequests();
+		else if (response instanceof BattleRequestsResponse msg) return msg.getRequests();
+		else if (response instanceof FriendsListResponse msg) return msg.getFriends();
+		return List.of();
 	}
+
+	private PlayerDTO getPlayer() {
+		if (player == null) {
+			this.player = this.clientController.getPlayer();
+		}
+		return player;
+	}
+
+
 
 	private void refreshFriendRequests() {
 		List<String> friendRequests = getRequests(new GetFriendRequestsRequest(getPlayer().getUsername()));
 		view.setFriendRequests(friendRequests);
 	}
 
-	private void refreshBattleRequests(){
+	private void refreshBattleRequests() {
 		List<String> battleRequests = getRequests(new GetBattleRequestsRequest(getPlayer().getUsername()));
 		view.setBattleRequests(battleRequests);
 	}
 
 	/**
-     * Load messages of a chat with a given friend.
-     */
-    private void loadMessages(String friend) {
-        new Thread(() -> loadMessagesInCurrentThread(friend)).start();
-    }
+	 * Load messages of a chat with a given friend.
+	 */
+	private void loadMessages(String friend) {
+		new Thread(() -> loadMessagesInCurrentThread(friend)).start();
+	}
 
-    private void loadMessagesInCurrentThread(String friend) {
+	private void loadMessagesInCurrentThread(String friend) {
 		List<ChatMessage> chatMessages = null;
 		if (this.clientController.getData(new GetChatMessagesRequest(getPlayer().getUsername(), friend)) instanceof ChatMessagesResponse msg)
 			chatMessages = msg.getMessages();
 
-        List<String> lines = new ArrayList<>();
-        for (ChatMessage chatMessage : chatMessages) {
-            lines.add(chatMessage.format(this.getPlayer().getUsername()));
-        }
-        Platform.runLater(() -> view.setMessages(lines));
-    }
+		List<String> lines = new ArrayList<>();
+		for (ChatMessage chatMessage : chatMessages) {
+			lines.add(chatMessage.format(this.getPlayer().getUsername()));
+		}
+		Platform.runLater(() -> view.setMessages(lines));
+	}
 
-	private PlayerDTO getPlayerByName(String username){
+	private PlayerDTO getPlayerByName(String username) {
 		if (this.clientController.getData(new GetPlayerRequest(username)) instanceof PlayerResponse msg) {
 			return msg.getPlayer();
 		}
@@ -135,7 +131,7 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 	 * @param userId2 The second player's id
 	 * @return The multiplayer battle status DTO
 	 */
-	public MultiBattleStatusDTO getMultiBattleStatus(int userId1, int userId2) throws CommunicationException{
+	public MultiBattleStatusDTO getMultiBattleStatus(int userId1, int userId2) throws CommunicationException {
 		if (this.clientController.getData(new GetMultiBattleStatusRequest(userId1, userId2)) instanceof MultiBattleStatusResponse msg)
 			return msg.getStatus();
 
@@ -143,7 +139,7 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 		throw new CommunicationException();
 	}
 
-	private void switchToTeamSelectionForMulti(PlayerDTO opponent){
+	private void switchToTeamSelectionForMulti(PlayerDTO opponent) {
 		this.clientController.setOpponentMulti(opponent);
 		this.clientController.showWindow(WindowName.TEAM);
 	}
@@ -155,14 +151,14 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 	 */
 	private void waitForBattleRequestResponse(PlayerDTO opponent) {
 		MultiBattleStatusDTO status = null;
-		try{
+		try {
 			status = this.getMultiBattleStatus(getPlayer().getUserId(), opponent.getUserId());
-		} catch(CommunicationException e){
+		} catch (CommunicationException e) {
 			this.clientController.stopWaitWindow();
 			this.clientController.showWindow(WindowName.MAIN_MENU);
 		}
 
-		switch(status.status()) {
+		switch (status.status()) {
 			case PICKING_TEAMS:
 				this.clientController.stopWaitWindow();
 				this.switchToTeamSelectionForMulti(opponent);
@@ -178,38 +174,38 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 	}
 
 	/**
-	* Close the social panel screen.
-	*/
+	 * Close the social panel screen.
+	 */
 	@Override
 	public void onClose() {
 		this.popupStage.close();
 	}
 
 	/**
-	* Decline a friend request.
-	*/
+	 * Decline a friend request.
+	 */
 	@Override
 	public void onDeclineFriend(String sender) {
-		if (this.clientController.postData(new DeclineFriendRequestRequest(getPlayer().getUsername(), sender))){
+		if (this.clientController.postData(new DeclineFriendRequestRequest(getPlayer().getUsername(), sender))) {
 			refreshFriendRequests();
 		}
 	}
 
 	@Override
 	public void onDeclineBattle(String sender) {
-		if (this.clientController.postData(new DeclineBattleRequestRequest(getPlayer().getUsername(), sender))){
+		if (this.clientController.postData(new DeclineBattleRequestRequest(getPlayer().getUsername(), sender))) {
 			refreshFriendRequests();
 		}
 	}
 
 	/**
-	* Accept a friend request.
-	*/
+	 * Accept a friend request.
+	 */
 	@Override
 	public void onAcceptFriend(String sender) {
 		if (this.clientController.postData(new AcceptFriendRequestRequest(getPlayer().getUsername(), sender))) {
 			refreshFriendRequests();
-            refreshFriends();
+			refreshFriends();
 		}
 	}
 
@@ -224,8 +220,8 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 	}
 
 	/**
-	* Displays the appropriat status and sends friend request.
-	*/
+	 * Displays the appropriat status and sends friend request.
+	 */
 	@Override
 	public void onInvite(String target) {
 		if (target.equals(this.getPlayer().getUsername())) {
@@ -244,16 +240,16 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 	}
 
 	/**
-	* Select given friend to chat.
-	*/
+	 * Select given friend to chat.
+	 */
 	@Override
 	public void onChatFriendSelected(String friend) {
 		loadMessages(friend);
 	}
 
 	/**
-	* Open request tab and refreshes.
-	*/
+	 * Open request tab and refreshes.
+	 */
 	@Override
 	public void onFriendRequestsOpened() {
 		refreshFriendRequests();
@@ -271,7 +267,8 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 		}
 
 		PlayerDTO friend = this.getPlayerByName(friendName);
-		boolean ok = this.clientController.postData(new SendBattleRequestRequest(getPlayer().getUsername(), friendName));
+		boolean ok = this.clientController.postData(new SendBattleRequestRequest(getPlayer().getUsername(),
+				friendName));
 		view.setInviteStatus(ok ? "Défi envoyé !" : "Impossible d'envoyer le défi.");
 
 		if (ok) {
@@ -284,16 +281,16 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 	}
 
 	/**
-     * Send given contents in form of a message to a given friend.
-     */
-    @Override
-    public void onSendMessage(String friend, String content) {
-        view.clearChatField();
-        new Thread(() -> {
-            this.clientController.postData(new SendChatMessageRequest(getPlayer().getUsername(), friend, content));
-            loadMessagesInCurrentThread(friend);
-        }).start();
-    }
+	 * Send given contents in form of a message to a given friend.
+	 */
+	@Override
+	public void onSendMessage(String friend, String content) {
+		view.clearChatField();
+		new Thread(() -> {
+			this.clientController.postData(new SendChatMessageRequest(getPlayer().getUsername(), friend, content));
+			loadMessagesInCurrentThread(friend);
+		}).start();
+	}
 
 	@Override
 	public void refreshFriends() {

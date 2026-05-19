@@ -1,4 +1,5 @@
 package ulb.model.tower.towerManager;
+
 import ulb.model.Player;
 import ulb.model.battle.Battle;
 import ulb.model.item.Inventory;
@@ -6,10 +7,10 @@ import ulb.model.team.OpponentTeamGenerator;
 import ulb.model.team.Team;
 import ulb.model.tower.Room;
 import ulb.model.tower.RoomType;
-import ulb.service.strategy.AI;
-import ulb.service.strategy.StrategyRandom;
 import ulb.service.BugemonService;
 import ulb.service.ItemService;
+import ulb.service.strategy.AI;
+import ulb.service.strategy.StrategyRandom;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,13 +21,12 @@ import java.util.logging.Logger;
  */
 public class RoomManager {
 	private final Logger LOGGER = Logger.getLogger(RoomManager.class.getName());
-
-	private Room room;
 	private final int floorNumber;
-	private Player player;
-	private Battle battle;
 	private final BugemonService bugemonService;
 	private final ItemService itemService;
+	private Room room;
+	private Player player;
+	private Battle battle;
 
 	/**
 	 * Creates a manager for a specific room.
@@ -37,7 +37,8 @@ public class RoomManager {
 	 * @param bugemonService Bugemon service
 	 * @param itemService Item service
 	 */
-	public RoomManager(Room room, int floorNumber, Player player, BugemonService bugemonService, ItemService itemService){
+	public RoomManager(Room room, int floorNumber, Player player, BugemonService bugemonService,
+					   ItemService itemService) {
 		this.room = room;
 		this.floorNumber = floorNumber;
 		this.player = player;
@@ -45,19 +46,6 @@ public class RoomManager {
 		this.itemService = itemService;
 		initializeRoomContent(room.getRoomType());
 	}
-
-	/** Indicates whether managed room is completed. */
-	public boolean isRoomCompleted() {
-		return room.isRoomCompleted();
-	}
-
-	/** Sets managed room completion status. */
-	public void setRoomCompleted(boolean status) {room.setRoomCompleted(status);}
-
-	/** Returns item service. */
-	public ItemService getItemService() { return this.itemService; }
-	/** Returns bugemon service. */
-	public BugemonService getBugemonService() { return this.bugemonService; }
 
 	/**
 	 * Initializes room content according to room type.
@@ -88,12 +76,12 @@ public class RoomManager {
 	 *
 	 * @param isBossBattle True for boss battle settings
 	 */
-	public void initializeBattleRoom(boolean isBossBattle){
+	public void initializeBattleRoom(boolean isBossBattle) {
 		Team playerTeam = player.getTeam();
 		Team opponentTeam = new Team();
-		try{
+		try {
 			opponentTeam = OpponentTeamGenerator.generateRandomOpponentTeam(playerTeam, this.getBugemonService());
-		} catch(Exception e){
+		} catch (Exception e) {
 			LOGGER.log(Level.WARNING, "Failed to generate random opponent team, defaulting to empty team.");
 		}
 		Inventory playerBInventory = this.getItemService().createStarterInventory();
@@ -108,9 +96,23 @@ public class RoomManager {
 		botPlayer.start();
 	}
 
+	/** Returns bugemon service. */
+	public BugemonService getBugemonService() { return this.bugemonService; }
+
+	/** Returns item service. */
+	public ItemService getItemService() { return this.itemService; }
+
+	/** Indicates whether managed room is completed. */
+	public boolean isRoomCompleted() {
+		return room.isRoomCompleted();
+	}
+
+	/** Sets managed room completion status. */
+	public void setRoomCompleted(boolean status) { room.setRoomCompleted(status); }
+
 	/** Returns managed room. */
-	public Room getRoom() {return room;}
+	public Room getRoom() { return room; }
 
 	/** Returns current battle instance. */
-	public Battle getBattle() {return this.battle;}
+	public Battle getBattle() { return this.battle; }
 }

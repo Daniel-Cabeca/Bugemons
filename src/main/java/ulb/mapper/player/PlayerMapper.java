@@ -1,9 +1,5 @@
 package ulb.mapper.player;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.DTO.player.PlayerDTO;
@@ -15,34 +11,39 @@ import ulb.model.bugemon.Bugemon;
 import ulb.model.item.Inventory;
 import ulb.model.item.Item;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Used to convert Regular Player to DTO Player
  */
 public class PlayerMapper {
-    private PlayerMapper() {}
+	private PlayerMapper() {}
 
-    public static PlayerDTO toDTO(Player entity) {
-        if (entity == null) return null;
+	public static PlayerDTO toDTO(Player entity) {
+		if (entity == null) return null;
 
-        List<BugemonDTO> team = new ArrayList<>();
+		List<BugemonDTO> team = new ArrayList<>();
 
-        for (Bugemon b : entity.getTeam().getMembers())
-            team.add(BugemonMapper.toDTO(b));
+		for (Bugemon b : entity.getTeam().getMembers())
+			team.add(BugemonMapper.toDTO(b));
 
-        Map<ItemDTO, Integer> inventory = new HashMap<>();
-        
-        for (Map.Entry<Item, Integer> e : entity.getInventory().getItems().entrySet())
-            inventory.put(ItemMapper.toDTO(e.getKey()), e.getValue());
-		
+		Map<ItemDTO, Integer> inventory = new HashMap<>();
+
+		for (Map.Entry<Item, Integer> e : entity.getInventory().getItems().entrySet())
+			inventory.put(ItemMapper.toDTO(e.getKey()), e.getValue());
+
 		int userId = -1;
-		if (entity.getUserId().isPresent()){
+		if (entity.getUserId().isPresent()) {
 			userId = entity.getUserId().get();
 		}
-        return new PlayerDTO(userId, entity.getUsername(), team, inventory);
-    }
+		return new PlayerDTO(userId, entity.getUsername(), team, inventory);
+	}
 
-    public static Player toEntity(PlayerRegisterDTO dto, Inventory inventory, int userId) {
-        if (dto == null) return null;
+	public static Player toEntity(PlayerRegisterDTO dto, Inventory inventory, int userId) {
+		if (dto == null) return null;
 		return new Player(dto.username(), userId, inventory);
-    }
+	}
 }

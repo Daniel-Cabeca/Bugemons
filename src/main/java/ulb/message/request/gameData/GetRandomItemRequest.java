@@ -1,4 +1,5 @@
 package ulb.message.request.gameData;
+
 import ulb.exceptions.DataAccessException;
 import ulb.exceptions.UserFacingException;
 import ulb.message.request.Request;

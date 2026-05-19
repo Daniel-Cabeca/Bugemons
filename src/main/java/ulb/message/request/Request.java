@@ -1,10 +1,10 @@
 package ulb.message.request;
 
-import java.io.Serializable;
-
-import ulb.server.ServerMessageHandler;
 import ulb.exceptions.DataAccessException;
 import ulb.exceptions.UserFacingException;
+import ulb.server.ServerMessageHandler;
+
+import java.io.Serializable;
 
 /**
  * Serializable message send from the client to the server.

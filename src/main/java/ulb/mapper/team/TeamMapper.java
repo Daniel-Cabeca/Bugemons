@@ -15,31 +15,31 @@ import java.util.List;
  */
 public class TeamMapper {
 
-    private TeamMapper() {}
+	private TeamMapper() {}
 
-    public static TeamDTO toDTO(Team entity) {
-        if (entity == null) return null;
+	public static TeamDTO toDTO(Team entity) {
+		if (entity == null) return null;
 
-        List<BugemonDTO> members = new ArrayList<>();
+		List<BugemonDTO> members = new ArrayList<>();
 
-        for (Bugemon b : entity.getMembers())
-            members.add(BugemonMapper.toDTO(b));
+		for (Bugemon b : entity.getMembers())
+			members.add(BugemonMapper.toDTO(b));
 
-        TeamDTO teamDTO = new TeamDTO(entity.getId(), entity.getTeamName(), members);
-        return teamDTO;
-    }
+		TeamDTO teamDTO = new TeamDTO(entity.getId(), entity.getTeamName(), members);
+		return teamDTO;
+	}
 
-    public static Team toEntity(TeamDTO dto) throws MappingException {
-        if (dto == null) return null;
-        List<Bugemon> members = new ArrayList<>();
+	public static Team toEntity(TeamDTO dto) throws MappingException {
+		if (dto == null) return null;
+		List<Bugemon> members = new ArrayList<>();
 
-        for (BugemonDTO b : dto.members()) {
-            members.add(BugemonMapper.toEntity(b));
-        }
-        Team team = new Team(members);
-        team.setTeamName(dto.teamName());
-        team.setId(dto.id());
-        return team;
-    }
+		for (BugemonDTO b : dto.members()) {
+			members.add(BugemonMapper.toEntity(b));
+		}
+		Team team = new Team(members);
+		team.setTeamName(dto.teamName());
+		team.setId(dto.id());
+		return team;
+	}
 
 }

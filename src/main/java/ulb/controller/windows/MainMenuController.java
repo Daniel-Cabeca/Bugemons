@@ -10,50 +10,50 @@ import ulb.view.windows.MainMenuWindow;
  * Controller for main mode selection actions.
  */
 public class MainMenuController extends WindowController<MainMenuWindow> implements MainMenuWindow.ViewListener {
-    /**
-     * Creates the mode controller.
-     *
-     * @param stage The application stage
-     * @param clientController The client controller
-     */
-    public MainMenuController(Stage stage, ClientController clientController) {
-        super(stage, WindowPath.MAIN_MENU, clientController);
-        this.view.setViewListener(this);
-    }
+	/**
+	 * Creates the mode controller.
+	 *
+	 * @param stage The application stage
+	 * @param clientController The client controller
+	 */
+	public MainMenuController(Stage stage, ClientController clientController) {
+		super(stage, WindowPath.MAIN_MENU, clientController);
+		this.view.setViewListener(this);
+	}
 
-    /**
-     * Notifies the listener to open the social menu or tab.
-     */
-    @Override
-    public void onOpenSocial() {
-        this.clientController.showWindow(WindowName.SOCIAL_PANEL);
-    }
-
-
-    /**
-     * Notifies the listener to initiate the solo (single-player) game mode.
-     */
-    @Override
-    public void onSolo() {
-        this.clientController.showWindow(WindowName.GAME_MODE);
-    }
+	/**
+	 * Notifies the listener to open the social menu or tab.
+	 */
+	@Override
+	public void onOpenSocial() {
+		this.clientController.showWindow(WindowName.SOCIAL_PANEL);
+	}
 
 
-    /**
-     * Shuts down the JavaFX platform and terminates the application process.
-     */
-    @Override
-    public void onQuit() {
-        Platform.exit();
-        System.exit(0);
-    }
+	/**
+	 * Notifies the listener to initiate the solo (single-player) game mode.
+	 */
+	@Override
+	public void onSolo() {
+		this.clientController.showWindow(WindowName.GAME_MODE);
+	}
 
-    /**
-     * Notifies the listener to log the current user out of their session.
-     */
-    @Override
-    public void onLogOut() {
-        this.clientController.unsetPlayer();
-        this.clientController.showWindow(WindowName.REGISTER);
-    }
+
+	/**
+	 * Shuts down the JavaFX platform and terminates the application process.
+	 */
+	@Override
+	public void onQuit() {
+		Platform.exit();
+		System.exit(0);
+	}
+
+	/**
+	 * Notifies the listener to log the current user out of their session.
+	 */
+	@Override
+	public void onLogOut() {
+		this.clientController.unsetPlayer();
+		this.clientController.showWindow(WindowName.REGISTER);
+	}
 }

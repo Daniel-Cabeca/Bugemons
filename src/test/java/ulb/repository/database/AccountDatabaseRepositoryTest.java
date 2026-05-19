@@ -1,21 +1,16 @@
 package ulb.repository.database;
 
-import ulb.repository.database.sql.DatabaseInitializer;
-
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-
 import ulb.exceptions.EntityNotFoundException;
-import ulb.exceptions.LoadException;
 import ulb.exceptions.UserAlreadyExistsException;
 import ulb.repository.database.sql.Database;
 import ulb.repository.database.sql.DatabaseInMemory;
-
-import java.util.Map;
-
-import javax.lang.model.type.ExecutableType;
+import ulb.repository.database.sql.DatabaseInitializer;
 
 import java.util.List;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AccountDatabaseRepositoryTest {
 
@@ -42,18 +37,18 @@ public class AccountDatabaseRepositoryTest {
 		assertEquals(250, lb.get("Bob"));
 	}
 
-	private AccountDatabaseRepository newRepository() throws Exception {
-		Database database = new DatabaseInMemory();
-		new DatabaseInitializer(database).createTables();
-		return new AccountDatabaseRepository(database);
-	}
-
 	@Test
 	void registerReturnsTrueForNewUser() throws Exception {
 		AccountDatabaseRepository repo = newRepository();
 		assertDoesNotThrow(() -> {
 			repo.register("alice", "hash1");
 		});
+	}
+
+	private AccountDatabaseRepository newRepository() throws Exception {
+		Database database = new DatabaseInMemory();
+		new DatabaseInitializer(database).createTables();
+		return new AccountDatabaseRepository(database);
 	}
 
 	@Test

@@ -9,7 +9,7 @@ import ulb.server.ServerMessageHandler;
 public class ChooseItemRewardRequest implements Request {
 	private final ItemDTO item;
 
-	public ChooseItemRewardRequest(ItemDTO item){
+	public ChooseItemRewardRequest(ItemDTO item) {
 		this.item = item;
 	}
 

@@ -32,7 +32,7 @@ public interface AccountRepository {
 	 * @param username The account username
 	 * @return The stored password hash, or null if not found
 	 * @throws LoadException If the lookup fails
-	 * @throws EntityNotFoundException If no match was found for the username 
+	 * @throws EntityNotFoundException If no match was found for the username
 	 */
 	public String getPasswordHash(String username) throws LoadException, EntityNotFoundException;
 

@@ -38,9 +38,9 @@ public class EffectDatabaseRepository {
 	 * @param effect The effect to insert
 	 * @param Id
 	 */
-	public void insert(Effect effect, String Id,boolean isItem) {
+	public void insert(Effect effect, String Id, boolean isItem) {
 		String column = isItem ? "item_id" : "ability_id";
-		String sql = "INSERT INTO effects (" + column +", type, target, value) VALUES (?, ?, ?, ?)";
+		String sql = "INSERT INTO effects (" + column + ", type, target, value) VALUES (?, ?, ?, ?)";
 
 		try {
 			PreparedStatement statement = this.database.prepareStatement(sql);
@@ -51,16 +51,34 @@ public class EffectDatabaseRepository {
 
 			if (effect instanceof EffectHeal effectHeal) {
 				this.completeInsertStatement(statement, effectHeal);
-			}
-			else if (effect instanceof EffectStatModifier effectStatModifier) {
+			} else if (effect instanceof EffectStatModifier effectStatModifier) {
 				this.completeInsertStatement(statement, effectStatModifier);
-			}
-			else {
+			} else {
 				statement.executeUpdate();
 			}
 		} catch (SQLException e) {
-			throw new IllegalArgumentException("Failed to insert effect in the database: "+ e.getMessage());
+			throw new IllegalArgumentException("Failed to insert effect in the database: " + e.getMessage());
 		}
+	}
+
+	/**
+	 * Returns the value to add to the database for the effect's type.
+	 *
+	 * @param effect The effect
+	 * @return The value corresponding to the given effect's type
+	 */
+	private static String getTypeStr(Effect effect) {
+		if (effect instanceof EffectHeal) {
+			return TYPESTR_HEAL;
+		} else if (effect instanceof EffectStatModifier) {
+			return TYPESTR_STAT_MODIFIER;
+		} else if (effect instanceof EffectResetMalus) {
+			return TYPESTR_RESET_MALUS;
+		} else if (effect instanceof EffectSwitch) {
+			return TYPESTR_SWITCH;
+		}
+
+		throw new UnsupportedOperationException("Unsupported type: " + effect.getClass());
 	}
 
 	/**
@@ -90,39 +108,17 @@ public class EffectDatabaseRepository {
 	}
 
 	private void insertStats(Stats stats, long effectId, EffectStatDuration duration) throws SQLException {
-		String sql = "INSERT INTO effect_stats_modifier (effect_id, hp,attack,defense,initiative,duration) VALUES (?, ?, ?, ?,?,?)";
+		String sql = "INSERT INTO effect_stats_modifier (effect_id, hp,attack,defense,initiative,duration) VALUES (?, " +
+				"?, ?, ?,?,?)";
 		PreparedStatement statement = this.database.prepareStatement(sql);
 
 		statement.setLong(1, effectId);
-		statement.setInt(2,stats.getHp());
+		statement.setInt(2, stats.getHp());
 		statement.setInt(3, stats.getAttack());
 		statement.setInt(4, stats.getDefense());
 		statement.setInt(5, stats.getInitiative());
 		statement.setString(6, duration.name());
 
 		statement.executeUpdate();
-	}
-
-	/**
-	 * Returns the value to add to the database for the effect's type.
-	 *
-	 * @param effect The effect
-	 * @return The value corresponding to the given effect's type
-	 */
-	private static String getTypeStr(Effect effect) {
-		if (effect instanceof EffectHeal) {
-			return TYPESTR_HEAL;
-		}
-		else if (effect instanceof EffectStatModifier) {
-			return TYPESTR_STAT_MODIFIER;
-		}
-		else if (effect instanceof EffectResetMalus) {
-			return TYPESTR_RESET_MALUS;
-		}
-		else if (effect instanceof EffectSwitch) {
-			return TYPESTR_SWITCH;
-		}
-
-		throw new UnsupportedOperationException("Unsupported type: "+ effect.getClass());
 	}
 }

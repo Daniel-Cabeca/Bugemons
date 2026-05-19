@@ -2,11 +2,9 @@ package ulb.repository.database.sql;
 
 import ulb.exceptions.LoadException;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
-
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Database stored as a file.
@@ -28,6 +26,16 @@ public class DatabaseInFile extends Database {
 	DatabaseInFile(String name) throws LoadException {
 		super("jdbc:sqlite:" + getPath(name).toString());
 		this.name = name;
+	}
+
+	/**
+	 * Returns the file path associated with a database name.
+	 *
+	 * @param name The database base filename
+	 * @return The corresponding file path
+	 */
+	static Path getPath(String name) {
+		return DIRECTORY.resolve(name + ".db");
 	}
 
 	/**
@@ -73,24 +81,16 @@ public class DatabaseInFile extends Database {
 	}
 
 	/**
-	 * Returns the database name.
-	 *
-	 * @return The database name without extension
-	 */
-	public String getName() { return this.name; }
-	/**
 	 * Returns the path to this database file.
 	 *
 	 * @return The file path for this database
 	 */
 	public Path getPath() { return getPath(this.getName()); }
+
 	/**
-	 * Returns the file path associated with a database name.
+	 * Returns the database name.
 	 *
-	 * @param name The database base filename
-	 * @return The corresponding file path
+	 * @return The database name without extension
 	 */
-	static Path getPath(String name) { 
-        return DIRECTORY.resolve(name + ".db");
-	}
+	public String getName() { return this.name; }
 }

@@ -1,24 +1,26 @@
 package ulb.repository.json.parser;
 
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.fasterxml.jackson.databind.JsonNode;
-
-import ulb.model.type.Type;
+import org.junit.jupiter.api.Test;
 import ulb.exceptions.LoadException;
+import ulb.model.type.Type;
 import ulb.repository.json.Json;
 
-public class TypeJsonParserTest {
-	public static Type parseTypeFromString(String str) throws LoadException {
-		TypeJsonParser parser = new TypeJsonParser();
-		JsonNode node = Json.getNode("\""+ str +"\"");
-		return parser.parseOne(node);
-	}
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+public class TypeJsonParserTest {
 	@Test
 	public void testIncorrect() throws Exception {
-		assertThrows(LoadException.class, () -> { parseTypeFromString("ptdr"); });
+		assertThrows(LoadException.class, () -> {
+			parseTypeFromString("ptdr");
+		});
+	}
+
+	public static Type parseTypeFromString(String str) throws LoadException {
+		TypeJsonParser parser = new TypeJsonParser();
+		JsonNode node = Json.getNode("\"" + str + "\"");
+		return parser.parseOne(node);
 	}
 
 	@Test

@@ -1,11 +1,11 @@
 package ulb.model.effect;
 
-import java.util.List;
-import java.util.ArrayList;
-
-import ulb.model.bugemon.Bugemon;
 import ulb.model.battle.Battle;
 import ulb.model.battle.Battle.ParticipantLabel;
+import ulb.model.bugemon.Bugemon;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Base abstraction for effects applied during battle.
@@ -48,7 +48,7 @@ public abstract class Effect {
 	public List<Bugemon> getTargets(Battle battle, ParticipantLabel team) {
 		List<Bugemon> targets = new ArrayList<>();
 
-		switch(this.target) {
+		switch (this.target) {
 			case OWN_BUGEMON:
 				targets.add(battle.getActiveBugemon(team));
 				break;

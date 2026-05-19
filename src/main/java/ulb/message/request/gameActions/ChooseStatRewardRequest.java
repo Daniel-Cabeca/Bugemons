@@ -9,7 +9,7 @@ import ulb.server.ServerMessageHandler;
 public class ChooseStatRewardRequest implements Request {
 	private final BugemonDTO bugemon;
 
-	public ChooseStatRewardRequest(BugemonDTO bugemon){
+	public ChooseStatRewardRequest(BugemonDTO bugemon) {
 		this.bugemon = bugemon;
 	}
 

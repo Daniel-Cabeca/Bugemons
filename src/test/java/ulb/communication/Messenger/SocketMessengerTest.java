@@ -1,7 +1,7 @@
 package ulb.communication.Messenger;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import org.junit.jupiter.api.Test;
+import ulb.message.response.StatusResponse;
 
 import java.io.Serializable;
 import java.net.ServerSocket;
@@ -9,112 +9,111 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.junit.jupiter.api.Test;
-
-import ulb.message.response.StatusResponse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SocketMessengerTest {
-    private final Logger LOGGER = Logger.getLogger(SocketMessengerTest.class.getName());
+	private final Logger LOGGER = Logger.getLogger(SocketMessengerTest.class.getName());
 
-    private SocketActor server;
-    private SocketActor client;
+	private SocketActor server;
+	private SocketActor client;
 
-    public class SocketActor extends Thread {
-        private ServerSocket connection;
-        private boolean isClient;
-        private Socket socket;
+	@Test
+	public void testSendingMessage() {
+		this.createActors();
 
-        private SocketMessenger messenger;
+		StatusResponse sendingMessage = new StatusResponse(false, "Test de la communication");
 
-        public SocketActor(boolean isClient, ServerSocket connectionSocket){
-            this.connection = connectionSocket;
-            this.isClient = isClient;
-        }
+		this.client.sendMessage(sendingMessage);
+		StatusResponse receivingMessage = (StatusResponse) this.server.receiveMessage();
 
-        public void run(){
-            try{
-                if (isClient){
-                    this.socket = new Socket("127.0.0.1", 8080);
-                } else{
-                    this.socket = this.connection.accept();
-                }
-                this.messenger = new SocketMessenger(socket);
-            } catch (Exception e){
-                LOGGER.log(Level.SEVERE, "Failed to establish socket connection.");
-            }
-        }
+		assertNotNull(receivingMessage);
+		assertEquals(sendingMessage.getMessage(), receivingMessage.getMessage());
+	}
 
-        public Socket getSocket(){
-            return this.socket;
-        }
+	public void createActors() {
+		try {
+			ServerSocket connectionSocket = new ServerSocket(8080);
 
-        public void sendMessage(Serializable message){
-            try{
-                this.messenger.sendMessage(message);
-            } catch (Exception e){
-                LOGGER.log(Level.WARNING, "Failed to send message.");
-            }
-        }
+			this.server = new SocketActor(false, connectionSocket);
+			this.client = new SocketActor(true, connectionSocket);
 
-        public Serializable receiveMessage(){
-            try{
-                return this.messenger.receiveMessage();
-            } catch (Exception e){
-                return null;
-            }
-            
-        }
-    }
+			this.server.start();
 
-    public void createActors(){
-        try{
-            ServerSocket connectionSocket = new ServerSocket(8080);
+			this.client.start();
 
-            this.server = new SocketActor(false, connectionSocket);
-            this.client = new SocketActor(true, connectionSocket);
+			Thread.sleep(100);
 
-            this.server.start();
+			connectionSocket.close();
+		} catch (Exception e) {
+			LOGGER.log(Level.SEVERE, "Failed to create socket actors.");
+		}
+	}
 
-            this.client.start();
+	@Test
+	public void testTwoWaysSendingMessage() {
+		this.createActors();
+		StatusResponse sendingMessage1 = new StatusResponse(false, "Test de la communication 1");
 
-            Thread.sleep(100);
+		this.client.sendMessage(sendingMessage1);
+		StatusResponse receivingMessage1 = (StatusResponse) this.server.receiveMessage();
 
-            connectionSocket.close();
-        } catch (Exception e){
-            LOGGER.log(Level.SEVERE, "Failed to create socket actors.");
-        }
-    }
+		assertNotNull(receivingMessage1);
+		assertEquals(sendingMessage1.getMessage(), receivingMessage1.getMessage());
 
-    @Test
-    public void testSendingMessage(){
-        this.createActors();
+		StatusResponse sendingMessage2 = new StatusResponse(false, "Test de la communication 2");
 
-        StatusResponse sendingMessage = new StatusResponse(false,"Test de la communication");
+		this.server.sendMessage(sendingMessage2);
+		StatusResponse receivingMessage2 = (StatusResponse) this.client.receiveMessage();
 
-        this.client.sendMessage(sendingMessage);
-        StatusResponse receivingMessage = (StatusResponse) this.server.receiveMessage();
+		assertNotNull(receivingMessage2);
+		assertEquals(sendingMessage2.getMessage(), receivingMessage2.getMessage());
+	}
 
-        assertNotNull(receivingMessage);
-        assertEquals(sendingMessage.getMessage(), receivingMessage.getMessage());
-    }
+	public class SocketActor extends Thread {
+		private ServerSocket connection;
+		private boolean isClient;
+		private Socket socket;
 
-    @Test
-    public void testTwoWaysSendingMessage(){
-        this.createActors();
-        StatusResponse sendingMessage1 = new StatusResponse(false,"Test de la communication 1");
+		private SocketMessenger messenger;
 
-        this.client.sendMessage(sendingMessage1);
-        StatusResponse receivingMessage1 = (StatusResponse) this.server.receiveMessage();
-        
-        assertNotNull(receivingMessage1);
-        assertEquals(sendingMessage1.getMessage(), receivingMessage1.getMessage());
+		public SocketActor(boolean isClient, ServerSocket connectionSocket) {
+			this.connection = connectionSocket;
+			this.isClient = isClient;
+		}
 
-        StatusResponse sendingMessage2 = new StatusResponse(false,"Test de la communication 2");
+		public void run() {
+			try {
+				if (isClient) {
+					this.socket = new Socket("127.0.0.1", 8080);
+				} else {
+					this.socket = this.connection.accept();
+				}
+				this.messenger = new SocketMessenger(socket);
+			} catch (Exception e) {
+				LOGGER.log(Level.SEVERE, "Failed to establish socket connection.");
+			}
+		}
 
-        this.server.sendMessage(sendingMessage2);
-        StatusResponse receivingMessage2 = (StatusResponse) this.client.receiveMessage();
-        
-        assertNotNull(receivingMessage2);
-        assertEquals(sendingMessage2.getMessage(), receivingMessage2.getMessage());
-    }
+		public Socket getSocket() {
+			return this.socket;
+		}
+
+		public void sendMessage(Serializable message) {
+			try {
+				this.messenger.sendMessage(message);
+			} catch (Exception e) {
+				LOGGER.log(Level.WARNING, "Failed to send message.");
+			}
+		}
+
+		public Serializable receiveMessage() {
+			try {
+				return this.messenger.receiveMessage();
+			} catch (Exception e) {
+				return null;
+			}
+
+		}
+	}
 }

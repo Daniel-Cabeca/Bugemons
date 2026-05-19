@@ -21,7 +21,7 @@ public class Stats {
 		this.initiative = initiative;
 	}
 
-	public Stats(Stats other){
+	public Stats(Stats other) {
 		this.hp = other.hp;
 		this.attack = other.attack;
 		this.defense = other.defense;
@@ -34,10 +34,12 @@ public class Stats {
 	 * @param delta the value to add to each stat
 	 */
 	public void change(Stats delta) {
-		this.hp = (this.hp <= Math.abs(delta.hp) && delta.hp < 0)? 0: this.hp + delta.hp;
-		this.attack = (this.attack <= Math.abs(delta.attack) && delta.attack < 0)? 0: this.attack + delta.attack;
-		this.defense = (this.defense <= Math.abs(delta.defense) && delta.defense < 0)? 0: this.defense + delta.defense;
-		this.initiative = (this.initiative <= Math.abs(delta.initiative) && delta.initiative < 0)? 0: this.initiative + delta.initiative;
+		this.hp = (this.hp <= Math.abs(delta.hp) && delta.hp < 0) ? 0 : this.hp + delta.hp;
+		this.attack = (this.attack <= Math.abs(delta.attack) && delta.attack < 0) ? 0 : this.attack + delta.attack;
+		this.defense = (this.defense <= Math.abs(delta.defense) && delta.defense < 0) ? 0 :
+				this.defense + delta.defense;
+		this.initiative = (this.initiative <= Math.abs(delta.initiative) && delta.initiative < 0) ? 0 :
+				this.initiative + delta.initiative;
 	}
 
 	/**
@@ -73,13 +75,19 @@ public class Stats {
 	}
 
 	public int getHp() { return hp; }
-	public int getAttack() { return attack; }
-	public int getDefense() { return defense; }
-	public int getInitiative() { return initiative; }
 
 	public void setHp(int hp) { this.hp = hp; }
+
+	public int getAttack() { return attack; }
+
 	public void setAttack(int attack) { this.attack = attack; }
+
+	public int getDefense() { return defense; }
+
 	public void setDefense(int defense) { this.defense = defense; }
+
+	public int getInitiative() { return initiative; }
+
 	public void setInitiative(int initiative) { this.initiative = initiative; }
 
 	@Override

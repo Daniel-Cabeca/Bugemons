@@ -1,16 +1,15 @@
 package ulb.service;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Random;
-import java.util.NoSuchElementException;
-
-import ulb.repository.BugemonSpeciesRepository;
 import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.BugemonSpecies;
+import ulb.repository.BugemonSpeciesRepository;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 /**
  * Provides Bugemon-related business logic.
@@ -28,6 +27,34 @@ public class BugemonService {
 	}
 
 	/**
+	 * Creates a Bugemon instance from a random species, at level 1.
+	 *
+	 * @return The instanciated Bugemon
+	 */
+	public Bugemon spawnBugemonRandom() throws LoadException, EntityNotFoundException {
+		Random random = new Random();
+		List<String> ids = this.getAllSpeciesIds();
+
+		String speciesId = ids.get(random.nextInt(ids.size()));
+		return this.spawnBugemon(speciesId);
+	}
+
+	/**
+	 * Creates a list of all species ids.
+	 *
+	 * @return The list of all species ids
+	 */
+	private List<String> getAllSpeciesIds() throws LoadException, EntityNotFoundException {
+		List<String> ids = new ArrayList<>();
+
+		for (BugemonSpecies species : this.speciesRepository.findAll()) {
+			ids.add(species.getId());
+		}
+
+		return ids;
+	}
+
+	/**
 	 * Creates a Bugemon instance of the specified species, at level 1.
 	 *
 	 * @param speciesId The id of the species
@@ -40,40 +67,12 @@ public class BugemonService {
 	}
 
 	/**
-	 * Creates a list of all species ids.
-	 *
-	 * @return The list of all species ids
-	 */
-	private List<String> getAllSpeciesIds() throws LoadException, EntityNotFoundException{
-		List<String> ids = new ArrayList<>();
-
-		for (BugemonSpecies species: this.speciesRepository.findAll()) {
-			ids.add(species.getId());
-		}
-
-		return ids;
-	}
-
-	/**
-	 * Creates a Bugemon instance from a random species, at level 1.
-	 *
-	 * @return The instanciated Bugemon
-	 */
-	public Bugemon spawnBugemonRandom() throws LoadException, EntityNotFoundException{
-		Random random = new Random();
-		List<String> ids = this.getAllSpeciesIds();
-
-		String speciesId = ids.get(random.nextInt(ids.size()));
-		return this.spawnBugemon(speciesId);
-	}
-
-	/**
 	 * Creates multiple Bugemon instances from random and distinct species, at level 1.
 	 *
 	 * @param number The number of Bugemons to spawn
 	 * @return The spawned Bugemons
 	 */
-	public List<Bugemon> spawnBugemonRandomDistinct(int number) throws LoadException, EntityNotFoundException{
+	public List<Bugemon> spawnBugemonRandomDistinct(int number) throws LoadException, EntityNotFoundException {
 		List<String> ids = this.getAllSpeciesIds();
 		Collections.shuffle(ids);
 
@@ -103,7 +102,7 @@ public class BugemonService {
 	 *
 	 * @return An iterable of all the species
 	 */
-	public Iterable<BugemonSpecies> getAllSpecies() throws LoadException, EntityNotFoundException{
+	public Iterable<BugemonSpecies> getAllSpecies() throws LoadException, EntityNotFoundException {
 		return this.speciesRepository.findAll();
 	}
 }

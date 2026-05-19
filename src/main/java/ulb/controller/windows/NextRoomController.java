@@ -11,22 +11,22 @@ import ulb.view.windows.NextRoomWindow;
  */
 public class NextRoomController extends WindowController<NextRoomWindow> implements NextRoomWindow.ViewListener {
 
-    /**
-     * Creates the next room controller.
-     *
-     * @param stage The application stage
-     * @param clientController The controller used for navigation
-     */
-    public NextRoomController(Stage stage, ClientController clientController) {
-        super(stage, WindowPath.NEXT_ROOM, clientController);
-        this.view.setViewListener(this);
-    }
+	/**
+	 * Creates the next room controller.
+	 *
+	 * @param stage The application stage
+	 * @param clientController The controller used for navigation
+	 */
+	public NextRoomController(Stage stage, ClientController clientController) {
+		super(stage, WindowPath.NEXT_ROOM, clientController);
+		this.view.setViewListener(this);
+	}
 
-    /**
-     * Handles continue action.
-     */
-    @Override
-    public void onContinue() { this.clientController.nextRoom(); }
+	/**
+	 * Handles continue action.
+	 */
+	@Override
+	public void onContinue() { this.clientController.nextRoom(); }
 
 //    /**
 //     * Returns the next window type according to server flow.
@@ -89,13 +89,13 @@ public class NextRoomController extends WindowController<NextRoomWindow> impleme
 //        this.clientListener.onShowBattleEnd(victory, totalXp, opponent);
 //    }
 
-    /**
-     * Handles return action.
-     */
-    @Override
-    public void onReturn() {
-        if (this.clientController.postData(new AbandonTowerRequest())){
-            this.clientController.showWindow(WindowName.MAIN_MENU);
-        }
-    }
+	/**
+	 * Handles return action.
+	 */
+	@Override
+	public void onReturn() {
+		if (this.clientController.postData(new AbandonTowerRequest())) {
+			this.clientController.showWindow(WindowName.MAIN_MENU);
+		}
+	}
 }

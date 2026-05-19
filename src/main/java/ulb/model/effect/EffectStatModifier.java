@@ -1,34 +1,35 @@
 package ulb.model.effect;
 
-import java.util.List;
-import java.util.Map;
-
 import ulb.model.battle.ActiveEffect;
 import ulb.model.battle.Battle;
 import ulb.model.battle.Battle.ParticipantLabel;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.Stats;
 
+import java.util.List;
+import java.util.Map;
+
 public class EffectStatModifier extends Effect {
 
 	public Map<EffectStatType, Integer> modifiers;
 	private EffectStatDuration duration;
 
-	public EffectStatModifier(EffectTarget targetType, EffectStatDuration duration, Map<EffectStatType, Integer> modifiers){
+	public EffectStatModifier(EffectTarget targetType, EffectStatDuration duration,
+							  Map<EffectStatType, Integer> modifiers) {
 		super(targetType);
 		this.modifiers = modifiers;
 		this.duration = duration;
-		
+
 	}
 
 	/**
-	* {@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void apply(Battle battle, ParticipantLabel team) {
 		List<Bugemon> targets = this.getTargets(battle, team);
 
-		for (Bugemon target: targets) {
+		for (Bugemon target : targets) {
 			target.changeFightStats(buildStatsChange());
 		}
 
@@ -42,10 +43,10 @@ public class EffectStatModifier extends Effect {
 	}
 
 	/**
-	* Builds the Stats object used to change the Stats of a Bugemon
-	*
-	* @return the built Stats object
-	*/
+	 * Builds the Stats object used to change the Stats of a Bugemon
+	 *
+	 * @return the built Stats object
+	 */
 	public Stats buildStatsChange() {
 		Stats statsChange = new Stats();
 		for (Map.Entry<EffectStatType, Integer> entry : this.modifiers.entrySet()) {
@@ -67,8 +68,9 @@ public class EffectStatModifier extends Effect {
 		return statsChange;
 	}
 
+	public EffectStatDuration getDuration() { return this.duration; }
+
 	public Map<EffectStatType, Integer> getModifiers() { return this.modifiers; }
-	public EffectStatDuration getDuration() { return this.duration;}
 
 
 }

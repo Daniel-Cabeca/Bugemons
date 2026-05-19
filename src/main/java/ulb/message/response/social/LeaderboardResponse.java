@@ -9,6 +9,6 @@ public class LeaderboardResponse extends Response {
 
 	public LeaderboardResponse(Map<String, Integer> leaderboard) { this.leaderboard = leaderboard; }
 
-	public  Map<String, Integer> getLeaderboard() { return leaderboard; }
+	public Map<String, Integer> getLeaderboard() { return leaderboard; }
 }
 

@@ -6,8 +6,8 @@ import ulb.message.request.Request;
 import ulb.server.ServerMessageHandler;
 
 public class GetLevelUpInfoRequest implements Request {
-    @Override
-    public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
-        handler.getLevelUpInfo();
-    }
+	@Override
+	public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
+		handler.getLevelUpInfo();
+	}
 }

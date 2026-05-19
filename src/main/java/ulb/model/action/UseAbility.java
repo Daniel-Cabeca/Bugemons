@@ -9,35 +9,35 @@ import ulb.model.bugemon.Bugemon;
  * Action representing the use of an ability.
  */
 public class UseAbility extends Action {
-    private Ability ability;
+	private Ability ability;
 
-    /** Creates an empty ability action. */
-    public UseAbility() {
+	/**
+	 * Creates an ability action.
+	 *
+	 * @param ability Ability to use
+	 */
+	public UseAbility(Ability ability) {
+		this();
+		this.ability = ability;
+	}
+
+	/** Creates an empty ability action. */
+	public UseAbility() {
 		this.priority = 0;
 	}
 
-    /**
-     * Creates an ability action.
-     *
-     * @param ability Ability to use
-     */
-    public UseAbility(Ability ability) {
-		this();
-        this.ability = ability;
-    }
+	/** {@inheritDoc} */
+	@Override
+	public boolean executeAction(Battle battle, ParticipantLabel team) {
+		if (this.ability == null) {
+			return false;
+		}
 
-    /** {@inheritDoc} */
-    @Override
-    public boolean executeAction(Battle battle, ParticipantLabel team) {
-        if (this.ability == null) {
-            return false;
-        }
+		Bugemon oppositeBugemon = battle.getActiveBugemon(battle.getOpponentTeamLabel(team));
+		if (!oppositeBugemon.isKO()) {
+			this.ability.use(battle, team);
+		}
 
-        Bugemon oppositeBugemon = battle.getActiveBugemon(battle.getOpponentTeamLabel(team));
-        if (!oppositeBugemon.isKO()) {
-            this.ability.use(battle, team);
-        }
-
-        return true;
-    }
+		return true;
+	}
 }

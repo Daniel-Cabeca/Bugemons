@@ -15,18 +15,18 @@ public class MultiBattleSessionTest {
 	private static final int USERID_1 = 1;
 	private static final int USERID_2 = 2;
 
-	private MultiBattleSession getFreshSession() {
-		Player player1 = new Player(USERNAME_1, USERID_1);
-		Player player2 = new Player(USERNAME_2, USERID_2);
-
-		return new MultiBattleSession(player1, player2);
-	}
-
 	@Test
 	public void testGetParticipant1FromId() {
 		MultiBattleSession session = this.getFreshSession();
 		MultiBattleParticipant participant = session.getParticipant(USERID_1);
 		assertEquals(USERNAME_1, participant.getPlayer().getUsername());
+	}
+
+	private MultiBattleSession getFreshSession() {
+		Player player1 = new Player(USERNAME_1, USERID_1);
+		Player player2 = new Player(USERNAME_2, USERID_2);
+
+		return new MultiBattleSession(player1, player2);
 	}
 
 	@Test
@@ -39,27 +39,33 @@ public class MultiBattleSessionTest {
 	@Test
 	public void testGetParticipantIncorrect() {
 		MultiBattleSession session = this.getFreshSession();
-		assertThrows(NoSuchElementException.class, () -> { session.getParticipant(-1); });
+		assertThrows(NoSuchElementException.class, () -> {
+			session.getParticipant(-1);
+		});
 	}
 
-	@Test public void isAcceptedFalseIfNeitherAccepted() {
+	@Test
+	public void isAcceptedFalseIfNeitherAccepted() {
 		MultiBattleSession session = this.getFreshSession();
 		assertFalse(session.isAccepted());
 	}
 
-	@Test public void isAcceptedFalseIfOnlyPlayer1Accepted() {
+	@Test
+	public void isAcceptedFalseIfOnlyPlayer1Accepted() {
 		MultiBattleSession session = this.getFreshSession();
 		session.getParticipant(USERID_1).accept();
 		assertFalse(session.isAccepted());
 	}
 
-	@Test public void isAcceptedFalseIfOnlyPlayer2Accepted() {
+	@Test
+	public void isAcceptedFalseIfOnlyPlayer2Accepted() {
 		MultiBattleSession session = this.getFreshSession();
 		session.getParticipant(USERID_2).accept();
 		assertFalse(session.isAccepted());
 	}
 
-	@Test public void isAcceptedTrueIfBothPlayersAccepted() {
+	@Test
+	public void isAcceptedTrueIfBothPlayersAccepted() {
 		MultiBattleSession session = this.getFreshSession();
 		session.getParticipant(USERID_1).accept();
 		session.getParticipant(USERID_2).accept();

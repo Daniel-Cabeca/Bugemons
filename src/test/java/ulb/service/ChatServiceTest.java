@@ -1,10 +1,10 @@
 package ulb.service;
 
 import org.junit.jupiter.api.Test;
+import ulb.exceptions.LoadException;
 import ulb.model.chat.ChatMessage;
 import ulb.repository.ChatRepository;
 import ulb.service.chat.InappropriateWordFilter;
-import ulb.exceptions.LoadException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,33 +13,33 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ChatServiceTest {
-    private static class InMemoryChatRepository implements ChatRepository {
-        private final List<ChatMessage> insertedMessages = new ArrayList<>();
+	@Test
+	void sendMessageStoresCensoredMessage() throws LoadException {
+		InMemoryChatRepository repository = new InMemoryChatRepository();
+		ChatService chatService = new ChatService(repository, new InappropriateWordFilter(Set.of("idiot")));
 
-        @Override
-        public void insert(ChatMessage message) {
-            this.insertedMessages.add(message);
-        }
+		chatService.sendMessage("alice", "bob", "Tu es idiot");
 
-        @Override
-        public List<ChatMessage> getMessages(String usernameA, String usernameB) {
-            return List.of();
-        }
+		assertEquals(1, repository.insertedMessages.size());
+		assertEquals("Tu es i***t", repository.insertedMessages.get(0).getContent());
+	}
 
-        @Override
-        public int countMessages(String usernameA, String usernameB) {
-            return 0;
-        }
-    }
-    
-    @Test
-    void sendMessageStoresCensoredMessage() throws LoadException {
-        InMemoryChatRepository repository = new InMemoryChatRepository();
-        ChatService chatService = new ChatService(repository, new InappropriateWordFilter(Set.of("idiot")));
+	private static class InMemoryChatRepository implements ChatRepository {
+		private final List<ChatMessage> insertedMessages = new ArrayList<>();
 
-        chatService.sendMessage("alice", "bob", "Tu es idiot");
+		@Override
+		public void insert(ChatMessage message) {
+			this.insertedMessages.add(message);
+		}
 
-        assertEquals(1, repository.insertedMessages.size());
-        assertEquals("Tu es i***t", repository.insertedMessages.get(0).getContent());
-    }
+		@Override
+		public List<ChatMessage> getMessages(String usernameA, String usernameB) {
+			return List.of();
+		}
+
+		@Override
+		public int countMessages(String usernameA, String usernameB) {
+			return 0;
+		}
+	}
 }

@@ -1,18 +1,17 @@
 package ulb.model.battle;
 
-import java.util.Vector;
-
 import ulb.model.Player;
 import ulb.model.action.Action;
-import ulb.model.battle.Battle.ParticipantLabel;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.team.Team;
+
+import java.util.Vector;
 
 /**
  * Runtime state for one battle participant.
  */
 public class BattleParticipant {
-    private Player player;
+	private Player player;
 	private Team team;
 	private Bugemon activeBugemon;
 	private Vector<Bugemon> participatingBugemons;
@@ -26,9 +25,9 @@ public class BattleParticipant {
 	 * @param player Associated player
 	 * @param team Participant team
 	 */
-    public BattleParticipant(Player player, Team team) {
-        this(player, team, team.getMembers().get(0));
-    }
+	public BattleParticipant(Player player, Team team) {
+		this(player, team, team.getMembers().get(0));
+	}
 
 	/**
 	 * Creates a participant with an explicit active bugemon.
@@ -37,64 +36,68 @@ public class BattleParticipant {
 	 * @param team Participant team
 	 * @param activeBugemon Initial active bugemon
 	 */
-    public BattleParticipant(Player player, Team team, Bugemon activeBugemon) {
-        this.player = player;
-        this.team = team;
-        this.activeBugemon = activeBugemon;
-        this.state = BattleState.INGAME;
-		this.participatingBugemons = new Vector<>() {};
+	public BattleParticipant(Player player, Team team, Bugemon activeBugemon) {
+		this.player = player;
+		this.team = team;
+		this.activeBugemon = activeBugemon;
+		this.state = BattleState.INGAME;
+		this.participatingBugemons = new Vector<>() {
+		};
 		this.setActiveBugemon(activeBugemon);
-    }
+	}
 
 	/** Returns participant player. */
-    public Player getPlayer() { return player; }
-	/** Returns participant team. */
-    public Team getTeam() { return team; }
-	/** Returns active bugemon. */
-    public Bugemon getActiveBugemon() { return activeBugemon; }
+	public Player getPlayer() { return player; }
 
-	/**
-	 * Sets active bugemon and tracks participation.
-	 *
-	 * @param activeBugemon New active bugemon
-	 */
-    public void setActiveBugemon(Bugemon activeBugemon) { 
-        this.activeBugemon = activeBugemon; 
-        if (!this.participatingBugemons.contains(activeBugemon)){
-            participatingBugemons.add(activeBugemon);
-        }
-    }
+	/** Returns participant team. */
+	public Team getTeam() { return team; }
 
 	/**
 	 * check if the team has the initiative for the next move.
-	 * It compares the priority of the two actions and then, if needed, the initiative of the two 
+	 * It compares the priority of the two actions and then, if needed, the initiative of the two
 	 * actives bugemons
+	 *
 	 * @param other the other participant to compare the initiative with
 	 * @return true if the team has the initiative
 	 */
-	public boolean hasInitiative(BattleParticipant other){
+	public boolean hasInitiative(BattleParticipant other) {
 		int actionPriorityTeamA = this.getAction().hasHightPriority(other.getAction());
 
-		if (actionPriorityTeamA != 0){ // if the priority isn't equal to 0, one action has higher priority than the other
+		if (actionPriorityTeamA != 0) { // if the priority isn't equal to 0, one action has higher priority than the
+			// other
 			return actionPriorityTeamA == 1;
 		}
 
 		return getActiveBugemon().checkInitiative(other.getActiveBugemon());
 	}
 
+	public Action getAction() { return action; }
 
-    public BattleState getState() { return state; }
+	/** Returns active bugemon. */
+	public Bugemon getActiveBugemon() { return activeBugemon; }
 
-    public void setState(BattleState state) { this.state = state; }
+	/**
+	 * Sets active bugemon and tracks participation.
+	 *
+	 * @param activeBugemon New active bugemon
+	 */
+	public void setActiveBugemon(Bugemon activeBugemon) {
+		this.activeBugemon = activeBugemon;
+		if (!this.participatingBugemons.contains(activeBugemon)) {
+			participatingBugemons.add(activeBugemon);
+		}
+	}
 
-    public Vector<Bugemon> getParticipatingBugemons() { return participatingBugemons; }
+	public void setAction(Action action) { this.action = action; }
 
-    public Action getAction() { return action; }
+	public BattleState getState() { return state; }
 
-    public void setAction(Action action) { this.action = action; }
+	public void setState(BattleState state) { this.state = state; }
 
-    public int getHpAfterFirstAction() { return hpAfterFirstAction; }
+	public Vector<Bugemon> getParticipatingBugemons() { return participatingBugemons; }
 
-    public void setHpAfterFirstAction(int hpAfterFirstAction) { this.hpAfterFirstAction = hpAfterFirstAction; }
+	public int getHpAfterFirstAction() { return hpAfterFirstAction; }
+
+	public void setHpAfterFirstAction(int hpAfterFirstAction) { this.hpAfterFirstAction = hpAfterFirstAction; }
 
 }

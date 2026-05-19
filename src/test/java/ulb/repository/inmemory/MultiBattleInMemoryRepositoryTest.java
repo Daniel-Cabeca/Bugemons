@@ -5,7 +5,7 @@ import ulb.model.Player;
 import ulb.model.battle.MultiBattleSession;
 import ulb.repository.MultiBattleRepository;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class MultiBattleInMemoryRepositoryTest {
 	@Test

@@ -10,7 +10,11 @@
         "defense": 10,
         "initiative": 10
       },
-      "attaques": ["pass_turn", "pollen_sournois", "racines_vives"],
+      "attaques": [
+        "pass_turn",
+        "pollen_sournois",
+        "racines_vives"
+      ],
       "sprite": "florachu.png",
       "starter": true
     },
@@ -24,7 +28,11 @@
         "defense": 10,
         "initiative": 10
       },
-      "attaques": ["insta_kill", "pollen_sournois", "racines_vives"],
+      "attaques": [
+        "insta_kill",
+        "pollen_sournois",
+        "racines_vives"
+      ],
       "sprite": "florachu.png",
       "starter": true
     },
@@ -38,7 +46,11 @@
         "defense": 100,
         "initiative": 100
       },
-      "attaques": ["fouet_liane", "pollen_sournois", "racines_vives"],
+      "attaques": [
+        "fouet_liane",
+        "pollen_sournois",
+        "racines_vives"
+      ],
       "sprite": "florachu.png",
       "starter": true
     },
@@ -52,7 +64,11 @@
         "defense": 10,
         "initiative": 10
       },
-      "attaques": ["fouet_liane", "pollen_sournois", "racines_vives"],
+      "attaques": [
+        "fouet_liane",
+        "pollen_sournois",
+        "racines_vives"
+      ],
       "sprite": "florachu.png",
       "starter": true
     },
@@ -66,7 +82,11 @@
         "defense": 10,
         "initiative": 10
       },
-      "attaques": ["fouet_liane", "pollen_sournois", "racines_vives"],
+      "attaques": [
+        "fouet_liane",
+        "pollen_sournois",
+        "racines_vives"
+      ],
       "sprite": "florachu.png",
       "starter": true
     }

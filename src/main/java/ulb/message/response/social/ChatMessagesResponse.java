@@ -6,9 +6,9 @@ import ulb.model.chat.ChatMessage;
 import java.util.List;
 
 public class ChatMessagesResponse extends Response {
-    private final List<ChatMessage> messages;
+	private final List<ChatMessage> messages;
 
-    public ChatMessagesResponse(List<ChatMessage> messages) { this.messages = messages; }
+	public ChatMessagesResponse(List<ChatMessage> messages) { this.messages = messages; }
 
-    public List<ChatMessage> getMessages() { return messages; }
+	public List<ChatMessage> getMessages() { return messages; }
 }

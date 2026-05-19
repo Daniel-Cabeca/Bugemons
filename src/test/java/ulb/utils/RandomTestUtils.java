@@ -5,11 +5,19 @@ import java.util.Random;
 /**
  * Collection of utilities for writing tests for features using RNG.
  *
- * Way more performance-heavy than using a proper mock library. We should switch to Mockito if we start using a lot of RNG in the game.
+ * Way more performance-heavy than using a proper mock library. We should switch to Mockito if we start using a lot
+ * of RNG in the game.
  */
 public class RandomTestUtils {
-	public interface RandomCondition {
-		boolean apply(Random random);
+	/**
+	 * Returns a Random object that satisfies a given condition.
+	 *
+	 * @param condition The condition to satify
+	 * @return A matching seed
+	 */
+	public static Random findRandom(RandomCondition condition) {
+		int seed = findSeed(condition);
+		return new Random(seed);
 	}
 
 	/**
@@ -26,14 +34,7 @@ public class RandomTestUtils {
 		return seed;
 	}
 
-	/**
-	 * Returns a Random object that satisfies a given condition.
-	 *
-	 * @param condition The condition to satify
-	 * @return A matching seed
-	 */
-	public static Random findRandom(RandomCondition condition) {
-		int seed = findSeed(condition);
-		return new Random(seed);
+	public interface RandomCondition {
+		boolean apply(Random random);
 	}
 }

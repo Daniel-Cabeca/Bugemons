@@ -1,20 +1,36 @@
 package ulb.repository.json.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
-
-import java.util.List;
-import java.util.ArrayList;
-
-import ulb.model.item.Item;
-import ulb.model.effect.Effect;
-
 import ulb.exceptions.LoadException;
+import ulb.model.effect.Effect;
+import ulb.model.item.Item;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Object that parses items from json nodes.
  */
 public class ItemJsonParser {
 	private final EffectJsonParser effectParser = new EffectJsonParser();
+
+	/**
+	 * Parses a list of items from a json node.
+	 *
+	 * @param node The json node
+	 * @return The parsed items
+	 * @throws LoadException If parsing failed
+	 */
+	public Iterable<Item> parseList(JsonNode node) throws LoadException {
+		List<Item> items = new ArrayList<>();
+
+		for (JsonNode itemNode : node) {
+			Item item = this.parseOne(itemNode);
+			items.add(item);
+		}
+
+		return items;
+	}
 
 	/**
 	 * Parses an item from a json node.
@@ -32,23 +48,5 @@ public class ItemJsonParser {
 		String sprite = node.get("sprite").asText();
 
 		return new Item(id, name, description, category, effect, sprite);
-	}
-
-	/**
-	 * Parses a list of items from a json node.
-	 *
-	 * @param node The json node
-	 * @return The parsed items
-	 * @throws LoadException If parsing failed
-	 */
-	public Iterable<Item> parseList(JsonNode node) throws LoadException {
-		List<Item> items = new ArrayList<>();
-
-		for (JsonNode itemNode: node) {
-			Item item = this.parseOne(itemNode);
-			items.add(item);
-		}
-
-		return items;
 	}
 }

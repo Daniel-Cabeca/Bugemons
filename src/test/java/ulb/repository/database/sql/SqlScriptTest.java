@@ -2,21 +2,22 @@ package ulb.repository.database.sql;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.net.URL;
 import java.util.Iterator;
 
-class SqlScriptTest {
-	private SqlScript getScript(String name) {
-		URL url = SqlScriptTest.class.getResource("/sql/"+ name +".sql");
-		return new SqlScript(url);
-	}
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
+class SqlScriptTest {
 	@Test
 	public void readsSqlFile() throws Exception {
 		SqlScript script = getScript("select1");
 		assertEquals("SELECT 1;\n", script.getSql());
+	}
+
+	private SqlScript getScript(String name) {
+		URL url = SqlScriptTest.class.getResource("/sql/" + name + ".sql");
+		return new SqlScript(url);
 	}
 
 	@Test

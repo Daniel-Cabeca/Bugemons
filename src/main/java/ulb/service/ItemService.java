@@ -1,13 +1,14 @@
 package ulb.service;
 
-import ulb.repository.ItemRepository;
-import ulb.repository.StartingInventoryRepository;
-import ulb.model.item.Item;
 import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
 import ulb.model.item.Inventory;
-import java.util.List;
+import ulb.model.item.Item;
+import ulb.repository.ItemRepository;
+import ulb.repository.StartingInventoryRepository;
+
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class ItemService {
@@ -20,35 +21,35 @@ public class ItemService {
 	}
 
 	/**
-	* Fetches an Item by its id.
-	*
-	* @param id The item's id
-	* @return The Item instance
-	* @throws EntityNotFoundException If no item matches the id
-	*/
+	 * Fetches an Item by its id.
+	 *
+	 * @param id The item's id
+	 * @return The Item instance
+	 * @throws EntityNotFoundException If no item matches the id
+	 */
 	public Item getItem(String id) throws EntityNotFoundException {
 		return this.itemRepository.findById(id);
 	}
 
 	/**
-	* Returns the list of all items.
-	*
-	* @return An iterable of all the items
-	*/
-	public Iterable<Item> getAllItems() throws LoadException, EntityNotFoundException{
+	 * Returns the list of all items.
+	 *
+	 * @return An iterable of all the items
+	 */
+	public Iterable<Item> getAllItems() throws LoadException, EntityNotFoundException {
 		return this.itemRepository.findAll();
 	}
 
 	/**
-	* Creates the starter inventory for a new game, as defined in Histoire 10.
-	* Contains:
-	* - 3x Baie Revigorante
-	* - 2x Baie Tonique
-	* - 1x Gel Défensif
-	* - 1x Sérum Offensif
-	*
-	* @return The starter Inventory
-	*/
+	 * Creates the starter inventory for a new game, as defined in Histoire 10.
+	 * Contains:
+	 * - 3x Baie Revigorante
+	 * - 2x Baie Tonique
+	 * - 1x Gel Défensif
+	 * - 1x Sérum Offensif
+	 *
+	 * @return The starter Inventory
+	 */
 	public Inventory createStarterInventory() {
 		return this.startingInventoryRepository.findStartingInventory();
 	}
@@ -58,7 +59,7 @@ public class ItemService {
 	 *
 	 * @return A random item
 	 */
-	public Item getRandomItem() throws LoadException, EntityNotFoundException{
+	public Item getRandomItem() throws LoadException, EntityNotFoundException {
 		List<Item> items = new ArrayList<>();
 		for (Item item : this.itemRepository.findAll()) {
 			items.add(item);
@@ -73,7 +74,7 @@ public class ItemService {
 	 * @param category The category to fetch items from
 	 * @return The items of the given category
 	 */
-	public List<Item> getItemsByCategory(String category) throws LoadException, EntityNotFoundException{
+	public List<Item> getItemsByCategory(String category) throws LoadException, EntityNotFoundException {
 		List<Item> result = new ArrayList<>();
 		for (Item item : this.itemRepository.findAll()) {
 			if (item.getCategory().equals(category)) {

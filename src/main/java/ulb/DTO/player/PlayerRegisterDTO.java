@@ -5,4 +5,5 @@ import java.io.Serializable;
 /**
  * Transferable Player, used on the vue side.
  */
-public record PlayerRegisterDTO (String username, String password) implements Serializable {}
+public record PlayerRegisterDTO(String username, String password) implements Serializable {
+}

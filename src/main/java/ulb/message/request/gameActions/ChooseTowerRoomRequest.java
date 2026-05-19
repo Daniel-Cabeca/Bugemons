@@ -16,5 +16,5 @@ public class ChooseTowerRoomRequest implements Request {
 	public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
 		handler.chooseTowerRoom(roomId);
 	}
-	
+
 }

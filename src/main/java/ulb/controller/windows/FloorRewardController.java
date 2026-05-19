@@ -5,61 +5,62 @@ import ulb.DTO.item.ItemDTO;
 import ulb.controller.ClientController;
 import ulb.message.request.gameActions.ChooseItemRewardRequest;
 import ulb.message.request.gameData.GetRandomItemRequest;
-import ulb.message.response.gameData.RandomItemResponse;
 import ulb.message.request.gameInfo.GetTowerInfoRequest;
+import ulb.message.response.gameData.RandomItemResponse;
 import ulb.message.response.gameInfo.TowerInfoResponse;
 import ulb.view.WindowPath;
 import ulb.view.windows.FloorRewardWindow;
 
 public class FloorRewardController extends WindowController<FloorRewardWindow> implements FloorRewardWindow.ViewListener {
 
-    private RewardChoice pendingChoice;
-    private ItemDTO rewardItem;
+	private RewardChoice pendingChoice;
+	private ItemDTO rewardItem;
 
-    /**
-     * Creates the floor reward controller.
-     *
-     * @param stage The application stage
-     * @param clientController The client controller
-     */
-    public FloorRewardController(Stage stage, ClientController clientController) {
-        super(stage, WindowPath.FLOOR_REWARD, clientController);
-        this.view.setViewListener(this);
-    }
+	/**
+	 * Creates the floor reward controller.
+	 *
+	 * @param stage The application stage
+	 * @param clientController The client controller
+	 */
+	public FloorRewardController(Stage stage, ClientController clientController) {
+		super(stage, WindowPath.FLOOR_REWARD, clientController);
+		this.view.setViewListener(this);
+	}
 
-    /**
-     * Displays the floor reward window, fetching a random item and tower info from the server.
-     */
-    @Override
-    public void show() {
-        if (clientController.getData(new GetRandomItemRequest()) instanceof RandomItemResponse r) {
-            rewardItem = r.getItem();
-        }
-        if (clientController.getData(new GetTowerInfoRequest()) instanceof TowerInfoResponse info) {
-            view.initializeLabels(info.getFloorNumber(), info.getRoomNumber(), rewardItem != null ? rewardItem.name() : "");
-        }
-        super.show();
-    }
+	/**
+	 * Displays the floor reward window, fetching a random item and tower info from the server.
+	 */
+	@Override
+	public void show() {
+		if (clientController.getData(new GetRandomItemRequest()) instanceof RandomItemResponse r) {
+			rewardItem = r.getItem();
+		}
+		if (clientController.getData(new GetTowerInfoRequest()) instanceof TowerInfoResponse info) {
+			view.initializeLabels(info.getFloorNumber(), info.getRoomNumber(), rewardItem != null ? rewardItem.name()
+					: "");
+		}
+		super.show();
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public void onObjectReward() {
-        if (clientController.postData(new ChooseItemRewardRequest(rewardItem))) {
-            clientController.showWindow(WindowName.FLOOR);
-        }
-    }
+	/** {@inheritDoc} */
+	@Override
+	public void onObjectReward() {
+		if (clientController.postData(new ChooseItemRewardRequest(rewardItem))) {
+			clientController.showWindow(WindowName.FLOOR);
+		}
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public void onChooseAttackReward() {
-        pendingChoice = RewardChoice.ATTACK;
-        clientController.chooseBugemonReward(pendingChoice);
-    }
+	/** {@inheritDoc} */
+	@Override
+	public void onChooseAttackReward() {
+		pendingChoice = RewardChoice.ATTACK;
+		clientController.chooseBugemonReward(pendingChoice);
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public void onStatReward() {
-        pendingChoice = RewardChoice.STAT;
-        clientController.chooseBugemonReward(pendingChoice);
-    }
+	/** {@inheritDoc} */
+	@Override
+	public void onStatReward() {
+		pendingChoice = RewardChoice.STAT;
+		clientController.chooseBugemonReward(pendingChoice);
+	}
 }

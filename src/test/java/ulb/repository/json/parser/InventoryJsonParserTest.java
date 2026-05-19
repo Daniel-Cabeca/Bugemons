@@ -1,18 +1,29 @@
 package ulb.repository.json.parser;
 
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.fasterxml.jackson.databind.JsonNode;
-import ulb.repository.json.Json;
-
+import org.junit.jupiter.api.Test;
 import ulb.exceptions.LoadException;
+import ulb.model.item.Inventory;
 import ulb.repository.ItemRepository;
+import ulb.repository.json.Json;
 import ulb.repository.mock.ItemMockRepository;
 
-import ulb.model.item.Inventory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class InventoryJsonParserTest {
+	@Test
+	public void testParseUnknownItemThrows() throws Exception {
+		String str = """
+				{
+					"doesnotexist": 3
+				}
+				""";
+		assertThrows(LoadException.class, () -> {
+			parseOneFromString(str);
+		});
+	}
+
 	public static Inventory parseOneFromString(String str) throws LoadException {
 		ItemRepository itemRepository = new ItemMockRepository();
 		JsonNode node = Json.getNode(str);
@@ -22,25 +33,15 @@ public class InventoryJsonParserTest {
 	}
 
 	@Test
-	public void testParseUnknownItemThrows() throws Exception {
-		String str = """
-			{
-				"doesnotexist": 3
-			}
-			""";
-		assertThrows(LoadException.class, () -> { parseOneFromString(str); });
-	}
-
-	@Test
 	public void testParseCorrect() throws Exception {
 		String str = """
-			{
-				"baie_revigorante": 3,
-				"baie_tonique": 2,
-				"gel_defensif": 1,
-				"serum_offensif": 1
-			}
-			""";
+				{
+					"baie_revigorante": 3,
+					"baie_tonique": 2,
+					"gel_defensif": 1,
+					"serum_offensif": 1
+				}
+				""";
 
 		ItemRepository itemRepository = new ItemMockRepository();
 		Inventory obtained = parseOneFromString(str);

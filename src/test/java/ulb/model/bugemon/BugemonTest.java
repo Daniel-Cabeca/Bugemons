@@ -1,9 +1,6 @@
 package ulb.model.bugemon;
 
 import org.junit.jupiter.api.Test;
-
-import ulb.exceptions.EntityNotFoundException;
-import ulb.exceptions.LoadException;
 import ulb.model.ability.Ability;
 import ulb.model.ability.AbilitySet;
 import ulb.model.type.Type;
@@ -15,11 +12,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class BugemonTest {
 
-	private Bugemon createBugemon(String name, Type type, int hp, int attack, int defense, int initiative){
-		BugemonSpecies species = new BugemonSpecies(name, name, type, new Stats(hp, attack, defense, initiative), new AbilitySet(), "", false);
-		return new Bugemon(species);
-	}
-
 	@Test
 	public void swapWrongTypeAbility() {
 		Bugemon B = createBugemon("A", Type.AQUA, 10, 29, 35, 16);
@@ -27,10 +19,16 @@ public class BugemonTest {
 		B.swapAbility(A, null);
 
 		boolean contains = false;
-		for (Ability ab: B.getAbilities()) {
+		for (Ability ab : B.getAbilities()) {
 			contains |= A.equals(ab);
 		}
 		assertFalse(contains);
+	}
+
+	private Bugemon createBugemon(String name, Type type, int hp, int attack, int defense, int initiative) {
+		BugemonSpecies species = new BugemonSpecies(name, name, type, new Stats(hp, attack, defense, initiative),
+				new AbilitySet(), "", false);
+		return new Bugemon(species);
 	}
 
 	@Test
@@ -61,8 +59,8 @@ public class BugemonTest {
 	}
 
 	@Test
-	public void resetFightStatsToBaseStats(){
-		Stats s = new Stats(-10,-9, -5, -6); // debuff stats
+	public void resetFightStatsToBaseStats() {
+		Stats s = new Stats(-10, -9, -5, -6); // debuff stats
 		Bugemon B = createBugemon("A", Type.AQUA, 100, 20, 10, 10);
 
 		B.changeFightStats(s);
@@ -123,7 +121,7 @@ public class BugemonTest {
 		b.changeFightStats(new Stats(-20, 5, -3, 2));
 		assertEquals(80, b.getFightStats().getHp());
 		assertEquals(15, b.getFightStats().getAttack());
-		assertEquals(7,  b.getFightStats().getDefense());
+		assertEquals(7, b.getFightStats().getDefense());
 		assertEquals(12, b.getFightStats().getInitiative());
 	}
 
@@ -147,7 +145,7 @@ public class BugemonTest {
 
 		assertTrue(b.consumeLevelReward(new Stats(10, 5, 5, 5)));
 		assertEquals(110, b.getBaseStats().getHp());
-		assertEquals(15,  b.getBaseStats().getAttack());
+		assertEquals(15, b.getBaseStats().getAttack());
 	}
 
 	@Test

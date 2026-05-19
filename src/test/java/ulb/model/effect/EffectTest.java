@@ -1,42 +1,22 @@
 package ulb.model.effect;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-
+import ulb.exceptions.EntityNotFoundException;
+import ulb.exceptions.LoadException;
+import ulb.model.Player;
+import ulb.model.battle.Battle;
+import ulb.model.battle.Battle.ParticipantLabel;
+import ulb.model.bugemon.Bugemon;
+import ulb.model.team.Team;
 import ulb.repository.mock.BugemonSpeciesMockRepository;
 import ulb.service.BugemonService;
 
 import java.util.List;
 import java.util.Map;
 
-import ulb.model.bugemon.Bugemon;
-import ulb.model.battle.Battle;
-import ulb.model.battle.Battle.ParticipantLabel;
-import ulb.model.team.Team;
-import ulb.exceptions.EntityNotFoundException;
-import ulb.exceptions.LoadException;
-import ulb.model.Player;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EffectTest {
-	private static Battle getTestBattle() throws LoadException, EntityNotFoundException {
-		BugemonSpeciesMockRepository repository = new BugemonSpeciesMockRepository();
-		BugemonService service = new BugemonService(repository);
-
-		Team teamA = new Team(List.of(
-			service.spawnBugemon("florachu"),
-			service.spawnBugemon("pyricore")
-		));
-		Team teamB = new Team(List.of(
-			service.spawnBugemon("rockachu"),
-			service.spawnBugemon("obsidian")
-		));
-
-		Player player = new Player();
-		Battle battle = new Battle(teamA, teamB, player, new Player());
-
-		return battle;
-	}
-
 	@Test
 	public void getTargetsIsOwnBugemonWhenTargetIsOwnBugemon() throws Exception {
 		Battle battle = getTestBattle();
@@ -47,6 +27,19 @@ public class EffectTest {
 
 		assertEquals(1, targets.size());
 		assertSame(battle.getActiveBugemon(team), targets.get(0));
+	}
+
+	private static Battle getTestBattle() throws LoadException, EntityNotFoundException {
+		BugemonSpeciesMockRepository repository = new BugemonSpeciesMockRepository();
+		BugemonService service = new BugemonService(repository);
+
+		Team teamA = new Team(List.of(service.spawnBugemon("florachu"), service.spawnBugemon("pyricore")));
+		Team teamB = new Team(List.of(service.spawnBugemon("rockachu"), service.spawnBugemon("obsidian")));
+
+		Player player = new Player();
+		Battle battle = new Battle(teamA, teamB, player, new Player());
+
+		return battle;
 	}
 
 	@Test
@@ -72,14 +65,12 @@ public class EffectTest {
 		boolean foundFlorachu = false;
 		boolean foundPyricore = false;
 
-		for (Bugemon bugemon: targets) {
+		for (Bugemon bugemon : targets) {
 			if (!foundFlorachu && bugemon.getSpecies().getId().equals("florachu")) {
 				foundFlorachu = true;
-			}
-			else if (!foundPyricore && bugemon.getSpecies().getId().equals("pyricore")) {
+			} else if (!foundPyricore && bugemon.getSpecies().getId().equals("pyricore")) {
 				foundPyricore = true;
-			}
-			else {
+			} else {
 				assertTrue(false, "Found an unexpected Bugemon in the targets list.");
 			}
 		}

@@ -1,17 +1,15 @@
 package ulb.model.ability;
 
-import java.lang.Math;
-import java.util.Random;
-
 import ulb.model.HasId;
-import ulb.model.type.Type;
-import ulb.model.effect.EffectList;
-
 import ulb.model.battle.Battle;
 import ulb.model.battle.Battle.ParticipantLabel;
 import ulb.model.bugemon.Bugemon;
 import ulb.model.bugemon.Stats;
+import ulb.model.effect.EffectList;
 import ulb.model.type.Effectiveness;
+import ulb.model.type.Type;
+
+import java.util.Random;
 
 /**
  * Represents a move that can be used by a Bugemon in battle.
@@ -48,11 +46,14 @@ public class Ability implements HasId {
 	@Override
 	public String getId() { return this.id; }
 
-	public String getName() { return this.name; }
-	public Type getType() { return this.type; }
-	public String getDescription() {return this.description;}
-	public int getPower() { return this.power; }
+	public String getDescription() { return this.description; }
+
 	public EffectList getEffects() { return this.effects; }
+
+	@Override
+	public int hashCode() {
+		return this.id.hashCode();
+	}
 
 	@Override
 	public boolean equals(Object o) {
@@ -71,9 +72,14 @@ public class Ability implements HasId {
 		return false;
 	}
 
-	@Override
-	public int hashCode() {
-		return this.id.hashCode();
+	/**
+	 * Uses the ability in combat.
+	 *
+	 * @param battle The current battle
+	 * @param team The team of the Bugemon using the ability
+	 */
+	public void use(Battle battle, ParticipantLabel team) {
+		this.use(battle, team, new Random());
 	}
 
 	/**
@@ -97,55 +103,6 @@ public class Ability implements HasId {
 	}
 
 	/**
-	 * Writes the message logs from using this ability.
-	 *
-	 * @param battle The current battle
-	 * @param ownBugemon The Bugemon using this ability
-	 * @param oppositeBugemon The Bugemon this ability is used against
-	 * @param damage The damage dealt
-	 */
-	private void writeLogs(Battle battle, Bugemon ownBugemon, Bugemon oppositeBugemon, int damage) {
-		battle.addLogMsg(ownBugemon.getName() + " a utilisé " + this.getName() + ". " + oppositeBugemon.getName() + " perd " +
-				damage + " PV!");
-
-		String effectivenessMessage = getEffectivenessMessage(oppositeBugemon);
-		if (!effectivenessMessage.equals("")) {
-			battle.addLogMsg(effectivenessMessage);
-		}
-	}
-
-	/**
-	 * Gets the effectiveness message of the ability
-	 *
-	 * @param oppositeBugemon The Bugemon this ability is used against
-	 * @return The effectiveness message (or an empty string if the effectiveness is normal)
-	 */
-	public String getEffectivenessMessage(Bugemon oppositeBugemon) {
-		Effectiveness.Category effectivenessCategory = Effectiveness.getCategory(this.getType(), oppositeBugemon.getType());
-
-		switch(effectivenessCategory) {
-			case HIGH:
-				return "Super efficace !";
-
-			case LOW:
-				return "Pas très efficace !";
-
-			default:
-				return "";
-		}
-	}
-
-	/**
-	 * Uses the ability in combat.
-	 *
-	 * @param battle The current battle
-	 * @param team The team of the Bugemon using the ability
-	 */
-	public void use(Battle battle, ParticipantLabel team) {
-		this.use(battle, team, new Random());
-	}
-
-	/**
 	 * Calculate the damage done when using this ability.
 	 *
 	 * @param ownBugemon The Bugemon using this ability
@@ -164,10 +121,56 @@ public class Ability implements HasId {
 		float typeFactor = Effectiveness.getFactor(this.getType(), oppositeBugemon.getType());
 
 		float criticalHitFactor = 1f;
-		if (random.nextDouble() <= CRITICAL_HIT_CHANCE){
+		if (random.nextDouble() <= CRITICAL_HIT_CHANCE) {
 			criticalHitFactor = CRITICAL_HIT_FACTOR;
 		}
 
 		return Math.round(baseDamage * typeFactor * criticalHitFactor);
+	}
+
+	/**
+	 * Writes the message logs from using this ability.
+	 *
+	 * @param battle The current battle
+	 * @param ownBugemon The Bugemon using this ability
+	 * @param oppositeBugemon The Bugemon this ability is used against
+	 * @param damage The damage dealt
+	 */
+	private void writeLogs(Battle battle, Bugemon ownBugemon, Bugemon oppositeBugemon, int damage) {
+		battle.addLogMsg(ownBugemon.getName() + " a utilisé " + this.getName() + ". " + oppositeBugemon.getName() + " " +
+				"perd " + damage + " PV!");
+
+		String effectivenessMessage = getEffectivenessMessage(oppositeBugemon);
+		if (!effectivenessMessage.equals("")) {
+			battle.addLogMsg(effectivenessMessage);
+		}
+	}
+
+	public int getPower() { return this.power; }
+
+	public Type getType() { return this.type; }
+
+	public String getName() { return this.name; }
+
+	/**
+	 * Gets the effectiveness message of the ability
+	 *
+	 * @param oppositeBugemon The Bugemon this ability is used against
+	 * @return The effectiveness message (or an empty string if the effectiveness is normal)
+	 */
+	public String getEffectivenessMessage(Bugemon oppositeBugemon) {
+		Effectiveness.Category effectivenessCategory = Effectiveness.getCategory(this.getType(),
+				oppositeBugemon.getType());
+
+		switch (effectivenessCategory) {
+			case HIGH:
+				return "Super efficace !";
+
+			case LOW:
+				return "Pas très efficace !";
+
+			default:
+				return "";
+		}
 	}
 }

@@ -1,47 +1,45 @@
 package ulb.repository.json.parser;
 
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.fasterxml.jackson.databind.JsonNode;
+import org.junit.jupiter.api.Test;
+import ulb.exceptions.LoadException;
+import ulb.model.item.Item;
 import ulb.repository.json.Json;
 
-import ulb.exceptions.LoadException;
-
-import ulb.model.item.Item;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ItemJsonParserTest {
-	public static Item parseItemFromString(String str) throws LoadException {
-		ItemJsonParser parser = new ItemJsonParser();
-		JsonNode node = Json.getNode(str);
-		return parser.parseOne(node);
+	@Test
+	public void parsesId() throws Exception {
+		Item item = getMockItemA();
+		assertEquals("baie_revigorante", item.getId());
 	}
 
 	private static Item getMockItemA() throws LoadException {
 		String str = """
-			{
-				"id": "baie_revigorante",
-				"nom": "Baie Revigorante",
-				"description": "Restaure 20 PV au Bugémon actif.",
-				"categorie": "soin",
-				"effet": {
-					"type": "soin",
-					"cible": "lanceur",
-					"valeur": 20
-				},
-				"sprite": "baie_revigorante.png"
-			}
-			""";
+				{
+					"id": "baie_revigorante",
+					"nom": "Baie Revigorante",
+					"description": "Restaure 20 PV au Bugémon actif.",
+					"categorie": "soin",
+					"effet": {
+						"type": "soin",
+						"cible": "lanceur",
+						"valeur": 20
+					},
+					"sprite": "baie_revigorante.png"
+				}
+				""";
 
 		return parseItemFromString(str);
 	}
 
 	// ParseOne
 
-	@Test
-	public void parsesId() throws Exception {
-		Item item = getMockItemA();
-		assertEquals("baie_revigorante", item.getId());
+	public static Item parseItemFromString(String str) throws LoadException {
+		ItemJsonParser parser = new ItemJsonParser();
+		JsonNode node = Json.getNode(str);
+		return parser.parseOne(node);
 	}
 
 	@Test

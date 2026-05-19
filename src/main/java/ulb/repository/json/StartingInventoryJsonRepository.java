@@ -1,7 +1,7 @@
 package ulb.repository.json;
 
-import ulb.repository.StartingInventoryRepository;
 import ulb.model.item.Inventory;
+import ulb.repository.StartingInventoryRepository;
 
 // /**
 //  * Repository for the starting inventory specified in JSON files.

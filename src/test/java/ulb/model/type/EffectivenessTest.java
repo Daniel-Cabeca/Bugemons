@@ -1,6 +1,7 @@
 package ulb.model.type;
 
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EffectivenessTest {
@@ -8,14 +9,14 @@ public class EffectivenessTest {
 
 	private static final float EPSILON = 1e-6f;
 
-	private void verifyFactor(Effectiveness.Category category, float expected) {
-		float obtained = Effectiveness.getFactor(category);
-		assertEquals(obtained, expected, EPSILON);
-	}
-
 	@Test
 	public void highEffectivenssFactor() {
 		verifyFactor(Effectiveness.Category.HIGH, Effectiveness.FACTOR_HIGH);
+	}
+
+	private void verifyFactor(Effectiveness.Category category, float expected) {
+		float obtained = Effectiveness.getFactor(category);
+		assertEquals(obtained, expected, EPSILON);
 	}
 
 	@Test
@@ -30,16 +31,16 @@ public class EffectivenessTest {
 
 	// Category
 
-	private void verifyTypeEffectiveness(Type move, Type target, Effectiveness.Category expected) {
-		Effectiveness.Category obtained = Effectiveness.getCategory(move, target);
-		assertEquals(obtained, expected);
+	@Test
+	public void effectivenessPyroToPyro() {
+		verifyTypeEffectiveness(Type.PYRO, Type.PYRO, Effectiveness.Category.NORMAL);
 	}
 
 	// Pyro
 
-	@Test
-	public void effectivenessPyroToPyro() {
-		verifyTypeEffectiveness(Type.PYRO, Type.PYRO, Effectiveness.Category.NORMAL);
+	private void verifyTypeEffectiveness(Type move, Type target, Effectiveness.Category expected) {
+		Effectiveness.Category obtained = Effectiveness.getCategory(move, target);
+		assertEquals(obtained, expected);
 	}
 
 	@Test

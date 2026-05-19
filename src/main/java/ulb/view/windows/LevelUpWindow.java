@@ -1,16 +1,16 @@
 package ulb.view.windows;
 
 
-import java.util.List;
-import javafx.fxml.FXML;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-
 import ulb.DTO.bugemon.BugemonDTO;
-import ulb.DTO.stats.StatsDTO;
 import ulb.DTO.reward.RewardDTO;
+import ulb.DTO.stats.StatsDTO;
+
+import java.util.List;
 
 public class LevelUpWindow {
 	@FXML
@@ -30,21 +30,12 @@ public class LevelUpWindow {
 	private RewardDTO rewardC;
 
 	public void setViewListener(ViewListener viewListener) {
-        this.viewListener = viewListener;
-    }
-	/**
-	 * Generates a short text describing the given reward.
-	 * @param r the reward that needs to be described. 
-	 * @return the generated text.
-	 */
-	private String createRewardsText(RewardDTO r) {
-		StatsDTO addedStats = r.stats();
-		return "HP: +" + addedStats.hp() + "\nAttaque: +" + addedStats.attack() + "\nDefense: +" + addedStats.defense()
-				+ "\nInitiative: +" + addedStats.initiative();
+		this.viewListener = viewListener;
 	}
 
 	/**
 	 * Initialize the LevelUpWindow with the given bugemon and rewards.
+	 *
 	 * @param bugemon the bugemon that levels up.
 	 * @param rewards the rewards generated.
 	 */
@@ -59,6 +50,7 @@ public class LevelUpWindow {
 
 	/**
 	 * Sets the rewards list on the window.
+	 *
 	 * @param rewards the list of rewards.
 	 */
 	public void setRewards(List<RewardDTO> rewards) {
@@ -75,6 +67,7 @@ public class LevelUpWindow {
 
 	/**
 	 * Sets the level of the given bugemon.
+	 *
 	 * @param bugemon the bugemon that needs it's level set.
 	 */
 	public void setBugemonLevel(BugemonDTO bugemon) {
@@ -83,6 +76,7 @@ public class LevelUpWindow {
 
 	/**
 	 * Sets the sprite of the given bugemon.
+	 *
 	 * @param bugemon the bugemon that needs it's sprite set.
 	 */
 	public void setBugemonSprite(BugemonDTO bugemon) {
@@ -90,7 +84,19 @@ public class LevelUpWindow {
 	}
 
 	/**
+	 * Generates a short text describing the given reward.
+	 *
+	 * @param r the reward that needs to be described.
+	 * @return the generated text.
+	 */
+	private String createRewardsText(RewardDTO r) {
+		StatsDTO addedStats = r.stats();
+		return "HP: +" + addedStats.hp() + "\nAttaque: +" + addedStats.attack() + "\nDefense: +" + addedStats.defense() + "\nInitiative: +" + addedStats.initiative();
+	}
+
+	/**
 	 * Handles the button that chooses Reward A.
+	 *
 	 * @param event the next event.
 	 */
 	@FXML
@@ -100,6 +106,7 @@ public class LevelUpWindow {
 
 	/**
 	 * Handles the button that chooses Reward B.
+	 *
 	 * @param event the next event.
 	 */
 	@FXML
@@ -109,6 +116,7 @@ public class LevelUpWindow {
 
 	/**
 	 * Handles the button that chooses Reward C.
+	 *
 	 * @param event the next event.
 	 */
 	@FXML
@@ -117,6 +125,6 @@ public class LevelUpWindow {
 	}
 
 	public interface ViewListener {
-        void onRewardChosen(RewardDTO reward, ActionEvent event);
-    }
+		void onRewardChosen(RewardDTO reward, ActionEvent event);
+	}
 }

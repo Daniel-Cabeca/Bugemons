@@ -19,11 +19,10 @@ import ulb.message.response.social.MultiBattleStatusResponse;
 import ulb.view.WindowPath;
 import ulb.view.windows.CreateTeamWindow;
 
+import javax.naming.CommunicationException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.naming.CommunicationException;
 
 /**
  * Controller for creating and validating the player's starting team.
@@ -37,18 +36,29 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 		this.view.setViewListener(this);
 	}
 
-
-	public PlayerDTO getSelfPlayer() { return this.clientController.getPlayer(); }
-	public boolean hasOpponent() { return this.opponent != null; }
-	public PlayerDTO getOpponent() { return this.opponent; }
-	public void setOpponent(PlayerDTO opponent) { this.opponent = opponent; }
 	public void resetOpponent() { this.opponent = null; }
 
-
 	@Override
-	public void show(){
+	public void show() {
 		this.view.populateAvailableBugemons();
 		super.show();
+	}
+
+	/**
+	 * Handles team confirmation from the view.
+	 *
+	 * @param selectedBugemonIds The selected species ids
+	 */
+	@Override
+	public void onConfirmTeam(List<String> selectedBugemonIds) {
+		this.setTeam(selectedBugemonIds);
+
+		if (this.hasOpponent()) {
+			this.confirmTeamMulti(this.getOpponent());
+		} else {
+			List<BugemonDTO> team = this.clientController.getPlayer().getTeam();
+			this.clientController.setupTeamAndShowConfirmTeam(team);
+		}
 	}
 
 	/**
@@ -65,23 +75,7 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 		selfPlayer.setTeam(members);
 	}
 
-	/**
-	 * Handles team confirmation from the view.
-	 *
-	 * @param selectedBugemonIds The selected species ids
-	 */
-	@Override
-	public void onConfirmTeam(List<String> selectedBugemonIds) {
-		this.setTeam(selectedBugemonIds);
-
-		if (this.hasOpponent()) {
-			this.confirmTeamMulti(this.getOpponent());
-		}
-		else {
-			List<BugemonDTO> team = this.clientController.getPlayer().getTeam();
-			this.clientController.setupTeamAndShowConfirmTeam(team);
-		}
-	}
+	public boolean hasOpponent() { return this.opponent != null; }
 
 	/**
 	 * Confirms the team for a multiplayer battle and waits for the battle to start.
@@ -97,6 +91,29 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 		});
 	}
 
+	public PlayerDTO getOpponent() { return this.opponent; }
+
+	public PlayerDTO getSelfPlayer() { return this.clientController.getPlayer(); }
+
+	/**
+	 * Transforms the list of bugemon ids to a list of BugemonDTO objects
+	 *
+	 * @param selectedBugemonIds the list of bugemon ids
+	 * @return the list of BugemonDTO
+	 */
+	private List<BugemonDTO> setupTeamMembers(List<String> selectedBugemonIds) {
+		List<BugemonDTO> members = new ArrayList<>();
+		List<BugemonSpeciesDTO> allSpecies = this.getAllSpecies();
+		for (String bugemonId : selectedBugemonIds) {
+			for (BugemonSpeciesDTO species : allSpecies) {
+				if (bugemonId.equals(species.id())) {
+					members.add(new BugemonDTO(species));
+				}
+			}
+		}
+		return members;
+	}
+
 	/**
 	 * Opens a waiting window.
 	 *
@@ -106,6 +123,7 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 		this.clientController.setNewTimeLine(waitCycle);
 		this.clientController.showWindow(WindowName.WAIT);
 	}
+
 	/**
 	 * Called in a loop while waiting for the opponent to pick his team.
 	 *
@@ -115,9 +133,9 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 		PlayerDTO self = this.clientController.getPlayer();
 
 		MultiBattleStatusDTO status = null;
-		try{
+		try {
 			status = this.getMultiBattleStatus(self.getUserId(), opponent.getUserId());
-		} catch(CommunicationException e){
+		} catch (CommunicationException e) {
 			this.clientController.stopWaitWindow();
 			this.clientController.showWindow(WindowName.MAIN_MENU);
 		}
@@ -136,6 +154,7 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 				this.clientController.showWindow(WindowName.MAIN_MENU);
 		}
 	}
+
 	/**
 	 * Returns the current multiplayer battle status between two players.
 	 *
@@ -150,6 +169,7 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 		throw new CommunicationException();
 
 	}
+
 	/**
 	 * Starts a battle once both teams have been picked.
 	 *
@@ -158,6 +178,29 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	private void startMultiBattle(PlayerDTO opponent) {
 		this.clientController.postData(new StartMultiBattleRequest(opponent));
 		this.clientController.showWindow(WindowName.BATTLE);
+	}
+
+	public void setOpponent(PlayerDTO opponent) { this.opponent = opponent; }
+
+	/**
+	 * Handles team loading by opening the load team panel
+	 */
+	@Override
+	public void onLoadTeam() {
+		this.clientController.showWindow(WindowName.LOAD_TEAM_PANEL);
+	}
+
+	/**
+	 * Handles saving the team to the database
+	 *
+	 * @param selectedBugemonIds the list of the ids of the team members
+	 * @param teamName the name of the team
+	 */
+	@Override
+	public void onSaveTeam(List<String> selectedBugemonIds, String teamName) {
+		List<BugemonDTO> members = setupTeamMembers(selectedBugemonIds);
+		TeamDTO team = new TeamDTO(-1, teamName, members);
+		this.saveTeam(team);
 	}
 
 	/**
@@ -172,24 +215,20 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	}
 
 	/**
-	 * Handles team loading by opening the load team panel
+	 * Returns the list of all the Bugemon species.
+	 *
+	 * @return A list of all the species of Bugemon
 	 */
 	@Override
-	public void onLoadTeam() {
-		this.clientController.showWindow(WindowName.LOAD_TEAM_PANEL);
+	public List<BugemonSpeciesDTO> getAllSpecies() {
+		Serializable message = this.clientController.getData(new GetAllBugemonSpeciesRequest());
+
+		if (message instanceof BugemonSpeciesResponse speciesMessage) {
+			return speciesMessage.getSpecies();
+		}
+		return null;
 	}
 
-    /**
-	 * Handles saving the team to the database
-     * @param selectedBugemonIds the list of the ids of the team members
-     * @param teamName the name of the team
-     */
-	@Override
-	public void onSaveTeam(List<String> selectedBugemonIds, String teamName) {
-		List<BugemonDTO> members = setupTeamMembers(selectedBugemonIds);
-		TeamDTO team = new TeamDTO(-1, teamName, members);
-		this.saveTeam(team);
-	}
 	/**
 	 * Saves the team to the database.
 	 *
@@ -200,39 +239,5 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 		if (!success) {
 			this.view.showInvalidSaveAlert("Tu as déjà une équipe avec ce nom!");
 		}
-	}
-
-    /**
-	 * Transforms the list of bugemon ids to a list of BugemonDTO objects
-	 *
-     * @param selectedBugemonIds the list of bugemon ids
-     * @return the list of BugemonDTO
-     */
-	private List<BugemonDTO> setupTeamMembers(List<String> selectedBugemonIds) {
-		List<BugemonDTO> members = new ArrayList<>();
-		List<BugemonSpeciesDTO> allSpecies = this.getAllSpecies();
-		for (String bugemonId : selectedBugemonIds) {
-			for (BugemonSpeciesDTO species : allSpecies){
-				if (bugemonId.equals(species.id())){
-					members.add(new BugemonDTO(species));
-				}
-			}
-		}
-		return members;
-	}
-
-	/**
-	 * Returns the list of all the Bugemon species.
-	 *
-	 * @return A list of all the species of Bugemon
-	 */
-	@Override
-	public List<BugemonSpeciesDTO> getAllSpecies(){
-		Serializable message = this.clientController.getData(new GetAllBugemonSpeciesRequest());
-
-		if (message instanceof BugemonSpeciesResponse speciesMessage){
-			return speciesMessage.getSpecies();
-		}
-		return null;
 	}
 }

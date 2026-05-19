@@ -1,16 +1,15 @@
 package ulb.repository.json.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import java.util.List;
-import java.util.ArrayList;
-
+import ulb.exceptions.LoadException;
+import ulb.model.ability.AbilitySet;
 import ulb.model.bugemon.BugemonSpecies;
 import ulb.model.bugemon.Stats;
 import ulb.model.type.Type;
-import ulb.model.ability.AbilitySet;
-
 import ulb.repository.AbilityRepository;
-import ulb.exceptions.LoadException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Parser for Bugemon species
@@ -33,7 +32,7 @@ public class BugemonSpeciesJsonParser {
 	public Iterable<BugemonSpecies> parseList(JsonNode node) throws LoadException {
 		List<BugemonSpecies> res = new ArrayList<>();
 
-		for (JsonNode speciesNode: node) {
+		for (JsonNode speciesNode : node) {
 			BugemonSpecies species = parseOne(speciesNode);
 			res.add(species);
 		}

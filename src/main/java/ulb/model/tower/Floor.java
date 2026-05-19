@@ -1,10 +1,10 @@
 package ulb.model.tower;
 
+import ulb.exceptions.EntityNotFoundException;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import ulb.exceptions.EntityNotFoundException;
 
 public class Floor {
 
@@ -36,15 +36,7 @@ public class Floor {
 		Room room5 = new Room(5, RoomType.BATTLE);
 		Room room6 = new Room(6, RoomType.REWARD);
 		Room room7 = new Room(7, RoomType.BOSS);
-		List<Room> roomList = Arrays.asList(
-			room1,
-			room2,
-			room3,
-			room4,
-			room5,
-			room6,
-			room7
-		);
+		List<Room> roomList = Arrays.asList(room1, room2, room3, room4, room5, room6, room7);
 		rooms.addAll(roomList);
 	}
 
@@ -68,7 +60,7 @@ public class Floor {
 		}
 	}
 
-	public Room getRoomById(int roomId) throws EntityNotFoundException{
+	public Room getRoomById(int roomId) throws EntityNotFoundException {
 		for (Room room : rooms) {
 			if (room.getId() == roomId) {
 				return room;
@@ -118,8 +110,8 @@ public class Floor {
 	}
 
 	public void setRoomsCompleted(List<Integer> completedRoomsId) {
-		for (int completedRoomId: completedRoomsId){
-			this.rooms.get(completedRoomId-1).setRoomCompleted(true);
+		for (int completedRoomId : completedRoomsId) {
+			this.rooms.get(completedRoomId - 1).setRoomCompleted(true);
 		}
 	}
 }

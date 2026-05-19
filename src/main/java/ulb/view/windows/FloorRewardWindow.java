@@ -27,29 +27,29 @@ public class FloorRewardWindow {
 
 
 	@FXML
-	private void objectReward(){
+	private void objectReward() {
 		if (viewListener != null) {
 			viewListener.onObjectReward();
 		}
 	}
 
 	@FXML
-	private void newAttackReward(){
+	private void newAttackReward() {
 		if (viewListener != null) {
 			viewListener.onChooseAttackReward();
 		}
 	}
 
 	@FXML
-	private void statReward(){
+	private void statReward() {
 		if (viewListener != null) {
 			viewListener.onStatReward();
 		}
 	}
 
-    public interface ViewListener {
-        void onObjectReward();
-        void onChooseAttackReward();
-        void onStatReward();
-    }
+	public interface ViewListener {
+		void onObjectReward();
+		void onChooseAttackReward();
+		void onStatReward();
+	}
 }

@@ -1,19 +1,9 @@
 package ulb.server;
 
-import ulb.exceptions.DataAccessException;
-import ulb.exceptions.EntityNotFoundException;
-import ulb.exceptions.GameException;
-import ulb.exceptions.InvalidCredentialsException;
-import ulb.exceptions.LoadException;
-import ulb.exceptions.UserAlreadyExistsException;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.DTO.player.PlayerRegisterDTO;
+import ulb.exceptions.*;
 import ulb.mapper.bugemon.BugemonMapper;
 import ulb.mapper.player.PlayerMapper;
 import ulb.model.Player;
@@ -24,57 +14,41 @@ import ulb.model.item.Inventory;
 import ulb.model.team.OpponentTeamGenerator;
 import ulb.model.team.Team;
 import ulb.model.tower.towerManager.TowerManager;
-import ulb.service.AccountService;
-import ulb.service.BugemonService;
-import ulb.service.InventoryService;
-import ulb.service.ItemService;
-import ulb.service.MultiBattleService;
-import ulb.service.TeamService;
-import ulb.service.TowerSaveService;
+import ulb.service.*;
 import ulb.service.strategy.AI;
 import ulb.service.strategy.StrategyRandom;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 public class SetupHandler {
-    ClientHandler clientHandler;
-    private final AccountService accountService;
-    private final ItemService itemService;
-    private final InventoryService inventoryService;
-    private final BugemonService bugemonService;
+	private final AccountService accountService;
+	private final ItemService itemService;
+	private final InventoryService inventoryService;
+	private final BugemonService bugemonService;
 	private final TeamService teamService;
 	private final TowerSaveService towerSaveService;
 	private final MultiBattleService multiBattleService;
+	ClientHandler clientHandler;
 
-    public SetupHandler(ClientHandler clientHandler, AccountService accountService, ItemService itemService, InventoryService inventoryService, BugemonService bugemonService, TeamService teamService, TowerSaveService towerSaveService, MultiBattleService multiBattleService) {
-        this.clientHandler = clientHandler;
-        this.accountService = accountService;
-        this.itemService = itemService;
-        this.inventoryService = inventoryService;
-        this.bugemonService = bugemonService;
+	public SetupHandler(ClientHandler clientHandler, AccountService accountService, ItemService itemService,
+						InventoryService inventoryService, BugemonService bugemonService, TeamService teamService,
+						TowerSaveService towerSaveService, MultiBattleService multiBattleService) {
+		this.clientHandler = clientHandler;
+		this.accountService = accountService;
+		this.itemService = itemService;
+		this.inventoryService = inventoryService;
+		this.bugemonService = bugemonService;
 		this.teamService = teamService;
 		this.towerSaveService = towerSaveService;
 		this.multiBattleService = multiBattleService;
-    }
-
-
-    private Player buildPlayer(PlayerRegisterDTO dto, boolean isLogin) throws LoadException, EntityNotFoundException {
-        String username = dto.username();
-
-        Inventory inventory;
-		int userId = accountService.getUserId(username);
-        if (isLogin) {
-            inventory = inventoryService.getInventoryFromDatabase(userId);
-        } else {
-            inventory = itemService.createStarterInventory();
-            inventoryService.insertInventory(inventory, userId);
-        }
-
-        return PlayerMapper.toEntity(dto, inventory, userId);
-    }
+	}
 
 	public void setupMultiBattle(PlayerDTO opponent, List<BugemonDTO> bugemons) throws DataAccessException {
 		Player player = clientHandler.getPlayer();
 
-		if (player.getUserId().isEmpty()){
+		if (player.getUserId().isEmpty()) {
 			clientHandler.sendErrorMessage("The player is not register");
 			return;
 		}
@@ -82,14 +56,15 @@ public class SetupHandler {
 		Team team = makeTeam(bugemons);
 		clientHandler.setTeam(team);
 
-		MultiBattleSession battle = this.multiBattleService.getMultiBattle(player.getUserId().get(), opponent.getUserId());
+		MultiBattleSession battle = this.multiBattleService.getMultiBattle(player.getUserId().get(),
+				opponent.getUserId());
 		battle.getParticipant(player.getUserId().get()).setTeam(team);
 
-		try{
+		try {
 			if (battle.isReady()) {
 				battle.start(accountService);
 			}
-		} catch (GameException e){
+		} catch (GameException e) {
 			clientHandler.sendErrorMessage("fail to start the game : " + e.getMessage());
 			return;
 		}
@@ -105,7 +80,7 @@ public class SetupHandler {
 	 */
 	private static Team makeTeam(List<BugemonDTO> bugemons) throws DataAccessException {
 		List<Bugemon> entities = new ArrayList<>();
-		for (BugemonDTO dto: bugemons) {
+		for (BugemonDTO dto : bugemons) {
 			Bugemon entity = BugemonMapper.toEntity(dto);
 			entities.add(entity);
 		}
@@ -113,43 +88,53 @@ public class SetupHandler {
 		return new Team(entities);
 	}
 
-	public void registerPlayer(PlayerRegisterDTO playerRegisterDTO, boolean isLogin) throws DataAccessException{
+	public void registerPlayer(PlayerRegisterDTO playerRegisterDTO, boolean isLogin) throws DataAccessException {
 		String username = playerRegisterDTO.username();
 		String password = playerRegisterDTO.password();
 
 		try {
 			if (isLogin) {
 				accountService.login(username, password);
-			}
-			else {
+			} else {
 				accountService.register(username, password);
 			}
 
 			Player player = buildPlayer(playerRegisterDTO, isLogin);
 			clientHandler.setPlayer(player);
 			clientHandler.sendSuccessMessage();
-		}
-		catch (UserAlreadyExistsException e) {
+		} catch (UserAlreadyExistsException e) {
 			clientHandler.sendErrorMessage("Username already taken");
-		}
-		catch (EntityNotFoundException e) {
+		} catch (EntityNotFoundException e) {
 			clientHandler.sendErrorMessage("User not found");
-		}
-		catch (InvalidCredentialsException e) {
+		} catch (InvalidCredentialsException e) {
 			clientHandler.sendErrorMessage("Wrong password");
-		}
-		catch (LoadException e) {
+		} catch (LoadException e) {
 			clientHandler.sendErrorMessage("Internal server error");
 		}
 	}
 
-    public void setupNormalMode() throws LoadException {
-        Player player = clientHandler.getPlayer();
-        Battle battle = clientHandler.getBattle();
-        TowerManager towerManager = clientHandler.getTowerManager();
-        boolean isGameTower = clientHandler.isGameTower();
+	private Player buildPlayer(PlayerRegisterDTO dto, boolean isLogin) throws LoadException, EntityNotFoundException {
+		String username = dto.username();
 
-		if (player == null){
+		Inventory inventory;
+		int userId = accountService.getUserId(username);
+		if (isLogin) {
+			inventory = inventoryService.getInventoryFromDatabase(userId);
+		} else {
+			inventory = itemService.createStarterInventory();
+			inventoryService.insertInventory(inventory, userId);
+		}
+
+		return PlayerMapper.toEntity(dto, inventory, userId);
+	}
+
+	public void setupNormalMode() throws LoadException {
+		Player player = clientHandler.getPlayer();
+		Battle battle = clientHandler.getBattle();
+		TowerManager towerManager = clientHandler.getTowerManager();
+		boolean isGameTower = clientHandler.isGameTower();
+
+		if (player == null) {
 			clientHandler.sendErrorMessage("Player not initialized !");
 			return;
 		}
@@ -162,7 +147,7 @@ public class SetupHandler {
 
 		try {
 			teamB = OpponentTeamGenerator.generateRandomOpponentTeam(player.getTeam(), bugemonService);
-		} catch (Exception e){
+		} catch (Exception e) {
 			clientHandler.sendErrorMessage(e.getMessage());
 			return;
 		}
@@ -171,10 +156,10 @@ public class SetupHandler {
 		// resets the inventory for each battle
 		player.setInventory(starterInventory);
 		inventoryService.updateInventory(starterInventory, player);
-        battle = new Battle(player.getTeam(), teamB, player, new Player("PlayerB", -1, starterInventory));
+		battle = new Battle(player.getTeam(), teamB, player, new Player("PlayerB", -1, starterInventory));
 		clientHandler.setBattle(battle);
 		clientHandler.setTeamLabel(Battle.ParticipantLabel.TEAM_A);
-        clientHandler.setGameMode(false);
+		clientHandler.setGameMode(false);
 
 		Thread opponentBot = new AI(battle, new StrategyRandom());
 		opponentBot.start();
@@ -183,11 +168,11 @@ public class SetupHandler {
 		clientHandler.sendSuccessMessage();
 	}
 
-	public void setupTeam(List<BugemonDTO> bugemons) throws DataAccessException{
+	public void setupTeam(List<BugemonDTO> bugemons) throws DataAccessException {
 		Team team = new Team();
 
-		for (BugemonDTO bugemonDTO : bugemons){
-			if (!team.add(BugemonMapper.toEntity(bugemonDTO))){
+		for (BugemonDTO bugemonDTO : bugemons) {
+			if (!team.add(BugemonMapper.toEntity(bugemonDTO))) {
 				clientHandler.sendErrorMessage("Invalid Team");
 			}
 		}
@@ -196,14 +181,14 @@ public class SetupHandler {
 		clientHandler.sendSuccessMessage();
 	}
 
-    public void setupTowerMode(boolean isNewTower) throws DataAccessException{
-        Player player = clientHandler.getPlayer();
+	public void setupTowerMode(boolean isNewTower) throws DataAccessException {
+		Player player = clientHandler.getPlayer();
 
-		if (!isNewTower){
-			
+		if (!isNewTower) {
+
 			try {
 				Optional<Team> playerTeam = teamService.getTowerTeam(player);
-				if (playerTeam.isPresent()){
+				if (playerTeam.isPresent()) {
 					player.setTeam(playerTeam.get());
 				}
 			} catch (Exception e) {
@@ -216,15 +201,16 @@ public class SetupHandler {
 			inventoryService.updateInventory(starterInventory, player);
 		}
 
-        Battle battle = clientHandler.getBattle();
-        TowerManager towerManager = clientHandler.getTowerManager();
-        boolean isGameTower = clientHandler.isGameTower();
-		
+		Battle battle = clientHandler.getBattle();
+		TowerManager towerManager = clientHandler.getTowerManager();
+		boolean isGameTower = clientHandler.isGameTower();
+
 		if (battle != null || towerManager != null || isGameTower) {
 			clientHandler.resetGameSessionState();
 		}
 		try {
-			towerManager = new TowerManager(player, isNewTower, bugemonService, itemService, teamService, towerSaveService);
+			towerManager = new TowerManager(player, isNewTower, bugemonService, itemService, teamService,
+					towerSaveService);
 		} catch (Exception e) {
 			clientHandler.sendErrorMessage("The tower cannot be initialized");
 			return;

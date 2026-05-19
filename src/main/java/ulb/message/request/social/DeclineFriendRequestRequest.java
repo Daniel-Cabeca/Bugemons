@@ -6,16 +6,16 @@ import ulb.message.request.Request;
 import ulb.server.ServerMessageHandler;
 
 public class DeclineFriendRequestRequest implements Request {
-    private final String receiverUsername;
-    private final String senderUsername;
+	private final String receiverUsername;
+	private final String senderUsername;
 
-    public DeclineFriendRequestRequest(String receiverUsername, String senderUsername) {
-        this.receiverUsername = receiverUsername;
-        this.senderUsername = senderUsername;
-    }
+	public DeclineFriendRequestRequest(String receiverUsername, String senderUsername) {
+		this.receiverUsername = receiverUsername;
+		this.senderUsername = senderUsername;
+	}
 
-    @Override
-    public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
-        handler.declineFriendRequest(senderUsername, receiverUsername );
-    }
+	@Override
+	public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException {
+		handler.declineFriendRequest(senderUsername, receiverUsername);
+	}
 }

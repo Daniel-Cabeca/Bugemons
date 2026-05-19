@@ -15,74 +15,74 @@ import java.util.List;
 
 public class LoadTeamPanel {
 
-    @FXML
-    public Accordion savedTeamsAccordion;
+	@FXML
+	public Accordion savedTeamsAccordion;
 
-    private ViewListener viewListener;
-    private TeamDTO selectedTeam;
+	private ViewListener viewListener;
+	private TeamDTO selectedTeam;
 
-    public void setViewListener(ViewListener viewListener) { this.viewListener = viewListener; }
+	public void setViewListener(ViewListener viewListener) { this.viewListener = viewListener; }
 
-    /**
-     * Displays the player's saved teams in the accordion
-     *
-     * @param savedTeams the player's saved teams
-     */
-    public void populateSavedTeams(List<TeamDTO> savedTeams) {
+	/**
+	 * Displays the player's saved teams in the accordion
+	 *
+	 * @param savedTeams the player's saved teams
+	 */
+	public void populateSavedTeams(List<TeamDTO> savedTeams) {
 		savedTeamsAccordion.getPanes().clear();
-        for (TeamDTO team : savedTeams) {
-            TitledPane pane = createTeamPane(team);
-            savedTeamsAccordion.getPanes().add(pane);
-            pane.setOnMouseClicked(e -> selectedTeam = team);
-        }
-    }
+		for (TeamDTO team : savedTeams) {
+			TitledPane pane = createTeamPane(team);
+			savedTeamsAccordion.getPanes().add(pane);
+			pane.setOnMouseClicked(e -> selectedTeam = team);
+		}
+	}
 
-    /**
-     * Creates a TitledPane for a team with the name as title and member bugemon names and sprites as content
-     *
-     * @param team the team to display
-     * @return the constructed TitledPane
-     */
-    private TitledPane createTeamPane(TeamDTO team) {
-        HBox teamBugemonsBox = new HBox(12);
-        for (BugemonDTO bugemon : team.members()) {
-            VBox cell = new VBox(4);
-            Image image = new Image(bugemon.getSpritePath());
-            ImageView sprite = new ImageView(image);
-            sprite.setFitWidth(64);
-            sprite.setFitHeight(64);
-            sprite.setPreserveRatio(true);
+	/**
+	 * Creates a TitledPane for a team with the name as title and member bugemon names and sprites as content
+	 *
+	 * @param team the team to display
+	 * @return the constructed TitledPane
+	 */
+	private TitledPane createTeamPane(TeamDTO team) {
+		HBox teamBugemonsBox = new HBox(12);
+		for (BugemonDTO bugemon : team.members()) {
+			VBox cell = new VBox(4);
+			Image image = new Image(bugemon.getSpritePath());
+			ImageView sprite = new ImageView(image);
+			sprite.setFitWidth(64);
+			sprite.setFitHeight(64);
+			sprite.setPreserveRatio(true);
 
-            Label name = new Label(bugemon.getName());
+			Label name = new Label(bugemon.getName());
 
-            cell.getChildren().addAll(sprite, name);
-            teamBugemonsBox.getChildren().add(cell);
-        }
-        return new TitledPane(team.teamName(), teamBugemonsBox);
-    }
+			cell.getChildren().addAll(sprite, name);
+			teamBugemonsBox.getChildren().add(cell);
+		}
+		return new TitledPane(team.teamName(), teamBugemonsBox);
+	}
 
 
-    /**
-     * Handles clicking the load button
-     */
-    @FXML
-    public void handleLoadTeam() {
-        if (selectedTeam != null) {
-            viewListener.onLoadTeam(selectedTeam);
-        }
-    }
+	/**
+	 * Handles clicking the load button
+	 */
+	@FXML
+	public void handleLoadTeam() {
+		if (selectedTeam != null) {
+			viewListener.onLoadTeam(selectedTeam);
+		}
+	}
 
-    /**
-     * Handles clicking the return button
-     */
-    @FXML
-    public void handleReturn() {
-        viewListener.onReturn();
-    }
+	/**
+	 * Handles clicking the return button
+	 */
+	@FXML
+	public void handleReturn() {
+		viewListener.onReturn();
+	}
 
-    public interface ViewListener {
-        void onLoadTeam(TeamDTO selectedTeam);
-        void onReturn();
-    }
+	public interface ViewListener {
+		void onLoadTeam(TeamDTO selectedTeam);
+		void onReturn();
+	}
 
 }

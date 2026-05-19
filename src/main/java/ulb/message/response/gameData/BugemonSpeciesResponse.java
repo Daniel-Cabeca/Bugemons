@@ -1,18 +1,18 @@
 package ulb.message.response.gameData;
 
-import java.util.List;
-
 import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.message.response.Response;
 
+import java.util.List;
+
 public class BugemonSpeciesResponse extends Response {
-    private final List<BugemonSpeciesDTO> species;
+	private final List<BugemonSpeciesDTO> species;
 
-    public BugemonSpeciesResponse(List<BugemonSpeciesDTO> species){
-        this.species = species;
-    }
+	public BugemonSpeciesResponse(List<BugemonSpeciesDTO> species) {
+		this.species = species;
+	}
 
-    public List<BugemonSpeciesDTO> getSpecies(){
-        return this.species;
-    }
+	public List<BugemonSpeciesDTO> getSpecies() {
+		return this.species;
+	}
 }

@@ -1,8 +1,8 @@
 package ulb.repository.database;
 
+import ulb.exceptions.LoadException;
 import ulb.model.chat.ChatMessage;
 import ulb.repository.ChatRepository;
-import ulb.exceptions.LoadException;
 import ulb.repository.database.sql.Database;
 
 import java.sql.PreparedStatement;
@@ -19,10 +19,8 @@ import java.util.logging.Logger;
  * Repository for chat conversations stored in the database.
  */
 public class ChatDatabaseRepository implements ChatRepository {
-	private static final Logger LOGGER = Logger.getLogger(ChatDatabaseRepository.class.getName());
-
 	public static final int MAX_MESSAGES = 20;
-
+	private static final Logger LOGGER = Logger.getLogger(ChatDatabaseRepository.class.getName());
 	private final Database database;
 
 	public ChatDatabaseRepository(Database database) {
@@ -30,11 +28,12 @@ public class ChatDatabaseRepository implements ChatRepository {
 	}
 
 	/**
-	* {@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void insert(ChatMessage message) throws LoadException {
-		String sql = "INSERT INTO chat_messages (sender_username, receiver_username, content, sent_at) VALUES (?, ?, ?, ?)";
+		String sql = "INSERT INTO chat_messages (sender_username, receiver_username, content, sent_at) VALUES (?, ?, " +
+				"?, ?)";
 		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
 			stmt.setString(1, message.getSenderUsername());
 			stmt.setString(2, message.getReceiverUsername());
@@ -48,8 +47,8 @@ public class ChatDatabaseRepository implements ChatRepository {
 	}
 
 	/**
-	* {@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public List<ChatMessage> getMessages(String usernameA, String usernameB) throws LoadException {
 		String sql = """
@@ -76,15 +75,15 @@ public class ChatDatabaseRepository implements ChatRepository {
 	}
 
 	/**
-	* {@inheritDoc}
-	*/
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int countMessages(String usernameA, String usernameB) {
 		String sql = """
-            SELECT COUNT(*) FROM chat_messages
-            WHERE (sender_username = ? AND receiver_username = ?)
-            OR (sender_username = ? AND receiver_username = ?)
-            """;
+				SELECT COUNT(*) FROM chat_messages
+				WHERE (sender_username = ? AND receiver_username = ?)
+				OR (sender_username = ? AND receiver_username = ?)
+				""";
 		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
 			this.setMessagesParameters(stmt, usernameA, usernameB, 1);
 			ResultSet rs = stmt.executeQuery();
@@ -94,6 +93,22 @@ public class ChatDatabaseRepository implements ChatRepository {
 			LOGGER.log(Level.SEVERE, "Failed to count messages between " + usernameA + " and " + usernameB + ".");
 			return 0;
 		}
+	}
+
+	/**
+	 * Creates a ChatMessage instance from an SQL result.
+	 *
+	 * @param resultSet The SQL result
+	 * @return The ChatMessage instance
+	 * @throws SQLException If an SQL error occurs
+	 */
+	private ChatMessage mapRow(ResultSet resultSet) throws SQLException {
+		long id = resultSet.getLong("id");
+		String senderUsername = resultSet.getString("sender_username");
+		String receiverUsername = resultSet.getString("receiver_username");
+		String content = resultSet.getString("content");
+		LocalDateTime sentAt = LocalDateTime.parse(resultSet.getString("sent_at"));
+		return new ChatMessage(id, senderUsername, receiverUsername, content, sentAt);
 	}
 
 	/**
@@ -142,21 +157,5 @@ public class ChatDatabaseRepository implements ChatRepository {
 		stmt.setString(startIndex + 1, usernameB);
 		stmt.setString(startIndex + 2, usernameB);
 		stmt.setString(startIndex + 3, usernameA);
-	}
-
-	/**
-	 * Creates a ChatMessage instance from an SQL result.
-	 *
-	 * @param resultSet The SQL result
-	 * @return The ChatMessage instance
-	 * @throws SQLException If an SQL error occurs
-	 */
-	private ChatMessage mapRow(ResultSet resultSet) throws SQLException {
-		long id = resultSet.getLong("id");
-		String senderUsername = resultSet.getString("sender_username");
-		String receiverUsername = resultSet.getString("receiver_username");
-		String content = resultSet.getString("content");
-		LocalDateTime sentAt = LocalDateTime.parse(resultSet.getString("sent_at"));
-		return new ChatMessage(id, senderUsername, receiverUsername, content, sentAt);
 	}
 }

@@ -4,30 +4,33 @@ import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-
-import java.io.InputStream;
-import java.io.Serializable;
-import java.util.List;
-import java.util.logging.Logger;
-
+import ulb.DTO.ability.AbilityDTO;
+import ulb.DTO.bugemon.BugemonDTO;
+import ulb.DTO.player.PlayerDTO;
+import ulb.DTO.reward.RewardDTO;
 import ulb.communication.SocketClient;
 import ulb.controller.windows.*;
 import ulb.controller.windows.Battle.BattleEndController;
 import ulb.controller.windows.Battle.BattleWindowController;
 import ulb.exceptions.CommunicationException;
+import ulb.message.request.Request;
+import ulb.message.request.gameActions.ChooseLevelUpRewardRequest;
+import ulb.message.request.gameInfo.GetBattleEndInfoRequest;
+import ulb.message.request.gameInfo.GetNextWindowRequest;
+import ulb.message.request.playerInfo.GetPlayerRequest;
+import ulb.message.request.setup.SetUpTeamRequest;
+import ulb.message.response.Response;
+import ulb.message.response.StatusResponse;
+import ulb.message.response.gameInfo.BattleEndInfoResponse;
+import ulb.message.response.gameInfo.NextWindowResponse;
+import ulb.message.response.gameInfo.WindowType;
+import ulb.message.response.playerInfo.PlayerResponse;
 import ulb.model.GameMode;
-import ulb.message.request.*;
-import ulb.message.response.*;
-import ulb.message.request.gameActions.*;
-import ulb.message.request.gameInfo.*;
-import ulb.message.request.playerInfo.*;
-import ulb.message.request.setup.*;
-import ulb.message.response.gameInfo.*;
-import ulb.message.response.playerInfo.*;
-import ulb.DTO.ability.AbilityDTO;
-import ulb.DTO.bugemon.BugemonDTO;
-import ulb.DTO.player.PlayerDTO;
-import ulb.DTO.reward.RewardDTO;
+
+import java.io.InputStream;
+import java.io.Serializable;
+import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Client-side application controller coordinating server messaging.
@@ -134,42 +137,8 @@ public class ClientController extends Application {
 		}
 	}
 
-	/**
-	 * Sends data to the server and returns whether the request was accepted.
-	 *
-	 * @param request The request sent to the server
-	 * @return True if the request was accepted by the server
-	 */
-	public boolean postData(Request request){
-		Response response = this.client.getResponse(request);
-		return response.isSuccess();
-	}
-
-	/**
-	 * Sends a request to the server and returns the response.
-	 *
-	 * @param request The message sent to the server
-	 * @return The response received from the server
-	 */
-	public Response getData(Request request){
-		return this.client.getResponse(request);
-	}
-
 	public PlayerDTO getPlayer() {
 		return this.player;
-	}
-
-	/**
-	 * Retrieves a player DTO by username from the server.
-	 *
-	 * @param username Username to retrieve
-	 * @return Matching player DTO or null if unavailable
-	 */
-	public PlayerDTO getPlayer(String username) {
-		if (getData(new GetPlayerRequest(username)) instanceof PlayerResponse msg) {
-			return msg.getPlayer();
-		}
-		return null;
 	}
 
 	/**
@@ -189,59 +158,61 @@ public class ClientController extends Application {
 	}
 
 	/**
+	 * Retrieves a player DTO by username from the server.
+	 *
+	 * @param username Username to retrieve
+	 * @return Matching player DTO or null if unavailable
+	 */
+	public PlayerDTO getPlayer(String username) {
+		if (getData(new GetPlayerRequest(username)) instanceof PlayerResponse msg) {
+			return msg.getPlayer();
+		}
+		return null;
+	}
+
+	/**
+	 * Sends a request to the server and returns the response.
+	 *
+	 * @param request The message sent to the server
+	 * @return The response received from the server
+	 */
+	public Response getData(Request request) {
+		return this.client.getResponse(request);
+	}
+
+	/**
 	 * Sets the current game mode.
 	 *
 	 * @param gameMode The game mode to set
 	 */
-	public void setGameMode(GameMode gameMode){this.gameMode = gameMode;}
+	public void setGameMode(GameMode gameMode) { this.gameMode = gameMode; }
 
 	/**
-	 * Switches to the next room window.
+	 * Submits the chosen level-up reward to the server and goes to the next window.
+	 *
+	 * @param reward The reward chosen by the player
 	 */
-	private void switchToNextRoomWindow(){
-		this.nextRoomController.show();
-	}
-
-	/**
-	 * Switches to the battle window according to game mode (and tower floor and room number if Tower mode).
-	 */
-	private void switchToBattleWindow() {
-		this.battleWindowController.setPlayer(player);
-		this.battleWindowController.setGameMode(gameMode);
-		this.battleWindowController.show();
-	}
-
-	/**
-	 * Switches to the battle end window with battle result.
-	 */
-	private void switchToBattleEndWindow(){
-		Serializable message = getData(new GetBattleEndInfoRequest());
-		boolean victory;
-		int totalXp;
-		String opponent;
-		boolean multiplayerBattle;
-		if (message instanceof BattleEndInfoResponse battleInfo){
-			victory = battleInfo.isVictory();
-			totalXp = battleInfo.getTotalXp();
-			multiplayerBattle = battleInfo.isMultiplayerBattle();
-			if (multiplayerBattle)
-				opponent = this.teamController.getOpponent().getUsername();
-			else {
-				opponent = "BotPlayer";
-			}
-
-		} else {
-			return;
+	public void chooseReward(RewardDTO reward) {
+		if (postData(new ChooseLevelUpRewardRequest(reward))) {
+			nextRoom();
 		}
+	}
 
-		battleEndController.show(victory, totalXp, opponent, multiplayerBattle);
-		this.teamController.resetOpponent();
+	/**
+	 * Sends data to the server and returns whether the request was accepted.
+	 *
+	 * @param request The request sent to the server
+	 * @return True if the request was accepted by the server
+	 */
+	public boolean postData(Request request) {
+		Response response = this.client.getResponse(request);
+		return response.isSuccess();
 	}
 
 	/**
 	 * Switches to the next window according to info gotten from the server.
 	 */
-	public void nextRoom(){
+	public void nextRoom() {
 		WindowType nextWindow = this.getWindowType();
 		if (nextWindow == null) {
 			LOGGER.warning("Impossible to determine the next window from the server.");
@@ -283,10 +254,10 @@ public class ClientController extends Application {
 	 *
 	 * @return The next window type, or null if unavailable
 	 */
-	public WindowType getWindowType(){
+	public WindowType getWindowType() {
 		Serializable message = getData(new GetNextWindowRequest());
 
-		if (message instanceof NextWindowResponse nextWindow){
+		if (message instanceof NextWindowResponse nextWindow) {
 			return nextWindow.getNextWindow();
 		} else if (message instanceof StatusResponse errorMessage && errorMessage.isFailure()) {
 			LOGGER.warning("Failed to get next window: " + errorMessage.getMessage());
@@ -296,14 +267,45 @@ public class ClientController extends Application {
 	}
 
 	/**
-	 * Submits the chosen level-up reward to the server and goes to the next window.
-	 *
-	 * @param reward The reward chosen by the player
+	 * Switches to the next room window.
 	 */
-	public void chooseReward(RewardDTO reward) {
-		if (postData(new ChooseLevelUpRewardRequest(reward))) {
-			nextRoom();
+	private void switchToNextRoomWindow() {
+		this.nextRoomController.show();
+	}
+
+	/**
+	 * Switches to the battle window according to game mode (and tower floor and room number if Tower mode).
+	 */
+	private void switchToBattleWindow() {
+		this.battleWindowController.setPlayer(player);
+		this.battleWindowController.setGameMode(gameMode);
+		this.battleWindowController.show();
+	}
+
+	/**
+	 * Switches to the battle end window with battle result.
+	 */
+	private void switchToBattleEndWindow() {
+		Serializable message = getData(new GetBattleEndInfoRequest());
+		boolean victory;
+		int totalXp;
+		String opponent;
+		boolean multiplayerBattle;
+		if (message instanceof BattleEndInfoResponse battleInfo) {
+			victory = battleInfo.isVictory();
+			totalXp = battleInfo.getTotalXp();
+			multiplayerBattle = battleInfo.isMultiplayerBattle();
+			if (multiplayerBattle) opponent = this.teamController.getOpponent().getUsername();
+			else {
+				opponent = "BotPlayer";
+			}
+
+		} else {
+			return;
 		}
+
+		battleEndController.show(victory, totalXp, opponent, multiplayerBattle);
+		this.teamController.resetOpponent();
 	}
 
 	// Floor Reward Listener
@@ -375,7 +377,7 @@ public class ClientController extends Application {
 	 */
 	public void setupTeamAndShowConfirmTeam(List<BugemonDTO> teamDTO) {
 		this.player.setTeam(teamDTO);
-		if (!this.postData(new SetUpTeamRequest(teamDTO))){
+		if (!this.postData(new SetUpTeamRequest(teamDTO))) {
 			return;
 		}
 		this.confirmTeamController.setGameMode(this.gameMode);

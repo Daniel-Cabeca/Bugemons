@@ -10,24 +10,24 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class ChatService {
-    private final ChatRepository repository;
-    private final InappropriateWordFilter inappropriateWordFilter;
+	private final ChatRepository repository;
+	private final InappropriateWordFilter inappropriateWordFilter;
 
-    public ChatService(ChatRepository repository) {
-        this(repository, new InappropriateWordFilter());
-    }
+	public ChatService(ChatRepository repository) {
+		this(repository, new InappropriateWordFilter());
+	}
 
-    public ChatService(ChatRepository repository, InappropriateWordFilter inappropriateWordFilter) {
-        this.repository = repository;
-        this.inappropriateWordFilter = inappropriateWordFilter;
-    }
+	public ChatService(ChatRepository repository, InappropriateWordFilter inappropriateWordFilter) {
+		this.repository = repository;
+		this.inappropriateWordFilter = inappropriateWordFilter;
+	}
 
-    public void sendMessage(String sender, String receiver, String content) throws LoadException {
-        String censoredContent = this.inappropriateWordFilter.censor(content);
-        repository.insert(new ChatMessage(sender, receiver, censoredContent, LocalDateTime.now()));
-    }
+	public void sendMessage(String sender, String receiver, String content) throws LoadException {
+		String censoredContent = this.inappropriateWordFilter.censor(content);
+		repository.insert(new ChatMessage(sender, receiver, censoredContent, LocalDateTime.now()));
+	}
 
-    public List<ChatMessage> getMessages(String userA, String userB) throws LoadException {
-        return repository.getMessages(userA, userB);
-    }
+	public List<ChatMessage> getMessages(String userA, String userB) throws LoadException {
+		return repository.getMessages(userA, userB);
+	}
 }

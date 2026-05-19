@@ -1,10 +1,10 @@
 package ulb.model.effect;
 
-import java.util.List;
-import java.util.ArrayList;
-
 import ulb.model.battle.Battle;
 import ulb.model.battle.Battle.ParticipantLabel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EffectList {
 	private final List<Effect> effects = new ArrayList<>();
@@ -27,13 +27,13 @@ public class EffectList {
 	 * Applies effects to the chosen team
 	 *
 	 * @param battle The current battle
-	 * @param team	The chosen team
+	 * @param team The chosen team
 	 */
 	public void apply(Battle battle, ParticipantLabel team) {
-		for (Effect effect: this.effects) {
+		for (Effect effect : this.effects) {
 			effect.apply(battle, team);
 		}
 	}
 
-	public List<Effect> getEffects() {return this.effects;}
+	public List<Effect> getEffects() { return this.effects; }
 }

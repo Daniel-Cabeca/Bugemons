@@ -1,9 +1,8 @@
 package ulb.model.item;
 
 import ulb.model.HasId;
-import ulb.model.effect.Effect;
 import ulb.model.battle.Battle;
-import ulb.model.effect.EffectTarget;
+import ulb.model.effect.Effect;
 
 /**
  * Consumable item with an associated battle effect.
@@ -56,7 +55,7 @@ public class Item implements HasId {
 	 * @param battle Current battle
 	 * @param team Acting participant label
 	 */
-	public void use(Battle battle, Battle.ParticipantLabel team){
+	public void use(Battle battle, Battle.ParticipantLabel team) {
 		this.effect.apply(battle, team);
 	}
 

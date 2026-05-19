@@ -1,19 +1,19 @@
 package ulb.message.response.playerInfo;
 
-import java.util.Map;
-
 import ulb.DTO.item.ItemDTO;
 import ulb.message.response.Response;
 
-public class PlayerInventoryResponse extends Response {
-    private final Map<ItemDTO, Integer> inventoryDTO;
+import java.util.Map;
 
-    public PlayerInventoryResponse(Map<ItemDTO, Integer> inventoryDTO) {
-        this.inventoryDTO = inventoryDTO;
-    }
-    
-     public Map<ItemDTO, Integer> getInventory() {
-        return this.inventoryDTO;
-    }
-    
+public class PlayerInventoryResponse extends Response {
+	private final Map<ItemDTO, Integer> inventoryDTO;
+
+	public PlayerInventoryResponse(Map<ItemDTO, Integer> inventoryDTO) {
+		this.inventoryDTO = inventoryDTO;
+	}
+
+	public Map<ItemDTO, Integer> getInventory() {
+		return this.inventoryDTO;
+	}
+
 }

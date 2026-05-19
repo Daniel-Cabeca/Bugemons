@@ -1,11 +1,10 @@
 package ulb.repository.mock;
 
 import ulb.exceptions.LoadException;
-
-import ulb.repository.StartingInventoryRepository;
-import ulb.repository.json.StartingInventoryJsonRepository;
-import ulb.repository.json.ItemJsonRepository;
 import ulb.model.item.Inventory;
+import ulb.repository.StartingInventoryRepository;
+import ulb.repository.json.ItemJsonRepository;
+import ulb.repository.json.StartingInventoryJsonRepository;
 
 public class StartingInventoryMockRepository implements StartingInventoryRepository {
 	private static StartingInventoryRepository inventoryRepository = null;

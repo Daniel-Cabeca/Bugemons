@@ -8,26 +8,23 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.utils.Scaling;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import ulb.DTO.bugemon.BugemonSpeciesDTO;
-
 public class CreateTeamWindow {
 
+	private final int MAX_BUGEMONS = 6;
+	private final List<String> selectedBugemonIds = new ArrayList<>();
 	@FXML
 	private VBox content;
 	@FXML
 	private GridPane availableBugemonsGrid;
 	@FXML
 	private GridPane selectedBugemonsGrid;
-
-	private final int MAX_BUGEMONS = 6;
-
-	private final List<String> selectedBugemonIds = new ArrayList<>();
 	private ViewListener viewListener;
 
 	/**
@@ -75,7 +72,7 @@ public class CreateTeamWindow {
 
 			cell.getChildren().addAll(name, sprite, checkBox);
 			availableBugemonsGrid.add(cell, col, row);
-			
+
 			col++; // Switch to the next Bugemon to show
 			if (col == 8) {
 				col = 0;
@@ -128,7 +125,7 @@ public class CreateTeamWindow {
 	private void disableAllBugemons() {
 		for (Node node : availableBugemonsGrid.getChildren()) {
 			VBox vbox = (VBox) node;
-			String bugemonName = ((Label)(vbox.getChildren().get(0))).getText();
+			String bugemonName = ((Label) (vbox.getChildren().get(0))).getText();
 			if (!selectedBugemonIds.contains(bugemonName)) {  // contains name of the bugemon
 				vbox.setDisable(true);
 			}
@@ -181,16 +178,32 @@ public class CreateTeamWindow {
 	}
 
 	/**
+	 * Shows an alert when the user tries to save/confirm a team with the wrong Bugemon number
+	 *
+	 * @param action the action (confirm or save) that triggered the alert
+	 */
+	private void showWrongBugemonNumberAlert(String action) {
+		Stage owner = (Stage) content.getScene().getWindow();
+		Alert alert = new Alert(Alert.AlertType.ERROR);
+		alert.initOwner(owner);
+		alert.setTitle("Erreur");
+		alert.setHeaderText("Équipe invalide");
+		alert.setContentText("Tu dois sélectionner entre 1 et 6 Bugémons pour " + action.toLowerCase() + " ton équipe" +
+				".");
+
+		alert.showAndWait();
+	}
+
+	/**
 	 * Displays the load team panel
 	 */
 	public void handleLoadTeam() {
 		viewListener.onLoadTeam();
 	}
 
-
-    /**
-     * Displays a dialog to input the team's name then handles team saving
-     */
+	/**
+	 * Displays a dialog to input the team's name then handles team saving
+	 */
 	public void handleSaveTeam() {
 
 		if (!selectedBugemonIds.isEmpty() && selectedBugemonIds.size() <= MAX_BUGEMONS) {
@@ -203,10 +216,8 @@ public class CreateTeamWindow {
 			dialog.setHeaderText("Donne un nom à ton équipe");
 
 			// changes the default dialog button names to be in French
-			dialog.getDialogPane().getButtonTypes().setAll(
-					new ButtonType("Valider", ButtonBar.ButtonData.OK_DONE),
-					new ButtonType("Annuler", ButtonBar.ButtonData.CANCEL_CLOSE)
-			);
+			dialog.getDialogPane().getButtonTypes().setAll(new ButtonType("Valider", ButtonBar.ButtonData.OK_DONE),
+					new ButtonType("Annuler", ButtonBar.ButtonData.CANCEL_CLOSE));
 
 			Optional<String> result = dialog.showAndWait();
 			result.ifPresent(teamName -> {
@@ -217,32 +228,16 @@ public class CreateTeamWindow {
 				viewListener.onSaveTeam(selectedBugemonIds, teamName);
 			});
 
-		}  else {
+		} else {
 			showWrongBugemonNumberAlert("sauvegarder");
 		}
 	}
 
-    /**
-	 * Shows an alert when the user tries to save/confirm a team with the wrong Bugemon number
-	 *
-     * @param action the action (confirm or save) that triggered the alert
-     */
-	private void showWrongBugemonNumberAlert(String action) {
-		Stage owner = (Stage) content.getScene().getWindow();
-		Alert alert = new Alert(Alert.AlertType.ERROR);
-		alert.initOwner(owner);
-		alert.setTitle("Erreur");
-		alert.setHeaderText("Équipe invalide");
-		alert.setContentText("Tu dois sélectionner entre 1 et 6 Bugémons pour " + action.toLowerCase() + " ton équipe.");
-
-		alert.showAndWait();
-	}
-
-    /**
+	/**
 	 * Shows an alert when the user tries to save a team with no name or with an already existing name
 	 *
-     * @param message the message to display in the alert
-     */
+	 * @param message the message to display in the alert
+	 */
 	public void showInvalidSaveAlert(String message) {
 		Stage owner = (Stage) content.getScene().getWindow();
 		Alert alert = new Alert(Alert.AlertType.ERROR);

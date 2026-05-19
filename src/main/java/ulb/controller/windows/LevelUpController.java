@@ -1,7 +1,5 @@
 package ulb.controller.windows;
 
-import java.util.List;
-
 import javafx.event.ActionEvent;
 import javafx.stage.Stage;
 import ulb.DTO.bugemon.BugemonDTO;
@@ -12,38 +10,40 @@ import ulb.message.response.gameInfo.LevelUpInfoResponse;
 import ulb.view.WindowPath;
 import ulb.view.windows.LevelUpWindow;
 
+import java.util.List;
+
 /**
  * Controller for the level up reward selection screen.
  */
 public class LevelUpController extends WindowController<LevelUpWindow> implements LevelUpWindow.ViewListener {
 
-    /**
-     * Creates the level up controller.
-     *
-     * @param stage The application stage
-     * @param clientController The client controller
-     */
-    public LevelUpController(Stage stage, ClientController clientController) {
-        super(stage, WindowPath.LEVEL_UP, clientController);
-        this.view.setViewListener(this);
-    }
+	/**
+	 * Creates the level up controller.
+	 *
+	 * @param stage The application stage
+	 * @param clientController The client controller
+	 */
+	public LevelUpController(Stage stage, ClientController clientController) {
+		super(stage, WindowPath.LEVEL_UP, clientController);
+		this.view.setViewListener(this);
+	}
 
-    /**
-     * Displays the level up screen, fetching available rewards from the server.
-     */
-    @Override
-    public void show() {
-        if (!(clientController.getData(new GetLevelUpInfoRequest()) instanceof LevelUpInfoResponse info)) return;
-        List<RewardDTO> rewards = info.getRewards();
-        if (rewards == null || rewards.isEmpty()) return;
-        BugemonDTO bugemon = rewards.get(0).bugemon();
-        view.initializeView(bugemon, rewards);
-        super.show();
-    }
+	/**
+	 * Displays the level up screen, fetching available rewards from the server.
+	 */
+	@Override
+	public void show() {
+		if (!(clientController.getData(new GetLevelUpInfoRequest()) instanceof LevelUpInfoResponse info)) return;
+		List<RewardDTO> rewards = info.getRewards();
+		if (rewards == null || rewards.isEmpty()) return;
+		BugemonDTO bugemon = rewards.get(0).bugemon();
+		view.initializeView(bugemon, rewards);
+		super.show();
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public void onRewardChosen(RewardDTO reward, ActionEvent event) {
-        clientController.chooseReward(reward);
-    }
+	/** {@inheritDoc} */
+	@Override
+	public void onRewardChosen(RewardDTO reward, ActionEvent event) {
+		clientController.chooseReward(reward);
+	}
 }

@@ -1,10 +1,6 @@
 package ulb.model.tower.towerManager;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.util.List;
-
 import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
 import ulb.model.Player;
@@ -12,42 +8,18 @@ import ulb.model.bugemon.Bugemon;
 import ulb.model.team.Team;
 import ulb.model.tower.Floor;
 import ulb.model.tower.Room;
-import  ulb.model.tower.Tower;
-import ulb.repository.database.AccountDatabaseRepository;
-import ulb.repository.database.BugemonSpeciesDatabaseRepository;
-import ulb.repository.database.ItemDatabaseRepository;
-import ulb.repository.database.TeamDatabaseRepository;
-import ulb.repository.database.TowerSaveDatabaseRepository;
+import ulb.model.tower.Tower;
+import ulb.repository.database.*;
 import ulb.repository.database.sql.DatabaseMock;
 import ulb.repository.json.ItemJsonRepository;
 import ulb.repository.json.StartingInventoryJsonRepository;
-import ulb.service.AccountService;
-import ulb.service.BugemonService;import ulb.service.ItemService;
-import ulb.service.TeamService;
-import ulb.service.TowerSaveService;
+import ulb.service.*;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TowerManagerTest {
-
-	private Bugemon makeBugemon(BugemonService bugemonService) throws LoadException, EntityNotFoundException {
-		return bugemonService.spawnBugemon("florachu");
-	}
-
-	private TowerManager setTowerManager() throws Exception {
-		DatabaseMock database = new DatabaseMock();
-		BugemonService bugemonService = new BugemonService(new BugemonSpeciesDatabaseRepository(database));
-		ItemService itemService = new ItemService(new ItemDatabaseRepository(database), new StartingInventoryJsonRepository(new ItemJsonRepository()));
-		TowerSaveService towerSaveService = new TowerSaveService(new TowerSaveDatabaseRepository(database));
-		TeamService teamService = new TeamService(new TeamDatabaseRepository(database));
-		AccountService accountService = new AccountService(new AccountDatabaseRepository(database));
-		
-		accountService.register("player", "pwd");
-		Player player = new Player("player", accountService.getUserId("player"));
-		Bugemon a = makeBugemon(bugemonService);
-		Team teamA = new Team(List.of(a));
-		player.setTeam(teamA);
-
-		return new TowerManager(player, bugemonService, itemService, teamService, towerSaveService);
-	}
 
 	@Test
 	void towerIsNotCompletedOnInitialisation() throws Exception {
@@ -59,6 +31,28 @@ public class TowerManagerTest {
 		// also check the internal flag on Tower
 		Tower tower = manager.getTower();
 		assertFalse(tower.getTowerCompleted());
+	}
+
+	private TowerManager setTowerManager() throws Exception {
+		DatabaseMock database = new DatabaseMock();
+		BugemonService bugemonService = new BugemonService(new BugemonSpeciesDatabaseRepository(database));
+		ItemService itemService = new ItemService(new ItemDatabaseRepository(database),
+				new StartingInventoryJsonRepository(new ItemJsonRepository()));
+		TowerSaveService towerSaveService = new TowerSaveService(new TowerSaveDatabaseRepository(database));
+		TeamService teamService = new TeamService(new TeamDatabaseRepository(database));
+		AccountService accountService = new AccountService(new AccountDatabaseRepository(database));
+
+		accountService.register("player", "pwd");
+		Player player = new Player("player", accountService.getUserId("player"));
+		Bugemon a = makeBugemon(bugemonService);
+		Team teamA = new Team(List.of(a));
+		player.setTeam(teamA);
+
+		return new TowerManager(player, bugemonService, itemService, teamService, towerSaveService);
+	}
+
+	private Bugemon makeBugemon(BugemonService bugemonService) throws LoadException, EntityNotFoundException {
+		return bugemonService.spawnBugemon("florachu");
 	}
 
 	@Test
@@ -75,7 +69,7 @@ public class TowerManagerTest {
 	}
 
 	@Test
-	void advanceFloorWhenCurrentFloorIsCompletedAndTowerIsNotCompleted()throws Exception {
+	void advanceFloorWhenCurrentFloorIsCompletedAndTowerIsNotCompleted() throws Exception {
 
 		TowerManager manager = setTowerManager();
 
@@ -92,14 +86,13 @@ public class TowerManagerTest {
 
 		int after = manager.getFloorNumber();
 		assertEquals(before + 1, after, "Floor index should advance by 1");
-		assertEquals(currentFloor.getId() + 1,
-				manager.getCurrentFloorManager().getFloor().getId(),
-				"Current floor manager should now point to the next floor");
+		assertEquals(currentFloor.getId() + 1, manager.getCurrentFloorManager().getFloor().getId(), "Current floor " +
+				"manager should now point to the next floor");
 	}
 
 	@Test
 	void doesNotAdvanceFloorWhenTowerIsCompleted() throws Exception {
-		
+
 		TowerManager manager = setTowerManager();
 
 		Tower tower = manager.getTower();

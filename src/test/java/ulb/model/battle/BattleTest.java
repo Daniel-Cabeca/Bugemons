@@ -1,43 +1,26 @@
 package ulb.model.battle;
 
 import org.junit.jupiter.api.Test;
-
-import ulb.model.bugemon.Bugemon;
-import ulb.model.bugemon.BugemonSpecies;
-import ulb.model.bugemon.Stats;
-import ulb.model.effect.*;
-import ulb.model.item.Item;
-import ulb.model.team.Team;
-import ulb.model.type.Type;
-import java.util.List;
 import ulb.model.Player;
 import ulb.model.ability.AbilitySet;
 import ulb.model.action.UseAbility;
 import ulb.model.battle.Battle.ParticipantLabel;
+import ulb.model.bugemon.Bugemon;
+import ulb.model.bugemon.BugemonSpecies;
+import ulb.model.bugemon.Stats;
+import ulb.model.effect.Effect;
+import ulb.model.effect.EffectHeal;
+import ulb.model.effect.EffectResetMalus;
+import ulb.model.effect.EffectTarget;
+import ulb.model.item.Item;
+import ulb.model.team.Team;
+import ulb.model.type.Type;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class BattleTest {
-
-	private Bugemon createBugemon(String name, Type type, int hp, int attack, int defense, int initiative){
-		BugemonSpecies species = new BugemonSpecies(name, name, type, new Stats(hp, attack, defense, initiative), new AbilitySet(), "", false);
-		return new Bugemon(species);
-	}
-
-	private Battle setupBattle() {
-		Bugemon a = createBugemon("a", Type.PYRO, 100, 10, 10, 20);
-		Bugemon b = createBugemon("b", Type.AQUA, 100, 10, 10, 5);
-
-		Team teamA = new Team(List.of(a));
-		Team teamB = new Team(List.of(b));
-		Player p = new Player();
-		return new Battle(teamA, teamB, p, new Player());
-	}
-
-	private Item createHealItem() {
-		EffectHeal healEffect = new EffectHeal(EffectTarget.OWN_BUGEMON, 20);
-		return new Item("heal", "Heal", "Heals the bugemon", "heal", healEffect, "sprite");
-	}
 
 	@Test
 	public void initiaveReturnsAWhenAHasHigherInitiative() {
@@ -54,6 +37,12 @@ public class BattleTest {
 
 
 		assertSame(ParticipantLabel.TEAM_A, battle.getFirstTeamToPlay());
+	}
+
+	private Bugemon createBugemon(String name, Type type, int hp, int attack, int defense, int initiative) {
+		BugemonSpecies species = new BugemonSpecies(name, name, type, new Stats(hp, attack, defense, initiative),
+				new AbilitySet(), "", false);
+		return new Bugemon(species);
 	}
 
 	@Test
@@ -112,6 +101,16 @@ public class BattleTest {
 		Battle battle = setupBattle();
 		battle.forfeit(ParticipantLabel.TEAM_A);
 		assertTrue(battle.isGameFinished());
+	}
+
+	private Battle setupBattle() {
+		Bugemon a = createBugemon("a", Type.PYRO, 100, 10, 10, 20);
+		Bugemon b = createBugemon("b", Type.AQUA, 100, 10, 10, 5);
+
+		Team teamA = new Team(List.of(a));
+		Team teamB = new Team(List.of(b));
+		Player p = new Player();
+		return new Battle(teamA, teamB, p, new Player());
 	}
 
 	@Test
@@ -193,6 +192,11 @@ public class BattleTest {
 		Battle battle = setupBattle();
 		Item healItem = createHealItem();
 		assertFalse(battle.checkItem(healItem, ParticipantLabel.TEAM_A));
+	}
+
+	private Item createHealItem() {
+		EffectHeal healEffect = new EffectHeal(EffectTarget.OWN_BUGEMON, 20);
+		return new Item("heal", "Heal", "Heals the bugemon", "heal", healEffect, "sprite");
 	}
 
 	@Test

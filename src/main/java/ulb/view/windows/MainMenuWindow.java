@@ -3,6 +3,7 @@ package ulb.view.windows;
 import javafx.fxml.FXML;
 import javafx.scene.layout.VBox;
 import ulb.utils.Scaling;
+
 /**
  * Class for the Mode selection window.
  * Handles UI interactions and scaling for the main menu options.
@@ -18,6 +19,7 @@ public class MainMenuWindow {
 	public void initialize() {
 		Scaling.applyScaling(content);
 	}
+
 	/**
 	 * Notifies the action to open the social panel.
 	 */
@@ -25,6 +27,7 @@ public class MainMenuWindow {
 	private void openSocialPanel() {
 		viewListener.onOpenSocial();
 	}
+
 	/**
 	 * Notifies the action to start the solo game mode.
 	 */
@@ -32,6 +35,7 @@ public class MainMenuWindow {
 	private void goSoloMode() {
 		viewListener.onSolo();
 	}
+
 	/**
 	 * Notifies the action to quit the application.
 	 */
@@ -39,6 +43,7 @@ public class MainMenuWindow {
 	private void quit() {
 		viewListener.onQuit();
 	}
+
 	/**
 	 * Notifies the action to log the user out of the current session.
 	 */

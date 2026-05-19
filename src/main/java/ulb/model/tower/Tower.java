@@ -1,26 +1,18 @@
 package ulb.model.tower;
 
+import ulb.exceptions.EntityNotFoundException;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-
-import ulb.exceptions.EntityNotFoundException;
 
 public class Tower {
 
 	private List<Floor> floors;
 	private boolean completedTower = false;
 
-    /**
-     * Creates a tower object
-     */
-	public Tower() {
-		floors = new ArrayList<>();
-		buildTower();
-	}
-
 	/**
 	 * Creates a tower object from the current floor id and list of completed rooms
+	 *
 	 * @param currentFloorId the id of the current floor
 	 * @param completedRoomsId the list of ids of the current floor completed rooms
 	 */
@@ -28,6 +20,27 @@ public class Tower {
 		this();
 		this.setCompletedFloors(currentFloorId);
 		this.setCurrentFloorCompletedRooms(completedRoomsId);
+	}
+
+	/**
+	 * Creates a tower object
+	 */
+	public Tower() {
+		floors = new ArrayList<>();
+		buildTower();
+	}
+
+	private void setCompletedFloors(int currentFloorId) {
+		for (Floor floor : this.floors) {
+			if (floor.getId() < currentFloorId) {
+				floor.setFloorCompleted(true);
+			}
+		}
+	}
+
+	private void setCurrentFloorCompletedRooms(List<Integer> completedRoomsId) throws EntityNotFoundException {
+		Floor currentFloor = this.getCurrentFloor();
+		currentFloor.setRoomsCompleted(completedRoomsId);
 	}
 
 	/**
@@ -41,21 +54,6 @@ public class Tower {
 		floors.add(new Floor(9, true));
 	}
 
-	private void setCompletedFloors(int currentFloorId) {
-		for (Floor floor : this.floors) {
-			if (floor.getId() < currentFloorId) {
-				floor.setFloorCompleted(true);
-			}
-		}
-	}
-
-	private void setCurrentFloorCompletedRooms(List<Integer> completedRoomsId) throws EntityNotFoundException{
-		Floor currentFloor = this.getCurrentFloor();
-		currentFloor.setRoomsCompleted(completedRoomsId);
-	}
-
-	public List<Floor> getFloors() { return floors; }
-
 	public Floor getCurrentFloor() throws EntityNotFoundException {
 		for (Floor floor : this.floors) {
 			if (!floor.isFloorCompleted()) {
@@ -64,6 +62,8 @@ public class Tower {
 		}
 		throw new EntityNotFoundException("floor", "current");
 	}
+
+	public List<Floor> getFloors() { return floors; }
 
 	public Integer getCurrentFloorId() throws EntityNotFoundException {
 		Floor currentFloor = getCurrentFloor();

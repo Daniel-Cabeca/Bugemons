@@ -355,6 +355,7 @@ public class ClientController extends Application {
 			case LEVEL_UP -> this.levelUpController.show();
 			case FLOOR_REWARD -> this.floorRewardController.show();
 			case CHOOSE_BUGEMON -> this.chooseBugemonController.show();
+			default -> this.mainMenuController.show();
 		}
 	}
 

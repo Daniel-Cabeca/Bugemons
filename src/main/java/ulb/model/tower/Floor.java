@@ -52,12 +52,10 @@ public class Floor {
 	 * @return the start room id (4 for all floors except the final floor that only has one boss battle)
 	 */
 	public int getStartRoomId() {
-		try {
-			Room room4 = getRoomById(4);
+		if (isRoomExist(4)){
 			return 4;
-		} catch (EntityNotFoundException e) {
-			return rooms.getFirst().getId();
 		}
+		return rooms.getFirst().getId();
 	}
 
 	public Room getRoomById(int roomId) throws EntityNotFoundException {
@@ -67,6 +65,15 @@ public class Floor {
 			}
 		}
 		throw new EntityNotFoundException("room", roomId);
+	}
+
+	public boolean isRoomExist(int roomId){
+		for (Room room : rooms) {
+			if (room.getId() == roomId){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public boolean isBossCompleted() {

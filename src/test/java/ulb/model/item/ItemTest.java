@@ -118,17 +118,19 @@ public class ItemTest {
 
 	@Test
 	public void switchItemAppliesEffect() throws Exception {
-		Battle battle = makeBattleController(spawnBugemon("florachu"), spawnBugemon("pyricore"));
+		Bugemon a = spawnBugemon("florachu");
+		Bugemon b = spawnBugemon("pyricore");
+		Battle battle = makeBattleController(a, b);
 		Player player = battle.getPlayer(ParticipantLabel.TEAM_A);
 
 		Item item = getItem("switch");
 		player.getInventory().addItem(item, 1);
 
-		Bugemon activeBefore = battle.getActiveBugemon(ParticipantLabel.TEAM_A);
+		assertEquals(a, battle.getActiveBugemon(ParticipantLabel.TEAM_A));
 		playTurnWithItem(battle, item);
 
-		assertNotEquals("florachu", battle.getActiveBugemon(ParticipantLabel.TEAM_A).getSpecies().getId());
-		assertEquals("pyricore", battle.getActiveBugemon(ParticipantLabel.TEAM_A).getSpecies().getId());
+		assertNotEquals(a, battle.getActiveBugemon(ParticipantLabel.TEAM_A));
+		assertEquals(b, battle.getActiveBugemon(ParticipantLabel.TEAM_A));
 	}
 
 	@Test

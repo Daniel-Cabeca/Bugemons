@@ -5,8 +5,8 @@ package ulb.model.tower;
  */
 public class Room {
 
-	private int id;
-	private RoomType roomType;
+	private final int id;
+	private final RoomType roomType;
 	private boolean completedRoom = false;
 
 	/**

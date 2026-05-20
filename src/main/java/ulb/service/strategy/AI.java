@@ -9,9 +9,9 @@ import java.util.logging.Logger;
 public class AI extends Thread {
 	private static final Logger LOGGER = Logger.getLogger(AI.class.getName());
 	private final long SLEEP_TIME = 1000;
-	private Battle battle;
-	private Strategy strategy;
-	private Battle.ParticipantLabel teamLabel = Battle.ParticipantLabel.TEAM_B;
+	private final Battle battle;
+	private final Strategy strategy;
+	private final Battle.ParticipantLabel teamLabel = Battle.ParticipantLabel.TEAM_B;
 
 	public AI(Battle battle, Strategy strategy) {
 		this.battle = battle;

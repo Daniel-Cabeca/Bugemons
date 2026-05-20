@@ -9,7 +9,7 @@ import java.util.List;
 
 public class EffectHeal extends Effect {
 
-	private int value;
+	private final int value;
 
 	public EffectHeal(EffectTarget targetType, int value) {
 		super(targetType);

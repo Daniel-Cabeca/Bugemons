@@ -9,7 +9,7 @@ import java.util.Map;
  * An inventory containing variable quantities of items.
  */
 public class Inventory {
-	private Map<Item, Integer> items;
+	private final Map<Item, Integer> items;
 
 	public Inventory() {
 		this.items = new HashMap<>();

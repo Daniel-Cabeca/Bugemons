@@ -10,5 +10,5 @@ public interface Strategy {
 	 *
 	 * @return The action picked
 	 */
-	public Action pickAction(Battle battle, Battle.ParticipantLabel teamLabel);
+	Action pickAction(Battle battle, Battle.ParticipantLabel teamLabel);
 }

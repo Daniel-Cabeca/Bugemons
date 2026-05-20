@@ -23,7 +23,7 @@ public interface AccountRepository {
 	 * @throws LoadException If the user cannot be persisted
 	 * @throws UserAlreadyExistsException If the user already is registered in the database
 	 */
-	public void register(String username, String password) throws LoadException, UserAlreadyExistsException;
+	void register(String username, String password) throws LoadException, UserAlreadyExistsException;
 
 
 	/**
@@ -34,7 +34,7 @@ public interface AccountRepository {
 	 * @throws LoadException If the lookup fails
 	 * @throws EntityNotFoundException If no match was found for the username
 	 */
-	public String getPasswordHash(String username) throws LoadException, EntityNotFoundException;
+	String getPasswordHash(String username) throws LoadException, EntityNotFoundException;
 
 
 	/**
@@ -44,7 +44,7 @@ public interface AccountRepository {
 	 * @return The user id, or -1 if not found
 	 * @throws NoSuchElementException If the lookup fails
 	 */
-	public Integer getUserId(String username) throws EntityNotFoundException;
+	Integer getUserId(String username) throws EntityNotFoundException;
 
 	/**
 	 * Returns the username of the player specified by a given id.
@@ -54,7 +54,7 @@ public interface AccountRepository {
 	 * @throws NoSuchElementException If no user has the given id
 	 * @throws DataAccessException If some unexpected SQL error occurs
 	 */
-	public String getUsername(int userId) throws EntityNotFoundException, DataAccessException;
+	String getUsername(int userId) throws EntityNotFoundException, DataAccessException;
 
 	/**
 	 * Gives a list of all the users added as friends for a given user.
@@ -117,7 +117,7 @@ public interface AccountRepository {
 
 	void declineBattleRequest(int senderId, int receiverId) throws LoadException;
 
-	public void addPoints(int userId, int pointsToAdd) throws LoadException;
+	void addPoints(int userId, int pointsToAdd) throws LoadException;
 
 	Map<String, Integer> getLeaderboard() throws LoadException;
 }

@@ -10,7 +10,7 @@ import java.util.Optional;
  */
 public class Player {
 	private final Optional<Integer> userId;
-	private String username;
+	private final String username;
 	private Team team;
 	private Inventory inventory;
 

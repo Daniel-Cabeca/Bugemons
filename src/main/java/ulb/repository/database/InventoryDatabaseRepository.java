@@ -22,7 +22,7 @@ public class InventoryDatabaseRepository implements InventoryRepository {
 	private static final Logger LOGGER = Logger.getLogger(InventoryDatabaseRepository.class.getName());
 
 	private final Database database;
-	private ItemRepository itemRepository;
+	private final ItemRepository itemRepository;
 
 	/**
 	 * Creates an inventory repository using the given database

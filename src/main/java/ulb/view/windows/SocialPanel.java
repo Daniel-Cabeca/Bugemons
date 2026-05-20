@@ -95,8 +95,8 @@ public class SocialPanel {
 				nameLabel.setStyle("-fx-text-fill: #000000; -fx-font-weight: bold;");
 
 				Button challengeButton = new Button("Défier");
-				challengeButton.setStyle("-fx-background-color: #f8f8d8; -fx-text-fill: #000000;" + " -fx-border-color" +
-						": #000000; -fx-border-width: 2;" + " -fx-padding: 4 10; -fx-cursor: hand;");
+				challengeButton.setStyle("-fx-background-color: #f8f8d8; -fx-text-fill: #000000;" + " -fx-border-color"
+						+ ": #000000; -fx-border-width: 2;" + " -fx-padding: 4 10; -fx-cursor: hand;");
 				challengeButton.setOnAction(e -> viewListener.onChallengeFriend(item));
 
 				HBox row = new HBox(12, nameLabel, challengeButton);

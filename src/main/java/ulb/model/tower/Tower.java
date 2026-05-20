@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Tower {
 
-	private List<Floor> floors;
+	private final List<Floor> floors;
 	private boolean completedTower = false;
 
 	/**

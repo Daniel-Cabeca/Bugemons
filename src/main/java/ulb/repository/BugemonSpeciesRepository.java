@@ -15,12 +15,12 @@ public interface BugemonSpeciesRepository {
 	 * @return The BugemonSpecies instance
 	 * @throws EntityNotFoundException If no match was found for the id
 	 */
-	public BugemonSpecies findById(String id) throws LoadException, EntityNotFoundException;
+	BugemonSpecies findById(String id) throws LoadException, EntityNotFoundException;
 
 	/**
 	 * Gives an iterable list of the species in the repository.
 	 *
 	 * @return An object iterable over the existing species
 	 */
-	public Iterable<BugemonSpecies> findAll() throws LoadException, EntityNotFoundException;
+	Iterable<BugemonSpecies> findAll() throws LoadException, EntityNotFoundException;
 }

@@ -8,7 +8,7 @@ import java.util.List;
 
 public class Floor {
 
-	private int id;
+	private final int id;
 	private boolean completed = false;
 	private List<Room> rooms;
 

@@ -102,8 +102,8 @@ public abstract class Database {
 	public boolean isNew() {
 		Statement statement = this.createStatement();
 		try {
-			ResultSet res = statement.executeQuery("SELECT name FROM sqlite_master WHERE type='table' AND " +
-					"name='items';");
+			ResultSet res = statement.executeQuery("SELECT name FROM sqlite_master WHERE type='table' AND " + "name" +
+					"='items';");
 			return !res.next();
 		} catch (SQLException e) {
 			LOGGER.log(Level.SEVERE, "Failed to test if the database is new.");

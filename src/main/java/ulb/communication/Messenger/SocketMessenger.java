@@ -34,6 +34,18 @@ public class SocketMessenger implements Messenger {
 		}
 	}
 
+	public void close() {
+		if (!socket.isClosed()) {
+			try {
+				this.reader.close();
+				this.writer.close();
+				this.socket.close();
+			} catch (IOException e) {
+				LOGGER.log(Level.WARNING, "Error while closing socket connection.");
+			}
+		}
+	}
+
 	@Override
 	public void sendMessage(Serializable message) throws CommunicationException {
 		if (message == null) {
@@ -60,18 +72,6 @@ public class SocketMessenger implements Messenger {
 		} catch (ClassNotFoundException e) {
 			this.close();
 			throw new CommunicationException("Unrecognized network message.");
-		}
-	}
-
-	public void close() {
-		if (!socket.isClosed()) {
-			try {
-				this.reader.close();
-				this.writer.close();
-				this.socket.close();
-			} catch (IOException e) {
-				LOGGER.log(Level.WARNING, "Error while closing socket connection.");
-			}
 		}
 	}
 }

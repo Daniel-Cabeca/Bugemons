@@ -11,7 +11,7 @@ public class Team {
 	public static final int MAX_PARTY_SIZE = 6;
 
 	private int id;
-	private List<Bugemon> members;
+	private final List<Bugemon> members;
 	private String teamName;
 
 	public Team(List<Bugemon> initialMembers) {

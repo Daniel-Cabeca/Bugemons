@@ -14,5 +14,5 @@ public interface StartingInventoryRepository {
 	 *
 	 * @return Inventory containing the starting items
 	 */
-	public Inventory findStartingInventory();
+	Inventory findStartingInventory();
 }

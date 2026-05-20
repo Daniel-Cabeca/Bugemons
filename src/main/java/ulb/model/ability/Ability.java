@@ -18,12 +18,12 @@ public class Ability implements HasId {
 	public static final float CRITICAL_HIT_FACTOR = 1.5f;
 	public static final float CRITICAL_HIT_CHANCE = 0.1f;
 
-	private String id;
-	private String name;
-	private Type type;
-	private String description;
-	private int power;
-	private EffectList effects;
+	private final String id;
+	private final String name;
+	private final Type type;
+	private final String description;
+	private final int power;
+	private final EffectList effects;
 
 	public Ability(String id, String name, Type type, String description, int power) {
 		this.id = id;
@@ -65,11 +65,7 @@ public class Ability implements HasId {
 			return false;
 		}
 
-		if (this.id.equals(((Ability) o).id)) {
-			return true;
-		}
-
-		return false;
+		return this.id.equals(((Ability) o).id);
 	}
 
 	/**
@@ -137,8 +133,8 @@ public class Ability implements HasId {
 	 * @param damage The damage dealt
 	 */
 	private void writeLogs(Battle battle, Bugemon ownBugemon, Bugemon oppositeBugemon, int damage) {
-		battle.addLogMsg(ownBugemon.getName() + " a utilisé " + this.getName() + ". " + oppositeBugemon.getName() + " " +
-				"perd " + damage + " PV!");
+		battle.addLogMsg(ownBugemon.getName() + " a utilisé " + this.getName() + ". " + oppositeBugemon.getName() + " "
+				+ "perd " + damage + " PV!");
 
 		String effectivenessMessage = getEffectivenessMessage(oppositeBugemon);
 		if (!effectivenessMessage.equals("")) {

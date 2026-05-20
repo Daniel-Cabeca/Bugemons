@@ -14,6 +14,7 @@ import java.util.Optional;
 public class MultiBattleSession {
 	private final ParticipantPair participants;
 	private Battle battle = null;
+
 	public MultiBattleSession(Player player1, Player player2) {
 		this.participants = new ParticipantPair(new MultiBattleParticipant(player1, Battle.ParticipantLabel.TEAM_A),
 				new MultiBattleParticipant(player2, Battle.ParticipantLabel.TEAM_B));
@@ -37,8 +38,8 @@ public class MultiBattleSession {
 			return this.participants.b();
 		}
 
-		throw new NoSuchElementException("No corresponding participant was found in the multiplayer battle session for" +
-				" this id: " + userId);
+		throw new NoSuchElementException("No corresponding participant was found in the multiplayer battle session " +
+				"for" + " this id: " + userId);
 	}
 
 	/**

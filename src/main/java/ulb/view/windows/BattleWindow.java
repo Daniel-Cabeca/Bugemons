@@ -69,8 +69,8 @@ public class BattleWindow {
 	@FXML
 	private Label battleLog;
 
-	private BattleWindowSetupHelper setupHelper = new BattleWindowSetupHelper();
-	private BattleWindowGraphicsHelper graphicsHelper = new BattleWindowGraphicsHelper();
+	private final BattleWindowSetupHelper setupHelper = new BattleWindowSetupHelper();
+	private final BattleWindowGraphicsHelper graphicsHelper = new BattleWindowGraphicsHelper();
 
 	private ViewListener viewListener;
 	private boolean autoMode;

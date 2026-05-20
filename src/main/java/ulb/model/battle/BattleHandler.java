@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 
 public class BattleHandler {
 	private static final Logger LOGGER = Logger.getLogger(ClientHandler.class.getName());
-	private Battle battle;
+	private final Battle battle;
 
 	public BattleHandler(Battle battle) {
 		this.battle = battle;

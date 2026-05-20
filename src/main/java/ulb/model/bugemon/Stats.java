@@ -96,16 +96,10 @@ public class Stats {
 			return true;
 		}
 
-		if (!(o instanceof Stats)) {
+		if (!(o instanceof Stats b)) {
 			return false;
 		}
 
-		Stats b = (Stats) o;
-
-		if (this.hp != b.hp || this.attack != b.attack || this.defense != b.defense || this.initiative != b.initiative) {
-			return false;
-		}
-
-		return true;
+		return this.hp == b.hp && this.attack == b.attack && this.defense == b.defense && this.initiative == b.initiative;
 	}
 }

@@ -17,7 +17,7 @@ public interface InventoryRepository {
 	 * @param userId the owner of the inventory
 	 * @throws LoadException
 	 */
-	public void insertItem(Item item, int quantity, int userId) throws LoadException;
+	void insertItem(Item item, int quantity, int userId) throws LoadException;
 
 	/**
 	 * Deletes an item from the inventory in the database.
@@ -27,7 +27,7 @@ public interface InventoryRepository {
 	 * @param userId the owner of the inventory
 	 * @throws LoadException
 	 */
-	public void deleteItem(Item item, int quantity, int userId) throws LoadException;
+	void deleteItem(Item item, int quantity, int userId) throws LoadException;
 
 	/**
 	 * Saves the inventory of the given user.
@@ -36,7 +36,7 @@ public interface InventoryRepository {
 	 * @param userId the owner of the inventory
 	 * @throws LoadException
 	 */
-	public void insertInventory(Inventory inventory, int userId) throws LoadException;
+	void insertInventory(Inventory inventory, int userId) throws LoadException;
 
 	/**
 	 * Updates the inventory of the given user.
@@ -45,7 +45,7 @@ public interface InventoryRepository {
 	 * @param userId the owner of the inventory
 	 * @throws LoadException
 	 */
-	public void updateInventory(Inventory inventory, int userId) throws LoadException;
+	void updateInventory(Inventory inventory, int userId) throws LoadException;
 
 	/**
 	 * Loads the inventory of the given user.
@@ -54,5 +54,5 @@ public interface InventoryRepository {
 	 * @return the corresponding inventory of the user
 	 * @throws NoSuchElementException
 	 */
-	public Inventory getInventory(int userId) throws LoadException, EntityNotFoundException;
+	Inventory getInventory(int userId) throws LoadException, EntityNotFoundException;
 }

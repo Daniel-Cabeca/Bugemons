@@ -1,5 +1,10 @@
 package ulb.communication;
 
+import ulb.communication.Messenger.SocketMessenger;
+import ulb.exceptions.CommunicationException;
+import ulb.server.ClientHandler;
+import ulb.service.*;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -9,19 +14,14 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import ulb.communication.Messenger.SocketMessenger;
-import ulb.exceptions.CommunicationException;
-import ulb.server.ClientHandler;
-import ulb.service.*;
-
 /**
  * Server managing incoming client connections using sockets.
  */
 public class SocketServer {
 	private static final Logger LOGGER = Logger.getLogger(SocketServer.class.getName());
 	private final ServerSocket serverSocket;
-	private boolean stopServer;
 	private final List<Thread> clients;
+	private boolean stopServer;
 
 	/**
 	 * Creates a socket server listening on the given port.
@@ -41,18 +41,41 @@ public class SocketServer {
 	}
 
 	/**
-	 * Waits for all client threads to finish.
+	 * Starts the server loop, accepting clients and creating a handler for each.
+	 *
+	 * @param abilityService The ability service
+	 * @param bugemonService The bugemon service
+	 * @param itemService The item service
+	 * @param accountService The account service
+	 * @param chatService The chat service
+	 * @param teamService The team service
+	 * @param inventoryService The inventory service
+	 * @param towerSaveService The tower save service
+	 * @param multiBattleService The multiplayer battle service
+	 * @throws CommunicationException If an error occurs while accepting connections
 	 */
-	public void waitAllThreads() {
-		for (Thread thread : this.clients) {
-			try {
-				thread.join();
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-				close();
-				return;
+	public void start(AbilityService abilityService, BugemonService bugemonService, ItemService itemService,
+					  AccountService accountService, ChatService chatService, TeamService teamService,
+					  InventoryService inventoryService, TowerSaveService towerSaveService,
+					  MultiBattleService multiBattleService) throws CommunicationException {
+		while (!stopServer) {
+			Socket clientSocket;
+			if ((clientSocket = listenConnection()) != null) {
+				try {
+					SocketMessenger clientMessenger = new SocketMessenger(clientSocket);
+					ClientHandler controller = new ClientHandler(clientMessenger, abilityService, bugemonService,
+							itemService, accountService, chatService, teamService, inventoryService, towerSaveService,
+							multiBattleService);
+					clients.add(controller);
+					LOGGER.log(Level.INFO, "Client successfully connected to the server");
+					controller.start();
+				} catch (CommunicationException e) {
+					LOGGER.log(Level.WARNING, "Impossible to initialize communication with client.");
+					closeClientSocket(clientSocket);
+				}
 			}
 		}
+		waitAllThreads();
 	}
 
 	/**
@@ -77,41 +100,34 @@ public class SocketServer {
 	}
 
 	/**
-	 * Starts the server loop, accepting clients and creating a handler for each.
+	 * Closes a client socket if it is not already closed.
 	 *
-	 * @param abilityService The ability service
-	 * @param bugemonService The bugemon service
-	 * @param itemService The item service
-	 * @param accountService The account service
-	 * @param chatService The chat service
-	 * @param teamService The team service
-	 * @param inventoryService The inventory service
-	 * @param towerSaveService The tower save service
-	 * @param multiBattleService The multiplayer battle service
-	 * @throws CommunicationException If an error occurs while accepting connections
+	 * @param socket The client socket to close
 	 */
-	public void start(AbilityService abilityService, BugemonService bugemonService, ItemService itemService,
-                      AccountService accountService, ChatService chatService, TeamService teamService,
-                      InventoryService inventoryService, TowerSaveService towerSaveService,
-                      MultiBattleService multiBattleService) throws CommunicationException {
-		while (!stopServer) {
-			Socket clientSocket;
-			if ((clientSocket = listenConnection()) != null) {
-				try {
-					SocketMessenger clientMessenger = new SocketMessenger(clientSocket);
-					ClientHandler controller = new ClientHandler(clientMessenger, abilityService, bugemonService,
-                            itemService, accountService, chatService, teamService, inventoryService, towerSaveService
-                            , multiBattleService);
-					clients.add(controller);
-					LOGGER.log(Level.INFO, "Client successfully connected to the server");
-					controller.start();
-				} catch (CommunicationException e) {
-					LOGGER.log(Level.WARNING, "Impossible to initialize communication with client.");
-					closeClientSocket(clientSocket);
-				}
+	private void closeClientSocket(Socket socket) {
+		if (socket == null || socket.isClosed()) {
+			return;
+		}
+		try {
+			socket.close();
+		} catch (IOException ignored) {
+			// The client socket is already unusable
+		}
+	}
+
+	/**
+	 * Waits for all client threads to finish.
+	 */
+	public void waitAllThreads() {
+		for (Thread thread : this.clients) {
+			try {
+				thread.join();
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				close();
+				return;
 			}
 		}
-		waitAllThreads();
 	}
 
 	/**
@@ -127,22 +143,6 @@ public class SocketServer {
 			serverSocket.close();
 		} catch (IOException e) {
 			LOGGER.log(Level.SEVERE, "Impossible to close server.");
-		}
-	}
-
-	/**
-	 * Closes a client socket if it is not already closed.
-	 *
-	 * @param socket The client socket to close
-	 */
-	private void closeClientSocket(Socket socket) {
-		if (socket == null || socket.isClosed()) {
-			return;
-		}
-		try {
-			socket.close();
-		} catch (IOException ignored) {
-			// The client socket is already unusable
 		}
 	}
 }

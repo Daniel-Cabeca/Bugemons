@@ -6,7 +6,7 @@ import ulb.message.request.Request;
 import ulb.server.ServerMessageHandler;
 
 public class GetPlayerTeamRequest implements Request {
-	private String username;
+	private final String username;
 
 	public GetPlayerTeamRequest(String username) {
 		this.username = username;

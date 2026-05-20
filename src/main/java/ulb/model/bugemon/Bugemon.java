@@ -8,8 +8,8 @@ import java.util.Random;
 
 public class Bugemon {
 	private int id;
-	private BugemonSpecies species;
-	private AbilitySet abilities;
+	private final BugemonSpecies species;
+	private final AbilitySet abilities;
 	private Stats baseStats;
 	private Stats fightStats;
 	private int xp;

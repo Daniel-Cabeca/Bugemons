@@ -24,8 +24,8 @@ public class RoomManager {
 	private final int floorNumber;
 	private final BugemonService bugemonService;
 	private final ItemService itemService;
-	private Room room;
-	private Player player;
+	private final Room room;
+	private final Player player;
 	private Battle battle;
 
 	/**

@@ -32,8 +32,9 @@ public class ChatDatabaseRepository implements ChatRepository {
 	 */
 	@Override
 	public void insert(ChatMessage message) throws LoadException {
-		String sql = "INSERT INTO chat_messages (sender_username, receiver_username, content, sent_at) VALUES (?, ?, " +
-				"?, ?)";
+		String sql =
+				"INSERT INTO chat_messages (sender_username, receiver_username, content, sent_at) VALUES (?, ?, " +
+						"?, ?)";
 		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
 			stmt.setString(1, message.getSenderUsername());
 			stmt.setString(2, message.getReceiverUsername());

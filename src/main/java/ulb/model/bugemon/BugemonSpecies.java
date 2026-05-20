@@ -8,13 +8,13 @@ import ulb.model.type.Type;
  * Holds data on a Bugemon species.
  */
 public class BugemonSpecies implements HasId {
-	private String id;
-	private String name;
-	private Type type;
-	private Stats baseStats;
-	private AbilitySet abilities;
-	private String sprite;
-	private boolean starter;
+	private final String id;
+	private final String name;
+	private final Type type;
+	private final Stats baseStats;
+	private final AbilitySet abilities;
+	private final String sprite;
+	private final boolean starter;
 
 	public BugemonSpecies(String id, String name, Type type, Stats baseStats, AbilitySet abilities, String sprite,
 						  boolean starter) {

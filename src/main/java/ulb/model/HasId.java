@@ -9,5 +9,5 @@ public interface HasId {
 	 *
 	 * @return The id of the object
 	 */
-	public String getId();
+	String getId();
 }

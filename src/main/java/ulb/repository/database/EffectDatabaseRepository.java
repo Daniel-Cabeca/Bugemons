@@ -46,7 +46,7 @@ public class EffectDatabaseRepository {
 			PreparedStatement statement = this.database.prepareStatement(sql);
 
 			statement.setString(1, Id);
-			statement.setString(2, this.getTypeStr(effect));
+			statement.setString(2, getTypeStr(effect));
 			statement.setString(3, effect.getTarget().name());
 
 			if (effect instanceof EffectHeal effectHeal) {
@@ -108,8 +108,8 @@ public class EffectDatabaseRepository {
 	}
 
 	private void insertStats(Stats stats, long effectId, EffectStatDuration duration) throws SQLException {
-		String sql = "INSERT INTO effect_stats_modifier (effect_id, hp,attack,defense,initiative,duration) VALUES (?, " +
-				"?, ?, ?,?,?)";
+		String sql = "INSERT INTO effect_stats_modifier (effect_id, hp,attack,defense,initiative,duration) VALUES (?, "
+				+ "?, ?, ?,?,?)";
 		PreparedStatement statement = this.database.prepareStatement(sql);
 
 		statement.setLong(1, effectId);

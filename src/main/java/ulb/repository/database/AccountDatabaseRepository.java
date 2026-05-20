@@ -196,8 +196,8 @@ public class AccountDatabaseRepository implements AccountRepository {
 
 	public List<String> getPendingBattleRequests(int receiverId) throws LoadException {
 		List<String> senders = new ArrayList<>();
-		String sql = "SELECT u.username FROM users u JOIN battle_requests r ON u.id = r.sender_id WHERE r.receiver_id " +
-				"= ?";
+		String sql = "SELECT u.username FROM users u JOIN battle_requests r ON u.id = r.sender_id WHERE r.receiver_id "
+				+ "= ?";
 		try (PreparedStatement stmt = database.prepareStatement(sql)) {
 			stmt.setInt(1, receiverId);
 			ResultSet rs = stmt.executeQuery();
@@ -224,8 +224,8 @@ public class AccountDatabaseRepository implements AccountRepository {
 	 */
 	public List<String> getPendingFriendRequests(int receiverId) throws LoadException {
 		List<String> senders = new ArrayList<>();
-		String sql = "SELECT u.username FROM users u JOIN friend_requests r ON u.id = r.sender_id WHERE r.receiver_id " +
-				"= ?";
+		String sql = "SELECT u.username FROM users u JOIN friend_requests r ON u.id = r.sender_id WHERE r.receiver_id "
+				+ "= ?";
 		try (PreparedStatement stmt = database.prepareStatement(sql)) {
 			stmt.setInt(1, receiverId);
 			ResultSet rs = stmt.executeQuery();

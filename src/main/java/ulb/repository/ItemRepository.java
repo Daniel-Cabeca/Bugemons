@@ -15,13 +15,13 @@ public interface ItemRepository {
 	 * @return The Item instance
 	 * @throws EntityNotFoundException If no match was found for the id
 	 */
-	public Item findById(String id) throws EntityNotFoundException;
+	Item findById(String id) throws EntityNotFoundException;
 
 	/**
 	 * Gives an iterable list of the items in the repository.
 	 *
 	 * @return An object iterable over the existing items
 	 */
-	public Iterable<Item> findAll() throws LoadException, EntityNotFoundException;
+	Iterable<Item> findAll() throws LoadException, EntityNotFoundException;
 
 }

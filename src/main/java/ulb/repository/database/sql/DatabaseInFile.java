@@ -24,7 +24,7 @@ public class DatabaseInFile extends Database {
 	 * @param name The database base filename
 	 */
 	DatabaseInFile(String name) throws LoadException {
-		super("jdbc:sqlite:" + getPath(name).toString());
+		super("jdbc:sqlite:" + getPath(name));
 		this.name = name;
 	}
 

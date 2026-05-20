@@ -13,8 +13,8 @@ import ulb.service.ItemService;
 public class FloorManager {
 	private final BugemonService bugemonService;
 	private final ItemService itemService;
-	private Player player;
-	private Floor floor;
+	private final Player player;
+	private final Floor floor;
 	private int currentRoomId;
 	private int previousRoomId;
 	private RoomManager currentRoomManager;

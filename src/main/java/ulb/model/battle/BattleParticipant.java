@@ -11,10 +11,10 @@ import java.util.Vector;
  * Runtime state for one battle participant.
  */
 public class BattleParticipant {
-	private Player player;
-	private Team team;
+	private final Player player;
+	private final Team team;
 	private Bugemon activeBugemon;
-	private Vector<Bugemon> participatingBugemons;
+	private final Vector<Bugemon> participatingBugemons;
 	private BattleState state;
 	private Action action = null;
 	private int hpAfterFirstAction = -1;

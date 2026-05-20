@@ -71,6 +71,13 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 			return msg.getLeaderboard();
 		return Collections.emptyMap();
 
+	}
+
+	private PlayerDTO getPlayer() {
+		if (player == null) {
+			this.player = this.clientController.getPlayer();
+		}
+		return player;
 	}	private List<String> getRequests(Request request) {
 		Serializable response = this.clientController.getData(request);
 		if (response instanceof FriendRequestsResponse msg) return msg.getRequests();
@@ -79,12 +86,6 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 		return List.of();
 	}
 
-	private PlayerDTO getPlayer() {
-		if (player == null) {
-			this.player = this.clientController.getPlayer();
-		}
-		return player;
-	}
 
 
 

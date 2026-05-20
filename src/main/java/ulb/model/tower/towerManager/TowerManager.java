@@ -22,7 +22,7 @@ public class TowerManager {
 	private final ItemService itemService;
 	private final TeamService teamService;
 	private final TowerSaveService towerSaveService;
-	private Player player;
+	private final Player player;
 	private Tower tower;
 	private int floorNumber;
 	private boolean fledBattle;

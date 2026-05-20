@@ -8,12 +8,12 @@ import ulb.model.effect.Effect;
  * Consumable item with an associated battle effect.
  */
 public class Item implements HasId {
-	private String id;
-	private String name;
-	private String description;
-	private String category;
-	private Effect effect;
-	private String sprite;
+	private final String id;
+	private final String name;
+	private final String description;
+	private final String category;
+	private final Effect effect;
+	private final String sprite;
 
 	/**
 	 * Creates an item definition.

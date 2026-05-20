@@ -11,7 +11,7 @@ public class MultiBattleParticipant {
 	private boolean accepted = false;
 	private boolean declined = false;
 	private Optional<Team> team = Optional.empty();
-	private Battle.ParticipantLabel participantLabel;
+	private final Battle.ParticipantLabel participantLabel;
 
 	public MultiBattleParticipant(Player player, Battle.ParticipantLabel participantLabel) {
 		this.player = player;

@@ -211,8 +211,7 @@ public class BattleWindowSetupHelper {
 				} else {
 					label.setText(entry.abilityName());
 
-					hbox.setStyle("-fx-background-color: " + TypeColor.getTypeColor(entry.abilityType()) + ";" + "-fx" +
-							"-padding: 6;" + "-fx-background-radius: 6;");
+					hbox.setStyle("-fx-background-color: " + TypeColor.getTypeColor(entry.abilityType()) + ";" + "-fx" + "-padding: 6;" + "-fx-background-radius: 6;");
 					if (entry.effectiveness() != null) {
 						Tooltip tooltip = new Tooltip(entry.abilityDescription() + "\n" + entry.effectiveness());
 						tooltip.setShowDelay(javafx.util.Duration.millis(100));

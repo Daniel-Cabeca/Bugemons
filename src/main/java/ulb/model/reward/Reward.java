@@ -5,7 +5,7 @@ import ulb.model.bugemon.Stats;
 
 public class Reward {
 
-	private Bugemon bugemon;
+	private final Bugemon bugemon;
 	private Stats stats;
 
 	public Reward(Bugemon bugemon) {

@@ -15,5 +15,5 @@ public interface Request extends Serializable {
 	 *
 	 * @param handler The message handler on the server side
 	 */
-	public void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException;
+	void dispatch(ServerMessageHandler handler) throws UserFacingException, DataAccessException;
 }

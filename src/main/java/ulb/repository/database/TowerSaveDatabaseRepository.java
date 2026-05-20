@@ -28,8 +28,8 @@ public class TowerSaveDatabaseRepository implements TowerSaveRepository {
 	 */
 	@Override
 	public void addTowerSave(Integer userId, Integer currentFloorId, List<Integer> completedRoomsId, Integer teamId) throws LoadException {
-		String sql = "INSERT INTO tower_saves (user_id, current_floor_id, completed_rooms_id, current_team_id) VALUES " +
-				"(?, ?, ?, ?)";
+		String sql = "INSERT INTO tower_saves (user_id, current_floor_id, completed_rooms_id, current_team_id) VALUES "
+				+ "(?, ?, ?, ?)";
 		String completedRoomsIdString = completedRoomsId.toString();
 		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
 			stmt.setInt(1, userId);

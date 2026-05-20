@@ -11,7 +11,7 @@ import ulb.repository.AbilityRepository;
  * Object that parses ability sets from json nodes.
  */
 public class AbilitySetJsonParser {
-	private AbilityRepository abilityRepository;
+	private final AbilityRepository abilityRepository;
 
 	public AbilitySetJsonParser(AbilityRepository abilityRepository) {
 		this.abilityRepository = abilityRepository;

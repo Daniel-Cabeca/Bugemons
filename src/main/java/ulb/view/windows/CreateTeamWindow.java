@@ -188,8 +188,7 @@ public class CreateTeamWindow {
 		alert.initOwner(owner);
 		alert.setTitle("Erreur");
 		alert.setHeaderText("Équipe invalide");
-		alert.setContentText("Tu dois sélectionner entre 1 et 6 Bugémons pour " + action.toLowerCase() + " ton équipe" +
-				".");
+		alert.setContentText("Tu dois sélectionner entre 1 et 6 Bugémons pour " + action.toLowerCase() + " ton équipe" + ".");
 
 		alert.showAndWait();
 	}

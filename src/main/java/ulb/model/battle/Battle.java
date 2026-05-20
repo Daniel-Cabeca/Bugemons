@@ -15,20 +15,20 @@ import java.util.*;
 
 public class Battle {
 	private final int XP_COEF = 30;
-	private BattleHandler battleHandler;
+	private final BattleHandler battleHandler;
 	private AccountService accountService;
 	private boolean multiplayerBattle;
-	private BattleParticipant participantA;
-	private BattleParticipant participantB;
+	private final BattleParticipant participantA;
+	private final BattleParticipant participantB;
 
 	private boolean isBossBattle = false;
 	private int floorNumber = 1;
 
 	private boolean gameFinished = false;
 
-	private List<String> logMsg;
+	private final List<String> logMsg;
 	private boolean clearLogs = false;
-	private List<ActiveEffect> activeEffects;
+	private final List<ActiveEffect> activeEffects;
 
 	public Battle(Team teamA, Team teamB, Player playerA, Player playerB, boolean multiplayerBattle,
 				  AccountService accountService) {

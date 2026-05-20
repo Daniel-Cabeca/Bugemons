@@ -15,12 +15,12 @@ public interface AbilityRepository {
 	 * @return The Ability instance
 	 * @throws EntityNotFoundException If no match was found for the id
 	 */
-	public Ability findById(String id) throws LoadException, EntityNotFoundException;
+	Ability findById(String id) throws LoadException, EntityNotFoundException;
 
 	/**
 	 * Gives an iterable list of the abilities in the repository.
 	 *
 	 * @return An object iterable over the existing abilities
 	 */
-	public Iterable<Ability> findAll() throws LoadException, EntityNotFoundException;
+	Iterable<Ability> findAll() throws LoadException, EntityNotFoundException;
 }

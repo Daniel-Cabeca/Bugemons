@@ -20,18 +20,15 @@ import java.sql.SQLException;
 /**
  * Creates and populates the tables of a database for the game.
  */
-public class DatabaseInitializer {
+public record DatabaseInitializer(Database database) {
 	private static final String SCRIPT_CREATE_TABLES = "/sql/init_db.sql";
-
-	private final Database database;
 
 	/**
 	 * Creates a database initializer for a target database.
 	 *
 	 * @param database The database to initialize
 	 */
-	public DatabaseInitializer(Database database) {
-		this.database = database;
+	public DatabaseInitializer {
 	}
 
 	/**
@@ -67,9 +64,9 @@ public class DatabaseInitializer {
 		SqlScript script = new SqlScript(SCRIPT_CREATE_TABLES);
 
 		try {
-			script.execute(this.getDatabase());
+			script.execute(this.database());
 		} catch (SQLException e) {
-			throw new LoadException("Failed to create tables for the database '" + this.getDatabase().getUrl() + "'.");
+			throw new LoadException("Failed to create tables for the database '" + this.database().getUrl() + "'.");
 		}
 	}
 
@@ -88,7 +85,8 @@ public class DatabaseInitializer {
 	 *
 	 * @return The managed database
 	 */
-	public Database getDatabase() { return this.database; }
+	@Override
+	public Database database() { return this.database; }
 
 	/**
 	 * Populates the database with game data.
@@ -98,10 +96,9 @@ public class DatabaseInitializer {
 	 * @param species The list of species
 	 */
 	void populate(Iterable<Item> items, Iterable<Ability> abilities, Iterable<BugemonSpecies> species) throws LoadException {
-		ItemDatabaseRepository itemRepository = new ItemDatabaseRepository(this.getDatabase());
-		AbilityDatabaseRepository abilityRepository = new AbilityDatabaseRepository(this.getDatabase());
-		BugemonSpeciesDatabaseRepository bugemonSpeciesDatabaseRepository =
-				new BugemonSpeciesDatabaseRepository(this.database);
+		ItemDatabaseRepository itemRepository = new ItemDatabaseRepository(this.database());
+		AbilityDatabaseRepository abilityRepository = new AbilityDatabaseRepository(this.database());
+		BugemonSpeciesDatabaseRepository bugemonSpeciesDatabaseRepository = new BugemonSpeciesDatabaseRepository(this.database);
 		try {
 			itemRepository.insertItems(items);
 			abilityRepository.insertAbilities(abilities);

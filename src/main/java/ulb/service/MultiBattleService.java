@@ -12,8 +12,8 @@ import java.util.NoSuchElementException;
  * Service in charge of multiplayer battle sessions.
  */
 public class MultiBattleService {
-	private MultiBattleRepository repository;
-	private AccountService accountService;
+	private final MultiBattleRepository repository;
+	private final AccountService accountService;
 
 	public MultiBattleService(MultiBattleRepository repository, AccountService accountService) {
 		this.repository = repository;

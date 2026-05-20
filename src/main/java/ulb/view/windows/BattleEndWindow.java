@@ -39,8 +39,7 @@ public class BattleEndWindow {
 		if (victory) {
 			titleLabel.setText("Victoire!");
 			if (multiplayerBattle) {
-				messageLabel.setText("Tous les Bugémons adverses ont été mis KO. Tu as gagné contre " + opponent + " " +
-						"!");
+				messageLabel.setText("Tous les Bugémons adverses ont été mis KO. Tu as gagné contre " + opponent + " " + "!");
 			} else {
 				messageLabel.setText("Tous les Bugémons adverses ont été mis KO. Tu as gagné !");
 			}

@@ -20,5 +20,6 @@ public final class WindowPath {
 	public static final String CHOOSE_BUGEMON = FXML_WINDOWS_PATH + "ChooseBugemonWindow" + FXML_FILE_EXTENSION;
 	public static final String LOAD_TEAM_PANEL = FXML_WINDOWS_PATH + "LoadTeamPanel" + FXML_FILE_EXTENSION;
 	public static final String FLOOR = FXML_WINDOWS_PATH + "FloorWindow" + FXML_FILE_EXTENSION;
+
 	private WindowPath() {}
 }

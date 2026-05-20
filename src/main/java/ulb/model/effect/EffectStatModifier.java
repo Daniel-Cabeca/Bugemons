@@ -12,7 +12,7 @@ import java.util.Map;
 public class EffectStatModifier extends Effect {
 
 	public Map<EffectStatType, Integer> modifiers;
-	private EffectStatDuration duration;
+	private final EffectStatDuration duration;
 
 	public EffectStatModifier(EffectTarget targetType, EffectStatDuration duration,
 							  Map<EffectStatType, Integer> modifiers) {

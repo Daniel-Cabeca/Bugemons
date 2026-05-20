@@ -1,8 +1,8 @@
 package ulb.communication.Messenger;
 
-import java.io.Serializable;
-
 import ulb.exceptions.CommunicationException;
+
+import java.io.Serializable;
 
 public interface Messenger {
 	void sendMessage(Serializable message) throws CommunicationException;

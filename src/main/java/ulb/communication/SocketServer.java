@@ -111,7 +111,7 @@ public class SocketServer {
 		try {
 			socket.close();
 		} catch (IOException ignored) {
-			// The client socket is already unusable
+			LOGGER.log(Level.FINE, "Client socket could not be closed because it is already unusable.");
 		}
 	}
 

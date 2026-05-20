@@ -42,7 +42,7 @@ public class SocketClient {
 			try {
 				socket.close();
 			} catch (IOException ignored) {
-				// The client is already being closed
+				LOGGER.log(Level.FINE, "Client socket could not be closed because it is already being closed.");
 			}
 		}
 	}

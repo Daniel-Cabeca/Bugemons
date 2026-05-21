@@ -46,10 +46,14 @@ public class BattleParticipant {
 		this.setActiveBugemon(activeBugemon);
 	}
 
-	/** Returns participant player. */
+	/** 
+	 * Returns participant player. 
+	*/
 	public Player getPlayer() { return player; }
 
-	/** Returns participant team. */
+	/**
+	 * Returns participant team. 
+	*/
 	public Team getTeam() { return team; }
 
 	/**
@@ -73,7 +77,9 @@ public class BattleParticipant {
 
 	public Action getAction() { return action; }
 
-	/** Returns active bugemon. */
+	/** 
+	 * Returns active bugemon. 
+	*/
 	public Bugemon getActiveBugemon() { return activeBugemon; }
 
 	/**

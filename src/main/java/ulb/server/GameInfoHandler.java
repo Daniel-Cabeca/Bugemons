@@ -29,9 +29,8 @@ import ulb.service.TowerSaveService;
 import java.util.*;
 
 /**
- * Handles requests for current game-related information, such as next window, battle end, battle state, or tower state
+ * Handles requests for current game-related information, such as next window, battle end, battle state, or tower state.
  */
-
 public class GameInfoHandler {
 	ClientHandler clientHandler;
 	TowerSaveService towerSaveService;
@@ -42,7 +41,7 @@ public class GameInfoHandler {
 	}
 
     /**
-     * Checks if the current battle is over and sends the answer to the client
+     * Checks if the current battle is over and sends the answer to the client.
      */
 	public void checkGameFinished() {
 		Battle battle = clientHandler.getBattle();
@@ -50,7 +49,7 @@ public class GameInfoHandler {
 	}
 
     /**
-	 * Checks which items can be currently used by the player and sends the answer to the client
+	 * Checks which items can be currently used by the player and sends the answer to the client.
 	 *
      * @param items the list of ItemDTOs to be checked
      * @throws DataAccessException if the item can't be mapped
@@ -70,7 +69,7 @@ public class GameInfoHandler {
 	}
 
     /**
-	 * Sends the effectiveness message for every ability to the client
+	 * Sends the effectiveness message for every ability to the client.
 	 *
      * @param bugemonDTO the opponent's bugemon
      * @param abilities the list of AbilityDTOs for which the effectiveness message is needed
@@ -90,7 +89,7 @@ public class GameInfoHandler {
 	}
 
     /**
-	 * Sends the player's and the opponent's currently active bugemons to the client
+	 * Sends the player's and the opponent's currently active bugemons to the client.
 	 *
      * @throws DataAccessException if there is no battle
      */
@@ -146,7 +145,7 @@ public class GameInfoHandler {
 	}
 
     /**
-     * Sends the current battle state to the client
+     * Sends the current battle state to the client.
      */
 	public void getBattleState() {
 		Battle battle = clientHandler.getBattle();
@@ -156,7 +155,7 @@ public class GameInfoHandler {
 	}
 
     /**
-	 * Checks if there is a pending level up state and sets the correct bugemon and rewards
+	 * Checks if there is a pending level up state and sets the correct bugemon and rewards.
 	 *
      * @param battle the battle during which a bugemon leveled up
      * @param current the bugemon who leveled up
@@ -175,7 +174,7 @@ public class GameInfoHandler {
 	}
 
     /**
-	 * Sends level up info (the bugemon who leveled up and the generated rewards) to the client
+	 * Sends level up info (the bugemon who leveled up and the generated rewards) to the client.
 	 *
      * @throws UserFacingException if no level-up information is available or no bugemon requires a level-up reward
      */
@@ -205,7 +204,7 @@ public class GameInfoHandler {
 	}
 
     /**
-	 * Sends the log messages after an action to the player, and clears them based on the flag
+	 * Sends the log messages after an action to the player, and clears them based on the flag.
 	 *
      * @param clearLogs whether battle logs should be cleared after sending
      */
@@ -226,7 +225,7 @@ public class GameInfoHandler {
 	}
 
     /**
-	 * Resolves the next window to be shown in tower mode
+	 * Resolves the next window to be shown in tower mode.
 	 *
      * @param battle the current battle after which another window has to be shown
      * @return the WindowType indicating which window has to be shown
@@ -251,7 +250,7 @@ public class GameInfoHandler {
 	}
 
     /**
-	 * Resolves the next window to be shown after winning a battle in tower mode
+	 * Resolves the next window to be shown after winning a battle in tower mode.
 	 *
      * @param towerManager the tower manager
      * @param battle the battle that was won
@@ -265,7 +264,7 @@ public class GameInfoHandler {
 		} catch (Exception e) {
 			throw new DataAccessException("The room cannot be completed");
 		}
-		battle.resetFightStats();
+		battle.resetAllFightStats();
 		RoomType currentRoomType = towerManager.getCurrentRoomType();
 		if (currentRoomType == RoomType.BOSS) {
 			try {
@@ -285,7 +284,7 @@ public class GameInfoHandler {
 	}
 
     /**
-	 * Resolves the next window to be shown based on the selected room in tower mode
+	 * Resolves the next window to be shown based on the selected room in tower mode.
 	 *
      * @param towerManager the tower manager
      * @return the WindowType indicating which window has to be shown
@@ -315,7 +314,7 @@ public class GameInfoHandler {
 	}
 
     /**
-	 * Resolves the next window to be shown in classic/auto mode
+	 * Resolves the next window to be shown in classic/auto mode.
 	 *
      * @param battle the current battle
      * @return the WindowType indicating which window has to be shown
@@ -331,7 +330,7 @@ public class GameInfoHandler {
 	}
 
     /**
-	 * Sends the next window to be shown to the client
+	 * Sends the next window to be shown to the client.
 	 *
      * @throws DataAccessException if resolving the next window fails
      */
@@ -356,7 +355,7 @@ public class GameInfoHandler {
 
     /**
 	 * Sends current information about the tower (floor, room, cleared rooms and if the player fled a battle)
-	 * to the client
+	 * to the client.
 	 *
      * @throws DataAccessException if the game is not in tower mode or if cleared room information cannot be retrieved
      */
@@ -383,7 +382,7 @@ public class GameInfoHandler {
 	}
 
     /**
-	 * Checks if a tower save for the player exists in the db and sends the answer to the client
+	 * Checks if a tower save for the player exists in the db and sends the answer to the client.
 	 *
      * @param player the player whose tower save is checked
      * @throws DataAccessException if the database lookup fails

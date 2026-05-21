@@ -21,15 +21,22 @@ public class BattleHandler {
 		this.battle = battle;
 	}
 
+	/**
+	 * Executes a full battle round.
+	 * 
+	 * Each participant performs their action in turn order determined by their initiative.
+	 * After the first action is done, the participants' HP values are updated, then the second action is executed.
+	 * Once both turns are completed, possible active effects are processed and both participants are set back to the INGAME state.
+	 */
 	public void handleRound() {
 
 		BattleParticipant participantA = battle.getParticipantA();
 		BattleParticipant participantB = battle.getParticipantB();
 
-		// checks whose action should be executed first and applies it
 		battle.setParticipantHpAfterFirstAction(participantA, -1);
 		battle.setParticipantHpAfterFirstAction(participantB, -1);
 
+		// checks whose action should be executed first and applies it
 		ParticipantLabel firstPlayer = this.battle.getFirstTeamToPlay();
 		ParticipantLabel secondPlayer = this.battle.getOpponentTeamLabel(firstPlayer);
 
@@ -52,7 +59,7 @@ public class BattleHandler {
 	}
 
 	/**
-	 * handle the round of one of the two players
+	 * handle the round of one of the two players.
 	 *
 	 * @param playerTeam the player who plays now
 	 * @return a boolean depending on if the turn continues
@@ -97,7 +104,7 @@ public class BattleHandler {
 	}
 
 	/**
-	 * Handles the end of the battle
+	 * Handles the end of the battle and computes the end battle results.
 	 */
 	public void handleBattleEnd() {
 
@@ -132,7 +139,7 @@ public class BattleHandler {
 	}
 
 	/**
-	 * Check if the round is finished and set the states depending on that
+	 * Checks if the round is finished and sets the states accordingly.
 	 *
 	 * @param previousActiveTeam the team who just finished the round
 	 * @return a boolean depending on if the round is finished

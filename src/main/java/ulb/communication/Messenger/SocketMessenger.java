@@ -10,11 +10,28 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Implementation of the Messenger interface using sockets.
+ */
 public class SocketMessenger implements Messenger {
-	private final Logger LOGGER = Logger.getLogger(SocketMessenger.class.getName());
+	/**
+	 * Object used for logging runtime information to the console or to a log file.
+	 */
+	private static final Logger LOGGER = Logger.getLogger(SocketMessenger.class.getName());
 
+	/**
+	 * The socket connection.
+	 */
 	private final Socket socket;
+
+	/**
+	 * Input stream for the socket.
+	 */
 	private final ObjectInputStream reader;
+
+	/**
+	 * Output stream for the socket.
+	 */
 	private final ObjectOutputStream writer;
 
 	public SocketMessenger(Socket socket) throws CommunicationException {
@@ -34,6 +51,9 @@ public class SocketMessenger implements Messenger {
 		}
 	}
 
+	/**
+	 * Close the socket.
+	 */
 	public void close() {
 		if (!socket.isClosed()) {
 			try {
@@ -46,6 +66,9 @@ public class SocketMessenger implements Messenger {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void sendMessage(Serializable message) throws CommunicationException {
 		if (message == null) {
@@ -62,6 +85,9 @@ public class SocketMessenger implements Messenger {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Serializable receiveMessage() throws CommunicationException {
 		try {

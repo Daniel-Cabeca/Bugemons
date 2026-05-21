@@ -18,9 +18,24 @@ import java.util.logging.Logger;
  * Server managing incoming client connections using sockets.
  */
 public class SocketServer {
+	/**
+	 * Object used for logging runtime information to the console or to a log file.
+	 */
 	private static final Logger LOGGER = Logger.getLogger(SocketServer.class.getName());
+
+	/**
+	 * Socket connection with multiple clients.
+	 */
 	private final ServerSocket serverSocket;
+
+	/**
+	 * The threads managing each client.
+	 */
 	private final List<Thread> clients;
+
+	/**
+	 * Flag for closing the server.
+	 */
 	private boolean stopServer;
 
 	/**

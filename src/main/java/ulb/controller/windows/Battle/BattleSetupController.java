@@ -25,9 +25,23 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Battle controller responsible for fetching information.
+ */
 public class BattleSetupController {
+	/**
+	 * Object used for logging runtime information to the console or to a log file.
+	 */
 	protected final Logger LOGGER = Logger.getLogger(this.getClass().getName());
+
+	/**
+	 * The controller responsible for coordinating server communications and switching to other controllers.
+	 */
 	private final ClientController clientController;
+
+	/**
+	 * The associated view.
+	 */
 	private BattleWindow view;
 
 	BattleSetupController(ClientController clientController) {
@@ -60,6 +74,11 @@ public class BattleSetupController {
 		return entries;
 	}
 
+	/**
+	 * Refreshes the list of item in the current player's inventory.
+	 *
+	 * @param player The current player
+	 */
 	public void updateInventory(PlayerDTO player) {
 		Serializable message = this.clientController.getData(new GetPlayerInventoryRequest(player.getUsername()));
 		if (message instanceof PlayerInventoryResponse playerInventory) {
@@ -69,6 +88,12 @@ public class BattleSetupController {
 		}
 	}
 
+	/**
+	 * Tests whether given items can be used for the active Bugemon.
+	 *
+	 * @param items The list of items to test
+	 * @return A map associating item ids and a boolean set to true if the item is usable on the current player's active Bugemon, false otherwise
+	 */
 	public Map<String, Boolean> checkItems(List<ItemDTO> items) {
 		Serializable message = this.clientController.getData(new CheckUsableItemRequest(items));
 		if (message instanceof UsableItemsResponse usableItems) {
@@ -117,6 +142,11 @@ public class BattleSetupController {
 		return entries;
 	}
 
+	/**
+	 * Fetches the active Bugemon of each player.
+	 *
+	 * @return A list holding two Bugemon; in order: the current player's active Bugemon and his opponent's active Bugemon
+	 */
 	public List<BugemonDTO> getActiveBugemons() {
 		Serializable message = clientController.getData(new GetActiveBugemonsRequest());
 		if (message instanceof ActiveBugemonsResponse activeBugemons) {
@@ -127,6 +157,13 @@ public class BattleSetupController {
 		return null;
 	}
 
+	/**
+	 * Fetches the type effectiveness of given abilities against a given Bugemon.
+	 *
+	 * @param abilities The list of abilities whose type effectiveness to test
+	 * @param bugemonTarget The Bugemon target to test type effectiveness against
+	 * @return A map associating each ability to a message to display to inform the player of its effectiveness
+	 */
 	public Map<AbilityDTO, String> getAbilityEffectiveness(List<AbilityDTO> abilities, BugemonDTO bugemonTarget) {
 		Serializable message = this.clientController.getData(new GetAbilityEffectivenessRequest(abilities,
 				bugemonTarget));
@@ -180,6 +217,11 @@ public class BattleSetupController {
 		return entries;
 	}
 
+	/**
+	 * Refreshes the list of Bugemons in the current player's team.
+	 *
+	 * @param player The current player
+	 */
 	public void updateTeam(PlayerDTO player) {
 		Serializable message = this.clientController.getData(new GetPlayerTeamRequest(player.getUsername()));
 		if (message instanceof PlayerTeamResponse playerTeam) {
@@ -249,6 +291,11 @@ public class BattleSetupController {
 		return null;
 	}
 
+	/**
+	 * Fetches the battle's state.
+	 *
+	 * @return The state of the battle
+	 */
 	public BattleState getState() {
 		Serializable message = this.clientController.getData(new GetBattleStateRequest());
 		if (message instanceof BattleStateResponse battleState) {

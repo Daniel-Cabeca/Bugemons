@@ -13,7 +13,13 @@ import ulb.view.windows.LoadTeamPanel;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * Controller for loading the player's saved Bugemon teams.
+ */
 public class LoadTeamPanelController extends WindowController<LoadTeamPanel> implements LoadTeamPanel.ViewListener {
+	/**
+	 * The FXML stage for the saved teams selection.
+	 */
 	private Stage popupStage;
 
 	public LoadTeamPanelController(Stage stage, ClientController clientController) {
@@ -40,11 +46,19 @@ public class LoadTeamPanelController extends WindowController<LoadTeamPanel> imp
 		popupStage.centerOnScreen();
 	}
 
+	/**
+	 * Retrieves the list of the current player's saved Bugemon teams form the server and sends it to the associated view.
+	 */
 	private void setSavedTeams() {
 		List<TeamDTO> teams = getSavedTeams();
 		view.populateSavedTeams(teams);
 	}
 
+	/**
+	 * Retrieves the list of the current player's saved Bugemon teams from the server.
+	 *
+	 * @return The list of the player's saved teams
+	 */
 	private List<TeamDTO> getSavedTeams() {
 		Serializable message = this.clientController.getData(new GetSavedTeamsRequest());
 
@@ -54,12 +68,18 @@ public class LoadTeamPanelController extends WindowController<LoadTeamPanel> imp
 		return null;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onLoadTeam(TeamDTO selectedTeam) {
 		this.clientController.setupTeamAndShowConfirmTeam(selectedTeam.members());
 		popupStage.close();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onReturn() {
 		popupStage.close();

@@ -14,10 +14,27 @@ import ulb.view.windows.FloorWindow;
  * Controller for the tower floor navigation window.
  */
 public class FloorController extends WindowController<FloorWindow> implements FloorWindow.ViewListener {
-
+	/**
+	 * The layout of the current floor of the tower.
+	 */
 	private final Floor floorGraph = new Floor(1, false);
+
+	/**
+	 * The current room id.
+	 * Initialized to 4 for the default layout.
+	 */
 	private int currentRoomId = 4;
-	private int lastEnteredRoomId = 4; // used for the return animation after fleeing a battle
+
+	/**
+	 * The id of the room to go back to when backtracking after fleeing from a battle.
+	 * Initialized to 4 for the default layout.
+	 */
+	private int lastEnteredRoomId = 4;
+
+	/**
+	 * The number of the current floor.
+	 * Value of -1 indicates that it has not been fetched form the server yet.
+	 */
 	private int currentFloorNumber = -1;
 
 	/**

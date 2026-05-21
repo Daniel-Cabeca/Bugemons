@@ -256,10 +256,33 @@ public class CreateTeamWindow {
 	}
 
 	public interface ViewListener {
+		/**
+		 * Handles team confirmation from the view.
+		 * @param selectedBugemonIds The selected species ids
+		 */
 		void onConfirmTeam(List<String> selectedBugemonIds);
+
+		/**
+		 * Handles team loading by opening the load team panel
+		 */
 		void onLoadTeam();
+
+		/**
+		 * Handles saving the team to the database
+		 * @param selectedBugemonIds The list of the ids of the team members
+		 * @param teamName The name of the team
+		 */
 		void onSaveTeam(List<String> selectedBugemonIds, String teamName);
+
+		/**
+		 * Handles return action from the team creation screen.
+		 */
 		void onReturn();
+
+		/**
+		 * Returns the list of all the Bugemon species.
+		 * @return A list of all the species of Bugemon
+		 */
 		List<BugemonSpeciesDTO> getAllSpecies();
 	}
 }

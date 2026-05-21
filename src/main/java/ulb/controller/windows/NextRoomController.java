@@ -10,7 +10,6 @@ import ulb.view.windows.NextRoomWindow;
  * Controller for the transition screen between tower rooms.
  */
 public class NextRoomController extends WindowController<NextRoomWindow> implements NextRoomWindow.ViewListener {
-
 	/**
 	 * Creates the next room controller.
 	 *
@@ -23,74 +22,13 @@ public class NextRoomController extends WindowController<NextRoomWindow> impleme
 	}
 
 	/**
-	 * Handles continue action.
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void onContinue() { this.clientController.nextRoom(); }
 
-//    /**
-//     * Returns the next window type according to server flow.
-//     *
-//     * @return The next window type, or null if unavailable
-//     */
-//    public WindowType getWindowType(){
-//        Serializable message = this.clientListener.onGetData(new GetNextWindowRequest());
-//        if (message instanceof NextWindowResponse nextWindow){
-//            return nextWindow.getNextWindow();
-//        }
-//        return null;
-//    }
-//
-//    /**
-//     * Switches to the next window according to info gotten from the server.
-//     */
-//    public void nextRoom(){
-//        WindowType nextWindow = this.getWindowType();
-//        switch (nextWindow) {
-//            case NEXT_ROOM:
-//                this.clientListener.onShowWindow(WindowName.NEXT_ROOM);
-//                break;
-//            case GAME:
-//                this.clientListener.onShowWindow(WindowName.BATTLE);
-//                break;
-//            case LEVEL_UP:
-//                this.clientListener.onShowWindow(WindowName.LEVEL_UP);
-//                break;
-//            case REWARD:
-//                this.clientListener.onShowWindow(WindowName.FLOOR_REWARD);
-//                break;
-//            case MAIN_MENU:
-//                this.switchToBattleEndWindow();
-//                break;
-//            case FLOOR:
-//                this.clientListener.onShowWindow(WindowName.FLOOR);
-//                break;
-//            default:
-//                break;
-//        }
-//    }
-//
-//    /**
-//     * Switches to the battle end window with battle result.
-//     */
-//    private void switchToBattleEndWindow(){
-//        Serializable message = this.clientListener.onGetData(new GetBattleEndInfoRequest());
-//        boolean victory;
-//        int totalXp;
-//        String opponent;
-//        if (message instanceof BattleEndInfoResponse battleInfo){
-//            victory = battleInfo.isVictory();
-//            totalXp = battleInfo.getTotalXp();
-//            opponent = battleInfo.getOpponent();
-//
-//        } else {
-//            return;
-//        }
-//        this.clientListener.onShowBattleEnd(victory, totalXp, opponent);
-//    }
-
 	/**
-	 * Handles return action.
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void onReturn() {

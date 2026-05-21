@@ -55,9 +55,24 @@ public class MainMenuWindow {
 	}
 
 	public interface ViewListener {
+		/**
+		 * Notifies the listener to open the social menu or tab.
+		 */
 		void onOpenSocial();
+
+		/**
+		 * Notifies the listener to initiate the solo (single-player) game mode.
+		 */
 		void onSolo();
+
+		/**
+		 * Shuts down the JavaFX platform and terminates the application process.
+		 */
 		void onQuit();
+
+		/**
+		 * Notifies the listener to log the current user out of their session.
+		 */
 		void onLogOut();
 	}
 }

@@ -33,16 +33,32 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * Client-side application controller coordinating server messaging.
+ * Client-side application controller coordinating controllers and server communications.
  */
 public class ClientController extends Application {
-
+	/**
+	 * Object used for logging runtime information to the console or to a log file.
+	 */
 	private static final Logger LOGGER = Logger.getLogger(ClientController.class.getName());
 
+	/**
+	 * The communication point with the server.
+	 */
 	SocketClient client;
+
+	/**
+	 * The current FXML Stage.
+	 */
 	Stage stage;
 
+	/**
+	 * The current player's account information.
+	 */
 	PlayerDTO player;
+
+	/**
+	 * The current game mode.
+	 */
 	GameMode gameMode;
 
 	RegisterController registerController;

@@ -28,7 +28,10 @@ import java.util.List;
  * Controller for creating and validating the player's starting team.
  */
 public class TeamController extends WindowController<CreateTeamWindow> implements CreateTeamWindow.ViewListener {
-
+	/**
+	 * Information on the opponent for a multiplayer battle.
+	 * Set to null if playing in singleplayer.
+	 */
 	private PlayerDTO opponent = null;
 
 	public TeamController(Stage stage, ClientController clientController) {
@@ -36,8 +39,16 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 		this.view.setViewListener(this);
 	}
 
+	/**
+	 * Removes the opponent information, reverting to singleplayer.
+	 */
 	public void resetOpponent() { this.opponent = null; }
 
+	public boolean hasOpponent() { return this.opponent != null; }
+
+	/**
+	 * Display this controller's associated view.
+	 */
 	@Override
 	public void show() {
 		this.view.populateAvailableBugemons();
@@ -45,9 +56,7 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	}
 
 	/**
-	 * Handles team confirmation from the view.
-	 *
-	 * @param selectedBugemonIds The selected species ids
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void onConfirmTeam(List<String> selectedBugemonIds) {
@@ -74,8 +83,6 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 		List<BugemonDTO> members = setupTeamMembers(selectedBugemonIds);
 		selfPlayer.setTeam(members);
 	}
-
-	public boolean hasOpponent() { return this.opponent != null; }
 
 	/**
 	 * Confirms the team for a multiplayer battle and waits for the battle to start.
@@ -183,7 +190,7 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	public void setOpponent(PlayerDTO opponent) { this.opponent = opponent; }
 
 	/**
-	 * Handles team loading by opening the load team panel
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void onLoadTeam() {
@@ -191,10 +198,7 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	}
 
 	/**
-	 * Handles saving the team to the database
-	 *
-	 * @param selectedBugemonIds the list of the ids of the team members
-	 * @param teamName the name of the team
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void onSaveTeam(List<String> selectedBugemonIds, String teamName) {
@@ -204,8 +208,9 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	}
 
 	/**
-	 * Handles return action from the team creation screen.
+	 * {@inheritDoc}
 	 */
+	@Override
 	public void onReturn() {
 		if (this.hasOpponent()) {
 			this.clientController.getData(new QuitMultiBattleRequest(this.opponent));
@@ -215,9 +220,7 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	}
 
 	/**
-	 * Returns the list of all the Bugemon species.
-	 *
-	 * @return A list of all the species of Bugemon
+	 * {@inheritDoc}
 	 */
 	@Override
 	public List<BugemonSpeciesDTO> getAllSpecies() {

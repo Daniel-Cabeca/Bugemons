@@ -11,17 +11,42 @@ import ulb.model.GameMode;
 import ulb.view.WindowPath;
 import ulb.view.windows.BattleWindow;
 
+/**
+ * Main controller for ongoing battles.
+ */
 public class BattleWindowController extends WindowController<BattleWindow> implements BattleWindow.ViewListener {
+	/**
+	 * Battle controller responsible for fetching information.
+	 */
 	private final BattleSetupController battleSetupController;
+
+	/**
+	 * Battle controller handling turn actions.
+	 */
 	private final BattleActionController battleActionController;
 
+	/**
+	 * The current player.
+	 */
 	private PlayerDTO player;
+
+	/**
+	 * The current game mode.
+	 */
 	private GameMode gameMode;
+
+	/**
+	 * The current tower floor number.
+	 */
 	private int towerFloorNumber;
+
+	/**
+	 * The current room number for the current floor.
+	 */
 	private int towerRoomNumber;
 
 	/**
-	 * Creates the floor reward controller.
+	 * Creates the battle controller.
 	 *
 	 * @param stage The application stage
 	 * @param clientController The client controller
@@ -33,6 +58,10 @@ public class BattleWindowController extends WindowController<BattleWindow> imple
 		battleActionController = new BattleActionController(clientController, battleSetupController);
 	}
 
+	/**
+	 * Display the associated view.
+	 */
+	@Override
 	public void show() {
 		loadTowerInfoIfNeeded();
 
@@ -47,6 +76,10 @@ public class BattleWindowController extends WindowController<BattleWindow> imple
 		super.show();
 	}
 
+	/**
+	 * Loads information pertaining to tower mode.
+	 * (floor and room numbers)
+	 */
 	private void loadTowerInfoIfNeeded() {
 		if (this.gameMode != GameMode.TOWER) {
 			this.towerFloorNumber = 0;

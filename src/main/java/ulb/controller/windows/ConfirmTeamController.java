@@ -11,12 +11,22 @@ import ulb.view.windows.ConfirmTeamWindow;
 
 import java.util.List;
 
+/**
+ * Controller for the view asking to confirm the selected team before gameplay.
+ */
 public class ConfirmTeamController extends WindowController<ConfirmTeamWindow> implements ConfirmTeamWindow.ViewListener {
+	/**
+	 * The selected team of Bugemon.
+	 */
 	private List<BugemonDTO> playerTeam;
+
+	/**
+	 * The game mode to initiate after confirmation.
+	 */
 	private GameMode gameMode;
 
 	/**
-	 * Creates the confirm team controller.
+	 * Creates the team confirmation controller.
 	 *
 	 * @param stage The application stage
 	 * @param clientController the clientController

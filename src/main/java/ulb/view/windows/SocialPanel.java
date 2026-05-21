@@ -336,18 +336,78 @@ public class SocialPanel {
 	}
 
 	public interface ViewListener {
+		/**
+		 * Close the social panel screen.
+		 */
 		void onClose();
+
+		/**
+		 * Decline a friend request.
+		 * @param sender The username of the player who sent the request
+		 */
 		void onDeclineFriend(String sender);
+
+		/**
+		 * Decline a battle request.
+		 * @param sender The username of the player who sent the request
+		 */
 		void onDeclineBattle(String sender);
+
+		/**
+		 * Accept a friend request.
+		 * @param sender The username of the player who sent the request
+		 */
 		void onAcceptFriend(String sender);
+
+		/**
+		 * Accept a battle request.
+		 * @param sender The username of the player who sent the request
+		 */
 		void onAcceptBattle(String sender);
+
+		/**
+		 * Displays the appropriate status and sends friend request.
+		 * @param target The username of the player to request as a friend
+		 */
 		void onInvite(String target);
+
+		/**
+		 * Select given friend to chat.
+		 * @param friend The username of the player to chat with
+		 */
 		void onChatFriendSelected(String friend);
+
+		/**
+		 * Open friend requests tab and refreshes.
+		 */
 		void onFriendRequestsOpened();
+
+		/**
+		 * Open the battle requests tab
+		 */
 		void onBattleRequestsOpened();
+
+		/**
+		 * Send a battle request and wait for the answer.
+		 * @param friend The username of the player to send a request to
+		 */
 		void onChallengeFriend(String friend);
-		void refreshFriends();
-		void refreshLeaderboard();
+
+		/**
+		 * Send given contents in form of a message to a given friend.
+		 * @param friend The username of the player to message
+		 * @param content The contents of the message
+		 */
 		void onSendMessage(String friend, String content);
+
+		/**
+		 * Refresh the list of friends of the current player.
+		 */
+		void refreshFriends();
+
+		/**
+		 * Refreshes the list of scores of the registered players.
+		 */
+		void refreshLeaderboard();
 	}
 }

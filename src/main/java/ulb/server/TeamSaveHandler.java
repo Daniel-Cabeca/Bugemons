@@ -13,6 +13,9 @@ import ulb.service.TeamService;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Handles requests related to saving and retrieving player teams
+ */
 public class TeamSaveHandler {
 	private final TeamService teamService;
 	ClientHandler clientHandler;
@@ -22,6 +25,11 @@ public class TeamSaveHandler {
 		this.teamService = teamService;
 	}
 
+	/**
+	 * Retrieves all saved teams for the currently connected player and sends them to the client
+	 *
+	 * @throws DataAccessException if the saved teams cannot be retrieved
+	 */
 	public void getSavedTeams() throws DataAccessException {
 		Player player = clientHandler.getPlayer();
 
@@ -37,6 +45,13 @@ public class TeamSaveHandler {
 		clientHandler.sendMessage(new SavedTeamsResponse(DTOTeams));
 	}
 
+	/**
+	 * Saves the given team for the currently connected player
+	 *
+	 * @param teamDTO the team to save
+	 * @throws UserFacingException if a team with the same name already exists for the player
+	 * @throws DataAccessException if the team cannot be saved
+	 */
 	public void saveTeam(TeamDTO teamDTO) throws UserFacingException, DataAccessException {
 		Player player = clientHandler.getPlayer();
 

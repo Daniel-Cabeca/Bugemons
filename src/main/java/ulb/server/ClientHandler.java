@@ -66,6 +66,10 @@ public class ClientHandler extends Thread implements ServerMessageHandler {
 		this.teamSaveHandler = new TeamSaveHandler(this, teamService);
 	}
 
+    /**
+	 * Resets all runtime session state (battle, tower, team label, etc.).
+	 * Used when switching game modes.
+     */
 	void resetGameSessionState() { // package-private
 		this.battle = null;
 		this.teamLabel = null;
@@ -74,6 +78,9 @@ public class ClientHandler extends Thread implements ServerMessageHandler {
 		clearPendingLevelUpState();
 	}
 
+    /**
+     * Clears stored pending level-up data (bugemon + rewards).
+     */
 	void clearPendingLevelUpState() {
 		this.pendingLevelUpBugemon = Optional.empty();
 		this.pendingLevelUpRewards = null;
@@ -111,6 +118,9 @@ public class ClientHandler extends Thread implements ServerMessageHandler {
 
 	public void setGameMode(boolean isGameTower) { this.isGameTower = isGameTower; }
 
+    /**
+     * Main thread loop. Continuously receives and processes client messages until stopped.
+     */
 	@Override
 	public void run() {
 		while (!this.stop) {
@@ -120,7 +130,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler {
 	}
 
 	/**
-	 * Reads the socket and handle the received message
+	 * Reads the socket and handles the received message
 	 */
 	private void handleMessage() {
 		Request message = receiveMessage();
@@ -140,6 +150,11 @@ public class ClientHandler extends Thread implements ServerMessageHandler {
 		}
 	}
 
+    /**
+	 * Receives a request from the client socket.
+	 *
+	 * @return the received request, or null if invalid or communication failed
+     */
 	public Request receiveMessage() {
 		try {
 			Serializable received = this.socketMessenger.receiveMessage();
@@ -156,6 +171,11 @@ public class ClientHandler extends Thread implements ServerMessageHandler {
 		return null;
 	}
 
+	/**
+	 * Sends an error message to the client.
+	 *
+	 * @param errorMessage message describing the error
+	 */
 	public void sendErrorMessage(String errorMessage) {
 		if (this.stop) {
 			return;
@@ -168,10 +188,18 @@ public class ClientHandler extends Thread implements ServerMessageHandler {
 		}
 	}
 
+    /**
+	 * Sends a success status response to the client.
+     */
 	public void sendSuccessMessage() {
 		sendMessage(new StatusResponse(true));
 	}
 
+    /**
+	 * Sends a serialized message to the client
+	 *
+     * @param message message to be sent
+     */
 	public void sendMessage(Serializable message) {
 		if (this.stop) {
 			return;
@@ -184,21 +212,36 @@ public class ClientHandler extends Thread implements ServerMessageHandler {
 		}
 	}
 
+    /**
+	 * Handles communication failure by logging and stopping the client handler
+	 *
+     * @param message log message
+     */
 	private void handleCommunicationFailure(String message) {
 		LOGGER.log(Level.INFO, message);
 		stopProcess();
 	}
 
+    /**
+     * Stops the client handler
+     */
 	public void stopProcess() {
 		this.stop = true;
 	}
 
+    /**
+     * Closes the socket connection
+     */
 	public void end() {
 		this.socketMessenger.close();
 	}
 
 	/**
-	 * Go to the next room if the game is in tower mode
+	 * Moves player to a specific tower room if in tower mode
+	 *
+	 * @param targetRoomId the id of the target room
+	 * @throws LoadException if room cannot be loaded
+	 * @throws EntityNotFoundException if room does not exist
 	 */
 	public void nextTowerRoom(int targetRoomId) throws LoadException, EntityNotFoundException {
 		if (!isGameTower) {
@@ -210,6 +253,12 @@ public class ClientHandler extends Thread implements ServerMessageHandler {
 		}
 	}
 
+    /**
+	 * Checks if current room matches given id
+	 *
+     * @param targetRoomId room id to compare
+     * @return true if equal
+     */
 	public boolean isCurrentRoomIdEqual(int targetRoomId) {
 		if (!isGameTower) {
 			return false;
@@ -217,6 +266,11 @@ public class ClientHandler extends Thread implements ServerMessageHandler {
 		return this.towerManager.getCurrentRoomId() == targetRoomId;
 	}
 
+    /**
+	 * Finished tower run and clears saved tower state
+	 *
+     * @throws DataAccessException if tower data cannot de deleted
+     */
 	void finishTower() throws DataAccessException {
 		if (!isGameTower) {
 			return;

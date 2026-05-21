@@ -21,6 +21,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Handles requests for player-related information, such as profile data, inventory, and team composition.
+ */
+
 public class PlayerInfoHandler {
 	private final AccountService accountService;
 	ClientHandler clientHandler;
@@ -30,6 +34,12 @@ public class PlayerInfoHandler {
 		this.accountService = accountService;
 	}
 
+	/**
+	 * Retrieves basic profile information for the player with the given username and sends it to the client
+	 *
+	 * @param username the username of the player to look up
+	 * @throws UserFacingException if no account is found for the given username
+	 */
 	public void getPlayerInfo(String username) throws UserFacingException {
 		try {
 			Integer id = this.accountService.getUserId(username);
@@ -41,6 +51,12 @@ public class PlayerInfoHandler {
 		}
 	}
 
+	/**
+	 * Retrieves the inventory of the currently connected player and sends it to the client
+	 *
+	 * @param username the username to validate against the connected player
+	 * @throws UserFacingException if the given username does not match the connected player
+	 */
 	public void getPlayerInventory(String username) throws UserFacingException {
 		Player player = clientHandler.getPlayer();
 
@@ -57,6 +73,12 @@ public class PlayerInfoHandler {
 		}
 	}
 
+	/**
+	 * Retrieves the team of the currently connected player and sends it to the client
+	 *
+	 * @param username the username to validate against the connected player
+	 * @throws UserFacingException if the given username does not match the connected player
+	 */
 	public void getPlayerTeam(String username) throws UserFacingException {
 		Player player = clientHandler.getPlayer();
 		if (username.equals(player.getUsername())) {

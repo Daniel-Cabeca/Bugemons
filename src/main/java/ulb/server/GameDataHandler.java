@@ -21,6 +21,9 @@ import ulb.service.ItemService;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Handles requests for static or randomly generated game data, such as bugemon species, abilities, and items.
+ */
 public class GameDataHandler {
 	private final BugemonService bugemonService;
 	private final AbilityService abilityService;
@@ -35,6 +38,11 @@ public class GameDataHandler {
 		this.itemService = itemService;
 	}
 
+	/**
+	 * Retrieves all available bugemon species and sends them to the client.
+	 *
+	 * @throws DataAccessException if the species list cannot be retrieved
+	 */
 	public void getAllBugemonSpecies() throws DataAccessException {
 		List<BugemonSpeciesDTO> DTOSpeciesList = new ArrayList<>();
 
@@ -49,6 +57,13 @@ public class GameDataHandler {
 		clientHandler.sendMessage(new BugemonSpeciesResponse(DTOSpeciesList));
 	}
 
+	/**
+	 * Retrieves a random ability compatible with the given bugemon's type and current ability set,
+	 * and sends it to the client.
+	 *
+	 * @param bugemonDTO the bugemon for which a random ability is requested
+	 * @throws DataAccessException if a random ability cannot be retrieved
+	 */
 	public void getRandomAbility(BugemonDTO bugemonDTO) throws DataAccessException {
 		Bugemon bugemon = BugemonMapper.toEntity(bugemonDTO);
 
@@ -62,6 +77,11 @@ public class GameDataHandler {
 		clientHandler.sendMessage(new RandomAbilityResponse(AbilityMapper.toDTO(RandomAbility)));
 	}
 
+	/**
+	 * Retrieves a random item and sends it to the client.
+	 *
+	 * @throws DataAccessException if a random item cannot be retrieved
+	 */
 	public void getRandomItem() throws DataAccessException {
 		Item randomItem;
 		try {

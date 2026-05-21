@@ -22,6 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Handles game session setup, including player registration, login, and initialization of game modes
+ */
 public class SetupHandler {
 	private final AccountService accountService;
 	private final ItemService itemService;
@@ -45,6 +48,14 @@ public class SetupHandler {
 		this.multiBattleService = multiBattleService;
 	}
 
+	/**
+	 * Sets up a multiplayer battle session for the connected player against the given opponent,
+	 * assigns the player's team, and starts the battle if both participants are ready
+	 *
+	 * @param opponent the opponent player
+	 * @param bugemons the list of bugemons in the player's team
+	 * @throws DataAccessException if the multiplayer session cannot be initialized
+	 */
 	public void setupMultiBattle(PlayerDTO opponent, List<BugemonDTO> bugemons) throws DataAccessException {
 		Player player = clientHandler.getPlayer();
 
@@ -88,7 +99,13 @@ public class SetupHandler {
 		return new Team(entities);
 	}
 
-	public void registerPlayer(PlayerRegisterDTO playerRegisterDTO, boolean isLogin) throws DataAccessException {
+	/**
+	 * Registers a new player or logs in an existing one
+	 *
+	 * @param playerRegisterDTO the registration or login credentials
+	 * @param isLogin {@code true} to log in an existing account, {@code false} to register a new one
+	 */
+	public void registerPlayer(PlayerRegisterDTO playerRegisterDTO, boolean isLogin) {
 		String username = playerRegisterDTO.username();
 		String password = playerRegisterDTO.password();
 
@@ -113,6 +130,16 @@ public class SetupHandler {
 		}
 	}
 
+	/**
+	 * Builds a Player instance from registration info, loads or creates the player's inventory
+	 * depending on whether they are logging in or registering.
+	 *
+	 * @param dto the player's registration or login data
+	 * @param isLogin {@code true} if the player is logging in, {@code false} if registering
+	 * @return the constructed Player
+	 * @throws LoadException if the inventory cannot be loaded or created
+	 * @throws EntityNotFoundException if the player account cannot be found
+	 */
 	private Player buildPlayer(PlayerRegisterDTO dto, boolean isLogin) throws LoadException, EntityNotFoundException {
 		String username = dto.username();
 
@@ -128,6 +155,12 @@ public class SetupHandler {
 		return PlayerMapper.toEntity(dto, inventory, userId);
 	}
 
+	/**
+	 * Initializes a normal (classic or auto) battle mode for the connected player,
+	 * generates a random opponent team and starts an AI-controlled opponent thread
+	 *
+	 * @throws LoadException if the starter inventory cannot be created
+	 */
 	public void setupNormalMode() throws LoadException {
 		Player player = clientHandler.getPlayer();
 		Battle battle = clientHandler.getBattle();
@@ -168,6 +201,12 @@ public class SetupHandler {
 		clientHandler.sendSuccessMessage();
 	}
 
+	/**
+	 * Sets up the player's active team from a list of bugemon DTOs
+	 *
+	 * @param bugemons the bugemons to include in the team
+	 * @throws DataAccessException if a bugemon instance cannot be created
+	 */
 	public void setupTeam(List<BugemonDTO> bugemons) throws DataAccessException {
 		Team team = new Team();
 
@@ -181,6 +220,13 @@ public class SetupHandler {
 		clientHandler.sendSuccessMessage();
 	}
 
+	/**
+	 * Initializes tower mode for the connected player, either starting a new tower run
+	 * or continuing a saved one
+	 *
+	 * @param isNewTower {@code true} to start a new tower run, {@code false} to continue a saved one
+	 * @throws DataAccessException if the tower cannot be initialized or the team cannot be loaded
+	 */
 	public void setupTowerMode(boolean isNewTower) throws DataAccessException {
 		Player player = clientHandler.getPlayer();
 

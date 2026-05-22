@@ -89,6 +89,7 @@ public class ClientController extends Application {
 
 	/**
 	 * Initializes network client from application launch parameters.
+	 * @throws CommunicationException when an error occures with the client socket
 	 */
 	@Override
 	public void init() throws CommunicationException {
@@ -172,6 +173,8 @@ public class ClientController extends Application {
 	 *
 	 * @param username The username to look up
 	 * @return The player DTO, or null if not found
+	 * @throws ServerStatusException when the response from the server is a StatusResponse with the failure boolean.
+	 * @throws UnknownServerResponse when the response from the server is unknown for the request sent.
 	 */
 	public PlayerDTO loadPlayer(String username) throws ServerStatusException, UnknownServerResponse {
 		this.player = Optional.of(this.getPlayer(username));
@@ -183,6 +186,8 @@ public class ClientController extends Application {
 	 *
 	 * @param username Username to retrieve
 	 * @return Matching player DTO or null if unavailable
+	 * @throws ServerStatusException when the response from the server is a StatusResponse with the failure boolean.
+	 * @throws UnknownServerResponse when the response from the server is unknown for the request sent.
 	 */
 	public PlayerDTO getPlayer(String username) throws ServerStatusException, UnknownServerResponse {
 		if (getData(new GetPlayerRequest(username)) instanceof PlayerResponse msg) {
@@ -196,6 +201,7 @@ public class ClientController extends Application {
 	 *
 	 * @param request The message sent to the server
 	 * @return The response received from the server
+	 * @throws ServerStatusException when the response from the server is a StatusResponse with the failure boolean.
 	 */
 	public Response getData(Request request) throws ServerStatusException {
 		Response response = this.client.getResponse(request);
@@ -229,6 +235,8 @@ public class ClientController extends Application {
 	 * @param userId1 The first player's id
 	 * @param userId2 The second player's id
 	 * @return The multiplayer battle status DTO
+	 * @throws ServerStatusException when the response from the server is a StatusResponse with the failure boolean.
+	 * @throws UnknownServerResponse when the response from the server is unknown for the request sent.
 	 */
 	public MultiBattleStatusDTO getMultiBattleStatus(int userId1, int userId2) throws ServerStatusException, UnknownServerResponse {
 		if (this.getData(new GetMultiBattleStatusRequest(userId1, userId2)) instanceof MultiBattleStatusResponse msg)
@@ -298,6 +306,8 @@ public class ClientController extends Application {
 	 * Returns the next window type according to server flow.
 	 *
 	 * @return The next window type, or null if unavailable
+	 * @throws ServerStatusException when the response from the server is a StatusResponse with the failure boolean.
+	 * @throws UnknownServerResponse when the response from the server is unknown for the request sent.
 	 */
 	public WindowType getWindowType() throws ServerStatusException, UnknownServerResponse {
 		if (getData(new GetNextWindowRequest()) instanceof NextWindowResponse nextWindow) {

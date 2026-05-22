@@ -102,6 +102,8 @@ public class BattleSetupController {
 	 *
 	 * @param items The list of items to test
 	 * @return A map associating item ids and a boolean set to true if the item is usable on the current player's active Bugemon, false otherwise
+	 * @throws ServerStatusException when the response from the server is a StatusResponse with the failure boolean
+	 * @throws UnknownServerResponse when the response from the server is unknown for the request sent
 	 */
 	public Map<String, Boolean> checkItems(List<ItemDTO> items) throws ServerStatusException, UnknownServerResponse {
 		if (this.clientController.getData(new CheckUsableItemRequest(items)) instanceof UsableItemsResponse usableItems) {
@@ -164,6 +166,8 @@ public class BattleSetupController {
 	 * Fetches the active Bugemon of each player.
 	 *
 	 * @return A list holding two Bugemon; in order: the current player's active Bugemon and his opponent's active Bugemon
+	 * @throws ServerStatusException when the response from the server is a StatusResponse with the failure boolean
+	 * @throws UnknownServerResponse when the response from the server is unknown for the request sent
 	 */
 	public List<BugemonDTO> getActiveBugemons() throws ServerStatusException, UnknownServerResponse {
 		if (clientController.getData(new GetActiveBugemonsRequest()) instanceof ActiveBugemonsResponse activeBugemons) {
@@ -178,6 +182,8 @@ public class BattleSetupController {
 	 * @param abilities The list of abilities whose type effectiveness to test
 	 * @param bugemonTarget The Bugemon target to test type effectiveness against
 	 * @return A map associating each ability to a message to display to inform the player of its effectiveness
+	 * @throws ServerStatusException when the response from the server is a StatusResponse with the failure boolean
+	 * @throws UnknownServerResponse when the response from the server is unknown for the request sent
 	 */
 	public Map<AbilityDTO, String> getAbilityEffectiveness(List<AbilityDTO> abilities, BugemonDTO bugemonTarget) throws ServerStatusException, UnknownServerResponse {
 		Serializable message = this.clientController.getData(new GetAbilityEffectivenessRequest(abilities,
@@ -283,6 +289,8 @@ public class BattleSetupController {
 	 * Indicates whether the player is currently forced to switch bugemon.
 	 *
 	 * @return True if switch is mandatory
+	 * @throws ServerStatusException when the response from the server is a StatusResponse with the failure boolean
+	 * @throws UnknownServerResponse when the response from the server is unknown for the request sent
 	 */
 	private boolean isForcedSwitch() throws ServerStatusException, UnknownServerResponse {
 		return this.getState() == BattleState.SWAPPING;
@@ -315,6 +323,8 @@ public class BattleSetupController {
 	 * Retrieves and clears accumulated battle log messages.
 	 *
 	 * @return The current list of log messages
+	 * @throws ServerStatusException when the response from the server is a StatusResponse with the failure boolean
+	 * @throws UnknownServerResponse when the response from the server is unknown for the request sent
 	 */
 	public List<String> consumeLogMessages() throws ServerStatusException, UnknownServerResponse {
 		if (this.clientController.getData(new GetLogsRequest(true)) instanceof LogsResponse logs) {
@@ -327,6 +337,8 @@ public class BattleSetupController {
 	 * Fetches the battle's state.
 	 *
 	 * @return The state of the battle
+	 * @throws ServerStatusException when the response from the server is a StatusResponse with the failure boolean
+	 * @throws UnknownServerResponse when the response from the server is unknown for the request sent
 	 */
 	public BattleState getState() throws ServerStatusException, UnknownServerResponse {
 		if (this.clientController.getData(new GetBattleStateRequest()) instanceof BattleStateResponse battleState) {

@@ -64,7 +64,9 @@ public class LoadTeamPanelController extends WindowController<LoadTeamPanel> imp
 	/**
 	 * Retrieves the list of the current player's saved Bugemon teams from the server.
 	 *
-	 * @return The list of the player's saved teams
+	 * @return The list of the player's saved teams.
+	 * @throws ServerStatusException when the response from the server is a StatusResponse with the failure boolean.
+	 * @throws UnknownServerResponse when the response from the server is unknown for the request sent.
 	 */
 	private List<TeamDTO> getSavedTeams() throws ServerStatusException, UnknownServerResponse {
 		if (this.clientController.getData(new GetSavedTeamsRequest()) instanceof SavedTeamsResponse teamsMessage) {

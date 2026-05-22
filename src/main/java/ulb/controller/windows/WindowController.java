@@ -63,6 +63,7 @@ public abstract class WindowController<T> {
 
 	/**
 	 * Read the fxml file and load the view window
+	 * @throws ViewLoadException when an exception occures with the FxmlLoader 
 	 */
 	protected void loadView(String windowPath) throws ViewLoadException {
 		loader = FxmlLoader.load(this, windowPath);

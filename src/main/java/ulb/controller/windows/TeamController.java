@@ -117,6 +117,7 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	 *
 	 * @param selectedBugemonIds the list of bugemon ids
 	 * @return the list of BugemonDTO
+	 * @throws Exception when an error occures for the communication with the server
 	 */
 	private List<BugemonDTO> setupTeamMembers(List<String> selectedBugemonIds) throws Exception {
 		List<BugemonDTO> members = new ArrayList<>();

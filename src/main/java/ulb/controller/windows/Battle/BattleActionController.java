@@ -131,6 +131,8 @@ public class BattleActionController {
 	 * Whether the battle is finished.
 	 *
 	 * @return True if the battle is finished, false otherwise
+	 * @throws ServerStatusException when the response from the server is a StatusResponse with the failure boolean
+	 * @throws UnknownServerResponse when the response from the server is unknown for the request sent
 	 */
 	public boolean isGameFinished() throws ServerStatusException, UnknownServerResponse {
 		if (this.clientController.getData(new CheckGameFinishedRequest()) instanceof GameFinishedResponse gameFinished) {
@@ -142,6 +144,8 @@ public class BattleActionController {
 	/**
 	 * Fetches the HP of both Bugemons after the first action of the turn.
 	 * @return A list of two integers holding the HP values of each Bugemon after the first action of the turn
+	 * @throws ServerStatusException when the response from the server is a StatusResponse with the failure boolean
+	 * @throws UnknownServerResponse when the response from the server is unknown for the request sent
 	 */
 	public List<Integer> getHpAfterFirstAction() throws ServerStatusException, UnknownServerResponse {
 		if (this.clientController.getData(new GetLogsRequest(false)) instanceof LogsResponse logs) {
@@ -252,6 +256,8 @@ public class BattleActionController {
 	 *
 	 * @param state The candidate state
 	 * @return The resolved battle state
+	 * @throws ServerStatusException when the response from the server is a StatusResponse with the failure boolean
+	 * @throws UnknownServerResponse when the response from the server is unknown for the request sent
 	 */
 	private BattleState stateOrCurrent(BattleState state) throws ServerStatusException, UnknownServerResponse {
 		if (state != null) {

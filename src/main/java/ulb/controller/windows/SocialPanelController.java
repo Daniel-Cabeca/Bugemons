@@ -80,6 +80,9 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 	 * Retrieves the list of the current player's friends.
 	 *
 	 * @return List of the usernames of the friends
+	 * @throws EntityNotFoundException when the player is empty
+	 * @throws ServerStatusException when the response from the server is a StatusResponse with the failure boolean
+	 * @throws UnknownServerResponse when the response from the server is unknown for the request sent
 	 */
 	private List<String> getFriendList() throws EntityNotFoundException,  ServerStatusException, UnknownServerResponse {
 		if (this.clientController.getData(new GetFriendsListRequest(getPlayer().getUsername())) instanceof FriendsListResponse msg)
@@ -92,6 +95,8 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 	 * Returns a list of the multiplayer score of each registered player.
 	 *
 	 * @return A map associating each player's username to his score
+	 * @throws ServerStatusException when the response from the server is a StatusResponse with the failure boolean
+	 * @throws UnknownServerResponse when the response from the server is unknown for the request sent
 	 */
 	private Map<String, Integer> getLeaderboardList() throws ServerStatusException, UnknownServerResponse {
 		if (this.clientController.getData(new GetLeaderboardRequest()) instanceof LeaderboardResponse msg)
@@ -100,6 +105,11 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 		throw new UnknownServerResponse("getLeaderboard");
 	}
 
+	/**
+	 * Get the player. If the player is empty, get it from the clientcontroller and store it
+	 * @return the player
+	 * @throws EntityNotFoundException when the player can't be found
+	 */
 	private PlayerDTO getPlayer() throws EntityNotFoundException {
 		if (this.player == null) {
 			Optional<PlayerDTO> optionalPlayer = this.clientController.getPlayer();
@@ -111,6 +121,13 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 		return this.player;
 	}	
 	
+	/**
+	 * Get specific request response from the server
+	 * @param request the request to send to the server
+	 * @return the response received from the server
+	 * @throws ServerStatusException when the response from the server is a StatusResponse with the failure boolean
+	 * @throws UnknownServerResponse when the response from the server is unknown for the request sent
+	 */
 	private List<String> getRequests(Request request) throws ServerStatusException, UnknownServerResponse {
 		Serializable response = this.clientController.getData(request);
 		if (response instanceof FriendRequestsResponse msg) return msg.getRequests();
@@ -156,6 +173,13 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 		}).start();
 	}
 
+	/**
+	 * Loads the messages from or to a friend in the current thread.
+	 * @param friend the friend that is the sender or the receiver of the messages
+	 * @throws EntityNotFoundException when the player can't be found.
+	 * @throws ServerStatusException when the response from the server is a StatusResponse with the failure boolean.
+	 * @throws UnknownServerResponse when the response from the server is unknown for the request sent.
+	 */
 	private void loadMessagesInCurrentThread(String friend) throws EntityNotFoundException, ServerStatusException, UnknownServerResponse {
 		List<ChatMessage> chatMessages = null;
 		if (this.clientController.getData(new GetChatMessagesRequest(getPlayer().getUsername(), friend)) instanceof ChatMessagesResponse msg) {
@@ -176,6 +200,8 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 	 *
 	 * @param username The player's username
 	 * @return Information on the player
+	 * @throws ServerStatusException when the response from the server is a StatusResponse with the failure boolean.
+	 * @throws UnknownServerResponse when the response from the server is unknown for the request sent.
 	 */
 	private PlayerDTO getPlayerByName(String username) throws ServerStatusException, UnknownServerResponse {
 		if (this.clientController.getData(new GetPlayerRequest(username)) instanceof PlayerResponse msg) {

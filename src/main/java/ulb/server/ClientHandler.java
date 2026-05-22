@@ -66,7 +66,41 @@ public class ClientHandler extends Thread implements ServerMessageHandler {
 		this.teamSaveHandler = new TeamSaveHandler(this, teamService);
 	}
 
-    /**
+	public Player getPlayer() { return this.player; }
+
+	public Battle getBattle() { return this.battle; }
+
+	public TowerManager getTowerManager() { return this.towerManager; }
+
+	public Battle.ParticipantLabel getTeamLabel() { return this.teamLabel; }
+
+	public Optional<Bugemon> getPendingLevelUpBugemon() { return this.pendingLevelUpBugemon; }
+
+	public List<Reward> getPendingLevelUpRewards() { return this.pendingLevelUpRewards; }
+
+	public boolean isGameTower() { return this.isGameTower; }
+
+
+	public void setPlayer(Player player) { this.player = player; }
+
+	public void setBattle(Battle battle) { this.battle = battle; }
+
+	public void setTeamLabel(Battle.ParticipantLabel label) { this.teamLabel = label; }
+
+	public void setPendingLevelUpBugemon(Bugemon pendingLevelUpBugemon) {
+		this.pendingLevelUpBugemon = Optional.of(pendingLevelUpBugemon);
+	}
+
+	public void setTowerManager(TowerManager towerManager) { this.towerManager = towerManager; }
+
+	public void setPendingLevelUpRewards(List<Reward> rewards) { this.pendingLevelUpRewards = rewards; }
+
+	public void setTeam(Team team) { this.player.setTeam(team); }
+
+	public void setGameMode(boolean isGameTower) { this.isGameTower = isGameTower; }
+
+
+	/**
 	 * Resets all runtime session state (battle, tower, team label, etc.).
 	 * Used when switching game modes.
      */
@@ -85,38 +119,6 @@ public class ClientHandler extends Thread implements ServerMessageHandler {
 		this.pendingLevelUpBugemon = Optional.empty();
 		this.pendingLevelUpRewards = null;
 	}
-
-	public Player getPlayer() { return this.player; }
-
-	public void setPlayer(Player player) { this.player = player; }
-
-	public Battle getBattle() { return this.battle; }
-
-	public void setBattle(Battle battle) { this.battle = battle; }
-
-	public TowerManager getTowerManager() { return this.towerManager; }
-
-	public void setTowerManager(TowerManager towerManager) { this.towerManager = towerManager; }
-
-	public boolean isGameTower() { return this.isGameTower; }
-
-	public Battle.ParticipantLabel getTeamLabel() { return this.teamLabel; }
-
-	public void setTeamLabel(Battle.ParticipantLabel label) { this.teamLabel = label; }
-
-	public Optional<Bugemon> getPendingLevelUpBugemon() { return this.pendingLevelUpBugemon; }
-
-	public void setPendingLevelUpBugemon(Bugemon pendingLevelUpBugemon) {
-		this.pendingLevelUpBugemon = Optional.of(pendingLevelUpBugemon);
-	}
-
-	public List<Reward> getPendingLevelUpRewards() { return this.pendingLevelUpRewards; }
-
-	public void setPendingLevelUpRewards(List<Reward> rewards) { this.pendingLevelUpRewards = rewards; }
-
-	public void setTeam(Team team) { this.player.setTeam(team); }
-
-	public void setGameMode(boolean isGameTower) { this.isGameTower = isGameTower; }
 
     /**
      * Main thread loop. Continuously receives and processes client messages until stopped.
@@ -286,6 +288,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler {
 		clearPendingLevelUpState();
 	}
 
+
 	// SETUP
 
 	@Override
@@ -350,6 +353,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler {
 
 	@Override
 	public void getTowerSavedInfo() throws DataAccessException { gameInfoHandler.getTowerSavedInfo(this.player); }
+
 
 	// GAME ACTIONS
 

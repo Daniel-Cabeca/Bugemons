@@ -11,7 +11,7 @@ donnant un nom. Dans le menu de constitution d’équipe, le joueur peut aussi c
 #### Priorité Client: 2
 #### Risque développeurs: 2
 #### Temps estimé : 8h
-#### Temps mis pendant cette itération : 7h40
+#### Temps mis pendant cette itération : 9h
 #### État : terminé
 
 ## Histoire 14a : Exploration visuelle des étages
@@ -42,7 +42,7 @@ Actions selon le type de salle :
 #### Priorité Client: 1
 #### Risque développeurs: 1
 #### Temps estimé : 15h
-#### Temps mis pendant cette itération : 9h
+#### Temps mis pendant cette itération : 14h
 #### État : terminé
 
 ## Histoire 14b : Afficher l'état d'exploration
@@ -52,8 +52,8 @@ L'interface affiche:
 - Les salles déjà visitées sont grisées ou marquées d’une coche
 #### Priorité Client: 1
 #### Risque développeurs: 1
-#### Temps estimé : 4h
-#### Temps mis pendant cette itération : 2h
+#### Temps estimé : 6h
+#### Temps mis pendant cette itération : 4h30
 #### État : terminé
 
 ## Histoire 16 : Animations de déplacement en mode exploration
@@ -68,7 +68,7 @@ Pour améliorer le feedback visuel, le jeu doit inclure des animations simples l
 #### Priorité Client: 3
 #### Risque développeurs: 2
 #### Temps estimé : 4h
-#### Temps mis pendant cette itération : 5h30
+#### Temps mis pendant cette itération : 6h
 #### État : terminé
 
 ## Histoire 20 : Sauvegarder sa progression, et continuer
@@ -90,7 +90,7 @@ En cas de défaite, la sauvegarde est réinitialisée : le joueur retourne à l�
 #### Priorité Client: 2
 #### Risque développeurs: 2
 #### Temps estimé : 10h
-#### Temps mis pendant cette itération : 13h45
+#### Temps mis pendant cette itération : 15h30
 #### État : terminé
 
 
@@ -103,7 +103,7 @@ Toute la fonctionnalité de défier un autre joueur comme l'itération précéde
 #### Priorité Client: 3
 #### Risque développeurs: 2
 #### Temps estimé pour les tâches restantes : 12h
-#### Temps mis pendant cette itération : 20h45
+#### Temps mis pendant cette itération : 22h
 #### État : terminé
 
 ## Histoire 26 : Chat
@@ -115,7 +115,7 @@ Pouvoir accéder au pendant un combat.
 #### Priorité Client: 1
 #### Risque développeurs: 2
 #### Temps estimé pour la tâche restante : 12h
-#### Temps mis pendant cette itération : 2h
+#### Temps mis pendant cette itération : 7h30
 #### État : terminé
 
 ## Histoire 27 : Filtrer les messages inappropriés
@@ -124,7 +124,7 @@ Dans le chat, les messages inappropriés (obscènes, insultants, …) sont adouc
 #### Priorité Client: 3
 #### Risque développeurs: 3
 #### Temps estimé : 5h
-#### Temps mis pendant cette itération : 2h
+#### Temps mis pendant cette itération : 3h
 #### État : terminé
 
 ## Histoire 28 : Leaderboard
@@ -133,10 +133,10 @@ En mode multijoueurs, à chaque fois que 2 personnes s’affrontent, celle qui e
 #### Priorité Client: 1
 #### Risque développeurs: 2
 #### Temps estimé : 10h
-#### Temps mis pendant cette itération : 2h45
+#### Temps mis pendant cette itération : 5h
 #### État : terminé
 
-## Histoire complémentaire C - Animation de sprites
+## Histoire complémentaire B - Animation de sprites
 ### Description
 Implémenter l'animation de déplacement lors d'une attaque pour se familiariser avec le fonctionnement des animations.
 Lorsqu’un Bugémon attaque, son sprite effectue une courte animation :
@@ -144,12 +144,5 @@ Lorsqu’un Bugémon attaque, son sprite effectue une courte animation :
 - Retour à la position initiale sur 0.2 secondes
 #### Risque développeurs: 2
 #### Temps estimé : 6h
-#### Temps mis pendant cette itération : 2h
-#### État : terminé
-
-## Histoire complémentaire C - Amis
-### Description
-Le joueur peut ajouter d'autres joueurs en tant qu'amis pour pouvoir ensuite utiliser le chat ou défier un autre joueur.
-#### Temps estimé : 14h
-#### Temps mis pendant cette itération : 9h45
+#### Temps mis pendant cette itération : 4h30
 #### État : terminé

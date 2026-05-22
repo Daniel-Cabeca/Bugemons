@@ -2,6 +2,9 @@ package ulb.repository;
 
 import ulb.model.item.Inventory;
 
+/**
+ * The repository holding the configuration for the default player inventory.
+ */
 public interface StartingInventoryRepository {
 
 	/**

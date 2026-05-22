@@ -12,7 +12,9 @@ import java.util.NoSuchElementException;
  * Service in charge of multiplayer battle sessions.
  */
 public class MultiBattleService {
+	/** Repository holding ongoing multiplayer battle sessions. */
 	private final MultiBattleRepository repository;
+	/** Repository holding user accounts. */
 	private final AccountService accountService;
 
 	public MultiBattleService(MultiBattleRepository repository, AccountService accountService) {

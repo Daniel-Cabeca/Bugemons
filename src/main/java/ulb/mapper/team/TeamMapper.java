@@ -17,6 +17,12 @@ public class TeamMapper {
 
 	private TeamMapper() {}
 
+	/**
+	 * Converts a Team entity to a DTO.
+	 *
+	 * @param entity The Team entity
+	 * @return The corresponding DTO or null
+	 */
 	public static TeamDTO toDTO(Team entity) {
 		if (entity == null) return null;
 
@@ -29,6 +35,13 @@ public class TeamMapper {
 		return teamDTO;
 	}
 
+	/**
+	 * Converts a TeamDTO to an entity.
+	 *
+	 * @param dto The Team DTO
+	 * @return The corresponding entity or null
+	 * @throws MappingException If mapping fails
+	 */
 	public static Team toEntity(TeamDTO dto) throws MappingException {
 		if (dto == null) return null;
 		List<Bugemon> members = new ArrayList<>();

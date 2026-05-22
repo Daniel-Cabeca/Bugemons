@@ -14,6 +14,13 @@ public class EffectMapper {
 
 	private EffectMapper() {}
 
+	/**
+	 * Converts an EffectDTO to an entity.
+	 *
+	 * @param dto The Effect DTO
+	 * @return The corresponding entity or null
+	 * @throws MappingException If mapping fails
+	 */
 	public static Effect toEntity(EffectDTO dto) throws MappingException {
 		if (dto == null) return null;
 
@@ -51,6 +58,12 @@ public class EffectMapper {
 		}
 	}
 
+	/**
+	 * Converts an EffectStatModifierDTO to an entity.
+	 *
+	 * @param dto The EffectStatModifier DTO
+	 * @return The corresponding entity or null
+	 */
 	public static EffectStatModifier toEntity(EffectStatModifierDTO dto) {
 		if (dto == null) {
 			return null;
@@ -61,6 +74,12 @@ public class EffectMapper {
 		};
 	}
 
+	/**
+	 * Converts an EffectHealDTO to an entity.
+	 *
+	 * @param dto The EffectHeal DTO
+	 * @return The corresponding entity or null
+	 */
 	public static EffectHeal toEntity(EffectHealDTO dto) {
 		if (dto == null) return null;
 
@@ -70,6 +89,12 @@ public class EffectMapper {
 		};
 	}
 
+	/**
+	 * Converts an Effect entity to a DTO.
+	 *
+	 * @param entity The Effect entity
+	 * @return The corresponding DTO or null
+	 */
 	public static EffectDTO toDTO(Effect entity) {
 		if (entity == null) return null;
 

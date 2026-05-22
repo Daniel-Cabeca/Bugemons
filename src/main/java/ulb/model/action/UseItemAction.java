@@ -7,7 +7,7 @@ import ulb.model.item.Item;
 /**
  * Action representing item usage during battle.
  */
-public class UseItem extends Action {
+public class UseItemAction extends Action {
 	private Item item;
 
 	/**
@@ -15,13 +15,13 @@ public class UseItem extends Action {
 	 *
 	 * @param item Item to use
 	 */
-	public UseItem(Item item) {
+	public UseItemAction(Item item) {
 		this();
 		this.item = item;
 	}
 
 	/** Creates an empty item action. */
-	public UseItem() {
+	public UseItemAction() {
 		this.priority = 2;
 	}
 

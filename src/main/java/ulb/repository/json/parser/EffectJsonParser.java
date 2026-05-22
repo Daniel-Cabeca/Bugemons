@@ -12,9 +12,9 @@ import java.util.Map;
  */
 public class EffectJsonParser {
 	/**
-	 * Parses a list of effects from a json node.
+	 * Parses a list of effects from a JSON node.
 	 *
-	 * @param node The json node
+	 * @param node The JSON node
 	 * @return A list of the parsed effects
 	 * @throws LoadException If parsing failed
 	 */
@@ -30,11 +30,11 @@ public class EffectJsonParser {
 	}
 
 	/**
-	 * Parses one effect from a json node.
+	 * Parses one effect from a JSON node.
 	 *
-	 * @param node The json node
+	 * @param node The JSON node
 	 * @return The parsed effect
-	 * @throws LoadException If a parsing error occured
+	 * @throws LoadException If a parsing error occurred
 	 */
 	public Effect parseOne(JsonNode node) throws LoadException {
 		String typeStr = node.get("type").asText();
@@ -56,9 +56,9 @@ public class EffectJsonParser {
 	}
 
 	/**
-	 * Parses one heal effect from a json node.
+	 * Parses one heal effect from a JSON node.
 	 *
-	 * @param node The json node
+	 * @param node The JSON node
 	 * @return The parsed effect
 	 * @throws LoadException If parsing failed
 	 */
@@ -71,9 +71,9 @@ public class EffectJsonParser {
 	}
 
 	/**
-	 * Parses one stat modifier effect from a json node.
+	 * Parses one stat modifier effect from a JSON node.
 	 *
-	 * @param node The json node
+	 * @param node The JSON node
 	 * @return The parsed effect
 	 * @throws LoadException If parsing failed
 	 */
@@ -89,9 +89,9 @@ public class EffectJsonParser {
 	}
 
 	/**
-	 * Parses one stat modifier effect that affects multiple stats from a json node.
+	 * Parses one stat modifier effect that affects multiple stats from a JSON node.
 	 *
-	 * @param node The json node
+	 * @param node The JSON node
 	 * @return The parsed effect
 	 * @throws LoadException If parsing failed
 	 */
@@ -110,9 +110,9 @@ public class EffectJsonParser {
 	}
 
 	/**
-	 * Parses one reset malus effect from a json node.
+	 * Parses one "reset malus" effect from a JSON node.
 	 *
-	 * @param node The json node
+	 * @param node The JSON node
 	 * @return The parsed effect
 	 * @throws LoadException If parsing failed
 	 */
@@ -123,9 +123,9 @@ public class EffectJsonParser {
 	}
 
 	/**
-	 * Parses one switch effect from a json node.
+	 * Parses one switch effect from a JSON node.
 	 *
-	 * @param node The json node
+	 * @param node The JSON node
 	 * @return The parsed effect
 	 * @throws LoadException If parsing failed
 	 */
@@ -136,9 +136,9 @@ public class EffectJsonParser {
 	}
 
 	/**
-	 * Parses an effect target from a json node.
+	 * Parses an effect target from a JSON node.
 	 *
-	 * @param node The json node
+	 * @param node The JSON node
 	 * @return The corresponding target enum value
 	 * @throws LoadException If the target is unrecognized
 	 */
@@ -158,9 +158,9 @@ public class EffectJsonParser {
 	}
 
 	/**
-	 * Parses an effect duration from a json node.
+	 * Parses an effect duration from a JSON node.
 	 *
-	 * @param node The json node
+	 * @param node The JSON node
 	 * @return The corresponding duration enum value
 	 * @throws LoadException If the duration is unrecognized
 	 */
@@ -178,9 +178,9 @@ public class EffectJsonParser {
 	}
 
 	/**
-	 * Parses a stat type from a json node.
+	 * Parses a stat type from a JSON node.
 	 *
-	 * @param node The json node
+	 * @param node The JSON node
 	 * @return The corresponding stat type enum value
 	 * @throws LoadException If the stat type is unrecognized
 	 */
@@ -193,9 +193,9 @@ public class EffectJsonParser {
 	}
 
 	/**
-	 * Parses a stat type from a json node.
+	 * Parses a stat type from a string.
 	 *
-	 * @param node The json node
+	 * @param statStr The string to parse
 	 * @return The corresponding stat type enum value
 	 * @throws LoadException If the stat type is unrecognized
 	 */

@@ -12,6 +12,7 @@ import java.util.Map;
  * Is not ordered. Entries are unique.
  */
 public class IdSet<T extends HasId> implements Iterable<T> {
+	/** Map associating each entry's id to its instance. */
 	private final Map<String, T> entries = new HashMap<>();
 
 	/**

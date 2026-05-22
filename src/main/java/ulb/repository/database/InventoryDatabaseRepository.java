@@ -19,9 +19,12 @@ import java.util.logging.Logger;
  * Inventory repository connected to the database
  */
 public class InventoryDatabaseRepository implements InventoryRepository {
+	/** Object used for logging runtime information to the console or to a log file. */
 	private static final Logger LOGGER = Logger.getLogger(InventoryDatabaseRepository.class.getName());
 
+	/** The database connection. */
 	private final Database database;
+	/** The repository holding the list of all items in the game data. */
 	private final ItemRepository itemRepository;
 
 	/**

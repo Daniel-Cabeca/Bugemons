@@ -40,7 +40,7 @@ public class InappropriateWordFilter {
 	 */
 	private final Set<String> inappropriateWords;
 
-	// Builds a filter with the default inappropriate words.
+	/** Builds a filter with the default inappropriate words. */
 	public InappropriateWordFilter() {
 		this(DEFAULT_WORDS);
 	}

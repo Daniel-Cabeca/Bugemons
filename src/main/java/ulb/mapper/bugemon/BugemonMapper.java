@@ -11,6 +11,12 @@ import ulb.model.bugemon.Bugemon;
 public class BugemonMapper {
 	private BugemonMapper() {}
 
+	/**
+	 * Converts a Bugemon entity to a DTO.
+	 *
+	 * @param entity The Bugemon entity
+	 * @return The corresponding DTO or null
+	 */
 	public static BugemonDTO toDTO(Bugemon entity) {
 		if (entity == null) return null;
 		return new BugemonDTO(BugemonSpeciesMapper.toDTO(entity.getSpecies()),
@@ -18,6 +24,13 @@ public class BugemonMapper {
 				entity.getLevel(), entity.getRemainingReward());
 	}
 
+	/**
+	 * Converts a BugemonDTO to an entity.
+	 *
+	 * @param dto The Bugemon DTO
+	 * @return The corresponding entity or null
+	 * @throws MappingException If mapping fails
+	 */
 	public static Bugemon toEntity(BugemonDTO dto) throws MappingException {
 		if (dto == null) return null;
 		Bugemon bugemon = new Bugemon(BugemonSpeciesMapper.toEntity(dto.species()));

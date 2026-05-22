@@ -13,7 +13,7 @@ import java.util.Optional;
  * Service layer for tower saves
  */
 public class TowerSaveService {
-
+	/** Repository holding players' saved tower progress. */
 	private final TowerSaveRepository towerSaveRepository;
 
 	/**
@@ -66,6 +66,14 @@ public class TowerSaveService {
 		}
 	}
 
+	/**
+	 * fetches the tower progress of a given player.
+	 *
+	 * @param player The player whose progress to fetch
+	 * @return The saved state of the player's advancement in the tower
+	 * @throws LoadException If the operation fails
+	 * @throws EntityNotFoundException If the player does not exist or has no saved progress
+	 */
 	public Tower getTowerSave(Player player) throws LoadException, EntityNotFoundException {
 		Optional<Integer> userId = player.getUserId();
 
@@ -82,6 +90,13 @@ public class TowerSaveService {
 
 	}
 
+	/**
+	 * Whether a given player has any tower progress saved in the repository.
+	 *
+	 * @param player The player
+	 * @return True if the player has data in the repository, false otherwise
+	 * @throws LoadException If the operation fails
+	 */
 	public boolean isTowerSaved(Player player) throws LoadException {
 		Optional<Integer> userId = player.getUserId();
 

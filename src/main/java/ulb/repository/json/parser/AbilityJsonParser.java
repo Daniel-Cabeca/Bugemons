@@ -13,7 +13,9 @@ import java.util.List;
  * Json parser for abilities.
  */
 public class AbilityJsonParser {
+	/** The parser for ability types. */
 	private final TypeJsonParser typeParser;
+	/** The parser for ability effects. */
 	private final EffectJsonParser effectParser;
 
 	public AbilityJsonParser() {
@@ -24,8 +26,7 @@ public class AbilityJsonParser {
 	/**
 	 * Parse abilities from a json node.
 	 *
-	 * @param filename The JSON file's path
-	 * @param database The ability database
+	 * @param node The JSON node to parser
 	 */
 	public Iterable<Ability> parseList(JsonNode node) throws LoadException {
 		List<Ability> res = new ArrayList<>();
@@ -41,7 +42,7 @@ public class AbilityJsonParser {
 	/**
 	 * Reads an ability from a JSON node.
 	 *
-	 * @param node The JSON node
+	 * @param node The JSON node to parse
 	 * @return The parsed ability
 	 */
 	public Ability parseOne(JsonNode node) throws LoadException {

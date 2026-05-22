@@ -6,7 +6,7 @@ import ulb.model.effect.*;
 import ulb.model.item.Item;
 import ulb.repository.ItemRepository;
 import ulb.repository.database.sql.Database;
-import ulb.utils.DuplicateElementException;
+import ulb.exceptions.DuplicateElementException;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,8 +19,10 @@ import java.util.logging.Logger;
  * Items repository connected to the SQL database.
  */
 public class ItemDatabaseRepository implements ItemRepository {
+	/** Object used for logging runtime information to the console or to a log file. */
 	private static final Logger LOGGER = Logger.getLogger(ItemDatabaseRepository.class.getName());
 
+	/** The database connection. */
 	private final Database database;
 
 	/**

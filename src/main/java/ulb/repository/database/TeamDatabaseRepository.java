@@ -18,10 +18,14 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Database-based repository for the players' saved Bugemon teams.
+ */
 public class TeamDatabaseRepository implements TeamRepository {
+	/** Object used for logging runtime information to the console or to a log file. */
 	private static final Logger LOGGER = Logger.getLogger(TeamDatabaseRepository.class.getName());
 
-
+	/** The database connection. */
 	private final Database database;
 
 	public TeamDatabaseRepository(Database database) {
@@ -167,6 +171,15 @@ public class TeamDatabaseRepository implements TeamRepository {
 		}
 	}
 
+	/**
+	 * Fills a statement with a Bugemon's data and executes it.
+	 *
+	 * @param stmt The statement to fill
+	 * @param bugemon The Bugemon whose data to use
+	 * @param userId The id of the user for whom the team is saved
+	 * @param useBugemonId Whether to fill the 10th position of the statement with the Bugemon's id
+	 * @throws SQLException If the operation fails
+	 */
 	private void executeUserBugemonStatement(PreparedStatement stmt, Bugemon bugemon, int userId,
 											 boolean useBugemonId) throws SQLException {
 		stmt.setString(1, bugemon.getSpecies().getId());

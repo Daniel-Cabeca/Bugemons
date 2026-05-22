@@ -11,7 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Database-based repository holding players' porgress on the tower.
+ */
 public class TowerSaveDatabaseRepository implements TowerSaveRepository {
+	/** The database connection. */
 	private final Database database;
 
 	/**

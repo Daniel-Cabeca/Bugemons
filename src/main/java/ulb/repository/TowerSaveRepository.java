@@ -5,9 +5,12 @@ import ulb.exceptions.LoadException;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Repository holding progress statuses of the players in their ongoing explorations of the tower.
+ */
 public interface TowerSaveRepository {
 	/**
-	 * save the informations about the tower in the database
+	 * save the information about the tower in the database
 	 *
 	 * @param userId the id of the user
 	 * @param currentFloorId the current floor of the tower reached by the user
@@ -18,7 +21,7 @@ public interface TowerSaveRepository {
 	void addTowerSave(Integer userId, Integer currentFloorId, List<Integer> completedRoomsId, Integer teamId) throws LoadException;
 
 	/**
-	 * update the informations of the tower already saved in the database
+	 * update the information of the tower already saved in the database
 	 *
 	 * @param userId the id of the user
 	 * @param currentFloorId the current floor of the tower reached by the user

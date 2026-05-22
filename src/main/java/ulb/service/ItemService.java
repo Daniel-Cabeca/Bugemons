@@ -11,8 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Service layer for game items.
+ */
 public class ItemService {
+	/** Repository holding all existing item types. */
 	private final ItemRepository itemRepository;
+	/** Repository holding the configuration for the default starting inventory. */
 	private final StartingInventoryRepository startingInventoryRepository;
 
 	public ItemService(ItemRepository itemRepository, StartingInventoryRepository startingInventoryRepository) {

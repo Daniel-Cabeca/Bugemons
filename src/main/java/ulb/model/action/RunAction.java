@@ -6,8 +6,8 @@ import ulb.model.battle.Battle.ParticipantLabel;
 /**
  * Action representing a battle forfeit.
  */
-public class Run extends Action {
-	public Run() {
+public class RunAction extends Action {
+	public RunAction() {
 		this.priority = 3;
 	}
 

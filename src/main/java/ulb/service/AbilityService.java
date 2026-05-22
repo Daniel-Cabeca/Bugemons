@@ -11,8 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Service layer for Bugemon abilities.
+ */
 public class AbilityService {
-
+	/** The repository holding all existing abilities. */
 	private final AbilityRepository abilityRepository;
 
 	public AbilityService(AbilityRepository abilityRepository) {

@@ -19,8 +19,19 @@ import java.util.logging.Logger;
  * Repository for chat conversations stored in the database.
  */
 public class ChatDatabaseRepository implements ChatRepository {
+	/**
+	 * Maximum number of messages stored in the conversation history of each pair of users.
+	 */
 	public static final int MAX_MESSAGES = 20;
+
+	/**
+	 * Object used for logging runtime information to the console or to a log file.
+	 */
 	private static final Logger LOGGER = Logger.getLogger(ChatDatabaseRepository.class.getName());
+
+	/**
+	 * Connection to the database.
+	 */
 	private final Database database;
 
 	public ChatDatabaseRepository(Database database) {

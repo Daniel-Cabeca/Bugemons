@@ -11,11 +11,15 @@ import java.util.Map;
  * Implemented as a map of singletons.
  */
 public class DatabaseInFile extends Database {
+	/** The default database name. */
 	public static final String NAME_DEFAULT = "bugemon";
+	/** The default directory where the database is saved. */
 	public static final Path DIRECTORY = resolveDataDirectory("infof307");
 
+	/** Map associating each existing database connection's name to its instance. */
 	private static final Map<String, DatabaseInFile> instances = new HashMap<>();
 
+	/** The name of the database. */
 	private final String name;
 
 	/**
@@ -57,6 +61,12 @@ public class DatabaseInFile extends Database {
 		return db;
 	}
 
+	/**
+	 * Builds the path to the database file from the application name.
+	 *
+	 * @param appName The application name
+	 * @return The path to the database file
+	 */
 	private static Path resolveDataDirectory(String appName) {
 		String os = System.getProperty("os.name").toLowerCase();
 

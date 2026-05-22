@@ -13,7 +13,7 @@ import ulb.repository.database.ItemDatabaseRepository;
 import ulb.repository.json.AbilityJsonRepository;
 import ulb.repository.json.BugemonSpeciesJsonRepository;
 import ulb.repository.json.ItemJsonRepository;
-import ulb.utils.DuplicateElementException;
+import ulb.exceptions.DuplicateElementException;
 
 import java.sql.SQLException;
 
@@ -21,6 +21,7 @@ import java.sql.SQLException;
  * Creates and populates the tables of a database for the game.
  */
 public record DatabaseInitializer(Database database) {
+	/** Path to the SQL script that creates the database's tables. */
 	private static final String SCRIPT_CREATE_TABLES = "/sql/init_db.sql";
 
 	/**

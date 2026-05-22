@@ -15,6 +15,7 @@ import java.util.Random;
  * Provides Bugemon-related business logic.
  */
 public class BugemonService {
+	/** Repository holding all loaded Bugemon species. */
 	private final BugemonSpeciesRepository speciesRepository;
 
 	/**

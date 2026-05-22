@@ -225,14 +225,14 @@ public class Battle {
 
 		switch (this.getState(team)) {
 			case INGAME:
-				actions.add(new UseAbility());
-				actions.add(new Run());
-				actions.add(new Swap());
-				actions.add(new UseItem());
+				actions.add(new UseAbilityAction());
+				actions.add(new RunAction());
+				actions.add(new SwapAction());
+				actions.add(new UseItemAction());
 				break;
 
 			case SWAPPING:
-				actions.add(new Swap());
+				actions.add(new SwapAction());
 				break;
 
 			default:

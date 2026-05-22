@@ -13,7 +13,7 @@ import ulb.mapper.reward.RewardMapper;
 import ulb.message.response.gameInfo.*;
 import ulb.model.Player;
 import ulb.model.ability.Ability;
-import ulb.model.action.Run;
+import ulb.model.action.RunAction;
 import ulb.model.battle.Battle;
 import ulb.model.battle.Battle.ParticipantLabel;
 import ulb.model.battle.BattleParticipant;
@@ -323,7 +323,7 @@ public class GameInfoHandler {
 		ParticipantLabel teamLabel = clientHandler.getTeamLabel();
 		BattleParticipant battleParticipantSelf = battle.getParticipant(teamLabel);
 
-		if (battleParticipantSelf.getAction() instanceof Run) {
+		if (battleParticipantSelf.getAction() instanceof RunAction) {
 			return WindowType.MAIN_MENU;
 		}
 		return battle.isGameFinished() ? WindowType.MAIN_MENU : WindowType.GAME;

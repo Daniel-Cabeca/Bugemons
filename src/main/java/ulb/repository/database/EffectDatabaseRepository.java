@@ -21,6 +21,7 @@ public class EffectDatabaseRepository {
 	/** Database value for switch effects. */
 	public final static String TYPESTR_SWITCH = "SWITCH";
 
+	/** Connection to the database. */
 	private final Database database;
 
 	/**
@@ -107,6 +108,14 @@ public class EffectDatabaseRepository {
 		this.insertStats(effect.buildStatsChange(), effectId, effect.getDuration());
 	}
 
+	/**
+	 * Inserts stat modifiers in the database.
+	 *
+	 * @param stats The stat modifiers
+	 * @param effectId The id of the effect to be inserted
+	 * @param duration The duration of the effect
+	 * @throws SQLException If the operation fails
+	 */
 	private void insertStats(Stats stats, long effectId, EffectStatDuration duration) throws SQLException {
 		String sql = "INSERT INTO effect_stats_modifier (effect_id, hp,attack,defense,initiative,duration) VALUES (?, "
 				+ "?, ?, ?,?,?)";

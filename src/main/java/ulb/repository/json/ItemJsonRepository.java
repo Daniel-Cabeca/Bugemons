@@ -15,7 +15,10 @@ import java.io.InputStream;
  * An item repository loaded from a json file.
  */
 public class ItemJsonRepository implements ItemRepository {
+	/** Container for all loaded items. */
 	private final IdSet<Item> items = new IdSet<>();
+
+	/** The default starting inventory. */
 	private final Inventory startingInventory;
 
 	/**

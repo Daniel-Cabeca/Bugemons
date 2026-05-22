@@ -15,7 +15,9 @@ import java.util.List;
  * Parser for Bugemon species
  */
 public class BugemonSpeciesJsonParser {
+	/** The parser for Bugemon types. */
 	private final TypeJsonParser typeParser;
+	/** The parser for Bugemons' ability sets. */
 	private final AbilitySetJsonParser abilitySetParser;
 
 	public BugemonSpeciesJsonParser(AbilityRepository abilityRepository) {
@@ -26,7 +28,7 @@ public class BugemonSpeciesJsonParser {
 	/**
 	 * Parse species from a json node.
 	 *
-	 * @param filename The json node
+	 * @param node The JSON node to parse
 	 * @throws LoadException If the parsing failed
 	 */
 	public Iterable<BugemonSpecies> parseList(JsonNode node) throws LoadException {
@@ -41,9 +43,9 @@ public class BugemonSpeciesJsonParser {
 	}
 
 	/**
-	 * Parse one species from a json node.
+	 * Parse one species from a JSON node.
 	 *
-	 * @param node The json node
+	 * @param node The JSON node
 	 * @return The parsed species
 	 */
 	public BugemonSpecies parseOne(JsonNode node) throws LoadException {
@@ -59,9 +61,9 @@ public class BugemonSpeciesJsonParser {
 	}
 
 	/**
-	 * Parse stats from a jspon node.
+	 * Parse stats from a JSON node.
 	 *
-	 * @param node The json node
+	 * @param node The JSON node
 	 * @return The parsed stats
 	 */
 	public Stats parseStats(JsonNode node) {

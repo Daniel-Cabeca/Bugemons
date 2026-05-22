@@ -24,8 +24,14 @@ import java.util.logging.Logger;
  * Database-backed implementation for Bugemon species persistence.
  */
 public class BugemonSpeciesDatabaseRepository implements BugemonSpeciesRepository {
+	/**
+	 * Object used for logging runtime information to the console or to a log file.
+	 */
 	private static final Logger LOGGER = Logger.getLogger(BugemonSpeciesDatabaseRepository.class.getName());
 
+	/**
+	 * Connection to the database.
+	 */
 	private final Database database;
 
 	/**

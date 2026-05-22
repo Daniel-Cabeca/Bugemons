@@ -11,14 +11,14 @@ import java.io.InputStream;
 import java.net.URL;
 
 /**
- * Utility class for parsing json inputs into json nodes.
+ * Utility class for parsing JSON inputs into JSON nodes.
  */
 public abstract class Json {
 	/**
 	 * Convenience method for parsing from a String object.
 	 *
-	 * @param stream The input string
-	 * @return The json node
+	 * @param str The input string
+	 * @return The JSON node
 	 * @throws LoadException If an error occured
 	 */
 	public static JsonNode getNode(String str) throws LoadException {
@@ -30,7 +30,7 @@ public abstract class Json {
 	 * Parses a JsonNode from an input stream.
 	 *
 	 * @param stream The input stream
-	 * @return The json node
+	 * @return The JSON node
 	 * @throws LoadException If an error occured
 	 */
 	public static JsonNode getNode(InputStream stream) throws LoadException {
@@ -49,8 +49,8 @@ public abstract class Json {
 	/**
 	 * Convenience method for parsing from a URL.
 	 *
-	 * @param path The url to read from
-	 * @return The json node
+	 * @param url The url to read from
+	 * @return The JSON node
 	 * @throws LoadException If an error occured
 	 */
 	public static JsonNode getNode(URL url) throws LoadException {

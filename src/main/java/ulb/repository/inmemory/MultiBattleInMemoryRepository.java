@@ -12,6 +12,17 @@ import java.util.NoSuchElementException;
  * Non-persistent repository for multiplayer battle sessions.
  */
 public class MultiBattleInMemoryRepository implements MultiBattleRepository {
+	/**
+	 * Pair of user ids.
+	 * The ids must always be sorted before building the record.
+	 *
+	 * @param userId1 The lowest-value user id of the pair
+	 * @param userId2 The highest-value user id of the pair
+	 */
+	private record SessionKey(int userId1, int userId2) {
+	}
+
+	/** Map associating session keys to their instance. */
 	private final Map<SessionKey, MultiBattleSession> sessions = new HashMap<>();
 
 	/**
@@ -63,8 +74,5 @@ public class MultiBattleInMemoryRepository implements MultiBattleRepository {
 	 */
 	private static SessionKey makeSessionKey(int userId1, int userId2) {
 		return new SessionKey(Math.min(userId1, userId2), Math.max(userId1, userId2));
-	}
-
-	private record SessionKey(int userId1, int userId2) {
 	}
 }

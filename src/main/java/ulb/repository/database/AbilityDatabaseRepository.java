@@ -20,8 +20,14 @@ import java.util.logging.Logger;
  * Database-backed implementation of the ability repository.
  */
 public class AbilityDatabaseRepository implements AbilityRepository {
+	/**
+	 * Object used for logging runtime information to the console or to a log file.
+	 */
 	private static final Logger LOGGER = Logger.getLogger(AbilityDatabaseRepository.class.getName());
 
+	/**
+	 * Connection to the database.
+	 */
 	private final Database database;
 
 	/**

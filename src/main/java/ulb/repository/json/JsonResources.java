@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.net.URL;
 
 /**
- * Gives access to the default json resource files.
+ * Gives access to the default JSON resource files.
  */
 public abstract class JsonResources {
 	public static final String PATH_BUGEMON_SPECIES = "/json/bugemons.json";

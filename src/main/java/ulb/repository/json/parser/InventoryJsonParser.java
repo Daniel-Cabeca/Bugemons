@@ -11,9 +11,10 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * Json parser for item inventories.
+ * JSON parser for item inventories.
  */
 public class InventoryJsonParser {
+	/** The repository holding all existing items. */
 	private final ItemRepository itemRepository;
 
 	public InventoryJsonParser(ItemRepository itemRepository) {
@@ -21,9 +22,9 @@ public class InventoryJsonParser {
 	}
 
 	/**
-	 * Parse an inventory from a json node.
+	 * Parse an inventory from a JSON node.
 	 *
-	 * @param node The json node
+	 * @param node The JSON node
 	 * @return The parsed inventory
 	 * @throws LoadException If parsing fails or contains an unknown item
 	 */

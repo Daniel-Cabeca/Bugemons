@@ -5,6 +5,9 @@ import ulb.model.chat.ChatMessage;
 
 import java.util.List;
 
+/**
+ * Repository holding chat messages.
+ */
 public interface ChatRepository {
 	/**
 	 * Adds a message in the story.

@@ -8,9 +8,10 @@ import ulb.model.ability.AbilitySet;
 import ulb.repository.AbilityRepository;
 
 /**
- * Object that parses ability sets from json nodes.
+ * Object that parses ability sets from JSON nodes.
  */
 public class AbilitySetJsonParser {
+	/** The repository holding all existing abilities. */
 	private final AbilityRepository abilityRepository;
 
 	public AbilitySetJsonParser(AbilityRepository abilityRepository) {
@@ -18,9 +19,9 @@ public class AbilitySetJsonParser {
 	}
 
 	/**
-	 * Parses one ability set from a json node.
+	 * Parses one ability set from a JSON node.
 	 *
-	 * @param node The json node
+	 * @param node The JSON node
 	 * @return The parsed ability set
 	 * @throws LoadException If parsing failed
 	 */
@@ -43,7 +44,6 @@ public class AbilitySetJsonParser {
 			}
 		}
 
-		// Couldn't find a more adaptable way of expanding the array.
 		return new AbilitySet(abilities[0], abilities[1], abilities[2]);
 	}
 }

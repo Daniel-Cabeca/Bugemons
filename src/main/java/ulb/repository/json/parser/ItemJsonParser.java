@@ -9,15 +9,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Object that parses items from json nodes.
+ * Object that parses items from JSON nodes.
  */
 public class ItemJsonParser {
+	/** The parser for item effects. */
 	private final EffectJsonParser effectParser = new EffectJsonParser();
 
 	/**
-	 * Parses a list of items from a json node.
+	 * Parses a list of items from a JSON node.
 	 *
-	 * @param node The json node
+	 * @param node The JSON node
 	 * @return The parsed items
 	 * @throws LoadException If parsing failed
 	 */
@@ -33,9 +34,9 @@ public class ItemJsonParser {
 	}
 
 	/**
-	 * Parses an item from a json node.
+	 * Parses an item from a JSON node.
 	 *
-	 * @param node The json node
+	 * @param node The JSON node
 	 * @return The parsed item
 	 * @throws LoadException If parsing failed
 	 */

@@ -15,8 +15,10 @@ import java.util.List;
  * SQL script that may contain multiple statements.
  */
 public class SqlScript {
+	/** The separator found between statements within an SQL script. */
 	private static final String QUERY_SEPARATOR = ";";
 
+	/** The URL of the script. */
 	private final URL url;
 
 	/**
@@ -95,23 +97,4 @@ public class SqlScript {
 	 * @return The SQL script URL
 	 */
 	public URL getUrl() { return this.url; }
-
-	/**
-	 * Executes the script.
-	 *
-	 * @param connection The SQL connection
-	 * @throws SQLException If an SQL error occurs
-	 * @deprecated Should call with a Database instance instead
-	 */
-	@Deprecated
-	public void execute(Connection connection) throws SQLException, LoadException {
-		Statement statement = connection.createStatement();
-
-		for (String statementStr : this.getSql().split(";")) {
-			String trimmedQuery = statementStr.trim();
-			if (!trimmedQuery.isEmpty()) {
-				statement.execute(trimmedQuery);
-			}
-		}
-	}
 }

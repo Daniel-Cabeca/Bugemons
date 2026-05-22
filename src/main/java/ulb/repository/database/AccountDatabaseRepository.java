@@ -21,8 +21,14 @@ import java.util.logging.Logger;
  * Database-backed implementation of account operations.
  */
 public class AccountDatabaseRepository implements AccountRepository {
+	/**
+	 * Object used for logging runtime information to the console or to a log file.
+	 */
 	private static final Logger LOGGER = Logger.getLogger(AccountDatabaseRepository.class.getName());
 
+	/**
+	 * Connection to the database.
+	 */
 	private final Database database;
 
 	/**
@@ -37,6 +43,7 @@ public class AccountDatabaseRepository implements AccountRepository {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void register(String username, String password) throws LoadException, UserAlreadyExistsException {
 		String sql = "INSERT INTO users (username, password_hash) VALUES (?, ?)";
 		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
@@ -55,6 +62,7 @@ public class AccountDatabaseRepository implements AccountRepository {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getPasswordHash(String username) throws LoadException, EntityNotFoundException {
 		String sql = "SELECT password_hash FROM users WHERE username = ?";
 		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
@@ -70,6 +78,7 @@ public class AccountDatabaseRepository implements AccountRepository {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Integer getUserId(String username) throws EntityNotFoundException {
 		String sql = "SELECT id FROM users WHERE username = ?";
 		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
@@ -86,6 +95,7 @@ public class AccountDatabaseRepository implements AccountRepository {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getUsername(int userId) throws EntityNotFoundException, DataAccessException {
 		String sql = "SELECT username FROM  users WHERE id = ?";
 
@@ -106,6 +116,7 @@ public class AccountDatabaseRepository implements AccountRepository {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public List<String> getFriendsList(int userId) throws LoadException {
 		List<String> friends = new ArrayList<>();
 
@@ -133,6 +144,7 @@ public class AccountDatabaseRepository implements AccountRepository {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void addFriend(int userId, int friendId) throws LoadException {
 		String sql = "INSERT OR IGNORE INTO friends (user_id, friend_id) VALUES (?, ?)";
 		try (PreparedStatement pstmt = this.database.prepareStatement(sql)) {
@@ -152,6 +164,7 @@ public class AccountDatabaseRepository implements AccountRepository {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void sendFriendRequest(int senderId, int receiverId) throws LoadException {
 		String sql = "INSERT OR IGNORE INTO friend_requests (sender_id, receiver_id) VALUES (?, ?)";
 		try (PreparedStatement stmt = database.prepareStatement(sql)) {
@@ -163,6 +176,10 @@ public class AccountDatabaseRepository implements AccountRepository {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void sendBattleRequest(int senderId, int receiverId) throws LoadException {
 		String sql = "INSERT OR IGNORE INTO battle_requests (sender_id, receiver_id) VALUES (?, ?)";
 		try (PreparedStatement stmt = database.prepareStatement(sql)) {
@@ -174,6 +191,10 @@ public class AccountDatabaseRepository implements AccountRepository {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public boolean hasPendingBattleRequestBetween(int userIdA, int userIdB) throws LoadException {
 		String sql = """
 					SELECT 1
@@ -194,6 +215,10 @@ public class AccountDatabaseRepository implements AccountRepository {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public List<String> getPendingBattleRequests(int receiverId) throws LoadException {
 		List<String> senders = new ArrayList<>();
 		String sql = "SELECT u.username FROM users u JOIN battle_requests r ON u.id = r.sender_id WHERE r.receiver_id "
@@ -208,6 +233,10 @@ public class AccountDatabaseRepository implements AccountRepository {
 		return senders;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void acceptBattleRequest(int senderId, int receiverId) throws LoadException {
 		String del = "DELETE FROM battle_requests WHERE sender_id = ? AND receiver_id = ?";
 		try (PreparedStatement stmt = database.prepareStatement(del)) {
@@ -222,6 +251,7 @@ public class AccountDatabaseRepository implements AccountRepository {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public List<String> getPendingFriendRequests(int receiverId) throws LoadException {
 		List<String> senders = new ArrayList<>();
 		String sql = "SELECT u.username FROM users u JOIN friend_requests r ON u.id = r.sender_id WHERE r.receiver_id "
@@ -239,6 +269,7 @@ public class AccountDatabaseRepository implements AccountRepository {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void acceptFriendRequest(int senderId, int receiverId) throws LoadException {
 		String del = "DELETE FROM friend_requests WHERE sender_id = ? AND receiver_id = ?";
 		try (PreparedStatement stmt = database.prepareStatement(del)) {
@@ -254,6 +285,7 @@ public class AccountDatabaseRepository implements AccountRepository {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void declineFriendRequest(int senderId, int receiverId) throws LoadException {
 		String del = "DELETE FROM friend_requests WHERE sender_id = ? AND receiver_id = ?";
 		try (PreparedStatement stmt = database.prepareStatement(del)) {
@@ -265,6 +297,10 @@ public class AccountDatabaseRepository implements AccountRepository {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void declineBattleRequest(int senderId, int receiverId) throws LoadException {
 		String del = "DELETE FROM battle_requests WHERE sender_id = ? AND receiver_id = ?";
 		try (PreparedStatement stmt = database.prepareStatement(del)) {
@@ -276,6 +312,10 @@ public class AccountDatabaseRepository implements AccountRepository {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void addPoints(int userId, int pointsToAdd) throws LoadException {
 		String sql = "UPDATE users SET points = points + ? WHERE id = ?";
 
@@ -292,6 +332,7 @@ public class AccountDatabaseRepository implements AccountRepository {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Map<String, Integer> getLeaderboard() throws LoadException {
 		Map<String, Integer> leaderboard = new LinkedHashMap<>();
 		String sql = "SELECT username, points FROM users ORDER BY points DESC LIMIT 10";

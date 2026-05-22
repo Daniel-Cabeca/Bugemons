@@ -10,9 +10,12 @@ import java.util.logging.Logger;
  * Base SQL database wrapper exposing helper operations.
  */
 public abstract class Database {
+	/** Object used for logging runtime information to the console or to a log file. */
 	private static final Logger LOGGER = Logger.getLogger(Database.class.getName());
 
+	/** The URL to the database. */
 	private final String url;
+	/** The connection to the database. */
 	private final Connection connection;
 
 	/**

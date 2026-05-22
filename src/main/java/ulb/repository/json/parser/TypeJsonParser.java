@@ -5,13 +5,13 @@ import ulb.exceptions.LoadException;
 import ulb.model.type.Type;
 
 /**
- * Object that parses types from json nodes.
+ * Object that parses types from JSON nodes.
  */
 public class TypeJsonParser {
 	/**
-	 * Returns one Type enum value from a json node.
+	 * Returns one Type enum value from a JSON node.
 	 *
-	 * @param node The json node
+	 * @param node The JSON node
 	 * @return The Type enum value
 	 * @throws LoadException If the type is not recognized
 	 */

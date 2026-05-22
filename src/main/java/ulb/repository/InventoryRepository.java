@@ -7,6 +7,9 @@ import ulb.model.item.Item;
 
 import java.util.NoSuchElementException;
 
+/**
+ * Repository holding the player inventories.
+ */
 public interface InventoryRepository {
 
 	/**

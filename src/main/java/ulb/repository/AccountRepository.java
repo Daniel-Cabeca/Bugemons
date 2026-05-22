@@ -83,9 +83,41 @@ public interface AccountRepository {
 	 */
 	void sendFriendRequest(int senderId, int receiverId) throws LoadException;
 
+	/**
+	 * Create a battle request.
+	 *
+	 * @param senderId The id of the user who sends the request
+	 * @param receiverId The id of the user who receives the request
+	 * @throws LoadException If the operation fails
+	 */
 	void sendBattleRequest(int senderId, int receiverId) throws LoadException;
+
+	/**
+	 * Tells whether there is a battle request that has not been accepted or declined yet between two users.
+	 *
+	 * @param userIdA The id of one of the users
+	 * @param userIdB The id of the other user
+	 * @return True if there is one such request, false otherwise
+	 * @throws LoadException If the operation fails
+	 */
 	boolean hasPendingBattleRequestBetween(int userIdA, int userIdB) throws LoadException;
+
+	/**
+	 * Fetches the list of battle requests sent to a given user waiting for his answer.
+	 *
+	 * @param receiverId The id of the user whose received requests to fetch
+	 * @return A list of the usernames of the users who sent battle requests
+	 * @throws LoadException If the operation fails
+	 */
 	List<String> getPendingBattleRequests(int receiverId) throws LoadException;
+
+	/**
+	 * Deletes a battle request from the repository.
+	 *
+	 * @param senderId The id of the user who sent the request
+	 * @param receiverId The id of the user the request was sent to
+	 * @throws LoadException If the operation fails
+	 */
 	void acceptBattleRequest(int senderId, int receiverId) throws LoadException;
 
 	/**
@@ -115,8 +147,22 @@ public interface AccountRepository {
 	 */
 	void declineFriendRequest(int senderId, int receiverId) throws LoadException;
 
+	/**
+	 * Decline a battle request.
+	 *
+	 * @param senderId The id of the user who sent the request
+	 * @param receiverId The id of the user who received the request
+	 * @throws LoadException If the operation fails
+	 */
 	void declineBattleRequest(int senderId, int receiverId) throws LoadException;
 
+	/**
+	 * Add points to a user's score for the multiplayer leaderboard.
+	 *
+	 * @param userId The id of the user
+	 * @param pointsToAdd The points to add
+	 * @throws LoadException If the operation fails
+	 */
 	void addPoints(int userId, int pointsToAdd) throws LoadException;
 
 	/**

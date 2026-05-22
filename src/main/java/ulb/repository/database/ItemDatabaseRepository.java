@@ -19,8 +19,10 @@ import java.util.logging.Logger;
  * Items repository connected to the SQL database.
  */
 public class ItemDatabaseRepository implements ItemRepository {
+	/** Object used for logging runtime information to the console or to a log file. */
 	private static final Logger LOGGER = Logger.getLogger(ItemDatabaseRepository.class.getName());
 
+	/** The database connection. */
 	private final Database database;
 
 	/**

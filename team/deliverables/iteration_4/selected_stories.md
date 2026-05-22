@@ -98,8 +98,6 @@ En cas de défaite, la sauvegarde est réinitialisée : le joueur retourne à l�
 ### Description
 En mode multi-joueurs, chaque joueur peut défier un autre joueur connecté. Si ce dernier
 accepte le défi, le combat se lance.
-### Tâche restante pour terminer l'histoire :
-Toute la fonctionnalité de défier un autre joueur comme l'itération précédente a été utilisée pour transformer le code en architecture serveur-client.
 #### Priorité Client: 3
 #### Risque développeurs: 2
 #### Temps estimé pour les tâches restantes : 12h
@@ -110,8 +108,6 @@ Toute la fonctionnalité de défier un autre joueur comme l'itération précéde
 ### Description
 En mode multi-joueurs, un salon de chat est disponible pour pouvoir communiquer avec
 les autres joueurs à partir du menu principal, et pendant un combat.
-### Tâche restante pour terminer l'histoire :
-Pouvoir accéder au pendant un combat.
 #### Priorité Client: 1
 #### Risque développeurs: 2
 #### Temps estimé pour la tâche restante : 12h

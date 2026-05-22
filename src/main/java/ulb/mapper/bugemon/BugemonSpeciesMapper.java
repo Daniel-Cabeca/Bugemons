@@ -19,6 +19,13 @@ public class BugemonSpeciesMapper {
 
 	private BugemonSpeciesMapper() {}
 
+	/**
+	 * Converts a BugemonSpeciesDTO to an entity.
+	 *
+	 * @param dto The BugemonSpecies DTO
+	 * @return The corresponding entity or null
+	 * @throws MappingException If mapping fails
+	 */
 	public static BugemonSpecies toEntity(BugemonSpeciesDTO dto) throws MappingException {
 		if (dto == null) return null;
 
@@ -35,6 +42,12 @@ public class BugemonSpeciesMapper {
 		return new BugemonSpecies(dto.id(), dto.name(), dto.type(), stats, abilitySet, dto.sprite(), dto.starter());
 	}
 
+	/**
+	 * Converts a BugemonSpecies entity to a DTO.
+	 *
+	 * @param entity The BugemonSpecies entity
+	 * @return The corresponding DTO or null
+	 */
 	public static BugemonSpeciesDTO toDTO(BugemonSpecies entity) {
 		if (entity == null) return null;
 		List<AbilityDTO> abilityDTOs = new ArrayList<>();

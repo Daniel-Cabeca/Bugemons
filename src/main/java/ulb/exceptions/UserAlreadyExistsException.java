@@ -1,7 +1,7 @@
 package ulb.exceptions;
 
 /**
- * Exception thrown when the user is trying to register while already having an account.
+ * Exception thrown when attempting to create a user that already exists in the database.
  */
 public class UserAlreadyExistsException extends Exception {
 	public UserAlreadyExistsException(String username) {

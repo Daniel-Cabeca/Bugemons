@@ -1,8 +1,7 @@
 package ulb.exceptions;
 
 /**
- * Exception thrown when element already exists. 
- * For example trying to insert an ability in the database with an id that already exists.
+ * Exception thrown when a duplicate element is inserted where uniqueness is required.
  */
 public class DuplicateElementException extends Exception {
 	public DuplicateElementException(String message) {

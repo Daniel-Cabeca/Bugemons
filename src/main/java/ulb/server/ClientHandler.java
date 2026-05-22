@@ -44,7 +44,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler {
 	private Battle.ParticipantLabel teamLabel;
 	private TowerManager towerManager;
 	private boolean isGameTower;
-	private Optional<Bugemon> pendingLevelUpBugemon;
+	private Optional<Bugemon> pendingLevelUpBugemon = Optional.empty();
 	private List<Reward> pendingLevelUpRewards;
 
 	public ClientHandler(SocketMessenger messenger, AbilityService abilityService, BugemonService bugemonService,

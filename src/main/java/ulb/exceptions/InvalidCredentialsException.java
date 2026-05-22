@@ -1,7 +1,7 @@
 package ulb.exceptions;
 
 /**
- * Exception thrown when the user inputs the wrong password.
+ * Exception thrown when invalid credentials are provided during authentication.
  */
 public class InvalidCredentialsException extends Exception {
 	public InvalidCredentialsException() {

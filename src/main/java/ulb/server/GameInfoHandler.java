@@ -218,7 +218,7 @@ public class GameInfoHandler {
 		List<String> logs = new ArrayList<>(battle.getLogMsg());
 
 		if (clearLogs) {
-			battle.clearLogMsg();
+			battle.clearLogMsg(this.clientHandler.getTeamLabel());
 		}
 
 		clientHandler.sendMessage(new LogsResponse(List.of(selfHpAfterFirstAction, opponentHpAfterFirstAction), logs));

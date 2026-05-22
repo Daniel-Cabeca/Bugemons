@@ -9,7 +9,7 @@ import ulb.model.bugemon.Stats;
 import ulb.model.type.Type;
 import ulb.repository.BugemonSpeciesRepository;
 import ulb.repository.database.sql.Database;
-import ulb.utils.DuplicateElementException;
+import ulb.exceptions.DuplicateElementException;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

@@ -13,7 +13,7 @@ import ulb.repository.database.ItemDatabaseRepository;
 import ulb.repository.json.AbilityJsonRepository;
 import ulb.repository.json.BugemonSpeciesJsonRepository;
 import ulb.repository.json.ItemJsonRepository;
-import ulb.utils.DuplicateElementException;
+import ulb.exceptions.DuplicateElementException;
 
 import java.sql.SQLException;
 

@@ -6,7 +6,7 @@ import ulb.model.effect.*;
 import ulb.model.item.Item;
 import ulb.repository.ItemRepository;
 import ulb.repository.database.sql.Database;
-import ulb.utils.DuplicateElementException;
+import ulb.exceptions.DuplicateElementException;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

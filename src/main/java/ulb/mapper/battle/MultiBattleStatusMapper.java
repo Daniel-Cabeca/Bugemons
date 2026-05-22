@@ -11,6 +11,12 @@ public class MultiBattleStatusMapper {
 
 	private MultiBattleStatusMapper() {}
 
+	/**
+	 * Converts a battle session to its status DTO.
+	 *
+	 * @param battle The multiplayer battle session
+	 * @return A DTO representing the current status of the battle
+	 */
 	public static MultiBattleStatusDTO toDTO(MultiBattleSession battle) {
 		MultiBattleStatusDTO.Status status = Status.NOT_CREATED;
 

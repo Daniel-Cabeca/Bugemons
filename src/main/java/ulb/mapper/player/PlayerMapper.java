@@ -22,6 +22,12 @@ import java.util.Map;
 public class PlayerMapper {
 	private PlayerMapper() {}
 
+	/**
+	 * Converts a Player entity to a DTO.
+	 *
+	 * @param entity The Player entity
+	 * @return The corresponding DTO or null
+	 */
 	public static PlayerDTO toDTO(Player entity) {
 		if (entity == null) return null;
 
@@ -42,6 +48,14 @@ public class PlayerMapper {
 		return new PlayerDTO(userId, entity.getUsername(), team, inventory);
 	}
 
+	/**
+	 * Converts a PlayerRegisterDTO to an entity.
+	 *
+	 * @param dto The PlayerRegister DTO
+	 * @param inventory The player inventory
+	 * @param userId The user id
+	 * @return The corresponding entity or null
+	 */
 	public static Player toEntity(PlayerRegisterDTO dto, Inventory inventory, int userId) {
 		if (dto == null) return null;
 		return new Player(dto.username(), userId, inventory);

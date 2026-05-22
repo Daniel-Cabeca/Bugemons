@@ -77,6 +77,13 @@ public class AccountService {
 		return this.repository.getUsername(userId);
 	}
 
+	/**
+	 * Returns the list of a given player's friends.
+	 *
+	 * @param userId The id of the player whose friends to fetch.
+	 * @return The list of his friends' usernames
+	 * @throws LoadException If an error occurs with the repository
+	 */
 	public List<String> getFriendsList(int userId) throws LoadException {
 		return repository.getFriendsList(userId);
 	}
@@ -125,6 +132,12 @@ public class AccountService {
 		repository.addPoints(userId, pointsToAdd);
 	}
 
+	/**
+	 * Returns the score of each player for multiplayer battles.
+	 *
+	 * @return A map associating each registered player's username and his score
+	 * @throws LoadException If the repository fails to load the scores
+	 */
 	public Map<String, Integer> getLeaderboard() throws LoadException {
 		return repository.getLeaderboard();
 	}

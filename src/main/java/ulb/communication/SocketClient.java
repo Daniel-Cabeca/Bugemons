@@ -12,10 +12,28 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Handles communications with the server on the client side.
+ */
 public class SocketClient {
+	/**
+	 * Object used for logging runtime information to the console or to a log file.
+	 */
 	private static final Logger LOGGER = Logger.getLogger(SocketClient.class.getName());
+
+	/**
+	 * Object used for mutexes in synchronized methods.
+	 */
 	private final Object serverRequestLock = new Object();
+
+	/**
+	 * Socket connection with a server.
+	 */
 	private final Socket socket;
+
+	/**
+	 * The communication point with the server.
+	 */
 	private final SocketMessenger messenger;
 
 	public SocketClient(String serverIP, int serverPort) throws CommunicationException {
@@ -32,6 +50,9 @@ public class SocketClient {
 		}
 	}
 
+	/**
+	 * Close the socket connection.
+	 */
 	public void closeSocket() {
 		if (messenger != null) {
 			messenger.close();

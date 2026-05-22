@@ -11,9 +11,20 @@ import ulb.message.response.gameInfo.TowerInfoResponse;
 import ulb.view.WindowPath;
 import ulb.view.windows.FloorRewardWindow;
 
+/**
+ * Controller for picking a reward after winning a battle.
+ */
 public class FloorRewardController extends WindowController<FloorRewardWindow> implements FloorRewardWindow.ViewListener {
-
+	/**
+	 * Enum denoting that a stat or new ability bonus has been picked.
+	 * Unset if not picked yet or if another bonus has been chosen.
+	 */
 	private RewardChoice pendingChoice;
+
+	/**
+	 * Item chosen as reward.
+	 * Unset if not picked yet or if another bonus has been chosen.
+	 */
 	private ItemDTO rewardItem;
 
 	/**
@@ -53,14 +64,14 @@ public class FloorRewardController extends WindowController<FloorRewardWindow> i
 	/** {@inheritDoc} */
 	@Override
 	public void onChooseAttackReward() {
-		pendingChoice = RewardChoice.ATTACK;
+		pendingChoice = RewardChoice.NEW_ABILITY;
 		clientController.chooseBugemonReward(pendingChoice);
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void onStatReward() {
-		pendingChoice = RewardChoice.STAT;
+		pendingChoice = RewardChoice.STAT_INCREASE;
 		clientController.chooseBugemonReward(pendingChoice);
 	}
 }

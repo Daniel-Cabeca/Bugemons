@@ -40,7 +40,7 @@ public class ChooseBugemonController extends WindowController<ChooseBugemonWindo
 	}
 
 	public void onBugemonChosen(BugemonDTO bugemon) {
-		if (this.clientController.getPendingFloorRewardChoice() == RewardChoice.STAT) {
+		if (this.clientController.getPendingFloorRewardChoice() == RewardChoice.STAT_INCREASE) {
 			if (this.clientController.postData(new ChooseStatRewardRequest(bugemon))) {
 				this.clientController.showWindow(WindowName.FLOOR);
 			}

@@ -25,11 +25,33 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Battle controller handling turn actions.
+ */
 public class BattleActionController {
+	/**
+	 * Object used for logging runtime information to the console or to a log file.
+	 */
 	protected final Logger LOGGER = Logger.getLogger(this.getClass().getName());
+
+	/**
+	 * The controller responsible for coordinating server communications and switching to other controllers.
+	 */
 	private final ClientController clientController;
+
+	/**
+	 * Battle controller responsible for fetching information.
+	 */
 	private final BattleSetupController battleSetupController;
+
+	/**
+	 * The associated view.
+	 */
 	private BattleWindow view;
+
+	/**
+	 * Flag specifying whether the server is waiting for the opponent before advancing the battle.
+	 */
 	private boolean waitingForOpponentAction = false;
 
 	BattleActionController(ClientController clientController, BattleSetupController battleSetupController) {
@@ -101,6 +123,11 @@ public class BattleActionController {
 		return activeBugemon.findActiveAbilityById(abilityId);
 	}
 
+	/**
+	 * Whether the battle is finished.
+	 *
+	 * @return True if the battle is finished, false otherwise
+	 */
 	public boolean isGameFinished() {
 		Serializable message = this.clientController.getData(new CheckGameFinishedRequest());
 		if (message instanceof GameFinishedResponse gameFinished) {
@@ -111,6 +138,10 @@ public class BattleActionController {
 		return true;
 	}
 
+	/**
+	 * Fetches the HP of both Bugemons after the first action of the turn.
+	 * @return A list of two integers holding the HP values of each Bugemon after the first action of the turn
+	 */
 	public List<Integer> getHpAfterFirstAction() {
 		Serializable message = this.clientController.getData(new GetLogsRequest(false));
 		if (message instanceof LogsResponse logs) {
@@ -210,6 +241,13 @@ public class BattleActionController {
 		return this.battleSetupController.getState();
 	}
 
+	/**
+	 * Make the current player use an item.
+	 *
+	 * @param itemId The id of the item to use
+	 * @param player The current player
+	 * @param event The event that triggered the action
+	 */
 	public void useItem(String itemId, PlayerDTO player, ActionEvent event) {
 		Optional<ItemDTO> item = findInventoryItemById(itemId, player);
 
@@ -228,6 +266,13 @@ public class BattleActionController {
 		});
 	}
 
+	/**
+	 * Makes the current player's active bugemon use an ability.
+	 *
+	 * @param abilityId The id of the ability to use
+	 * @param player The current player
+	 * @param event The event that triggered the action
+	 */
 	public void useAbility(String abilityId, PlayerDTO player, ActionEvent event) {
 		Optional<AbilityDTO> ability = findActiveAbilityById(abilityId);
 
@@ -244,6 +289,14 @@ public class BattleActionController {
 		});
 	}
 
+	/**
+	 * Makes the current player swap his active Bugemon.
+	 *
+	 * @param bugemonId The id of the Bugemon to swap in
+	 * @param player The current player
+	 * @param gameMode The current game mode
+	 * @param event The event that triggered the action
+	 */
 	public void swapBugemon(String bugemonId, PlayerDTO player, GameMode gameMode, ActionEvent event) {
 		Optional<BugemonDTO> bugemon = findTeamBugemonById(bugemonId, player);
 
@@ -276,6 +329,12 @@ public class BattleActionController {
 		});
 	}
 
+	/**
+	 * Triggers an action to play for the current player un auto-battle mode.
+	 *
+	 * @param player The current player
+	 * @param event The event that triggered the action
+	 */
 	public void autoAction(PlayerDTO player, ActionEvent event) {
 		view.setAutoButtonVisible(false);
 
@@ -291,6 +350,9 @@ public class BattleActionController {
 		});
 	}
 
+	/**
+	 * Flee from battle.
+	 */
 	public void run() {
 		if (this.clientController.postData(new RunRequest())) {
 			this.clientController.nextRoom();

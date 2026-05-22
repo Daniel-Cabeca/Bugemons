@@ -289,6 +289,9 @@ public class AccountDatabaseRepository implements AccountRepository {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Map<String, Integer> getLeaderboard() throws LoadException {
 		Map<String, Integer> leaderboard = new LinkedHashMap<>();
 		String sql = "SELECT username, points FROM users ORDER BY points DESC LIMIT 10";

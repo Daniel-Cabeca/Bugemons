@@ -12,7 +12,14 @@ import ulb.view.windows.AttackReplacementWindow;
  * Controller handling the attack replacement flow after learning a new ability.
  */
 public class AttackReplacementController extends WindowController<AttackReplacementWindow> implements AttackReplacementWindow.ViewListener {
+	/**
+	 * The Bugemon whose abilities to change.
+	 */
 	private BugemonDTO currentBugemon;
+
+	/**
+	 * The new ability to replace an old one with.
+	 */
 	private AbilityDTO currentNewAbility;
 
 	/**

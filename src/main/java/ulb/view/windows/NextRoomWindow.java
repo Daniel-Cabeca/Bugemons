@@ -3,8 +3,13 @@ package ulb.view.windows;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
+/**
+ * Controller for asking the player to continue after a battle in the tower.
+ */
 public class NextRoomWindow {
-
+	/**
+	 * Listener for the view's inputs.
+	 */
 	private ViewListener viewListener;
 
 	public void setViewListener(ViewListener viewListener) {
@@ -29,8 +34,18 @@ public class NextRoomWindow {
 		viewListener.onReturn();
 	}
 
+	/**
+	 * Listener for the view's inputs.
+	 */
 	public interface ViewListener {
+		/**
+		 * Handles continue action.
+		 */
 		void onContinue();
+
+		/**
+		 * Handles return action.
+		 */
 		void onReturn();
 	}
 }

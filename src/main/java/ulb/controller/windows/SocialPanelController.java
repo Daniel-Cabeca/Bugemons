@@ -23,8 +23,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Controller for the social panel handling interactions with other players.
+ */
 public class SocialPanelController extends WindowController<SocialPanel> implements SocialPanel.ViewListener {
+	/**
+	 * FXML Stage for the panel.
+	 */
 	private Stage popupStage;
+
+	/**
+	 * Information on the current player.
+	 */
 	private PlayerDTO player;
 
 	/**
@@ -60,12 +70,22 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 		popupStage.show();
 	}
 
+	/**
+	 * Retrieves the list of the current player's friends.
+	 *
+	 * @return List of the usernames of the friends
+	 */
 	private List<String> getFriendList() {
 		if (this.clientController.getData(new GetFriendsListRequest(getPlayer().getUsername())) instanceof FriendsListResponse msg)
 			return msg.getFriends();
 		return List.of();
 	}
 
+	/**
+	 * Returns a list of the multiplayer score of each registered player.
+	 *
+	 * @return A map associating each player's username to his score
+	 */
 	private Map<String, Integer> getLeaderboardList() {
 		if (this.clientController.getData(new GetLeaderboardRequest()) instanceof LeaderboardResponse msg)
 			return msg.getLeaderboard();
@@ -73,6 +93,11 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 
 	}
 
+	/**
+	 * Fetches information on the current player.
+	 *
+	 * @return Information on the current player
+	 */
 	private PlayerDTO getPlayer() {
 		if (player == null) {
 			this.player = this.clientController.getPlayer();
@@ -86,14 +111,17 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 		return List.of();
 	}
 
-
-
-
+	/**
+	 * Fetches the list of the current player's friends and updates it in the view.
+	 */
 	private void refreshFriendRequests() {
 		List<String> friendRequests = getRequests(new GetFriendRequestsRequest(getPlayer().getUsername()));
 		view.setFriendRequests(friendRequests);
 	}
 
+	/**
+	 * Fetches the list of pending battle requests for the current player and updates it in the view.
+	 */
 	private void refreshBattleRequests() {
 		List<String> battleRequests = getRequests(new GetBattleRequestsRequest(getPlayer().getUsername()));
 		view.setBattleRequests(battleRequests);
@@ -118,6 +146,12 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 		Platform.runLater(() -> view.setMessages(lines));
 	}
 
+	/**
+	 * Fetches information on a given player.
+	 *
+	 * @param username The player's username
+	 * @return Information on the player
+	 */
 	private PlayerDTO getPlayerByName(String username) {
 		if (this.clientController.getData(new GetPlayerRequest(username)) instanceof PlayerResponse msg) {
 			return msg.getPlayer();
@@ -140,6 +174,11 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 		throw new CommunicationException();
 	}
 
+	/**
+	 * Switches the view to the team selection for a multiplayer battle.
+	 *
+	 * @param opponent The opponent player
+	 */
 	private void switchToTeamSelectionForMulti(PlayerDTO opponent) {
 		this.clientController.setOpponentMulti(opponent);
 		this.clientController.showWindow(WindowName.TEAM);
@@ -175,7 +214,7 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 	}
 
 	/**
-	 * Close the social panel screen.
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void onClose() {
@@ -183,7 +222,7 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 	}
 
 	/**
-	 * Decline a friend request.
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void onDeclineFriend(String sender) {
@@ -192,6 +231,9 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onDeclineBattle(String sender) {
 		if (this.clientController.postData(new DeclineBattleRequestRequest(getPlayer().getUsername(), sender))) {
@@ -200,7 +242,7 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 	}
 
 	/**
-	 * Accept a friend request.
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void onAcceptFriend(String sender) {
@@ -210,6 +252,9 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onAcceptBattle(String sender) {
 		if (this.clientController.postData(new AcceptBattleRequestRequest(getPlayer().getUsername(), sender))) {
@@ -221,7 +266,7 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 	}
 
 	/**
-	 * Displays the appropriat status and sends friend request.
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void onInvite(String target) {
@@ -241,7 +286,7 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 	}
 
 	/**
-	 * Select given friend to chat.
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void onChatFriendSelected(String friend) {
@@ -249,18 +294,24 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 	}
 
 	/**
-	 * Open request tab and refreshes.
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void onFriendRequestsOpened() {
 		refreshFriendRequests();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onBattleRequestsOpened() {
 		refreshBattleRequests();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void onChallengeFriend(String friendName) {
 		if (friendName == null || friendName.isBlank()) {
@@ -282,7 +333,7 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 	}
 
 	/**
-	 * Send given contents in form of a message to a given friend.
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void onSendMessage(String friend, String content) {
@@ -293,11 +344,17 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 		}).start();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void refreshFriends() {
 		view.setFriendsList(this.getFriendList());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void refreshLeaderboard() {
 		view.setLeaderboardList(this.getLeaderboardList());

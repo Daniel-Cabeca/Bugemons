@@ -22,7 +22,7 @@ public class MainMenuController extends WindowController<MainMenuWindow> impleme
 	}
 
 	/**
-	 * Notifies the listener to open the social menu or tab.
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void onOpenSocial() {
@@ -31,7 +31,7 @@ public class MainMenuController extends WindowController<MainMenuWindow> impleme
 
 
 	/**
-	 * Notifies the listener to initiate the solo (single-player) game mode.
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void onSolo() {
@@ -40,7 +40,7 @@ public class MainMenuController extends WindowController<MainMenuWindow> impleme
 
 
 	/**
-	 * Shuts down the JavaFX platform and terminates the application process.
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void onQuit() {
@@ -49,7 +49,7 @@ public class MainMenuController extends WindowController<MainMenuWindow> impleme
 	}
 
 	/**
-	 * Notifies the listener to log the current user out of their session.
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void onLogOut() {

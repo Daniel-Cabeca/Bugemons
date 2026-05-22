@@ -11,21 +11,39 @@ import ulb.view.FxmlLoader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 /**
  * Abstract class that represent a WindowController
  *
  * @param <T> ViewWindow of the windowController
  */
 public abstract class WindowController<T> {
+	/**
+	 * Object used for logging runtime information to the console or to a log file.
+	 */
 	protected final Logger LOGGER = Logger.getLogger(this.getClass().getName());
+
+	/**
+	 * The associated FXML Stage.
+	 */
 	protected Stage stage;
+
+	/**
+	 * The associated view.
+	 */
 	protected T view;
+
+	/**
+	 * The FXML Loader responsible for loading .fxml files.
+	 */
 	protected FXMLLoader loader;
+
+	/**
+	 * The controller responsible for coordinating server communications and switching to other controllers.
+	 */
 	protected ClientController clientController;
 
 	/**
-	 * A super constructor for all windowControlls
+	 * A super constructor for all window controllers
 	 *
 	 * @param stage used to show fxml windows
 	 * @param windowPath the fxml path of the viewWindow

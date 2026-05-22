@@ -119,5 +119,11 @@ public interface AccountRepository {
 
 	void addPoints(int userId, int pointsToAdd) throws LoadException;
 
+	/**
+	 * Gets the list of all the players' score for multiplayer battles.
+	 *
+	 * @return A map associating each player's username to his score
+	 * @throws LoadException If the repository fails to load the scores.
+	 */
 	Map<String, Integer> getLeaderboard() throws LoadException;
 }

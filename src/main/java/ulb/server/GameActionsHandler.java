@@ -234,6 +234,13 @@ public class GameActionsHandler extends Thread {
 		clientHandler.sendSuccessMessage();
 	}
 
+	public void readyToPlay(){
+		ParticipantLabel teamLabel = this.clientHandler.getTeamLabel();
+		this.clientHandler.getBattle().readyToPlay(teamLabel);
+
+		this.clientHandler.sendSuccessMessage();
+	}
+
 	/**
 	 * Registers a run action for the player's team. In tower mode, resets bugemon HP and
 	 * rewinds to the previous room (or finishes the tower if on the final floor).

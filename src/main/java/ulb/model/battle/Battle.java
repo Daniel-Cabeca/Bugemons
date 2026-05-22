@@ -12,7 +12,6 @@ import ulb.service.AccountService;
 
 import java.util.*;
 
-
 public class Battle {
 	private final int XP_COEF = 30;
 	private final BattleHandler battleHandler;
@@ -113,6 +112,13 @@ public class Battle {
 
 	public void addLogMsg(String log) { this.logMsg.add(log); }
 
+	public void readyToPlay(ParticipantLabel team) { 
+		this.getParticipant(team).setReadyToPlay(true); 
+	}
+
+	public boolean arePlayersReadyToPlay(){
+		return this.getParticipantA().isReadyToPlay() && this.getParticipantB().isReadyToPlay();
+	}
 
 	/**
 	 * get the team that has the initiative.
@@ -229,15 +235,6 @@ public class Battle {
 				actions.add(new Swap());
 				break;
 
-			case LOST:
-				break;
-
-			case WON:
-				break;
-
-			case WAITING:
-				break;
-
 			default:
 				break;
 		}
@@ -293,6 +290,7 @@ public class Battle {
 	 * @param team team registering the action
 	 */
 	public synchronized void chooseAction(Action action, ParticipantLabel team) {
+		readyToPlay(team);
 		registerAction(action, team, getOpponentTeamLabel(team), getState(team));
 	}
 
@@ -313,7 +311,16 @@ public class Battle {
 	 * Handles one round of the battle.
 	 */
 	private void handleRound() {
+		while (!arePlayersReadyToPlay()) {
+			try {
+				Thread.sleep(1000);
+			} catch (Exception e) {
+				return;
+			}
+		}
 		this.battleHandler.handleRound();
+		this.participantA.setReadyToPlay(false);
+		this.participantB.setReadyToPlay(false);
 	}
 
 	/**

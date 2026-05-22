@@ -372,6 +372,9 @@ public class ClientHandler extends Thread implements ServerMessageHandler {
 	public void chooseTowerRoom(int roomId) throws DataAccessException { gameActionsHandler.chooseTowerRoom(roomId); }
 
 	@Override
+	public void readyToPlay() { gameActionsHandler.readyToPlay(); }
+
+	@Override
 	public void chooseRandomAction() { gameActionsHandler.chooseRandomAction(); }
 
 	@Override

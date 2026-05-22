@@ -51,6 +51,7 @@ public interface ServerMessageHandler {
 	void chooseLevelUpReward(RewardDTO rewardDTO) throws UserFacingException, DataAccessException;
 	void chooseStatReward(BugemonDTO bugemonDTO) throws UserFacingException, DataAccessException;
 	void chooseTowerRoom(int roomId) throws UserFacingException, DataAccessException;
+	void readyToPlay();
 	void chooseRandomAction() throws UserFacingException, DataAccessException;
 	void chooseRunAction() throws UserFacingException, DataAccessException;
 	void startMultiBattle(PlayerDTO opponentDTO) throws UserFacingException, DataAccessException;

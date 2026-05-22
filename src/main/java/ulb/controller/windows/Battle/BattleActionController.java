@@ -223,8 +223,15 @@ public class BattleActionController {
 		}
 
 		Optional<BattleSnapshot> finalSnapshot = this.battleSetupController.buildBattleSnapshot();
-
 		if (finalSnapshot.isEmpty()) {
+			return;
+		}
+
+		try {
+			if (!this.clientController.postData(new ReadyToPlayRequest())){
+				throw new ServerStatusException("");
+			}
+		} catch (Exception e) {
 			return;
 		}
 

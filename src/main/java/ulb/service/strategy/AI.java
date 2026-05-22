@@ -47,6 +47,7 @@ public class AI extends Thread {
 
 		if (action != null) {
 			battle.chooseAction(action, teamLabel);
+			battle.readyToPlay(teamLabel);
 		}
 	}
 }

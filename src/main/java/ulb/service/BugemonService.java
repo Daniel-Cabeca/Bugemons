@@ -89,16 +89,6 @@ public class BugemonService {
 	}
 
 	/**
-	 * Fetches a Bugemon species by its id.
-	 *
-	 * @param id The species' id
-	 * @throws EntityNotFoundException If no species matches the id
-	 */
-	public BugemonSpecies getBugemonSpecies(String id) throws LoadException, EntityNotFoundException {
-		return this.speciesRepository.findById(id);
-	}
-
-	/**
 	 * Returns the list of all loaded Bugemon species.
 	 *
 	 * @return An iterable of all the species

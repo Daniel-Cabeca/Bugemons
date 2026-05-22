@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -86,28 +85,7 @@ public class ChatDatabaseRepository implements ChatRepository {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public int countMessages(String usernameA, String usernameB) {
-		String sql = """
-				SELECT COUNT(*) FROM chat_messages
-				WHERE (sender_username = ? AND receiver_username = ?)
-				OR (sender_username = ? AND receiver_username = ?)
-				""";
-		try (PreparedStatement stmt = this.database.prepareStatement(sql)) {
-			this.setMessagesParameters(stmt, usernameA, usernameB, 1);
-			ResultSet rs = stmt.executeQuery();
-			if (rs.next()) return rs.getInt(1);
-			return 0;
-		} catch (SQLException e) {
-			LOGGER.log(Level.SEVERE, "Failed to count messages between " + usernameA + " and " + usernameB + ".");
-			return 0;
-		}
-	}
-
-	/**
+    /**
 	 * Creates a ChatMessage instance from an SQL result.
 	 *
 	 * @param resultSet The SQL result

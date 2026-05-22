@@ -29,12 +29,6 @@ public class EffectMapper {
 		}
 
 		switch (dto.getType()) {
-			case SWITCH:
-				return new EffectSwitch(dto.getTarget()) {
-					@Override
-					public void apply(Battle battle, Battle.ParticipantLabel team) {}
-				};
-
 			case RESET_MALUS:
 				return new EffectResetMalus(dto.getTarget()) {
 					@Override
@@ -68,10 +62,7 @@ public class EffectMapper {
 		if (dto == null) {
 			return null;
 		}
-		return new EffectStatModifier(dto.getTarget(), dto.getDuration(), dto.getModifiers()) {
-			// @Override
-			// public void apply(Battle battle, Battle.ParticipantLabel team){}
-		};
+		return new EffectStatModifier(dto.getTarget(), dto.getDuration(), dto.getModifiers()) {};
 	}
 
 	/**
@@ -83,10 +74,7 @@ public class EffectMapper {
 	public static EffectHeal toEntity(EffectHealDTO dto) {
 		if (dto == null) return null;
 
-		return new EffectHeal(dto.getTarget(), dto.getValue()) {
-			// @Override
-			// public void apply(Battle battle, Battle.ParticipantLabel team){}
-		};
+		return new EffectHeal(dto.getTarget(), dto.getValue()) {};
 	}
 
 	/**
@@ -105,8 +93,6 @@ public class EffectMapper {
 			return new EffectHealDTO(EffectType.HEAL, heal.getTarget(), heal.getValue());
 		} else if (entity instanceof EffectResetMalus resetMalus) {
 			return new EffectDTO(EffectType.RESET_MALUS, resetMalus.getTarget());
-		} else if (entity instanceof EffectSwitch switchEffect) {
-			return new EffectDTO(EffectType.SWITCH, switchEffect.getTarget());
 		}
 		return null;
 	}

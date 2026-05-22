@@ -118,17 +118,6 @@
         "duree": "tour"
       },
       "sprite": "fumigraine.png"
-    },
-    {
-      "id": "pierre_retraite",
-      "nom": "Pierre de Retraite",
-      "description": "Permet de changer de Bugémon sans perdre l’initiative du tour.",
-      "categorie": "tactique",
-      "effet": {
-        "type": "switch",
-        "cible": "lanceur"
-      },
-      "sprite": "pierre_retraite.png"
     }
   ],
   "inventaire_depart": {

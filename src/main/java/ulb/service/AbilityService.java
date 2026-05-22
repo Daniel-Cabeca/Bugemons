@@ -23,20 +23,6 @@ public class AbilityService {
 	}
 
 	/**
-	 * Returns a random ability.
-	 *
-	 * @return A random ability
-	 */
-	public Ability getRandomAbility() throws LoadException, EntityNotFoundException {
-		List<Ability> abilities = new ArrayList<>();
-		for (Ability ability : this.abilityRepository.findAll()) {
-			abilities.add(ability);
-		}
-		Random random = new Random();
-		return abilities.get(random.nextInt(abilities.size()));
-	}
-
-	/**
 	 * Returns a random ability compatible with the given type and not already present in the set.
 	 *
 	 * @param type the Bugemon type

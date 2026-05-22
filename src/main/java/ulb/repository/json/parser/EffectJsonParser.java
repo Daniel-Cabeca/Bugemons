@@ -48,8 +48,6 @@ public class EffectJsonParser {
 				return this.parseOneStatModifierMultiple(node);
 			case "reset_malus":
 				return this.parseOneResetMalus(node);
-			case "switch":
-				return this.parseOneSwitch(node);
 			default:
 				throw new LoadException("Unknown effect type: " + typeStr);
 		}
@@ -120,19 +118,6 @@ public class EffectJsonParser {
 		EffectTarget target = this.parseTarget(node.get("cible"));
 
 		return new EffectResetMalus(target);
-	}
-
-	/**
-	 * Parses one switch effect from a JSON node.
-	 *
-	 * @param node The JSON node
-	 * @return The parsed effect
-	 * @throws LoadException If parsing failed
-	 */
-	private Effect parseOneSwitch(JsonNode node) throws LoadException {
-		EffectTarget target = this.parseTarget(node.get("cible"));
-
-		return new EffectSwitch(target);
 	}
 
 	/**

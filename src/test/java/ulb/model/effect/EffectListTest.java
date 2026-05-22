@@ -8,7 +8,7 @@ public class EffectListTest {
 	@Test
 	public void addOneEffect() {
 		EffectList effects = new EffectList();
-		effects.add(new EffectSwitch(EffectTarget.OWN_BUGEMON));
+		effects.add(new EffectResetMalus(EffectTarget.OWN_BUGEMON));
 
 		assertEquals(1, effects.getSize());
 	}

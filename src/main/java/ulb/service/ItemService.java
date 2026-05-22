@@ -26,26 +26,6 @@ public class ItemService {
 	}
 
 	/**
-	 * Fetches an Item by its id.
-	 *
-	 * @param id The item's id
-	 * @return The Item instance
-	 * @throws EntityNotFoundException If no item matches the id
-	 */
-	public Item getItem(String id) throws EntityNotFoundException {
-		return this.itemRepository.findById(id);
-	}
-
-	/**
-	 * Returns the list of all items.
-	 *
-	 * @return An iterable of all the items
-	 */
-	public Iterable<Item> getAllItems() throws LoadException, EntityNotFoundException {
-		return this.itemRepository.findAll();
-	}
-
-	/**
 	 * Creates the starter inventory for a new game, as defined in Histoire 10.
 	 * Contains:
 	 * - 3x Baie Revigorante
@@ -73,19 +53,4 @@ public class ItemService {
 		return items.get(random.nextInt(items.size()));
 	}
 
-	/**
-	 * Returns a list of all items in a given category.
-	 *
-	 * @param category The category to fetch items from
-	 * @return The items of the given category
-	 */
-	public List<Item> getItemsByCategory(String category) throws LoadException, EntityNotFoundException {
-		List<Item> result = new ArrayList<>();
-		for (Item item : this.itemRepository.findAll()) {
-			if (item.getCategory().equals(category)) {
-				result.add(item);
-			}
-		}
-		return result;
-	}
 }

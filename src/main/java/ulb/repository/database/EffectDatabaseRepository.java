@@ -18,8 +18,6 @@ public class EffectDatabaseRepository {
 	public final static String TYPESTR_STAT_MODIFIER = "STAT_MODIFIER";
 	/** Database value for reset malus effects. */
 	public final static String TYPESTR_RESET_MALUS = "RESET_MALUS";
-	/** Database value for switch effects. */
-	public final static String TYPESTR_SWITCH = "SWITCH";
 
 	/** Connection to the database. */
 	private final Database database;
@@ -37,7 +35,8 @@ public class EffectDatabaseRepository {
 	 * Inserts an effect in the database.
 	 *
 	 * @param effect The effect to insert
-	 * @param Id
+	 * @param Id The id of the item or the ability that has the effect
+	 * @param isItem true if the effect is for an item, false if it is for an ability
 	 */
 	public void insert(Effect effect, String Id, boolean isItem) {
 		String column = isItem ? "item_id" : "ability_id";
@@ -75,8 +74,6 @@ public class EffectDatabaseRepository {
 			return TYPESTR_STAT_MODIFIER;
 		} else if (effect instanceof EffectResetMalus) {
 			return TYPESTR_RESET_MALUS;
-		} else if (effect instanceof EffectSwitch) {
-			return TYPESTR_SWITCH;
 		}
 
 		throw new UnsupportedOperationException("Unsupported type: " + effect.getClass());

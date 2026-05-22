@@ -200,17 +200,6 @@ public class Battle {
 	}
 
 	/**
-	 * Returns the next available non-active Bugemon when switching.
-	 *
-	 * @param team the team whose Bugemons are being considered
-	 * @return the next available non-active Bugemon as an Optional object.
-	 * The Optional is empty if no Bugemon is available
-	 */
-	public Optional<Bugemon> getNextBugemon(ParticipantLabel team) {
-		return this.getTeam(team).getNextBugemon(this.getActiveBugemon(team));
-	}
-
-	/**
 	 * Returns all available actions based on current game state.
 	 *
 	 * @param team the team whose available actions are returned

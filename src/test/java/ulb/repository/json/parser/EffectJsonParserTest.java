@@ -196,21 +196,6 @@ public class EffectJsonParserTest {
 	}
 
 	@Test
-	public void testParseOneSwitch() throws Exception {
-		String str = """
-				{
-					"type": "switch",
-					"cible": "lanceur"
-				}
-				""";
-
-		Effect obtained = parseEffectFromStr(str);
-
-		assertInstanceOf(EffectSwitch.class, obtained);
-		assertEquals(EffectTarget.OWN_BUGEMON, obtained.getTarget());
-	}
-
-	@Test
 	public void parseListCorrectSize() throws Exception {
 		String str = """
 				[

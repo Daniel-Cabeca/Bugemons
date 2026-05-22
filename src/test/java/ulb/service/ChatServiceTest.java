@@ -37,9 +37,5 @@ class ChatServiceTest {
 			return List.of();
 		}
 
-		@Override
-		public int countMessages(String usernameA, String usernameB) {
-			return 0;
-		}
 	}
 }

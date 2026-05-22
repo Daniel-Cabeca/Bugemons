@@ -28,12 +28,4 @@ public interface ChatRepository {
 	 */
 	List<ChatMessage> getMessages(String usernameA, String usernameB) throws LoadException;
 
-	/**
-	 * Returns the total number of messages stored for a given conversation.
-	 *
-	 * @param usernameA One participant
-	 * @param usernameB The other participant
-	 * @return The amount of messages
-	 */
-	int countMessages(String usernameA, String usernameB);
 }

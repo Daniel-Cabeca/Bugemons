@@ -117,23 +117,6 @@ public class ItemTest {
 	}
 
 	@Test
-	public void switchItemAppliesEffect() throws Exception {
-		Bugemon a = spawnBugemon("florachu");
-		Bugemon b = spawnBugemon("pyricore");
-		Battle battle = makeBattleController(a, b);
-		Player player = battle.getPlayer(ParticipantLabel.TEAM_A);
-
-		Item item = getItem("switch");
-		player.getInventory().addItem(item, 1);
-
-		assertEquals(a, battle.getActiveBugemon(ParticipantLabel.TEAM_A));
-		playTurnWithItem(battle, item);
-
-		assertNotEquals(a, battle.getActiveBugemon(ParticipantLabel.TEAM_A));
-		assertEquals(b, battle.getActiveBugemon(ParticipantLabel.TEAM_A));
-	}
-
-	@Test
 	public void resetMalusItemAppliesEffect() throws Exception {
 		Bugemon bugemon = spawnBugemon("100all");
 		bugemon.changeFightStats(new Stats(-5, -5, -5, -5));

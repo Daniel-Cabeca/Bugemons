@@ -91,13 +91,6 @@ public class DatabaseInFile extends Database {
 	}
 
 	/**
-	 * Returns the path to this database file.
-	 *
-	 * @return The file path for this database
-	 */
-	public Path getPath() { return getPath(this.getName()); }
-
-	/**
 	 * Returns the database name.
 	 *
 	 * @return The database name without extension

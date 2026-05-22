@@ -89,17 +89,6 @@ public class AccountService {
 	}
 
 	/**
-	 * Sets two users as friends.
-	 *
-	 * @param userId The id of one user
-	 * @param friendId The id of the other user
-	 * @throws LoadException If the operation fails
-	 */
-	public void addFriend(int userId, int friendId) throws LoadException {
-		repository.addFriend(userId, friendId);
-	}
-
-	/**
 	 * Create a friend request.
 	 *
 	 * @param senderId The id of the user sending the request

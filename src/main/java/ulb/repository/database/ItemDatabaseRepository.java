@@ -75,7 +75,8 @@ public class ItemDatabaseRepository implements ItemRepository {
 	 */
 	@Override
 	public Item findById(String id) throws EntityNotFoundException {
-		// La grosse requête qui rassemble tout (Outer Join pour ne rien perdre)
+		// big request joining the items, effects and effec_stats_modifier tables
+		// outer join to avoid losing anything
 		String sql = """
 				    SELECT i.*, e.id AS effect_id, e.type AS effect_type, e.target, e.value,
 				           esm.hp, esm.attack, esm.defense, esm.initiative, esm.duration
@@ -101,7 +102,7 @@ public class ItemDatabaseRepository implements ItemRepository {
 					if (type == EffectType.HEAL) {
 						effect = Optional.of(new EffectHeal(target, rs.getInt("value")));
 					} else if (type == EffectType.STAT_MODIFIER) {
-						// On reconstruit l'objet Stats du modificateur
+						// builds the modifier's Stats object
 						Map<EffectStatType, Integer> statsChanges = new EnumMap<>(EffectStatType.class);
 						statsChanges.put(EffectStatType.HP, rs.getInt("hp"));
 						statsChanges.put(EffectStatType.ATTACK, rs.getInt("attack"));
@@ -113,8 +114,6 @@ public class ItemDatabaseRepository implements ItemRepository {
 						effect = Optional.of(new EffectStatModifier(target, duration, statsChanges));
 					} else if (type == EffectType.RESET_MALUS) {
 						effect = Optional.of(new EffectResetMalus(target));
-					} else if (type == EffectType.SWITCH) {
-						effect = Optional.of(new EffectSwitch(target));
 					}
 				}
 				if (effect.isEmpty()) {

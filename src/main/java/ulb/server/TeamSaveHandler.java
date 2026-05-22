@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Handles requests related to saving and retrieving player teams
+ * Handles requests related to saving and retrieving player teams.
  */
 public class TeamSaveHandler {
 	private final TeamService teamService;
@@ -32,7 +32,7 @@ public class TeamSaveHandler {
 	}
 
 	/**
-	 * Retrieves all saved teams for the currently connected player and sends them to the client
+	 * Retrieves all saved teams for the currently connected player and sends them to the client.
 	 *
 	 * @throws DataAccessException if the saved teams cannot be retrieved
 	 */
@@ -52,7 +52,7 @@ public class TeamSaveHandler {
 	}
 
 	/**
-	 * Saves the given team for the currently connected player
+	 * Saves the given team for the currently connected player.
 	 *
 	 * @param teamDTO the team to save
 	 * @throws UserFacingException if a team with the same name already exists for the player

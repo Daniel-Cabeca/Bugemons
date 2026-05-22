@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Handles game session setup, including player registration, login, and initialization of game modes
+ * Handles game session setup, including player registration, login, and initialization of game modes.
  */
 public class SetupHandler {
 	private final AccountService accountService;
@@ -62,7 +62,7 @@ public class SetupHandler {
 
 	/**
 	 * Sets up a multiplayer battle session for the connected player against the given opponent,
-	 * assigns the player's team, and starts the battle if both participants are ready
+	 * assigns the player's team, and starts the battle if both participants are ready.
 	 *
 	 * @param opponent the opponent player
 	 * @param bugemons the list of bugemons in the player's team
@@ -112,7 +112,7 @@ public class SetupHandler {
 	}
 
 	/**
-	 * Registers a new player or logs in an existing one
+	 * Registers a new player or logs in an existing one.
 	 *
 	 * @param playerRegisterDTO the registration or login credentials
 	 * @param isLogin {@code true} to log in an existing account, {@code false} to register a new one
@@ -169,7 +169,7 @@ public class SetupHandler {
 
 	/**
 	 * Initializes a normal (classic or auto) battle mode for the connected player,
-	 * generates a random opponent team and starts an AI-controlled opponent thread
+	 * generates a random opponent team and starts an AI-controlled opponent thread.
 	 *
 	 * @throws LoadException if the starter inventory cannot be created
 	 */
@@ -214,7 +214,7 @@ public class SetupHandler {
 	}
 
 	/**
-	 * Sets up the player's active team from a list of bugemon DTOs
+	 * Sets up the player's active team from a list of bugemon DTOs.
 	 *
 	 * @param bugemons the bugemons to include in the team
 	 * @throws DataAccessException if a bugemon instance cannot be created
@@ -234,7 +234,7 @@ public class SetupHandler {
 
 	/**
 	 * Initializes tower mode for the connected player, either starting a new tower run
-	 * or continuing a saved one
+	 * or continuing a saved one.
 	 *
 	 * @param isNewTower {@code true} to start a new tower run, {@code false} to continue a saved one
 	 * @throws DataAccessException if the tower cannot be initialized or the team cannot be loaded

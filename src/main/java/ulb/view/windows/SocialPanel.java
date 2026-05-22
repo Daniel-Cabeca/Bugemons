@@ -295,7 +295,7 @@ public class SocialPanel {
 	}
 
 	/**
-	 * Handles accepting a battle invite
+	 * Handles accepting a battle invite.
 	 */
 	@FXML
 	private void handleAcceptBattle() {
@@ -306,7 +306,7 @@ public class SocialPanel {
 	}
 
 	/**
-	 * Handles declining a battle invite
+	 * Handles declining a battle invite.
 	 */
 	@FXML
 	private void handleDeclineBattle() {
@@ -383,7 +383,7 @@ public class SocialPanel {
 		void onFriendRequestsOpened();
 
 		/**
-		 * Open the battle requests tab
+		 * Open the battle requests tab.
 		 */
 		void onBattleRequestsOpened();
 

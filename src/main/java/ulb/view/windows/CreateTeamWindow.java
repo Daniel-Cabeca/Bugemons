@@ -186,7 +186,7 @@ public class CreateTeamWindow {
 	}
 
 	/**
-	 * Shows an alert when the user tries to save/confirm a team with the wrong Bugemon number
+	 * Shows an alert when the user tries to save/confirm a team with the wrong Bugemon number.
 	 *
 	 * @param action the action (confirm or save) that triggered the alert
 	 */
@@ -202,14 +202,14 @@ public class CreateTeamWindow {
 	}
 
 	/**
-	 * Displays the load team panel
+	 * Displays the load team panel.
 	 */
 	public void handleLoadTeam() {
 		viewListener.onLoadTeam();
 	}
 
 	/**
-	 * Displays a dialog to input the team's name then handles team saving
+	 * Displays a dialog to input the team's name then handles team saving.
 	 */
 	public void handleSaveTeam() {
 

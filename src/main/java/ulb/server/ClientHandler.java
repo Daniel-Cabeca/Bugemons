@@ -150,7 +150,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler {
 	}
 
 	/**
-	 * Reads the socket and handles the received message
+	 * Reads the socket and handles the received message.
 	 */
 	private void handleMessage() {
 		Request message = receiveMessage();
@@ -216,7 +216,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler {
 	}
 
     /**
-	 * Sends a serialized message to the client
+	 * Sends a serialized message to the client.
 	 *
      * @param message message to be sent
      */
@@ -233,7 +233,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler {
 	}
 
     /**
-	 * Handles communication failure by logging and stopping the client handler
+	 * Handles communication failure by logging and stopping the client handler.
 	 *
      * @param message log message
      */
@@ -243,21 +243,21 @@ public class ClientHandler extends Thread implements ServerMessageHandler {
 	}
 
     /**
-     * Stops the client handler
+     * Stops the client handler.
      */
 	public void stopProcess() {
 		this.stop = true;
 	}
 
     /**
-     * Closes the socket connection
+     * Closes the socket connection.
      */
 	public void end() {
 		this.socketMessenger.close();
 	}
 
 	/**
-	 * Moves player to a specific tower room if in tower mode
+	 * Moves player to a specific tower room if in tower mode.
 	 *
 	 * @param targetRoomId the id of the target room
 	 * @throws LoadException if room cannot be loaded
@@ -274,7 +274,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler {
 	}
 
     /**
-	 * Checks if current room matches given id
+	 * Checks if current room matches given id.
 	 *
      * @param targetRoomId room id to compare
      * @return true if equal
@@ -287,7 +287,7 @@ public class ClientHandler extends Thread implements ServerMessageHandler {
 	}
 
     /**
-	 * Finished tower run and clears saved tower state
+	 * Finished tower run and clears saved tower state.
 	 *
      * @throws DataAccessException if tower data cannot de deleted
      */
@@ -531,6 +531,4 @@ public class ClientHandler extends Thread implements ServerMessageHandler {
 	/** {@inheritDoc} */
 	@Override
 	public void saveTeam(TeamDTO teamDTO) throws UserFacingException, DataAccessException { teamSaveHandler.saveTeam(teamDTO); }
-
-
 }

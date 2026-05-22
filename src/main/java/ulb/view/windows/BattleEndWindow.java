@@ -8,7 +8,7 @@ import javafx.scene.layout.VBox;
 import ulb.utils.Scaling;
 
 /**
- * End screen displayed after winning/losing a battle
+ * End screen displayed after winning/losing a battle.
  */
 public class BattleEndWindow {
 
@@ -33,7 +33,7 @@ public class BattleEndWindow {
 	}
 
 	/**
-	 * Sets the result and message labels according to the battle result
+	 * Sets the result and message labels according to the battle result.
 	 *
 	 * @param victory boolean indicating if the player's team won
 	 */
@@ -58,7 +58,7 @@ public class BattleEndWindow {
 	}
 
 	/**
-	 * Returns to the main menu
+	 * Returns to the main menu.
 	 */
 	public void handleReturn() {
 		listener.onHandleReturn();

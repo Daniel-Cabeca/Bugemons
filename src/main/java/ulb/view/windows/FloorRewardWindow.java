@@ -26,6 +26,9 @@ public class FloorRewardWindow {
 	}
 
 
+	/**
+	 * Handles object reward selection.
+	 */
 	@FXML
 	private void objectReward() {
 		if (viewListener != null) {
@@ -33,6 +36,9 @@ public class FloorRewardWindow {
 		}
 	}
 
+	/**
+	 * Handles new attack reward selection.
+	 */
 	@FXML
 	private void newAttackReward() {
 		if (viewListener != null) {
@@ -40,6 +46,9 @@ public class FloorRewardWindow {
 		}
 	}
 
+	/**
+	 * Handles stat reward selection.
+	 */
 	@FXML
 	private void statReward() {
 		if (viewListener != null) {

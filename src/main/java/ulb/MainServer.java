@@ -27,6 +27,11 @@ public class MainServer {
 		}
 	}
 
+	/**
+	 * Starts the server by initiating all repositories and services.
+	 * @param serverPort the given port
+	 * @throws Exception
+	 */
 	private static void startServer(Integer serverPort) throws Exception {
 		SocketServer server = new SocketServer(serverPort);
 

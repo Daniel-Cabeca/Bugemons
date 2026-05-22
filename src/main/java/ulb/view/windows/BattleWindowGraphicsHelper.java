@@ -389,7 +389,7 @@ public class BattleWindowGraphicsHelper {
 	}
 
 	/**
-	 * Updates the HP bars for both Bugemons using the given HP values
+	 * Updates the HP bars for both Bugemons using the given HP values.
 	 *
 	 * @param selfHp the player Bugemon's current HP to display
 	 * @param opponentHp the opponent Bugemon's current HP to display
@@ -470,7 +470,7 @@ public class BattleWindowGraphicsHelper {
 
 	/**
 	 * Applies a BattlePhaseVisual to the UI.
-	 * First renders the snapshot, then overlays the intermediate HP values
+	 * First renders the snapshot, then overlays the intermediate HP values.
 	 *
 	 * @param visual the visual to apply
 	 * @param currentSnapshotSupplier supplier returning the most recently cached snapshot
@@ -488,7 +488,7 @@ public class BattleWindowGraphicsHelper {
 	}
 
 	/**
-	 * Plays an animation when a Bugemon attacks. Helper function for playAttackAnimationIfNeeded()
+	 * Plays an animation when a Bugemon attacks. Helper function for playAttackAnimationIfNeeded().
 	 *
 	 * @param attacker the sprite of the Bugemon attacking
 	 * @param isPlayer true if the attacking Bugemon is the player's, false otherwise

@@ -32,7 +32,7 @@ public class AI extends Thread {
 	}
 
 	/**
-	 * Plays the game loop in the automatic battle mode
+	 * Plays the game loop in the automatic battle mode.
 	 */
 	public void play() {
 		while (!this.battle.isGameFinished()) {
@@ -48,7 +48,7 @@ public class AI extends Thread {
 	}
 
 	/**
-	 * Plays a turn in the automatic battle mode
+	 * Plays a turn in the automatic battle mode.
 	 */
 	public void playAutoTurn() {
 		Action action = strategy.pickAction(battle, teamLabel);

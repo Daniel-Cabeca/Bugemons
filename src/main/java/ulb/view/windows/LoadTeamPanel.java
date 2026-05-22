@@ -24,7 +24,7 @@ public class LoadTeamPanel {
 	public void setViewListener(ViewListener viewListener) { this.viewListener = viewListener; }
 
 	/**
-	 * Displays the player's saved teams in the accordion
+	 * Displays the player's saved teams in the accordion.
 	 *
 	 * @param savedTeams the player's saved teams
 	 */
@@ -38,7 +38,7 @@ public class LoadTeamPanel {
 	}
 
 	/**
-	 * Creates a TitledPane for a team with the name as title and member bugemon names and sprites as content
+	 * Creates a TitledPane for a team with the name as title and member bugemon names and sprites as content.
 	 *
 	 * @param team the team to display
 	 * @return the constructed TitledPane
@@ -63,7 +63,7 @@ public class LoadTeamPanel {
 
 
 	/**
-	 * Handles clicking the load button
+	 * Handles clicking the load button.
 	 */
 	@FXML
 	public void handleLoadTeam() {
@@ -73,7 +73,7 @@ public class LoadTeamPanel {
 	}
 
 	/**
-	 * Handles clicking the return button
+	 * Handles clicking the return button.
 	 */
 	@FXML
 	public void handleReturn() {

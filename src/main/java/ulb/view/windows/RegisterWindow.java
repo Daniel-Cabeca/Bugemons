@@ -77,9 +77,13 @@ public class RegisterWindow {
 	 * Listener for register and login view events.
 	 */
 	public interface ViewListener {
-		/** Handles the login attempt with the given username and password. */
+		/** 
+		 * Handles the login attempt with the given username and password. 
+		*/
 		void onLogin(String username, String password);
-		/** Handles the sign-up attempt with the given username and password. */
+		/** 
+		 * Handles the sign-up attempt with the given username and password.
+		*/
 		void onSignUp(String username, String password);
 	}
 }

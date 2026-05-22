@@ -19,7 +19,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Handles social features such as friend requests, battle requests, chat messaging and leaderboard
+ * Handles social features such as friend requests, battle requests, chat messaging and leaderboard.
  */
 public class SocialHandler {
 	private static final Logger LOGGER = Logger.getLogger(SocialHandler.class.getName());
@@ -45,7 +45,7 @@ public class SocialHandler {
 	}
 
 	/**
-	 * Accepts a battle request from the sender
+	 * Accepts a battle request from the sender.
 	 *
 	 * @param senderUsername the username of the player who sent the battle request
 	 * @param receiverUsername the username of the player accepting the request
@@ -69,7 +69,7 @@ public class SocialHandler {
 	}
 
 	/**
-	 * Accepts a friend request from the sender
+	 * Accepts a friend request from the sender.
 	 *
 	 * @param senderUsername the username of the player who sent the friend request
 	 * @param receiverUsername the username of the player accepting the request
@@ -89,7 +89,7 @@ public class SocialHandler {
 	}
 
 	/**
-	 * Declines a battle request from the sender
+	 * Declines a battle request from the sender.
 	 *
 	 * @param senderUsername the username of the player who sent the battle request
 	 * @param receiverUsername the username of the player declining the request
@@ -113,7 +113,7 @@ public class SocialHandler {
 	}
 
 	/**
-	 * Declines a friend request
+	 * Declines a friend request.
 	 *
 	 * @param senderUsername the username of the player who sent the friend request
 	 * @param receiverUsername the username of the player declining the request
@@ -132,7 +132,7 @@ public class SocialHandler {
 	}
 
 	/**
-	 * Retrieves all pending battle requests for the given player and sends them to the client
+	 * Retrieves all pending battle requests for the given player and sends them to the client.
 	 *
 	 * @param username the username of the player whose battle requests to retrieve
 	 * @throws DataAccessException if the player's ID cannot be retrieved
@@ -150,7 +150,7 @@ public class SocialHandler {
 
 	/**
 	 * Retrieves the current status of the multiplayer battle session between two players
-	 * and sends it to the client
+	 * and sends it to the client.
 	 *
 	 * @param userId1 the ID of the first player
 	 * @param userId2 the ID of the second player
@@ -183,7 +183,7 @@ public class SocialHandler {
 	}
 
 	/**
-	 * Retrieves all pending friend requests for the given player and sends them to the client
+	 * Retrieves all pending friend requests for the given player and sends them to the client.
 	 *
 	 * @param username the username of the player whose friend requests to retrieve
 	 * @throws DataAccessException if the player's ID cannot be retrieved
@@ -200,7 +200,7 @@ public class SocialHandler {
 	}
 
 	/**
-	 * Retrieves the friends list for the given player and sends it to the client
+	 * Retrieves the friends list for the given player and sends it to the client.
 	 *
 	 * @param username the username of the player whose friends list to retrieve
 	 * @throws DataAccessException if the player's ID cannot be retrieved
@@ -217,7 +217,7 @@ public class SocialHandler {
 	}
 
 	/**
-	 * Retrieves the global leaderboard and sends it to the client
+	 * Retrieves the global leaderboard and sends it to the client.
 	 *
 	 * @throws DataAccessException if the leaderboard cannot be retrieved
 	 */
@@ -228,7 +228,7 @@ public class SocialHandler {
 
 	/**
 	 * Sends a battle request from one player to another, creating a new multiplayer session
-	 * and marking the sender as having accepted
+	 * and marking the sender as having accepted.
 	 *
 	 * @param senderUsername the username of the player sending the battle request
 	 * @param receiverUsername the username of the player receiving the battle request

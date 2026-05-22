@@ -26,7 +26,6 @@ public class Battle {
 	private boolean gameFinished = false;
 
 	private final List<String> logMsg;
-	private boolean clearLogs = false;
 	private final List<ActiveEffect> activeEffects;
 
 	public Battle(Team teamA, Team teamB, Player playerA, Player playerB, boolean multiplayerBattle,
@@ -87,6 +86,13 @@ public class Battle {
 
 	public List<String> getLogMsg() { return logMsg; }
 
+	public List<String> getLogMsgIfNotCleard(ParticipantLabel teamLabel) {
+		if (this.getParticipant(teamLabel).isClearLogs()) {
+			return new ArrayList<String>();
+		}
+		return logMsg;
+	}
+
 	public boolean isBugemonKO(ParticipantLabel team) { return this.getActiveBugemon(team).isKO(); }
 
 	public boolean isTeamKO(ParticipantLabel team) { return getTeam(team).checkTeamKO(); }
@@ -110,7 +116,11 @@ public class Battle {
 
 	public void enableBossBattle() { this.isBossBattle = true; }
 
-	public void addLogMsg(String log) { this.logMsg.add(log); }
+	public void addLogMsg(String log) { 
+		this.logMsg.add(log); 
+		this.getParticipantA().setClearLogs(false);
+		this.getParticipantB().setClearLogs(false);
+	}
 
 	public void readyToPlay(ParticipantLabel team) { 
 		this.getParticipant(team).setReadyToPlay(true); 
@@ -158,7 +168,7 @@ public class Battle {
 		}
 		item.use(this, team);
 		removeUsedItemFromInventory(team, item);
-		logMsg.add("L'objet " + item.getName() + " a été utilisé.");
+		addLogMsg("L'objet " + item.getName() + " a été utilisé.");
 		return true;
 	}
 
@@ -184,7 +194,7 @@ public class Battle {
 		}
 
 		setActiveBugemon(target, team);
-		logMsg.add(target.getName() + " a été envoyé !");
+		addLogMsg(target.getName() + " a été envoyé !");
 		return true;
 	}
 
@@ -374,17 +384,13 @@ public class Battle {
 		if (!multiplayerBattle) { // if solo battle, always clears the logs
 			logMsg.clear();
 			return;
-		} // else, clears the logs only when the two player asked for it
+		}
 		this.getParticipant(teamLabel).setClearLogs(true);
-		
-		if (getParticipantA().isClearLogs() && getParticipantB().isClearLogs()){
+
+		if (getParticipantA().isClearLogs() && getParticipantB().isClearLogs()){ // clears the logs only if both players have asked for.
 			logMsg.clear();
 			this.getParticipantA().setClearLogs(false);
 			this.getParticipantB().setClearLogs(false);
 		}
-		// if (clearLogs) {
-		// 	logMsg.clear();
-		// }
-		// clearLogs = !clearLogs; // switch the flag so that it clears the logs only when the two players asked for it
 	}
 }

@@ -210,7 +210,6 @@ public class BattleActionController {
 		List<Integer> hpAfterFirstAction;
 		try {
 			logs = this.battleSetupController.consumeLogMessages();
-			System.out.println("consume logs in display actions : " + logs);
 			hpAfterFirstAction = this.getHpAfterFirstAction();
 		} catch (Exception e) {
 			LOGGER.warning("Impossible d'afficher la séquence d'actions.");

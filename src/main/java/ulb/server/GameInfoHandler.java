@@ -150,7 +150,6 @@ public class GameInfoHandler {
 	public void getBattleState() {
 		Battle battle = clientHandler.getBattle();
 		ParticipantLabel teamLabel = clientHandler.getTeamLabel();
-
 		clientHandler.sendMessage(new BattleStateResponse(battle.getState(teamLabel)));
 	}
 
@@ -215,12 +214,11 @@ public class GameInfoHandler {
 		int selfHpAfterFirstAction = battle.getHpAfterFirstActionSelf(teamLabel);
 		int opponentHpAfterFirstAction = battle.getHpAfterFirstActionOpponent(teamLabel);
 
-		List<String> logs = new ArrayList<>(battle.getLogMsg());
+		List<String> logs = new ArrayList<>(battle.getLogMsgIfNotCleard(teamLabel));
 
 		if (clearLogs) {
-			battle.clearLogMsg(this.clientHandler.getTeamLabel());
+			battle.clearLogMsg(teamLabel);
 		}
-
 		clientHandler.sendMessage(new LogsResponse(List.of(selfHpAfterFirstAction, opponentHpAfterFirstAction), logs));
 	}
 

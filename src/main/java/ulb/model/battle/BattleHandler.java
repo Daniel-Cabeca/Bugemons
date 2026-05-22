@@ -47,7 +47,7 @@ public class BattleHandler {
 		battle.setParticipantHpAfterFirstAction(participantA, participantA.getActiveBugemon().getHp());
 		battle.setParticipantHpAfterFirstAction(participantB, participantB.getActiveBugemon().getHp());
 
-		this.battle.getLogMsg().add(null); // separator between first and second action messages
+		this.battle.addLogMsg(null); // separator between first and second action messages
 
 		if (!this.handlePlayerTurn(secondPlayer)) {
 			return;
@@ -95,7 +95,7 @@ public class BattleHandler {
 				Stats revert = new Stats(-ae.delta.getHp(), -ae.delta.getAttack(), -ae.delta.getDefense(),
 						-ae.delta.getInitiative());
 				ae.target.changeFightStats(revert);
-				this.battle.getLogMsg().add("L'effet de " + ae.itemName + " sur " + ae.target.getName() + " s'est " +
+				this.battle.addLogMsg("L'effet de " + ae.itemName + " sur " + ae.target.getName() + " s'est " +
 						"dissipé!");
 				expired.add(ae);
 			}
@@ -158,7 +158,7 @@ public class BattleHandler {
 			this.battle.setState(BattleState.SWAPPING, opponentTeam);
 			this.battle.setState(BattleState.WAITING, previousActiveTeam);
 			if (previousActiveTeam == ParticipantLabel.TEAM_A) {
-				this.battle.getLogMsg().add(participantB.getActiveBugemon().getName() + " est KO!");
+				this.battle.addLogMsg(participantB.getActiveBugemon().getName() + " est KO!");
 				if (participantA.getHpAfterFirstAction() == -1) {
 					battle.setParticipantHpAfterFirstAction(participantA, participantA.getActiveBugemon().getHp());
 					battle.setParticipantHpAfterFirstAction(participantB, 0);

@@ -137,7 +137,7 @@ public class BattleWindow {
 	}
 
 	/**
-	 * Switches the view back to the main battle menu (Attack / Item / Switch / Run buttons).
+	 * Switches the view back to the main battle menu (Attack / Item / Switch / RunAction buttons).
 	 * Hides all sub-menus.
 	 */
 	public void showMainMenu() {

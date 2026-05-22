@@ -7,7 +7,7 @@ import ulb.model.bugemon.Bugemon;
 /**
  * Action representing a bugemon swap.
  */
-public class Swap extends Action {
+public class SwapAction extends Action {
 	private Bugemon toSwap;
 
 	/**
@@ -15,13 +15,13 @@ public class Swap extends Action {
 	 *
 	 * @param toSwap Target bugemon to swap in
 	 */
-	public Swap(Bugemon toSwap) {
+	public SwapAction(Bugemon toSwap) {
 		this();
 		this.toSwap = toSwap;
 	}
 
 	/** Creates an empty swap action. */
-	public Swap() {
+	public SwapAction() {
 		this.priority = 1;
 	}
 

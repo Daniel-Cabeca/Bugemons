@@ -6,11 +6,19 @@ import ulb.model.battle.Battle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Class simulating user input for battles against the computer.
+ */
 public class AI extends Thread {
+	/** Object used for logging runtime information to the console or to a log file. */
 	private static final Logger LOGGER = Logger.getLogger(AI.class.getName());
+	/** Duration in milliseconds to wait between two actions. */
 	private final long SLEEP_TIME = 1000;
+	/** Current battle instance. */
 	private final Battle battle;
+	/** The logic for picking battle actions. */
 	private final Strategy strategy;
+	/** The team of the AI. */
 	private final Battle.ParticipantLabel teamLabel = Battle.ParticipantLabel.TEAM_B;
 
 	public AI(Battle battle, Strategy strategy) {

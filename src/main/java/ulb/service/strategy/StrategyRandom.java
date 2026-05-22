@@ -12,10 +12,14 @@ import java.util.List;
 import java.util.Random;
 import java.util.Vector;
 
+/**
+ * Strategy implementations picking a random ability of the active Bugemon nto use at each turn.
+ */
 public class StrategyRandom implements Strategy {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Action pickAction(Battle battle, Battle.ParticipantLabel teamLabel) {
 		Vector<Action> actions = battle.getAvailableActions(teamLabel);
 		Action chosenAction = null;

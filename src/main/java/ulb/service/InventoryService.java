@@ -13,6 +13,7 @@ import java.util.NoSuchElementException;
  * Service layer for inventory saving and loading.
  */
 public class InventoryService {
+	/** Repository holding the inventories of players. */
 	private final InventoryRepository inventoryRepository;
 
 	/**

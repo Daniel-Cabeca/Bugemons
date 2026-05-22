@@ -14,7 +14,7 @@ import java.util.Optional;
  * Service layer for team saving and loading.
  */
 public class TeamService {
-
+	/** Repository holding all save Bugemon teams. */
 	private final TeamRepository repository;
 
 	/**
@@ -179,7 +179,7 @@ public class TeamService {
 	/**
 	 * Returns a list of all the teams belonging to a user
 	 *
-	 * @param username the user's name
+	 * @param player the player
 	 * @return the list of the user's saved teams
 	 */
 	public List<Team> getAllTeams(Player player) throws LoadException, EntityNotFoundException {

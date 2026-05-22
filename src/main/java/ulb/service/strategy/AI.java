@@ -13,7 +13,7 @@ public class AI extends Thread {
 	/** Object used for logging runtime information to the console or to a log file. */
 	private static final Logger LOGGER = Logger.getLogger(AI.class.getName());
 	/** Duration in milliseconds to wait between two actions. */
-	private final long SLEEP_TIME = 1000;
+	private final long SLEEP_TIME = 2000;
 	/** Current battle instance. */
 	private final Battle battle;
 	/** The logic for picking battle actions. */

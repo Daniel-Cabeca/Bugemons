@@ -29,6 +29,12 @@ public class PlayerInfoHandler {
 	private final AccountService accountService;
 	ClientHandler clientHandler;
 
+	/**
+	 * Creates a player info handler for the given client and services.
+	 *
+	 * @param clientHandler the client handler owning this session
+	 * @param accountService service for account operations
+	 */
 	public PlayerInfoHandler(ClientHandler clientHandler, AccountService accountService) {
 		this.clientHandler = clientHandler;
 		this.accountService = accountService;

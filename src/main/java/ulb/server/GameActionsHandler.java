@@ -38,6 +38,13 @@ public class GameActionsHandler extends Thread {
 	private final MultiBattleService multiBattleService;
 	ClientHandler clientHandler;
 
+	/**
+	 * Creates a game actions handler for the given client and services.
+	 *
+	 * @param clientHandler the client handler owning this session
+	 * @param inventoryService service for player inventory
+	 * @param multiBattleService service for multiplayer battle sessions
+	 */
 	public GameActionsHandler(ClientHandler clientHandler, InventoryService inventoryService,
 							  MultiBattleService multiBattleService) {
 		this.clientHandler = clientHandler;

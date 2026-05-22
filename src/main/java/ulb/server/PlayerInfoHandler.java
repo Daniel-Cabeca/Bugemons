@@ -41,7 +41,7 @@ public class PlayerInfoHandler {
 	}
 
 	/**
-	 * Retrieves basic profile information for the player with the given username and sends it to the client
+	 * Retrieves basic profile information for the player with the given username and sends it to the client.
 	 *
 	 * @param username the username of the player to look up
 	 * @throws UserFacingException if no account is found for the given username
@@ -58,7 +58,7 @@ public class PlayerInfoHandler {
 	}
 
 	/**
-	 * Retrieves the inventory of the currently connected player and sends it to the client
+	 * Retrieves the inventory of the currently connected player and sends it to the client.
 	 *
 	 * @param username the username to validate against the connected player
 	 * @throws UserFacingException if the given username does not match the connected player
@@ -80,7 +80,7 @@ public class PlayerInfoHandler {
 	}
 
 	/**
-	 * Retrieves the team of the currently connected player and sends it to the client
+	 * Retrieves the team of the currently connected player and sends it to the client.
 	 *
 	 * @param username the username to validate against the connected player
 	 * @throws UserFacingException if the given username does not match the connected player

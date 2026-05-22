@@ -27,7 +27,7 @@ public class TeamService {
 	}
 
 	/**
-	 * Saves a new team
+	 * Saves a new team.
 	 *
 	 * @param player the user who saves the team
 	 * @param team the team to be saved
@@ -48,7 +48,7 @@ public class TeamService {
 	}
 
 	/**
-	 * Inserts a user-specific bugemon in the database
+	 * Inserts a user-specific bugemon in the database.
 	 *
 	 * @param bugemon the bugemon to insert
 	 * @param player the user
@@ -64,7 +64,7 @@ public class TeamService {
 	}
 
 	/**
-	 * Saves all the bugemons in the team
+	 * Saves all the bugemons in the team.
 	 *
 	 * @param team the team containing the bugemons to be saved
 	 * @throws LoadException if the saving fails
@@ -76,7 +76,7 @@ public class TeamService {
 	}
 
 	/**
-	 * Saves a new team as the team used for the tower
+	 * Saves a new team as the team used for the tower.
 	 *
 	 * @param player the user who saves the team
 	 * @throws LoadException if the saving fails
@@ -103,7 +103,7 @@ public class TeamService {
 	}
 
 	/**
-	 * Updates a user-specific bugemon in the database
+	 * Updates a user-specific bugemon in the database.
 	 *
 	 * @param bugemon the bugemon to insert
 	 * @param player the user
@@ -119,7 +119,7 @@ public class TeamService {
 	}
 
 	/**
-	 * deletes the team used for the tower
+	 * deletes the team used for the tower.
 	 *
 	 * @param player the user whose team is deleted
 	 * @throws LoadException if the deleting fails
@@ -144,7 +144,7 @@ public class TeamService {
 	}
 
 	/**
-	 * Get the team saved as the tower team for a player
+	 * Get the team saved as the tower team for a player.
 	 *
 	 * @param player the user
 	 * @return the team saved
@@ -159,7 +159,7 @@ public class TeamService {
 	}
 
 	/**
-	 * Checks if a team with the same name for the same user already exists in the database
+	 * Checks if a team with the same name for the same user already exists in the database.
 	 *
 	 * @param teamName the name of the team
 	 * @param player the user
@@ -177,7 +177,7 @@ public class TeamService {
 	}
 
 	/**
-	 * Returns a list of all the teams belonging to a user
+	 * Returns a list of all the teams belonging to a user.
 	 *
 	 * @param player the player
 	 * @return the list of the user's saved teams

@@ -331,7 +331,9 @@ public interface ServerMessageHandler {
 
 	// TEAM SAVE
 
-	/** Retrieves all saved teams for the connected player. */
+	/** 
+	 * Retrieves all saved teams for the connected player. 
+	*/
 	void getSavedTeams() throws UserFacingException, DataAccessException;
 
 	/**

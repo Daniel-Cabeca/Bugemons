@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Service layer for tower saves
+ * Service layer for tower saves.
  */
 public class TowerSaveService {
 	/** Repository holding players' saved tower progress. */
@@ -26,7 +26,7 @@ public class TowerSaveService {
 	}
 
 	/**
-	 * Add or update tower save
+	 * Add or update tower save.
 	 *
 	 * @param tower current tower played by the player
 	 * @param player player who played in the tower
@@ -50,7 +50,7 @@ public class TowerSaveService {
 	}
 
 	/**
-	 * Delete tower save
+	 * Delete tower save.
 	 *
 	 * @param player the player who played in the tower
 	 */

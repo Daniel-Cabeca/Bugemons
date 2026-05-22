@@ -53,7 +53,7 @@ public class StrategyRandom implements Strategy {
 	}
 
 	/**
-	 * Picks a random non-KO Bugemon from the team, or null if they are all KO
+	 * Picks a random non-KO Bugemon from the team, or null if they are all KO.
 	 *
 	 * @return the randomly chosen bugemon
 	 */

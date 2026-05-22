@@ -119,7 +119,7 @@ public class GameActionsHandler extends Thread {
 	}
 
 	/**
-	 * Applies an item reward by adding the chosen item to the player's inventory, then marking the current
+	 * Applies an item reward by adding the chosen item to the player's inventory, then marking the current.
 	 * tower room as completed
 	 *
 	 * @param itemDTO the item to add to the player's inventory
@@ -138,7 +138,7 @@ public class GameActionsHandler extends Thread {
 	}
 
 	/**
-	 * Applies the chosen level-up reward from the pending reward choices and clears the pending state
+	 * Applies the chosen level-up reward from the pending reward choices and clears the pending state.
 	 *
 	 * @param rewardDTO the reward chosen by the player
 	 * @throws UserFacingException if there are no pending rewards, the reward is null,
@@ -202,7 +202,7 @@ public class GameActionsHandler extends Thread {
 	}
 
 	/**
-	 * Moves the player to the specified room in the current tower floor
+	 * Moves the player to the specified room in the current tower floor.
 	 *
 	 * @param roomId the ID of the room to move to
 	 * @throws DataAccessException if the game is not in tower mode, the room cannot be selected,
@@ -228,7 +228,7 @@ public class GameActionsHandler extends Thread {
 	}
 
 	/**
-	 * Picks a random action for the player's team in the current battle
+	 * Picks a random action for the player's team in the current battle.
 	 */
 	public void chooseRandomAction() {
 		Battle battle = clientHandler.getBattle();
@@ -307,7 +307,7 @@ public class GameActionsHandler extends Thread {
 	}
 
 	/**
-	 * Declines or withdraws from a pending multiplayer battle session with the specified opponent
+	 * Declines or withdraws from a pending multiplayer battle session with the specified opponent.
 	 *
 	 * @param opponentDTO the opponent player of the session to quit
 	 * @throws UserFacingException if either the player or the opponent is not registered
@@ -329,7 +329,7 @@ public class GameActionsHandler extends Thread {
 	}
 
 	/**
-	 * Registers a swap action for the player's team
+	 * Registers a swap action for the player's team.
 	 *
 	 * @param bugemonDTOToSwap the bugemon to swap in
 	 * @throws UserFacingException if the bugemon to swap is not found in the player's team
@@ -368,7 +368,7 @@ public class GameActionsHandler extends Thread {
 	}
 
 	/**
-	 * Registers a use item action for the player's team and removes the item from the inventory
+	 * Registers a use item action for the player's team and removes the item from the inventory.
 	 *
 	 * @param itemDTO the item to use
 	 * @throws DataAccessException if the action cannot be registered or the item cannot be removed

@@ -25,7 +25,7 @@ public class ChooseBugemonWindow {
 	}
 
 	/**
-	 * Displays the player's team with corresponding stats
+	 * Displays the player's team with corresponding stats.
 	 *
 	 * @param team the team to display
 	 */
@@ -74,7 +74,7 @@ public class ChooseBugemonWindow {
 	}
 
 	/**
-	 * Choose the last Bugemon selected
+	 * Choose the last Bugemon selected.
 	 */
 	@FXML
 	private void apply() {
@@ -84,7 +84,7 @@ public class ChooseBugemonWindow {
 	}
 
 	/**
-	 * Return to the previous Menu (Floor Reward Window)
+	 * Return to the previous Menu (Floor Reward Window).
 	 */
 	@FXML
 	private void returnFloorRewardWindow() {

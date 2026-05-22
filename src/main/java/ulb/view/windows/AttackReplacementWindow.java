@@ -60,7 +60,7 @@ public class AttackReplacementWindow {
 	}
 
 	/**
-	 * Populates the list with the Bugemon's current abilities, each with a button "to replace"
+	 * Populates the list with the Bugemon's current abilities, each with a button "to replace".
 	 */
 	private void populateAbilities() {
 		abilitiesList.getChildren().clear();
@@ -96,7 +96,7 @@ public class AttackReplacementWindow {
 	}
 
 	/**
-	 * Returns to the previous window (ChooseBugemonWindow)
+	 * Returns to the previous window (ChooseBugemonWindow).
 	 */
 	@FXML
 	private void returnToPrevious() {

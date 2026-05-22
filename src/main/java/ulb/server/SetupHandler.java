@@ -35,6 +35,18 @@ public class SetupHandler {
 	private final MultiBattleService multiBattleService;
 	ClientHandler clientHandler;
 
+	/**
+	 * Creates a setup handler for the given client and services.
+	 *
+	 * @param clientHandler the client handler owning this session
+	 * @param accountService service for account registration and login
+	 * @param itemService service for item operations
+	 * @param inventoryService service for player inventory
+	 * @param bugemonService service for bugemon operations
+	 * @param teamService service for team persistence
+	 * @param towerSaveService service for tower save state
+	 * @param multiBattleService service for multiplayer battle sessions
+	 */
 	public SetupHandler(ClientHandler clientHandler, AccountService accountService, ItemService itemService,
 						InventoryService inventoryService, BugemonService bugemonService, TeamService teamService,
 						TowerSaveService towerSaveService, MultiBattleService multiBattleService) {

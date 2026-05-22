@@ -20,6 +20,12 @@ public class TeamSaveHandler {
 	private final TeamService teamService;
 	ClientHandler clientHandler;
 
+	/**
+	 * Creates a team save handler for the given client and services.
+	 *
+	 * @param clientHandler the client handler owning this session
+	 * @param teamService service for team persistence
+	 */
 	public TeamSaveHandler(ClientHandler clientHandler, TeamService teamService) {
 		this.clientHandler = clientHandler;
 		this.teamService = teamService;

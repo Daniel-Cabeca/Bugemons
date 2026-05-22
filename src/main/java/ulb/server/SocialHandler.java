@@ -28,6 +28,14 @@ public class SocialHandler {
 	private final MultiBattleService multiBattleService;
 	ClientHandler clientHandler;
 
+	/**
+	 * Creates a social handler for the given client and services.
+	 *
+	 * @param clientHandler the client handler owning this session
+	 * @param accountService service for account and social operations
+	 * @param chatService service for chat messaging
+	 * @param multiBattleService service for multiplayer battle sessions
+	 */
 	public SocialHandler(ClientHandler clientHandler, AccountService accountService, ChatService chatService,
 						 MultiBattleService multiBattleService) {
 		this.clientHandler = clientHandler;
@@ -278,6 +286,15 @@ public class SocialHandler {
 		clientHandler.sendSuccessMessage();
 	}
 
+	/**
+	 * Resolves and validates the user IDs for a sender and receiver pair.
+	 *
+	 * @param senderUsername the sender's username
+	 * @param receiverUsername the receiver's username
+	 * @return a list containing {@code [senderId, receiverId]}
+	 * @throws DataAccessException if either player's ID cannot be retrieved
+	 * @throws UserFacingException if either player is unknown
+	 */
 	private List<Integer> verifyUsers(String senderUsername, String receiverUsername) throws DataAccessException, UserFacingException {
 		int senderId, receiverId;
 		try {

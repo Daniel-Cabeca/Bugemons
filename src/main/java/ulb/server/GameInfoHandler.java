@@ -35,6 +35,12 @@ public class GameInfoHandler {
 	ClientHandler clientHandler;
 	TowerSaveService towerSaveService;
 
+	/**
+	 * Creates a game info handler for the given client and services.
+	 *
+	 * @param clientHandler the client handler owning this session
+	 * @param towerSaveService service for tower save state
+	 */
 	public GameInfoHandler(ClientHandler clientHandler, TowerSaveService towerSaveService) {
 		this.clientHandler = clientHandler;
 		this.towerSaveService = towerSaveService;

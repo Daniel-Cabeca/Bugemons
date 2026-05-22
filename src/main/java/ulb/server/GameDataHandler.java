@@ -30,6 +30,14 @@ public class GameDataHandler {
 	private final ItemService itemService;
 	ClientHandler clientHandler;
 
+	/**
+	 * Creates a game data handler for the given client and services.
+	 *
+	 * @param clientHandler the client handler owning this session
+	 * @param bugemonService service for bugemon operations
+	 * @param abilityService service for ability operations
+	 * @param itemService service for item operations
+	 */
 	public GameDataHandler(ClientHandler clientHandler, BugemonService bugemonService, AbilityService abilityService,
 						   ItemService itemService) {
 		this.clientHandler = clientHandler;

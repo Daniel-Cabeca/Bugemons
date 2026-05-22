@@ -25,6 +25,10 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Thread that handles a single connected client.
+ * Receives requests over a socket, dispatches them to specialized handlers, and sends responses back.
+ */
 public class ClientHandler extends Thread implements ServerMessageHandler {
 	private static final Logger LOGGER = Logger.getLogger(ClientHandler.class.getName());
 
@@ -47,6 +51,20 @@ public class ClientHandler extends Thread implements ServerMessageHandler {
 	private Optional<Bugemon> pendingLevelUpBugemon = Optional.empty();
 	private List<Reward> pendingLevelUpRewards;
 
+	/**
+	 * Creates a client handler wired to the given messenger and services.
+	 *
+	 * @param messenger the socket messenger for this client connection
+	 * @param abilityService service for ability-related operations
+	 * @param bugemonService service for bugemon-related operations
+	 * @param itemService service for item-related operations
+	 * @param accountService service for account and social operations
+	 * @param chatService service for chat messaging
+	 * @param teamService service for team persistence
+	 * @param inventoryService service for player inventory
+	 * @param towerSaveService service for tower save state
+	 * @param multiBattleService service for multiplayer battle sessions
+	 */
 	public ClientHandler(SocketMessenger messenger, AbilityService abilityService, BugemonService bugemonService,
 						 ItemService itemService, AccountService accountService, ChatService chatService,
 						 TeamService teamService, InventoryService inventoryService, TowerSaveService towerSaveService
@@ -291,163 +309,211 @@ public class ClientHandler extends Thread implements ServerMessageHandler {
 
 	// SETUP
 
+	/** {@inheritDoc} */
 	@Override
 	public void setupMultiBattle(PlayerDTO opponent, List<BugemonDTO> bugemons) throws DataAccessException { setupHandler.setupMultiBattle(opponent, bugemons); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void registerPlayer(PlayerRegisterDTO playerRegisterDTO, boolean isLogin) throws DataAccessException { setupHandler.registerPlayer(playerRegisterDTO, isLogin); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void setupNormalMode() throws DataAccessException { setupHandler.setupNormalMode(); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void setupTeam(List<BugemonDTO> bugemons) throws DataAccessException { setupHandler.setupTeam(bugemons); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void setupTowerMode(boolean isNewTower) throws DataAccessException { setupHandler.setupTowerMode(isNewTower); }
 
 
 	// PLAYER INFO
 
+	/** {@inheritDoc} */
 	@Override
 	public void getPlayerInfo(String username) throws UserFacingException, DataAccessException { playerInfoHandler.getPlayerInfo(username); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void getPlayerInventory(String username) throws UserFacingException, DataAccessException { playerInfoHandler.getPlayerInventory(username); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void getPlayerTeam(String username) throws UserFacingException, DataAccessException { playerInfoHandler.getPlayerTeam(username); }
 
 
 	// GAME INFO
 
+	/** {@inheritDoc} */
 	@Override
 	public void checkGameFinished() throws DataAccessException { gameInfoHandler.checkGameFinished(); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void checkUsableItems(List<ItemDTO> items) throws DataAccessException { gameInfoHandler.checkUsableItems(items); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void getAbilityEffectiveness(BugemonDTO bugemonDTO, List<AbilityDTO> abilities) throws DataAccessException { gameInfoHandler.getAbilityEffectiveness(bugemonDTO, abilities); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void getActiveBugemons() throws DataAccessException { gameInfoHandler.getActiveBugemons(); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void getBattleEndInfo() throws DataAccessException { gameInfoHandler.getBattleEndInfo(); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void getBattleState() throws DataAccessException { gameInfoHandler.getBattleState(); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void getLevelUpInfo() throws UserFacingException, DataAccessException { gameInfoHandler.getLevelUpInfo(); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void getLogs(boolean clearLogs) throws DataAccessException { gameInfoHandler.getLogs(clearLogs); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void getNextWindow() throws DataAccessException { gameInfoHandler.getNextWindow(); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void getTowerInfo() throws DataAccessException { gameInfoHandler.getTowerInfo(); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void getTowerSavedInfo() throws DataAccessException { gameInfoHandler.getTowerSavedInfo(this.player); }
 
 
 	// GAME ACTIONS
 
+	/** {@inheritDoc} */
 	@Override
 	public void abandonTower() throws DataAccessException { gameActionsHandler.abandonTower(); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void chooseAbilityReward(BugemonDTO bugemonDTO, AbilityDTO oldAbilityDTO, AbilityDTO newAbilityDTO) throws UserFacingException, DataAccessException { gameActionsHandler.chooseAbilityReward(bugemonDTO, oldAbilityDTO, newAbilityDTO); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void chooseItemReward(ItemDTO itemDTO) throws DataAccessException { gameActionsHandler.chooseItemReward(itemDTO); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void chooseLevelUpReward(RewardDTO rewardDTO) throws UserFacingException, DataAccessException { gameActionsHandler.chooseLevelUpReward(rewardDTO); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void chooseStatReward(BugemonDTO bugemonDTO) throws UserFacingException, DataAccessException { gameActionsHandler.chooseStatReward(bugemonDTO); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void chooseTowerRoom(int roomId) throws DataAccessException { gameActionsHandler.chooseTowerRoom(roomId); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void chooseRandomAction() { gameActionsHandler.chooseRandomAction(); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void chooseRunAction() throws DataAccessException { gameActionsHandler.chooseRunAction(); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void startMultiBattle(PlayerDTO opponentDTO) throws UserFacingException { gameActionsHandler.startMultiBattle(opponentDTO); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void quitMultiBattle(PlayerDTO opponentDTO) throws UserFacingException { gameActionsHandler.quitMultiBattle(opponentDTO); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void chooseSwapBugemonAction(BugemonDTO bugemonDTOToSwap) throws UserFacingException { gameActionsHandler.chooseSwapBugemonAction(bugemonDTOToSwap); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void chooseUseAbilityAction(AbilityDTO abilityDTO) throws DataAccessException { gameActionsHandler.chooseUseAbilityAction(abilityDTO); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void chooseUseItemAction(ItemDTO itemDTO) throws DataAccessException { gameActionsHandler.chooseUseItemAction(itemDTO); }
 
 
 	// GAME DATA
 
+	/** {@inheritDoc} */
 	@Override
 	public void getAllBugemonSpecies() throws DataAccessException { gameDataHandler.getAllBugemonSpecies(); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void getRandomAbility(BugemonDTO bugemonDTO) throws DataAccessException { gameDataHandler.getRandomAbility(bugemonDTO); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void getRandomItem() throws DataAccessException { gameDataHandler.getRandomItem(); }
 
 
 	// SOCIAL
 
+	/** {@inheritDoc} */
 	@Override
 	public void acceptBattleRequest(String senderUsername, String receiverUsername) throws DataAccessException { socialHandler.acceptBattleRequest(senderUsername, receiverUsername); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void acceptFriendRequest(String senderUsername, String receiverUsername) throws DataAccessException { socialHandler.acceptFriendRequest(senderUsername, receiverUsername); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void declineBattleRequest(String senderUsername, String receiverUsername) throws DataAccessException { socialHandler.declineBattleRequest(senderUsername, receiverUsername); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void declineFriendRequest(String senderUsername, String receiverUsername) throws DataAccessException { socialHandler.declineFriendRequest(senderUsername, receiverUsername); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void getBattleRequests(String username) throws DataAccessException { socialHandler.getBattleRequests(username); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void getMultiBattleStatus(int userId1, int userId2) throws DataAccessException { socialHandler.getMultiBattleStatus(userId1, userId2); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void getChatMessages(String usernameA, String usernameB) throws DataAccessException { socialHandler.getChatMessages(usernameA, usernameB); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void getFriendRequests(String username) throws DataAccessException { socialHandler.getFriendRequests(username); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void getFriendsList(String username) throws DataAccessException { socialHandler.getFriendsList(username); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void getLeaderboard() throws DataAccessException { socialHandler.getLeaderboard(); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void sendBattleRequest(String senderUsername, String receiverUsername) throws UserFacingException,
 			DataAccessException { socialHandler.sendBattleRequest(senderUsername, receiverUsername); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void sendChatMessage(String senderUsername, String receiverUsername, String content) throws DataAccessException { socialHandler.sendChatMessage(senderUsername, receiverUsername, content); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void sendFriendRequest(String senderUsername, String receiverUsername) throws UserFacingException,
 			DataAccessException { socialHandler.sendFriendRequest(senderUsername, receiverUsername); }
@@ -455,9 +521,11 @@ public class ClientHandler extends Thread implements ServerMessageHandler {
 
 	// TEAM SAVE
 
+	/** {@inheritDoc} */
 	@Override
 	public void getSavedTeams() throws DataAccessException { teamSaveHandler.getSavedTeams(); }
 
+	/** {@inheritDoc} */
 	@Override
 	public void saveTeam(TeamDTO teamDTO) throws UserFacingException, DataAccessException { teamSaveHandler.saveTeam(teamDTO); }
 

@@ -136,7 +136,7 @@ En mode multijoueurs, à chaque fois que 2 personnes s’affrontent, celle qui e
 #### Temps mis pendant cette itération : 2h45
 #### État : terminé
 
-## Histoire complémentaire C - Animation de sprites
+## Histoire complémentaire B - Animation de sprites
 ### Description
 Implémenter l'animation de déplacement lors d'une attaque pour se familiariser avec le fonctionnement des animations.
 Lorsqu’un Bugémon attaque, son sprite effectue une courte animation :

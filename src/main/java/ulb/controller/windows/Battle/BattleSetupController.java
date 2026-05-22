@@ -270,7 +270,9 @@ public class BattleSetupController {
 			if (snapshot.isPresent()) {
 				view.renderBattle(snapshot.get());
 			}
-			view.showLogMessages(consumeLogMessages());
+			List<String> logs = consumeLogMessages();
+			System.out.println("Consume logs in refresh view : " + logs);
+			view.showLogMessages(logs);
 		} catch (Exception e) {
 			LOGGER.warning("Impossible de rafraichir l'interface.");
 			return;
@@ -316,6 +318,7 @@ public class BattleSetupController {
 	 * @return The current list of log messages
 	 */
 	public List<String> consumeLogMessages() throws ServerStatusException, UnknownServerResponse {
+		System.out.println("CONSUME LOGS");
 		if (this.clientController.getData(new GetLogsRequest(true)) instanceof LogsResponse logs) {
 			return logs.getLogs();
 		} 

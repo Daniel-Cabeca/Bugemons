@@ -381,14 +381,21 @@ public class Battle {
 	/**
 	 * Clears the current log messages in different ways based on the game mode.
 	 */
-	synchronized public void clearLogMsg() {
+	synchronized public void clearLogMsg(ParticipantLabel teamLabel) {
 		if (!multiplayerBattle) { // if solo battle, always clears the logs
 			logMsg.clear();
 			return;
 		} // else, clears the logs only when the two player asked for it
-		if (clearLogs) {
+		this.getParticipant(teamLabel).setClearLogs(true);
+		
+		if (getParticipantA().isClearLogs() && getParticipantB().isClearLogs()){
 			logMsg.clear();
+			this.getParticipantA().setClearLogs(false);
+			this.getParticipantB().setClearLogs(false);
 		}
-		clearLogs = !clearLogs; // switch the flag so that it clears the logs only when the two players asked for it
+		// if (clearLogs) {
+		// 	logMsg.clear();
+		// }
+		// clearLogs = !clearLogs; // switch the flag so that it clears the logs only when the two players asked for it
 	}
 }

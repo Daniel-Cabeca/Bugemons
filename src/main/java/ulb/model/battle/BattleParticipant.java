@@ -18,7 +18,9 @@ public class BattleParticipant {
 	private BattleState state;
 	private Action action = null;
 	private int hpAfterFirstAction = -1;
+
 	private boolean readyToPlay = false;
+	private boolean clearLogs = false;
 
 	/**
 	 * Creates a participant using the first team member as active bugemon.
@@ -110,4 +112,8 @@ public class BattleParticipant {
 	public boolean isReadyToPlay() { return this.readyToPlay; }
 
 	public void setReadyToPlay(boolean readyToPlay) { this.readyToPlay = readyToPlay; }
+
+	public boolean isClearLogs() { return this.clearLogs; }
+	
+	public void setClearLogs(boolean clearLogs) { this.clearLogs = clearLogs; }
 }

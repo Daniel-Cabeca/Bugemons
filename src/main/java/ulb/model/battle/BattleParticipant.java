@@ -62,7 +62,7 @@ public class BattleParticipant {
 	/**
 	 * check if the team has the initiative for the next move.
 	 * It compares the priority of the two actions and then, if needed, the initiative of the two
-	 * actives bugemons
+	 * actives bugemons.
 	 *
 	 * @param other the other participant to compare the initiative with
 	 * @return true if the team has the initiative

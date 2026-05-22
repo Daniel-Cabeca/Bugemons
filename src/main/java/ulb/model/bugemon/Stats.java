@@ -29,7 +29,7 @@ public class Stats {
 	}
 
 	/**
-	 * Changes each stat by adding a (positive or negative) value
+	 * Changes each stat by adding a (positive or negative) value.
 	 *
 	 * @param delta the value to add to each stat
 	 */
@@ -43,7 +43,7 @@ public class Stats {
 	}
 
 	/**
-	 * Adds a value to stats
+	 * Adds a value to stats.
 	 *
 	 * @param delta the value to add to each stat
 	 */

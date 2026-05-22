@@ -20,12 +20,16 @@ public class SwapAction extends Action {
 		this.toSwap = toSwap;
 	}
 
-	/** Creates an empty swap action. */
+	/** 
+	 * Creates an empty swap action. 
+	 */
 	public SwapAction() {
 		this.priority = 1;
 	}
 
-	/** {@inheritDoc} */
+	/** 
+	 * {@inheritDoc} 
+	 */
 	@Override
 	public boolean executeAction(Battle battle, ParticipantLabel team) {
 		return battle.performSwap(this.toSwap, team);

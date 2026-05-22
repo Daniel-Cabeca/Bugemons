@@ -16,7 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Inventory repository connected to the database
+ * Inventory repository connected to the database.
  */
 public class InventoryDatabaseRepository implements InventoryRepository {
 	/** Object used for logging runtime information to the console or to a log file. */
@@ -28,7 +28,7 @@ public class InventoryDatabaseRepository implements InventoryRepository {
 	private final ItemRepository itemRepository;
 
 	/**
-	 * Creates an inventory repository using the given database
+	 * Creates an inventory repository using the given database.
 	 *
 	 * @param database the database used
 	 * @param itemRepository used to acces the items in the database

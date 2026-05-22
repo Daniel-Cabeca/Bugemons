@@ -106,7 +106,15 @@ public class AttackReplacementWindow {
 	}
 
 	public interface ViewListener {
+		/**
+		 * Handles the replacement of a bugemons' ability.
+		 * @param oldAbility the ability that needs to be replaced
+		 */
 		void onReplaceAbility(AbilityDTO oldAbility);
+
+		/** 
+		 * Handles the return button being pressed. 
+		 */
 		void onReturnToChooseBugemon();
 	}
 }

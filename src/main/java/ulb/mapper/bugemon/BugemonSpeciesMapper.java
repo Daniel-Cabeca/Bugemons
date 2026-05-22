@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Used to convert Regular Bugemon Species to DTO Bugemon Species
+ * Used to convert Regular Bugemon Species to DTO Bugemon Species.
  */
 public class BugemonSpeciesMapper {
 

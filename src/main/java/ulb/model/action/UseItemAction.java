@@ -20,12 +20,16 @@ public class UseItemAction extends Action {
 		this.item = item;
 	}
 
-	/** Creates an empty item action. */
+	/** 
+	 * Creates an empty item action. 
+	 */
 	public UseItemAction() {
 		this.priority = 2;
 	}
 
-	/** {@inheritDoc} */
+	/** 
+	 * {@inheritDoc} 
+	 */
 	@Override
 	public boolean executeAction(Battle battle, ParticipantLabel team) {
 		return battle.applyItem(this.item, team);

@@ -29,7 +29,7 @@ public class GameModeController extends WindowController<GameModeWindow> impleme
 	}
 
 	/**
-	 * show GameModeWindow and enable or disable TowerButton
+	 * Show GameModeWindow and enable or disable TowerButton.
 	 */
 	@Override
 	public void show() {
@@ -39,7 +39,7 @@ public class GameModeController extends WindowController<GameModeWindow> impleme
 	}
 
 	/**
-	 * Helper function that checks towerSave in database
+	 * Helper function that checks towerSave in database.
 	 *
 	 * @return true if there is a tower Saving database else false
 	 */
@@ -96,7 +96,7 @@ public class GameModeController extends WindowController<GameModeWindow> impleme
 	}
 
 	/**
-	 * Helper function that choose the gameMode and Show teamCreateWindow
+	 * Helper function that choose the gameMode and Show teamCreateWindow.
 	 *
 	 * @param gameMode indicate which game mode is chosen
 	 */

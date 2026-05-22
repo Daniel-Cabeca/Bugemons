@@ -45,7 +45,7 @@ public class RegisterController extends WindowController<RegisterWindow> impleme
 	}
 
 	/**
-	 * Sends a login request
+	 * Sends a login request.
 	 *
 	 * @param player Player credentials DTO
 	 * @return True if accepted by server

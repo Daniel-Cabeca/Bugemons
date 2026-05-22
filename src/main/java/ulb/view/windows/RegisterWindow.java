@@ -81,6 +81,7 @@ public class RegisterWindow {
 		 * Handles the login attempt with the given username and password. 
 		*/
 		void onLogin(String username, String password);
+		
 		/** 
 		 * Handles the sign-up attempt with the given username and password.
 		*/

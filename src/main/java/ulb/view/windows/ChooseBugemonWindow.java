@@ -94,7 +94,15 @@ public class ChooseBugemonWindow {
 	}
 
 	public interface ViewListener {
+		/**
+		 * Handles the bugemon selection.
+		 * @param bugemon the chosen bugemon
+		 */
 		void onBugemonChosen(BugemonDTO bugemon);
+
+		/** 
+		 * Handles the return button being pressed. 
+		 */
 		void onReturnFloorRewardWindow();
 	}
 

@@ -125,6 +125,11 @@ public class LevelUpWindow {
 	}
 
 	public interface ViewListener {
+		/**
+		 * Handles the reward chosen.
+		 * @param reward the chosen reward
+		 * @param event the event that needs to be done
+		 */
 		void onRewardChosen(RewardDTO reward, ActionEvent event);
 	}
 }

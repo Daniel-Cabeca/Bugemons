@@ -81,7 +81,15 @@ public class LoadTeamPanel {
 	}
 
 	public interface ViewListener {
+		/**
+		 * Notifies the listener to load the given team.
+		 * @param selectedTeam the team
+		 */
 		void onLoadTeam(TeamDTO selectedTeam);
+		
+		/**
+		 * Handles return action.
+		 */
 		void onReturn();
 	}
 

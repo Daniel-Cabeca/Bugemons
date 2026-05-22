@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Used to convert regular ability to DTO ability
+ * Used to convert regular ability to DTO ability.
  */
 public class AbilityMapper {
 	private AbilityMapper() {}

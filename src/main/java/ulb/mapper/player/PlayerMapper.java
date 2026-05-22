@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Used to convert Regular Player to DTO Player
+ * Used to convert Regular Player to DTO Player.
  */
 public class PlayerMapper {
 	private PlayerMapper() {}

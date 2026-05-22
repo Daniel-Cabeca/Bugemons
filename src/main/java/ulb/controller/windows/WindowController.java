@@ -12,7 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Abstract class that represent a WindowController
+ * Abstract class that represent a WindowController.
  *
  * @param <T> ViewWindow of the windowController
  */
@@ -43,7 +43,7 @@ public abstract class WindowController<T> {
 	protected ClientController clientController;
 
 	/**
-	 * A super constructor for all window controllers
+	 * A super constructor for all window controllers.
 	 *
 	 * @param stage used to show fxml windows
 	 * @param windowPath the fxml path of the viewWindow
@@ -71,7 +71,7 @@ public abstract class WindowController<T> {
 	}
 
 	/**
-	 * Changes the fxml window to the current fxml window
+	 * Changes the fxml window to the current fxml window.
 	 */
 	public void show() {
 		Parent root = loader.getRoot();
@@ -85,8 +85,8 @@ public abstract class WindowController<T> {
 	}
 
 	/**
-	 * WindowName enum is used by showWindow function to show the right window
-	 * Each name represent an FXML ViewWindow to show
+	 * WindowName enum is used by showWindow function to show the right window.
+	 * Each name represent an FXML ViewWindow to show.
 	 */
 	public enum WindowName {
 		REGISTER, MAIN_MENU, GAME_MODE, ATTACK_REPLACEMENT, BATTLE, BATTLE_END, CHOOSE_BUGEMON, CONFIRM_TEAM, FLOOR,

@@ -43,7 +43,7 @@ public class EffectStatModifier extends Effect {
 	}
 
 	/**
-	 * Builds the Stats object used to change the Stats of a Bugemon
+	 * Builds the Stats object used to change the Stats of a Bugemon.
 	 *
 	 * @return the built Stats object
 	 */

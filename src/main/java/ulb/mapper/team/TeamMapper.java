@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Used to convert regular Team to DTO Team
+ * Used to convert regular Team to DTO Team.
  */
 public class TeamMapper {
 

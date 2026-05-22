@@ -11,7 +11,9 @@ public class RunAction extends Action {
 		this.priority = 3;
 	}
 
-	/** {@inheritDoc} */
+	/** 
+	 * {@inheritDoc} 
+	 */
 	@Override
 	public boolean executeAction(Battle battle, ParticipantLabel team) {
 		battle.forfeit(team);

@@ -21,12 +21,16 @@ public class UseAbilityAction extends Action {
 		this.ability = ability;
 	}
 
-	/** Creates an empty ability action. */
+	/** 
+	 * Creates an empty ability action. 
+	 */
 	public UseAbilityAction() {
 		this.priority = 0;
 	}
 
-	/** {@inheritDoc} */
+	/** 
+	 * {@inheritDoc} 
+	 */
 	@Override
 	public boolean executeAction(Battle battle, ParticipantLabel team) {
 		if (this.ability == null) {

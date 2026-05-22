@@ -57,8 +57,19 @@ public class FloorRewardWindow {
 	}
 
 	public interface ViewListener {
+		/**
+		 * Handles object reward selection.
+		 */
 		void onObjectReward();
+
+		/**
+		 * Handles attack reward selection.
+		 */
 		void onChooseAttackReward();
+
+		/**
+		 * Handles stat reward selection.
+		 */
 		void onStatReward();
 	}
 }

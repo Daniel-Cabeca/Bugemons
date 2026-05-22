@@ -46,7 +46,9 @@ public class ChatMessage implements Serializable {
 
 	public LocalDateTime getSentAt() { return this.sentAt; }
 
-	/** {@inheritDoc} */
+	/** 
+	 * {@inheritDoc} 
+	 */
 	@Override
 	public String toString() {
 		return "[" + this.sentAt + "] " + this.senderUsername + " → " + this.receiverUsername + ": " + this.content;

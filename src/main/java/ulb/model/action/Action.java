@@ -21,7 +21,7 @@ public abstract class Action {
 	}
 
 	/**
-	 * Check if the action has a higher priority than the other action
+	 * Check if the action has a higher priority than the other action.
 	 *
 	 * @param otherAction the action to compare the priority with
 	 * @return 1 if the priority is higher

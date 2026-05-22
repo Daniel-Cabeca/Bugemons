@@ -298,21 +298,44 @@ public class FloorWindow {
 	 * Listener for floor navigation view events.
 	 */
 	public interface ViewListener {
-		/** Handles the boss room being selected. */
+		/** 
+		 * Handles the boss room being selected. 
+		 */
 		void onBoss();
-		/** Handles the battle A1 room being selected. */
+
+		/** 
+		 * Handles the battle A1 room being selected. 
+		 */
 		void onBattleA1();
-		/** Handles the battle A2 room being selected. */
+
+		/** 
+		 * Handles the battle A2 room being selected. 
+		 */
 		void onBattleA2();
-		/** Handles the battle B room being selected. */
+
+		/** 
+		 * Handles the battle B room being selected. 
+		 */
 		void onBattleB();
-		/** Handles the bonus A room being selected. */
+
+		/** 
+		 * Handles the bonus A room being selected. 
+		 */
 		void onBonusA();
-		/** Handles the bonus B room being selected. */
+
+		/** 
+		 * Handles the bonus B room being selected. 
+		 */
 		void onBonusB();
-		/** Handles the start room being selected. */
+
+		/** 
+		 * Handles the start room being selected. 
+		 */
 		void onStart();
-		/** Handles the return button being pressed. */
+		
+		/** 
+		 * Handles the return button being pressed. 
+		 */
 		void onReturnFloorWindow();
 	}
 

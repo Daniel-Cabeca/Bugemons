@@ -62,9 +62,11 @@ public class BattleEndWindow {
 	 */
 	public void handleReturn() {
 		listener.onHandleReturn();
-
 	}
 
+	/** 
+	 * Handles the return button being pressed. 
+	 */
 	public interface ViewListener {
 		void onHandleReturn();
 	}

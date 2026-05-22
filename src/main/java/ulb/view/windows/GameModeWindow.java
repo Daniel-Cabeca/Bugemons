@@ -85,13 +85,24 @@ public class GameModeWindow {
 	 * Listener for game mode selection view events.
 	 */
 	public interface ViewListener {
-		/** Handles the automatic battle mode being selected. */
+		/** 
+		 * Handles the automatic battle mode being selected. 
+		 */
 		void onAutoBattle();
-		/** Handles the controlled battle mode being selected. */
+
+		/** 
+		 * Handles the controlled battle mode being selected. 
+		 */
 		void onControlledBattle();
-		/** Handles the tower mode being selected. */
+
+		/** 
+		 * Handles the tower mode being selected. 
+		 */
 		void onTowerMode(boolean newTower);
-		/** Handles the return button being pressed. */
+		
+		/** 
+		 * Handles the return button being pressed. 
+		 */
 		void onReturn();
 	}
 }

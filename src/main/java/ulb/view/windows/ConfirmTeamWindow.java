@@ -117,9 +117,14 @@ public class ConfirmTeamWindow {
 	 * Listener for team confirmation view events.
 	 */
 	public interface ViewListener {
-		/** Handles the player confirming their team. */
+		/** 
+		 * Handles the player confirming their team. 
+		 */
 		void onConfirm();
-		/** Handles the return button being pressed. */
+
+		/** 
+		 * Handles the return button being pressed. 
+		 */
 		void onReturn();
 	}
 }

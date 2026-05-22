@@ -8,7 +8,7 @@ import ulb.model.battle.Battle;
 import ulb.model.effect.*;
 
 /**
- * Used to convert Regular Effect to DTO Effect
+ * Used to convert Regular Effect to DTO Effect.
  */
 public class EffectMapper {
 

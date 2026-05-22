@@ -57,7 +57,9 @@ public class FloorRewardController extends WindowController<FloorRewardWindow> i
 		super.show();
 	}
 
-	/** {@inheritDoc} */
+	/** 
+	 * {@inheritDoc} 
+	 */
 	@Override
 	public void onObjectReward() {
 		if (clientController.postData(new ChooseItemRewardRequest(rewardItem))) {
@@ -65,14 +67,18 @@ public class FloorRewardController extends WindowController<FloorRewardWindow> i
 		}
 	}
 
-	/** {@inheritDoc} */
+	/** 
+	 * {@inheritDoc} 
+	 */
 	@Override
 	public void onChooseAttackReward() {
 		pendingChoice = RewardChoice.NEW_ABILITY;
 		clientController.chooseBugemonReward(pendingChoice);
 	}
 
-	/** {@inheritDoc} */
+	/** 
+	 * {@inheritDoc} 
+	 */
 	@Override
 	public void onStatReward() {
 		pendingChoice = RewardChoice.STAT_INCREASE;

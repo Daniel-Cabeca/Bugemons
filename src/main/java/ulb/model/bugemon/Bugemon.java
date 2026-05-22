@@ -69,7 +69,7 @@ public class Bugemon {
 
 	/**
 	 * Resets fight stats to get rid of debuffs. If fight stat > base stat,
-	 * assumes that there is no debuff and keeps the stat
+	 * assumes that there is no debuff and keeps the stat.
 	 */
 	public void removeStatsDebuffs() {
 		this.getFightStats().setMin(this.getBaseStats());
@@ -89,7 +89,7 @@ public class Bugemon {
 			gainLevels++;
 			this.remainingRewards++;
 		}
-		return gainLevels; // TO REMOVE : possibilité d'appeler directement gainLevelsReward
+		return gainLevels;
 	}
 
 	/**
@@ -134,7 +134,7 @@ public class Bugemon {
 	public String getSpeciesId() { return this.getSpecies().getId(); }
 
 	/**
-	 * Check if this bugemon have the initiative higher than the other one
+	 * Check if this bugemon have the initiative higher than the other one.
 	 *
 	 * @param other the other bugemon to check the initiative with
 	 * @return a boolean depending if this bugemon have a higher initiative, or a random boolean if both are equals

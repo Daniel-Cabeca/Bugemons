@@ -59,7 +59,7 @@ public class ConfirmTeamController extends WindowController<ConfirmTeamWindow> i
 	}
 
 	/**
-	 * Switch to the next window depending on the current game mode
+	 * Switch to the next window depending on the current game mode.
 	 */
 	private void switchToNextWindow() {
 		switch (this.gameMode) {
@@ -76,7 +76,7 @@ public class ConfirmTeamController extends WindowController<ConfirmTeamWindow> i
 	}
 
 	/**
-	 * Tell the server to setup the Battle and switch to battle window if the setup is succeded
+	 * Tell the server to setup the Battle and switch to battle window if the setup is succeded.
 	 */
 	private void switchToBattle() {
 		if (this.clientController.postData(new SetUpNormalModeRequest())) {
@@ -85,7 +85,7 @@ public class ConfirmTeamController extends WindowController<ConfirmTeamWindow> i
 	}
 
 	/**
-	 * Tell the server to setup the Tower and switch to floor window if the setup is succeded
+	 * Tell the server to setup the Tower and switch to floor window if the setup is succeded.
 	 */
 	private void switchToTower() {
 		if (this.clientController.postData(new SetUpTowerModeRequest(true))) {

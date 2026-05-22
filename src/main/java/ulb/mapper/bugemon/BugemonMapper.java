@@ -6,7 +6,7 @@ import ulb.mapper.stats.StatsMapper;
 import ulb.model.bugemon.Bugemon;
 
 /**
- * Used to convert Regular Bugemon to DTO Bugemon
+ * Used to convert Regular Bugemon to DTO Bugemon.
  */
 public class BugemonMapper {
 	private BugemonMapper() {}

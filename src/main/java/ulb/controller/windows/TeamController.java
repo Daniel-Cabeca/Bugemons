@@ -113,7 +113,7 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	}
 
 	/**
-	 * Transforms the list of bugemon ids to a list of BugemonDTO objects
+	 * Transforms the list of bugemon ids to a list of BugemonDTO objects.
 	 *
 	 * @param selectedBugemonIds the list of bugemon ids
 	 * @return the list of BugemonDTO

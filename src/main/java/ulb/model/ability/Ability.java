@@ -149,7 +149,7 @@ public class Ability implements HasId {
 	public String getName() { return this.name; }
 
 	/**
-	 * Gets the effectiveness message of the ability
+	 * Gets the effectiveness message of the ability.
 	 *
 	 * @param oppositeBugemon The Bugemon this ability is used against
 	 * @return The effectiveness message (or an empty string if the effectiveness is normal)

@@ -5,6 +5,7 @@ import javafx.stage.Stage;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.reward.RewardDTO;
 import ulb.controller.ClientController;
+import ulb.exceptions.UnknownServerResponse;
 import ulb.message.request.gameInfo.GetLevelUpInfoRequest;
 import ulb.message.response.gameInfo.LevelUpInfoResponse;
 import ulb.view.WindowPath;
@@ -33,8 +34,17 @@ public class LevelUpController extends WindowController<LevelUpWindow> implement
 	 */
 	@Override
 	public void show() {
-		if (!(clientController.getData(new GetLevelUpInfoRequest()) instanceof LevelUpInfoResponse info)) return;
-		List<RewardDTO> rewards = info.getRewards();
+		List<RewardDTO> rewards;
+		try {
+			if (clientController.getData(new GetLevelUpInfoRequest()) instanceof LevelUpInfoResponse info) {
+				rewards = info.getRewards();
+			} else {
+				throw new UnknownServerResponse("getLevelUpInfo");
+			}
+		} catch (Exception e) {
+			LOGGER.warning("Impossible de récupérer les récompenses de montée de niveau.");
+			return;
+		}
 		if (rewards == null || rewards.isEmpty()) return;
 		BugemonDTO bugemon = rewards.get(0).bugemon();
 		view.initializeView(bugemon, rewards);

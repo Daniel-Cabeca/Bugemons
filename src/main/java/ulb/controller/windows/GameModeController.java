@@ -2,6 +2,7 @@ package ulb.controller.windows;
 
 import javafx.stage.Stage;
 import ulb.controller.ClientController;
+import ulb.exceptions.UnknownServerResponse;
 import ulb.message.request.gameInfo.GetTowerSavedInfoRequest;
 import ulb.message.request.setup.SetUpTowerModeRequest;
 import ulb.message.response.gameInfo.TowerSavedInfoResponse;
@@ -43,11 +44,16 @@ public class GameModeController extends WindowController<GameModeWindow> impleme
 	 * @return true if there is a tower Saving database else false
 	 */
 	private boolean isTowerSaved() {
-		Serializable message = this.clientController.getData(new GetTowerSavedInfoRequest());
-		if (message instanceof TowerSavedInfoResponse towerInfoMessage) {
-			return towerInfoMessage.isTowerSaved();
+		try {
+			Serializable message = this.clientController.getData(new GetTowerSavedInfoRequest());
+			if (message instanceof TowerSavedInfoResponse towerInfoMessage) {
+				return towerInfoMessage.isTowerSaved();
+			}
+			throw new UnknownServerResponse("getTowerSavedInfo");
+		} catch (Exception e) {
+			LOGGER.warning("Impossible de récupérer les information de la tour.");
+			return false;
 		}
-		return false;
 	}
 
 

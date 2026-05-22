@@ -7,6 +7,9 @@ import javafx.stage.StageStyle;
 import ulb.DTO.battle.MultiBattleStatusDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.controller.ClientController;
+import ulb.exceptions.EntityNotFoundException;
+import ulb.exceptions.ServerStatusException;
+import ulb.exceptions.UnknownServerResponse;
 import ulb.message.request.Request;
 import ulb.message.request.playerInfo.GetPlayerRequest;
 import ulb.message.request.social.*;
@@ -16,12 +19,11 @@ import ulb.model.chat.ChatMessage;
 import ulb.view.WindowPath;
 import ulb.view.windows.SocialPanel;
 
-import javax.naming.CommunicationException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Controller for the social panel handling interactions with other players.
@@ -53,8 +55,12 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 	 */
 	public void show() {
 
-		view.setFriendsList(this.getFriendList());
-		view.setLeaderboardList(this.getLeaderboardList());
+		try {
+			view.setFriendsList(this.getFriendList());
+			view.setLeaderboardList(this.getLeaderboardList());
+		} catch (Exception e) {
+			return;
+		}
 
 		if (popupStage == null) {
 			popupStage = new Stage();
@@ -75,10 +81,11 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 	 *
 	 * @return List of the usernames of the friends
 	 */
-	private List<String> getFriendList() {
+	private List<String> getFriendList() throws EntityNotFoundException,  ServerStatusException, UnknownServerResponse {
 		if (this.clientController.getData(new GetFriendsListRequest(getPlayer().getUsername())) instanceof FriendsListResponse msg)
 			return msg.getFriends();
-		return List.of();
+		LOGGER.warning("Impossible de récupérer la liste d'amis");
+		throw new UnknownServerResponse("getFriendsListRequest");
 	}
 
 	/**
@@ -86,58 +93,76 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 	 *
 	 * @return A map associating each player's username to his score
 	 */
-	private Map<String, Integer> getLeaderboardList() {
+	private Map<String, Integer> getLeaderboardList() throws ServerStatusException, UnknownServerResponse {
 		if (this.clientController.getData(new GetLeaderboardRequest()) instanceof LeaderboardResponse msg)
 			return msg.getLeaderboard();
-		return Collections.emptyMap();
-
+		LOGGER.warning("Impossible de récupérer le leaderboard");
+		throw new UnknownServerResponse("getLeaderboard");
 	}
 
-	/**
-	 * Fetches information on the current player.
-	 *
-	 * @return Information on the current player
-	 */
-	private PlayerDTO getPlayer() {
-		if (player == null) {
-			this.player = this.clientController.getPlayer();
+	private PlayerDTO getPlayer() throws EntityNotFoundException {
+		if (this.player == null) {
+			Optional<PlayerDTO> optionalPlayer = this.clientController.getPlayer();
+			if (optionalPlayer.isEmpty()){
+				throw new EntityNotFoundException("player", "");
+			}
+			this.player = optionalPlayer.get();
 		}
-		return player;
-	}	private List<String> getRequests(Request request) {
+		return this.player;
+	}	
+	
+	private List<String> getRequests(Request request) throws ServerStatusException, UnknownServerResponse {
 		Serializable response = this.clientController.getData(request);
 		if (response instanceof FriendRequestsResponse msg) return msg.getRequests();
 		else if (response instanceof BattleRequestsResponse msg) return msg.getRequests();
 		else if (response instanceof FriendsListResponse msg) return msg.getFriends();
-		return List.of();
+		throw new UnknownServerResponse("");
 	}
 
 	/**
 	 * Fetches the list of the current player's friends and updates it in the view.
 	 */
 	private void refreshFriendRequests() {
-		List<String> friendRequests = getRequests(new GetFriendRequestsRequest(getPlayer().getUsername()));
-		view.setFriendRequests(friendRequests);
+		try {
+			List<String> friendRequests = getRequests(new GetFriendRequestsRequest(getPlayer().getUsername()));
+			view.setFriendRequests(friendRequests);
+		} catch (Exception e) {
+			LOGGER.warning("Impossible de rafraichir la liste des demandes d'amis");
+		}
 	}
 
 	/**
 	 * Fetches the list of pending battle requests for the current player and updates it in the view.
 	 */
 	private void refreshBattleRequests() {
-		List<String> battleRequests = getRequests(new GetBattleRequestsRequest(getPlayer().getUsername()));
-		view.setBattleRequests(battleRequests);
+		try {
+			List<String> battleRequests = getRequests(new GetBattleRequestsRequest(getPlayer().getUsername()));
+			view.setBattleRequests(battleRequests);
+		} catch (Exception e) {
+			LOGGER.warning("Impossible de rafraichir la liste des demandes de combat");
+		}
 	}
 
 	/**
 	 * Load messages of a chat with a given friend.
 	 */
 	private void loadMessages(String friend) {
-		new Thread(() -> loadMessagesInCurrentThread(friend)).start();
+		new Thread(() -> {
+			try {
+				loadMessagesInCurrentThread(friend);
+			} catch (Exception e) {
+				LOGGER.warning("Impossible de charger les message");
+			}
+		}).start();
 	}
 
-	private void loadMessagesInCurrentThread(String friend) {
+	private void loadMessagesInCurrentThread(String friend) throws EntityNotFoundException, ServerStatusException, UnknownServerResponse {
 		List<ChatMessage> chatMessages = null;
-		if (this.clientController.getData(new GetChatMessagesRequest(getPlayer().getUsername(), friend)) instanceof ChatMessagesResponse msg)
+		if (this.clientController.getData(new GetChatMessagesRequest(getPlayer().getUsername(), friend)) instanceof ChatMessagesResponse msg) {
 			chatMessages = msg.getMessages();
+		} else {
+			throw new UnknownServerResponse("getChatMessage");
+		}
 
 		List<String> lines = new ArrayList<>();
 		for (ChatMessage chatMessage : chatMessages) {
@@ -152,26 +177,11 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 	 * @param username The player's username
 	 * @return Information on the player
 	 */
-	private PlayerDTO getPlayerByName(String username) {
+	private PlayerDTO getPlayerByName(String username) throws ServerStatusException, UnknownServerResponse {
 		if (this.clientController.getData(new GetPlayerRequest(username)) instanceof PlayerResponse msg) {
 			return msg.getPlayer();
 		}
-		return null;
-	}
-
-	/**
-	 * Returns the current multiplayer battle status between two players.
-	 *
-	 * @param userId1 The first player's id
-	 * @param userId2 The second player's id
-	 * @return The multiplayer battle status DTO
-	 */
-	public MultiBattleStatusDTO getMultiBattleStatus(int userId1, int userId2) throws CommunicationException {
-		if (this.clientController.getData(new GetMultiBattleStatusRequest(userId1, userId2)) instanceof MultiBattleStatusResponse msg)
-			return msg.getStatus();
-
-		LOGGER.warning("Failed to obtain multiplayer battle status.");
-		throw new CommunicationException();
+		throw new UnknownServerResponse("getPlayer");
 	}
 
 	/**
@@ -190,12 +200,13 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 	 * @param opponent The player the battle request has been sent to
 	 */
 	private void waitForBattleRequestResponse(PlayerDTO opponent) {
-		MultiBattleStatusDTO status = null;
+		MultiBattleStatusDTO status;
 		try {
-			status = this.getMultiBattleStatus(getPlayer().getUserId(), opponent.getUserId());
-		} catch (CommunicationException e) {
+			status = this.clientController.getMultiBattleStatus(getPlayer().getUserId(), opponent.getUserId());
+		} catch (Exception e) {
 			this.clientController.stopWaitWindow();
 			this.clientController.showWindow(WindowName.MAIN_MENU);
+			return;
 		}
 
 		switch (status.status()) {
@@ -226,8 +237,12 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 	 */
 	@Override
 	public void onDeclineFriend(String sender) {
-		if (this.clientController.postData(new DeclineFriendRequestRequest(getPlayer().getUsername(), sender))) {
-			refreshFriendRequests();
+		try {
+			if (this.clientController.postData(new DeclineFriendRequestRequest(getPlayer().getUsername(), sender))) {
+				refreshFriendRequests();
+			}
+		} catch (Exception e) {
+			LOGGER.warning("Impossible de décliner la demande d'amis de " + sender);
 		}
 	}
 
@@ -236,8 +251,12 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 	 */
 	@Override
 	public void onDeclineBattle(String sender) {
-		if (this.clientController.postData(new DeclineBattleRequestRequest(getPlayer().getUsername(), sender))) {
-			refreshFriendRequests();
+		try {
+			if (this.clientController.postData(new DeclineBattleRequestRequest(getPlayer().getUsername(), sender))) {
+				refreshFriendRequests();
+			}
+		} catch (Exception e) {
+			LOGGER.warning("Impossible de décliner la demande de combat de " + sender);
 		}
 	}
 
@@ -246,9 +265,13 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 	 */
 	@Override
 	public void onAcceptFriend(String sender) {
-		if (this.clientController.postData(new AcceptFriendRequestRequest(getPlayer().getUsername(), sender))) {
-			refreshFriendRequests();
-			refreshFriends();
+		try {
+			if (this.clientController.postData(new AcceptFriendRequestRequest(getPlayer().getUsername(), sender))) {
+				refreshFriendRequests();
+				refreshFriends();
+			}
+		} catch (Exception e) {
+			LOGGER.warning("Impossible d'accepter la demande d'amis de " + sender);
 		}
 	}
 
@@ -257,11 +280,15 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 	 */
 	@Override
 	public void onAcceptBattle(String sender) {
-		if (this.clientController.postData(new AcceptBattleRequestRequest(getPlayer().getUsername(), sender))) {
-			PlayerDTO opponent = this.getPlayerByName(sender);
-
-			this.popupStage.close();
-			this.switchToTeamSelectionForMulti(opponent);
+		try {
+			if (this.clientController.postData(new AcceptBattleRequestRequest(getPlayer().getUsername(), sender))) {
+				PlayerDTO opponent = this.getPlayerByName(sender);
+	
+				this.popupStage.close();
+				this.switchToTeamSelectionForMulti(opponent);
+			}
+		} catch (Exception e) {
+			LOGGER.warning("Impossible d'accepter la demande de combat de " + sender);
 		}
 	}
 
@@ -270,18 +297,22 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 	 */
 	@Override
 	public void onInvite(String target) {
-		if (target.equals(this.getPlayer().getUsername())) {
-			view.setInviteStatus("On ne peut pas être son propre ami...");
+		try {
+			if (target.equals(this.getPlayer().getUsername())) {
+				view.setInviteStatus("On ne peut pas être son propre ami...");
+				return;
+			}
+			if (this.getFriendList().contains(target)) {
+				view.setInviteStatus("Vous êtes déjà amis !");
+				return;
+			}
+			boolean ok = this.clientController.postData(new SendFriendRequestRequest(getPlayer().getUsername(), target));
+			view.setInviteStatus(ok ? "Demande envoyée !" : "Utilisateur introuvable.");
+			if (ok) {
+				view.clearInviteField();
+			}
+		} catch (Exception e) {
 			return;
-		}
-		if (this.getFriendList().contains(target)) {
-			view.setInviteStatus("Vous êtes déjà amis !");
-			return;
-		}
-		boolean ok = this.clientController.postData(new SendFriendRequestRequest(getPlayer().getUsername(), target));
-		view.setInviteStatus(ok ? "Demande envoyée !" : "Utilisateur introuvable.");
-		if (ok) {
-			view.clearInviteField();
 		}
 	}
 
@@ -317,10 +348,15 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 		if (friendName == null || friendName.isBlank()) {
 			return;
 		}
-
-		PlayerDTO friend = this.getPlayerByName(friendName);
-		boolean ok = this.clientController.postData(new SendBattleRequestRequest(getPlayer().getUsername(),
-				friendName));
+		PlayerDTO friend;
+		boolean ok;
+		try {
+			friend = this.getPlayerByName(friendName);
+			ok = this.clientController.postData(new SendBattleRequestRequest(getPlayer().getUsername(),
+					friendName));
+		} catch (Exception e) {
+			return;
+		}
 		view.setInviteStatus(ok ? "Défi envoyé !" : "Impossible d'envoyer le défi.");
 
 		if (ok) {
@@ -339,8 +375,12 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 	public void onSendMessage(String friend, String content) {
 		view.clearChatField();
 		new Thread(() -> {
-			this.clientController.postData(new SendChatMessageRequest(getPlayer().getUsername(), friend, content));
-			loadMessagesInCurrentThread(friend);
+			try {
+				this.clientController.postData(new SendChatMessageRequest(getPlayer().getUsername(), friend, content));
+				loadMessagesInCurrentThread(friend);
+			} catch (Exception e) {
+				LOGGER.warning("Impossible de charger les messages.");
+			}
 		}).start();
 	}
 
@@ -349,7 +389,11 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 	 */
 	@Override
 	public void refreshFriends() {
-		view.setFriendsList(this.getFriendList());
+		try {
+			view.setFriendsList(this.getFriendList());
+		} catch (Exception e) {
+			return;
+		}
 	}
 
 	/**
@@ -357,6 +401,10 @@ public class SocialPanelController extends WindowController<SocialPanel> impleme
 	 */
 	@Override
 	public void refreshLeaderboard() {
-		view.setLeaderboardList(this.getLeaderboardList());
+		try {
+			view.setLeaderboardList(this.getLeaderboardList());
+		} catch (Exception e) {
+			return;
+		}
 	}
 }

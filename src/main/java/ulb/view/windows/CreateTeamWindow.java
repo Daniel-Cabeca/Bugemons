@@ -46,7 +46,15 @@ public class CreateTeamWindow {
 		availableBugemonsGrid.getChildren().clear();
 
 		int col = 0, row = 0;
-		for (BugemonSpeciesDTO bugemon : this.viewListener.getAllSpecies()) {
+
+		List<BugemonSpeciesDTO> bugemons;
+		try {
+			bugemons = this.viewListener.getAllSpecies();
+		} catch (Exception e) {
+			return; // don't show any bugemon if an exception occures
+		}
+
+		for (BugemonSpeciesDTO bugemon : bugemons) {
 
 			VBox cell = new VBox(8);
 			cell.getStyleClass().add("availableBugemons");
@@ -283,6 +291,6 @@ public class CreateTeamWindow {
 		 * Returns the list of all the Bugemon species.
 		 * @return A list of all the species of Bugemon
 		 */
-		List<BugemonSpeciesDTO> getAllSpecies();
+		List<BugemonSpeciesDTO> getAllSpecies() throws Exception;
 	}
 }

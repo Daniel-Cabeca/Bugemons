@@ -3,6 +3,7 @@ package ulb.controller.windows;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 import ulb.controller.ClientController;
+import ulb.exceptions.UnknownServerResponse;
 import ulb.message.request.gameActions.ChooseTowerRoomRequest;
 import ulb.message.request.gameInfo.GetTowerInfoRequest;
 import ulb.message.response.gameInfo.TowerInfoResponse;
@@ -63,10 +64,20 @@ public class FloorController extends WindowController<FloorWindow> implements Fl
 	 * Resets the fled-detection state when the floor number changes.
 	 */
 	private void syncCurrentRoomFromServer() {
-		if (!(clientController.getData(new GetTowerInfoRequest()) instanceof TowerInfoResponse info)) return;
+		TowerInfoResponse info;
+		try {
+			if (clientController.getData(new GetTowerInfoRequest()) instanceof TowerInfoResponse infoResponse) {
+				info = infoResponse;
+			} else {
+				throw new UnknownServerResponse("getTowerInfo");
+			}
+		} catch (Exception e) {
+			LOGGER.warning("Impossible de récupérer les informations de la tour.");
+			return;
+		}
+		
 		int serverFloor = info.getFloorNumber();
-		this.currentRoomId = info.getRoomNumber();
-
+			this.currentRoomId = info.getRoomNumber();
 		if (serverFloor != this.currentFloorNumber) { // moved to new floor
 			this.lastEnteredRoomId = this.currentRoomId;
 			this.currentFloorNumber = serverFloor;

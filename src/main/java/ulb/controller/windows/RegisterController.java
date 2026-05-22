@@ -31,7 +31,9 @@ public class RegisterController extends WindowController<RegisterWindow> impleme
 		PlayerRegisterDTO playerDTO = new PlayerRegisterDTO(userName, password);
 		boolean success = this.logIn(playerDTO);
 		if (success) {
-			if (this.clientController.loadPlayer(userName) == null) {
+			try {
+				this.clientController.loadPlayer(userName);
+			} catch (Exception e) {
 				LOGGER.warning("Player is null after login for username: " + userName);
 				this.view.setErrorLabel("Connexion réussie, mais profil joueur introuvable.");
 				return;
@@ -61,7 +63,9 @@ public class RegisterController extends WindowController<RegisterWindow> impleme
 		PlayerRegisterDTO playerDTO = new PlayerRegisterDTO(userName, password);
 		boolean success = this.signUp(playerDTO);
 		if (success) {
-			if (this.clientController.loadPlayer(userName) == null) {
+			try {
+				this.clientController.loadPlayer(userName);
+			} catch (Exception e) {
 				LOGGER.warning("Player is null after sign-up for username: " + userName);
 				this.view.setErrorLabel("Inscription réussie, mais profil joueur introuvable.");
 				return;

@@ -5,6 +5,7 @@ import javafx.stage.Stage;
 import ulb.DTO.player.PlayerDTO;
 import ulb.controller.ClientController;
 import ulb.controller.windows.WindowController;
+import ulb.exceptions.UnknownServerResponse;
 import ulb.message.request.gameInfo.GetTowerInfoRequest;
 import ulb.message.response.gameInfo.TowerInfoResponse;
 import ulb.model.GameMode;
@@ -87,10 +88,16 @@ public class BattleWindowController extends WindowController<BattleWindow> imple
 			return;
 		}
 
-		if (this.clientController.getData(new GetTowerInfoRequest()) instanceof TowerInfoResponse towerInfo) {
-			this.towerFloorNumber = towerInfo.getFloorNumber();
-			this.towerRoomNumber = towerInfo.getRoomNumber();
+		try {
+			if (this.clientController.getData(new GetTowerInfoRequest()) instanceof TowerInfoResponse towerInfo) {
+				this.towerFloorNumber = towerInfo.getFloorNumber();
+				this.towerRoomNumber = towerInfo.getRoomNumber();
+			}
+			throw new UnknownServerResponse("getTowerInfoRequest");
+		} catch (Exception e) {
+			LOGGER.warning("Impossible de récupérer les informations de la tour.");
 		}
+		
 	}
 
 	public void setPlayer(PlayerDTO player) { this.player = player; }

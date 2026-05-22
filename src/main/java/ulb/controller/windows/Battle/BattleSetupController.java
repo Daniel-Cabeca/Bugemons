@@ -5,10 +5,11 @@ import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.controller.ClientController;
+import ulb.exceptions.ServerStatusException;
+import ulb.exceptions.UnknownServerResponse;
 import ulb.message.request.gameInfo.*;
 import ulb.message.request.playerInfo.GetPlayerInventoryRequest;
 import ulb.message.request.playerInfo.GetPlayerTeamRequest;
-import ulb.message.response.StatusResponse;
 import ulb.message.response.gameInfo.*;
 import ulb.message.response.playerInfo.PlayerInventoryResponse;
 import ulb.message.response.playerInfo.PlayerTeamResponse;
@@ -22,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -63,7 +63,14 @@ public class BattleSetupController {
 		}
 
 		List<InventoryEntry> entries = new ArrayList<>();
-		Map<String, Boolean> itemMap = this.checkItems(new ArrayList<ItemDTO>(inventory.keySet()));
+		
+		Map<String, Boolean> itemMap;
+		try {
+			itemMap = this.checkItems(new ArrayList<ItemDTO>(inventory.keySet()));
+		} catch (Exception e) {
+			LOGGER.warning("Impossible de vérifier si un objet est utilisable.");
+			return List.of();
+		}
 
 		for (Map.Entry<ItemDTO, Integer> entry : inventory.entrySet()) {
 			ItemDTO item = entry.getKey();
@@ -80,11 +87,13 @@ public class BattleSetupController {
 	 * @param player The current player
 	 */
 	public void updateInventory(PlayerDTO player) {
-		Serializable message = this.clientController.getData(new GetPlayerInventoryRequest(player.getUsername()));
-		if (message instanceof PlayerInventoryResponse playerInventory) {
-			player.setInventory(playerInventory.getInventory());
-		} else if (message instanceof StatusResponse errorMessage && errorMessage.isFailure()) {
-			LOGGER.log(Level.WARNING, "Failed to update player inventory: " + errorMessage.getMessage());
+		try {
+			if (this.clientController.getData(new GetPlayerInventoryRequest(player.getUsername())) instanceof PlayerInventoryResponse playerInventory) {
+				player.setInventory(playerInventory.getInventory());
+			}
+			throw new UnknownServerResponse("getPlayerInventory");
+		} catch (Exception e) {
+			LOGGER.warning("Impossible de mettre à jour l'inventaire du joueur.");
 		}
 	}
 
@@ -94,14 +103,11 @@ public class BattleSetupController {
 	 * @param items The list of items to test
 	 * @return A map associating item ids and a boolean set to true if the item is usable on the current player's active Bugemon, false otherwise
 	 */
-	public Map<String, Boolean> checkItems(List<ItemDTO> items) {
-		Serializable message = this.clientController.getData(new CheckUsableItemRequest(items));
-		if (message instanceof UsableItemsResponse usableItems) {
+	public Map<String, Boolean> checkItems(List<ItemDTO> items) throws ServerStatusException, UnknownServerResponse {
+		if (this.clientController.getData(new CheckUsableItemRequest(items)) instanceof UsableItemsResponse usableItems) {
 			return usableItems.getItemMap();
-		} else if (message instanceof StatusResponse errorMessage && errorMessage.isFailure()) {
-			LOGGER.log(Level.WARNING, "Failed to check usable items: " + errorMessage.getMessage());
-		}
-		return null;
+		} 
+		throw new UnknownServerResponse("checkUsableItem");
 	}
 
 	/**
@@ -110,7 +116,13 @@ public class BattleSetupController {
 	 * @return The list of ability entries
 	 */
 	public List<AbilityEntry> buildAbilityEntries() {
-		List<BugemonDTO> activeBugemons = this.getActiveBugemons();
+		List<BugemonDTO> activeBugemons;
+		try {
+			activeBugemons = this.getActiveBugemons();
+		} catch (Exception e) {
+			LOGGER.warning("Impossible de récupérer les bugemons actifs");
+			return List.of();
+		}
 		BugemonDTO ownActiveBugemon = activeBugemons.get(0);
 		BugemonDTO opponentActiveBugemon = activeBugemons.get(1);
 		if (ownActiveBugemon == null) {
@@ -118,8 +130,14 @@ public class BattleSetupController {
 		}
 
 		List<AbilityEntry> entries = new ArrayList<>();
-		Map<AbilityDTO, String> abilitiesEffectiveness = this.getAbilityEffectiveness(ownActiveBugemon.getAbilities(),
-				opponentActiveBugemon);
+		Map<AbilityDTO, String> abilitiesEffectiveness;
+		try {
+			abilitiesEffectiveness = this.getAbilityEffectiveness(ownActiveBugemon.getAbilities(),
+					opponentActiveBugemon);
+		} catch (Exception e) {
+			LOGGER.warning("Impossible de récupérer l'efficacité des compétences.");
+			return List.of();
+		}
 
 		for (AbilityDTO ability : ownActiveBugemon.getAbilities()) {
 			if (ability != null) {
@@ -147,14 +165,11 @@ public class BattleSetupController {
 	 *
 	 * @return A list holding two Bugemon; in order: the current player's active Bugemon and his opponent's active Bugemon
 	 */
-	public List<BugemonDTO> getActiveBugemons() {
-		Serializable message = clientController.getData(new GetActiveBugemonsRequest());
-		if (message instanceof ActiveBugemonsResponse activeBugemons) {
+	public List<BugemonDTO> getActiveBugemons() throws ServerStatusException, UnknownServerResponse {
+		if (clientController.getData(new GetActiveBugemonsRequest()) instanceof ActiveBugemonsResponse activeBugemons) {
 			return List.of(activeBugemons.getSelfActiveBugemon(), activeBugemons.getOpponentActiveBugemon());
-		} else if (message instanceof StatusResponse errorMessage && errorMessage.isFailure()) {
-			LOGGER.log(Level.WARNING, "Failed to get active bugemons: " + errorMessage.getMessage());
-		}
-		return null;
+		} 
+		throw new UnknownServerResponse("getActiveBugemons");
 	}
 
 	/**
@@ -164,15 +179,13 @@ public class BattleSetupController {
 	 * @param bugemonTarget The Bugemon target to test type effectiveness against
 	 * @return A map associating each ability to a message to display to inform the player of its effectiveness
 	 */
-	public Map<AbilityDTO, String> getAbilityEffectiveness(List<AbilityDTO> abilities, BugemonDTO bugemonTarget) {
+	public Map<AbilityDTO, String> getAbilityEffectiveness(List<AbilityDTO> abilities, BugemonDTO bugemonTarget) throws ServerStatusException, UnknownServerResponse {
 		Serializable message = this.clientController.getData(new GetAbilityEffectivenessRequest(abilities,
 				bugemonTarget));
 		if (message instanceof AbilityEffectivenessResponse effectivenessMessage) {
 			return effectivenessMessage.getEffectiveness();
-		} else if (message instanceof StatusResponse errorMessage && errorMessage.isFailure()) {
-			LOGGER.log(Level.WARNING, "Failed to get ability effectiveness: " + errorMessage.getMessage());
-		}
-		return null;
+		} 
+		throw new UnknownServerResponse("getAbilityEffectiveness");
 	}
 
 	/**
@@ -206,7 +219,14 @@ public class BattleSetupController {
 			return List.of();
 		}
 
-		BugemonDTO activeBugemon = this.getActiveBugemons().get(0);
+		BugemonDTO activeBugemon;	
+		try {
+			activeBugemon = this.getActiveBugemons().get(0);
+		} catch (Exception e) {
+			LOGGER.warning("Impossible de récupérer les bugemons actifs");
+			return List.of();
+		}
+
 		List<BugemonEntry> entries = new ArrayList<>();
 		for (BugemonDTO bugemon : playerTeam) {
 			boolean active = bugemon.getId().equals(activeBugemon.getId());
@@ -223,11 +243,14 @@ public class BattleSetupController {
 	 * @param player The current player
 	 */
 	public void updateTeam(PlayerDTO player) {
-		Serializable message = this.clientController.getData(new GetPlayerTeamRequest(player.getUsername()));
-		if (message instanceof PlayerTeamResponse playerTeam) {
-			player.setTeam(playerTeam.getBugemons());
-		} else if (message instanceof StatusResponse errorMessage && errorMessage.isFailure()) {
-			LOGGER.log(Level.WARNING, "Failed to update player team: " + errorMessage.getMessage());
+		try {
+			if (this.clientController.getData(new GetPlayerTeamRequest(player.getUsername())) instanceof PlayerTeamResponse playerTeam) {
+				player.setTeam(playerTeam.getBugemons());
+				return;
+			}
+			throw new UnknownServerResponse("getPlayerTeam");
+		} catch (Exception e) {
+			LOGGER.warning("Impossible de mettre à jour l'équipe du joueur.");
 		}
 	}
 
@@ -239,14 +262,20 @@ public class BattleSetupController {
 			return;
 		}
 
-		boolean isForcedToSwitch = this.isForcedSwitch();
-		view.setForcedSwitch(isForcedToSwitch);
-		Optional<BattleSnapshot> snapshot = buildBattleSnapshot();
+		try {
+			boolean isForcedToSwitch = this.isForcedSwitch();
+			view.setForcedSwitch(isForcedToSwitch);
+			Optional<BattleSnapshot> snapshot = buildBattleSnapshot();
 
-		if (snapshot.isPresent()) {
-			view.renderBattle(snapshot.get());
+			if (snapshot.isPresent()) {
+				view.renderBattle(snapshot.get());
+			}
+			view.showLogMessages(consumeLogMessages());
+		} catch (Exception e) {
+			LOGGER.warning("Impossible de rafraichir l'interface.");
+			return;
 		}
-		view.showLogMessages(consumeLogMessages());
+		
 	}
 
 	/**
@@ -254,7 +283,7 @@ public class BattleSetupController {
 	 *
 	 * @return True if switch is mandatory
 	 */
-	private boolean isForcedSwitch() {
+	private boolean isForcedSwitch() throws ServerStatusException, UnknownServerResponse {
 		return this.getState() == BattleState.SWAPPING;
 	}
 
@@ -264,7 +293,12 @@ public class BattleSetupController {
 	 * @return The battle snapshot, or null if unavailable
 	 */
 	public Optional<BattleSnapshot> buildBattleSnapshot() {
-		List<BugemonDTO> activeBugemons = this.getActiveBugemons();
+		List<BugemonDTO> activeBugemons;
+		try {
+			activeBugemons = this.getActiveBugemons();
+		} catch (Exception e) {
+			return Optional.empty();
+		}
 		BugemonDTO playerBugemon = activeBugemons.get(0);
 		BugemonDTO opponentBugemon = activeBugemons.get(1);
 
@@ -281,14 +315,11 @@ public class BattleSetupController {
 	 *
 	 * @return The current list of log messages
 	 */
-	public List<String> consumeLogMessages() {
-		Serializable message = this.clientController.getData(new GetLogsRequest(true));
-		if (message instanceof LogsResponse logs) {
+	public List<String> consumeLogMessages() throws ServerStatusException, UnknownServerResponse {
+		if (this.clientController.getData(new GetLogsRequest(true)) instanceof LogsResponse logs) {
 			return logs.getLogs();
-		} else if (message instanceof StatusResponse errorMessage && errorMessage.isFailure()) {
-			LOGGER.log(Level.WARNING, "Failed to get logs: " + errorMessage.getMessage());
-		}
-		return null;
+		} 
+		throw new UnknownServerResponse("getLogs");
 	}
 
 	/**
@@ -296,14 +327,11 @@ public class BattleSetupController {
 	 *
 	 * @return The state of the battle
 	 */
-	public BattleState getState() {
-		Serializable message = this.clientController.getData(new GetBattleStateRequest());
-		if (message instanceof BattleStateResponse battleState) {
+	public BattleState getState() throws ServerStatusException, UnknownServerResponse {
+		if (this.clientController.getData(new GetBattleStateRequest()) instanceof BattleStateResponse battleState) {
 			return battleState.getBattleState();
-		} else if (message instanceof StatusResponse errorMessage && errorMessage.isFailure()) {
-			LOGGER.log(Level.WARNING, "Failed to get battle state: " + errorMessage.getMessage());
-		}
-		return null;
+		} 
+		throw new UnknownServerResponse("getBattleState");
 	}
 
 	/**

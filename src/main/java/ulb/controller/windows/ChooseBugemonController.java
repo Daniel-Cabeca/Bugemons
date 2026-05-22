@@ -7,13 +7,12 @@ import ulb.DTO.player.PlayerDTO;
 import ulb.controller.ClientController;
 import ulb.message.request.gameActions.ChooseStatRewardRequest;
 import ulb.message.request.gameData.GetRandomAbilityRequest;
-import ulb.message.response.StatusResponse;
 import ulb.message.response.gameData.RandomAbilityResponse;
 import ulb.view.WindowPath;
 import ulb.view.windows.ChooseBugemonWindow;
 
 import java.io.Serializable;
-import java.util.logging.Level;
+import java.util.Optional;
 
 /**
  * Controller for selecting a bugemon for a reward action.
@@ -34,8 +33,13 @@ public class ChooseBugemonController extends WindowController<ChooseBugemonWindo
 	 * Displays the choose bugemon screen.
 	 */
 	public void show() {
-		PlayerDTO player = this.clientController.getPlayer();
-		this.view.populatePlayerBugemons(player.getTeam());
+		Optional<PlayerDTO> player = this.clientController.getPlayer();
+		if (player.isEmpty()){
+			LOGGER.warning("Le joueur n'est pas connecté");
+			this.clientController.showWindow(WindowName.GAME_MODE);
+			return;
+		}
+		this.view.populatePlayerBugemons(player.get().getTeam());
 		super.show();
 	}
 
@@ -47,21 +51,21 @@ public class ChooseBugemonController extends WindowController<ChooseBugemonWindo
 			return;
 		}
 
-		AbilityDTO newAbility = null;
-		Serializable message = this.clientController.getData(new GetRandomAbilityRequest(bugemon));
+		AbilityDTO newAbility;
 
-		if (message instanceof StatusResponse errorMessage && errorMessage.isFailure()) {
-			LOGGER.log(Level.WARNING, "Failed to get random ability: " + errorMessage.getMessage());
+		try {
+			Serializable message = this.clientController.getData(new GetRandomAbilityRequest(bugemon));
+			if (message instanceof RandomAbilityResponse randomAbility) {
+				newAbility = randomAbility.getAbility();
+			} else {
+				this.clientController.nextRoom();
+				return;
+			}
+		} catch (Exception e) {
+			LOGGER.warning("Impossible de récupérer une compétence aléatoire.");
 			return;
-
-		} else if (message instanceof RandomAbilityResponse randomAbility) {
-			newAbility = randomAbility.getAbility();
 		}
 
-		if (newAbility == null) {
-			this.clientController.nextRoom();
-			return;
-		}
 		this.clientController.showAttackReplacement(bugemon, newAbility);
 	}
 

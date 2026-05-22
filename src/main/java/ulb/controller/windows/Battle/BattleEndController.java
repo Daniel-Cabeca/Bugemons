@@ -1,5 +1,7 @@
 package ulb.controller.windows.Battle;
 
+import java.util.Optional;
+
 import javafx.stage.Stage;
 import ulb.controller.ClientController;
 import ulb.controller.windows.WindowController;
@@ -29,9 +31,9 @@ public class BattleEndController extends WindowController<BattleEndWindow> imple
 	 * @param totalXP Total experience gained
 	 * @param opponent the one player fought
 	 */
-	public void show(boolean victory, int totalXP, String opponent, boolean multiplayerBattle) {
+	public void show(boolean victory, int totalXP, Optional<String> opponent) {
 		super.show();
-		this.view.setResult(victory, totalXP, opponent, multiplayerBattle);
+		this.view.setResult(victory, totalXP, opponent);
 	}
 
 	/**

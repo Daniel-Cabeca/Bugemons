@@ -5,12 +5,13 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import ulb.DTO.team.TeamDTO;
 import ulb.controller.ClientController;
+import ulb.exceptions.ServerStatusException;
+import ulb.exceptions.UnknownServerResponse;
 import ulb.message.request.teamSave.GetSavedTeamsRequest;
 import ulb.message.response.teamSave.SavedTeamsResponse;
 import ulb.view.WindowPath;
 import ulb.view.windows.LoadTeamPanel;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -50,7 +51,13 @@ public class LoadTeamPanelController extends WindowController<LoadTeamPanel> imp
 	 * Retrieves the list of the current player's saved Bugemon teams form the server and sends it to the associated view.
 	 */
 	private void setSavedTeams() {
-		List<TeamDTO> teams = getSavedTeams();
+		List<TeamDTO> teams;
+		try {
+			teams = getSavedTeams();
+		} catch (Exception e) {
+			LOGGER.warning("Impossible de récupérer les équipes chargées.");
+			return;
+		}
 		view.populateSavedTeams(teams);
 	}
 
@@ -59,13 +66,11 @@ public class LoadTeamPanelController extends WindowController<LoadTeamPanel> imp
 	 *
 	 * @return The list of the player's saved teams
 	 */
-	private List<TeamDTO> getSavedTeams() {
-		Serializable message = this.clientController.getData(new GetSavedTeamsRequest());
-
-		if (message instanceof SavedTeamsResponse teamsMessage) {
+	private List<TeamDTO> getSavedTeams() throws ServerStatusException, UnknownServerResponse {
+		if (this.clientController.getData(new GetSavedTeamsRequest()) instanceof SavedTeamsResponse teamsMessage) {
 			return teamsMessage.getTeams();
 		}
-		return null;
+		throw new UnknownServerResponse("getSavedTeams");
 	}
 
 	/**

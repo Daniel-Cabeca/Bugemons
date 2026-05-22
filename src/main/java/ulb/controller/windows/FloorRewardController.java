@@ -43,12 +43,16 @@ public class FloorRewardController extends WindowController<FloorRewardWindow> i
 	 */
 	@Override
 	public void show() {
-		if (clientController.getData(new GetRandomItemRequest()) instanceof RandomItemResponse r) {
-			rewardItem = r.getItem();
-		}
-		if (clientController.getData(new GetTowerInfoRequest()) instanceof TowerInfoResponse info) {
-			view.initializeLabels(info.getFloorNumber(), info.getRoomNumber(), rewardItem != null ? rewardItem.name()
-					: "");
+		try {
+			if (clientController.getData(new GetRandomItemRequest()) instanceof RandomItemResponse r) {
+				rewardItem = r.getItem();
+			} 
+			if (clientController.getData(new GetTowerInfoRequest()) instanceof TowerInfoResponse info) {
+				view.initializeLabels(info.getFloorNumber(), info.getRoomNumber(), rewardItem != null ? rewardItem.name()
+						: "");
+			}
+		} catch (Exception e) {
+			LOGGER.warning("Impossible de récupérer les récompenses ou les informations de la tour.");
 		}
 		super.show();
 	}

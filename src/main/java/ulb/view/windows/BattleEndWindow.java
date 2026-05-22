@@ -1,5 +1,7 @@
 package ulb.view.windows;
 
+import java.util.Optional;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
@@ -35,19 +37,19 @@ public class BattleEndWindow {
 	 *
 	 * @param victory boolean indicating if the player's team won
 	 */
-	public void setResult(boolean victory, int totalXP, String opponent, boolean multiplayerBattle) {
+	public void setResult(boolean victory, int totalXP, Optional<String> opponent) {
 		if (victory) {
 			titleLabel.setText("Victoire!");
-			if (multiplayerBattle) {
-				messageLabel.setText("Tous les Bugémons adverses ont été mis KO. Tu as gagné contre " + opponent + " " + "!");
+			if (opponent.isPresent()) {
+				messageLabel.setText("Tous les Bugémons adverses ont été mis KO. Tu as gagné contre " + opponent.get() + " " + "!");
 			} else {
 				messageLabel.setText("Tous les Bugémons adverses ont été mis KO. Tu as gagné !");
 			}
 			gainXPLabel.setText("XP gagné: " + totalXP);
 		} else {
 			titleLabel.setText("Défaite");
-			if (multiplayerBattle) {
-				messageLabel.setText("Tous tes Bugémons sont KO. Tu as perdu contre " + opponent + " !");
+			if (opponent.isPresent()) {
+				messageLabel.setText("Tous tes Bugémons sont KO. Tu as perdu contre " + opponent.get() + " !");
 			} else {
 				messageLabel.setText("Tous tes Bugémons sont KO. Tu as perdu !");
 			}

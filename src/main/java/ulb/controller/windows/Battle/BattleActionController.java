@@ -7,10 +7,11 @@ import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.item.ItemDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.controller.ClientController;
+import ulb.exceptions.ServerStatusException;
+import ulb.exceptions.UnknownServerResponse;
 import ulb.message.request.gameActions.*;
 import ulb.message.request.gameInfo.CheckGameFinishedRequest;
 import ulb.message.request.gameInfo.GetLogsRequest;
-import ulb.message.response.StatusResponse;
 import ulb.message.response.gameInfo.GameFinishedResponse;
 import ulb.message.response.gameInfo.LogsResponse;
 import ulb.model.GameMode;
@@ -18,11 +19,9 @@ import ulb.model.battle.BattleState;
 import ulb.view.windows.BattleWindow;
 import ulb.view.windows.BattleWindow.BattleSnapshot;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -116,11 +115,16 @@ public class BattleActionController {
 	 * @return The matching ability DTO, or null if not found
 	 */
 	private Optional<AbilityDTO> findActiveAbilityById(String abilityId) {
-		BugemonDTO activeBugemon = this.battleSetupController.getActiveBugemons().get(0);
-		if (activeBugemon == null) {
+		try {
+			BugemonDTO activeBugemon = this.battleSetupController.getActiveBugemons().get(0);
+			if (activeBugemon == null) {
+				return Optional.empty();
+			}
+			return activeBugemon.findActiveAbilityById(abilityId);
+		} catch (Exception e) {
 			return Optional.empty();
 		}
-		return activeBugemon.findActiveAbilityById(abilityId);
+		
 	}
 
 	/**
@@ -128,28 +132,22 @@ public class BattleActionController {
 	 *
 	 * @return True if the battle is finished, false otherwise
 	 */
-	public boolean isGameFinished() {
-		Serializable message = this.clientController.getData(new CheckGameFinishedRequest());
-		if (message instanceof GameFinishedResponse gameFinished) {
+	public boolean isGameFinished() throws ServerStatusException, UnknownServerResponse {
+		if (this.clientController.getData(new CheckGameFinishedRequest()) instanceof GameFinishedResponse gameFinished) {
 			return gameFinished.isGameFinished();
-		} else if (message instanceof StatusResponse errorMessage && errorMessage.isFailure()) {
-			LOGGER.log(Level.WARNING, "Failed to check if game is finished: " + errorMessage.getMessage());
-		}
-		return true;
+		} 
+		throw new UnknownServerResponse("checkGameFinished");
 	}
 
 	/**
 	 * Fetches the HP of both Bugemons after the first action of the turn.
 	 * @return A list of two integers holding the HP values of each Bugemon after the first action of the turn
 	 */
-	public List<Integer> getHpAfterFirstAction() {
-		Serializable message = this.clientController.getData(new GetLogsRequest(false));
-		if (message instanceof LogsResponse logs) {
+	public List<Integer> getHpAfterFirstAction() throws ServerStatusException, UnknownServerResponse {
+		if (this.clientController.getData(new GetLogsRequest(false)) instanceof LogsResponse logs) {
 			return logs.getHpsAfterFirstAction();
-		} else if (message instanceof StatusResponse errorMessage && errorMessage.isFailure()) {
-			LOGGER.log(Level.WARNING, "Failed to get HP after first action: " + errorMessage.getMessage());
-		}
-		return List.of();
+		} 
+		throw new UnknownServerResponse("getLogsRequest");
 	}
 
 	/**
@@ -170,15 +168,23 @@ public class BattleActionController {
 				while (this.battleSetupController.getState() == BattleState.WAITING && !this.isGameFinished()) {
 					Thread.sleep(100);
 				}
-			} catch (InterruptedException e) {
+			} catch (Exception e) {
+				LOGGER.warning("Impossible d'attendre l'adversaire.");
 				Thread.currentThread().interrupt();
 			}
 
 			Platform.runLater(() -> {
 				waitingForOpponentAction = false;
 				view.setBattleInputsDisabled(false);
+				
+				BattleState currentState;
+				try {
+					currentState = this.battleSetupController.getState();
+				} catch (Exception e) {
+					LOGGER.warning("Impossible de récupérer l'état du combat.");
+					return;
+				}
 
-				BattleState currentState = this.battleSetupController.getState();
 				displayActionSequence(currentState, player, event, () -> {
 					if (currentState == BattleState.INGAME) {
 						view.showMainMenu();
@@ -200,9 +206,15 @@ public class BattleActionController {
 	 */
 	private void displayActionSequence(BattleState stateAfter, PlayerDTO player, ActionEvent event,
 									   Runnable afterDisplay) {
-		List<String> logs = this.battleSetupController.consumeLogMessages();
-
-		List<Integer> hpAfterFirstAction = this.getHpAfterFirstAction();
+		List<String> logs;
+		List<Integer> hpAfterFirstAction;
+		try {
+			logs = this.battleSetupController.consumeLogMessages();
+			hpAfterFirstAction = this.getHpAfterFirstAction();
+		} catch (Exception e) {
+			LOGGER.warning("Impossible d'afficher la séquence d'actions.");
+			return;
+		}
 		Integer firstActionSelfHp = null, firstActionOpponentHp = null;
 
 		if (logs.contains(null) && hpAfterFirstAction.get(0) != null && hpAfterFirstAction.get(1) != null) {
@@ -234,7 +246,7 @@ public class BattleActionController {
 	 * @param state The candidate state
 	 * @return The resolved battle state
 	 */
-	private BattleState stateOrCurrent(BattleState state) {
+	private BattleState stateOrCurrent(BattleState state) throws ServerStatusException, UnknownServerResponse {
 		if (state != null) {
 			return state;
 		}
@@ -255,7 +267,13 @@ public class BattleActionController {
 			return;
 		}
 
-		BattleState stateAfter = stateOrCurrent(this.battleSetupController.getState());
+		BattleState stateAfter;
+		try {
+			stateAfter = stateOrCurrent(this.battleSetupController.getState());
+		} catch (Exception e) {
+			LOGGER.warning("Impossible d'utiliser l'objet.");
+			return;
+		}
 
 		displayActionSequence(stateAfter, player, event, () -> {
 			if (stateAfter == BattleState.WAITING || stateAfter == BattleState.INGAME) {
@@ -280,7 +298,13 @@ public class BattleActionController {
 			return;
 		}
 
-		BattleState stateAfter = stateOrCurrent(this.battleSetupController.getState());
+		BattleState stateAfter;
+		try {
+			stateAfter = stateOrCurrent(this.battleSetupController.getState());
+		} catch (Exception e) {
+			LOGGER.warning("Impossible d'utiliser la compétence.");
+			return;
+		}
 
 		displayActionSequence(stateAfter, player, event, () -> {
 			if (stateAfter == BattleState.WAITING || stateAfter == BattleState.INGAME) {
@@ -314,7 +338,13 @@ public class BattleActionController {
 			return;
 		}
 
-		BattleState stateAfter = stateOrCurrent(this.battleSetupController.getState());
+		BattleState stateAfter;
+		try {
+			stateAfter = stateOrCurrent(this.battleSetupController.getState());
+		} catch (Exception e) {
+			LOGGER.warning("Impossible de changer de bugemon.");
+			return;
+		}
 
 		displayActionSequence(stateAfter, player, event, () -> {
 			if (stateAfter == BattleState.WAITING || stateAfter == BattleState.INGAME) {
@@ -341,8 +371,13 @@ public class BattleActionController {
 		if (!this.clientController.postData(new ChooseRandomActionRequest())) {
 			return;
 		}
-
-		BattleState stateAfter = stateOrCurrent(this.battleSetupController.getState());
+		BattleState stateAfter;
+		try {
+			stateAfter = stateOrCurrent(this.battleSetupController.getState());
+		} catch (Exception e) {
+			LOGGER.warning("Impossible de choisir une action aléatoire.");
+			return;
+		}
 
 		displayActionSequence(stateAfter, player, event, () -> {
 			view.showMainMenu();

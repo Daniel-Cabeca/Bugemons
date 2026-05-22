@@ -5,6 +5,7 @@ import javafx.event.EventHandler;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import ulb.DTO.ability.AbilityDTO;
+import ulb.DTO.battle.MultiBattleStatusDTO;
 import ulb.DTO.bugemon.BugemonDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.DTO.reward.RewardDTO;
@@ -13,23 +14,27 @@ import ulb.controller.windows.*;
 import ulb.controller.windows.Battle.BattleEndController;
 import ulb.controller.windows.Battle.BattleWindowController;
 import ulb.exceptions.CommunicationException;
+import ulb.exceptions.ServerStatusException;
+import ulb.exceptions.UnknownServerResponse;
 import ulb.message.request.Request;
 import ulb.message.request.gameActions.ChooseLevelUpRewardRequest;
 import ulb.message.request.gameInfo.GetBattleEndInfoRequest;
 import ulb.message.request.gameInfo.GetNextWindowRequest;
 import ulb.message.request.playerInfo.GetPlayerRequest;
 import ulb.message.request.setup.SetUpTeamRequest;
+import ulb.message.request.social.GetMultiBattleStatusRequest;
 import ulb.message.response.Response;
 import ulb.message.response.StatusResponse;
 import ulb.message.response.gameInfo.BattleEndInfoResponse;
 import ulb.message.response.gameInfo.NextWindowResponse;
 import ulb.message.response.gameInfo.WindowType;
 import ulb.message.response.playerInfo.PlayerResponse;
+import ulb.message.response.social.MultiBattleStatusResponse;
 import ulb.model.GameMode;
 
 import java.io.InputStream;
-import java.io.Serializable;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
@@ -54,7 +59,7 @@ public class ClientController extends Application {
 	/**
 	 * The current player's account information.
 	 */
-	PlayerDTO player;
+	Optional<PlayerDTO> player;
 
 	/**
 	 * The current game mode.
@@ -153,14 +158,14 @@ public class ClientController extends Application {
 		}
 	}
 
-	public PlayerDTO getPlayer() {
+	public Optional<PlayerDTO> getPlayer() {
 		return this.player;
 	}
 
 	/**
 	 * Clears the currently authenticated player.
 	 */
-	public void unsetPlayer() { this.player = null; }
+	public void unsetPlayer() { this.player = Optional.empty(); }
 
 	/**
 	 * Loads a player by username, stores it as the current player, and returns it.
@@ -168,9 +173,9 @@ public class ClientController extends Application {
 	 * @param username The username to look up
 	 * @return The player DTO, or null if not found
 	 */
-	public PlayerDTO loadPlayer(String username) {
-		this.player = this.getPlayer(username);
-		return this.player;
+	public PlayerDTO loadPlayer(String username) throws ServerStatusException, UnknownServerResponse {
+		this.player = Optional.of(this.getPlayer(username));
+		return this.player.get();
 	}
 
 	/**
@@ -179,11 +184,11 @@ public class ClientController extends Application {
 	 * @param username Username to retrieve
 	 * @return Matching player DTO or null if unavailable
 	 */
-	public PlayerDTO getPlayer(String username) {
+	public PlayerDTO getPlayer(String username) throws ServerStatusException, UnknownServerResponse {
 		if (getData(new GetPlayerRequest(username)) instanceof PlayerResponse msg) {
 			return msg.getPlayer();
 		}
-		return null;
+		throw new UnknownServerResponse("getPlayer");
 	}
 
 	/**
@@ -192,8 +197,12 @@ public class ClientController extends Application {
 	 * @param request The message sent to the server
 	 * @return The response received from the server
 	 */
-	public Response getData(Request request) {
-		return this.client.getResponse(request);
+	public Response getData(Request request) throws ServerStatusException {
+		Response response = this.client.getResponse(request);
+		if (response instanceof StatusResponse statusResponse){
+			throw new ServerStatusException(statusResponse.getMessage());
+		}
+		return response;
 	}
 
 	/**
@@ -215,6 +224,20 @@ public class ClientController extends Application {
 	}
 
 	/**
+	 * Returns the current multiplayer battle status between two players.
+	 *
+	 * @param userId1 The first player's id
+	 * @param userId2 The second player's id
+	 * @return The multiplayer battle status DTO
+	 */
+	public MultiBattleStatusDTO getMultiBattleStatus(int userId1, int userId2) throws ServerStatusException, UnknownServerResponse {
+		if (this.getData(new GetMultiBattleStatusRequest(userId1, userId2)) instanceof MultiBattleStatusResponse msg)
+			return msg.getStatus();
+		LOGGER.warning("Error lors de la récupération du status du combat multiplayer.");
+		throw new UnknownServerResponse("getMultiBattleStatus");
+	}
+
+	/**
 	 * Sends data to the server and returns whether the request was accepted.
 	 *
 	 * @param request The request sent to the server
@@ -229,7 +252,13 @@ public class ClientController extends Application {
 	 * Switches to the next window according to info gotten from the server.
 	 */
 	public void nextRoom() {
-		WindowType nextWindow = this.getWindowType();
+		WindowType nextWindow;
+		try {
+			nextWindow = this.getWindowType();
+		} catch (Exception e) {
+			LOGGER.warning("Impossible to determine the next window from the server.");
+			return;
+		}
 		if (nextWindow == null) {
 			LOGGER.warning("Impossible to determine the next window from the server.");
 			return;
@@ -270,16 +299,11 @@ public class ClientController extends Application {
 	 *
 	 * @return The next window type, or null if unavailable
 	 */
-	public WindowType getWindowType() {
-		Serializable message = getData(new GetNextWindowRequest());
-
-		if (message instanceof NextWindowResponse nextWindow) {
+	public WindowType getWindowType() throws ServerStatusException, UnknownServerResponse {
+		if (getData(new GetNextWindowRequest()) instanceof NextWindowResponse nextWindow) {
 			return nextWindow.getNextWindow();
-		} else if (message instanceof StatusResponse errorMessage && errorMessage.isFailure()) {
-			LOGGER.warning("Failed to get next window: " + errorMessage.getMessage());
 		}
-
-		return null;
+		throw new UnknownServerResponse("getNextWindow");
 	}
 
 	/**
@@ -293,7 +317,8 @@ public class ClientController extends Application {
 	 * Switches to the battle window according to game mode (and tower floor and room number if Tower mode).
 	 */
 	private void switchToBattleWindow() {
-		this.battleWindowController.setPlayer(player);
+		if (this.player.isEmpty()) return;
+		this.battleWindowController.setPlayer(player.get());
 		this.battleWindowController.setGameMode(gameMode);
 		this.battleWindowController.show();
 	}
@@ -302,25 +327,32 @@ public class ClientController extends Application {
 	 * Switches to the battle end window with battle result.
 	 */
 	private void switchToBattleEndWindow() {
-		Serializable message = getData(new GetBattleEndInfoRequest());
+		Response message;
+		try {
+			message = getData(new GetBattleEndInfoRequest());
+		} catch (Exception e) {
+			LOGGER.warning("Impossible de récupérer l'information de la fin du combat.");
+			return;
+		}
 		boolean victory;
 		int totalXp;
-		String opponent;
+		Optional<String> opponent;
 		boolean multiplayerBattle;
 		if (message instanceof BattleEndInfoResponse battleInfo) {
 			victory = battleInfo.isVictory();
 			totalXp = battleInfo.getTotalXp();
 			multiplayerBattle = battleInfo.isMultiplayerBattle();
-			if (multiplayerBattle) opponent = this.teamController.getOpponent().getUsername();
-			else {
-				opponent = "BotPlayer";
+			opponent = this.teamController.getOpponentUsername();
+			if (opponent.isEmpty() && multiplayerBattle){
+				LOGGER.warning("The opponent isn't connected");
+				return;
 			}
-
 		} else {
+			LOGGER.warning("Impossible de récupérer l'information de la fin du combat.");
 			return;
 		}
 
-		battleEndController.show(victory, totalXp, opponent, multiplayerBattle);
+		battleEndController.show(victory, totalXp, opponent);
 		this.teamController.resetOpponent();
 	}
 
@@ -393,10 +425,13 @@ public class ClientController extends Application {
 	 * @param teamDTO The list of Bugemons in the player's team
 	 */
 	public void setupTeamAndShowConfirmTeam(List<BugemonDTO> teamDTO) {
-		this.player.setTeam(teamDTO);
 		if (!this.postData(new SetUpTeamRequest(teamDTO))) {
 			return;
 		}
+
+		if (this.player.isEmpty()) return;
+		this.player.get().setTeam(teamDTO);
+
 		this.confirmTeamController.setGameMode(this.gameMode);
 		this.confirmTeamController.setPlayerTeam(teamDTO);
 

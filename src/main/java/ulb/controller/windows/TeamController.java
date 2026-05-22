@@ -8,21 +8,20 @@ import ulb.DTO.bugemon.BugemonSpeciesDTO;
 import ulb.DTO.player.PlayerDTO;
 import ulb.DTO.team.TeamDTO;
 import ulb.controller.ClientController;
+import ulb.exceptions.UnknownServerResponse;
 import ulb.message.request.gameActions.QuitMultiBattleRequest;
 import ulb.message.request.gameActions.StartMultiBattleRequest;
 import ulb.message.request.gameData.GetAllBugemonSpeciesRequest;
 import ulb.message.request.setup.ConfirmTeamMultiRequest;
-import ulb.message.request.social.GetMultiBattleStatusRequest;
 import ulb.message.request.teamSave.SaveTeamRequest;
 import ulb.message.response.gameData.BugemonSpeciesResponse;
-import ulb.message.response.social.MultiBattleStatusResponse;
 import ulb.view.WindowPath;
 import ulb.view.windows.CreateTeamWindow;
 
-import javax.naming.CommunicationException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Controller for creating and validating the player's starting team.
@@ -32,7 +31,7 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	 * Information on the opponent for a multiplayer battle.
 	 * Set to null if playing in singleplayer.
 	 */
-	private PlayerDTO opponent = null;
+	private Optional<PlayerDTO> opponent = Optional.empty();
 
 	public TeamController(Stage stage, ClientController clientController) {
 		super(stage, WindowPath.CREATE_TEAM, clientController);
@@ -42,9 +41,7 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	/**
 	 * Removes the opponent information, reverting to singleplayer.
 	 */
-	public void resetOpponent() { this.opponent = null; }
-
-	public boolean hasOpponent() { return this.opponent != null; }
+	public void resetOpponent() { this.opponent = Optional.empty(); }
 
 	/**
 	 * Display this controller's associated view.
@@ -60,47 +57,60 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	 */
 	@Override
 	public void onConfirmTeam(List<String> selectedBugemonIds) {
-		this.setTeam(selectedBugemonIds);
+		List<BugemonDTO> playerTeam;
+		try {
+			playerTeam = setupTeamMembers(selectedBugemonIds);
+		} catch (Exception e) {
+			LOGGER.warning("Impossible de charger les bugemons");
+			return;
+		}
 
 		if (this.hasOpponent()) {
-			this.confirmTeamMulti(this.getOpponent());
+			this.confirmTeamMulti(playerTeam, this.getOpponent().get());
 		} else {
-			List<BugemonDTO> team = this.clientController.getPlayer().getTeam();
-			this.clientController.setupTeamAndShowConfirmTeam(team);
+			this.clientController.setupTeamAndShowConfirmTeam(playerTeam);
 		}
 	}
 
 	/**
 	 * Creates a new Team for the player and adds his selected bugémons.
 	 */
-	public void setTeam(List<String> selectedBugemonIds) {
-		PlayerDTO selfPlayer = this.getSelfPlayer();
-
-		if (selfPlayer == null) {
-			throw new IllegalStateException("Impossible de confirmer l'équipe : aucun joueur connecté côté client.");
+	public void setTeam(List<BugemonDTO> team) {
+		Optional<PlayerDTO> selfPlayer = getSelfPlayer();
+		if (selfPlayer.isEmpty()) {
+			LOGGER.info("Impossible de confirmer l'équipe : le joueur n'est pas connecté");
+			return;
 		}
 
-		List<BugemonDTO> members = setupTeamMembers(selectedBugemonIds);
-		selfPlayer.setTeam(members);
+		selfPlayer.get().setTeam(team);
 	}
+
+	public boolean hasOpponent() { return this.opponent.isPresent(); }
 
 	/**
 	 * Confirms the team for a multiplayer battle and waits for the battle to start.
 	 *
 	 * @param opponent The opponent
 	 */
-	public void confirmTeamMulti(PlayerDTO opponent) {
-		PlayerDTO player = this.clientController.getPlayer();
-		this.clientController.postData(new ConfirmTeamMultiRequest(this.opponent, player.getTeam()));
-
-		this.openWaitWindow(e -> {
-			this.waitForOpponentTeam(opponent);
-		});
+	public void confirmTeamMulti(List<BugemonDTO> playerTeam, PlayerDTO opponent) {
+		if (this.clientController.postData(new ConfirmTeamMultiRequest(opponent, playerTeam))){
+			this.setTeam(playerTeam);
+			this.openWaitWindow(e -> {
+				this.waitForOpponentTeam(opponent);
+			});
+		}
 	}
 
-	public PlayerDTO getOpponent() { return this.opponent; }
+	public Optional<PlayerDTO> getOpponent() { return this.opponent; }
 
-	public PlayerDTO getSelfPlayer() { return this.clientController.getPlayer(); }
+	public Optional<PlayerDTO> getSelfPlayer() { return this.clientController.getPlayer(); }
+
+	public Optional<String> getOpponentUsername() {
+		if (opponent.isPresent()){
+			return Optional.of(this.opponent.get().getUsername());
+		}
+		return Optional.empty();
+	}
 
 	/**
 	 * Transforms the list of bugemon ids to a list of BugemonDTO objects
@@ -108,7 +118,7 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	 * @param selectedBugemonIds the list of bugemon ids
 	 * @return the list of BugemonDTO
 	 */
-	private List<BugemonDTO> setupTeamMembers(List<String> selectedBugemonIds) {
+	private List<BugemonDTO> setupTeamMembers(List<String> selectedBugemonIds) throws Exception {
 		List<BugemonDTO> members = new ArrayList<>();
 		List<BugemonSpeciesDTO> allSpecies = this.getAllSpecies();
 		for (String bugemonId : selectedBugemonIds) {
@@ -137,14 +147,19 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	 * @param opponent The opponent
 	 */
 	private void waitForOpponentTeam(PlayerDTO opponent) {
-		PlayerDTO self = this.clientController.getPlayer();
+		Optional<PlayerDTO> self = getSelfPlayer();
+		if (self.isEmpty()) {
+			LOGGER.info("Vous n'êtes pas connecté");
+			return;
+		}
 
-		MultiBattleStatusDTO status = null;
+		MultiBattleStatusDTO status;
 		try {
-			status = this.getMultiBattleStatus(self.getUserId(), opponent.getUserId());
-		} catch (CommunicationException e) {
+			status = this.clientController.getMultiBattleStatus(self.get().getUserId(), opponent.getUserId());
+		} catch (Exception e) {
 			this.clientController.stopWaitWindow();
 			this.clientController.showWindow(WindowName.MAIN_MENU);
+			return;
 		}
 
 		switch (status.status()) {
@@ -163,21 +178,6 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	}
 
 	/**
-	 * Returns the current multiplayer battle status between two players.
-	 *
-	 * @param userId1 The first player's id
-	 * @param userId2 The second player's id
-	 * @return The multiplayer battle status DTO
-	 */
-	public MultiBattleStatusDTO getMultiBattleStatus(int userId1, int userId2) throws CommunicationException {
-		if (this.clientController.getData(new GetMultiBattleStatusRequest(userId1, userId2)) instanceof MultiBattleStatusResponse msg)
-			return msg.getStatus();
-		LOGGER.warning("Failed to obtain multiplayer battle status.");
-		throw new CommunicationException();
-
-	}
-
-	/**
 	 * Starts a battle once both teams have been picked.
 	 *
 	 * @param opponent The opponent
@@ -187,7 +187,7 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 		this.clientController.showWindow(WindowName.BATTLE);
 	}
 
-	public void setOpponent(PlayerDTO opponent) { this.opponent = opponent; }
+	public void setOpponent(PlayerDTO opponent) { this.opponent = Optional.of(opponent); }
 
 	/**
 	 * {@inheritDoc}
@@ -202,7 +202,13 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	 */
 	@Override
 	public void onSaveTeam(List<String> selectedBugemonIds, String teamName) {
-		List<BugemonDTO> members = setupTeamMembers(selectedBugemonIds);
+		List<BugemonDTO> members;
+		try {
+			members = setupTeamMembers(selectedBugemonIds);
+		} catch (Exception e) {
+			LOGGER.warning("Impossible de charger les bugemons");
+			return;
+		}
 		TeamDTO team = new TeamDTO(-1, teamName, members);
 		this.saveTeam(team);
 	}
@@ -212,8 +218,14 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	 */
 	@Override
 	public void onReturn() {
-		if (this.hasOpponent()) {
-			this.clientController.getData(new QuitMultiBattleRequest(this.opponent));
+		
+		try {
+			if (this.hasOpponent()) {
+				this.clientController.getData(new QuitMultiBattleRequest(this.getOpponent().get()));
+			}
+		} catch (Exception e) {
+			LOGGER.warning("Error while trying to quit multi battle");
+			return;
 		}
 
 		this.clientController.showWindow(WindowName.GAME_MODE);
@@ -223,13 +235,12 @@ public class TeamController extends WindowController<CreateTeamWindow> implement
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<BugemonSpeciesDTO> getAllSpecies() {
+	public List<BugemonSpeciesDTO> getAllSpecies() throws Exception {
 		Serializable message = this.clientController.getData(new GetAllBugemonSpeciesRequest());
-
 		if (message instanceof BugemonSpeciesResponse speciesMessage) {
 			return speciesMessage.getSpecies();
 		}
-		return null;
+		throw new UnknownServerResponse("getAllBugemonSpecies");		
 	}
 
 	/**

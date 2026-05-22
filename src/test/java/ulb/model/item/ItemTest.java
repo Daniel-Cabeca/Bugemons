@@ -5,8 +5,8 @@ import ulb.exceptions.EntityNotFoundException;
 import ulb.exceptions.LoadException;
 import ulb.model.Player;
 import ulb.model.ability.Ability;
-import ulb.model.action.UseAbility;
-import ulb.model.action.UseItem;
+import ulb.model.action.UseAbilityAction;
+import ulb.model.action.UseItemAction;
 import ulb.model.battle.Battle;
 import ulb.model.battle.Battle.ParticipantLabel;
 import ulb.model.bugemon.Bugemon;
@@ -65,8 +65,8 @@ public class ItemTest {
 	private void playTurnWithItem(Battle battle, Item item) throws Exception {
 		Ability otherAbility = battle.getActiveBugemon(ParticipantLabel.TEAM_B).getAbilities().getAbility(0);
 
-		battle.chooseAction(new UseItem(item), Battle.ParticipantLabel.TEAM_A);
-		battle.chooseAction(new UseAbility(otherAbility), Battle.ParticipantLabel.TEAM_B);
+		battle.chooseAction(new UseItemAction(item), Battle.ParticipantLabel.TEAM_A);
+		battle.chooseAction(new UseAbilityAction(otherAbility), Battle.ParticipantLabel.TEAM_B);
 	}
 
 	@Test

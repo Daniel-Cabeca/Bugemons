@@ -3,8 +3,8 @@ package ulb.service.strategy;
 import ulb.model.ability.Ability;
 import ulb.model.ability.AbilitySet;
 import ulb.model.action.Action;
-import ulb.model.action.Swap;
-import ulb.model.action.UseAbility;
+import ulb.model.action.SwapAction;
+import ulb.model.action.UseAbilityAction;
 import ulb.model.battle.Battle;
 import ulb.model.bugemon.Bugemon;
 
@@ -20,15 +20,15 @@ public class StrategyRandom implements Strategy {
 		Vector<Action> actions = battle.getAvailableActions(teamLabel);
 		Action chosenAction = null;
 
-		if (actions.stream().anyMatch(a -> a instanceof UseAbility)) { // if the available action is UseAbility
+		if (actions.stream().anyMatch(a -> a instanceof UseAbilityAction)) { // if the available action is UseAbilityAction
 			Ability randomAbility = getRandomAbility(battle, teamLabel);
-			chosenAction = new UseAbility(randomAbility);
+			chosenAction = new UseAbilityAction(randomAbility);
 
 			// if the Bugemon is KO, it needs to be swapped (the only available action is SWAP)
-		} else if (actions.stream().anyMatch(a -> a instanceof Swap)) {
+		} else if (actions.stream().anyMatch(a -> a instanceof SwapAction)) {
 			Bugemon chosenBugemon = pickRandomBugemon(battle, teamLabel);
 			if (chosenBugemon != null) {
-				chosenAction = new Swap(chosenBugemon);
+				chosenAction = new SwapAction(chosenBugemon);
 			}
 		}
 		return chosenAction;

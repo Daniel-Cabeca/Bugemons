@@ -248,7 +248,7 @@ public class GameActionsHandler extends Thread {
 		boolean isGameTower = clientHandler.isGameTower();
 		TowerManager towerManager = clientHandler.getTowerManager();
 
-		battle.chooseAction(new Run(), teamLabel);
+		battle.chooseAction(new RunAction(), teamLabel);
 
 		if (isGameTower) {
 			for (Bugemon bugemon : player.getTeam().getMembers()) {
@@ -339,7 +339,7 @@ public class GameActionsHandler extends Thread {
 			throw new UserFacingException("The bugemon to swap isn't present in the Team");
 		}
 
-		battle.chooseAction(new Swap(bugemonToSwap), teamLabel);
+		battle.chooseAction(new SwapAction(bugemonToSwap), teamLabel);
 
 		clientHandler.sendSuccessMessage();
 	}
@@ -355,7 +355,7 @@ public class GameActionsHandler extends Thread {
 		ParticipantLabel teamLabel = clientHandler.getTeamLabel();
 
 		Ability ability = AbilityMapper.toEntity(abilityDTO);
-		battle.chooseAction(new UseAbility(ability), teamLabel);
+		battle.chooseAction(new UseAbilityAction(ability), teamLabel);
 
 		clientHandler.sendSuccessMessage();
 	}
@@ -372,7 +372,7 @@ public class GameActionsHandler extends Thread {
 		ParticipantLabel teamLabel = clientHandler.getTeamLabel();
 
 		Item item = ItemMapper.toEntity(itemDTO);
-		battle.chooseAction(new UseItem(item), teamLabel);
+		battle.chooseAction(new UseItemAction(item), teamLabel);
 		inventoryService.deleteItem(item, 1, player);
 		clientHandler.sendSuccessMessage();
 	}

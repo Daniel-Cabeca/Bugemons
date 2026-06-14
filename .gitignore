@@ -184,3 +184,6 @@ buildNumber.properties
 *.kate-swp
 .idea
 *.db
+
+# Others
+.mailmap
